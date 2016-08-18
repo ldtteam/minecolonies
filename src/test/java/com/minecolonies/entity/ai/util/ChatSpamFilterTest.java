@@ -1,7 +1,10 @@
 package com.minecolonies.entity.ai.util;
 
 import com.minecolonies.entity.EntityCitizen;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static com.minecolonies.entity.ai.util.ChatSpamFilter.BASE_TIMEOUT;
 import static com.minecolonies.entity.ai.util.ChatSpamFilter.MAX_TIMEOUT;
@@ -10,89 +13,99 @@ import static org.mockito.Mockito.*;
 
 public class ChatSpamFilterTest
 {
+    @Mock
+    private EntityCitizen citizen;
+
+    private ChatSpamFilter filter;
+
+    private static final String MESSAGE_1 = "Whatever";
+    private static final String MESSAGE_2 = "Whatever2";
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
+        filter = new ChatSpamFilter(citizen);
+        when(citizen.getOffsetTicks()).thenReturn(0);
+    }
 
     @Test
     public void testFilterFirst()
     {
-        final EntityCitizen  mockedCitizen = mock(EntityCitizen.class);
-        final ChatSpamFilter filter        = new ChatSpamFilter(mockedCitizen);
-        filter.requestWithoutSpam("Whatever");
-        verify(mockedCitizen).sendLocalizedChat(any(), any());
+        filter.requestWithoutSpam(MESSAGE_1);
+        verify(citizen).sendLocalizedChat(any(), any());
     }
 
     @Test
     public void testFilterFiltering()
     {
-        final EntityCitizen  mockedCitizen = mock(EntityCitizen.class);
-        final ChatSpamFilter filter        = new ChatSpamFilter(mockedCitizen);
-        filter.requestWithoutSpam("Whatever");
-        filter.requestWithoutSpam("Whatever");
-        verify(mockedCitizen).sendLocalizedChat(any(), any());
+        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(MESSAGE_1);
+        verify(citizen).sendLocalizedChat(any(), any());
     }
 
     @Test
     public void testFilterRelease()
     {
-        final EntityCitizen  mockedCitizen = mock(EntityCitizen.class);
-        final ChatSpamFilter filter        = new ChatSpamFilter(mockedCitizen);
-        filter.requestWithoutSpam("Whatever");
-        filter.requestWithoutSpam("Whatever2");
-        verify(mockedCitizen, times(2)).sendLocalizedChat(any(), any());
+        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(MESSAGE_2);
+        verify(citizen, times(2)).sendLocalizedChat(any(), any());
     }
 
     @Test
     public void testFilterReleaseAndFilter()
     {
-        final EntityCitizen  mockedCitizen = mock(EntityCitizen.class);
-        final ChatSpamFilter filter        = new ChatSpamFilter(mockedCitizen);
-        filter.requestWithoutSpam("Whatever");
-        filter.requestWithoutSpam("Whatever2");
-        filter.requestWithoutSpam("Whatever2");
-        filter.requestWithoutSpam("Whatever");
-        verify(mockedCitizen, times(3)).sendLocalizedChat(any(), any());
+        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(MESSAGE_2);
+        filter.requestWithoutSpam(MESSAGE_2);
+        filter.requestWithoutSpam(MESSAGE_1);
+        verify(citizen, times(3)).sendLocalizedChat(any(), any());
     }
 
     @Test
     public void testFilterTimeout()
     {
-        final EntityCitizen  mockedCitizen = mock(EntityCitizen.class);
-        final ChatSpamFilter filter        = new ChatSpamFilter(mockedCitizen);
-        for (int i = 0; i < BASE_TIMEOUT + 2; i++)
-        {
-            filter.requestWithoutSpam("Whatever");
-        }
+        filter.requestWithoutSpam(MESSAGE_1);
+        when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT);
+        filter.requestWithoutSpam(MESSAGE_1);
 
-        verify(mockedCitizen, times(2)).sendLocalizedChat(any(), any());
+        verify(citizen, times(2)).sendLocalizedChat(any(), any());
     }
 
     @Test
     public void testFilterTimeoutLonger()
     {
-        final EntityCitizen  mockedCitizen = mock(EntityCitizen.class);
-        final ChatSpamFilter filter        = new ChatSpamFilter(mockedCitizen);
-        for (int i = 0; i < BASE_TIMEOUT * (1 + 2 + 4) + 4; i++)
-        {
-            filter.requestWithoutSpam("Whatever");
-        }
+        filter.requestWithoutSpam(MESSAGE_1);
+        when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT);
+        filter.requestWithoutSpam(MESSAGE_1);
+        when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 3);
+        filter.requestWithoutSpam(MESSAGE_1);
+        when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 7);
+        filter.requestWithoutSpam(MESSAGE_1);
 
-        verify(mockedCitizen, times(4)).sendLocalizedChat(any(), any());
+        verify(citizen, times(4)).sendLocalizedChat(any(), any());
     }
 
     @Test
     public void testFilterTimeoutMax()
     {
-        final EntityCitizen  mockedCitizen = mock(EntityCitizen.class);
-        final ChatSpamFilter filter        = new ChatSpamFilter(mockedCitizen);
-        for (int i = 0; i < BASE_TIMEOUT * (1 + 2 + 4 + 8) + 5; i++)
-        {
-            filter.requestWithoutSpam("Whatever");
-        }
-        verify(mockedCitizen, times(5)).sendLocalizedChat(any(), any());
-        for (int i = 0; i < MAX_TIMEOUT * 2 + 2; i++)
-        {
-            filter.requestWithoutSpam("Whatever");
-        }
-        verify(mockedCitizen, times(7)).sendLocalizedChat(any(), any());
+        filter.requestWithoutSpam(MESSAGE_1);
+        when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT);
+        filter.requestWithoutSpam(MESSAGE_1);
+        when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 3);
+        filter.requestWithoutSpam(MESSAGE_1);
+        when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 7);
+        filter.requestWithoutSpam(MESSAGE_1);
+        when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 15);
+        filter.requestWithoutSpam(MESSAGE_1);
+
+        verify(citizen, times(5)).sendLocalizedChat(any(), any());
+
+        when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 15 + MAX_TIMEOUT);
+        filter.requestWithoutSpam(MESSAGE_1);
+        when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 15 + MAX_TIMEOUT * 2);
+        filter.requestWithoutSpam(MESSAGE_1);
+
+        verify(citizen, times(7)).sendLocalizedChat(any(), any());
     }
 
 }
