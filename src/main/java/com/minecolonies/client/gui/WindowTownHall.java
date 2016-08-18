@@ -95,6 +95,21 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String BUTTON_DEMOTE = "demote";
 
     /**
+     * Id of the up button in the GUI.
+     */
+    private static final String BUTTON_UP = "up";
+
+    /**
+     * Id of the up button in the GUI.
+     */
+    private static final String BUTTON_DOWN = "down";
+
+    /**
+     * The id of the delete button in the GUI.
+     */
+    private static final String BUTTON_DELETE      = "delete";
+
+    /**
      * Id of the input bar to add players. in the GUI.
      */
     private static final String INPUT_ADDPLAYER_NAME = "addPlayerName";
@@ -275,9 +290,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
 
-        registerButton("up", this::updatePriority);
-        registerButton("down", this::updatePriority);
-        registerButton("delete", this::deleteWorkOrder);
+        registerButton(BUTTON_UP, this::updatePriority);
+        registerButton(BUTTON_DOWN, this::updatePriority);
+        registerButton(BUTTON_DELETE, this::deleteWorkOrder);
     }
 
     /**
@@ -287,7 +302,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void updatePriority(Button button)
     {
         Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
-        int id = Integer.valueOf(idLabel.getLabelText());
+        int id = Integer.parseInt(idLabel.getLabelText());
         String buttonLabel = button.getID();
 
         for (int i = 0; i < workOrders.size(); i++)
@@ -295,23 +310,26 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             WorkOrderView workOrder = workOrders.get(i);
             if (workOrder.getId() == id)
             {
-                if(buttonLabel.equals("up"))
+                if(buttonLabel.equals(BUTTON_UP))
                 {
-                    if (i-1 >= 0)
+                    if (i > 0)
                     {
-                        workOrder.setPriority(workOrders.get(i-1).getPriority());
-                        workOrders.get(i-1).setPriority(workOrder.getPriority());
+                        WorkOrderView workOrderUp = workOrders.get(i-1);
+                        workOrder.setPriority(workOrderUp.getPriority());
+                        workOrderUp.setPriority(workOrder.getPriority());
 
-                        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrders.get(i-1).getPriority()+1));
+                        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrderUp.getPriority()+1));
                     }
                 }
-                else if (buttonLabel.equals("down"))
+                else if (buttonLabel.equals(BUTTON_DOWN))
                 {
-                    if (i+1 < workOrders.size())
+                    if (i <= workOrders.size())
                     {
-                        workOrder.setPriority(workOrders.get(i+1).getPriority());
-                        workOrders.get(i+1).setPriority(workOrder.getPriority());
-                        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrders.get(i+1).getPriority()-1));
+                        WorkOrderView workOrderDown = workOrders.get(i+1);
+
+                        workOrder.setPriority(workOrderDown.getPriority());
+                        workOrderDown.setPriority(workOrder.getPriority());
+                        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrderDown.getPriority()-1));
                     }
                 }
                 workOrders.remove(i);
@@ -330,7 +348,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private void deleteWorkOrder(Button button)
     {
         Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
-        int id = Integer.valueOf(idLabel.getLabelText());
+        int id = Integer.parseInt(idLabel.getLabelText());
         for(int i = 0; i < workOrders.size(); i++)
         {
             if(workOrders.get(i).getId() == id)

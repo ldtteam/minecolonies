@@ -75,11 +75,6 @@ public class WindowHireWorker extends Window implements Button.Handler
     private AbstractBuilding.View building;
 
     /**
-     * The abstract building to set things in the worker building GUI.
-     */
-    private AbstractBuildingWorker abstractBuildingWorker;
-
-    /**
      * The colony.
      */
     private                 ColonyView  colony;
