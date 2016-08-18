@@ -339,7 +339,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void deleteWorkOrder(Button button)
     {
-        //todo player has permission to do this?
         final Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
         final int id = Integer.parseInt(idLabel.getLabelText());
         for(int i = 0; i < workOrders.size(); i++)

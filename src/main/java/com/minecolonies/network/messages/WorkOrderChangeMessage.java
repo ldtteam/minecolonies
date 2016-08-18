@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrderChangeMessage, IMessage>
 {
     /**
-     * The Colony ID;
+     * The Colony ID.
      */
     private int colonyId;
 
