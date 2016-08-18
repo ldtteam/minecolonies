@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
- * Add or Update a ColonyView on the client
+ * Add or Update a ColonyView on the client.
  */
 public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<ColonyViewCitizenViewMessage, IMessage>
 {
@@ -21,7 +21,7 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     public ColonyViewCitizenViewMessage(){}
 
     /**
-     * Updates a {@link CitizenData.CitizenDataView} of the citizens
+     * Updates a {@link com.minecolonies.colony.CitizenDataView} of the citizens.
      *
      * @param colony     Colony of the citizen
      * @param citizen    Citizen data of the citizen to update view

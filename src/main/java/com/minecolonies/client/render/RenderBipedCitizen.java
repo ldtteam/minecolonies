@@ -11,12 +11,12 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Renderer for the citizens
+ * Renderer for the citizens.
  */
 public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
 {
     /**
-     * Enum with possible citizens
+     * Enum with possible citizens.
      */
     public enum Model
     {
@@ -75,7 +75,9 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     }
 
     /**
-     * Renders model, see {@link RenderBiped}
+     * Renders model, see {@link RenderBiped}.
+     *
+     * @param renderManagerIn the RenderManager for this Renderer.
      */
     public RenderBipedCitizen(RenderManager renderManagerIn)
     {

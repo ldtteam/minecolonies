@@ -131,7 +131,9 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * getter for current water
+     * Getter for current water.
+     *
+     * @return Location of the current water block.
      */
     public BlockPos getWater()
     {
@@ -139,7 +141,9 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Setter for current water
+     * Setter for current water.
+     *
+     * @param water New location for the current water block.
      */
     public void setWater(BlockPos water)
     {
@@ -147,7 +151,7 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Returns a safe copy of all current ponds
+     * Returns a safe copy of all current ponds.
      *
      * @return a list of coordinates
      */

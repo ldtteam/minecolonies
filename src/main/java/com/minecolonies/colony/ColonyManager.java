@@ -254,8 +254,7 @@ public final class ColonyManager
     }
 
     /**
-     * Returns the closest view
-     * @see {@link this#getColonyView(World, BlockPos)}
+     * Returns the closest view {@link #getColonyView(World, BlockPos)}.
      *
      * @param w     World
      * @param pos    Block Position
@@ -319,9 +318,8 @@ public final class ColonyManager
     /**
      * Side neutral method to get colony.
      * On clients it returns the view.
-     * On servers it returns the colony itself
-     *
-     * @see {@link this#getClosestColony(World, BlockPos)}
+     * On servers it returns the colony itself.
+     * {@link #getClosestColony(World, BlockPos)}
      *
      * @param w         World
      * @param pos        Block position
@@ -365,7 +363,7 @@ public final class ColonyManager
     }
 
     /**
-     * Returns the minimum distance between two town halls, to not make colonies collide
+     * Returns the minimum distance between two town halls, to not make colonies collide.
      *
      * @return          Minimum town hall distance
      */
@@ -376,10 +374,10 @@ public final class ColonyManager
     }
 
     /**
-     * On server tick, tick every Colony
+     * On server tick, tick every Colony.
      * NOTE: Review this for performance
      *
-     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
     public static void onServerTick(TickEvent.ServerTickEvent event)
     {
@@ -395,7 +393,7 @@ public final class ColonyManager
     }
 
     /**
-     * On Client tick, clears views when player left
+     * On Client tick, clears views when player left.
      *
      * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}
      */
@@ -409,7 +407,7 @@ public final class ColonyManager
     }
 
     /**
-     * On world tick, tick every Colony in that world
+     * On world tick, tick every Colony in that world.
      * NOTE: Review this for performance
      *
      * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}

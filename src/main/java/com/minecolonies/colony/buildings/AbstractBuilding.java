@@ -355,7 +355,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Sets the tile entity field to  {@param te}
+     * Sets the tile entity for the building.
      *
      * @param te    {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
      */

@@ -223,12 +223,12 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns whether or not the citizen is heading to a specific location
+     * Returns whether or not the citizen is heading to a specific location.
+     * {@link EntityUtils#isPathingTo(EntityCitizen, int, int)}
      *
      * @param citizen Citizen you want to check
      * @param pos     Position you want to check
      * @return True if citizen heads to pos, otherwise false
-     * @see {@link EntityUtils#isPathingTo(EntityCitizen, int, int)}
      */
     public static boolean isPathingTo(EntityCitizen citizen, BlockPos pos)
     {
@@ -236,10 +236,11 @@ public final class BlockPosUtil
     }
 
     /**
+     * {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int)}.
+     *
      * @param worker Worker to check
      * @param site   Chunk coordinates of site to check
      * @return True when worker is at site, otherwise false
-     * @see {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int)}
      */
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, BlockPos site)
     {
@@ -247,11 +248,11 @@ public final class BlockPosUtil
     }
 
     /**
+     * {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}.
      * @param worker Worker to check
      * @param site   Chunk coordinates of site to check
      * @param range  Range to check in
      * @return True when within range, otherwise false
-     * @see {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}
      */
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, BlockPos site, int range)
     {
@@ -259,10 +260,10 @@ public final class BlockPosUtil
     }
 
     /**
+     * {@link EntityUtils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}.
      * @param living      A living entity
      * @param destination chunk coordinates to check moving to
      * @return True when XYZ is found, an set moving to, otherwise false
-     * @see {@link EntityUtils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}
      */
     public static boolean tryMoveLivingToXYZ(EntityLiving living, BlockPos destination)
     {

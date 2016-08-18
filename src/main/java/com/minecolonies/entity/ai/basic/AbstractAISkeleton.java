@@ -202,6 +202,8 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
 
     /**
      * Get the current state the ai is in.
+     *
+     * @return The current AIState
      */
     public final AIState getState()
     {

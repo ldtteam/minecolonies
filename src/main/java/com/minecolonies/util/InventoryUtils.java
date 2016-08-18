@@ -13,7 +13,7 @@ import java.util.List;
 public class InventoryUtils {
 
     /**
-     * Filters a list of items, equal to given parameter, in an {@link IInventory}
+     * Filters a list of items, equal to given parameter, in an {@link IInventory}.
      *
      * @param inventory     Inventory to get items from
      * @param targetItem    Item to look for
@@ -55,7 +55,7 @@ public class InventoryUtils {
     }
 
     /**
-     * @see {@link #filterInventory(IInventory, Item)}
+     * {@link #filterInventory(IInventory, Item)}.
      *
      * @param inventory     Inventory to filter in
      * @param block         Block to filter
@@ -91,7 +91,7 @@ public class InventoryUtils {
     }
 
     /**
-     * @see {@link #findFirstSlotInInventoryWith(IInventory, Block)}
+     * {@link #findFirstSlotInInventoryWith(IInventory, Block)}.
      *
      * @param inventory     Inventory to check
      * @param targetItem    Item to find
@@ -112,7 +112,7 @@ public class InventoryUtils {
     }
 
     /**
-     * Returns the amount of occurrences in the inventory
+     * Returns the amount of occurrences in the inventory.
      *
      * @param inventory     Inventory to scan
      * @param targetitem    Item to count
@@ -129,7 +129,7 @@ public class InventoryUtils {
     }
 
     /**
-     * @see {@link #getItemCountInInventory(IInventory, Item)}
+     * {@link #getItemCountInInventory(IInventory, Item)}.
      *
      * @param inventory     Inventory to scan
      * @param block         block to count
@@ -140,8 +140,8 @@ public class InventoryUtils {
     }
 
     /**
-     * Checks if a player has an item in the inventory
-     * Checked by {@link #getItemCountInInventory(IInventory, Item)} > 0;
+     * Checks if a player has an item in the inventory.
+     * Checked by {@link #getItemCountInInventory(IInventory, Item)} &gt; 0;
      *
      * @param inventory     Inventory to scan
      * @param item          Item to count
@@ -152,8 +152,8 @@ public class InventoryUtils {
     }
 
     /**
-     * Checks if a player has an block in the inventory
-     * Checked by {@link #getItemCountInInventory(IInventory, Block)} > 0;
+     * Checks if a player has an block in the inventory.
+     * Checked by {@link #getItemCountInInventory(IInventory, Block)} &gt; 0;
      *
      * @param inventory     Inventory to scan
      * @param block         Block to count
@@ -178,8 +178,9 @@ public class InventoryUtils {
     }
 
     /**
-     * Tries to put an item into Inventory
+     * Tries to put an item into Inventory.
      *
+     * @param inventory the inventory to set the stack in.
      * @param stack Item stack with items to be transferred
      * @return      returns null if successful, or stack of remaining items
      */
@@ -223,7 +224,7 @@ public class InventoryUtils {
     }
 
     /**
-     * Returns if the inventory is full
+     * Returns if the inventory is full.
      * @param inventory the inventory
      * @return true if the inventory is full
      */
@@ -233,8 +234,9 @@ public class InventoryUtils {
     }
 
     /**
-     * returns first open slot in the inventory
+     * returns first open slot in the inventory.
      *
+     * @param inventory the inventory to check.
      * @return      slot number or -1 if none found.
      */
     public static int getOpenSlot(IInventory inventory)
@@ -250,26 +252,10 @@ public class InventoryUtils {
     }
 
     /**
-     * returns a slot number if a chest contains given ItemStack item
+     * Returns a slot number if a chest contains given ItemStack item that is not fully stacked.
      *
-     * @return      returns slot number if found, -1 when not found.
-     */
-    public static int containsStack(IInventory inventory, ItemStack stack)
-    {
-        for(int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            ItemStack testStack = inventory.getStackInSlot(i);
-            if(testStack != null && testStack.isItemEqual(stack))
-            {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * returns a slot number if a chest contains given ItemStack item that is not fully stacked
-     *
+     * @param inventory the inventory to check.
+     * @param stack the stack to check for.
      * @return      returns slot number if found, -1 when not found.
      */
     public static int containsPartialStack(IInventory inventory, ItemStack stack)
@@ -286,7 +272,7 @@ public class InventoryUtils {
     }
 
     /**
-     * @see {@link #takeStackInSlot(IInventory, IInventory, int, int, boolean)}
+     * {@link #takeStackInSlot(IInventory, IInventory, int, int, boolean)}.
      * Default:
      *      amount: 1
      *      takeAll: true
@@ -301,7 +287,7 @@ public class InventoryUtils {
     }
 
     /**
-     * @see {@link #takeStackInSlot(IInventory, IInventory, int, int, boolean)}
+     * {@link #takeStackInSlot(IInventory, IInventory, int, int, boolean)}.
      * Default:
      *      takeAll: false
      *
@@ -317,7 +303,7 @@ public class InventoryUtils {
     }
 
     /**
-     * Gives an item from an slot index from an inventory and puts it in a receiving inventory
+     * Gives an item from an slot index from an inventory and puts it in a receiving inventory.
      * If <code>takeAll</code> is true, the entire slot will we transferred.
      * This only applied when at least <code>amount</code> can be taken.
      *
@@ -416,7 +402,10 @@ public class InventoryUtils {
     }
 
     /**
-     * returns a slot number if an inventory contains given tool type
+     * Returns a slot number if an inventory contains given tool type.
+     *
+     * @param inventory the inventory to get the slot from.
+     * @param tool the tool type to look for.
      *
      * @return      slot number if found, -1 if not found.
      */
@@ -484,7 +473,7 @@ public class InventoryUtils {
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storePartialItemStack(ItemStack)}
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storePartialItemStack(ItemStack)}.
      * <p>
      * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
      * left over items.
