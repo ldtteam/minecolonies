@@ -3,6 +3,8 @@
 # filter out # for sonar
 BRANCH=$(echo $TRAVIS_BRANCH | sed 's/[#]//g')
 
+echo "building for branch $BRANCH"
+
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   ./gradlew test jacocoTestReport sonarqube --stacktrace \
       -Dsonar.analysis.mode=issues \
