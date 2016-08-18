@@ -550,11 +550,10 @@ public class Colony implements IColony
     {
         if (getWorkManager().isDirty() || hasNewSubscribers)
         {
-            int i = 0;
             for (AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
             {
                 subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                           .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, workOrder , i++ , ColonyViewWorkOrderMessage.workOrderMessages.EDIT), player));
+                           .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, workOrder , 0 , ColonyViewWorkOrderMessage.workOrderMessages.EDIT), player));
             }
 
             if(getWorkManager().getWorkOrders().isEmpty())
