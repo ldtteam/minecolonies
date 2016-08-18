@@ -285,7 +285,6 @@ public class EventHandler
      * Calls {@link ColonyManager#onWorldLoad(World)}
      *
      * @param event     {@link net.minecraftforge.event.world.WorldEvent.Load}
-     * @see             {@link ColonyManager#onWorldLoad(World)}
      */
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event)
@@ -298,7 +297,6 @@ public class EventHandler
      * Calls {@link ColonyManager#onWorldUnload(World)}
      *
      * @param event     {@link net.minecraftforge.event.world.WorldEvent.Unload}
-     * @see             {@link ColonyManager#onWorldUnload(World)}
      */
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload event)
@@ -311,7 +309,6 @@ public class EventHandler
      * Calls {@link ColonyManager#onWorldSave(World)}
      *
      * @param event     {@link net.minecraftforge.event.world.WorldEvent.Save}
-     * @see             {@link ColonyManager#onWorldSave(World)}
      */
     @SubscribeEvent
     public void onWorldSave(WorldEvent.Save event)

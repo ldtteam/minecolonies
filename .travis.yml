@@ -3,7 +3,7 @@ sudo: false
 jdk: oraclejdk8
 install: ./gradlew build
 script:
-  - ./gradlew test jacocoTestReport
+  - ./gradlew javadoc
   - ./sonar.sh
 after_success: ./dropbox.sh
 before_cache:

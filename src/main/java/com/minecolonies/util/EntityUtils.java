@@ -38,14 +38,13 @@ public final class EntityUtils
     }
 
     /**
+     * {@link #isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}.
+     *
      * @param worker Worker to check
      * @param x      X-coordinate
      * @param y      Y-coordinate
      * @param z      Z-coordinate
      * @return True if worker is at site, otherwise false
-     * @see {@link #isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}
-     * Default:
-     * range: 3
      */
     public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, int x, int y, int z)
     {
@@ -97,16 +96,14 @@ public final class EntityUtils
 
     /**
      * Sets the movement of the entity to specific point.
-     * Returns true if direction is set, otherwise false
+     * Returns true if direction is set, otherwise false.
+     * {@link #tryMoveLivingToXYZ(EntityLiving, int, int, int, double)}
      *
      * @param living Entity to move
      * @param x      x-coordinate
      * @param y      y-coordinate
      * @param z      z-coordinate
      * @return True if the path is set to destination, otherwise false
-     * @see {@link #tryMoveLivingToXYZ(EntityLiving, int, int, int, double)}
-     * Default:
-     * speed: 1.0D
      */
     public static boolean tryMoveLivingToXYZ(EntityLiving living, int x, int y, int z)
     {

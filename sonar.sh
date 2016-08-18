@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
-  ./gradlew sonarqube --stacktrace \
+  ./gradlew test jacocoTestReport sonarqube --stacktrace \
       -Dsonar.analysis.mode=issues \
       -Dsonar.github.pullRequest=$TRAVIS_PULL_REQUEST \
       -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
@@ -14,7 +14,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
 fi
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
-./gradlew sonarqube --stacktrace \
+./gradlew test jacocoTestReport sonarqube --stacktrace \
     -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
     -Dsonar.github.oauth=$GITHUB_TOKEN \
     -Dsonar.host.url=$SONAR_HOST_URL \

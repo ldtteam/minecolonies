@@ -55,7 +55,9 @@ public class MineColonies
     }
 
     /**
-     * Event handler for forge pre init event
+     * Event handler for forge pre init event.
+     *
+     * @param event the forge pre init event.
      */
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -68,7 +70,9 @@ public class MineColonies
     }
 
     /**
-     * Event handler for forge init event
+     * Event handler for forge init event.
+     *
+     * @param event the forge init event.
      */
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)

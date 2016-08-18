@@ -65,7 +65,7 @@ public class ScrollingView extends View
     /**
      * Redirect all predefined children into our container
      *
-     * @param params
+     * @param params the xml parameters.
      */
     @Override
     public void parseChildren(PaneParams params)

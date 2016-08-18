@@ -20,7 +20,7 @@ public final class Color
      *
      * @param name name of the color.
      * @param def default to use if the name doesn't exist.
-     * @return
+     * @return the color as an integer.
      */
     public static int getByName(String name, int def)
     {

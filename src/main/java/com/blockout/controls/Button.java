@@ -22,7 +22,7 @@ public class Button extends Pane
         /**
          * Called when a button is clicked.
          *
-         * @param button
+         * @param button the button that was clicked.
          */
         void onButtonClicked(Button button);
     }
