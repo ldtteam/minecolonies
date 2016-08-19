@@ -86,7 +86,8 @@ public class ChatSpamFilter
                 return;
             }
 
-            // to protect against overflows
+            // this check is to protect against overflows
+            // (BASE_TIMEOUT << speechRepeat) is the same as BASE_TIMEOUT * pow(2, speachRepeat), but uses integers
             if ((BASE_TIMEOUT << speechRepeat) < MAX_TIMEOUT)
             {
                 speechRepeat++;
@@ -99,6 +100,8 @@ public class ChatSpamFilter
 
         worker.sendLocalizedChat(key, (Object[]) chat);
         speechDelayString = key + Arrays.toString(chat);
+        
+        // (BASE_TIMEOUT << speechRepeat) is the same as BASE_TIMEOUT * pow(2, speachRepeat), but uses integers
         speechDelay = Math.min(BASE_TIMEOUT << speechRepeat, MAX_TIMEOUT) + worker.getOffsetTicks();
     }
 }
