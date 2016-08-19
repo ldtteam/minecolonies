@@ -49,8 +49,8 @@ public abstract class AbstractBlockMineColonies extends Block
     {
         if (placer instanceof EntityPlayer)
         {
-            EntityPlayer player = (EntityPlayer) placer;
-            Block block = state.getBlock();
+            final EntityPlayer player = (EntityPlayer) placer;
+            final Block block = state.getBlock();
 
             if (block == ModBlocks.blockHutTownHall)
             {

@@ -6,9 +6,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 
 /**
- * A sublcass for this mod.
+ * A subclass for this mod.
  *
- * May contain custom logic for achievements
+ * May contain custom logic for achievements.
  *
  * @author Isfirs
  * @since 0.2
@@ -17,7 +17,7 @@ public class MineColoniesAchievement extends Achievement
 {
 
     /**
-     * Inherit parent constructor
+     * Inherit parent constructor.
      * 
      * @param id
      * @param name
@@ -32,7 +32,7 @@ public class MineColoniesAchievement extends Achievement
     }
 
     /**
-     * Parent constructor
+     * Parent constructor.
      * 
      * @param id
      * @param name
@@ -47,7 +47,7 @@ public class MineColoniesAchievement extends Achievement
     }
 
     /**
-     * Parent constructor
+     * Parent constructor.
      * 
      * @param id
      * @param name
