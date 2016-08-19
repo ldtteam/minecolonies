@@ -406,6 +406,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Sets the block the AI is currently walking to.
      *
      * @param stand where to walk to
+     * @param range how close we need to be
      * @return true while walking to the block
      */
     protected final boolean walkToBlock(@NotNull final BlockPos stand, final int range)

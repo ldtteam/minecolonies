@@ -18,7 +18,7 @@ import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.util.Constants;
 
 /**
- * Basic inventory for the citizens
+ * Basic inventory for the citizens.
  */
 public class InventoryCitizen implements IInventory
 {
@@ -37,7 +37,7 @@ public class InventoryCitizen implements IInventory
     /**
      * The inventories custom name. In our case the citizens name.
      */
-    protected String customName;
+    private String customName;
     /**
      * The held item.
      */
@@ -126,6 +126,8 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Returns the first item stack that is empty.
+     *
+     * @return the id of the first empty slot.
      */
     public int getFirstEmptyStack()
     {
@@ -592,10 +594,10 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Gets slot that hold item that is being held by citizen
+     * Gets slot that hold item that is being held by citizen.
+     * {@link #getHeldItem()}.
      *
      * @return Slot index of held item
-     * @see {@link #getHeldItem()}
      */
     public int getHeldItemSlot()
     {

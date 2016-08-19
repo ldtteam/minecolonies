@@ -90,6 +90,11 @@ processResources {
     }
 }
 
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
 //task sourceJar(type: Jar) {
 //    from sourceSets.main.allSource
 //    appendix = 'src'

@@ -10,7 +10,7 @@ import net.minecraft.world.World;
 import java.util.Objects;
 
 /**
- * General purpose utilities class
+ * General purpose utilities class.
  * todo: split up into logically distinct parts
  */
 public final class Utils
@@ -347,7 +347,7 @@ public final class Utils
      *
      * @param stack the stack to test
      * @param tool  the tool category
-     * @return integer value for mining level >= 0 is okay
+     * @return integer value for mining level &gt;= 0 is okay
      */
     public static int getMiningLevel(ItemStack stack, String tool)
     {

@@ -55,7 +55,7 @@ public class WorkManager
     }
 
     /**
-     * Removes a work order from the work manager
+     * Removes a work order from the work manager.
      *
      * @param orderId   ID of the order to remove
      */
@@ -65,7 +65,7 @@ public class WorkManager
     }
 
     /**
-     * Removes a work order from the work manager
+     * Removes a work order from the work manager.
      *
      * @param order     {@link AbstractWorkOrder} to remove
      */
@@ -75,7 +75,7 @@ public class WorkManager
     }
 
     /**
-     * Get a work order of the specified id
+     * Get a work order of the specified id.
      *
      * @param id        the id of the work order
      * @return          the work order of the specified id, or null
@@ -86,10 +86,11 @@ public class WorkManager
     }
 
     /**
-     * Get a work order of the specified id, as a specific type
+     * Get a work order of the specified id, as a specific type.
      *
      * @param id        the id of the work order
      * @param type      the class of the expected type of the work order
+     * @param <W>       the type of work order to return.
      * @return          the work order of the specified id, or null if it was not found or is of an incompatible type
      */
     public <W extends AbstractWorkOrder> W getWorkOrder(int id, Class<W> type)
@@ -107,9 +108,10 @@ public class WorkManager
     }
 
     /**
-     * Get an unclaimed work order of a specified type
+     * Get an unclaimed work order of a specified type.
      *
      * @param type      the class of the type of work order to find
+     * @param <W>       the type of work order to return.
      * @return          an unclaimed work order of the given type, or null if no unclaimed work order of the type was found
      */
     public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(Class<W> type)
@@ -126,9 +128,10 @@ public class WorkManager
     }
 
     /**
-     * Get all work orders of a specified type
+     * Get all work orders of a specified type.
      *
      * @param type the class of the type of work order to find
+     * @param <W>       the type of work order to return.
      * @return a list of all work orders of the given type
      */
     public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(Class<W> type)
@@ -137,7 +140,7 @@ public class WorkManager
     }
 
     /**
-     * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen
+     * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen.
      *
      * @param citizen       Citizen to unclaim work for.
      */
