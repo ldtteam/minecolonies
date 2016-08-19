@@ -1,4 +1,6 @@
 
+echo "Javadoc-testing commit $TRAVIS_COMMIT"
+
 curl -H "Content-Type: application/json" -H "authToken: $GITHUB_TOKEN" \
       --request POST \
       --data '{"state":"pending",
@@ -7,7 +9,8 @@ curl -H "Content-Type: application/json" -H "authToken: $GITHUB_TOKEN" \
       "context":"javadoc"}' \
       "https://api.github.com/repos/Minecolonies/minecolonies/statuses/$TRAVIS_COMMIT"
       
+echo "Start gradle..."
 
 ./gradlew javadoc
 
-
+echo "Start gradle..."
