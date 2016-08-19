@@ -1,0 +1,6 @@
+
+
+
+./gradlew javadoc
+
+
