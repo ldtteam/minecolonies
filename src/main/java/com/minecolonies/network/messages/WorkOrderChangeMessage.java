@@ -3,6 +3,8 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.util.EntityUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -98,7 +100,7 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
     public IMessage onMessage(WorkOrderChangeMessage message, MessageContext ctx)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null)
+        if (colony != null && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
         {
             if (message.removeWorkOrder)
             {
