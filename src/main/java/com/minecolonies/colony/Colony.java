@@ -53,7 +53,7 @@ public class Colony implements IColony
 
     //  Buildings
     private BuildingTownHall                                townHall;
-    private                 Map<BlockPos, Building>         buildings                       = new HashMap<>();
+    private                 Map<BlockPos, AbstractBuilding>         buildings                       = new HashMap<>();
     private                 Map<BlockPos, Field>            fields                          = new HashMap<>();
 
     //  Citizenry
@@ -77,7 +77,6 @@ public class Colony implements IColony
     private static  final   String                          TAG_BUILDINGS                   = "buildings";
     private static  final   String                          TAG_CITIZENS                    = "citizens";
     private static  final   String                          TAG_WORK                        = "work";
-    private static  final   String                          TAG_AUTO_HOSTILE                = "autoHostile";
     private static  final   String                          TAG_MANUAL_HIRING               = "manualHiring";
     private static  final   String                          TAG_FIELDS                      = "fields";
     /**

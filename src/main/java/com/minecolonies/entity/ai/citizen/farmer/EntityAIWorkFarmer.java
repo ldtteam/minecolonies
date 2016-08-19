@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai.citizen.farmer;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.Field;
 import com.minecolonies.colony.buildings.BuildingFarmer;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
@@ -88,10 +89,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.PREPARING;
         }
 
-        if (checkForHoe())
+        /*if (checkForHoe())
         {
             return getState();
-        }
+        }*/
 
         //if any field needs work -> work on them
 
@@ -103,6 +104,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private void searchAndAddFields()
     {
+        //todo field is not registering with colony!
         Colony colony = worker.getColony();
         if(colony != null)
         {
@@ -123,11 +125,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     @Override
     protected boolean wantInventoryDumped()
     {
-        if (getBlocksMined() > MAX_BLOCKS_HARVESTED)
+        /*if (getBlocksMined() > MAX_BLOCKS_HARVESTED)
         {
             clearBlocksMined();
             return true;
-        }
+        }*/
         return false;
     }
 

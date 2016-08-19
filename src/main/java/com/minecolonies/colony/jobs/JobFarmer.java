@@ -6,7 +6,7 @@ import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.farmer.EntityAIWorkFarmer;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class JobFarmer extends Job
+public class JobFarmer extends AbstractJob
 {
     public JobFarmer(CitizenData entity)
     {
