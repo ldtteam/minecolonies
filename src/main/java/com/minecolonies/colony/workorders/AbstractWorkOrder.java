@@ -66,6 +66,8 @@ public abstract class AbstractWorkOrder
 
     /**
      * Getter for the priority.
+     *
+     * @return the priority of the work order.
      */
     public int getPriority()
     {
