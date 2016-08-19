@@ -312,25 +312,20 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             {
                 if(buttonLabel.equals(BUTTON_UP) && i > 0)
                 {
-                    final WorkOrderView workOrderUp = workOrders.get(i-1);
-                    workOrder.setPriority(workOrderUp.getPriority()+1);
-                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrderUp.getPriority()+1));
+                    workOrder.setPriority(workOrders.get(i - 1).getPriority() + 1);
+                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrder.getPriority()));
                 }
                 else if (buttonLabel.equals(BUTTON_DOWN) && i <= workOrders.size())
                 {
-
-                    final WorkOrderView workOrderDown = workOrders.get(i + 1);
-                    workOrder.setPriority(workOrderDown.getPriority() - 1);
-                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrderDown.getPriority() - 1));
+                    workOrder.setPriority(workOrders.get(i + 1).getPriority() - 1);
+                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
                 }
-                workOrders.remove(i);
-                workOrders.add(workOrder);
-                break;
 
+                Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
+                window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
+                return;
             }
         }
-        Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
-        window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
     }
 
     /**
@@ -500,15 +495,19 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
                 if(index == 0)
                 {
-                    if(workOrders.size() == 1)
+                    if(getElementCount() == 1)
                     {
-                        rowPane.findPaneOfTypeByID(BUTTON_DOWN,Button.class).hide();
+                        rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
                     }
-                    rowPane.findPaneOfTypeByID(BUTTON_UP,Button.class).hide();
+                    else
+                    {
+                        rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).show();
+                    }
+                    rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).hide();
                 }
-                else if(index == getElementCount()-1)
+                else if(index == getElementCount() - 1)
                 {
-                    rowPane.findPaneOfTypeByID(BUTTON_DOWN,Button.class).hide();
+                    rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
                 }
 
                 //Searches citizen of id x
@@ -539,7 +538,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         createAndSetStatistics();
 
-
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
 
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
@@ -553,7 +551,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         {
             findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
         }
-
     }
 
     /**
