@@ -33,11 +33,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private static final int MAX_BLOCKS_HARVESTED = 32;
 
     /**
-     * The list of the fields the farmer manages.
-     */
-    private ArrayList<Field> farmerFields = new ArrayList<>();
-
-    /**
      * Constructor for the Farmer.
      * Defines the tasks the Farmer executes.
      *
@@ -78,12 +73,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private AIState prepareForFarming()
     {
-        if(farmerFields.size() < getOwnBuilding().getBuildingLevel())
+        if(getOwnBuilding()!= null && getOwnBuilding().getBuildingLevel() < 1)
+        {
+            return AIState.FARMER_CHECK_FIELDS;
+        }
+
+        if(job.getFarmerFields().size() < getOwnBuilding().getBuildingLevel())
         {
             searchAndAddFields();
         }
 
-        if(farmerFields.isEmpty())
+        if(job.getFarmerFields().isEmpty())
         {
             chatSpamFilter.talkWithoutSpam("entity.farmer.noFreeFields");
             return AIState.PREPARING;
@@ -104,7 +104,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private void searchAndAddFields()
     {
-        //todo field is not registering with colony!
         Colony colony = worker.getColony();
         if(colony != null)
         {
@@ -112,7 +111,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
             if(newField!=null)
             {
-                farmerFields.add(newField);
+                job.getFarmerFields().add(newField);
             }
         }
     }

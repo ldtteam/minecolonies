@@ -8,25 +8,14 @@
         <view id="pageSettings" size="100% 100%" pos="0 1">
 
             <view size="100% 100" pos="0 0">
-                <label size="100% 11" pos="0 0"
-                       label="Plant" color="black" textalign="BottomMiddle"/>
+                <label size="100% 11" pos="0 0" label="Plant:" color="black" textalign="BottomMiddle"/>
 
-                <view size="100% 100" pos="0 16">
-                    <itemicon size="20 20" pos="33 2"  item="wheat"/>
-                    <button   size="30 20" pos="52 0"  id="wheat" />
+                <list id="fields" size="70% 120" pos="60 70" align="TopMiddle">
 
-                    <itemicon size="20 20" pos="90 2"  item="potato"/>
-                    <button   size="30 20" pos="109 0" id="potato" />
+                </list>
 
-                    <itemicon size="20 20" pos="33 26"  item="carrot"/>
-                    <button   size="30 20" pos="52 24"  id="carrot" />
-
-                    <itemicon size="20 20" pos="90 26"  item="melon"/>
-                    <button   size="30 20" pos="109 24" id="melon" />
-
-                    <itemicon size="20 20" pos="50 50"  item="pumpkin"/>
-                    <button   size="30 20" pos="69 48" id="pumpkin" />
-                </view>
+                <itemicon id="icon" size = "30 30" item="Wheat"/>
+                <
             </view>
 
         </view>

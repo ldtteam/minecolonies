@@ -27,13 +27,14 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     @Override
     public void renderTileEntityAt(ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage) {
         GlStateManager.pushMatrix(); // store the transformation 
-        GlStateManager.translate(posX, posY, posZ); // set viewport to tile entity position to render it
+        GlStateManager.translate(posX+0.5, posY+1.5, posZ+0.5); // set viewport to tile entity position to render it
         
         /* ============ Rendering Code goes here ============ */
         EnumFacing facing = te.getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
         
         this.bindTexture(this.getResourceLocation(te));
-        //GlStateManager.rotate(angle, x, y, z);
+
+        GlStateManager.rotate(180, 0.311F, 0, 2.845F);
         this.model.render(.0625f);
         
         /* ============ Rendering Code stops here =========== */
@@ -45,7 +46,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         String loc;
         
         if(tileentity.getType())
-            loc = "textures/blocks/blockScarecrowPumpkin.png";
+            loc = "/textures/blocks/blockScarecrowPumpkin.png";
         else
             loc = "textures/blocks/blockScarecrowNormal.png";
         

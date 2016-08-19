@@ -116,7 +116,7 @@ public class Field
      *
      * @param colony    The owning colony
      * @param compound  The saved data
-     * @return          {@link com.minecolonies.colony.buildings.Building} created from the compound.
+     * @return          {@link com.minecolonies.colony.Field} created from the compound.
      */
     public static Field createFromNBT(Colony colony, NBTTagCompound compound)
     {

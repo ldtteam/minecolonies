@@ -211,7 +211,7 @@ public class Colony implements IColony
         {
             NBTTagCompound fieldCompound = new NBTTagCompound();
             f.writeToNBT(fieldCompound);
-            buildingTagList.appendTag(fieldCompound);
+            fieldTagList.appendTag(fieldCompound);
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
 

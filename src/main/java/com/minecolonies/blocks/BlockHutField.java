@@ -110,9 +110,14 @@ public class BlockHutField extends Block implements ITileEntityProvider
     @Override
     public boolean isOpaqueCube()
     {
-        return true;
+        return false;
     }
 
+    @Override
+    public int getRenderType()
+    {
+        return -1;
+    }
 
     // =======================================================================
     // ======================= Rendering & IBlockState =======================
