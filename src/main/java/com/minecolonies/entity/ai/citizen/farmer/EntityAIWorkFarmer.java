@@ -89,10 +89,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.PREPARING;
         }
 
-        /*if (checkForHoe())
+        if (checkForHoe())
         {
             return getState();
-        }*/
+        }
 
         //if any field needs work -> work on them
 

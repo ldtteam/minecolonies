@@ -562,7 +562,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return true if we have a hoe
      */
-    private boolean checkForHoe()
+    protected boolean checkForHoe()
     {
         needsHoe = checkForTool(Utils.HOE);
         return needsHoe;
