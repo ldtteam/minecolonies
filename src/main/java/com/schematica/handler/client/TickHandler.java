@@ -6,29 +6,48 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
-public class TickHandler {
+/**
+ * Settings TickHandler for schematic rendering.
+ */
+public final class TickHandler
+{
     public static final TickHandler INSTANCE = new TickHandler();
 
     private final Minecraft minecraft = Minecraft.getMinecraft();
 
-    private TickHandler() {}
-
-    @SubscribeEvent
-    public void onClientDisconnect(final FMLNetworkEvent.ClientDisconnectionFromServerEvent event) {
-        Settings.instance.isPendingReset = true;
+    private TickHandler()
+    {
     }
 
+    /**
+     * Mark dirty when a client disconnects.
+     *
+     * @param event Forge event.
+     */
     @SubscribeEvent
-    public void onClientTick(final TickEvent.ClientTickEvent event) {
-        if (this.minecraft.isGamePaused() || event.phase != TickEvent.Phase.END) {
+    public void onClientDisconnect(final FMLNetworkEvent.ClientDisconnectionFromServerEvent event)
+    {
+        Settings.instance.markDirty();
+    }
+
+    /**
+     * Call {@link Settings#reset()} if dirty.
+     *
+     * @param event Forge event.
+     */
+    @SubscribeEvent
+    public void onClientTick(final TickEvent.ClientTickEvent event)
+    {
+        if (this.minecraft.isGamePaused() || event.phase != TickEvent.Phase.END)
+        {
             return;
         }
 
         this.minecraft.mcProfiler.startSection("schematica");
 
-        if (Settings.instance.isPendingReset) {
+        if (Settings.instance.isDirty())
+        {
             Settings.instance.reset();
-            Settings.instance.isPendingReset = false;
         }
 
         this.minecraft.mcProfiler.endSection();

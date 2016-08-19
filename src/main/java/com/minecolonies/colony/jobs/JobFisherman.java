@@ -2,8 +2,8 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.entity.ai.EntityAIWorkFisherman;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -17,7 +17,7 @@ import java.util.List;
  * The fisherman's job class,
  * implements some useful things for him.
  */
-public class JobFisherman extends Job
+public class JobFisherman extends AbstractJob
 {
     /**
      * Final strings to save and retrieve the current water location and pond list.
@@ -51,9 +51,9 @@ public class JobFisherman extends Job
     }
 
     /**
-     * Return a Localization label for the Job
+     * Return a Localization textContent for the Job
      *
-     * @return localization label String
+     * @return localization textContent String
      */
     @Override
     public String getName()
@@ -131,7 +131,9 @@ public class JobFisherman extends Job
     }
 
     /**
-     * getter for current water
+     * Getter for current water.
+     *
+     * @return Location of the current water block.
      */
     public BlockPos getWater()
     {
@@ -139,7 +141,9 @@ public class JobFisherman extends Job
     }
 
     /**
-     * Setter for current water
+     * Setter for current water.
+     *
+     * @param water New location for the current water block.
      */
     public void setWater(BlockPos water)
     {
@@ -147,7 +151,7 @@ public class JobFisherman extends Job
     }
 
     /**
-     * Returns a safe copy of all current ponds
+     * Returns a safe copy of all current ponds.
      *
      * @return a list of coordinates
      */

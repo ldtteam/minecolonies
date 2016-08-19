@@ -3,7 +3,7 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 /**
  * The abstract class for each worker building.
  */
-public abstract class BuildingWorker extends BuildingHut
+public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 {
     private static final    String      TAG_WORKER = "worker";
     private                 CitizenData worker;
@@ -23,7 +23,7 @@ public abstract class BuildingWorker extends BuildingHut
      * @param c the colony
      * @param l the position
      */
-    public BuildingWorker(Colony c, BlockPos l)
+    public AbstractBuildingWorker(Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -39,7 +39,7 @@ public abstract class BuildingWorker extends BuildingHut
      * @param citizen the citizen to take the job.
      * @return the Job.
      */
-    public abstract         Job         createJob(CitizenData citizen);
+    public abstract AbstractJob createJob(CitizenData citizen);
 
     @Override
     public void onDestroyed()
@@ -184,9 +184,9 @@ public abstract class BuildingWorker extends BuildingHut
     }
 
     /**
-     * BuildingWorker View for clients
+     * AbstractBuildingWorker View for clients
      */
-    public static class View extends BuildingHut.View
+    public static class View extends AbstractBuildingHut.View
     {
         private int workerId;
 

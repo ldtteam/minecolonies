@@ -7,7 +7,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-public class ItemBuildTool extends ItemMinecolonies
+public class ItemBuildTool extends AbstractItemMinecolonies
 {
     public ItemBuildTool()
     {
@@ -22,6 +22,16 @@ public class ItemBuildTool extends ItemMinecolonies
     }
 
     @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (world.isRemote)
+        {
+            MineColonies.proxy.openBuildToolWindow(null);
+        }
+
+        return stack;
+    }
+
+    @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if(!worldIn.isRemote)
@@ -29,29 +39,7 @@ public class ItemBuildTool extends ItemMinecolonies
             return false;
         }
 
-        switch(side)
-        {
-        case DOWN:
-            pos.down();
-            break;
-        case UP:
-            pos.up();
-            break;
-        case NORTH:
-            pos.north();
-            break;
-        case SOUTH:
-            pos.south();
-            break;
-        case WEST:
-            pos.west();
-            break;
-        case EAST:
-            pos.east();
-            break;
-        }
-
-        MineColonies.proxy.openBuildToolWindow(pos);
+        MineColonies.proxy.openBuildToolWindow(pos.offset(side));
         return false;
     }
 }

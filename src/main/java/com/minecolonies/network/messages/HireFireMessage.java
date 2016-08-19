@@ -3,8 +3,8 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.buildings.Building;
-import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
- * Message class which manages the messages hiring or firing of citizens
+ * Message class which manages the messages hiring or firing of citizens.
  */
 public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessage, IMessage>
 {
@@ -38,13 +38,11 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
     private int citizenID;
 
     /**
-     * Empty public constructor
+     * Empty public constructor.
      */
     public HireFireMessage()
     {
-        /**
-         * Intentionally left empty.
-         */
+        //Required for netty.
     }
 
     /**
@@ -53,7 +51,7 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
      * @param hire hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(Building.View building, boolean hire, int citizenID)
+    public HireFireMessage(AbstractBuilding.View building, boolean hire, int citizenID)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -91,7 +89,7 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
      * Called when a message has been received.
      * @param message the message.
      * @param ctx the context.
-     * @return possible response, in this case -> null.
+     * @return possible response, in this case -&gt; null.
      */
     @Override
     public IMessage onMessage(HireFireMessage message, MessageContext ctx)
@@ -102,11 +100,11 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
             if(message.hire)
             {
                 CitizenData citizen = colony.getCitizen(message.citizenID);
-                ((BuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
+                ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
             }
             else
             {
-                ((BuildingWorker) colony.getBuilding(message.buildingId)).setWorker(null);
+                ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(null);
             }
         }
         return null;

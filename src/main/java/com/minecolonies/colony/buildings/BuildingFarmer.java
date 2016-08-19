@@ -4,13 +4,13 @@ import com.minecolonies.client.gui.WindowHutFarmer;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
-public class BuildingFarmer extends BuildingWorker
+public class BuildingFarmer extends AbstractBuildingWorker
 {
 
     public                  int     wheat    = 100;
@@ -43,7 +43,7 @@ public class BuildingFarmer extends BuildingWorker
     public String getJobName(){ return FARMER; }
 
     @Override
-    public Job createJob(CitizenData citizen)
+    public AbstractJob createJob(CitizenData citizen)
     {
         return new JobFarmer(citizen); //TODO Implement Later
     }
@@ -78,7 +78,7 @@ public class BuildingFarmer extends BuildingWorker
         compound.setTag(TAG_FARMER, farmerCompound);
     }
 
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public int wheat = 100,
                 potato = 0,

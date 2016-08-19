@@ -6,14 +6,21 @@ public class Node implements Comparable<Node>
 {
     public Node parent;
     public final BlockPos pos;
-    public final int hash;
+
+    private final int hash;
 
     public int counterAdded;
     public int counterVisited;
     public int steps;
-    public double cost;     //  A* g value
-    public double heuristic;//  A* h value
-    public double score;    //  A* f value (g + h)
+
+    // A* g value
+    public double cost;
+
+    //  A* h value
+    public double heuristic;
+
+    //  A* f value (g + h)
+    public double score;
 
     public boolean closed = false;
     public boolean isLadder = false;
@@ -23,23 +30,25 @@ public class Node implements Comparable<Node>
      * Create a Node that inherits from a parent, and has a Cost and Heuristic estimate
      * @param parent parent node arrives from
      * @param pos coordinate of node
-     * @param cost
-     * @param score
+     * @param cost node cost
+     * @param heuristic heuristic estimate
+     * @param score node total score
      */
     public Node(Node parent, BlockPos pos, double cost, double heuristic, double score)
     {
         this.parent = parent;
         this.pos = pos;
-        this.steps = parent != null ? parent.steps + 1 : 0;
+        this.steps = parent != null ? (parent.steps + 1) : 0;
         this.cost = cost;
         this.heuristic = heuristic;
         this.score = score;
-        this.hash = pos.getX() ^ (pos.getZ() << 12 | pos.getZ() >> 20) ^ (pos.getY() << 24);
+        this.hash = pos.getX() ^ ((pos.getZ() << 12) | (pos.getZ() >> 20)) ^ (pos.getY() << 24);
     }
 
     /**
      * Create initial Node
-     * @param x,y,z coordinate of node
+     * @param pos coordinates of node
+     * @param heuristic heuristic estimate
      */
     public Node(BlockPos pos, double heuristic)
     {
@@ -50,22 +59,34 @@ public class Node implements Comparable<Node>
     public int compareTo(Node o)
     {
         //  Comparing doubles and returning value as int; can't simply cast the result
-        if (score < o.score) return -1;
-        if (score > o.score) return 1;
-        if (heuristic < o.heuristic)
-             return -1;
-        if (heuristic > o.heuristic)
+        if (score < o.score)
+        {
+            return -1;
+        }
+
+        if (score > o.score)
+        {
             return 1;
-////        if ((score - o.score) <= -1E-14) return -1;
-////        if ((score - o.score) >= 1E-14) return 1;
-//        return 0;
-        return counterAdded - o.counterAdded;   //  In case of score tie, older node has better score
+        }
+
+        if (heuristic < o.heuristic)
+        {
+            return -1;
+        }
+
+        if (heuristic > o.heuristic)
+        {
+            return 1;
+        }
+
+        //  In case of score tie, older node has better score
+        return counterAdded - o.counterAdded;
     }
 
     @Override
     public boolean equals(Object o)
     {
-        if (o instanceof Node)
+        if (o != null && o.getClass() == this.getClass())
         {
             Node other = (Node)o;
             return pos.getX() == other.pos.getX() &&

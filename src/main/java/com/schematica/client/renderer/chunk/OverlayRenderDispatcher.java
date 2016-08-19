@@ -11,10 +11,13 @@ import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.util.EnumWorldBlockLayer;
 
-public class OverlayRenderDispatcher extends ChunkRenderDispatcher {
+public class OverlayRenderDispatcher extends ChunkRenderDispatcher
+{
     @Override
-    public ListenableFuture<Object> uploadChunk(final EnumWorldBlockLayer layer, final WorldRenderer worldRenderer, final RenderChunk renderChunk, final CompiledChunk compiledChunk) {
-        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread() || OpenGlHelper.useVbo()) {
+    public ListenableFuture<Object> uploadChunk(final EnumWorldBlockLayer layer, final WorldRenderer worldRenderer, final RenderChunk renderChunk, final CompiledChunk compiledChunk)
+    {
+        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread() || OpenGlHelper.useVbo())
+        {
             return super.uploadChunk(layer, worldRenderer, renderChunk, compiledChunk);
         }
 

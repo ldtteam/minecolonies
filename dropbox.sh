@@ -1,10 +1,7 @@
-cat > ~/.dropbox_uploader <<EOL
-APPKEY=${APPKEY}
-APPSECRET=${APPSECRET}
-ACCESS_LEVEL=${ACCESS_LEVEL}
-OAUTH_ACCESS_TOKEN=${OAUTH_ACCESS_TOKEN}
-OAUTH_ACCESS_TOKEN_SECRET=${OAUTH_ACCESS_TOKEN_SECRET}
-EOL
+#!/bin/bash
+
+rm -rfv ~/.dropbox_uploader
+echo "OAUTH_ACCESS_TOKEN=$OAUTH_ACCESS_TOKEN" > ~/.dropbox_uploader
 
 curl "https://raw.githubusercontent.com/andreafabrizi/Dropbox-Uploader/master/dropbox_uploader.sh" -o ~/dropbox_uploader.sh
 chmod +x ~/dropbox_uploader.sh
@@ -18,3 +15,5 @@ else
     ~/dropbox_uploader.sh mkdir "pr/$TRAVIS_PULL_REQUEST"
     ~/dropbox_uploader.sh upload ./build/libs/*univ*.jar "pr/$TRAVIS_PULL_REQUEST"
 fi
+
+exit 0

@@ -2,15 +2,15 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
-import com.minecolonies.entity.ai.EntityAIWorkLumberjack;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * The Lumberjack job class
  */
-public class JobLumberjack extends Job
+public class JobLumberjack extends AbstractJob
 {
     private static final String TAG_TREE = "Tree";
     /**
@@ -29,9 +29,9 @@ public class JobLumberjack extends Job
     }
 
     /**
-     * Return a Localization label for the Job
+     * Return a Localization textContent for the Job
      *
-     * @return localization label String
+     * @return localization textContent String
      */
     @Override
     public String getName()

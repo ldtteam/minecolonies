@@ -8,17 +8,17 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.client.render.RenderFishHook;
 import com.minecolonies.client.render.TileEntityScarecrowRenderer;
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import com.schematica.Settings;
 import com.schematica.client.renderer.RenderSchematic;
-import com.schematica.handler.client.RenderTickHandler;
 import com.schematica.handler.client.TickHandler;
 import com.schematica.handler.client.WorldHandler;
-import com.schematica.world.storage.Schematic;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -30,21 +30,10 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends CommonProxy
 {
-    private Schematic schematic = null;
-
     @Override
     public boolean isClient()
     {
         return true;
-    }
-
-    @Override
-    public void registerKeyBindings()
-    {
-//        for(KeyBinding keyBinding : KeyInputHandler.KEY_BINDINGS)
-//        {
-//            ClientRegistry.registerKeyBinding(keyBinding);
-//        }
     }
 
     @Override
@@ -56,7 +45,6 @@ public class ClientProxy extends CommonProxy
 
         //Schematica
         MinecraftForge.EVENT_BUS.register(RenderSchematic.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(RenderTickHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(TickHandler.INSTANCE);
         MinecraftForge.EVENT_BUS.register(new WorldHandler());
     }
@@ -66,7 +54,6 @@ public class ClientProxy extends CommonProxy
     {
         RenderingRegistry.registerEntityRenderingHandler(EntityCitizen.class, RenderBipedCitizen::new);
         RenderingRegistry.registerEntityRenderingHandler(EntityFishHook.class, RenderFishHook::new);
-
     }
 
     @Override
@@ -77,7 +64,7 @@ public class ClientProxy extends CommonProxy
     }
 
     @Override
-    public void showCitizenWindow(CitizenData.View citizen)
+    public void showCitizenWindow(CitizenDataView citizen)
     {
         WindowCitizen window = new WindowCitizen(citizen);
         window.open();
@@ -86,12 +73,17 @@ public class ClientProxy extends CommonProxy
     @Override
     public void openBuildToolWindow(BlockPos pos)
     {
+        if (pos == null && Settings.instance.getActiveSchematic() == null) {
+            return;
+        }
+
         WindowBuildTool window = new WindowBuildTool(pos);
         window.open();
     }
 
     @Override
-    public void registerRenderer() {
+    public void registerRenderer()
+    {
     	super.registerRenderer();
     	
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockHutBaker), 0, new ModelResourceLocation(ModBlocks.blockHutBaker.getRegistryName(), "inventory"));

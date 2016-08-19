@@ -17,6 +17,11 @@ public enum Alignment
     BottomMiddle("bottom horizontal"),
     BottomRight ("bottom right");
 
+    private boolean rightAligned;
+    private boolean bottomAligned;
+    private boolean horizontalCentered;
+    private boolean verticalCentered;
+
     Alignment(String attributes)
     {
         rightAligned = attributes.contains("right");
@@ -25,8 +30,23 @@ public enum Alignment
         verticalCentered = attributes.contains("vertical");
     }
 
-    public boolean rightAligned;
-    public boolean bottomAligned;
-    public boolean horizontalCentered;
-    public boolean verticalCentered;
+    public boolean isRightAligned()
+    {
+        return rightAligned;
+    }
+
+    public boolean isBottomAligned()
+    {
+        return bottomAligned;
+    }
+
+    public boolean isHorizontalCentered()
+    {
+        return horizontalCentered;
+    }
+
+    public boolean isVerticalCentered()
+    {
+        return verticalCentered;
+    }
 }

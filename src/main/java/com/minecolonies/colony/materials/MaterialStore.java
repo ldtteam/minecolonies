@@ -20,7 +20,7 @@ public class MaterialStore
 {
     /**
      * INVENTORY is Entity
-     * CHEST is Building
+     * CHEST is AbstractBuilding
      */
     public enum Type
     {
@@ -49,7 +49,7 @@ public class MaterialStore
     /**
      * Constructor for MaterialStore
      *
-     * @param type What kind of inventory, Entity(INVENTORY) or Building(CHEST)
+     * @param type What kind of inventory, Entity(INVENTORY) or AbstractBuilding(CHEST)
      * @param system The MaterialSystem associated with the colony
      */
     public MaterialStore(Type type, MaterialSystem system)

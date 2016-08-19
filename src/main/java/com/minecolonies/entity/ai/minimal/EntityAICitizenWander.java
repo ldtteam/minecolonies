@@ -25,7 +25,7 @@ public class EntityAICitizenWander extends EntityAIBase
     /**
      * {@inheritDoc}
      * Returns whether the EntityAIBase should begin execution.
-     * True when age < 100, when a random (120) is chosen correctly, and when a citizen is nearby
+     * True when age less than 100, when a random (120) is chosen correctly, and when a citizen is nearby.
      */
     @Override
     public boolean shouldExecute()

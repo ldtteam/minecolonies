@@ -58,6 +58,13 @@ com.minecolonies.gui.buildtool.nodecoration=Ingen Dekorationer
 com.minecolonies.gui.buildtool.hut=Bygninger
 com.minecolonies.gui.buildtool.decoration=Dekorationer
 
+com.minecolonies.gui.hiring.on=Manual
+com.minecolonies.gui.hiring.off=Auotomatisk
+com.minecolonies.gui.hiring.buttonHire=Ansæt
+com.minecolonies.gui.hiring.description=Vælg en arbejder til jobbet.
+com.minecolonies.gui.townHall.addPlayer=Tilføj spiller:
+com.minecolonies.gui.townHall.jobHiring= Arbejder ansættelses Mode:
+
 tile.minecolonies.blockHutCitizen.name=Indbyggernes Hus
 tile.minecolonies.blockHutBaker.name=Bager
 tile.minecolonies.blockHutBlacksmith.name=Smede

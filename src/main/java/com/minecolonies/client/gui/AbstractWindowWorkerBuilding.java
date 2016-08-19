@@ -3,8 +3,8 @@ package com.minecolonies.client.gui;
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.buildings.BuildingWorker;
+import com.minecolonies.colony.CitizenDataView;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.network.messages.HireFireMessage;
 import com.minecolonies.network.messages.RecallCitizenMessage;
 import com.minecolonies.util.LanguageHandler;
@@ -12,9 +12,9 @@ import com.minecolonies.util.LanguageHandler;
 /**
  * Abstract class for window for worker building
  *
- * @param <B> Class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+ * @param <B> Class extending {@link AbstractBuildingWorker.View}
  */
-public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View> extends AbstractWindowSkeleton<B>
+public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWorker.View> extends AbstractWindowBuilding<B>
 {
     /**
      * Id of the hire/fire button in the GUI.
@@ -44,7 +44,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
     /**
      * Constructor for the window of the worker building
      *
-     * @param building class extending {@link com.minecolonies.colony.buildings.BuildingWorker.View}
+     * @param building class extending {@link AbstractBuildingWorker.View}
      * @param resource Resource of the window
      */
     AbstractWindowWorkerBuilding(B building, String resource)
@@ -102,7 +102,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
 
         if (building.getWorkerId() != 0)
         {
-            CitizenData.View worker = building.getColony().getCitizen(building.getWorkerId());
+            CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId());
             if (worker != null)
             {
                 workerName = worker.getName();
@@ -115,10 +115,10 @@ public abstract class AbstractWindowWorkerBuilding<B extends BuildingWorker.View
             findPaneOfTypeByID(BUTTON_HIRE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
         }
 
-        findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabel(workerName);
+        findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(workerName);
         findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
-                .setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", workerLevel));
+                .setLabelText(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", workerLevel));
 
-        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabel("xxxxxxxx");
+        findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText("xxxxxxxx");
     }
 }

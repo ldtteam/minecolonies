@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai.basic;
 
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
@@ -9,6 +9,7 @@ import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.EntityUtils;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -24,7 +25,7 @@ import java.util.function.Supplier;
  *
  * @param <J> the job type this AI has to do.
  */
-public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractEntityAIInteract<J>
+public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends AbstractEntityAIInteract<J>
 {
 
     /**
@@ -59,7 +60,7 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
      *
      * @param job the job class of the ai using this base class
      */
-    protected AbstractEntityAIStructure(J job)
+    protected AbstractEntityAIStructure(@NotNull final J job)
     {
         super(job);
         this.registerTargets(
@@ -82,7 +83,7 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
                  */
                 new AITarget(AIState.BUILDING_STEP, () -> AIState.IDLE),
                 /**
-                 * Decorate the Building with torches etc.
+                 * Decorate the AbstractBuilding with torches etc.
                  * todo: implement
                  */
                 new AITarget(AIState.DECORATION_STEP, () -> AIState.IDLE),
@@ -110,7 +111,8 @@ public abstract class AbstractEntityAIStructure<J extends Job> extends AbstractE
      */
     private Supplier<AIState> generateSchematicIterator(Function<Structure.SchematicBlock, Boolean> evaluationFunction, AIState nextState)
     {
-        // do not replace with method reference, this one stays the same on changing reference for currentStructure
+        //do not replace with method reference, this one stays the same on changing reference for currentStructure
+        //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
         Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
         Supplier<Structure.Result>         advanceBlock    = () -> currentStructure.advanceBlock();
 

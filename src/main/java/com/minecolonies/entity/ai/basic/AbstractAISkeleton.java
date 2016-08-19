@@ -1,6 +1,6 @@
 package com.minecolonies.entity.ai.basic;
 
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
@@ -8,6 +8,7 @@ import com.minecolonies.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
  *
  * @param <J> the job this ai will have
  */
-public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
+public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAIBase
 {
 
     private static final int MUTEX_MASK = 3;
@@ -42,7 +43,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
      *
      * @param job the job class
      */
-    protected AbstractAISkeleton(final J job)
+    protected AbstractAISkeleton(@NotNull final J job)
     {
         this.targetList = new ArrayList<>();
         setMutexBits(MUTEX_MASK);
@@ -162,7 +163,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
                 return false;
             }
         }
-        catch (Exception e)
+        catch (RuntimeException e)
         {
             Log.logger.warn("Condition check for target " + target + " threw an exception:", e);
             return false;
@@ -186,7 +187,7 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
         {
             newState = target.apply();
         }
-        catch (Exception e)
+        catch (RuntimeException e)
         {
             Log.logger.warn("Action for target " + target + " threw an exception:", e);
             return false;
@@ -201,6 +202,8 @@ public abstract class AbstractAISkeleton<J extends Job> extends EntityAIBase
 
     /**
      * Get the current state the ai is in.
+     *
+     * @return The current AIState
      */
     public final AIState getState()
     {

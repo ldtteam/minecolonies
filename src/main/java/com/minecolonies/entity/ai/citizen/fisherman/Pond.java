@@ -6,9 +6,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-public class Pond
+/**
+ * Represents a body of water used by the fisherman.
+ */
+public final class Pond
 {
-    private static final String TAG_LOCATION = "Location";
+    private static final String TAG_LOCATION                  = "Location";
+    private static final int    WATER_POOL_WIDTH_REQUIREMENT  = 6;
+    private static final int    WATER_POOL_HEIGHT_REQUIREMENT = 3;
 
     private BlockPos location;
 
@@ -41,18 +46,20 @@ public class Pond
      */
     private static boolean checkWater(IBlockAccess world, BlockPos water)
     {
-        int x = water.getX();
-        int y = water.getY();
-        int z = water.getZ();
-
-        if (!(world.getBlockState(water).getBlock() == Blocks.water) || !world.isAirBlock(water.up()))
+        if (world.getBlockState(water).getBlock() != Blocks.water || !world.isAirBlock(water.up()))
         {
             return false;
         }
 
+        int x = water.getX();
+        int y = water.getY();
+        int z = water.getZ();
+
         //If not one direction contains a pool with length at least 6 and width 7
-        return checkWaterPoolInDirectionXThenZ(world, x, y, z, 1) || checkWaterPoolInDirectionXThenZ(world, x, y, z, -1) ||
-               checkWaterPoolInDirectionZThenX(world, x, y, z, 1) || checkWaterPoolInDirectionZThenX(world, x, y, z, -1);
+        return checkWaterPoolInDirectionXThenZ(world, x, y, z, 1)
+               || checkWaterPoolInDirectionXThenZ(world, x, y, z, -1)
+               ||               checkWaterPoolInDirectionZThenX(world, x, y, z, 1)
+               || checkWaterPoolInDirectionZThenX(world, x, y, z, -1);
     }
 
     /**
@@ -69,15 +76,16 @@ public class Pond
     private static boolean checkWaterPoolInDirectionXThenZ(IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 6 blocks in direction +/- x
-        for (int dx = x + 6 * vector; dx <= x + 6 * vector; dx++)
+        for (int dx = x + WATER_POOL_WIDTH_REQUIREMENT * vector; dx <= x + WATER_POOL_WIDTH_REQUIREMENT * vector; dx++)
         {
-            if (!(world.getBlockState(new BlockPos(dx, y, z)).getBlock() == Blocks.water))
+            if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.water)
             {
                 return false;
             }
         }
         //Takes the middle x block and searches 3 water blocks to both sides
-        return checkWaterPoolInDirectionZ(world, x + 3 * vector, y, z, 1) && checkWaterPoolInDirectionZ(world, x + 3 * vector, y, z, -1);
+        return checkWaterPoolInDirectionZ(world, x + WATER_POOL_HEIGHT_REQUIREMENT * vector, y, z, 1) && checkWaterPoolInDirectionZ(world, x + WATER_POOL_HEIGHT_REQUIREMENT
+                                                                                                                                               * vector, y, z, -1);
     }
 
     /**
@@ -93,9 +101,9 @@ public class Pond
     private static boolean checkWaterPoolInDirectionZ(IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 3 blocks in direction +/- z
-        for (int dz = z + 3 * vector; dz <= z + 3 * vector; dz++)
+        for (int dz = z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz <= z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz++)
         {
-            if (!(world.getBlockState(new BlockPos(x, y, dz)).getBlock() == Blocks.water))
+            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.water)
             {
                 return false;
             }
@@ -117,15 +125,16 @@ public class Pond
     private static boolean checkWaterPoolInDirectionZThenX(IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 6 blocks in direction +/- z
-        for (int dz = z + 6 * vector; dz <= z + 6 * vector; dz++)
+        for (int dz = z + WATER_POOL_WIDTH_REQUIREMENT * vector; dz <= z + WATER_POOL_WIDTH_REQUIREMENT * vector; dz++)
         {
-            if (!(world.getBlockState(new BlockPos(x, y, dz)).getBlock() == Blocks.water))
+            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.water)
             {
                 return false;
             }
         }
         //Takes the middle z block and searches 3 water blocks to both sides
-        return checkWaterPoolInDirectionX(world, x, y, z + 3 * vector, 1) && checkWaterPoolInDirectionX(world, x, y, z + 3 * vector, -1);
+        return checkWaterPoolInDirectionX(world, x, y, z + WATER_POOL_HEIGHT_REQUIREMENT * vector, 1) && checkWaterPoolInDirectionX(world, x, y, z + WATER_POOL_HEIGHT_REQUIREMENT
+                                                                                                                                                     * vector, -1);
     }
 
     /**
@@ -141,9 +150,9 @@ public class Pond
     private static boolean checkWaterPoolInDirectionX(IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 3 blocks in direction +/- x
-        for (int dx = x + 3 * vector; dx <= x + 3 * vector; dx++)
+        for (int dx = x + WATER_POOL_HEIGHT_REQUIREMENT * vector; dx <= x + WATER_POOL_HEIGHT_REQUIREMENT * vector; dx++)
         {
-            if (!(world.getBlockState(new BlockPos(dx, y, z)).getBlock() == Blocks.water))
+            if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.water)
             {
                 return false;
             }
@@ -151,6 +160,12 @@ public class Pond
         return true;
     }
 
+    /**
+     * Create a Pond object from NBT.
+     *
+     * @param compound NBT tag compound to read from.
+     * @return new Pond instance.
+     */
     public static Pond readFromNBT(NBTTagCompound compound)
     {
         return new Pond(BlockPosUtil.readFromNBT(compound, TAG_LOCATION));
@@ -165,10 +180,11 @@ public class Pond
     @Override
     public boolean equals(Object obj)
     {
-        if (!(obj instanceof Pond))
+        if (obj == null || obj.getClass() != this.getClass())
         {
             return false;
         }
+
         Pond wobj = (Pond) obj;
         return location.equals(wobj.getLocation());
     }
@@ -178,6 +194,11 @@ public class Pond
         return location;
     }
 
+    /**
+     * Serialize for NBT.
+     *
+     * @param compound nbt tag compound to write to.
+     */
     public void writeToNBT(NBTTagCompound compound)
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);

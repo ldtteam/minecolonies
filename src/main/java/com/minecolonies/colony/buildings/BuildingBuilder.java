@@ -4,94 +4,94 @@ import com.minecolonies.client.gui.WindowHutBuilder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobBuilder;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
 /**
  * The builders building.
  */
-public class BuildingBuilder extends BuildingWorker
+public class BuildingBuilder extends AbstractBuildingWorker
 {
-    private static final String TAG_CLEARED = "cleared";
-    private static final String BUILDER     = "Builder";
     /**
-     * Has the building are been cleared
+     * The maximum upgrade of the building.
      */
-    private boolean cleared;
+    private static final int MAX_BUILDING_LEVEL = 2;
+    /**
+     * The job description.
+     */
+    private static final String BUILDER     = "Builder";
 
-
+    /**
+     * Public constructor of the building, creates an object of the building.
+     * @param c the colony.
+     * @param l the position.
+     */
     public BuildingBuilder(Colony c, BlockPos l)
     {
         super(c, l);
     }
 
+    /**
+     * Getter of the schematic name.
+     * @return the schematic name.
+     */
     @Override
     public String getSchematicName()
     {
         return BUILDER;
     }
 
+    /**
+     * Getter of the max building level.
+     * @return the integer.
+     */
     @Override
     public int getMaxBuildingLevel()
     {
-        return 2;
+        return MAX_BUILDING_LEVEL;
     }
 
+    /**
+     * Getter of the job description.
+     * @return the description of the builder job.
+     */
     @Override
     public String getJobName()
     {
         return BUILDER;
     }
 
+    /**
+     * Create the job for the builder.
+     * @param citizen the citizen to take the job.
+     * @return the new job.
+     */
     @Override
-    public Job createJob(CitizenData citizen)
+    public AbstractJob createJob(CitizenData citizen)
     {
         return new JobBuilder(citizen);
     }
 
-    @Override
-    public void writeToNBT(NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        compound.setBoolean(TAG_CLEARED, cleared);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        cleared = compound.getBoolean(TAG_CLEARED);
-    }
-
     /**
-     * If the builder has cleared the current area already
-     *
-     * @return true if so
+     * Provides a view of the builder building class.
      */
-    public boolean isCleared()
+    public static class View extends AbstractBuildingWorker.View
     {
-        return cleared;
-    }
-
-    /**
-     * Sets if the building area has been cleared
-     *
-     * @param cleared true or false
-     */
-    public void setCleared(boolean cleared)
-    {
-        this.cleared = cleared;
-    }
-
-    public static class View extends BuildingWorker.View
-    {
+        /**
+         * Public constructor of the view, creates an instance of it.
+         * @param c the colony.
+         * @param l the position.
+         */
         public View(ColonyView c, BlockPos l)
         {
             super(c, l);
         }
 
+        /**
+         * Gets the blockOut Window.
+         * @return the window of the builder building.
+         */
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutBuilder(this);

@@ -5,13 +5,19 @@ import com.minecolonies.lib.Constants;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-public abstract class ItemMinecolonies extends Item
+/**
+ * Handles simple things that all items need.
+ */
+public abstract class AbstractItemMinecolonies extends Item
 {
-    public ItemMinecolonies()
+    /**
+     * Sets the name, creative tab, and registers the item.
+     */
+    public AbstractItemMinecolonies()
     {
-        setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + getName());
+        super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + getName());
+        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setRegistryName(getName());
-        setCreativeTab(ModCreativeTabs.MINECOLONIES);
         GameRegistry.registerItem(this);
     }
 

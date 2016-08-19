@@ -3,10 +3,25 @@ package com.blockout;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Color
+/**
+ * Color utility methods.
+ */
+public final class Color
 {
-    private static Map<String, Integer> nameToColorMap = new HashMap<String, Integer>();
+    private static Map<String, Integer> nameToColorMap = new HashMap<>();
 
+    private Color()
+    {
+        // Hides default constructor.
+    }
+
+    /**
+     * Get a color integer from its name.
+     *
+     * @param name name of the color.
+     * @param def default to use if the name doesn't exist.
+     * @return the color as an integer.
+     */
     public static int getByName(String name, int def)
     {
         Integer i = nameToColorMap.get(name.toLowerCase());

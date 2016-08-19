@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Schematic implements ISchematic {
+public class Schematic implements ISchematic
+{
     private static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
     private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
 
@@ -33,7 +34,8 @@ public class Schematic implements ISchematic {
 
     private BlockPos offset;
 
-    public Schematic(final ItemStack icon, final int width, final int height, final int length) {
+    public Schematic(final ItemStack icon, final int width, final int height, final int length)
+    {
         this.icon = icon;
         this.blocks = new short[width][height][length];
         this.metadata = new byte[width][height][length];
@@ -42,7 +44,7 @@ public class Schematic implements ISchematic {
         this.height = height;
         this.length = length;
 
-        offset = new BlockPos(0,0,0);
+        offset = new BlockPos(0, 0, 0);
     }
 
     //MINECOLONIES START
@@ -59,12 +61,12 @@ public class Schematic implements ISchematic {
 
     private boolean hasOffset()
     {
-        return !BlockPosUtil.equals(offset, 0, 0, 0);
+        return !BlockPosUtil.isEqual(offset, 0, 0, 0);
     }
 
     public String getType()
     {
-        if(hasOffset())
+        if (hasOffset())
         {
             return "Hut";
         }
@@ -74,8 +76,10 @@ public class Schematic implements ISchematic {
     //MINECOLONIES END
 
     @Override
-    public IBlockState getBlockState(final BlockPos pos) {
-        if (isInvalid(pos)) {
+    public IBlockState getBlockState(final BlockPos pos)
+    {
+        if (isInvalid(pos))
+        {
             return Blocks.air.getDefaultState();
         }
 
@@ -88,14 +92,17 @@ public class Schematic implements ISchematic {
     }
 
     @Override
-    public boolean setBlockState(final BlockPos pos, final IBlockState blockState) {
-        if (isInvalid(pos)) {
+    public boolean setBlockState(final BlockPos pos, final IBlockState blockState)
+    {
+        if (isInvalid(pos))
+        {
             return false;
         }
 
         final Block block = blockState.getBlock();
         final int id = BLOCK_REGISTRY.getId(block);
-        if (id == -1) {
+        if (id == -1)
+        {
             return false;
         }
 
@@ -110,9 +117,12 @@ public class Schematic implements ISchematic {
     }
 
     @Override
-    public TileEntity getTileEntity(final BlockPos pos) {
-        for (final TileEntity tileEntity : this.tileEntities) {
-            if (tileEntity.getPos().equals(pos)) {
+    public TileEntity getTileEntity(final BlockPos pos)
+    {
+        for (final TileEntity tileEntity : this.tileEntities)
+        {
+            if (tileEntity.getPos().equals(pos))
+            {
                 return tileEntity;
             }
         }
@@ -121,48 +131,60 @@ public class Schematic implements ISchematic {
     }
 
     @Override
-    public List<TileEntity> getTileEntities() {
+    public List<TileEntity> getTileEntities()
+    {
         return this.tileEntities;
     }
 
     @Override
-    public void setTileEntity(final BlockPos pos, final TileEntity tileEntity) {
-        if (isInvalid(pos)) {
+    public void setTileEntity(final BlockPos pos, final TileEntity tileEntity)
+    {
+        if (isInvalid(pos))
+        {
             return;
         }
 
         removeTileEntity(pos);
 
-        if (tileEntity != null) {
+        if (tileEntity != null)
+        {
             this.tileEntities.add(tileEntity);
         }
     }
 
     @Override
-    public void removeTileEntity(final BlockPos pos) {
+    public void removeTileEntity(final BlockPos pos)
+    {
         final Iterator<TileEntity> iterator = this.tileEntities.iterator();
 
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             final TileEntity tileEntity = iterator.next();
-            if (tileEntity.getPos().equals(pos)) {
+            if (tileEntity.getPos().equals(pos))
+            {
                 iterator.remove();
             }
         }
     }
 
     @Override
-    public List<Entity> getEntities() {
+    public List<Entity> getEntities()
+    {
         return this.entities;
     }
 
     @Override
-    public void addEntity(final Entity entity) {
-        if (entity == null || entity.getUniqueID() == null || entity instanceof EntityPlayer) {
+    public void addEntity(final Entity entity)
+    {
+        if (entity == null || entity.getUniqueID() == null || entity instanceof EntityPlayer)
+        {
             return;
         }
 
-        for (final Entity e : this.entities) {
-            if (entity.getUniqueID().equals(e.getUniqueID())) {
+        for (final Entity e : this.entities)
+        {
+            if (entity.getUniqueID().equals(e.getUniqueID()))
+            {
                 return;
             }
         }
@@ -171,50 +193,63 @@ public class Schematic implements ISchematic {
     }
 
     @Override
-    public void removeEntity(final Entity entity) {
-        if (entity == null || entity.getUniqueID() == null) {
+    public void removeEntity(final Entity entity)
+    {
+        if (entity == null || entity.getUniqueID() == null)
+        {
             return;
         }
 
         final Iterator<Entity> iterator = this.entities.iterator();
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
+        {
             final Entity e = iterator.next();
-            if (entity.getUniqueID().equals(e.getUniqueID())) {
+            if (entity.getUniqueID().equals(e.getUniqueID()))
+            {
                 iterator.remove();
             }
         }
     }
 
     @Override
-    public ItemStack getIcon() {
+    public ItemStack getIcon()
+    {
         return this.icon;
     }
 
     @Override
-    public void setIcon(final ItemStack icon) {
-        if (icon != null) {
+    public void setIcon(final ItemStack icon)
+    {
+        if (icon != null)
+        {
             this.icon = icon;
-        } else {
+        }
+        else
+        {
             this.icon = DEFAULT_ICON.copy();
         }
     }
 
     @Override
-    public int getWidth() {
+    public int getWidth()
+    {
         return this.width;
     }
 
     @Override
-    public int getLength() {
+    public int getLength()
+    {
         return this.length;
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight()
+    {
         return this.height;
     }
 
-    private boolean isInvalid(final BlockPos pos) {
+    private boolean isInvalid(final BlockPos pos)
+    {
         final int x = pos.getX();
         final int y = pos.getY();
         final int z = pos.getZ();

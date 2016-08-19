@@ -7,7 +7,7 @@ import com.blockout.controls.TextField;
 import com.blockout.views.ScrollingList;
 import com.blockout.views.SwitchView;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.lib.Constants;
@@ -20,7 +20,7 @@ import java.util.*;
 /**
  * Window for the town hall
  */
-public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View>
+public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View>
 {
     /**
      * Id of the info button in the GUI.
@@ -175,7 +175,7 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
     /**
      * List of citizens.
      */
-    private List<CitizenData.View>   citizens    = new ArrayList<>();
+    private List<CitizenDataView>   citizens    = new ArrayList<>();
 
     /**
      * Map of the pages.
@@ -263,11 +263,11 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
         String numberOfBuilders    = LanguageHandler.format("com.minecolonies.gui.townHall.population.builders", builders);
         String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townHall.population.deliverymen", deliverymen);
 
-        findPaneOfTypeByID(CURRENT_SPEC_LABEL, Label.class).setLabel("<Industrial>");
-        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabel(numberOfCitizens);
-        findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setLabel(numberOfUnemployed);
-        findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setLabel(numberOfBuilders);
-        findPaneOfTypeByID(DELIVERY_MAN_LABEL, Label.class).setLabel(numberOfDeliverymen);
+        findPaneOfTypeByID(CURRENT_SPEC_LABEL, Label.class).setLabelText("<Industrial>");
+        findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
+        findPaneOfTypeByID(UNEMP_CITIZENS_LABEL, Label.class).setLabelText(numberOfUnemployed);
+        findPaneOfTypeByID(BUILDERS_LABEL, Label.class).setLabelText(numberOfBuilders);
+        findPaneOfTypeByID(DELIVERY_MAN_LABEL, Label.class).setLabelText(numberOfDeliverymen);
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
 
         lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
@@ -288,8 +288,8 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
                 Permissions.Player player = users.get(index);
                 String rank = player.getRank().name();
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(player.getName());
-                rowPane.findPaneOfTypeByID("rank", Label.class).setLabel(rank);
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(player.getName());
+                rowPane.findPaneOfTypeByID("rank", Label.class).setLabelText(rank);
             }
         });
 
@@ -309,10 +309,9 @@ public class WindowTownHall extends AbstractWindowSkeleton<BuildingTownHall.View
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-                CitizenData.View citizen = citizens.get(index);
+                CitizenDataView citizen = citizens.get(index);
 
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabel(citizen.getName());
-                //rowPane.findPaneOfTypeByID("job", Label.class).setLabel("" /* Not working yet */);
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(citizen.getName());
             }
         });
 

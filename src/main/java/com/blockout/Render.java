@@ -5,24 +5,56 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
-public class Render
+/**
+ * Render utility functions.
+ */
+public final class Render
 {
-    public static void drawOutlineRect(int x1, int y1, int x2, int y2, int color)
+    private static final int ALPHA_SHIFT = 24;
+    private static final int RED_SHIFT = 16;
+    private static final int GREEN_SHIFT = 8;
+    private static final int COLOR_MASK = 255;
+    private static final double COLOR_DIVISOR = 255.0;
+
+    private Render()
     {
-        drawOutlineRect(x1, y1, x2, y2, 1.0f, color);
+        // Hide default constructor
     }
 
+    /**
+     * {@link Render#drawOutlineRect(int, int, int, int, float, int)}.
+     *
+     * @param x1    lower x
+     * @param y1    lower y
+     * @param x2    upper x
+     * @param y2    upper y
+     * @param color color
+     */
+    public static void drawOutlineRect(int x1, int y1, int x2, int y2, int color)
+    {
+        drawOutlineRect(x1, y1, x2, y2, 1.0F, color);
+    }
+
+    /**
+     * Draw an outlined untextured rectangle.
+     *
+     * @param x1        lower x
+     * @param y1        lower y
+     * @param x2        upper x
+     * @param y2        upper y
+     * @param lineWidth line thickness, default of 1.0
+     * @param color     color
+     */
     public static void drawOutlineRect(int x1, int y1, int x2, int y2, float lineWidth, int color)
     {
-        float           a             = (float)(color >> 24 & 255) / 255.0F;
-        float           r             = (float)(color >> 16 & 255) / 255.0F;
-        float           g             = (float)(color >> 8 & 255) / 255.0F;
-        float           b             = (float)(color & 255) / 255.0F;
-        Tessellator     tessellator   = Tessellator.getInstance();
+        float a = (float) (((color >> ALPHA_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
+        float r = (float) (((color >> RED_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
+        float g = (float) (((color >> GREEN_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
+        float b = (float) ((color & COLOR_MASK) / COLOR_DIVISOR);
+
+        Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 
-        // There are several to choose from, look at DefaultVertexFormats for more info
-        //todo may need to choose a different Format
         worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glLineWidth(lineWidth);
@@ -36,6 +68,5 @@ public class Render
 
         tessellator.draw();
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-
     }
 }

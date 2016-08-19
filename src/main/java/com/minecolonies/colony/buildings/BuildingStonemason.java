@@ -4,11 +4,11 @@ import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobPlaceholder;
 import net.minecraft.util.BlockPos;
 
-public class BuildingStonemason extends BuildingWorker
+public class BuildingStonemason extends AbstractBuildingWorker
 {
 
     private static final String STONEMASON          = "Stonemason";
@@ -38,12 +38,12 @@ public class BuildingStonemason extends BuildingWorker
     }
 
     @Override
-    public Job createJob(CitizenData citizen)
+    public AbstractJob createJob(CitizenData citizen)
     {
         return new JobPlaceholder(citizen); //TODO Implement Later
     }
 
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public View(ColonyView c, BlockPos l)
         {

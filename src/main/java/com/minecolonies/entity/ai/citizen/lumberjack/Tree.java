@@ -26,39 +26,48 @@ public class Tree
     /**
      * Tag to save the location to NBT.
      */
-    private static final String TAG_LOCATION     = "Location";
+    private static final String TAG_LOCATION = "Location";
+
     /**
      * Tag to save the log list to NBT.
      */
-    private static final String TAG_LOGS         = "Logs";
+    private static final String TAG_LOGS = "Logs";
+
     /**
      * Tage to save the stump list to NBT.
      */
-    private static final String TAG_STUMPS       = "Stumps";
+    private static final String TAG_STUMPS = "Stumps";
+
     /**
      * Number of leaves necessary for a tree to be recognized.
      */
-    private static final int    NUMBER_OF_LEAVES = 3;
+    private static final int NUMBER_OF_LEAVES = 3;
+
     /**
      * The location of the tree stump.
      */
-    private BlockPos             location;
+    private BlockPos location;
+
     /**
      * All wood blocks connected to the tree.
      */
     private LinkedList<BlockPos> woodBlocks;
+
     /**
      * Is the tree a tree?
      */
-    private boolean              isTree;
+    private boolean isTree;
+
     /**
      * The locations of the stumps (Some trees are connected to dirt by 4 logs).
      */
-    private ArrayList<BlockPos>  stumpLocations;
+    private ArrayList<BlockPos> stumpLocations;
+
     /**
      * The wood variant (Oak, jungle, dark oak...).
      */
     private BlockPlanks.EnumType variant;
+
 
     /**
      * Private constructor of the tree.
@@ -142,7 +151,7 @@ public class Tree
                 for(int z = -1; z <= 1; z++)
                 {
                     BlockPos temp = log.add(x, y, z);
-                    if(BlockPosUtil.getBlock(world, temp).isWood(null,new BlockPos(0,0,0)) && !woodBlocks.contains(temp))//TODO reorder if more optimal
+                    if(BlockPosUtil.getBlock(world, temp).isWood(null,new BlockPos(0,0,0)) && !woodBlocks.contains(temp))
                     {
                         addAndSearch(world, temp);
                     }
@@ -191,13 +200,14 @@ public class Tree
      * @param pos   The coordinates
      * @return the base log position
      */
-    private BlockPos getBaseLog(World world, BlockPos pos)
+    private static BlockPos getBaseLog(IBlockAccess world, BlockPos pos)
     {
-        while (world.getBlockState(pos.down()).getBlock().isWood(world, pos))
+        BlockPos basePos = pos;
+        while (world.getBlockState(basePos.down()).getBlock().isWood(world, basePos))
         {
-            pos = pos.down();
+            basePos = basePos.down();
         }
-        return pos;
+        return basePos;
     }
 
     /**
@@ -207,13 +217,14 @@ public class Tree
      * @param pos   The coordinates
      * @return the top log position
      */
-    private BlockPos getTopLog(World world, BlockPos pos)
+    private static BlockPos getTopLog(IBlockAccess world, BlockPos pos)
     {
-        while (world.getBlockState(pos.up()).getBlock().isWood(world, pos.down()))
+        BlockPos topPos = pos;
+        while (world.getBlockState(topPos.up()).getBlock().isWood(world, topPos.down()))
         {
-            pos = pos.up();
+            topPos = topPos.up();
         }
-        return pos;
+        return topPos;
     }
 
     /**
@@ -232,22 +243,18 @@ public class Tree
         }
 
         //Get base log, should already be base log
-        while (world.getBlockState(pos.down()).getBlock().isWood(world, pos))
-        {
-            pos = pos.down();
-        }
+        BlockPos basePos = getBaseLog(world, pos);
 
         //Make sure tree is on solid ground and tree is not build above cobblestone
-        if (!world.getBlockState(pos.down()).getBlock().getMaterial().isSolid() || world.getBlockState(pos.down()).getBlock() == Blocks.cobblestone)
-        {
-            return false;
-        }
+        return world.getBlockState(basePos.down()).getBlock().getMaterial().isSolid()
+                && world.getBlockState(basePos.down()).getBlock() != Blocks.cobblestone
+                && hasEnoughLeaves(world, pos);
+    }
 
+    private static boolean hasEnoughLeaves(IBlockAccess world, BlockPos pos)
+    {
         //Get top log
-        while (world.getBlockState(pos.up()).getBlock().isWood(world, pos))
-        {
-            pos = pos.up();
-        }
+        BlockPos topPos = getTopLog(world, pos);
 
         int leafCount = 0;
         for (int dx = -1; dx <= 1; dx++)
@@ -256,7 +263,7 @@ public class Tree
             {
                 for (int dy = -1; dy <= 1; dy++)
                 {
-                    if (world.getBlockState(pos.add(dx, dy, dz)).getBlock().getMaterial().equals(Material.leaves))
+                    if (world.getBlockState(topPos.add(dx, dy, dz)).getBlock().getMaterial().equals(Material.leaves))
                     {
                         leafCount++;
                         if (leafCount >= NUMBER_OF_LEAVES)
@@ -318,13 +325,13 @@ public class Tree
     }
 
     /**
-     * Check if the found tree has any logs
+     * Check if the found tree has any logs.
      *
-     * @return true if size > 0
+     * @return true if there are wood blocks associated with the tree.
      */
     public boolean hasLogs()
     {
-        return woodBlocks.size() > 0;
+        return !woodBlocks.isEmpty();
     }
 
     /**
@@ -380,18 +387,13 @@ public class Tree
     /**
      * Overridden equals method checks if the location of the both trees are equal.
      *
-     * @param o the object to compare
+     * @param tree the object to compare
      * @return true if equal or false if not
      */
     @Override
-    public boolean equals(Object o)
+    public boolean equals(Object tree)
     {
-        if (o instanceof Tree)
-        {
-            Tree tree = (Tree) o;
-            return tree.getLocation().equals(location);
-        }
-        return false;
+        return tree != null && tree.getClass() == this.getClass() && ((Tree) tree).getLocation().equals(location);
     }
 
     /**
@@ -432,7 +434,5 @@ public class Tree
             BlockPosUtil.writeToNBTTagList(stumps, stump);
         }
         compound.setTag(TAG_STUMPS, stumps);
-
-
     }
 }

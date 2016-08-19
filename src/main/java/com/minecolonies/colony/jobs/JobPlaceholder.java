@@ -3,7 +3,7 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 
-public class JobPlaceholder extends Job
+public class JobPlaceholder extends AbstractJob
 {
     public JobPlaceholder(CitizenData entity)
     {

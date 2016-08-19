@@ -30,9 +30,20 @@ sonarqube {
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
+apply plugin: 'jacoco'
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
 dependencies {
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:1.+"
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.5'
+
+    compile 'com.intellij:annotations:+@jar'
 }
 
 ext.configFile = file "build.properties"
@@ -45,7 +56,7 @@ configFile.withReader {
 }
 
 group = "com.minecolonies"
-config.buildnumber = System.getenv()['bamboo_BUILD_NUMBER'] != null ? System.getenv()['bamboo_BUILD_NUMBER'] : "${config.minecolonies_build}"
+config.buildnumber = System.getenv()['TRAVIS_BUILD_NUMBER'] != null ? System.getenv()['TRAVIS_BUILD_NUMBER'] : "${config.minecolonies_build}"
 version = "${config.minecraft_version}-${config.minecolonies_major}.${config.minecolonies_minor}.${config.buildnumber}"
 
 sourceCompatibility = '1.8'
@@ -79,6 +90,11 @@ processResources {
     }
 }
 
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
 //task sourceJar(type: Jar) {
 //    from sourceSets.main.allSource
 //    appendix = 'src'
@@ -102,7 +118,7 @@ task incrementBuildNumber() {
 
 jar {
     appendix = 'universal'
-    archiveName = "minecolonies-universal-" + config.minecraft_version + "-" + project.version + ".jar"
+    archiveName = "minecolonies-universal-" + project.version + ".jar"
 
     manifest {
         attributes 'FMLAT': "minecolonies_at.cfg"

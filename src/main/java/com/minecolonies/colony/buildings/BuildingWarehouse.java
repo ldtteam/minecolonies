@@ -4,13 +4,13 @@ import com.minecolonies.client.gui.WindowHutWarehouse;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.jobs.Job;
+import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobDeliveryman;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
-public class BuildingWarehouse extends BuildingWorker
+public class BuildingWarehouse extends AbstractBuildingWorker
 {
 
     private static final    String  WAREHOUSE               = "Warehouse";
@@ -64,7 +64,7 @@ public class BuildingWarehouse extends BuildingWorker
     }
 
     @Override
-    public Job createJob(CitizenData citizen)
+    public AbstractJob createJob(CitizenData citizen)
     {
         return new JobDeliveryman(citizen);
     }
@@ -133,7 +133,7 @@ public class BuildingWarehouse extends BuildingWorker
     /**
      * BuildingWarehouse View
      */
-    public static class View extends BuildingWorker.View
+    public static class View extends AbstractBuildingWorker.View
     {
         public boolean blacksmithGold = false;
         public boolean blacksmithDiamond = false;

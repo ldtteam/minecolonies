@@ -84,6 +84,7 @@ com.minecolonies.gui.workerHuts.Farmer=Farmer
 
 
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
+tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
 
 com.minecolonies.job.Builder=Builder
 com.minecolonies.job.Deliveryman=Deliveryman
@@ -97,6 +98,7 @@ tile.blockHutTownHall.messageColonistDead=A colonist has died!
 tile.blockHutTownHall.messagePlacedAlready=You have placed a Town Hall already
 tile.blockHutTownHall.messageInvalidWorld=You can't place a town hall in this world type
 tile.blockHutTownHall.messageTooClose=Too close to existing town hall
+tile.blockHutTownHall.messageTooFar=Too far away from your Colony
 
 tile.blockHut.messageTooFarFromTownHall=You need to be closer to your town hall!
 tile.blockHut.messageNoTownHall=You need to place a town hall first!
@@ -127,6 +129,7 @@ entity.worker.inventoryFullChestFull=Please make space in my building chest. I a
 entity.builder.messageBuildStart=Started building %s
 entity.builder.messageBuildComplete=Finished building %s
 entity.builder.messageNeedMaterial=I need %s (Amount: %d)
+entity.builder.messageBuilderNecessary=Requiring a builder of level %d in order to build or upgrade this building.
 
 entity.miner.messageNeedTools=Need tool %s!
 entity.miner.messageNeedBlockAndItem=I need %s!
@@ -135,3 +138,5 @@ entity.miner.messageMoreBlocks=I need more %s!
 entity.miner.messageRequiresBetterHut=Please upgrade my hut to dig deeper!
 
 entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!
+
+com.minecolonies.workOrderAdded=Build Request Created!

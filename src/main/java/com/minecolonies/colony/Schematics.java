@@ -9,10 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -20,83 +17,151 @@ import java.util.stream.Stream;
  * Created by chris on 10/19/15.
  * Schematic class
  */
-public class Schematics
+public final class Schematics
 {
-    private static Map<String, List<String>> hutStyleMap = new HashMap<>();//Hut,Styles
+    //Hut, Styles
+    private static Map<String, List<String>> hutStyleMap = new HashMap<>();
+
+    //Hut, Levels
+    private static Map<String, Integer> hutLevelsMap = new HashMap<>();
+
+    //Decoration, Style
+    private static Map<String, List<String>> decorationStyleMap = new HashMap<>();
+
+    private static final String NULL_STYLE            = "schematics";
+    private static final String SCHEMATIC_EXTENSION   = ".schematic";
+    private static final String SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
 
     /**
-     * Calls {@link #loadHutStyleMap()}
+     * Private constructor so Schematics objects can't be made.
+     */
+    private Schematics()
+    {
+        //Hide implicit public constructor.
+    }
+
+    /**
+     * Calls {@link #loadStyleMaps()}
      */
     public static void init()
     {
-        loadHutStyleMap();
+        loadStyleMaps();
     }
 
     /**
      * Loads all styles saved in ["/assets/minecolonies/schematics/"]
-     * Puts these in {@link #hutStyleMap}, with key being the name of the hut (E.G. Lumberjack)
-     * and the value is a list of styles
+     * Puts these in {@link #hutStyleMap}, with key being the name of the hutDec (E.G. Lumberjack)
+     * and the value is a list of styles. Puts decorations in {@link #decorationStyleMap}.
      */
-    private static void loadHutStyleMap()
+    private static void loadStyleMaps()
     {
         try
         {
-            URI  uri = ColonyManager.class.getResource("/assets/minecolonies/schematics/").toURI();
+            URI  uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
             Path basePath;
 
-            if (uri.getScheme().equals("jar"))
+            if ("jar".equals(uri.getScheme()))
             {
-                basePath = FileSystems.newFileSystem(uri, Collections.emptyMap()).getPath(
-                        "/assets/minecolonies/schematics/");
+                try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap()))
+                {
+                    basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
+                    loadStyleMaps(basePath);
+                }
             }
             else
             {
                 basePath = Paths.get(uri);
+                loadStyleMaps(basePath);
             }
-            try (Stream<Path> walk = Files.walk(basePath))
-            {
-
-                Iterator<Path> it = walk.iterator();
-
-                while (it.hasNext())
-                {
-                    Path path = it.next();
-
-                    if (path.toString().endsWith("1.schematic"))
-                    {
-                        String hutpath = path.getFileName().toString();
-                        String hut     = hutpath.substring(0, hutpath.length() - 11);
-                        String style   = path.getParent().getFileName().toString();
-
-                        if (Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut) == null)
-                        {
-                            Log.logger.warn(String.format("Malformed schematic name: %s/%s ignoring file",
-                                                          style,
-                                                          hut));
-                            continue;
-                        }
-
-                        if (!hutStyleMap.containsKey(hut))
-                        {
-                            hutStyleMap.put(hut, new ArrayList<>());
-                        }
-                        hutStyleMap.get(hut).add(style);
-                    }
-                }
-            }
-
+            
         }
         catch (IOException | URISyntaxException e)
         {
-            Log.logger.error("Error loading Schematic directory. Things will break!");
+            Log.logger.error("Error loading Schematic directory. Things will break!", e);
         }
+    }
+
+    private static void loadStyleMaps(Path basePath) throws IOException
+    {
+        try (Stream<Path> walk = Files.walk(basePath))
+        {
+            Iterator<Path> it = walk.iterator();
+
+            while (it.hasNext())
+            {
+                Path path = it.next();
+
+                String style = path.getParent().getFileName().toString();
+
+                //Don't treat generic schematics as decorations or huts - ex: supply ship
+                if(NULL_STYLE.equals(style))
+                {
+                    continue;
+                }
+
+                if (path.toString().endsWith(SCHEMATIC_EXTENSION))
+                {
+                    String filename = path.getFileName().toString().split("\\.schematic")[0];
+                    String hut      = filename.split("\\d+")[0];
+
+                    if (isSchematicHut(hut))
+                    {
+                        addHutStyle(hut, style);
+                        incrementHutMaxLevel(hut);
+                    }
+                    else
+                    {
+                        addDecorationStyle(filename, style);
+                    }
+                }
+            }
+        }
+    }
+
+    private static void addHutStyle(String hut, String style)
+    {
+        if (!hutStyleMap.containsKey(hut))
+        {
+            hutStyleMap.put(hut, new ArrayList<>());
+        }
+
+        if(!hutStyleMap.get(hut).contains(style))
+        {
+            hutStyleMap.get(hut).add(style);
+        }
+    }
+
+    private static void addDecorationStyle(String decoration, String style)
+    {
+        if (!decorationStyleMap.containsKey(decoration))
+        {
+            decorationStyleMap.put(decoration, new ArrayList<>());
+        }
+        decorationStyleMap.get(decoration).add(style);
+    }
+
+    private static void incrementHutMaxLevel(String hut)
+    {
+        //Only count the number of huts in 1 style.
+        if(getStylesForHut(hut).size() > 1)
+        {
+            return;
+        }
+
+        Integer level = hutLevelsMap.getOrDefault(hut, 0);
+        hutLevelsMap.put(hut, level + 1);
+    }
+
+    private static boolean isSchematicHut(String name)
+    {
+        return Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + name) != null;
     }
 
     /**
      * Returns a set of huts.
-     * This is the key set of {@link #hutStyleMap}
+     * This is the key set of {@link #hutStyleMap}.
      *
-     * @return Set of huts with a schematic
+     * @return Set of huts with a schematic.
      */
     public static Set<String> getHuts()
     {
@@ -104,10 +169,10 @@ public class Schematics
     }
 
     /**
-     * Returns a lst of styles for one specific hut
+     * Returns a list of styles for one specific hut.
      *
-     * @param hut Hut to get styles for
-     * @return List of styles
+     * @param hut Hut to get styles for.
+     * @return List of styles.
      */
     public static List<String> getStylesForHut(String hut)
     {
@@ -115,13 +180,48 @@ public class Schematics
     }
 
     /**
+     * Returns the max level for the provided hut.
+     *
+     * @param hut Hut to get max level for.
+     * @return Max level of hut.
+     */
+    public static int getMaxLevelForHut(String hut)
+    {
+        return hutLevelsMap.getOrDefault(hut, 0);
+    }
+
+    /**
+     * Returns a set of decorations.
+     * This is the key set of {@link #decorationStyleMap}
+     *
+     * @return Set of decorations with a schematic
+     */
+    public static Set<String> getDecorations()
+    {
+        return decorationStyleMap.keySet();
+    }
+
+    /**
+     * Returns a list of styles for one specific decoration
+     *
+     * @param decoration Decoration to get styles for
+     * @return List of styles
+     */
+    public static List<String> getStylesForDecoration(String decoration)
+    {
+        return decorationStyleMap.get(decoration);
+    }
+
+    /**
      * For use on client side by the ColonyStylesMessage
      *
-     * @param stylesMap new hutStyleMap
+     * @param hutStyleMap        new hutStyleMap
+     * @param decorationStyleMap new decorationStyleMap
      */
     @SideOnly(Side.CLIENT)
-    public static void setStyles(Map<String, List<String>> stylesMap)
+    public static void setStyles(Map<String, List<String>> hutStyleMap, Map<String, List<String>> decorationStyleMap)
     {
-        hutStyleMap = stylesMap;
+        Schematics.hutStyleMap = hutStyleMap;
+        Schematics.decorationStyleMap = decorationStyleMap;
     }
 }

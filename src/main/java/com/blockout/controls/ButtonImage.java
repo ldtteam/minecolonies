@@ -2,135 +2,238 @@ package com.blockout.controls;
 
 import com.blockout.Alignment;
 import com.blockout.PaneParams;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import org.lwjgl.opengl.GL11;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
-import java.io.IOException;
-import java.util.Iterator;
-
+/**
+ * Clickable image.
+ */
 public class ButtonImage extends Button
 {
-    private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
     protected ResourceLocation image;
     protected ResourceLocation imageHighlight;
     protected ResourceLocation imageDisabled;
 
-    protected int       imageOffsetX = 0, imageOffsetY = 0, imageWidth = 0, imageHeight = 0;
-    protected int       highlightOffsetX = 0, highlightOffsetY = 0, highlightWidth = 0, highlightHeight = 0;
-    protected int       disabledOffsetX = 0, disabledOffsetY = 0, disabledWidth = 0, disabledHeight = 0;
-    protected float     textScale         = 1.0f;
-    protected Alignment textAlignment     = Alignment.Middle;
-    protected int       textColor         = 0xffffff;
-    protected int       textHoverColor    = 0xffffff;
-    protected int       textDisabledColor = 0xffffff;
-    protected boolean   shadow            = false;
-    protected int       textOffsetX = 0, textOffsetY = 0;
+    protected int imageOffsetX = 0;
+    protected int imageOffsetY = 0;
+    protected int imageWidth = 0;
+    protected int imageHeight = 0;
+    protected int imageMapWidth = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int imageMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
 
+    protected int highlightOffsetX = 0;
+    protected int highlightOffsetY = 0;
+    protected int highlightWidth = 0;
+    protected int highlightHeight = 0;
+    protected int highlightMapWidth = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int highlightMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+
+    protected int disabledOffsetX = 0;
+    protected int disabledOffsetY = 0;
+    protected int disabledWidth = 0;
+    protected int disabledHeight = 0;
+    protected int disabledMapWidth = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int disabledMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+
+    protected double textScale = 1.0;
+    protected Alignment textAlignment = Alignment.Middle;
+    protected int textColor = 0xffffff;
+    protected int textHoverColor = 0xffffff;
+    protected int textDisabledColor = 0xffffff;
+    protected boolean shadow = false;
+    protected int textOffsetX = 0;
+    protected int textOffsetY = 0;
+
+    /**
+     * Default size is a small square button.
+     */
+    private static final int DEFAULT_BUTTON_SIZE = 20;
+
+    private static final float HALF = 0.5F;
+
+    /**
+     * Default constructor. Makes a small square button.
+     */
     public ButtonImage()
     {
-        setSize(20, 20);
+        super();
+
+        width = DEFAULT_BUTTON_SIZE;
+        height = DEFAULT_BUTTON_SIZE;
     }
 
+    /**
+     * Constructor called by the xml loader.
+     *
+     * @param params PaneParams provided in the xml.
+     */
     public ButtonImage(PaneParams params)
     {
         super(params);
 
+        loadImageInfo(params);
+        loadHighlightInfo(params);
+        loadDisabledInfo(params);
+
+        loadTextInfo(params);
+    }
+
+    /**
+     * Loads the parameters for the normal image.
+     *
+     * @param params PaneParams provided in the xml.
+     */
+    private void loadImageInfo(PaneParams params)
+    {
         String path = params.getStringAttribute("source", null);
         if (path != null)
         {
             image = new ResourceLocation(path);
+            loadImageDimensions();
         }
 
         PaneParams.SizePair size = params.getSizePairAttribute("imageoffset", null, null);
         if (size != null)
         {
-            imageOffsetX = size.x;
-            imageOffsetY = size.y;
+            imageOffsetX = size.getX();
+            imageOffsetY = size.getY();
         }
 
         size = params.getSizePairAttribute("imagesize", null, null);
         if (size != null)
         {
-            imageWidth = size.x;
-            imageHeight = size.y;
+            imageWidth = size.getX();
+            imageHeight = size.getY();
         }
+    }
 
-        path = params.getStringAttribute("highlight", null);
+    /**
+     * Loads the parameters for the hover image.
+     *
+     * @param params PaneParams provided in the xml.
+     */
+    private void loadHighlightInfo(PaneParams params)
+    {
+        String path = params.getStringAttribute("highlight", null);
         if (path != null)
         {
             imageHighlight = new ResourceLocation(path);
+            loadImageHighlightDimensions();
         }
 
-        size = params.getSizePairAttribute("highlightoffset", null, null);
+        PaneParams.SizePair size = params.getSizePairAttribute("highlightoffset", null, null);
         if (size != null)
         {
-            highlightOffsetX = size.x;
-            highlightOffsetY = size.y;
+            highlightOffsetX = size.getX();
+            highlightOffsetY = size.getY();
         }
 
         size = params.getSizePairAttribute("highlightsize", null, null);
         if (size != null)
         {
-            highlightWidth = size.x;
-            highlightHeight = size.y;
+            highlightWidth = size.getX();
+            highlightHeight = size.getY();
         }
+    }
 
-        path = params.getStringAttribute("disabled", null);
+    /**
+     * Loads the parameters for the disabled image.
+     *
+     * @param params PaneParams provided in the xml.
+     */
+    private void loadDisabledInfo(PaneParams params)
+    {
+        String path = params.getStringAttribute("disabled", null);
         if (path != null)
         {
             imageDisabled = new ResourceLocation(path);
+            loadImageDisabledDimensions();
         }
 
-        size = params.getSizePairAttribute("disabledoffset", null, null);
+        PaneParams.SizePair size = params.getSizePairAttribute("disabledoffset", null, null);
         if (size != null)
         {
-            disabledOffsetX = size.x;
-            disabledOffsetY = size.y;
+            disabledOffsetX = size.getX();
+            disabledOffsetY = size.getY();
         }
 
         size = params.getSizePairAttribute("disabledsize", null, null);
         if (size != null)
         {
-            disabledWidth = size.x;
-            disabledHeight = size.y;
-        }
-
-        textScale         = params.getFloatAttribute("scale", textScale);
-        textAlignment     = params.getEnumAttribute("textalign", textAlignment);
-        textColor = params.getColorAttribute("textcolor", textColor);
-        textHoverColor    = params.getColorAttribute("texthovercolor", textColor); //  match textcolor by default
-        textDisabledColor = params.getColorAttribute("textdisabledcolor", textColor); //  match textcolor by default
-        shadow            = params.getBooleanAttribute("shadow", shadow);
-
-        size = params.getSizePairAttribute("textoffset", null, null);
-        if (size != null)
-        {
-            textOffsetX = size.x;
-            textOffsetY = size.y;
+            disabledWidth = size.getX();
+            disabledHeight = size.getY();
         }
     }
 
+    /**
+     * Loads the parameters for the button textContent.
+     *
+     * @param params PaneParams provided in the xml.
+     */
+    private void loadTextInfo(PaneParams params)
+    {
+        textScale = params.getDoubleAttribute("scale", textScale);
+        textAlignment = params.getEnumAttribute("textalign", Alignment.class, textAlignment);
+        textColor = params.getColorAttribute("textcolor", textColor);
+        // match textColor by default
+        textHoverColor = params.getColorAttribute("texthovercolor", textColor);
+        // match textColor by default
+        textDisabledColor = params.getColorAttribute("textdisabledcolor", textColor);
+        shadow = params.getBooleanAttribute("shadow", shadow);
+
+        PaneParams.SizePair size = params.getSizePairAttribute("textoffset", null, null);
+        if (size != null)
+        {
+            textOffsetX = size.getX();
+            textOffsetY = size.getY();
+        }
+    }
+
+    /**
+     * Set the default image.
+     *
+     * @param source String path.
+     */
     public void setImage(String source)
     {
         setImage(source, 0, 0, 0, 0);
     }
 
+    /**
+     * Set the default image.
+     *
+     * @param source  String path.
+     * @param offsetX image x offset.
+     * @param offsetY image y offset.
+     * @param w       image width.
+     * @param h       image height.
+     */
     public void setImage(String source, int offsetX, int offsetY, int w, int h)
     {
         setImage(source != null ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
     }
 
+    /**
+     * Set the default image.
+     *
+     * @param loc ResourceLocation for the image.
+     */
     public void setImage(ResourceLocation loc)
     {
         setImage(loc, 0, 0, 0, 0);
     }
 
+    /**
+     * Set the default image.
+     *
+     * @param loc     ResourceLocation for the image.
+     * @param offsetX image x offset.
+     * @param offsetY image y offset.
+     * @param w       image width.
+     * @param h       image height.
+     */
     public void setImage(ResourceLocation loc, int offsetX, int offsetY, int w, int h)
     {
         image = loc;
@@ -138,23 +241,63 @@ public class ButtonImage extends Button
         imageOffsetY = offsetY;
         imageHeight = w;
         imageWidth = h;
+
+        loadImageDimensions();
     }
 
+    /**
+     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of image texture.
+     */
+    private void loadImageDimensions()
+    {
+        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(image);
+        imageMapWidth = dimensions.getFirst();
+        imageMapHeight = dimensions.getSecond();
+    }
+
+    /**
+     * Set the hover image.
+     *
+     * @param source String path.
+     */
     public void setImageHighlight(String source)
     {
         setImageHighlight(source, 0, 0, 0, 0);
     }
 
+    /**
+     * Set the hover image.
+     *
+     * @param source  String path.
+     * @param offsetX image x offset.
+     * @param offsetY image y offset.
+     * @param w       image width.
+     * @param h       image height.
+     */
     public void setImageHighlight(String source, int offsetX, int offsetY, int w, int h)
     {
         setImageHighlight(source != null ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
     }
 
+    /**
+     * Set the hover image.
+     *
+     * @param loc ResourceLocation for the image.
+     */
     public void setImageHighlight(ResourceLocation loc)
     {
         setImageHighlight(loc, 0, 0, 0, 0);
     }
 
+    /**
+     * Set the hover image.
+     *
+     * @param loc     ResourceLocation for the image.
+     * @param offsetX image x offset.
+     * @param offsetY image y offset.
+     * @param w       image width.
+     * @param h       image height.
+     */
     public void setImageHighlight(ResourceLocation loc, int offsetX, int offsetY, int w, int h)
     {
         imageHighlight = loc;
@@ -162,11 +305,125 @@ public class ButtonImage extends Button
         highlightOffsetY = offsetY;
         highlightHeight = w;
         highlightWidth = h;
+
+        loadImageHighlightDimensions();
     }
 
-    public int getTextColor() { return textColor; }
-    public int getTextHoverColor() { return textHoverColor; }
-    public void setTextColor(int c) { setTextColor(c, c, c); }
+    /**
+     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of hover image texture.
+     */
+    private void loadImageHighlightDimensions()
+    {
+        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageHighlight);
+        highlightMapWidth = dimensions.getFirst();
+        highlightMapHeight = dimensions.getSecond();
+    }
+
+    /**
+     * Set the disabled image.
+     *
+     * @param source String path.
+     */
+    public void setImageDisabled(String source)
+    {
+        setImageHighlight(source, 0, 0, 0, 0);
+    }
+
+    /**
+     * Set the disabled image.
+     *
+     * @param source  String path.
+     * @param offsetX image x offset.
+     * @param offsetY image y offset.
+     * @param w       image width.
+     * @param h       image height.
+     */
+    public void setImageDisabled(String source, int offsetX, int offsetY, int w, int h)
+    {
+        setImageHighlight(source != null ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
+    }
+
+    /**
+     * Set the disabled image.
+     *
+     * @param loc ResourceLocation for the image.
+     */
+    public void setImageDisabled(ResourceLocation loc)
+    {
+        setImageHighlight(loc, 0, 0, 0, 0);
+    }
+
+    /**
+     * Set the disabled image.
+     *
+     * @param loc     ResourceLocation for the image.
+     * @param offsetX image x offset.
+     * @param offsetY image y offset.
+     * @param w       image width.
+     * @param h       image height.
+     */
+    public void setImageDisabled(ResourceLocation loc, int offsetX, int offsetY, int w, int h)
+    {
+        imageDisabled = loc;
+        disabledOffsetX = offsetX;
+        disabledOffsetY = offsetY;
+        disabledHeight = w;
+        disabledWidth = h;
+
+        loadImageDisabledDimensions();
+    }
+
+    /**
+     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of disabled image texture.
+     */
+    private void loadImageDisabledDimensions()
+    {
+        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageDisabled);
+        disabledMapWidth = dimensions.getFirst();
+        disabledMapHeight = dimensions.getSecond();
+    }
+
+    /**
+     * @return The standard textContent color.
+     */
+    public int getTextColor()
+    {
+        return textColor;
+    }
+
+    /**
+     * @return The textContent color when you hover the button.
+     */
+    public int getTextHoverColor()
+    {
+        return textHoverColor;
+    }
+
+    /**
+     * @return The textContent color when the button is disabled.
+     */
+    public int getTextDisabledColor()
+    {
+        return textDisabledColor;
+    }
+
+    /**
+     * Set the standard textContent color.
+     *
+     * @param c New textContent color.
+     */
+    public void setTextColor(int c)
+    {
+        setTextColor(c, c, c);
+    }
+
+    /**
+     * Set all textContent colors.
+     *
+     * @param c Standard textContent color.
+     * @param d Disabled textContent color.
+     * @param h Hover textContent color.
+     */
     public void setTextColor(int c, int d, int h)
     {
         textColor = c;
@@ -174,28 +431,110 @@ public class ButtonImage extends Button
         textHoverColor = h;
     }
 
-    public boolean getShadow() { return shadow; }
-    public void setShadow(boolean s) { shadow = s; }
+    /**
+     * @return true if the shadow is enabled.
+     */
+    public boolean getShadow()
+    {
+        return shadow;
+    }
 
-    public Alignment getTextAlignment() { return textAlignment; }
-    public void setTextAlignment(Alignment align) { textAlignment = align; }
+    /**
+     * Used to enabled or disable shadow.
+     *
+     * @param s true to enable shadow.
+     */
+    public void setShadow(boolean s)
+    {
+        shadow = s;
+    }
 
-    public float getTextScale() { return textScale; }
-    public void setTextScale(float s) { textScale = s; }
+    /**
+     * @return the Text {@link Alignment}.
+     */
+    public Alignment getTextAlignment()
+    {
+        return textAlignment;
+    }
 
-    public int getTextHeight() { return (int)(mc.fontRendererObj.FONT_HEIGHT * textScale); }
-    public int getStringWidth() { return (int)(mc.fontRendererObj.getStringWidth(label) * textScale); }
+    /**
+     * Set the textContent textContent {@link Alignment}.
+     *
+     * @param align textContent alignment.
+     */
+    public void setTextAlignment(Alignment align)
+    {
+        textAlignment = align;
+    }
 
+    /**
+     * @return The textContent scale.
+     */
+    public double getTextScale()
+    {
+        return textScale;
+    }
+
+    /**
+     * Set the textContent scale.
+     *
+     * @param s New textContent scale.
+     */
+    public void setTextScale(float s)
+    {
+        textScale = s;
+    }
+
+    /**
+     * Text height is calculated by multiplying FONT_HEIGHT and textContent scale.
+     *
+     * @return The textContent height.
+     */
+    public int getTextHeight()
+    {
+        return (int) (mc.fontRendererObj.FONT_HEIGHT * textScale);
+    }
+
+    /**
+     * The textContent width is calculated by multiplying the normal string width by the textContent scale.
+     *
+     * @return The width of the textContent.
+     */
+    public int getStringWidth()
+    {
+        return (int) (mc.fontRendererObj.getStringWidth(label) * textScale);
+    }
+
+    /**
+     * Draw the button.
+     * Decide what image to use, and possibly draw textContent.
+     *
+     * @param mx Mouse x (relative to parent)
+     * @param my Mouse y (relative to parent)
+     */
     @Override
     protected void drawSelf(int mx, int my)
+    {
+        boolean mouseOver = isPointInPane(mx, my);
+
+        drawImage(mouseOver);
+        drawlabel(mouseOver);
+    }
+
+    /**
+     * Draw the correct image.
+     *
+     * @param mouseOver Is the mouse hovering over the button.
+     */
+    private void drawImage(boolean mouseOver)
     {
         ResourceLocation bind = image;
         int offsetX = imageOffsetX;
         int offsetY = imageOffsetY;
         int w = imageWidth;
         int h = imageHeight;
-
-        boolean mouseOver = isPointInPane(mx, my);
+        int mapWidth = imageMapWidth;
+        int mapHeight = imageMapHeight;
 
         if (!enabled)
         {
@@ -206,6 +545,8 @@ public class ButtonImage extends Button
                 offsetY = disabledOffsetY;
                 w = disabledWidth;
                 h = disabledHeight;
+                mapWidth = disabledMapWidth;
+                mapHeight = disabledMapHeight;
             }
         }
         else if (mouseOver && imageHighlight != null)
@@ -215,83 +556,83 @@ public class ButtonImage extends Button
             offsetY = highlightOffsetY;
             w = highlightWidth;
             h = highlightHeight;
+            mapWidth = highlightMapWidth;
+            mapHeight = highlightMapHeight;
         }
 
-        if (w == 0 || w > getWidth())   w = getWidth();
-        if (h == 0 || h > getHeight())  h = getHeight();
+        if (w == 0 || w > getWidth())
+        {
+            w = getWidth();
+        }
+        if (h == 0 || h > getHeight())
+        {
+            h = getHeight();
+        }
 
-        mc.renderEngine.bindTexture(bind);
-        if (enabled || imageDisabled != null)
+        setupOpenGL(bind);
+
+        //Draw
+        drawModalRectWithCustomSizedTexture(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
+    }
+
+    /**
+     * Bind texture, set color, and enable blending.
+     *
+     * @param texture The texture to bind.
+     */
+    private void setupOpenGL(ResourceLocation texture)
+    {
+        this.mc.getTextureManager().bindTexture(texture);
+        if (this.enabled || this.imageDisabled != null)
         {
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         }
         else
         {
-            GL11.glColor4f(0.5F, 0.5F, 0.5F, 1.0F);
+            GL11.glColor4f(HALF, HALF, HALF, 1.0F);
         }
 
         GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
 
-        //Get file dimension
-        int mapWidth = 256, mapHeight = 256;
-        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
-        if (it.hasNext()) {
-            ImageReader reader = it.next();
-            try (ImageInputStream stream = ImageIO.createImageInputStream(Minecraft.getMinecraft().getResourceManager().getResource(bind).getInputStream())) {
-                reader.setInput(stream);
-                mapWidth = reader.getWidth(reader.getMinIndex());
-                mapHeight = reader.getHeight(reader.getMinIndex());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                reader.dispose();
-            }
-        }
-
-        //Draw
-        drawModalRectWithCustomSizedTexture(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
-        //func_146110_a(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
-
-        //  Label, if any
+    /**
+     * Draw the textContent if there is one.
+     *
+     * @param mouseOver If the mouse hovering over the button.
+     */
+    private void drawlabel(boolean mouseOver)
+    {
         if (label != null)
         {
             int color = enabled ? (mouseOver ? textHoverColor : textColor) : textDisabledColor;
 
-            offsetX = textOffsetX;
-            offsetY = textOffsetY;
+            int offsetX = textOffsetX;
+            int offsetY = textOffsetY;
 
-            if (textAlignment.rightAligned)
+            if (textAlignment.isRightAligned())
             {
                 offsetX += (getWidth() - getStringWidth());
             }
-            else if (textAlignment.horizontalCentered)
+            else if (textAlignment.isHorizontalCentered())
             {
                 offsetX += (getWidth() - getStringWidth()) / 2;
             }
 
-            if (textAlignment.bottomAligned)
+            if (textAlignment.isBottomAligned())
             {
                 offsetY += (getHeight() - getTextHeight());
             }
-            else if (textAlignment.verticalCentered)
+            else if (textAlignment.isVerticalCentered())
             {
                 offsetY += (getHeight() - getTextHeight()) / 2;
             }
 
             GL11.glPushMatrix();
-            GL11.glTranslatef(textScale, textScale, textScale);
-            mc.fontRendererObj.drawString(label, getX() + offsetX, getY() + offsetY, color, shadow);
+            GL11.glTranslatef((float) textScale, (float) textScale, (float) textScale);
+            mc.fontRendererObj.drawString(label, (float) (getX() + offsetX), (float) (getY() + offsetY), color, shadow);
             GL11.glPopMatrix();
         }
-    }
-
-    @Override
-    public void handleClick(int mx, int my)
-    {
-        //func_147674_a
-        mc.getSoundHandler().playSound(PositionedSoundRecord.create(soundClick, 1.0F));
-        super.handleClick(mx, my);
     }
 }

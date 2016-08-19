@@ -17,7 +17,7 @@ public class PathResult
     public PathResult() {}
 
     /**
-     * For PathNavigate and PathJob use only
+     * For PathNavigate and AbstractPathJob use only
      * @param s status to set
      */
     public void setStatus(Status s)
@@ -53,8 +53,8 @@ public class PathResult
     public boolean isCancelled() { return status == Status.CANCELLED; }
 
     /**
-     * For PathNavigate and PathJob use only
-     * @param value
+     * For PathNavigate and AbstractPathJob use only.
+     * @param value new value for pathReachesDestination.
      */
     public void setPathReachesDestination(boolean value) { pathReachesDestination = value; }
 
@@ -64,8 +64,8 @@ public class PathResult
     public boolean getPathReachesDestination() { return pathReachesDestination; }
 
     /**
-     * For PathNavigate use only
-     * @param l
+     * For PathNavigate use only.
+     * @param l new value for pathLength.
      */
     public void setPathLength(int l) { pathLength = l; }
 

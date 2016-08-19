@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class BuildingHome extends BuildingHut
+public class BuildingHome extends AbstractBuildingHut
 {
     private List<CitizenData> residents = new ArrayList<>();
 
@@ -163,7 +163,7 @@ public class BuildingHome extends BuildingHut
         }
     }
 
-    public static class View extends BuildingHut.View
+    public static class View extends AbstractBuildingHut.View
     {
         private List<Integer> residents = new ArrayList<>();
 

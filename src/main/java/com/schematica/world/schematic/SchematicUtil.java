@@ -5,16 +5,20 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-final class SchematicUtil {
+final class SchematicUtil
+{
     private static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
 
-    public static ItemStack getIconFromNBT(final NBTTagCompound tagCompound) {
+    public static ItemStack getIconFromNBT(final NBTTagCompound tagCompound)
+    {
         ItemStack icon = DEFAULT_ICON.copy();
 
-        if (tagCompound != null && tagCompound.hasKey(Names.NBT.ICON)) {
+        if (tagCompound != null && tagCompound.hasKey(Names.NBT.ICON))
+        {
             icon.readFromNBT(tagCompound.getCompoundTag(Names.NBT.ICON));
 
-            if (icon.getItem() == null) {
+            if (icon.getItem() == null)
+            {
                 icon = DEFAULT_ICON.copy();
             }
         }
