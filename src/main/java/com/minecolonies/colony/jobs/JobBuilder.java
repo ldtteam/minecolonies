@@ -137,7 +137,7 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Get the Schematic loaded by the Job
+     * Get the Schematic loaded by the Job.
      *
      * @return Schematic loaded by the Job
      */
