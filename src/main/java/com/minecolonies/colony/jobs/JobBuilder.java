@@ -85,7 +85,7 @@ public class JobBuilder extends AbstractJob
 
             if (compound.hasKey(TAG_SCHEMATIC))
             {
-                NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
+                final NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
                 schematicName = schematicTag.getString(TAG_NAME);
                 schematicPos = BlockPosUtil.readFromNBT(schematicTag, TAG_POSITION);
                 schematicProgress = BlockPosUtil.readFromNBT(schematicTag, TAG_PROGRESS);
