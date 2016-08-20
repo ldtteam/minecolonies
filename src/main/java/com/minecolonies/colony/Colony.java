@@ -25,6 +25,8 @@ import com.minecolonies.network.messages.ColonyViewMessage;
 import com.minecolonies.network.messages.ColonyViewRemoveBuildingMessage;
 import com.minecolonies.network.messages.ColonyViewRemoveCitizenMessage;
 import com.minecolonies.network.messages.PermissionsMessage;
+import com.minecolonies.network.messages.ColonyViewWorkOrderMessage;
+import com.minecolonies.network.messages.ColonyViewRemoveWorkOrderMessage;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.EntityUtils;
@@ -33,9 +35,6 @@ import com.minecolonies.util.Log;
 import com.minecolonies.util.MathUtils;
 import com.minecolonies.util.ServerUtils;
 import com.minecolonies.util.Utils;
-
-import com.minecolonies.network.messages.ColonyViewWorkOrderMessage;
-import com.minecolonies.network.messages.ColonyViewRemoveWorkOrderMessage;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
