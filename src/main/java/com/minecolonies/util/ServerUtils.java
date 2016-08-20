@@ -88,7 +88,7 @@ public final class ServerUtils
             return null;
         }
         final List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-        for (EntityPlayerMP player : allPlayers)
+        for (final EntityPlayerMP player : allPlayers)
         {
             if (player.getUniqueID().equals(parUUID))
             {
