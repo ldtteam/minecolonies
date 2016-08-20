@@ -18,6 +18,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
       -Dsonar.branch=$BRANCH \
       -Dsonar.java.binaries=build/classes/main \
       -Xmx3g
+  $RETURN_CODE=$?
 fi
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
@@ -31,4 +32,15 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dsonar.branch=$BRANCH \
     -Dsonar.java.binaries=build/classes/main \
     -Xmx3g
+  $RETURN_CODE=$?
+fi
+
+if [ $RETURN_CODE -ne 0 ]; then
+  curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
+    --request POST \
+    --data '{"state":"failure",
+    "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/${TRAVIS_BUILD_ID}",
+    "description":"Sonarqube build failed, please check logs!",
+    "context":"sonarqube"}' \
+    "https://api.github.com/repos/Minecolonies/minecolonies/statuses/$TRAVIS_COMMIT"
 fi
