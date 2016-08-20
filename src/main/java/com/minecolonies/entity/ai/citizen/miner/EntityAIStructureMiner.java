@@ -1293,6 +1293,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private void setBlockFromInventory(BlockPos location, Block block)
     {
+        worker.swingItem();
         setBlockFromInventory(location, block, block.getDefaultState());
     }
 

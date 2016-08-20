@@ -46,7 +46,8 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
-        buildingData = buf;
+        buildingData = Unpooled.buffer(buf.readableBytes());
+        buf.readBytes(buildingData, buf.readableBytes());
     }
 
     @Override

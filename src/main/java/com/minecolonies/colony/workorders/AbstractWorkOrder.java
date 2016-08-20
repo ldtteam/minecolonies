@@ -2,8 +2,11 @@ package com.minecolonies.colony.workorders;
 
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.WorkOrderView;
 import com.minecolonies.util.Log;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -17,6 +20,7 @@ public abstract class AbstractWorkOrder
 {
     protected int id;
     private int claimedBy;
+    private int priority;
 
     //  Job and View Class Mapping
     private static          Map<String, Class<? extends AbstractWorkOrder>> nameToClassMap  = new HashMap<>();
@@ -26,6 +30,16 @@ public abstract class AbstractWorkOrder
     private static final String TAG_ID = "id";
     private static final String TAG_CLAIMED_BY = "claimedBy";
 
+    private boolean changed = false;
+
+    /**
+     * Contains all classes which inherit directly from this class.
+     */
+    public enum WorkOrderType
+    {
+        BUILD
+    }
+
     static
     {
         addMapping("build", WorkOrderBuild.class);
@@ -34,12 +48,61 @@ public abstract class AbstractWorkOrder
 
     /**
      * Default constructor; we also start with a new id and replace it during loading;
-     * this greatly simplifies creating subclasses
+     * this greatly simplifies creating subclasses.
      */
     public AbstractWorkOrder()
     {
         //Should be overridden
     }
+
+    /**
+     * Setter for the priority.
+     * @param priority the new priority.
+     */
+    public void setPriority(int priority)
+    {
+        this.priority = priority;
+    }
+
+    /**
+     * Getter for the priority.
+     *
+     * @return the priority of the work order.
+     */
+    public int getPriority()
+    {
+        return this.priority;
+    }
+
+
+    /**
+     * Checks if the workOrder has changed.
+     * @return true if so.
+     */
+    public boolean hasChanged()
+    {
+        return changed;
+    }
+
+    /**
+     * Resets the changed variable.
+     */
+    public void resetChange()
+    {
+        changed = false;
+    }
+
+    /**
+     * Gets of the WorkOrder Type. Overwrite this for the different implementations.
+     * @return the type.
+     */
+    protected abstract WorkOrderType getType();
+
+    /**
+     * Gets the value of the WorkOrder. Overwrite this in every subclass.
+     * @return a description string.
+     */
+    protected abstract String getValue();
 
     /**
      * Add a given Work Order mapping
@@ -121,6 +184,7 @@ public abstract class AbstractWorkOrder
      */
     void setClaimedBy(CitizenData citizen)
     {
+        changed = true;
         claimedBy = (citizen != null) ? citizen.getId() : 0;
     }
 
@@ -129,6 +193,7 @@ public abstract class AbstractWorkOrder
      */
     public void clearClaimedBy()
     {
+        changed = true;
         claimedBy = 0;
     }
 
@@ -230,4 +295,44 @@ public abstract class AbstractWorkOrder
      * @param colony    The colony that owns the Work Order
      */
     public abstract void attemptToFulfill(Colony colony);
+
+
+    /**
+     * Writes the workOrders data to a byte buf for transition.
+     *
+     * @param buf Buffer to write to
+     */
+    public void serializeViewNetworkData(ByteBuf buf)
+    {
+        buf.writeInt(id);
+        buf.writeInt(priority);
+        buf.writeInt(claimedBy);
+        buf.writeInt(getType().ordinal());
+        ByteBufUtils.writeUTF8String(buf, getValue());
+        //value is upgradeName and upgradeLevel for workOrderBuild
+    }
+
+    /**
+     * Create a WorkOrder View from a buffer.
+     *
+     * @param buf The network data
+     * @return View object of the workOrder
+     */
+    public static WorkOrderView createWorkOrderView(ByteBuf buf)
+    {
+        WorkOrderView workOrderView = new WorkOrderView();
+
+        try
+        {
+            workOrderView.deserialize(buf);
+        }
+        catch(RuntimeException ex)
+        {
+            Log.logger.error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                                           workOrderView.getId()), ex);
+            workOrderView = null;
+        }
+
+        return workOrderView;
+    }
 }
