@@ -188,7 +188,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         if (!hasWorker() && (getBuildingLevel() > 0 || this instanceof BuildingBuilder)
                 && !this.getColony().isManualHiring())
         {
-            CitizenData joblessCitizen = getColony().getJoblessCitizen();
+            final CitizenData joblessCitizen = getColony().getJoblessCitizen();
             if (joblessCitizen != null)
             {
                 setWorker(joblessCitizen);
