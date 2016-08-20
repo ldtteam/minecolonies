@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.minecolonies.MineColonies;
@@ -34,7 +33,6 @@ import com.minecolonies.util.MathUtils;
 import com.minecolonies.util.ServerUtils;
 import com.minecolonies.util.Utils;
 
-import com.sun.corba.se.spi.activation.Server;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -696,14 +694,14 @@ public class Colony implements IColony
     }
     
     /**
-     * Checks if the achievements are valid
+     * Checks if the achievements are valid.
      */
     private void checkAchievements()
     {
         // the colonies size
         final int size = this.citizens.size();
         
-        EntityPlayer owner = ServerUtils.getPlayerFromUUID(this.getPermissions().getOwner());
+        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(this.getPermissions().getOwner());
         
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
@@ -717,7 +715,7 @@ public class Colony implements IColony
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
         {
-            owner.triggerAchievement(ModAchievements.achievementsizeCity);
+            owner.triggerAchievement(ModAchievements.achievementSizeCity);
         }
     }
     

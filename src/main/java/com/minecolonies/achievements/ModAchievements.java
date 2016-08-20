@@ -1,6 +1,5 @@
 package com.minecolonies.achievements;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
@@ -9,7 +8,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
 
 /**
- * Achievement collection
+ * Achievement collection.
  *
  * @author Isfirs
  * @since 0.2
@@ -17,8 +16,19 @@ import net.minecraftforge.common.AchievementPage;
 public final class ModAchievements
 {
 
+    /**
+     * Size to achieve {@link ModAchievements#achievementSizeSettlement}
+     */
     public static final int ACHIEVEMENT_SIZE_SETTLEMENT = 5;
+
+    /**
+     * Size to achieve {@link ModAchievements#achievementSizeTown}
+     */
     public static final int ACHIEVEMENT_SIZE_TOWN = 10;
+
+    /**
+     * Size to achieve {@link ModAchievements#achievementSizeCity}
+     */
     public static final int ACHIEVEMENT_SIZE_CITY = 20;
 
     // Achievements
@@ -124,7 +134,7 @@ public final class ModAchievements
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_CITY} citizens
      */
-    public static final Achievement achievementsizeCity       = new MineColoniesAchievement("size.city", "size.city", 6, -2,
+    public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", "size.city", 6, -2,
                                                                                             Items.diamond, achievementSizeTown)
             .registerStat();
 
@@ -136,7 +146,7 @@ public final class ModAchievements
             Constants.MOD_NAME,
             achievementGetSupply, achievementWandOfbuilding, achievementBuildingTownhall, achievementBuildingBuilder, achievementBuildingColonist,
             achievementBuildingLumberjack, achievementBuildingMiner, achievementBuildingFisher, achievementSizeSettlement, achievementSizeTown,
-            achievementsizeCity, achievementUpgradeColonistMax, achievementUpgradeBuilderMax, achievementUpgradeLumberjackMax, achievementUpgradeMinerMax,
+            achievementSizeCity, achievementUpgradeColonistMax, achievementUpgradeBuilderMax, achievementUpgradeLumberjackMax, achievementUpgradeMinerMax,
             achievementUpgradeFisherMax
     );
 
