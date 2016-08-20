@@ -25,7 +25,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
       "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/${TRAVIS_BUILD_ID}",
       "description":"Sonarqube build failed, please check logs!",
       "context":"sonarqube"}' \
-      "https://api.github.com/repos/Minecolonies/minecolonies/statuses/$TRAVIS_COMMIT"
+      "https://api.github.com/repos/Minecolonies/minecolonies/statuses/${TRAVIS_COMMIT}"
   fi
 fi
 
@@ -36,7 +36,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/{$TRAVIS_BUILD_ID}",
     "description": "Sonarqube report in progress...",
     "context":"sonarqube-report"}' \
-    "https://api.github.com/repos/Minecolonies/minecolonies/statuses/$TRAVIS_COMMIT"
+    "https://api.github.com/repos/Minecolonies/minecolonies/statuses/${TRAVIS_COMMIT}"
   ./gradlew test jacocoTestReport sonarqube --stacktrace \
     -Dsonar.github.repository=$TRAVIS_REPO_SLUG \
     -Dsonar.github.oauth=$GITHUB_TOKEN \
@@ -54,7 +54,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
       "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/${TRAVIS_BUILD_ID}",
       "description":"Sonarqube report failed, please check logs!",
       "context":"sonarqube-report"}' \
-      "https://api.github.com/repos/Minecolonies/minecolonies/statuses/$TRAVIS_COMMIT"
+      "https://api.github.com/repos/Minecolonies/minecolonies/statuses/${TRAVIS_COMMIT}"
   else
     curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
       --request POST \
@@ -62,7 +62,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
       "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/${TRAVIS_BUILD_ID}",
       "description":"Sonarqube report passed!",
       "context":"sonarqube-report"}' \
-      "https://api.github.com/repos/Minecolonies/minecolonies/statuses/$TRAVIS_COMMIT"    
+      "https://api.github.com/repos/Minecolonies/minecolonies/statuses/${TRAVIS_COMMIT}"    
   fi
 fi
 
