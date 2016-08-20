@@ -54,7 +54,7 @@ public class JobBuilder extends AbstractJob
 
             if (hasSchematic())
             {
-                NBTTagCompound schematicTag = new NBTTagCompound();
+                final NBTTagCompound schematicTag = new NBTTagCompound();
                 schematicTag.setString(TAG_NAME, schematic.getName());
                 BlockPosUtil.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
                 BlockPosUtil.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
