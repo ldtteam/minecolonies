@@ -146,35 +146,6 @@ public final class EntityUtils
     }
 
     /**
-     * Returns a list of online players whose UUID's match the ones provided.
-     *
-     * @param world the world the players are in.
-     * @param ids   List of UUIDs
-     * @return list of EntityPlayers
-     */
-    public static List<EntityPlayer> getPlayersFromUUID(World world, Collection<UUID> ids)
-    {
-        List<EntityPlayer> players = new ArrayList<>();
-
-        for (Object o : world.playerEntities)
-        {
-            if (o instanceof EntityPlayer)
-            {
-                EntityPlayer player = (EntityPlayer) o;
-                if (ids.contains(player.getGameProfile().getId()))
-                {
-                    players.add(player);
-                    if (players.size() == ids.size())
-                    {
-                        return players;
-                    }
-                }
-            }
-        }
-        return players;
-    }
-
-    /**
      * Returns a list of loaded entities whose UUID's match the ones provided.
      *
      * @param world the world the entities are in.

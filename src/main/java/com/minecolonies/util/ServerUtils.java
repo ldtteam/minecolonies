@@ -1,8 +1,11 @@
 package com.minecolonies.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -41,6 +44,35 @@ public final class ServerUtils
             }
         }
         return null;
+    }
+
+    /**
+     * Returns a list of online players whose UUID's match the ones provided.
+     *
+     * @param world the world the players are in.
+     * @param ids   List of UUIDs
+     * @return list of EntityPlayers
+     */
+    public static List<EntityPlayer> getPlayersFromUUID(World world, Collection<UUID> ids)
+    {
+        List<EntityPlayer> players = new ArrayList<>();
+
+        for (Object o : world.playerEntities)
+        {
+            if (o instanceof EntityPlayer)
+            {
+                EntityPlayer player = (EntityPlayer) o;
+                if (ids.contains(player.getGameProfile().getId()))
+                {
+                    players.add(player);
+                    if (players.size() == ids.size())
+                    {
+                        return players;
+                    }
+                }
+            }
+        }
+        return players;
     }
 
     /**
