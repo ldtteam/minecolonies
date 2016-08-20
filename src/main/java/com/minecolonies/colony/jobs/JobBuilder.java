@@ -147,7 +147,7 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Set the schematic of builder's job
+     * Set the schematic of builder's job.
      *
      * @param schematic {@link SchematicWrapper} object
      */
