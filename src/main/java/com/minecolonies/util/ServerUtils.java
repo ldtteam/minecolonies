@@ -61,7 +61,7 @@ public final class ServerUtils
         {
             if (o instanceof EntityPlayer)
             {
-                EntityPlayer player = (EntityPlayer) o;
+                final EntityPlayer player = (EntityPlayer) o;
                 if (ids.contains(player.getGameProfile().getId()))
                 {
                     players.add(player);
