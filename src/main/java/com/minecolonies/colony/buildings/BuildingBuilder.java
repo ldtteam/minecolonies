@@ -92,11 +92,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             owner.triggerAchievement(ModAchievements.achievementBuildingBuilder);
         }
-        else
-            if (newLevel >= this.getMaxBuildingLevel())
-            {
-                owner.triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
-            }
+        else if (newLevel >= this.getMaxBuildingLevel())
+        {
+            owner.triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
+        }
     }
 
     /**
