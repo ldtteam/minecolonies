@@ -103,7 +103,7 @@ public abstract class AbstractBlockHut extends AbstractBlockMineColonies impleme
          */
         if(worldIn.isRemote)
         {
-            AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
+            final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
 
             if(building != null)
             {
