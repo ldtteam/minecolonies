@@ -62,7 +62,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * Returns the worker of the current building
+     * Returns the worker of the current building.
      *
      * @return {@link CitizenData} of the current building
      */
