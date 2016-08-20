@@ -167,7 +167,7 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Do final completion when the Job's current work is complete
+     * Do final completion when the Job's current work is complete.
      */
     public void complete()
     {
