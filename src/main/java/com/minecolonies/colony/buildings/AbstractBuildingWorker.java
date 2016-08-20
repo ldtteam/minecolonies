@@ -86,10 +86,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      *
      * @return {@link net.minecraft.entity.Entity} of the worker
      */
-    public EntityCitizen getWorkerEntity()
-    {
-        return (worker != null) ? worker.getCitizenEntity() : null;
-    }
+    public EntityCitizen getWorkerEntity( ) { return (worker == null) ? null : worker.getCitizenEntity(); }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
