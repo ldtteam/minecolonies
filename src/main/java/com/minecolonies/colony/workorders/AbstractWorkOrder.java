@@ -251,7 +251,7 @@ public abstract class AbstractWorkOrder
      */
     public void writeToNBT(NBTTagCompound compound)
     {
-        String s = classToNameMap.get(this.getClass());
+        final String s = classToNameMap.get(this.getClass());
 
         if (s == null)
         {
