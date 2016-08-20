@@ -132,7 +132,7 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Get the ID of the Work Order
+     * Get the ID of the Work Order.
      *
      * @return          ID of the work order
      */
