@@ -168,7 +168,7 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Get the ID of the Citizen that the Work Order is claimed by
+     * Get the ID of the Citizen that the Work Order is claimed by.
      *
      * @return          ID of citizen the Work Order has been claimed by, or null
      */
