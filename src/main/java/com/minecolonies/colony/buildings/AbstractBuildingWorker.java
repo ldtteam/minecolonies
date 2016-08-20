@@ -198,7 +198,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * AbstractBuildingWorker View for clients
+     * AbstractBuildingWorker View for clients.
      */
     public static class View extends AbstractBuildingHut.View
     {
