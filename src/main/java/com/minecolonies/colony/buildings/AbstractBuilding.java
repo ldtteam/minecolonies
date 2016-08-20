@@ -562,7 +562,8 @@ public abstract class AbstractBuilding
      *
      * @param newLevel The new level
      */
-    public void onUpgradeComplete(int newLevel) {
+    public void onUpgradeComplete(int newLevel)
+    {
         // Does nothing here
     }
 
