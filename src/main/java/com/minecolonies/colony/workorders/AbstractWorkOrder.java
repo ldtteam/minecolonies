@@ -189,7 +189,7 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Clear the Claimed By status of the Work Order
+     * Clear the Claimed By status of the Work Order.
      */
     public void clearClaimedBy()
     {
