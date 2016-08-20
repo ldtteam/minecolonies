@@ -561,6 +561,15 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Called upon completion of an upgrade process.
+     *
+     * @param newLevel The new level
+     */
+    public void onUpgradeComplete(int newLevel) {
+        // Does nothing here
+    }
+
+    /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
      * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form
      * Mutable operations on a View result in a message to the server to perform the operation
