@@ -15,7 +15,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
     private PlayerProperties(){}
 
     /**
-     * Registers player property. Should be checked if already exists, and called in onEntityConstruct event
+     * Registers player property. Should be checked if already exists, and called in onEntityConstruct event.
      *
      * @param player player to create property for
      */
@@ -25,7 +25,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
     }
 
     /**
-     * Gets the player properties for a player
+     * Gets the player properties for a player.
      *
      * @param player player to get property for
      * @return PlayerProperties for the player.
@@ -60,7 +60,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
     }
 
     /**
-     * Adds support for other mods and multiple properties tags
+     * Adds support for other mods and multiple properties tags.
      *
      * @param player the player
      * @return String HashMap key
@@ -86,7 +86,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
     }
 
     /**
-     * Loads NBT data from proxy HashMap
+     * Loads NBT data from proxy HashMap.
      *
      * @param player to load data for
      */
@@ -102,7 +102,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
     }
 
     /**
-     * Gets the property whether the player has placed a supply chest
+     * Gets the property whether the player has placed a supply chest.
      *
      * @return whether the player has placed a supply chest.
      */
@@ -112,7 +112,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
     }
 
     /**
-     * Sets hasPlacedSupplyChest to true
+     * Sets hasPlacedSupplyChest to true.
      */
     public void placeSupplyChest()
     {
