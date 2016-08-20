@@ -86,7 +86,7 @@ public abstract class AbstractBlockHut extends AbstractBlockMineColonies impleme
         if(placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
             final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-            Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
+            final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
 
             if(colony != null)
             {
