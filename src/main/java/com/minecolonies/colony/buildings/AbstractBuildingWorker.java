@@ -158,7 +158,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * Returns if the {@link CitizenData} is the same as {@link #worker}
+     * Returns if the {@link CitizenData} is the same as {@link #worker}.
      *
      * @param citizen
      *            {@link CitizenData} you want to compare
