@@ -11,6 +11,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.network.messages.*;
+import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 import net.minecraft.entity.player.EntityPlayer;
@@ -164,8 +165,8 @@ public class Colony implements IColony
         NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.tagCount(); ++i)
         {
-            NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
-            Field f = Field.createFromNBT(this, fieldCompound);
+            NBTTagCompound      fieldCompound = fieldTagList.getCompoundTagAt(i);
+            Field               f             = Field.createFromNBT(this, fieldCompound);
             if (f != null)
             {
                 addField(f);

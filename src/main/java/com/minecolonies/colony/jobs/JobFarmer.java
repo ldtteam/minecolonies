@@ -55,6 +55,7 @@ public class JobFarmer extends AbstractJob
         for (int i = 0; i < fieldTagList.tagCount(); ++i)
         {
             NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
+
             Field f = Field.createFromNBT(getColony(), fieldCompound);
             if (f != null)
             {

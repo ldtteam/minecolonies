@@ -1,13 +1,10 @@
 package com.minecolonies.client.render;
 
-import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.client.model.ModelScarecrowBoth;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -18,37 +15,89 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<ScarecrowTileEntity>
 {
+    /**
+     * The model of the scarecrow.
+     */
     private final ModelScarecrowBoth model;
 
+    /**
+     * Offset to the block middle.
+     */
+    private static final double BLOCK_MIDDLE = 0.5;
+
+    /**
+     * Y-Offset in order to have the scarecrow over ground.
+     */
+    private static final double YOFFSET = 1.5;
+
+    /**
+     * Which size the scarecrow should have ingame.
+     */
+    private static final double SIZERATIO = .0625;
+
+    /**
+     * Rotate the model some degrees.
+     */
+    private static final int ROTATION = 180;
+
+    /**
+     * Rotate it on the following x offset.
+     */
+    private static final double XROTATIONOFFSET = 0.311;
+
+    /**
+     * Rotate it on the following y offset.
+     */
+    private static final double YROTATIONOFFSET = 0.0;
+
+    /**
+     * Rotate it on the following z offset.
+     */
+    private static final double ZROTATIONOFFSET = 2.845;
+
+
+    /**
+     * The public constructor for the renderer.
+     */
     public TileEntityScarecrowRenderer() { 
         this.model = new ModelScarecrowBoth();
     }
     
     @Override
-    public void renderTileEntityAt(ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage) {
-        GlStateManager.pushMatrix(); // store the transformation 
-        GlStateManager.translate(posX+0.5, posY+1.5, posZ+0.5); // set viewport to tile entity position to render it
-        
-        /* ============ Rendering Code goes here ============ */
-        EnumFacing facing = te.getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
-        
+    public void renderTileEntityAt(ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage)
+    {
+        //Store the transformation
+        GlStateManager.pushMatrix();
+        //Set viewport to tile entity position to render it
+        GlStateManager.translate(posX+BLOCK_MIDDLE, posY+YOFFSET, posZ+BLOCK_MIDDLE);
+
         this.bindTexture(this.getResourceLocation(te));
 
-        GlStateManager.rotate(180, 0.311F, 0, 2.845F);
-        this.model.render(.0625f);
+        GlStateManager.rotate(ROTATION, (float)XROTATIONOFFSET, (float)YROTATIONOFFSET, (float)ZROTATIONOFFSET);
+        this.model.render((float) SIZERATIO);
         
         /* ============ Rendering Code stops here =========== */
-        
-        GlStateManager.popMatrix(); // restore the transformation, so other renderer's are not messed up
+        //Restore the transformation, so other renderer's are not messed up.
+        GlStateManager.popMatrix();
     }
-    
-    private ResourceLocation getResourceLocation(ScarecrowTileEntity tileentity) { 
+
+    /**
+     * Returns the ResourceLocation of the scarecrow texture.
+     * @param tileEntity the tileEntity of the scarecrow.
+     * @return the location.
+     */
+    private ResourceLocation getResourceLocation(ScarecrowTileEntity tileEntity)
+    {
         String loc;
         
-        if(tileentity.getType())
+        if(tileEntity.getType() == ScarecrowTileEntity.ScareCrowType.PUMPKINHEAD)
+        {
             loc = "/textures/blocks/blockScarecrowPumpkin.png";
+        }
         else
+        {
             loc = "textures/blocks/blockScarecrowNormal.png";
+        }
         
         return new ResourceLocation(Constants.MOD_ID + ":" + loc);
     }

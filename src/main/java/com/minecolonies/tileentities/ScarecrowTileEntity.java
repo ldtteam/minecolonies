@@ -1,40 +1,92 @@
 package com.minecolonies.tileentities;
 
 import java.util.Random;
-
 import com.minecolonies.inventory.InventoryField;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
+/**
+ * The scarecrow tile entity to store extra data.
+ */
 public class ScarecrowTileEntity extends TileEntity
 {
+    /**
+     * NBTTag to store the type.
+     */
+    private static final String TAG_TYPE = "type";
+
+    /**
+     * The name of the inventory which shows up when opened.
+     */
+    private static final String INVENTORY_NAME = "Scarecrow";
+    //todo change to .lang term
+
+    /**
+     * The inventory connected with the scarecrow.
+     */
     public final InventoryField inventoryField;
 
+    /**
+     * Random generator.
+     */
+    private final Random random = new Random();
+
+    /**
+     * The type of the scarecrow.
+     */
+    private ScareCrowType TYPE;
+
+    /**
+     * Enum describing the different textures the scarecrow has.
+     */
+    public enum ScareCrowType
+    {
+        PUMPKINHEAD,
+        NORMAL
+    }
+
+    /**
+     * Public constructor which construct the tileEntity.
+     * @param inventoryField the fields inventory.
+     */
     public ScarecrowTileEntity(InventoryField inventoryField)
     {
         this.inventoryField = inventoryField;
     }
 
-    private final Random random = new Random();
-    private Boolean TYPE;
-    
+    /**
+     * Empty public constructor.
+     */
+    public ScarecrowTileEntity()
+    {
+        inventoryField = new InventoryField(INVENTORY_NAME, true);
+    }
+
     @Override
     public void writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         
-        compound.setBoolean("type", this.getType());
+        compound.setInteger(TAG_TYPE, this.getType().ordinal());
+        inventoryField.writeToNBT(compound);
     }
     
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         
-        TYPE = compound.getBoolean("type");
+        TYPE = ScareCrowType.values()[compound.getInteger(TAG_TYPE)];
+        inventoryField.readFromNBT(compound);
     }
-    
-    public boolean getType() {
-        if(this.TYPE == null) {
-            this.TYPE = this.random.nextBoolean();
+
+    /**
+     * Returns the type of the scarecrow (Important for the rendering).
+     * @return the enum type.
+     */
+    public ScareCrowType getType()
+    {
+        if(this.TYPE == null)
+        {
+            this.TYPE = ScareCrowType.values()[this.random.nextInt(1)];
         }
         return this.TYPE;
     }

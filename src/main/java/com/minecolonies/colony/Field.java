@@ -1,23 +1,14 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.inventory.InventoryField;
-import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.util.BlockPosUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockPumpkin;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemSeeds;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class Field extends Container
@@ -50,7 +41,7 @@ public class Field extends Container
     /**
      * The fields location.
      */
-    private final BlockPos location;
+    private BlockPos location;
 
     /**
      * The colony of the field.
@@ -91,6 +82,15 @@ public class Field extends Container
      * The inventorySlot of the field.
      */
     private InventoryField inventory;
+
+     /**
+     * Private constructor to create field from NBT.
+     * @param colony the colony the field belongs to.
+     */
+    private Field(Colony colony)
+    {
+       this.colony = colony;
+    }
 
     /**
      * Creates a new field object.
@@ -138,19 +138,6 @@ public class Field extends Container
         }
     }
 
-    //todo some problem with the remove stuff
-    @Override
-    public ItemStack slotClick(final int slotId, final int clickedButton, final int mode, final EntityPlayer playerIn)
-    {
-        return super.slotClick(slotId, clickedButton, mode, playerIn);
-    }
-
-    @Override
-    protected void retrySlotClick(final int slotId, final int clickedButton, final boolean mode, final EntityPlayer playerIn)
-    {
-        super.retrySlotClick(slotId, clickedButton, mode, playerIn);
-    }
-
     /**
      * Returns the {@link BlockPos} of the current object, also used as ID
      *
@@ -172,7 +159,7 @@ public class Field extends Container
     }
 
     /**
-     * Create and load a Building given it's saved NBTTagCompound
+     * Create and load a Field given it's saved NBTTagCompound
      *
      * @param colony    The owning colony
      * @param compound  The saved data
@@ -180,13 +167,8 @@ public class Field extends Container
      */
     public static Field createFromNBT(Colony colony, NBTTagCompound compound)
     {
-        BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
-        Boolean free = compound.getBoolean(TAG_TAKEN);
-        int localLength = compound.getInteger(TAG_LENGTH);
-        int localWidth = compound.getInteger(TAG_WIDTH);
-        //todo what happens after shutdown?
-        Field field = new Field(colony,pos,localWidth,localLength, new InventoryField("Scarecrow ", true));
-        field.setTaken(free);
+        Field field = new Field(colony);
+        field.readFromNBT(compound);
         return field;
     }
 
@@ -199,6 +181,26 @@ public class Field extends Container
     public void writeToNBT(NBTTagCompound compound)
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
+        compound.setBoolean(TAG_TAKEN, taken);
+        compound.setInteger(TAG_LENGTH, length);
+        compound.setInteger(TAG_WIDTH, width);
+        inventory.writeToNBT(compound);
+    }
+
+    /**
+     * Save data to NBT compound.
+     * Writes the {@link #location} value.
+     *
+     * @param compound      {@link net.minecraft.nbt.NBTTagCompound} to write data to
+     */
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+        taken = compound.getBoolean(TAG_TAKEN);
+        length = compound.getInteger(TAG_LENGTH);
+        width = compound.getInteger(TAG_WIDTH);
+        inventory = new InventoryField("Scarecrow", true);
+        inventory.readFromNBT(compound);
     }
 
     /**

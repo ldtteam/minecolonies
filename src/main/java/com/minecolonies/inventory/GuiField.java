@@ -11,18 +11,32 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+/**
+ * Class which creates the GUI of our field inventory.
+ */
 @SideOnly(Side.CLIENT)
 public class GuiField extends GuiContainer
 {
+    /**
+     * The resource location of the GUI background.
+     */
     private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/scarecrow.png");
 
-    public GuiField(InventoryPlayer parInventoryPlayer, IInventory parInventoryGrinder)
+    /**
+     * Constructor of the GUI.
+     * @param parInventoryPlayer the player inventory.
+     * @param fieldInventory the field inventory.
+     */
+    protected GuiField(InventoryPlayer parInventoryPlayer, IInventory fieldInventory)
     {
-        super(new Field((InventoryField) parInventoryGrinder, parInventoryPlayer));
+        super(new Field((InventoryField) fieldInventory, parInventoryPlayer));
     }
 
     /**
-     * Args : renderPartialTicks, mouseX, mouseY
+     * Does draw the background of the GUI.
+     * @param partialTicks the ticks delivered.
+     * @param mouseX the mouseX position.
+     * @param mouseY the mouseY position.
      */
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)

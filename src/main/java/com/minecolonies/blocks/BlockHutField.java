@@ -20,28 +20,65 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
-import net.minecraft.util.StringUtils;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class BlockHutField extends BlockContainer implements ITileEntityProvider
 {
 
+    /**
+     * Hardness of the block.
+     */
     private static final float HARDNESS   = 10F;
+
+    /**
+     * Resistance of the block.
+     */
     private static final float RESISTANCE = 10F;
-    public static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
-    public final InventoryField inventoryField;
+
+    /**
+     * The position it faces.
+     */
+    private static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
+
+    /**
+     * Start of the collision box at y.
+     */
+    private static final double BOTTOM_COLLISION = 0.0;
+
+    /**
+     * Start of the collision box at x and z.
+     */
+    private static final double START_COLLISION = 0.2;
+
+    /**
+     * End of the collision box.
+     */
+    private static final double END_COLLISION = 0.8;
+
+    /**
+     * Height of the collision box.
+     */
+    private static final double HEIGHT_COLLISION = 2.5;
+
+    /**
+     * Its inventory.
+     */
+    private final InventoryField inventoryField;
+
+
 
     public BlockHutField()
     {
@@ -66,6 +103,8 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
         setHardness(HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         GameRegistry.registerBlock(this);
+        setBlockBounds((float)START_COLLISION, (float)BOTTOM_COLLISION, (float)START_COLLISION, (float)END_COLLISION, (float)HEIGHT_COLLISION, (float)END_COLLISION);
+
     }
 
     @Override
@@ -100,7 +139,7 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
      */
     private int calculateLength(int start, World world)
     {
-        //IBlockState blockAtOffset =  world.getBlockState(location.down().north(start));
+        //todo calculate the real length and width
         return 6;
     }
 
@@ -165,10 +204,13 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta) {
+    public IBlockState getStateFromMeta(int meta)
+    {
         EnumFacing facing = EnumFacing.getFront(meta);
         if(facing.getAxis() == EnumFacing.Axis.Y)
+        {
             facing = EnumFacing.NORTH;
+        }
         return this.getDefaultState().withProperty(FACING, facing);
     }
 

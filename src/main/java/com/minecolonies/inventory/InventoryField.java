@@ -1,13 +1,50 @@
 package com.minecolonies.inventory;
+import com.minecolonies.colony.materials.MaterialSystem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
 
 /**
  * The custom chest of the field.
  */
 public class InventoryField extends InventoryCitizen
 {
-    private ItemStack[] stackResult = new ItemStack[1];
-    private String customName = "";
+    /**
+     * NBTTag to store the slot.
+     */
+    private static final String TAG_SLOT = "slot";
+
+    /**
+     * NBTTag to store the items.
+     */
+    private static final String TAG_ITEMS = "items";
+
+    /**
+     * NBTTag to store the custom name.
+     */
+    private static final String TAG_CUSTOM_NAME = "name";
+
+    /**
+     * NBTTag to store the inventory.
+     */
+    private static final String TAG_INVENTORY = "inventory";
+
+    /**
+     * Returned slot if no slat has been found.
+     */
+    private static final int NO_SLOT = -1;
+
+    /**
+     * The inventory stack.
+     */
+    private ItemStack[] stackResult   = new ItemStack[1];
+
+    /**
+     * The custom name of the inventory.
+     */
+    private String customName         = "";
+
     /**
      * Creates the inventory of the citizen.
      *
@@ -75,5 +112,62 @@ public class InventoryField extends InventoryCitizen
     public String getName()
     {
         return this.hasCustomName() ? this.customName : "field.inventory";
+    }
+
+    /**
+     * Used to retrieve variables.
+     * @param compound with the give tag.
+     */
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
+        this.stackResult = new ItemStack[this.getSizeInventory()];
+
+        for (int i = 0; i < nbttaglist.tagCount(); ++i)
+        {
+            NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+            int            j              = nbttagcompound.getByte(TAG_SLOT) & Byte.MAX_VALUE;
+
+            if (j != NO_SLOT && j < this.stackResult.length)
+            {
+                this.stackResult[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
+            }
+        }
+
+        if (compound.hasKey(TAG_CUSTOM_NAME, Constants.NBT.TAG_STRING))
+        {
+            this.customName = compound.getString(TAG_CUSTOM_NAME);
+        }
+    }
+
+    /**
+     * Used to store variables.
+     * @param compound with the given tag.
+     */
+    @Override
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        NBTTagList nbttaglist = new NBTTagList();
+
+        for (int i = 0; i < this.stackResult.length; ++i)
+        {
+            if (this.stackResult[i] != null)
+            {
+                NBTTagCompound nbttagcompound = new NBTTagCompound();
+                nbttagcompound.setByte(TAG_SLOT, (byte) i);
+                this.stackResult[i].writeToNBT(nbttagcompound);
+                nbttaglist.appendTag(nbttagcompound);
+            }
+        }
+
+        compound.setTag(TAG_ITEMS, nbttaglist);
+
+        if (this.hasCustomName())
+        {
+            compound.setString(TAG_CUSTOM_NAME, this.customName);
+        }
+
+        compound.setTag(TAG_INVENTORY, nbttaglist);
     }
 }
