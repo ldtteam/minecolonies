@@ -1,11 +1,11 @@
 language: java
 sudo: false
 jdk: oraclejdk8
-install: ./gradlew build
+install: ./travis/build.sh
 script:
-  - ./gradlew javadoc
-  - ./sonar.sh
-after_success: ./dropbox.sh
+  - ./travis/javadoc.sh
+  - ./travis/sonar.sh
+after_success: ./travis/dropbox.sh
 before_cache:
   - rm -rfv $HOME/.gradle/caches/*/plugin-resolution/
   - rm -rfv $HOME/.gradle/caches/modules-2/modules-2.lock

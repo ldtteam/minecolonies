@@ -390,6 +390,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             setDelay(TIMEOUT_DELAY);
             return true;
         }
+        timeWaited++;
         return false;
     }
 

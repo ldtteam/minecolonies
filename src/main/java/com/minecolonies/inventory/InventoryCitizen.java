@@ -2,6 +2,7 @@ package com.minecolonies.inventory;
 
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -358,8 +359,7 @@ public class InventoryCitizen implements IInventory
     @Override
     public boolean isUseableByPlayer(EntityPlayer player)
     {
-        //TODO We may restrict its access according to colony rules here.
-        return true;
+        return this.citizen.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
 
     /**
