@@ -82,7 +82,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * Returns the {@link net.minecraft.entity.Entity} of the worker
+     * Returns the {@link net.minecraft.entity.Entity} of the worker.
      *
      * @return {@link net.minecraft.entity.Entity} of the worker
      */
