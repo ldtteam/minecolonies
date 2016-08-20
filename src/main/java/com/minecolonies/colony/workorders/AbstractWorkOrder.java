@@ -267,7 +267,7 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Read the WorkOrder data from the NBTTagCompound
+     * Read the WorkOrder data from the NBTTagCompound.
      *
      * @param compound  NBT Tag compound
      */
