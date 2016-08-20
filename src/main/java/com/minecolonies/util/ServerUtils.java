@@ -21,7 +21,7 @@ public final class ServerUtils
 {
 
     /**
-     * Private
+     * Private.
      */
     private ServerUtils()
     {
