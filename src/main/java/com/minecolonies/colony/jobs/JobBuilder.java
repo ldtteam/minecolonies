@@ -157,7 +157,7 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Returns the work interval of the worker //unfinished
+     * Returns the work interval of the worker.
      *
      * @return work interval
      */
