@@ -7,6 +7,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemSeeds;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -117,9 +118,8 @@ public class Field extends Container
 
         addSlotToContainer(new Slot(inventory, 0, 80, 34));
 
-        // add player inventory slots
-        // note that the slot numbers are within the player inventory so can
-        // be same as the tile entity inventory
+        //Ddd player inventory slots
+        // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
         int i;
         for (i = 0; i < 3; ++i)
         {
@@ -130,7 +130,6 @@ public class Field extends Container
             }
         }
 
-        // add hotbar slots
         for (i = 0; i < 9; ++i)
         {
             addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18,
@@ -297,5 +296,31 @@ public class Field extends Container
     public boolean canInteractWith(final EntityPlayer playerIn)
     {
         return true;
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex)
+    {
+        if (slotIndex == 0)
+        {
+            playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
+            inventory.setInventorySlotContents(0, null);
+        }
+        else if(inventory.getStackInSlot(0) == null)
+        {
+            int playerIndex = slotIndex < 28 ? slotIndex + 8 : slotIndex - 28;
+            if(playerIn.inventory.getStackInSlot(playerIndex) != null)
+            {
+                inventory.setInventorySlotContents(0, playerIn.inventory.getStackInSlot(playerIndex).splitStack(1));
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public ItemStack slotClick(final int slotId, final int clickedButton, final int mode, final EntityPlayer playerIn)
+    {
+        return super.slotClick(slotId, clickedButton, mode, playerIn);
     }
 }
