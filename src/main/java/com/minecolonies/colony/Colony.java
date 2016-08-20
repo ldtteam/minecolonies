@@ -22,7 +22,6 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.EntityUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.MathUtils;
