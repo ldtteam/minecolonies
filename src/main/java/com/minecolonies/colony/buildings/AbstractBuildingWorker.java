@@ -119,7 +119,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * Set the worker of the current building
+     * Set the worker of the current building.
      *
      * @param citizen
      *            {@link CitizenData} of the worker
