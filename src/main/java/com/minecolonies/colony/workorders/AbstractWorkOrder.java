@@ -214,7 +214,7 @@ public abstract class AbstractWorkOrder
 
             if (oclass != null)
             {
-                Constructor<?> constructor = oclass.getDeclaredConstructor();
+                final Constructor<?> constructor = oclass.getDeclaredConstructor();
                 order = (AbstractWorkOrder) constructor.newInstance();
             }
         }
