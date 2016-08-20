@@ -78,7 +78,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
     public static void saveProxyData(EntityPlayer player)
     {
         final PlayerProperties playerData = PlayerProperties.get(player);
-        NBTTagCompound savedData = new NBTTagCompound();
+        final NBTTagCompound savedData = new NBTTagCompound();
 
         playerData.saveNBTData(savedData);
 
