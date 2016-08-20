@@ -124,10 +124,7 @@ public class JobBuilder extends AbstractJob
      *
      * @param order Work Order to associate with this job, or null
      */
-    public void setWorkOrder(WorkOrderBuild order)
-    {
-        workOrderId = (order != null) ? order.getID() : 0;
-    }
+    public void setWorkOrder(WorkOrderBuild order) { workOrderId = (order == null) ? 0 : order.getID(); }
 
     /**
      * Does this job have a Work Order it has claimed?
