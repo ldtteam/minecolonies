@@ -3,7 +3,7 @@ package com.minecolonies.entity.ai.citizen.miner;
 import net.minecraft.nbt.NBTTagCompound;
 
 /**
- * Miner Node Data Structure
+ * Miner Node Data Structure.
  * <p>
  * When a node is completed we should add the surrounding nodes to level as AVAILABLE
  * also note that we don't want node (0, -1) because there will be a ladder on the back
@@ -22,7 +22,7 @@ public class Node
     private static final String TAG_STATUS_POSITIVE_Z = "positiveZ";
     private static final String TAG_STATUS_NEGATIVE_Z = "negativeZ";
     /**
-     * Location of the node
+     * Location of the node.
      */
     private int        x;
     private int        z;
@@ -165,7 +165,7 @@ public class Node
     }
 
     /**
-     * Writes the node to a NBT-compound
+     * Writes the node to a NBT-compound.
      *
      * @param compound Compound to write to
      */
@@ -185,7 +185,7 @@ public class Node
     }
 
     /**
-     * Returns the x-coordinate in the node
+     * Returns the x-coordinate in the node.
      *
      * @return x-coordinate
      */
@@ -195,7 +195,7 @@ public class Node
     }
 
     /**
-     * Returns the z-coordinate in the node
+     * Returns the z-coordinate in the node.
      *
      * @return z-coordinate
      */
@@ -205,7 +205,7 @@ public class Node
     }
 
     /**
-     * Returns the {@link NodeStatus} of the current node
+     * Returns the {@link NodeStatus} of the current node.
      *
      * @return {@link NodeStatus}
      */
@@ -215,7 +215,7 @@ public class Node
     }
 
     /**
-     * Sets the status of the current node
+     * Sets the status of the current node.
      *
      * @param status {@link NodeStatus}
      */
@@ -241,7 +241,7 @@ public class Node
     }
 
     /**
-     * Returns the {@link NodeType} of the current node
+     * Returns the {@link NodeType} of the current node.
      *
      * @return {@link NodeType}
      */
@@ -251,7 +251,7 @@ public class Node
     }
 
     /**
-     * Sets the {@link NodeType} of the current node
+     * Sets the {@link NodeType} of the current node.
      *
      * @param style {@link NodeType}
      */
@@ -261,7 +261,7 @@ public class Node
     }
 
     /**
-     * Sets the status of the node
+     * Sets the status of the node.
      * AVAILABLE means it can be mined
      * IN_PROGRESS means it is currently being mined
      * COMPLETED means it has been mined and all torches/wood structure has been placed
@@ -278,7 +278,7 @@ public class Node
     }
 
     /**
-     * Sets the node style used
+     * Sets the node style used.
      * //TODO document the types
      */
     enum NodeType
