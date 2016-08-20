@@ -8,7 +8,6 @@ import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.SchematicWrapper;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
@@ -100,7 +99,7 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Get the Work Order ID for this Job
+     * Get the Work Order ID for this Job.
      *
      * @return UUID of the Work Order claimed by this Job, or null
      */
