@@ -34,6 +34,9 @@ import com.minecolonies.util.MathUtils;
 import com.minecolonies.util.ServerUtils;
 import com.minecolonies.util.Utils;
 
+import com.minecolonies.network.messages.ColonyViewWorkOrderMessage;
+import com.minecolonies.network.messages.ColonyViewRemoveWorkOrderMessage;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -1057,10 +1060,8 @@ public class Colony implements IColony
     /**
      * Performed when a building of this colony finished his upgrade state.
      *
-     * @param building
-     *            The upgraded building
-     * @param level
-     *            The new level
+     * @param building The upgraded building
+     * @param level    The new level
      */
     public void onBuildingUpgradeComplete(AbstractBuilding building, int level)
     {
