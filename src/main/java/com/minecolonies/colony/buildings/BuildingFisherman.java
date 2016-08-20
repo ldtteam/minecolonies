@@ -85,17 +85,16 @@ public class BuildingFisherman extends AbstractBuildingWorker
     {
         super.onUpgradeComplete(newLevel);
 
-        EntityPlayer owner = ServerUtils.getPlayerFromUUID(this.getColony().getPermissions().getOwner());
+        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(this.getColony().getPermissions().getOwner());
 
         if (newLevel == 1)
         {
             owner.triggerAchievement(ModAchievements.achievementBuildingFisher);
         }
-        else
-            if (newLevel >= this.getMaxBuildingLevel())
-            {
-                owner.triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
-            }
+        else if (newLevel >= this.getMaxBuildingLevel())
+        {
+            owner.triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
+        }
     }
 
     /**
