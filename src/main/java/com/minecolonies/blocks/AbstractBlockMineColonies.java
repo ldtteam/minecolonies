@@ -14,6 +14,8 @@ import net.minecraft.world.World;
 
 /**
  * Abstract {@link Block} wrapper.
+ *
+ * Used for mode related centralized code.
  * 
  * @author Isfirs
  * @since 0.1
@@ -44,6 +46,15 @@ public abstract class AbstractBlockMineColonies extends Block
         super(blockMaterialIn, blockMapColorIn);
     }
 
+    /**
+     *
+     * @param worldIn
+     * @param pos
+     * @param state
+     * @param placer
+     * @param stack
+     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
+     */
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
