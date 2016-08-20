@@ -38,9 +38,9 @@ public final class ServerUtils
     {
         for (int i = 0; i < world.playerEntities.size(); ++i)
         {
-            if (id.equals(((EntityPlayer) world.playerEntities.get(i)).getGameProfile().getId()))
+            if (id.equals((world.playerEntities.get(i)).getGameProfile().getId()))
             {
-                return (EntityPlayer) world.playerEntities.get(i);
+                return world.playerEntities.get(i);
             }
         }
         return null;
