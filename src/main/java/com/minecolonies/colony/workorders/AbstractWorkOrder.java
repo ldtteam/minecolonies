@@ -1,10 +1,5 @@
 package com.minecolonies.colony.workorders;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.WorkOrderView;
@@ -12,6 +7,11 @@ import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * General information between WorkOrders.
@@ -105,7 +105,7 @@ public abstract class AbstractWorkOrder
     protected abstract String getValue();
 
     /**
-     * Add a given Work Order mapping
+     * Add a given Work Order mapping.
      *
      * @param name       name of work order
      * @param orderClass class of work order
