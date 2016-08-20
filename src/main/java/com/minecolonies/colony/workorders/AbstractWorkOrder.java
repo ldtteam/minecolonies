@@ -223,7 +223,11 @@ public abstract class AbstractWorkOrder
             Log.logger.trace(e);
         }
 
-        if (order != null)
+        if (order == null)
+        {
+            Log.logger.warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+        }
+        else
         {
             try
             {
@@ -232,13 +236,9 @@ public abstract class AbstractWorkOrder
             catch (RuntimeException ex)
             {
                 Log.logger.error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                        compound.getString(TAG_TYPE), oclass.getName()), ex);
+                                               compound.getString(TAG_TYPE), oclass.getName()), ex);
                 order = null;
             }
-        }
-        else
-        {
-            Log.logger.warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
         }
 
         return order;
