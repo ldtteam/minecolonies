@@ -16,7 +16,8 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
       -Dsonar.password=$SONAR_PASS \
       -Dsonar.sources=src/main/java \
       -Dsonar.branch=$BRANCH \
-      -Dsonar.java.binaries=build/classes/main
+      -Dsonar.java.binaries=build/classes/main \
+      -Xmx3g
 fi
 
 if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
@@ -28,5 +29,6 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dsonar.password=$SONAR_PASS \
     -Dsonar.sources=src/main/java \
     -Dsonar.branch=$BRANCH \
-    -Dsonar.java.binaries=build/classes/main
+    -Dsonar.java.binaries=build/classes/main \
+    -Xmx3g
 fi
