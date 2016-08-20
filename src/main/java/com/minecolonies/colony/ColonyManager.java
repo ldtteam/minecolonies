@@ -21,7 +21,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Singleton class that links colonies to minecraft.
@@ -646,8 +645,8 @@ public final class ColonyManager
      */
     public static IMessage handlePermissionsViewMessage(int colonyID, ByteBuf data)
     {
-        ColonyView view = getColonyView(colonyID);
-        if(view != null)
+        final ColonyView view = getColonyView(colonyID);
+        if (view != null)
         {
             return view.handlePermissionsViewMessage(data);
         }
@@ -669,10 +668,29 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewCitizensMessage(int colonyId, int citizenId, ByteBuf buf)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             return view.handleColonyViewCitizensMessage(citizenId, buf);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)} (int, ByteBuf)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     *
+     * @param colonyId      ID of the colony
+     * @param buf           {@link ByteBuf} with colony data
+     * @return              result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)} or null
+     */
+    public static IMessage handleColonyViewWorkOrderMessage(int colonyId, ByteBuf buf)
+    {
+        final ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            return view.handleColonyViewWorkOrderMessage(buf);
         }
 
         return null;
@@ -688,7 +706,7 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewRemoveCitizenMessage(int colonyId, int citizenId)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
@@ -710,7 +728,7 @@ public final class ColonyManager
      */
     public static IMessage handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, ByteBuf buf)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             return view.handleColonyBuildingViewMessage(buildingId, buf);
@@ -732,12 +750,33 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewRemoveBuildingMessage(int colonyId, BlockPos buildingId)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
             //  possible to receive a 'remove' notice before receiving the View
             return view.handleColonyViewRemoveBuildingMessage(buildingId);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     *
+     * @param colonyId      ID of the colony
+     * @param workOrderId    ID of the workOrder
+     * @return              result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)}  or null
+     */
+    public static IMessage handleColonyViewRemoveWorkOrderMessage(final int colonyId, final int workOrderId)
+    {
+        final ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            //  Can legitimately be NULL, because (to keep the code simple and fast), it is
+            //  possible to receive a 'remove' notice before receiving the View
+            return view.handleColonyViewRemoveWorkOrderMessage(workOrderId);
         }
 
         return null;

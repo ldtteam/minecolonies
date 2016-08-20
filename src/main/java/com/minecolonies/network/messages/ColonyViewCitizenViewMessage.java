@@ -47,7 +47,8 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
-        citizenBuffer = buf;
+        this.citizenBuffer = Unpooled.buffer();
+        buf.readBytes(citizenBuffer, buf.readableBytes());
     }
 
     @Override
