@@ -245,7 +245,7 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Save the Work Order to an NBTTagCompound
+     * Save the Work Order to an NBTTagCompound.
      *
      * @param compound  NBT tag compount
      */
