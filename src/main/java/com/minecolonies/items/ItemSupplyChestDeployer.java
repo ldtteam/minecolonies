@@ -87,7 +87,6 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             spawnShip(worldIn, pos, playerIn, facing);
             stack.stackSize--;
             
-            // Trigger Achievement
             playerIn.triggerAchievement(ModAchievements.achievementGetSupply);
             
             return true;
