@@ -178,7 +178,7 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Set the Work Order as claimed by the given Citizen
+     * Set the Work Order as claimed by the given Citizen.
      *
      * @param citizen   {@link CitizenData}
      */
