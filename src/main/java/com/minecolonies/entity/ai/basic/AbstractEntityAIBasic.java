@@ -329,7 +329,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return NEEDS_ITEM;
             }
 
-            requestWithoutSpam(first.getDisplayName(), DELAY_RECHECK);
+            requestWithoutSpam(first.getDisplayName());
         }
         return NEEDS_ITEM;
     }
@@ -371,11 +371,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Request an Item without spamming the chat.
      *
      * @param chat  the Item Name
-     * @param ticks the amount of ticks waited
      */
-    private void requestWithoutSpam(@NotNull final String chat, int ticks)
+    private void requestWithoutSpam(@NotNull final String chat)
     {
-        chatSpamFilter.requestWithoutSpam(chat, ticks);
+        chatSpamFilter.requestWithoutSpam(chat);
     }
 
     /**
@@ -499,7 +498,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
-        requestWithoutSpam(tool, DELAY_RECHECK);
+        requestWithoutSpam(tool);
         return true;
     }
 
@@ -613,7 +612,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return true;
             }
-            requestWithoutSpam("Pickaxe at least level " + minlevel, DELAY_RECHECK);
+            requestWithoutSpam("Pickaxe at least level " + minlevel);
         }
         return needsPickaxe;
     }
