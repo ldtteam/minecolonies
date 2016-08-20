@@ -120,7 +120,7 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Set a Work Order for this Job
+     * Set a Work Order for this Job.
      *
      * @param order Work Order to associate with this job, or null
      */
