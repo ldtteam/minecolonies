@@ -17,12 +17,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * Entity related utilities
+ * Entity related utilities.
  */
 public final class EntityUtils
 {
     /**
-     * Default range for moving to something until we stop
+     * Default range for moving to something until we stop.
      */
     private static final int DEFAULT_MOVE_RANGE       = 3;
     /**
@@ -31,7 +31,7 @@ public final class EntityUtils
     private static final int AIR_SPACE_ABOVE_TO_CHECK = 2;
 
     /**
-     * Private constructor to hide the implicit public one
+     * Private constructor to hide the implicit public one.
      */
     private EntityUtils()
     {
@@ -55,7 +55,7 @@ public final class EntityUtils
 
     /**
      * Checks if a worker is at his working site.
-     * If he isn't, sets it's path to the location
+     * If he isn't, sets it's path to the location.
      *
      * @param worker Worker to check
      * @param x      X-coordinate
@@ -80,7 +80,7 @@ public final class EntityUtils
     }
 
     /**
-     * Returns whether or not the worker is within a specific range of his working site
+     * Returns whether or not the worker is within a specific range of his working site.
      *
      * @param worker Worker to check
      * @param x      X-coordinate
@@ -112,7 +112,7 @@ public final class EntityUtils
 
     /**
      * Sets the movement of the entity to specific point.
-     * Returns true if direction is set, otherwise false
+     * Returns true if direction is set, otherwise false.
      *
      * @param living Entity to move
      * @param x      x-coordinate
@@ -127,7 +127,7 @@ public final class EntityUtils
     }
 
     /**
-     * Returns the loaded Entity with the given UUID
+     * Returns the loaded Entity with the given UUID.
      *
      * @param world world the entity is in
      * @param id    the entity's UUID
@@ -218,7 +218,7 @@ public final class EntityUtils
     }
 
     /**
-     * Returns whether or not a citizen is heading to a specific location
+     * Returns whether or not a citizen is heading to a specific location.
      *
      * @param citizen Citizen you want to check
      * @param x       X-coordinate
