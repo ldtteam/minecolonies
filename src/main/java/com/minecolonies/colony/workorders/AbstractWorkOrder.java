@@ -198,7 +198,7 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Create a Work Order from a saved NBTTagCompound
+     * Create a Work Order from a saved NBTTagCompound.
      *
      * @param compound      the compound that contains the data for the Work Order
      * @return              {@link AbstractWorkOrder} from the NBT
