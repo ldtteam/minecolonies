@@ -1,11 +1,19 @@
 package com.minecolonies.blocks;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.creativetab.ModCreativeTabs;
+import com.minecolonies.inventory.InventoryCitizen;
+import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -20,21 +28,26 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
-public class BlockHutField extends Block implements ITileEntityProvider
+public class BlockHutField extends BlockContainer implements ITileEntityProvider
 {
 
     private static final float HARDNESS   = 10F;
     private static final float RESISTANCE = 10F;
     public static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
+    public final InventoryField inventoryField;
 
     public BlockHutField()
     {
         super(Material.wood);
+        //todo language String
+        this.inventoryField = new InventoryField("Scarecrow", true);
         initBlock();
     }
 
@@ -74,7 +87,7 @@ public class BlockHutField extends Block implements ITileEntityProvider
             {
                 int width = calculateWidth(0,worldIn);
                 int length = calculateLength(0,worldIn);
-                colony.addNewField(pos,width,length);
+                colony.addNewField(pos,width,length, inventoryField);
             }
         }
     }
@@ -88,7 +101,7 @@ public class BlockHutField extends Block implements ITileEntityProvider
     private int calculateLength(int start, World world)
     {
         //IBlockState blockAtOffset =  world.getBlockState(location.down().north(start));
-        return 0;
+        return 6;
     }
 
     /**
@@ -99,7 +112,7 @@ public class BlockHutField extends Block implements ITileEntityProvider
      */
     private int calculateWidth(int start, World world)
     {
-        return 0;
+        return 6;
     }
 
     /**
@@ -117,6 +130,22 @@ public class BlockHutField extends Block implements ITileEntityProvider
     public int getRenderType()
     {
         return -1;
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    {
+        //If the world is server, open the inventory of the field.
+        if(!worldIn.isRemote)
+        {
+            Colony colony = ColonyManager.getColony(worldIn, pos);
+            if(colony != null)
+            {
+                playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+                return true;
+            }
+        }
+        return false;
     }
 
     // =======================================================================
@@ -155,7 +184,7 @@ public class BlockHutField extends Block implements ITileEntityProvider
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new ScarecrowTileEntity();
+        return new ScarecrowTileEntity(inventoryField);
     }
     // =======================================================================
     // ===================== END of Rendering & Meta-Data ====================

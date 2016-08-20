@@ -8,6 +8,7 @@ import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
@@ -815,9 +816,9 @@ public class Colony implements IColony
      *
      * @param pos Position where the field has been placed.
      */
-    public void addNewField(BlockPos pos, int width, int length)
+    public void addNewField(BlockPos pos, int width, int length, InventoryField inventoryField)
     {
-        Field field = new Field(this, pos, width, length);
+        Field field = new Field(this, pos, width, length, inventoryField);
         addField(field);
         ColonyManager.markDirty();
     }

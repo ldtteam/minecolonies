@@ -2,12 +2,19 @@ package com.minecolonies.tileentities;
 
 import java.util.Random;
 
+import com.minecolonies.inventory.InventoryField;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 public class ScarecrowTileEntity extends TileEntity
 {
-    
+    public final InventoryField inventoryField;
+
+    public ScarecrowTileEntity(InventoryField inventoryField)
+    {
+        this.inventoryField = inventoryField;
+    }
+
     private final Random random = new Random();
     private Boolean TYPE;
     

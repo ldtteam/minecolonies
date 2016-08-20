@@ -1,15 +1,26 @@
 package com.minecolonies.colony;
 
+import com.minecolonies.inventory.InventoryField;
+import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockPumpkin;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemSeeds;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
-public class Field
+public class Field extends Container
 {
     /**
      * Tag to store the location.
@@ -77,18 +88,67 @@ public class Field
     private int width;
 
     /**
+     * The inventorySlot of the field.
+     */
+    private InventoryField inventory;
+
+    /**
      * Creates a new field object.
      * @param colony The colony the field is a part of.
      * @param location The location the field has been placed.
      * @param width The fields width.
      * @param length The fields length.
      */
-    public Field(Colony colony, BlockPos location, int width, int length)
+    public Field(Colony colony, BlockPos location, int width, int length, InventoryField inventory)
     {
         this.location = location;
         this.colony   = colony;
         this.length = length;
         this.width = width;
+        this.inventory = inventory;
+    }
+
+    public Field(InventoryField inventory, final InventoryPlayer playerInventory)
+    {
+        colony = this.getColony();
+        location = new BlockPos(0,1,2);
+
+        this.inventory = inventory;
+
+        addSlotToContainer(new Slot(inventory, 0, 80, 34));
+
+        // add player inventory slots
+        // note that the slot numbers are within the player inventory so can
+        // be same as the tile entity inventory
+        int i;
+        for (i = 0; i < 3; ++i)
+        {
+            for (int j = 0; j < 9; ++j)
+            {
+                addSlotToContainer(new Slot(playerInventory, j+i*9+9,
+                                            8+j*18, 84+i*18));
+            }
+        }
+
+        // add hotbar slots
+        for (i = 0; i < 9; ++i)
+        {
+            addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18,
+                                        142));
+        }
+    }
+
+    //todo some problem with the remove stuff
+    @Override
+    public ItemStack slotClick(final int slotId, final int clickedButton, final int mode, final EntityPlayer playerIn)
+    {
+        return super.slotClick(slotId, clickedButton, mode, playerIn);
+    }
+
+    @Override
+    protected void retrySlotClick(final int slotId, final int clickedButton, final boolean mode, final EntityPlayer playerIn)
+    {
+        super.retrySlotClick(slotId, clickedButton, mode, playerIn);
     }
 
     /**
@@ -124,7 +184,8 @@ public class Field
         Boolean free = compound.getBoolean(TAG_TAKEN);
         int localLength = compound.getInteger(TAG_LENGTH);
         int localWidth = compound.getInteger(TAG_WIDTH);
-        Field field = new Field(colony,pos,localWidth,localLength);
+        //todo what happens after shutdown?
+        Field field = new Field(colony,pos,localWidth,localLength, new InventoryField("Scarecrow ", true));
         field.setTaken(free);
         return field;
     }
@@ -217,5 +278,22 @@ public class Field
     public int getMaxRange()
     {
         return MAX_RANGE;
+    }
+
+    /**
+     * Return this citizens inventory.
+     *
+     * @return the inventory this citizen has.
+     */
+    @NotNull
+    public InventoryField getInventoryField()
+    {
+        return inventory;
+    }
+
+    @Override
+    public boolean canInteractWith(final EntityPlayer playerIn)
+    {
+        return true;
     }
 }
