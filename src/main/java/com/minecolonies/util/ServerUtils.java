@@ -12,7 +12,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
 
 /**
- * Utility for server related stuff
+ * Utility for server related stuff.
  * 
  * @author Isfirs
  * @since 0.2
@@ -55,7 +55,7 @@ public final class ServerUtils
      */
     public static List<EntityPlayer> getPlayersFromUUID(World world, Collection<UUID> ids)
     {
-        List<EntityPlayer> players = new ArrayList<>();
+        final List<EntityPlayer> players = new ArrayList<>();
 
         for (Object o : world.playerEntities)
         {
@@ -87,7 +87,7 @@ public final class ServerUtils
         {
             return null;
         }
-        List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+        final List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
         for (EntityPlayerMP player : allPlayers)
         {
             if (player.getUniqueID().equals(parUUID))
