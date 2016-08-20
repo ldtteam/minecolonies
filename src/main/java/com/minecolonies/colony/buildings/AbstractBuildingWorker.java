@@ -227,6 +227,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             return workerId;
         }
 
+        /**
+         * Sets the id of the worker.
+         * @param workerId the id to set.
+         */
+        public void setWorkerId(int workerId)
+        {
+            this.workerId = workerId;
+        }
+
         @Override
         public void deserialize(ByteBuf buf)
         {

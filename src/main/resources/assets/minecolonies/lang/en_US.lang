@@ -151,7 +151,7 @@ achievement.upgrade.builder.max.desc=What a powerfull man
 achievement.upgrade.colonist.first=The Citizen!
 achievement.upgrade.colonist.first.desc=A place to live
 achievement.upgrade.colonist.max=Prestige
-achievement.upgrade.colonist.max.desc=What a noble man 
+achievement.upgrade.colonist.max.desc=What a noble man
 
 achievement.upgrade.lumberjack.first=Just a wood cutter
 achievement.upgrade.lumberjack.first.desc=Chop chop
@@ -174,3 +174,7 @@ achievement.size.town=Town
 achievement.size.town.desc=A healthy colony
 achievement.size.city=City
 achievement.size.city.desc=The Capital
+
+
+com.minecolonies.gui.workerHuts.workOrderAdded=Construction added to build queue.
+com.minecolonies.gui.workerHuts.workOrder=Work Orders

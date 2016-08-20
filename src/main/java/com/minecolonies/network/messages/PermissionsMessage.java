@@ -84,7 +84,7 @@ public class PermissionsMessage
         }
 
         /**
-         * @see {@link Permission}
+         * {@link Permission}.
          *
          * @param colony        Colony the permission is set in
          * @param type          Type of permission {@link MessageType}
