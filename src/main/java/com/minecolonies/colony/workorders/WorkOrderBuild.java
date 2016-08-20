@@ -5,7 +5,6 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.EntityUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.ServerUtils;
 import net.minecraft.nbt.NBTTagCompound;
