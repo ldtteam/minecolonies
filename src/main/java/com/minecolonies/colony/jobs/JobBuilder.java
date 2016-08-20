@@ -109,7 +109,7 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Get the Work Order for the Job
+     * Get the Work Order for the Job.
      * Warning: WorkOrder is not cached
      *
      * @return WorkOrderBuild for the Build
