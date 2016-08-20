@@ -75,6 +75,10 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
             {
                 MineColonies.getNetwork().sendToServer(new HireFireMessage(building, false, 0));
                 button.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
+                findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText("");
+                findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
+                        .setLabelText(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", ""));
+                building.setWorkerId(0);
             }
         }
     }

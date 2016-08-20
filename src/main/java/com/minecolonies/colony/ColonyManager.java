@@ -21,7 +21,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Singleton class that links colonies to minecraft.
@@ -254,8 +253,7 @@ public final class ColonyManager
     }
 
     /**
-     * Returns the closest view
-     * @see {@link this#getColonyView(World, BlockPos)}
+     * Returns the closest view {@link #getColonyView(World, BlockPos)}.
      *
      * @param w     World
      * @param pos    Block Position
@@ -319,9 +317,8 @@ public final class ColonyManager
     /**
      * Side neutral method to get colony.
      * On clients it returns the view.
-     * On servers it returns the colony itself
-     *
-     * @see {@link this#getClosestColony(World, BlockPos)}
+     * On servers it returns the colony itself.
+     * {@link #getClosestColony(World, BlockPos)}
      *
      * @param w         World
      * @param pos        Block position
@@ -365,7 +362,7 @@ public final class ColonyManager
     }
 
     /**
-     * Returns the minimum distance between two town halls, to not make colonies collide
+     * Returns the minimum distance between two town halls, to not make colonies collide.
      *
      * @return          Minimum town hall distance
      */
@@ -376,10 +373,10 @@ public final class ColonyManager
     }
 
     /**
-     * On server tick, tick every Colony
+     * On server tick, tick every Colony.
      * NOTE: Review this for performance
      *
-     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
     public static void onServerTick(TickEvent.ServerTickEvent event)
     {
@@ -395,7 +392,7 @@ public final class ColonyManager
     }
 
     /**
-     * On Client tick, clears views when player left
+     * On Client tick, clears views when player left.
      *
      * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}
      */
@@ -409,7 +406,7 @@ public final class ColonyManager
     }
 
     /**
-     * On world tick, tick every Colony in that world
+     * On world tick, tick every Colony in that world.
      * NOTE: Review this for performance
      *
      * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
@@ -648,8 +645,8 @@ public final class ColonyManager
      */
     public static IMessage handlePermissionsViewMessage(int colonyID, ByteBuf data)
     {
-        ColonyView view = getColonyView(colonyID);
-        if(view != null)
+        final ColonyView view = getColonyView(colonyID);
+        if (view != null)
         {
             return view.handlePermissionsViewMessage(data);
         }
@@ -671,10 +668,29 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewCitizensMessage(int colonyId, int citizenId, ByteBuf buf)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             return view.handleColonyViewCitizensMessage(citizenId, buf);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)} (int, ByteBuf)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     *
+     * @param colonyId      ID of the colony
+     * @param buf           {@link ByteBuf} with colony data
+     * @return              result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)} or null
+     */
+    public static IMessage handleColonyViewWorkOrderMessage(int colonyId, ByteBuf buf)
+    {
+        final ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            return view.handleColonyViewWorkOrderMessage(buf);
         }
 
         return null;
@@ -690,7 +706,7 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewRemoveCitizenMessage(int colonyId, int citizenId)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
@@ -712,7 +728,7 @@ public final class ColonyManager
      */
     public static IMessage handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, ByteBuf buf)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             return view.handleColonyBuildingViewMessage(buildingId, buf);
@@ -734,12 +750,33 @@ public final class ColonyManager
      */
     public static IMessage handleColonyViewRemoveBuildingMessage(int colonyId, BlockPos buildingId)
     {
-        ColonyView view = getColonyView(colonyId);
+        final ColonyView view = getColonyView(colonyId);
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
             //  possible to receive a 'remove' notice before receiving the View
             return view.handleColonyViewRemoveBuildingMessage(buildingId);
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int)}
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     *
+     * @param colonyId      ID of the colony
+     * @param workOrderId    ID of the workOrder
+     * @return              result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)}  or null
+     */
+    public static IMessage handleColonyViewRemoveWorkOrderMessage(final int colonyId, final int workOrderId)
+    {
+        final ColonyView view = getColonyView(colonyId);
+        if (view != null)
+        {
+            //  Can legitimately be NULL, because (to keep the code simple and fast), it is
+            //  possible to receive a 'remove' notice before receiving the View
+            return view.handleColonyViewRemoveWorkOrderMessage(workOrderId);
         }
 
         return null;

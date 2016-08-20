@@ -136,6 +136,10 @@ entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!
 
 com.minecolonies.workOrderAdded=Build Request Created!
 
+
+com.minecolonies.gui.workerHuts.workOrderAdded=Construction added to build queue.
+com.minecolonies.gui.workerHuts.workOrder=Work Orders
+
 achievement.supply=A new start
 achievement.supply.desc=Get supplies
 achievement.wandofbuilding=Wand of Building

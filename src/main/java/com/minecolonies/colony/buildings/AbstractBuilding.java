@@ -15,6 +15,8 @@ import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.EntityUtils;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 
 import io.netty.buffer.ByteBuf;
@@ -377,7 +379,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Sets the tile entity field to {@param te}
+     * Sets the tile entity for the building.
      *
      * @param te
      *            {@link TileEntityColonyBuilding} that will fill the
@@ -509,6 +511,8 @@ public abstract class AbstractBuilding
         }
 
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
+        LanguageHandler.sendPlayersLocalizedMessage(
+                EntityUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()), "com.minecolonies.workOrderAdded");
     }
 
     /**

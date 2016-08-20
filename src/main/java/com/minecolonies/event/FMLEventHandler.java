@@ -14,8 +14,7 @@ public class FMLEventHandler
      * Called when the server ticks
      * Calls {@link ColonyManager#onServerTick(TickEvent.ServerTickEvent)}
      *
-     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent
-     * @see             {@link ColonyManager#onServerTick(TickEvent.ServerTickEvent)}
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event)
@@ -27,8 +26,7 @@ public class FMLEventHandler
      * Called when the client ticks
      * Calls {@link ColonyManager#onClientTick(TickEvent.ClientTickEvent)}
      *
-     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
-     * @see             {@link ColonyManager#onClientTick(TickEvent.ClientTickEvent)}
+     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}
      */
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event)
@@ -41,7 +39,6 @@ public class FMLEventHandler
      * Calls {@link ColonyManager#onWorldTick(TickEvent.WorldTickEvent)}
      *
      * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
-     * @see             {@link ColonyManager#onWorldTick(TickEvent.WorldTickEvent)}
      */
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event)
