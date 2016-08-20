@@ -57,7 +57,7 @@ public final class ServerUtils
     {
         final List<EntityPlayer> players = new ArrayList<>();
 
-        for (Object o : world.playerEntities)
+        for (final Object o : world.playerEntities)
         {
             if (o instanceof EntityPlayer)
             {
