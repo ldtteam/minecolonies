@@ -76,7 +76,7 @@ public final class ServerUtils
     }
 
     /**
-     * Found on <a href="http://jabelarminecraft.blogspot.de/p/minecraft-forge-172-finding-block.html">jabelarminecraft</a>
+     * Found on <a href="http://jabelarminecraft.blogspot.de/p/minecraft-forge-172-finding-block.html">jabelarminecraft</a>.
      *
      * @param parUUID
      * @return The player
