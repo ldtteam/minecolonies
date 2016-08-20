@@ -72,7 +72,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * Returns whether or not the building has a worker
+     * Returns whether or not the building has a worker.
      *
      * @return true if building has worker, otherwise false.
      */
