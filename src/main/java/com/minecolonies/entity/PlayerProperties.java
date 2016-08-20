@@ -38,7 +38,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
     @Override
     public void saveNBTData(NBTTagCompound compound)
     {
-        NBTTagCompound properties = new NBTTagCompound();
+        final NBTTagCompound properties = new NBTTagCompound();
 
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
