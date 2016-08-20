@@ -63,7 +63,7 @@ public abstract class AbstractBlockHut extends AbstractBlockMineColonies impleme
     }
 
     /**
-     * Method to return the name of the block
+     * Method to return the name of the block.
      *
      * @return Name of the block.
      */
