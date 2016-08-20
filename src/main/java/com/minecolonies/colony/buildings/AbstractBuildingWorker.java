@@ -247,7 +247,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     {
         super.serializeToView(buf);
 
-        buf.writeInt(worker != null ? worker.getId() : 0);
+        buf.writeInt(worker == null ? 0 : worker.getId());
     }
 
 }
