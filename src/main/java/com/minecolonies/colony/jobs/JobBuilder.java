@@ -21,10 +21,10 @@ public class JobBuilder extends AbstractJob
     private static final String TAG_STAGE      = "stage";
     protected SchematicWrapper schematic;
     //TODO save some of this in building
-    private   int       workOrderId;
-    private   String    schematicName;
-    private   BlockPos  schematicPos;
-    private   BlockPos  schematicProgress;
+    private   int              workOrderId;
+    private   String           schematicName;
+    private   BlockPos         schematicPos;
+    private   BlockPos         schematicProgress;
 
     public JobBuilder(CitizenData entity)
     {
@@ -124,7 +124,15 @@ public class JobBuilder extends AbstractJob
      *
      * @param order Work Order to associate with this job, or null
      */
-    public void setWorkOrder(WorkOrderBuild order) { workOrderId = (order == null) ? 0 : order.getID(); }
+    public void setWorkOrder(WorkOrderBuild order)
+    {
+        if (order == null)
+        {
+            workOrderId = 0;
+            return;
+        }
+        workOrderId = order.getID();
+    }
 
     /**
      * Does this job have a Work Order it has claimed?
@@ -163,7 +171,9 @@ public class JobBuilder extends AbstractJob
      */
     public int getWorkInterval()
     {
-        return 1;//Constants.BUILDERWORKINTERFALL - this.getLevel();//TODO
+        //TODO
+        //Constants.BUILDERWORKINTERFALL - this.getLevel();
+        return 1;
     }
 
     /**
