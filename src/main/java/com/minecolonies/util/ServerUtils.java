@@ -1,40 +1,43 @@
 package com.minecolonies.util;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.World;
-
 /**
  * Utility for server related stuff.
- * 
- * @author Isfirs
+ * <p>
+ * Here you can query players on the server.
+ *
  * @since 0.2
  */
 public final class ServerUtils
 {
 
     /**
-     * Private.
+     * Private constructor to hide the implicit public one.
      */
     private ServerUtils()
     {
     }
 
     /**
-     * Returns the online EntityPlayer with the given UUID
+     * Returns the online EntityPlayer with the given UUID.
      *
      * @param world world the player is in
      * @param id    the player's UUID
      * @return the Player
      */
-    public static EntityPlayer getPlayerFromUUID(World world, UUID id)
+    @Nullable
+    public static EntityPlayer getPlayerFromUUID(@NotNull World world, @NotNull UUID id)
     {
         for (int i = 0; i < world.playerEntities.size(); ++i)
         {
@@ -53,7 +56,8 @@ public final class ServerUtils
      * @param ids   List of UUIDs
      * @return list of EntityPlayers
      */
-    public static List<EntityPlayer> getPlayersFromUUID(World world, Collection<UUID> ids)
+    @NotNull
+    public static List<EntityPlayer> getPlayersFromUUID(@NotNull World world, @NotNull Collection<UUID> ids)
     {
         final List<EntityPlayer> players = new ArrayList<>();
 
@@ -76,21 +80,24 @@ public final class ServerUtils
     }
 
     /**
-     * Found on <a href="http://jabelarminecraft.blogspot.de/p/minecraft-forge-172-finding-block.html">jabelarminecraft</a>.
+     * Finds a player by his UUID
+     * <p>
+     * Found on <a href="http://jabelarminecraft.blogspot.de/p/minecraft-forge-172-finding-block.html">jabelarminecraft.</a>
      *
-     * @param parUUID
-     * @return The player
+     * @param uuid the uuid to search for
+     * @return The player the player if found or null
      */
-    public static EntityPlayer getPlayerFromUUID(UUID parUUID)
+    @Nullable
+    public static EntityPlayer getPlayerFromUUID(@Nullable UUID uuid)
     {
-        if (parUUID == null)
+        if (uuid == null)
         {
             return null;
         }
         final List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
         for (final EntityPlayerMP player : allPlayers)
         {
-            if (player.getUniqueID().equals(parUUID))
+            if (player.getUniqueID().equals(uuid))
             {
                 return player;
             }
