@@ -141,6 +141,45 @@ entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!
 
 com.minecolonies.workOrderAdded=Build Request Created!
 
+achievement.supply=A new start
+achievement.supply.desc=Get supplies
+achievement.wandofbuilding=Wand of Building
+achievement.wandofbuilding.desc=Be a better builder
+achievement.townhall=Found a colony
+achievement.townhall.desc=Create your own Settlement
+
+achievement.upgrade.builder.first=A construction worker
+achievement.upgrade.builder.first.desc=Build the foundation...
+achievement.upgrade.builder.max=The Builder!
+achievement.upgrade.builder.max.desc=What a powerfull man
+
+achievement.upgrade.colonist.first=The Citizen!
+achievement.upgrade.colonist.first.desc=A place to live
+achievement.upgrade.colonist.max=Prestige
+achievement.upgrade.colonist.max.desc=What a noble man
+
+achievement.upgrade.lumberjack.first=Just a wood cutter
+achievement.upgrade.lumberjack.first.desc=Chop chop
+achievement.upgrade.lumberjack.max=A real Lumberjack
+achievement.upgrade.lumberjack.max.desc=Deforestation
+
+achievement.upgrade.miner.first=A miner
+achievement.upgrade.miner.first.desc=Diggy diggy whole
+achievement.upgrade.miner.max=The diamond finder!
+achievement.upgrade.miner.max.desc=A diamond gatherer
+
+achievement.upgrade.fisher.first=A fisher man
+achievement.upgrade.fisher.first.desc=If they are too strong, you are too weak
+achievement.upgrade.fisher.max=A hunter of the ocean
+achievement.upgrade.fisher.max.desc=Moby Dick will fear him
+
+achievement.size.settlement=Settlement
+achievement.size.settlement.desc=A few lost souls
+achievement.size.town=Town
+achievement.size.town.desc=A healthy colony
+achievement.size.city=City
+achievement.size.city.desc=The Capital
+
 
 com.minecolonies.gui.workerHuts.workOrderAdded=Construction added to build queue.
 com.minecolonies.gui.workerHuts.workOrder=Work Orders
