@@ -19,14 +19,15 @@ public class BuildingFisherman extends AbstractBuildingWorker
     /**
      * The maximum upgrade of the building.
      */
-    private static final int MAX_BUILDING_LEVEL = 3;
+    private static final int    MAX_BUILDING_LEVEL = 3;
     /**
      * The job description.
      */
-    private static final String FISHERMAN     = "Fisherman";
+    private static final String FISHERMAN          = "Fisherman";
 
     /**
      * Public constructor of the building, creates an object of the building.
+     *
      * @param c the colony.
      * @param l the position.
      */
@@ -37,6 +38,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
 
     /**
      * Getter of the schematic name.
+     *
      * @return the schematic name.
      */
     @Override
@@ -47,6 +49,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
 
     /**
      * Getter of the max building level.
+     *
      * @return the integer.
      */
     @Override
@@ -57,6 +60,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
 
     /**
      * Getter of the job description.
+     *
      * @return the description of the fisherman job.
      */
     @Override
@@ -67,6 +71,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
 
     /**
      * Create the job for the fisherman.
+     *
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
@@ -77,7 +82,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
     }
 
     /**
-     * 
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -91,7 +95,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
         {
             owner.triggerAchievement(ModAchievements.achievementBuildingFisher);
         }
-        else if (newLevel >= this.getMaxBuildingLevel())
+        if (newLevel >= this.getMaxBuildingLevel())
         {
             owner.triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
         }
@@ -104,6 +108,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
     {
         /**
          * Public constructor of the view, creates an instance of it.
+         *
          * @param c the colony.
          * @param l the position.
          */
@@ -114,6 +119,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
 
         /**
          * Gets the blockOut Window.
+         *
          * @return the window of the fisherman building.
          */
         @Override

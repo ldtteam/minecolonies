@@ -6,7 +6,6 @@ import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.util.ServerUtils;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -100,8 +99,7 @@ public class BuildingHome extends AbstractBuildingHut
     /**
      * Adds the citizen to the building
      *
-     * @param citizen
-     *            Citizen to add
+     * @param citizen Citizen to add
      */
     private void addResident(CitizenData citizen)
     {
@@ -124,8 +122,7 @@ public class BuildingHome extends AbstractBuildingHut
     /**
      * Returns whether the citizen has this as home or not
      *
-     * @param citizen
-     *            Citizen to check
+     * @param citizen Citizen to check
      * @return True if citizen lives here, otherwise false
      */
     public boolean hasResident(CitizenData citizen)
@@ -180,7 +177,7 @@ public class BuildingHome extends AbstractBuildingHut
         {
             owner.triggerAchievement(ModAchievements.achievementBuildingColonist);
         }
-        else if (newLevel >= this.getMaxBuildingLevel())
+        if (newLevel >= this.getMaxBuildingLevel())
         {
             owner.triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
         }

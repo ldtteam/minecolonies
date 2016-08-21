@@ -8,7 +8,6 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.util.ServerUtils;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 
@@ -20,7 +19,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     /**
      * The maximum upgrade of the building.
      */
-    private static final int MAX_BUILDING_LEVEL = 3;
+    private static final int    MAX_BUILDING_LEVEL  = 3;
     /**
      * The job description.
      */
@@ -32,6 +31,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
     /**
      * Public constructor of the building, creates an object of the building.
+     *
      * @param c the colony.
      * @param l the position.
      */
@@ -42,6 +42,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
     /**
      * Getter of the schematic name.
+     *
      * @return the schematic name.
      */
     @Override
@@ -52,6 +53,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
     /**
      * Getter of the max building level.
+     *
      * @return the integer.
      */
     @Override
@@ -62,6 +64,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
     /**
      * Getter of the job description.
+     *
      * @return the description of the lumberjacks job.
      */
     @Override
@@ -72,6 +75,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
     /**
      * Create the job for the lumberjack.
+     *
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
@@ -82,7 +86,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
-     * 
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -96,7 +99,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             owner.triggerAchievement(ModAchievements.achievementBuildingLumberjack);
         }
-        else if (newLevel >= this.getMaxBuildingLevel())
+        if (newLevel >= this.getMaxBuildingLevel())
         {
             owner.triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
         }
@@ -109,6 +112,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     {
         /**
          * Public constructor of the view, creates an instance of it.
+         *
          * @param c the colony.
          * @param l the position.
          */
@@ -119,6 +123,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         /**
          * Gets the blockOut Window.
+         *
          * @return the window of the lumberjack building.
          */
         public com.blockout.views.Window getWindow()
@@ -126,5 +131,4 @@ public class BuildingLumberjack extends AbstractBuildingWorker
             return new WindowHutWorkerPlaceholder<>(this, LUMBERJACK_HUT_NAME);
         }
     }
-
 }

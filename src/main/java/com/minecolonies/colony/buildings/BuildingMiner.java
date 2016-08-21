@@ -10,7 +10,6 @@ import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.citizen.miner.Level;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.ServerUtils;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,59 +30,59 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * The NBT Tag to store the floorBlock
      */
-    private static final    String              TAG_FLOOR_BLOCK         = "floorBlock";
+    private static final String TAG_FLOOR_BLOCK    = "floorBlock";
     /**
      * The NBT Tag to store the fenceBlock
      */
-    private static final    String              TAG_FENCE_BLOCK         = "fenceBlock";
+    private static final String TAG_FENCE_BLOCK    = "fenceBlock";
     /**
      * The NBT Tag to store the starting level of the shaft.
      */
-    private static final    String              TAG_STARTING_LEVEL      = "startingLevelShaft";
+    private static final String TAG_STARTING_LEVEL = "startingLevelShaft";
     /**
      * The NBT Tag to store list of levels.
      */
-    private static final    String              TAG_LEVELS              = "levels";
+    private static final String TAG_LEVELS         = "levels";
     /**
      * The NBT Tag to store if the shaft has been cleared.
      */
-    private static final    String              TAG_CLEARED             = "clearedShaft";
+    private static final String TAG_CLEARED        = "clearedShaft";
     /**
      * The NBT Tag to store the location of the shaft.
      */
-    private static final    String              TAG_SLOCATION           = "shaftLocation";
+    private static final String TAG_SLOCATION      = "shaftLocation";
     /**
      * The NBT Tag to store the vector-x of the shaft
      */
-    private static final    String              TAG_VECTORX             = "vectorx";
+    private static final String TAG_VECTORX        = "vectorx";
     /**
      * The NBT Tag to store the vector-z of the shaft
      */
-    private static final    String              TAG_VECTORZ             = "vectorz";
+    private static final String TAG_VECTORZ        = "vectorz";
     /**
      * The NBT Tag to store the location of the cobblestone at the shaft.
      */
-    private static final    String              TAG_CLOCATION           = "cobblelocation";
+    private static final String TAG_CLOCATION      = "cobblelocation";
     /**
      * The NBT Tag to store the active node the miner is working on.
      */
-    private static final    String              TAG_ACTIVE              = "activeNodeint";
+    private static final String TAG_ACTIVE         = "activeNodeint";
     /**
      * The NBT Tag to store the current level the miner is working in.
      */
-    private static final    String              TAG_CURRENT_LEVEL       = "currentLevel";
+    private static final String TAG_CURRENT_LEVEL  = "currentLevel";
     /**
      * The NBT Tag to store the starting node.
      */
-    private static final    String              TAG_SN                  = "StartingNode";
+    private static final String TAG_SN             = "StartingNode";
     /**
      * The NBT Tag to store the location of the ladder.
      */
-    private static final    String              TAG_LLOCATION           = "ladderlocation";
+    private static final String TAG_LLOCATION      = "ladderlocation";
     /**
      * The NBT Tag to store if a ladder has been found yet.
      */
-    private static final    String              TAG_LADDER              = "found_ladder";
+    private static final String TAG_LADDER         = "found_ladder";
 
     /**
      * Defines the material used for the floor of the shaft.
@@ -116,11 +115,11 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * The id of the active node.
      */
-    private int active = 0;
+    private int active            = 0;
     /**
      * The number of the current level.
      */
-    private int currentLevel = 0;
+    private int currentLevel      = 0;
     /**
      * The position of the start of the shaft.
      */
@@ -154,11 +153,11 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * The maximum upgrade of the building.
      */
-    private static final int MAX_BUILDING_LEVEL = 3;
+    private static final int    MAX_BUILDING_LEVEL = 3;
     /**
      * The job description.
      */
-    private static final String MINER          = "Miner";
+    private static final String MINER              = "Miner";
 
     /**
      * Required constructor.
@@ -173,6 +172,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Getter of the schematic name.
+     *
      * @return the schematic name.
      */
     @Override
@@ -183,6 +183,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Getter of the max building level.
+     *
      * @return the integer.
      */
     @Override
@@ -193,6 +194,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Getter of the job description.
+     *
      * @return the description of the miners job.
      */
     @Override
@@ -203,6 +205,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Create the job for the miner.
+     *
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
@@ -248,6 +251,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Method to serialize data to send it to the view.
+     *
      * @param buf the used ByteBuffer.
      */
     @Override
@@ -266,10 +270,10 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Returns the depth limit
      * Limitted by building level
-     *      - Level 1: 50
-     *      - Level 2: 30
-     *      - Level 3: 5
-
+     * - Level 1: 50
+     * - Level 2: 30
+     * - Level 3: 5
+     *
      * @return Depth limit
      */
     public int getDepthLimit()
@@ -292,6 +296,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Getter of the ladderLocation.
+     *
      * @return the ladder location.
      */
     public BlockPos getLadderLocation()
@@ -301,6 +306,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Setter of the ladder location.
+     *
      * @param ladderLocation the new ladder location.
      */
     public void setLadderLocation(BlockPos ladderLocation)
@@ -310,6 +316,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Checks if a ladder has been found already.
+     *
      * @return true if so.
      */
     public boolean hasFoundLadder()
@@ -319,6 +326,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Setter for the foundLadder.
+     *
      * @param foundLadder the boolean.
      */
     public void setFoundLadder(boolean foundLadder)
@@ -328,6 +336,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Getter of the X-vector.
+     *
      * @return the vectorX.
      */
     public int getVectorX()
@@ -337,6 +346,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Getter of the Z-vector.
+     *
      * @return the vectorZ.
      */
     public int getVectorZ()
@@ -346,6 +356,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Setter of the X-vector.
+     *
      * @param vectorX the vector to set +1 or -1.
      */
     public void setVectorX(int vectorX)
@@ -355,6 +366,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Setter of the Z-vector.
+     *
      * @param vectorZ the vector to set +1 or -1.
      */
     public void setVectorZ(int vectorZ)
@@ -364,6 +376,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Getter of the cobbleLocation.
+     *
      * @return the location.
      */
     public BlockPos getCobbleLocation()
@@ -373,6 +386,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Setter for the cobbleLocation.
+     *
      * @param pos the location to set.
      */
     public void setCobbleLocation(BlockPos pos)
@@ -382,6 +396,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Setter of the shaftStart.
+     *
      * @param pos the location.
      */
     public void setShaftStart(BlockPos pos)
@@ -391,6 +406,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Getter of the starting level of the shaft.
+     *
      * @return the start level.
      */
     public int getStartingLevelShaft()
@@ -416,6 +432,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Sets the current level the miner is at.
+     *
      * @param currentLevel the level to set.
      */
     public void setCurrentLevel(int currentLevel)
@@ -425,6 +442,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Getter of the floor block.
+     *
      * @return the material of the floor block.
      */
     public Block getFloorBlock()
@@ -434,6 +452,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Getter of the fence block.
+     *
      * @return the material of the fence block.
      */
     public Block getFenceBlock()
@@ -443,6 +462,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Writes the information to NBT to store it permanently.
+     *
      * @param compound the compound key.
      */
     @Override
@@ -484,6 +504,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
     /**
      * Reads the information from NBT from permanent storage.
+     *
      * @param compound the compound key.
      */
     @Override
@@ -540,7 +561,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         {
             owner.triggerAchievement(ModAchievements.achievementBuildingMiner);
         }
-        else if (newLevel >= this.getMaxBuildingLevel())
+        if (newLevel >= this.getMaxBuildingLevel())
         {
             owner.triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
         }
@@ -556,6 +577,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
         /**
          * Public constructor of the view, creates an instance of it.
+         *
          * @param c the colony.
          * @param l the position.
          */
@@ -566,6 +588,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
         /**
          * Gets the blockOut Window.
+         *
          * @return the window of the lumberjack building.
          */
         @Override
@@ -576,6 +599,7 @@ public class BuildingMiner extends AbstractBuildingWorker
 
         /**
          * Deserializes the information the building class sent to store it in the view.
+         *
          * @param buf the buffer to read from.
          */
         @Override
