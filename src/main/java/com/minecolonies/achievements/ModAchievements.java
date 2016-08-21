@@ -10,7 +10,6 @@ import net.minecraftforge.common.AchievementPage;
 /**
  * Achievement collection.
  *
- * @author Isfirs
  * @since 0.2
  */
 public final class ModAchievements {

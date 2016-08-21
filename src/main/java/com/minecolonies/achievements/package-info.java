@@ -8,7 +8,6 @@
  *
  * and a collection of achievements in {@link com.minecolonies.achievements.ModAchievements}
  *
- * @author Isfirs
  * @since 0.2
  */
 package com.minecolonies.achievements;
