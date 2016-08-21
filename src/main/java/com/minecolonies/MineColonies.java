@@ -1,5 +1,6 @@
 package com.minecolonies;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.configuration.Configurations;
@@ -7,6 +8,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
 import com.minecolonies.util.RecipeHandler;
+import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -90,6 +92,8 @@ public class MineColonies
         proxy.registerRenderer();
 
         Schematics.init();
+        
+        ModAchievements.init();
     }
 
     private static synchronized void initializeNetwork()

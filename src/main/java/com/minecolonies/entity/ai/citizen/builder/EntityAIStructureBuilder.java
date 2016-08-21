@@ -137,7 +137,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (wo instanceof WorkOrderBuildDecoration)
             {
-                LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
+                LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
                                                             "entity.builder.messageBuildStart",
                                                             job.getSchematic().getName());
 
@@ -158,7 +158,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     return this.getState();
                 }
 
-                LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
+                LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
                                                             "entity.builder.messageBuildStart",
                                                             job.getSchematic().getName());
 
@@ -789,7 +789,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         job.getSchematic().getEntities().forEach(this::spawnEntity);
 
         String schematicName = job.getSchematic().getName();
-        LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
+        LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
                                                     "entity.builder.messageBuildComplete",
                                                     schematicName);
 

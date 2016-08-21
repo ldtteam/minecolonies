@@ -5,8 +5,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.EntityUtils;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.ServerUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
@@ -190,7 +190,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         if (sendMessage && !hasSentMessageForThisWorkOrder)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
+            LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
                                                         "entity.builder.messageBuilderNecessary", this.upgradeLevel);
         }
     }

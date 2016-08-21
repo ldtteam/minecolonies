@@ -26,7 +26,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Abstract class for all minecolonies blocks.
+ * <p>
  * The method {@link AbstractBlockHut#getName()} is abstract
+ * <p>
  * All AbstractBlockHut[something] should extend this class
  */
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
@@ -41,6 +43,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 
     /**
      * Constructor for a block using the minecolonies mod.
+     * <p>
      * Registers the block, sets the creative tab, as well as the resistance and the hardness.
      */
     public AbstractBlockHut()
@@ -63,30 +66,44 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     /**
-     * Method to return the name of the block
+     * Method to return the name of the block.
      *
      * @return Name of the block.
      */
     public abstract String getName();
 
+    /**
+     * Event-Handler for placement of this block.
+     * <p>
+     * Override for custom logic.
+     *
+     * @param worldIn the word we are in
+     * @param pos     the position where the block was placed
+     * @param state   the state the placed block is in
+     * @param placer  the player placing the block
+     * @param stack   the itemstack from where the block was placed
+     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
+     */
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+        
         /*
         Only work on server side
         */
-        if(worldIn.isRemote)
+        if (worldIn.isRemote)
         {
             return;
         }
 
-        TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if(placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
+        final TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
-            TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-            Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
+            final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
+            final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
 
-            if(colony != null)
+            if (colony != null)
             {
                 colony.addNewBuilding(hut);
             }
@@ -99,11 +116,11 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         /*
         If the world is client, open the gui of the building
          */
-        if(worldIn.isRemote)
+        if (worldIn.isRemote)
         {
-            AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
+            final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
 
-            if(building != null)
+            if (building != null)
             {
                 building.openGui();
             }
@@ -126,13 +143,13 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
-        EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+        final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
     // render as a solid block, we don't want transparency here
     @Override
-    @SideOnly(Side.CLIENT)
+    @SideOnly (Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer()
     {
         return EnumWorldBlockLayer.SOLID;
@@ -142,7 +159,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     public IBlockState getStateFromMeta(int meta)
     {
         EnumFacing facing = EnumFacing.getFront(meta);
-        if(facing.getAxis() == EnumFacing.Axis.Y)
+        if (facing.getAxis() == EnumFacing.Axis.Y)
         {
             facing = EnumFacing.NORTH;
         }

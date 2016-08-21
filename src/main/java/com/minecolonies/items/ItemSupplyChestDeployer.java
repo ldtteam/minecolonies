@@ -1,5 +1,6 @@
 package com.minecolonies.items;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
@@ -85,6 +86,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         {
             spawnShip(worldIn, pos, playerIn, facing);
             stack.stackSize--;
+            
+            playerIn.triggerAchievement(ModAchievements.achievementGetSupply);
+            
             return true;
         }
         LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.supplyChestDeployer.invalid");
@@ -205,7 +209,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).getHasPlacedSupplyChest())
+        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest())
             return true;
         LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.error.supplyChestAlreadyPlaced");
         return false;
