@@ -270,9 +270,11 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Returns the depth limit
      * Limitted by building level
+     * <pre>
      * - Level 1: 50
      * - Level 2: 30
      * - Level 3: 5
+     * </pre>
      *
      * @return Depth limit
      */
