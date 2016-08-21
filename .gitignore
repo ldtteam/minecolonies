@@ -1,12 +1,12 @@
-.idea/*
-.gradle/*
-classes/*
-build/*
-eclipse/*
-logs/*
-mods/*
-out/*
-run/*
+.idea/
+.gradle/
+classes/
+build/
+eclipse/
+logs/
+mods/
+out/
+run/
 *.iml
 *.ipr
 *.iws
@@ -33,6 +33,6 @@ README.txt
 /MineColonies_Client.launch
 /MineColonies_Server.launch
 
-# Old launcher
+# Old launcher (different case)
 /minecolonies_Client.launch
 /minecolonies_Server.launch
