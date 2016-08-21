@@ -31,7 +31,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * <p>
  * All AbstractBlockHut[something] should extend this class
  */
-public abstract class AbstractBlockHut extends AbstractBlockMineColonies implements ITileEntityProvider
+public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
 
     protected int workingRange;
