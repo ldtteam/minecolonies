@@ -92,18 +92,18 @@ public abstract class AbstractBlockHut extends AbstractBlockMineColonies impleme
         /*
         Only work on server side
         */
-        if(worldIn.isRemote)
+        if (worldIn.isRemote)
         {
             return;
         }
 
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if(placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
+        if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
             final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
             final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
 
-            if(colony != null)
+            if (colony != null)
             {
                 colony.addNewBuilding(hut);
             }
@@ -116,11 +116,11 @@ public abstract class AbstractBlockHut extends AbstractBlockMineColonies impleme
         /*
         If the world is client, open the gui of the building
          */
-        if(worldIn.isRemote)
+        if (worldIn.isRemote)
         {
             final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
 
-            if(building != null)
+            if (building != null)
             {
                 building.openGui();
             }
@@ -149,7 +149,7 @@ public abstract class AbstractBlockHut extends AbstractBlockMineColonies impleme
 
     // render as a solid block, we don't want transparency here
     @Override
-    @SideOnly(Side.CLIENT)
+    @SideOnly (Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer()
     {
         return EnumWorldBlockLayer.SOLID;
@@ -159,7 +159,7 @@ public abstract class AbstractBlockHut extends AbstractBlockMineColonies impleme
     public IBlockState getStateFromMeta(int meta)
     {
         EnumFacing facing = EnumFacing.getFront(meta);
-        if(facing.getAxis() == EnumFacing.Axis.Y)
+        if (facing.getAxis() == EnumFacing.Axis.Y)
         {
             facing = EnumFacing.NORTH;
         }
