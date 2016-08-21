@@ -6,58 +6,53 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 
 /**
- * A subclass for this mod.
+ * This class is the superclass of all our achievements.
+ * <p>
+ * Constructors exist to make creating achievements easy.
  *
- * May contain custom logic for achievements.
- *
- * @author Isfirs
  * @since 0.2
  */
-public class MineColoniesAchievement extends Achievement
-{
+public class MineColoniesAchievement extends Achievement {
 
     /**
-     * Inherit parent constructor.
-     * 
-     * @param id
-     * @param name
-     * @param offsetX
-     * @param offsetY
-     * @param itemIcon
-     * @param parent
+     * Create a new Achievement.
+     *
+     * @param id       the unique id this achievement should have
+     * @param name     the visible name this achievement should have
+     * @param offsetX  X position placement on the board
+     * @param offsetY  Y position placement on the board
+     * @param itemIcon The icon to show
+     * @param parent   the parent achievement
      */
-    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final Item itemIcon, final Achievement parent)
-    {
+    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final Item itemIcon, final Achievement parent) {
         super(id, name, offsetX, offsetY, itemIcon, parent);
     }
 
     /**
-     * Parent constructor.
-     * 
-     * @param id
-     * @param name
-     * @param offsetX
-     * @param offsetY
-     * @param blockIcon
-     * @param parent
+     * Create a new Achievement.
+     *
+     * @param id        the unique id this achievement should have
+     * @param name      the visible name this achievement should have
+     * @param offsetX   X position placement on the board
+     * @param offsetY   Y position placement on the board
+     * @param blockIcon The icon to show
+     * @param parent    the parent achievement
      */
-    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final Block blockIcon, final Achievement parent)
-    {
+    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final Block blockIcon, final Achievement parent) {
         super(id, name, offsetX, offsetY, blockIcon, parent);
     }
 
     /**
-     * Parent constructor.
-     * 
-     * @param id
-     * @param name
-     * @param offsetX
-     * @param offsetY
-     * @param itemStackIcon
-     * @param parent
+     * Create a new Achievement.
+     *
+     * @param id            the unique id this achievement should have
+     * @param name          the visible name this achievement should have
+     * @param offsetX       X position placement on the board
+     * @param offsetY       Y position placement on the board
+     * @param itemStackIcon The icon to show
+     * @param parent        the parent achievement
      */
-    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final ItemStack itemStackIcon, final Achievement parent)
-    {
+    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final ItemStack itemStackIcon, final Achievement parent) {
         super(id, name, offsetX, offsetY, itemStackIcon, parent);
     }
 }
