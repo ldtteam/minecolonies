@@ -1,13 +1,14 @@
 package com.minecolonies.inventory;
 
-
 import com.minecolonies.colony.Field;
 import com.minecolonies.lib.Constants;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -27,9 +28,9 @@ public class GuiField extends GuiContainer
      * @param parInventoryPlayer the player inventory.
      * @param fieldInventory the field inventory.
      */
-    protected GuiField(InventoryPlayer parInventoryPlayer, IInventory fieldInventory)
+    protected GuiField(InventoryPlayer parInventoryPlayer, IInventory fieldInventory, World world, BlockPos location)
     {
-        super(new Field((InventoryField) fieldInventory, parInventoryPlayer));
+        super(new Field((InventoryField) fieldInventory, parInventoryPlayer, world, location));
     }
 
     /**

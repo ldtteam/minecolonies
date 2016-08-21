@@ -1,5 +1,6 @@
 package com.minecolonies.colony;
 
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +11,7 @@ import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 public class Field extends Container
@@ -109,10 +111,10 @@ public class Field extends Container
         this.inventory = inventory;
     }
 
-    public Field(InventoryField inventory, final InventoryPlayer playerInventory)
+    public Field(InventoryField inventory, final InventoryPlayer playerInventory, World world, BlockPos location)
     {
-        colony = this.getColony();
-        location = new BlockPos(0,1,2);
+        this.colony = ColonyManager.getColony(world,location);
+        this.location = location;
 
         this.inventory = inventory;
 
@@ -295,7 +297,7 @@ public class Field extends Container
     @Override
     public boolean canInteractWith(final EntityPlayer playerIn)
     {
-        return true;
+        return getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS);
     }
 
     @Override
@@ -312,6 +314,10 @@ public class Field extends Container
             if(playerIn.inventory.getStackInSlot(playerIndex) != null)
             {
                 inventory.setInventorySlotContents(0, playerIn.inventory.getStackInSlot(playerIndex).splitStack(1));
+                if(playerIn.inventory.getStackInSlot(playerIndex).stackSize == 0)
+                {
+                    playerIn.inventory.removeStackFromSlot(playerIndex);
+                }
             }
         }
 
