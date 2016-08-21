@@ -4,24 +4,21 @@ import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
 
 /**
- * A sublcass for this mod.
+ * This class is the superclass of our achievement pages.
+ * <p>
+ * Constructors exist to make creating new achievement pages easy.
  *
- * May contain page logic.
- *
- * @author Isfirs
  * @since 0.2
  */
-public class MineColoniesAchievementPage extends AchievementPage
-{
+public class MineColoniesAchievementPage extends AchievementPage {
 
     /**
-     * {@inheritDoc}
+     * Create a new achievement page.
      *
-     * @param name
-     * @param achievements
+     * @param name         The name this page should have
+     * @param achievements A list of achievements to display
      */
-    public MineColoniesAchievementPage(final String name, final Achievement... achievements)
-    {
+    public MineColoniesAchievementPage(final String name, final Achievement... achievements) {
         super(name, achievements);
     }
 }
