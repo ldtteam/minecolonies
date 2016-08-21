@@ -10,6 +10,7 @@ import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.Nullable;
 
 public class JobBuilder extends AbstractJob
 {
@@ -124,14 +125,16 @@ public class JobBuilder extends AbstractJob
      *
      * @param order Work Order to associate with this job, or null
      */
-    public void setWorkOrder(WorkOrderBuild order)
+    public void setWorkOrder(@Nullable WorkOrderBuild order)
     {
         if (order == null)
         {
             workOrderId = 0;
-            return;
         }
-        workOrderId = order.getID();
+        else
+        {
+            workOrderId = order.getID();
+        }
     }
 
     /**
