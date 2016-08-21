@@ -1,14 +1,5 @@
 package com.minecolonies.colony;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.minecolonies.MineColonies;
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.buildings.AbstractBuilding;
@@ -21,13 +12,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Log;
-import com.minecolonies.util.MathUtils;
-import com.minecolonies.util.ServerUtils;
-import com.minecolonies.util.Utils;
-
+import com.minecolonies.util.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -38,6 +23,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * This class describes a colony and contains all the data and methods for manipulating a Colony.
@@ -50,16 +39,16 @@ public class Colony implements IColony
     private World world = null;
 
     //  Updates and Subscriptions
-    private Set<EntityPlayerMP> subscribers = new HashSet<>();
-    private boolean isDirty = false;
-    private boolean isCitizensDirty = false;
-    private boolean isBuildingsDirty = false;
-    private boolean manualHiring = false;
+    private Set<EntityPlayerMP> subscribers      = new HashSet<>();
+    private boolean             isDirty          = false;
+    private boolean             isCitizensDirty  = false;
+    private boolean             isBuildingsDirty = false;
+    private boolean             manualHiring     = false;
 
     //  General Attributes
     private String name = "ERROR(Wasn't placed by player)";
-    private final int dimensionId;
-    private BlockPos center;
+    private final int      dimensionId;
+    private       BlockPos center;
 
     //  Administration/permissions
     private Permissions permissions = new Permissions();
@@ -70,9 +59,9 @@ public class Colony implements IColony
     private Map<BlockPos, AbstractBuilding> buildings = new HashMap<>();
 
     //  Citizenry
-    private Map<Integer, CitizenData> citizens = new HashMap<>();
-    private int topCitizenId = 0;
-    private int maxCitizens = Configurations.maxCitizens;
+    private Map<Integer, CitizenData> citizens     = new HashMap<>();
+    private int                       topCitizenId = 0;
+    private int                       maxCitizens  = Configurations.maxCitizens;
 
     //  Settings
     private static final int CITIZEN_CLEANUP_TICK_INCREMENT = 5 * 20;
@@ -82,14 +71,14 @@ public class Colony implements IColony
 
     private final MaterialSystem materialSystem = new MaterialSystem();
 
-    private static final String TAG_ID = "id";
-    private static final String TAG_NAME = "name";
-    private static final String TAG_DIMENSION = "dimension";
-    private static final String TAG_CENTER = "center";
-    private static final String TAG_MAX_CITIZENS = "maxCitizens";
-    private static final String TAG_BUILDINGS = "buildings";
-    private static final String TAG_CITIZENS = "citizens";
-    private static final String TAG_WORK = "work";
+    private static final String TAG_ID            = "id";
+    private static final String TAG_NAME          = "name";
+    private static final String TAG_DIMENSION     = "dimension";
+    private static final String TAG_CENTER        = "center";
+    private static final String TAG_MAX_CITIZENS  = "maxCitizens";
+    private static final String TAG_BUILDINGS     = "buildings";
+    private static final String TAG_CITIZENS      = "citizens";
+    private static final String TAG_WORK          = "work";
     private static final String TAG_MANUAL_HIRING = "manualHiring";
 
     /**
@@ -121,8 +110,8 @@ public class Colony implements IColony
     /**
      * Load a saved colony
      *
-     * @param compound  The NBT compound containing the colony's data.
-     * @return          loaded colony.
+     * @param compound The NBT compound containing the colony's data.
+     * @return loaded colony.
      */
     public static Colony loadColony(NBTTagCompound compound)
     {
@@ -136,7 +125,7 @@ public class Colony implements IColony
     /**
      * Read colony from saved data
      *
-     * @param compound  compount to read from
+     * @param compound compount to read from
      */
     private void readFromNBT(NBTTagCompound compound)
     {
@@ -151,7 +140,7 @@ public class Colony implements IColony
 
         //  Citizens before Buildings, because Buildings track the Citizens
         NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < citizenTagList.tagCount(); ++i)
+        for(int i = 0; i < citizenTagList.tagCount(); ++i)
         {
             NBTTagCompound citizenCompound = citizenTagList.getCompoundTagAt(i);
             CitizenData data = CitizenData.createFromNBT(citizenCompound, this);
@@ -161,11 +150,11 @@ public class Colony implements IColony
 
         //  Buildings
         NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
-        for (int i = 0; i < buildingTagList.tagCount(); ++i)
+        for(int i = 0; i < buildingTagList.tagCount(); ++i)
         {
             NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
             AbstractBuilding b = AbstractBuilding.createFromNBT(this, buildingCompound);
-            if (b != null)
+            if(b != null)
             {
                 addBuilding(b);
             }
@@ -178,7 +167,7 @@ public class Colony implements IColony
     /**
      * Write colony to save data.
      *
-     * @param compound  compound to write to.
+     * @param compound compound to write to.
      */
     protected void writeToNBT(NBTTagCompound compound)
     {
@@ -190,7 +179,7 @@ public class Colony implements IColony
         compound.setString(TAG_NAME, name);
         BlockPosUtil.writeToNBT(compound, TAG_CENTER, center);
 
-        compound.setBoolean(TAG_MANUAL_HIRING,manualHiring);
+        compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
         // Permissions
@@ -198,7 +187,7 @@ public class Colony implements IColony
 
         //  Buildings
         NBTTagList buildingTagList = new NBTTagList();
-        for (AbstractBuilding b : buildings.values())
+        for(AbstractBuilding b : buildings.values())
         {
             NBTTagCompound buildingCompound = new NBTTagCompound();
             b.writeToNBT(buildingCompound);
@@ -208,7 +197,7 @@ public class Colony implements IColony
 
         //  Citizens
         NBTTagList citizenTagList = new NBTTagList();
-        for (CitizenData citizen : citizens.values())
+        for(CitizenData citizen : citizens.values())
         {
             NBTTagCompound citizenCompound = new NBTTagCompound();
             citizen.writeToNBT(citizenCompound);
@@ -225,7 +214,7 @@ public class Colony implements IColony
     /**
      * Returns the ID of the colony.
      *
-     * @return      Colony ID.
+     * @return Colony ID.
      */
     public int getID()
     {
@@ -235,7 +224,7 @@ public class Colony implements IColony
     /**
      * Returns the dimension ID.
      *
-     * @return      Dimension ID.
+     * @return Dimension ID.
      */
     public int getDimensionId()
     {
@@ -245,7 +234,7 @@ public class Colony implements IColony
     /**
      * Returns the world the colony is in.
      *
-     * @return      World the colony is in.
+     * @return World the colony is in.
      */
     public World getWorld()
     {
@@ -262,7 +251,7 @@ public class Colony implements IColony
      * Sets the name of the colony.
      * Marks dirty.
      *
-     * @param n     new name.
+     * @param n new name.
      */
     public void setName(String n)
     {
@@ -273,7 +262,7 @@ public class Colony implements IColony
     /**
      * Returns the center of the colony.
      *
-     * @return      Chunk Coordinates of the center of the colony.
+     * @return Chunk Coordinates of the center of the colony.
      */
     public BlockPos getCenter()
     {
@@ -328,11 +317,11 @@ public class Colony implements IColony
     /**
      * When the Colony's world is loaded, associate with it.
      *
-     * @param w     World object.
+     * @param w World object.
      */
     public void onWorldLoad(World w)
     {
-        if (w.provider.getDimensionId() == dimensionId)
+        if(w.provider.getDimensionId() == dimensionId)
         {
             world = w;
         }
@@ -341,11 +330,11 @@ public class Colony implements IColony
     /**
      * Unsets the world if the world unloads.
      *
-     * @param w     World object.
+     * @param w World object.
      */
     public void onWorldUnload(World w)
     {
-        if (!w.equals(world))
+        if(!w.equals(world))
         {
             throw new IllegalStateException("Colony's world does not match the event.");
         }
@@ -356,16 +345,16 @@ public class Colony implements IColony
     /**
      * Any per-server-tick logic should be performed here.
      *
-     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
+     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
     public void onServerTick(TickEvent.ServerTickEvent event)
     {
-        for (AbstractBuilding b : buildings.values())
+        for(AbstractBuilding b : buildings.values())
         {
             b.onServerTick(event);
         }
 
-        if (event.phase == TickEvent.Phase.END)
+        if(event.phase == TickEvent.Phase.END)
         {
             updateSubscribers();
         }
@@ -376,16 +365,16 @@ public class Colony implements IColony
      * NOTE: If the Colony's world isn't loaded, it won't have a world tick.
      * Use onServerTick for logic that should _always_ run.
      *
-     * @param event     {@link TickEvent.WorldTickEvent}
+     * @param event {@link TickEvent.WorldTickEvent}
      */
     public void onWorldTick(TickEvent.WorldTickEvent event)
     {
-        if (event.world != getWorld())
+        if(event.world != getWorld())
         {
             throw new IllegalStateException("Colony's world does not match the event.");
         }
 
-        if (event.phase == TickEvent.Phase.START)
+        if(event.phase == TickEvent.Phase.START)
         {
             //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
             //  Consider handing this in an ChunkUnload Event instead?
@@ -397,7 +386,7 @@ public class Colony implements IColony
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if ((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event))
+            if((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event))
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
@@ -412,12 +401,12 @@ public class Colony implements IColony
             cleanUpBuildings(event);
 
             //  Spawn Citizens
-            if (townHall != null && citizens.size() < maxCitizens)
+            if(townHall != null && citizens.size() < maxCitizens)
             {
                 int respawnInterval = Configurations.citizenRespawnInterval * 20;
                 respawnInterval -= (60 * townHall.getBuildingLevel());
 
-                if (event.world.getWorldTime() % respawnInterval == 0)
+                if(event.world.getWorldTime() % respawnInterval == 0)
                 {
                     spawnCitizen();
                 }
@@ -425,7 +414,7 @@ public class Colony implements IColony
         }
 
         //  Tick Buildings
-        for (AbstractBuilding building : buildings.values())
+        for(AbstractBuilding building : buildings.values())
         {
             building.onWorldTick(event);
         }
@@ -451,22 +440,22 @@ public class Colony implements IColony
                         .collect(Collectors.toList()));
 
         //  Add nearby players
-        if (world != null)
+        if(world != null)
         {
-            for (EntityPlayer o : world.playerEntities)
+            for(EntityPlayer o : world.playerEntities)
             {
-                if (o instanceof EntityPlayerMP)
+                if(o instanceof EntityPlayerMP)
                 {
-                    EntityPlayerMP player = (EntityPlayerMP)o;
+                    EntityPlayerMP player = (EntityPlayerMP) o;
 
-                    if (subscribers.contains(player))
+                    if(subscribers.contains(player))
                     {
                         //  Already a subscriber
                         continue;
                     }
 
                     double distance = player.getDistanceSq(center);
-                    if (distance < MathUtils.square(Configurations.workingRangeTownHall + 16D) ||
+                    if(distance < MathUtils.square(Configurations.workingRangeTownHall + 16D) ||
                             (oldSubscribers.contains(player) && distance < MathUtils.square(Configurations.workingRangeTownHall * 2D)))
                     {
                         // Players become subscribers if they come within 16 blocks of the edge of the colony
@@ -477,7 +466,7 @@ public class Colony implements IColony
             }
         }
 
-        if (!subscribers.isEmpty())
+        if(!subscribers.isEmpty())
         {
             //  Determine if any new subscribers were added this pass
             boolean hasNewSubscribers = hasNewSubscribers(oldSubscribers, subscribers);
@@ -513,20 +502,21 @@ public class Colony implements IColony
 
     /**
      * Sends packages to update the buildings.
-     * @param oldSubscribers the existing subscribers.
+     *
+     * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      */
     private void sendBuildingPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
-        if (isBuildingsDirty || hasNewSubscribers)
+        if(isBuildingsDirty || hasNewSubscribers)
         {
-            for (AbstractBuilding building : buildings.values())
+            for(AbstractBuilding building : buildings.values())
             {
-                if (building.isDirty() || hasNewSubscribers)
+                if(building.isDirty() || hasNewSubscribers)
                 {
                     subscribers.stream()
-                               .filter(player -> building.isDirty() || !oldSubscribers.contains(player))
-                               .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+                            .filter(player -> building.isDirty() || !oldSubscribers.contains(player))
+                            .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
                 }
             }
         }
@@ -534,20 +524,21 @@ public class Colony implements IColony
 
     /**
      * Sends packages to update the citizens.
-     * @param oldSubscribers the existing subscribers.
+     *
+     * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      */
     private void sendCitizenPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
-        if (isCitizensDirty || hasNewSubscribers)
+        if(isCitizensDirty || hasNewSubscribers)
         {
-            for (CitizenData citizen : citizens.values())
+            for(CitizenData citizen : citizens.values())
             {
-                if (citizen.isDirty() || hasNewSubscribers)
+                if(citizen.isDirty() || hasNewSubscribers)
                 {
                     subscribers.stream()
-                               .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
-                               .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(this, citizen), player));
+                            .filter(player -> citizen.isDirty() || !oldSubscribers.contains(player))
+                            .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewCitizenViewMessage(this, citizen), player));
                 }
             }
         }
@@ -555,17 +546,18 @@ public class Colony implements IColony
 
     /**
      * Sends packages to update the workOrders.
-     * @param oldSubscribers the existing subscribers.
+     *
+     * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      */
     private void sendWorkOrderPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
-        if (getWorkManager().isDirty() || hasNewSubscribers)
+        if(getWorkManager().isDirty() || hasNewSubscribers)
         {
-            for (AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
+            for(AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
             {
                 subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
-                           .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, workOrder), player));
+                        .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, workOrder), player));
             }
 
             getWorkManager().setDirty(false);
@@ -574,7 +566,8 @@ public class Colony implements IColony
 
     /**
      * Sends packages to update the permissions.
-     * @param oldSubscribers the existing subscribers.
+     *
+     * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      */
     private void sendPermissionsPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
@@ -592,12 +585,12 @@ public class Colony implements IColony
 
     private void sendColonyViewPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
-        if (isDirty || hasNewSubscribers)
+        if(isDirty || hasNewSubscribers)
         {
-            for (EntityPlayerMP player : subscribers)
+            for(EntityPlayerMP player : subscribers)
             {
                 boolean isNewSubscriber = !oldSubscribers.contains(player);
-                if (isDirty || isNewSubscriber)
+                if(isDirty || isNewSubscriber)
                 {
                     MineColonies.getNetwork().sendTo(new ColonyViewMessage(this, isNewSubscriber), player);
                 }
@@ -607,9 +600,9 @@ public class Colony implements IColony
 
     private static boolean hasNewSubscribers(Set<EntityPlayerMP> oldSubscribers, Set<EntityPlayerMP> subscribers)
     {
-        for (EntityPlayerMP player : subscribers)
+        for(EntityPlayerMP player : subscribers)
         {
-            if (!oldSubscribers.contains(player))
+            if(!oldSubscribers.contains(player))
             {
                 return true;
             }
@@ -627,11 +620,11 @@ public class Colony implements IColony
     private boolean areAllColonyChunksLoaded(TickEvent.WorldTickEvent event)
     {
         int distanceFromCenter = Configurations.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
-        for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
+        for(int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
         {
-            for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
+            for(int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
             {
-                if (!event.world.isBlockLoaded(new BlockPos(getCenter().getX() + x, 128, getCenter().getZ() + z)))
+                if(!event.world.isBlockLoaded(new BlockPos(getCenter().getX() + x, 128, getCenter().getZ() + z)))
                 {
                     return false;
                 }
@@ -644,13 +637,13 @@ public class Colony implements IColony
     {
         List<AbstractBuilding> removedBuildings = null;
 
-        for (AbstractBuilding building : buildings.values())
+        for(AbstractBuilding building : buildings.values())
         {
             BlockPos loc = building.getLocation();
-            if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
+            if(event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
-                if (removedBuildings == null)
+                if(removedBuildings == null)
                 {
                     removedBuildings = new ArrayList<>();
                 }
@@ -658,7 +651,7 @@ public class Colony implements IColony
             }
         }
 
-        if (removedBuildings != null)
+        if(removedBuildings != null)
         {
             removedBuildings.forEach(AbstractBuilding::destroy);
         }
@@ -675,11 +668,11 @@ public class Colony implements IColony
     /**
      * Spawn a citizen with specific citizen data
      *
-     * @param data      Data to use to spawn citizen
+     * @param data Data to use to spawn citizen
      */
     private void spawnCitizen(CitizenData data)
     {
-        if (!world.isBlockLoaded(center))
+        if(!world.isBlockLoaded(center))
         {
             //  Chunk with TownHall Block is not loaded
             return;
@@ -693,7 +686,7 @@ public class Colony implements IColony
             EntityCitizen entity = new EntityCitizen(world);
 
             CitizenData citizenData = data;
-            if (citizenData == null)
+            if(citizenData == null)
             {
                 topCitizenId++;
                 citizenData = new CitizenData(topCitizenId, this);
@@ -701,7 +694,7 @@ public class Colony implements IColony
 
                 citizens.put(citizenData.getId(), citizenData);
 
-                if (getMaxCitizens() == getCitizens().size())
+                if(getMaxCitizens() == getCitizens().size())
                 {
                     //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersLocalizedMessage(
@@ -714,13 +707,13 @@ public class Colony implements IColony
 
             entity.setPosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
             world.spawnEntityInWorld(entity);
-            
+
             checkAchievements();
 
             markCitizensDirty();
         }
     }
-    
+
     /**
      * Checks if the achievements are valid.
      */
@@ -728,30 +721,34 @@ public class Colony implements IColony
     {
         // the colonies size
         final int size = this.citizens.size();
-        
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(this.getPermissions().getOwner());
-        
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
+
+
+        ArrayList<Consumer<EntityPlayer>> consumers = new ArrayList<>();
+        if(size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
-            owner.triggerAchievement(ModAchievements.achievementSizeSettlement);
+            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeSettlement));
         }
 
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_TOWN)
+        if(size >= ModAchievements.ACHIEVEMENT_SIZE_TOWN)
         {
-            owner.triggerAchievement(ModAchievements.achievementSizeTown);
+            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeTown));
         }
 
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
+        if(size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
         {
-            owner.triggerAchievement(ModAchievements.achievementSizeCity);
+            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeCity));
         }
+        this.getPermissions().getPlayers().values().stream()
+                .map(Permissions.Player::getID)
+                .map(ServerUtils::getPlayerFromUUID)
+                .forEach(player -> consumers.forEach(consumer -> consumer.accept(player)));
     }
-    
+
     /**
      * Returns a map with all buildings within the colony.
      * Key is ID (Coordinates), value is building object.
      *
-     * @return      Map with ID (coordinates) as key, and buildings as value.
+     * @return Map with ID (coordinates) as key, and buildings as value.
      */
     public Map<BlockPos, AbstractBuilding> getBuildings()
     {
@@ -761,7 +758,7 @@ public class Colony implements IColony
     /**
      * Gets the town hall of the colony.
      *
-     * @return      Town hall of the colony.
+     * @return Town hall of the colony.
      */
     public BuildingTownHall getTownHall()
     {
@@ -777,8 +774,8 @@ public class Colony implements IColony
     /**
      * Get building in Colony by ID.
      *
-     * @param buildingId    ID (coordinates) of the building to get.
-     * @return              AbstractBuilding belonging to the given ID.
+     * @param buildingId ID (coordinates) of the building to get.
+     * @return AbstractBuilding belonging to the given ID.
      */
     public AbstractBuilding getBuilding(BlockPos buildingId)
     {
@@ -788,9 +785,9 @@ public class Colony implements IColony
     /**
      * Get building in Colony by ID. The building will be casted to the provided type.
      *
-     * @param buildingId    ID (coordinates) of the building to get.
-     * @param type          Type of building.
-     * @param <B>           Building class.
+     * @param buildingId ID (coordinates) of the building to get.
+     * @param type       Type of building.
+     * @param <B>        Building class.
      * @return the building with the specified id.
      */
     public <B extends AbstractBuilding> B getBuilding(BlockPos buildingId, Class<B> type)
@@ -799,7 +796,7 @@ public class Colony implements IColony
         {
             return type.cast(buildings.get(buildingId));
         }
-        catch (ClassCastException e)
+        catch(ClassCastException e)
         {
             Log.logger.warn("getBuilding called with wrong type: ", e);
             return null;
@@ -817,7 +814,7 @@ public class Colony implements IColony
         building.markDirty();
 
         //  Limit 1 town hall
-        if (building instanceof BuildingTownHall && townHall == null)
+        if(building instanceof BuildingTownHall && townHall == null)
         {
             townHall = (BuildingTownHall) building;
         }
@@ -834,22 +831,22 @@ public class Colony implements IColony
         tileEntity.setColony(this);
 
         AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
-        if (building != null)
+        if(building != null)
         {
             addBuilding(building);
             tileEntity.setBuilding(building);
 
             Log.logger.info(String.format("Colony %d - new AbstractBuilding for %s at %s",
-                                          getID(),
-                                          tileEntity.getBlockType().getClass(),
-                                          tileEntity.getPosition()));
+                    getID(),
+                    tileEntity.getBlockType().getClass(),
+                    tileEntity.getPosition()));
         }
         else
         {
             Log.logger.error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
-                                           getID(),
-                                           tileEntity.getBlockType().getClass(),
-                                           tileEntity.getPosition()));
+                    getID(),
+                    tileEntity.getBlockType().getClass(),
+                    tileEntity.getPosition()));
         }
 
         calculateMaxCitizens();
@@ -865,26 +862,26 @@ public class Colony implements IColony
      */
     public void removeBuilding(AbstractBuilding building)
     {
-        if (buildings.remove(building.getID()) != null)
+        if(buildings.remove(building.getID()) != null)
         {
-            for (EntityPlayerMP player : subscribers)
+            for(EntityPlayerMP player : subscribers)
             {
                 MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(this, building.getID()), player);
             }
 
             Log.logger.info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
-                                          getID(),
-                                          building.getID(),
-                                          building.getSchematicName()));
+                    getID(),
+                    building.getID(),
+                    building.getSchematicName()));
         }
 
-        if (building == townHall)
+        if(building == townHall)
         {
             townHall = null;
         }
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
-        for (CitizenData citizen : citizens.values())
+        for(CitizenData citizen : citizens.values())
         {
             citizen.onRemoveBuilding(building);
         }
@@ -896,6 +893,7 @@ public class Colony implements IColony
 
     /**
      * Getter which checks if jobs should be manually allocated.
+     *
      * @return true of false.
      */
     public boolean isManualHiring()
@@ -905,6 +903,7 @@ public class Colony implements IColony
 
     /**
      * Setter to set the job allocation manual or automatic.
+     *
      * @param manualHiring true if manual, false if automatic.
      */
     public void setManualHiring(boolean manualHiring)
@@ -930,16 +929,16 @@ public class Colony implements IColony
     {
         int newMaxCitizens = Configurations.maxCitizens;
 
-        for (AbstractBuilding b : buildings.values())
+        for(AbstractBuilding b : buildings.values())
         {
-            if (b instanceof BuildingHome &&
+            if(b instanceof BuildingHome &&
                     b.getBuildingLevel() > 0)
             {
                 newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
             }
         }
 
-        if (maxCitizens != newMaxCitizens)
+        if(maxCitizens != newMaxCitizens)
         {
             maxCitizens = newMaxCitizens;
             markDirty();
@@ -950,7 +949,7 @@ public class Colony implements IColony
      * Returns a map of citizens in the colony.
      * The map has ID as key, and citizen data as value.
      *
-     * @return          Map of citizens in the colony, with as key the citizen ID, and as value the citizen data.
+     * @return Map of citizens in the colony, with as key the citizen ID, and as value the citizen data.
      */
     public Map<Integer, CitizenData> getCitizens()
     {
@@ -967,7 +966,7 @@ public class Colony implements IColony
         //Remove the Citizen
         citizens.remove(citizen.getId());
 
-        for (AbstractBuilding building : buildings.values())
+        for(AbstractBuilding building : buildings.values())
         {
             building.removeCitizen(citizen);
         }
@@ -975,7 +974,7 @@ public class Colony implements IColony
         workManager.clearWorkForCitizen(citizen);
 
         //  Inform Subscribers of removed citizen
-        for (EntityPlayerMP player : subscribers)
+        for(EntityPlayerMP player : subscribers)
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(this, citizen.getId()), player);
         }
@@ -983,12 +982,13 @@ public class Colony implements IColony
 
     /**
      * Send the message of a removed workOrder to the client.
+     *
      * @param orderId the workOrder to remove.
      */
     public void removeWorkOrder(int orderId)
     {
         //  Inform Subscribers of removed workOrder
-        for (EntityPlayerMP player : subscribers)
+        for(EntityPlayerMP player : subscribers)
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }
@@ -1012,9 +1012,9 @@ public class Colony implements IColony
      */
     public CitizenData getJoblessCitizen()
     {
-        for (CitizenData citizen : citizens.values())
+        for(CitizenData citizen : citizens.values())
         {
-            if (citizen.getWorkBuilding() == null)
+            if(citizen.getWorkBuilding() == null)
             {
                 return citizen;
             }
@@ -1037,10 +1037,10 @@ public class Colony implements IColony
     {
 
         return citizens.values().stream()
-                       .filter(citizen -> citizen.getWorkBuilding() != null && citizen.getJob() != null)
-                       .filter(citizen -> !citizen.getJob().isMissingNeededItem())
-                       .map(citizen -> citizen.getWorkBuilding().getLocation())
-                       .collect(Collectors.toList());
+                .filter(citizen -> citizen.getWorkBuilding() != null && citizen.getJob() != null)
+                .filter(citizen -> !citizen.getJob().isMissingNeededItem())
+                .map(citizen -> citizen.getWorkBuilding().getLocation())
+                .collect(Collectors.toList());
     }
 
     public MaterialSystem getMaterialSystem()
