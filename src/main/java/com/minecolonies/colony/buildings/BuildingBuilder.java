@@ -8,7 +8,6 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.ServerUtils;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 
@@ -20,14 +19,15 @@ public class BuildingBuilder extends AbstractBuildingWorker
     /**
      * The maximum upgrade of the building.
      */
-    private static final int MAX_BUILDING_LEVEL = 2;
+    private static final int    MAX_BUILDING_LEVEL = 2;
     /**
      * The job description.
      */
-    private static final String BUILDER     = "Builder";
+    private static final String BUILDER            = "Builder";
 
     /**
      * Public constructor of the building, creates an object of the building.
+     *
      * @param c the colony.
      * @param l the position.
      */
@@ -38,6 +38,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Getter of the schematic name.
+     *
      * @return the schematic name.
      */
     @Override
@@ -48,6 +49,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Getter of the max building level.
+     *
      * @return the integer.
      */
     @Override
@@ -58,6 +60,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Getter of the job description.
+     *
      * @return the description of the builder job.
      */
     @Override
@@ -68,6 +71,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Create the job for the builder.
+     *
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
@@ -78,7 +82,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
-     * 
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -92,7 +95,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             owner.triggerAchievement(ModAchievements.achievementBuildingBuilder);
         }
-        else if (newLevel >= this.getMaxBuildingLevel())
+        if (newLevel >= this.getMaxBuildingLevel())
         {
             owner.triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
         }
@@ -105,6 +108,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         /**
          * Public constructor of the view, creates an instance of it.
+         *
          * @param c the colony.
          * @param l the position.
          */
@@ -115,6 +119,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         /**
          * Gets the blockOut Window.
+         *
          * @return the window of the builder building.
          */
         public com.blockout.views.Window getWindow()

@@ -723,7 +723,7 @@ public class Colony implements IColony
         final int size = this.citizens.size();
 
 
-        ArrayList<Consumer<EntityPlayer>> consumers = new ArrayList<>();
+        final ArrayList<Consumer<EntityPlayer>> consumers = new ArrayList<>();
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
             consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeSettlement));
