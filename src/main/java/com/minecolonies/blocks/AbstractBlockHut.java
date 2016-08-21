@@ -6,6 +6,7 @@ import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
@@ -25,7 +26,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Abstract class for all minecolonies blocks.
+ * <p>
  * The method {@link AbstractBlockHut#getName()} is abstract
+ * <p>
  * All AbstractBlockHut[something] should extend this class
  */
 public abstract class AbstractBlockHut extends AbstractBlockMineColonies implements ITileEntityProvider
@@ -40,6 +43,7 @@ public abstract class AbstractBlockHut extends AbstractBlockMineColonies impleme
 
     /**
      * Constructor for a block using the minecolonies mod.
+     * <p>
      * Registers the block, sets the creative tab, as well as the resistance and the hardness.
      */
     public AbstractBlockHut()
@@ -68,6 +72,18 @@ public abstract class AbstractBlockHut extends AbstractBlockMineColonies impleme
      */
     public abstract String getName();
 
+    /**
+     * Event-Handler for placement of this block.
+     * <p>
+     * Override for custom logic.
+     *
+     * @param worldIn the word we are in
+     * @param pos     the position where the block was placed
+     * @param state   the state the placed block is in
+     * @param placer  the player placing the block
+     * @param stack   the itemstack from where the block was placed
+     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
+     */
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {

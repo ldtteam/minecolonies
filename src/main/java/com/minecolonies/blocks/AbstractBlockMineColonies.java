@@ -1,32 +1,23 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.achievements.ModAchievements;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 
 /**
  * Abstract {@link Block} wrapper.
- *
+ * <p>
  * Used for mode related centralized code.
- * 
- * @author Isfirs
+ *
  * @since 0.1
  */
 public abstract class AbstractBlockMineColonies extends Block
 {
 
     /**
-     * Parent constructor.
-     * 
-     * @param materialIn
+     * Create a new Block for the mod.
+     *
+     * @param materialIn the material to use
      * @see Block#Block(Material)
      */
     public AbstractBlockMineColonies(Material materialIn)
@@ -35,41 +26,15 @@ public abstract class AbstractBlockMineColonies extends Block
     }
 
     /**
-     * Parent constructor.
+     * Create a new Block for the mod.
      *
-     * @param blockMaterialIn
-     * @param blockMapColorIn
+     * @param blockMaterialIn the material to use
+     * @param blockMapColorIn The color to show on the map
      * @see Block#Block(Material, MapColor)
      */
     public AbstractBlockMineColonies(Material blockMaterialIn, MapColor blockMapColorIn)
     {
         super(blockMaterialIn, blockMapColorIn);
-    }
-
-    /**
-     *
-     * @param worldIn
-     * @param pos
-     * @param state
-     * @param placer
-     * @param stack
-     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
-     */
-    @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
-    {
-        if (placer instanceof EntityPlayer)
-        {
-            final EntityPlayer player = (EntityPlayer) placer;
-            final Block block = state.getBlock();
-
-            if (block == ModBlocks.blockHutTownHall)
-            {
-                player.triggerAchievement(ModAchievements.achievementBuildingTownhall);
-            }
-        }
-
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 
 }
