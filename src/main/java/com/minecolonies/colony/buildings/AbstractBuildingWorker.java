@@ -5,7 +5,6 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.EntityCitizen;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -17,15 +16,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 {
     private static final String TAG_WORKER = "worker";
-    private CitizenData         worker;
+    private CitizenData worker;
 
     /**
      * The abstract constructor of the building.
-     * 
-     * @param c
-     *            the colony
-     * @param l
-     *            the position
+     *
+     * @param c the colony
+     * @param l the position
      */
     public AbstractBuildingWorker(Colony c, BlockPos l)
     {
@@ -34,16 +31,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 
     /**
      * The abstract method which returns the name of the job.
-     * 
+     *
      * @return the job name.
      */
     public abstract String getJobName();
 
     /**
      * The abstract method which creates a job for the building.
-     * 
-     * @param citizen
-     *            the citizen to take the job.
+     *
+     * @param citizen the citizen to take the job.
      * @return the Job.
      */
     public abstract AbstractJob createJob(CitizenData citizen);
@@ -86,7 +82,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      *
      * @return {@link net.minecraft.entity.Entity} of the worker
      */
-    public EntityCitizen getWorkerEntity( ) { return (worker == null) ? null : worker.getCitizenEntity(); }
+    public EntityCitizen getWorkerEntity(){ return (worker == null) ? null : worker.getCitizenEntity(); }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
@@ -118,8 +114,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     /**
      * Set the worker of the current building.
      *
-     * @param citizen
-     *            {@link CitizenData} of the worker
+     * @param citizen {@link CitizenData} of the worker
      */
     public void setWorker(CitizenData citizen)
     {
@@ -157,8 +152,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     /**
      * Returns if the {@link CitizenData} is the same as {@link #worker}.
      *
-     * @param citizen
-     *            {@link CitizenData} you want to compare
+     * @param citizen {@link CitizenData} you want to compare
      * @return true if same citizen, otherwise false
      */
     public boolean isWorker(CitizenData citizen)
@@ -167,7 +161,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * 
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -203,11 +196,9 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 
         /**
          * Creates the view representation of the building.
-         * 
-         * @param c
-         *            the colony.
-         * @param l
-         *            the location.
+         *
+         * @param c the colony.
+         * @param l the location.
          */
         public View(ColonyView c, BlockPos l)
         {
@@ -216,7 +207,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 
         /**
          * Returns the id of the worker.
-         * 
+         *
          * @return 0 if there is no worker else the correct citizen id.
          */
         public int getWorkerId()
@@ -226,6 +217,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 
         /**
          * Sets the id of the worker.
+         *
          * @param workerId the id to set.
          */
         public void setWorkerId(int workerId)
