@@ -12,7 +12,8 @@ import net.minecraftforge.common.AchievementPage;
  *
  * @since 0.2
  */
-public final class ModAchievements {
+public final class ModAchievements
+{
 
     /**
      * Population size to achieve {@link ModAchievements#achievementSizeSettlement}.
@@ -129,7 +130,8 @@ public final class ModAchievements {
     /**
      * private constructor to hide the implicit public one.
      */
-    private ModAchievements() {
+    private ModAchievements()
+    {
     }
 
     /**
@@ -137,7 +139,8 @@ public final class ModAchievements {
      * <p>
      * Registers the page.
      */
-    public static void init() {
+    public static void init()
+    {
         AchievementPage.registerAchievementPage(achievementPageMineColonies);
     }
 
