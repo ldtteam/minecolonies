@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The abstract class for each worker building.
@@ -82,7 +83,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      *
      * @return {@link net.minecraft.entity.Entity} of the worker
      */
-    public EntityCitizen getWorkerEntity(){ return (worker == null) ? null : worker.getCitizenEntity(); }
+    @Nullable
+    public EntityCitizen getWorkerEntity()
+    {
+        if (worker == null)
+        {
+            return null;
+        }
+        return worker.getCitizenEntity();
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
