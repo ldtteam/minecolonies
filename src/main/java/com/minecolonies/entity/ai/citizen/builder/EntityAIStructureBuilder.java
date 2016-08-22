@@ -350,7 +350,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (worldBlock != Blocks.air
              && !(worldBlock instanceof AbstractBlockHut)
              && worldBlock != Blocks.bedrock
-             && job.getSchematic().getBlock() != ModBlocks.blockSubstitution && !job.getSchematic().doesSchematicBlockEqualWorldBlock())
+             && job.getSchematic().getBlock() != ModBlocks.blockSubstitution)
         {
             //Fill workFrom with the position from where the builder should build.
             if (!goToConstructionSite())
