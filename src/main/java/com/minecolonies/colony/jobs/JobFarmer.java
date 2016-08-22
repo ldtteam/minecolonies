@@ -10,10 +10,19 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+/**
+ * Job class of the farmer, handles his fields.
+ */
 public class JobFarmer extends AbstractJob
 {
+    /**
+     * NBTTag to store the fields.
+     */
     private static final String TAG_FIELDS = "fields";
+
     /**
      * The list of the fields the farmer manages.
      */
@@ -74,12 +83,19 @@ public class JobFarmer extends AbstractJob
         return new EntityAIWorkFarmer(this);
     }
 
-    //todo immutable.
-    public ArrayList<Field> getFarmerFields()
+    /**
+     * Returns list of fields of the farmer.
+     * @return a list of field objects.
+     */
+    public List<Field> getFarmerFields()
     {
-        return farmerFields;
+        return Collections.unmodifiableList(farmerFields);
     }
 
+    /**
+     * Assigns a field list to the field list.
+     * @param farmerFields the list to set.
+     */
     public void setFarmerFields(final ArrayList<Field> farmerFields)
     {
         this.farmerFields = farmerFields;

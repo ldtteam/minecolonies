@@ -17,6 +17,7 @@ import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -74,16 +75,16 @@ public class Colony implements IColony
 
     private final MaterialSystem materialSystem = new MaterialSystem();
 
-    private static  final   String                          TAG_ID                          = "id";
-    private static  final   String                          TAG_NAME                        = "name";
-    private static  final   String                          TAG_DIMENSION                   = "dimension";
-    private static  final   String                          TAG_CENTER                      = "center";
-    private static  final   String                          TAG_MAX_CITIZENS                = "maxCitizens";
-    private static  final   String                          TAG_BUILDINGS                   = "buildings";
-    private static  final   String                          TAG_CITIZENS                    = "citizens";
-    private static  final   String                          TAG_WORK                        = "work";
-    private static  final   String                          TAG_MANUAL_HIRING               = "manualHiring";
-    private static  final   String                          TAG_FIELDS                      = "fields";
+    private static final String TAG_ID            = "id";
+    private static final String TAG_NAME          = "name";
+    private static final String TAG_DIMENSION     = "dimension";
+    private static final String TAG_CENTER        = "center";
+    private static final String TAG_MAX_CITIZENS  = "maxCitizens";
+    private static final String TAG_BUILDINGS     = "buildings";
+    private static final String TAG_CITIZENS      = "citizens";
+    private static final String TAG_WORK          = "work";
+    private static final String TAG_MANUAL_HIRING = "manualHiring";
+    private static final String TAG_FIELDS        = "fields";
     /**
      * Constructor for a newly created Colony.
      *
@@ -889,9 +890,9 @@ public class Colony implements IColony
      *
      * @param pos Position where the field has been placed.
      */
-    public void addNewField(BlockPos pos, int width, int length, InventoryField inventoryField)
+    public void addNewField(InventoryField inventoryField, InventoryPlayer inventoryPlayer, BlockPos pos, World world)
     {
-        Field field = new Field(this, pos, width, length, inventoryField);
+        Field field = new Field(inventoryField, inventoryPlayer, world, pos);
         addField(field);
         ColonyManager.markDirty();
     }

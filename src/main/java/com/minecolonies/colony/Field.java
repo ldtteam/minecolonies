@@ -11,9 +11,13 @@ import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Handles the field class.
+ */
 public class Field extends Container
 {
     /**
@@ -27,19 +31,29 @@ public class Field extends Container
     private static final String TAG_TAKEN = "taken";
 
     /**
-     * Tag to store the fields length.
+     * Tag to store the fields positive length.
      */
-    private static final String TAG_LENGTH = "length";
+    private static final String TAG_LENGTH_PLUS = "length+";
 
     /**
-     * Tag to store the fields width.
+     * Tag to store the fields positive width.
      */
-    private static final String TAG_WIDTH = "width";
+    private static final String TAG_WIDTH_PLUS = "width+";
+
+    /**
+     * Tag to store the fields negative length.
+     */
+    private static final String TAG_LENGTH_MINUS = "length-";
+
+    /**
+     * Tag to store the fields negative width.
+     */
+    private static final String TAG_WIDTH_MINUS = "width-";
 
     /**
      * The max width/length of a field.
      */
-    private static final int MAX_RANGE = 10;
+    private static final int MAX_RANGE = 5;
 
     /**
      * The fields location.
@@ -72,14 +86,24 @@ public class Field extends Container
     private ItemSeeds seed;
 
     /**
-     * The length of the field.
+     * The length to plus x of the field.
      */
-    private int length;
+    private int lengthPlusX;
 
     /**
-     * The width of the seed;
+     * The width to plus z of the seed.
      */
-    private int width;
+    private int widthPlusZ;
+
+    /**
+     * The length to minus xof the field.
+     */
+    private int lengthMinusX;
+
+    /**
+     * The width to minus z of the seed.
+     */
+    private int widthMinusZ;
 
     /**
      * The inventorySlot of the field.
@@ -93,22 +117,6 @@ public class Field extends Container
     private Field(Colony colony)
     {
        this.colony = colony;
-    }
-
-    /**
-     * Creates a new field object.
-     * @param colony The colony the field is a part of.
-     * @param location The location the field has been placed.
-     * @param width The fields width.
-     * @param length The fields length.
-     */
-    public Field(Colony colony, BlockPos location, int width, int length, InventoryField inventory)
-    {
-        this.location = location;
-        this.colony   = colony;
-        this.length = length;
-        this.width = width;
-        this.inventory = inventory;
     }
 
     public Field(InventoryField inventory, final InventoryPlayer playerInventory, World world, BlockPos location)
@@ -137,6 +145,38 @@ public class Field extends Container
             addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18,
                                         142));
         }
+        calculateSize(world,location);
+    }
+
+    /**
+     * Calculates recursively the length of the field until a certain point.
+     * @param position the start position.
+     * @param world the world the field is in.
+     */
+    private void calculateSize(World world, BlockPos position)
+    {
+        //Calculate in all 4 directions
+        this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);
+        this.lengthMinusX= searchNextBlock(0, position.west(), EnumFacing.WEST, world);
+        this.widthPlusZ  = searchNextBlock(0, position.south(), EnumFacing.SOUTH, world);
+        this.widthMinusZ = searchNextBlock(0, position.north(), EnumFacing.NORTH, world);
+    }
+
+    /**
+     * Calculates the field size into a specific direction.
+     * @param blocksChecked how many blocks have been checked.
+     * @param position the start position.
+     * @param direction the direction to search.
+     * @param world the world object.
+     * @return the distance.
+     */
+    private int searchNextBlock(int blocksChecked, BlockPos position, EnumFacing direction, World world)
+    {
+        if(world.isAirBlock(position) || blocksChecked == getMaxRange() || !world.isAirBlock(position.up()))
+        {
+            return blocksChecked;
+        }
+        return  searchNextBlock(blocksChecked+1,position.offset(direction),direction,world);
     }
 
     /**
@@ -183,8 +223,10 @@ public class Field extends Container
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
         compound.setBoolean(TAG_TAKEN, taken);
-        compound.setInteger(TAG_LENGTH, length);
-        compound.setInteger(TAG_WIDTH, width);
+        compound.setInteger(TAG_LENGTH_PLUS, lengthPlusX);
+        compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
+        compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
+        compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
         inventory.writeToNBT(compound);
     }
 
@@ -198,8 +240,10 @@ public class Field extends Container
     {
         location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
         taken = compound.getBoolean(TAG_TAKEN);
-        length = compound.getInteger(TAG_LENGTH);
-        width = compound.getInteger(TAG_WIDTH);
+        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
+        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
+        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
+        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
         inventory = new InventoryField("Scarecrow", true);
         inventory.readFromNBT(compound);
     }
@@ -257,24 +301,6 @@ public class Field extends Container
     }
 
     /**
-     * Getter for the length.
-     * @return the fields length.
-     */
-    public int getLength()
-    {
-        return this.length;
-    }
-
-    /**
-     * Getter for the width.
-     * @return the fields with.
-     */
-    public int getWidth()
-    {
-        return this.width;
-    }
-
-    /**
      * Getter for MAX_RANGE.
      * @return the max range.
      */
@@ -313,20 +339,20 @@ public class Field extends Container
             int playerIndex = slotIndex < 28 ? slotIndex + 8 : slotIndex - 28;
             if(playerIn.inventory.getStackInSlot(playerIndex) != null)
             {
-                inventory.setInventorySlotContents(0, playerIn.inventory.getStackInSlot(playerIndex).splitStack(1));
+                ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
+                inventory.setInventorySlotContents(0, stack);
                 if(playerIn.inventory.getStackInSlot(playerIndex).stackSize == 0)
                 {
                     playerIn.inventory.removeStackFromSlot(playerIndex);
+                }
+
+                if(stack.getItem() != null && stack.getItem() instanceof ItemSeeds)
+                {
+                    seed = (ItemSeeds)stack.getItem();
                 }
             }
         }
 
         return null;
-    }
-
-    @Override
-    public ItemStack slotClick(final int slotId, final int clickedButton, final int mode, final EntityPlayer playerIn)
-    {
-        return super.slotClick(slotId, clickedButton, mode, playerIn);
     }
 }

@@ -124,34 +124,9 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
 
             if (colony != null)
             {
-                int width = calculateWidth(0,worldIn);
-                int length = calculateLength(0,worldIn);
-                colony.addNewField(pos,width,length, inventoryField);
+                colony.addNewField(inventoryField, ((EntityPlayer) placer).inventory, pos, worldIn);
             }
         }
-    }
-
-    /**
-     * Calculates recursively the length of the field until a certain point.
-     * @param start the start offset.
-     * @param world the world the field is in.
-     * @return the length.
-     */
-    private int calculateLength(int start, World world)
-    {
-        //todo calculate the real length and width
-        return 6;
-    }
-
-    /**
-     * Calculates recursively the width of the field until a certain point.
-     * @param start the start offset.
-     * @param world the world the field is in.
-     * @return the width.
-     */
-    private int calculateWidth(int start, World world)
-    {
-        return 6;
     }
 
     /**
