@@ -103,7 +103,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         WorkOrderBuild wo = job.getWorkOrder();
-        if (wo == null || (job.getColony().getBuilding(wo.getBuildingLocation()) == null && !(wo instanceof WorkOrderBuildDecoration)))
+
+        if(wo == null)
+        {
+            cancelWork();
+            return true;
+        }
+
+        if (job.getColony().getBuilding(wo.getBuildingLocation()) == null && !(wo instanceof WorkOrderBuildDecoration))
         {
             job.complete();
             return true;
@@ -331,6 +338,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     private AIState clearStep()
     {
         WorkOrderBuild wo = job.getWorkOrder();
+
         if (wo.isCleared())
         {
             return AIState.BUILDER_STRUCTURE_STEP;
@@ -523,6 +531,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState decorationStep()
     {
+        if(job.getWorkOrder() == null)
+        {
+            return AIState.IDLE;
+        }
+
         if (!goToConstructionSite())
         {
             return this.getState();
@@ -811,6 +824,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                                                    wo.getBuildingLocation()));
                 }
             }
+            job.complete();
         }
         else
         {
@@ -820,7 +834,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                                            job.getWorkOrderId()));
         }
 
-        job.complete();
         resetTask();
         worker.addExperience(XP_EACH_BUILDING);
         workFrom = null;
@@ -828,6 +841,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return AIState.IDLE;
     }
 
+    private void cancelWork()
+    {
+        resetTask();
+        job.setWorkOrder(null);
+        workFrom = null;
+        job.setSchematic(null);
+    }
 
     /**
      * Calculates after how many actions the ai should dump it's inventory.
