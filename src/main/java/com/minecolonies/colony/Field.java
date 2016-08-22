@@ -51,6 +51,11 @@ public class Field extends Container
     private static final String TAG_WIDTH_MINUS = "width-";
 
     /**
+     * Tag to store the fields stage.
+     */
+    private static final String TAG_STAGE = "stage";
+
+    /**
      * The max width/length of a field.
      */
     private static final int MAX_RANGE = 5;
@@ -78,7 +83,7 @@ public class Field extends Container
     /**
      * Has the field been planted?
      */
-    private boolean planted = false;
+    private FieldStage fieldStage = FieldStage.EMPTY;
 
     /**
      * The set seed type for the field.
@@ -109,6 +114,14 @@ public class Field extends Container
      * The inventorySlot of the field.
      */
     private InventoryField inventory;
+
+    public enum FieldStage
+    {
+        EMPTY,
+        HOED,
+        PLANTED
+    }
+
 
      /**
      * Private constructor to create field from NBT.
@@ -145,7 +158,7 @@ public class Field extends Container
             addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18,
                                         142));
         }
-        calculateSize(world,location);
+        calculateSize(world,location.down());
     }
 
     /**
@@ -172,11 +185,16 @@ public class Field extends Container
      */
     private int searchNextBlock(int blocksChecked, BlockPos position, EnumFacing direction, World world)
     {
-        if(world.isAirBlock(position) || blocksChecked == getMaxRange() || !world.isAirBlock(position.up()))
+        if(blocksChecked == getMaxRange() || isPartOfField(world, position))
         {
             return blocksChecked;
         }
         return  searchNextBlock(blocksChecked+1,position.offset(direction),direction,world);
+    }
+
+    public boolean isPartOfField(World world, BlockPos position)
+    {
+        return world.isAirBlock(position) || world.getBlockState(position.up()).getBlock().getMaterial().isSolid();
     }
 
     /**
@@ -223,6 +241,7 @@ public class Field extends Container
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
         compound.setBoolean(TAG_TAKEN, taken);
+        compound.setInteger(TAG_STAGE, fieldStage.ordinal());
         compound.setInteger(TAG_LENGTH_PLUS, lengthPlusX);
         compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
         compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
@@ -240,6 +259,7 @@ public class Field extends Container
     {
         location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
         taken = compound.getBoolean(TAG_TAKEN);
+        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
         lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
         widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
         lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
@@ -268,18 +288,18 @@ public class Field extends Container
      * Checks if the field has been planted.
      * @return true if there are crops planted.
      */
-    public boolean isPlanted()
+    public FieldStage getFieldStage()
     {
-        return this.planted;
+        return this.fieldStage;
     }
 
     /**
      * Sets if there are any crops planted.
-     * @param planted true after planting, false after harvesting.
+     * @param fieldStage true after planting, false after harvesting.
      */
-    public void setPlanted(boolean planted)
+    public void setFieldStage(FieldStage fieldStage)
     {
-        this.planted = planted;
+        this.fieldStage = fieldStage;
     }
 
     /**
@@ -307,6 +327,60 @@ public class Field extends Container
     public int getMaxRange()
     {
         return MAX_RANGE;
+    }
+
+    /**
+     * Getter of the seed of the field
+     * @return the ItemSeed
+     */
+    public ItemSeeds getSeed()
+    {
+        return seed;
+    }
+
+    /**
+     * Getter of the length in plus x direction.
+     * @return field length.
+     */
+    public int getLengthPlusX()
+    {
+        return lengthPlusX;
+    }
+
+    /**
+     * Getter of the with in plus z direction.
+     * @return field width.
+     */
+    public int getWidthPlusZ()
+    {
+        return widthPlusZ;
+    }
+
+    /**
+     * Getter of the length in minus x direction.
+     * @return field length.
+     */
+    public int getLengthMinusX()
+    {
+        return lengthMinusX;
+    }
+
+    /**
+     * Getter of the with in minus z direction.
+     * @return field width.
+     */
+    public int getWidthMinusZ()
+    {
+        return widthMinusZ;
+    }
+
+    /**
+     * Location getter.
+     * @return the location of the scarecrow of the field.
+     */
+    public BlockPos getLocation()
+    {
+        return this.location;
     }
 
     /**

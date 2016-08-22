@@ -3,17 +3,16 @@ package com.minecolonies.entity.ai.citizen.farmer;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.Field;
 import com.minecolonies.colony.buildings.BuildingFarmer;
-import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.InventoryUtils;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import java.util.ArrayList;
+import net.minecraft.util.BlockPos;
 
+import static com.minecolonies.colony.Field.FieldStage.*;
 import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
@@ -44,11 +43,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         super.registerTargets(
                 new AITarget(IDLE, () -> START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-                new AITarget(PREPARING, this::prepareForFarming)
-                //new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
-                //new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
-                //new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
-                //new AITarget(FISHERMAN_START_FISHING, this::doFishing)
+                new AITarget(PREPARING, this::prepareForFarming),
+                new AITarget(FARMER_CHECK_FIELDS, this::checkFields),
+                new AITarget(FARMER_HOE, this::hoe),
+                new AITarget(FARMER_PLANT, this::plant),
+                new AITarget(FARMER_HARVEST, this::harvest)
         );
         worker.setSkillModifier(2*worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
     }
@@ -73,9 +72,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private AIState prepareForFarming()
     {
-        if(getOwnBuilding()!= null && getOwnBuilding().getBuildingLevel() < 1)
+        if(getOwnBuilding() != null && getOwnBuilding().getBuildingLevel() < 1)
         {
-            return AIState.FARMER_CHECK_FIELDS;
+            return AIState.PREPARING;
         }
 
         if(job.getFarmerFields().size() < getOwnBuilding().getBuildingLevel())
@@ -89,6 +88,33 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.PREPARING;
         }
 
+        //If the farmer has no currentField and there is no field which needs work, check fields.
+        if(job.getCurrentField() == null && job.getFieldToWorkOn() == null)
+        {
+            return AIState.FARMER_CHECK_FIELDS;
+        }
+
+        if(job.getCurrentField().needsWork() && !walkToBlock(job.getCurrentField().getLocation()))
+        {
+            switch (job.getCurrentField().getFieldStage())
+            {
+                case EMPTY:
+                    if(checkForHoe())
+                    {
+                        return AIState.FARMER_HOE;
+                    }
+                case HOED:
+                    //todo get seed from hut chest
+                    return AIState.FARMER_PLANT;
+                case PLANTED:
+                    return AIState.FARMER_HARVEST;
+            }
+        }
+        else
+        {
+            job.setCurrentField(null);
+        }
+
         if (checkForHoe())
         {
             return getState();
@@ -96,7 +122,91 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         //if any field needs work -> work on them
 
-        return AIState.FARMER_CHECK_FIELDS;
+        return AIState.PREPARING;
+    }
+
+    /**
+     * Executes the hoeing of the field.
+     * @return the next state.
+     */
+    private AIState hoe()
+    {
+        //todo request hoe
+        Field    field    = job.getCurrentField();
+        BlockPos position = field.getLocation();
+
+        //hoe it, set work false, set status hoed
+        //todo important only harvest, plant, hoe if the field has no crops in it.
+
+        //todo if work is done
+        if(true)
+        {
+            job.getCurrentField().setNeedsWork(false);
+            job.getCurrentField().setFieldStage(HOED);
+        }
+
+        return AIState.FARMER_HOE;
+    }
+
+    /**
+     * Executes the planting of the field.
+     * @return the next state.
+     */
+    private AIState plant()
+    {
+
+        Field    field    = job.getCurrentField();
+        BlockPos position = field.getLocation();
+
+        //todo If not the right seed in inventory and if nothing planted on field yet, request seed and setFieldNull
+
+        //calculate position t check
+        //if it applies to our field rule
+        //if(job.getCurrentField().isPartOfField(world, positionOff))
+
+        //plant it, set work false, set status seeded
+
+        //todo if work is done
+        if(true)
+        {
+            job.getCurrentField().setNeedsWork(false);
+            job.getCurrentField().setFieldStage(PLANTED);
+        }
+
+        return AIState.FARMER_PLANT;
+    }
+
+    /**
+     * Executes the harvesting of the field.
+     * @return the next state.
+     */
+    private AIState harvest()
+    {
+        Field    field    = job.getCurrentField();
+        BlockPos position = field.getLocation();
+
+        //harvest it, set work false, set status empty
+
+        //todo if work is done
+        if(true)
+        {
+            job.getCurrentField().setNeedsWork(false);
+            job.getCurrentField().setFieldStage(EMPTY);
+        }
+
+        return AIState.FARMER_HARVEST;
+    }
+
+    private AIState checkFields()
+    {
+        //todo goTo current field
+        //check status
+        //if status = empty, check if hoed if not set workTodo else set hoed.
+
+        //if status = hoed -> check if seeded, if not set workTodo else, set seeded
+        //if status = seeded -> if more than 50% ready, set workTodo
+
+        return AIState.FARMER_HOE;
     }
 
     /**

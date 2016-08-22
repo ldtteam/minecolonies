@@ -24,9 +24,19 @@ public class JobFarmer extends AbstractJob
     private static final String TAG_FIELDS = "fields";
 
     /**
+     * NBTTag to store the currentField.
+     */
+    private static final String TAG_CURRENT_FIELD = "currentField";
+
+    /**
      * The list of the fields the farmer manages.
      */
     private ArrayList<Field> farmerFields = new ArrayList<>();
+
+    /**
+     * The field the farmer is currently working on.
+     */
+    private Field currentField;
 
     public JobFarmer(CitizenData entity)
     {
@@ -54,6 +64,7 @@ public class JobFarmer extends AbstractJob
             fieldTagList.appendTag(fieldCompound);
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
+        compound.setInteger(TAG_CURRENT_FIELD,farmerFields.indexOf(currentField));
     }
 
     @Override
@@ -71,7 +82,7 @@ public class JobFarmer extends AbstractJob
                 farmerFields.add(f);
             }
         }
-
+        currentField = farmerFields.get(compound.getInteger(TAG_CURRENT_FIELD));
     }
 
     /**
@@ -99,5 +110,36 @@ public class JobFarmer extends AbstractJob
     public void setFarmerFields(final ArrayList<Field> farmerFields)
     {
         this.farmerFields = farmerFields;
+    }
+
+    /**
+     * Getter of the current field.
+     * @return a field object.
+     */
+    public Field getCurrentField()
+    {
+        return currentField;
+    }
+
+    /**
+     * Sets the field the farmer is currently working on.
+     * @param currentField the field to work on.
+     */
+    public void setCurrentField(final Field currentField)
+    {
+        this.currentField = currentField;
+    }
+
+    public Field getFieldToWorkOn()
+    {
+        for(Field field: farmerFields)
+        {
+            if(field.needsWork())
+            {
+                currentField = field;
+                return field;
+            }
+        }
+        return null;
     }
 }
