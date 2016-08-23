@@ -26,9 +26,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
-
 import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
@@ -106,7 +104,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if(wo == null)
         {
-            cancelWork();
+            resetTask();
+            this.
             return true;
         }
 
@@ -531,11 +530,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState decorationStep()
     {
-        if(job.getWorkOrder() == null)
-        {
-            return AIState.IDLE;
-        }
-
         if (!goToConstructionSite())
         {
             return this.getState();
@@ -841,9 +835,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return AIState.IDLE;
     }
 
-    private void cancelWork()
+    /**
+     * Resets the builders current task.
+     */
+    @Override
+    public void resetTask()
     {
-        resetTask();
+        super.resetTask();
         job.setWorkOrder(null);
         workFrom = null;
         job.setSchematic(null);
