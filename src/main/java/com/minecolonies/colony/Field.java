@@ -115,6 +115,10 @@ public class Field extends Container
      */
     private InventoryField inventory;
 
+    /**
+     * Describes the stage the field is in.
+     * Like if it has been hoed, planted or is empty.
+     */
     public enum FieldStage
     {
         EMPTY,
@@ -132,7 +136,14 @@ public class Field extends Container
        this.colony = colony;
     }
 
-    public Field(InventoryField inventory, final InventoryPlayer playerInventory, World world, BlockPos location)
+    /**
+     * Creates an instance of our field container, this may be serve to open the GUI.
+     * @param inventory the field inventory.
+     * @param playerInventory the player inventory.
+     * @param world the world.
+     * @param location the position of the field.
+     */
+    public Field(InventoryField inventory, InventoryPlayer playerInventory, World world, BlockPos location)
     {
         this.colony = ColonyManager.getColony(world,location);
         this.location = location;
@@ -192,6 +203,12 @@ public class Field extends Container
         return  searchNextBlock(blocksChecked+1,position.offset(direction),direction,world);
     }
 
+    /**
+     * Checks if a certain position is part of the field. Complies with the definition of field block.
+     * @param world the world object.
+     * @param position the position.
+     * @return true if it is.
+     */
     public boolean isPartOfField(World world, BlockPos position)
     {
         return world.isAirBlock(position) || world.getBlockState(position.up()).getBlock().getMaterial().isSolid();
@@ -204,7 +221,8 @@ public class Field extends Container
      */
     public BlockPos getID()
     {
-        return this.location; //  Location doubles as ID
+        // Location doubles as ID
+        return this.location;
     }
 
     /**
@@ -395,7 +413,7 @@ public class Field extends Container
     }
 
     @Override
-    public boolean canInteractWith(final EntityPlayer playerIn)
+    public boolean canInteractWith(EntityPlayer playerIn)
     {
         return getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS);
     }
@@ -410,7 +428,7 @@ public class Field extends Container
         }
         else if(inventory.getStackInSlot(0) == null)
         {
-            int playerIndex = slotIndex < 28 ? slotIndex + 8 : slotIndex - 28;
+            int playerIndex = slotIndex < 28 ? (slotIndex + 8) : (slotIndex - 28);
             if(playerIn.inventory.getStackInSlot(playerIndex) != null)
             {
                 ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
@@ -429,4 +447,5 @@ public class Field extends Container
 
         return null;
     }
+
 }

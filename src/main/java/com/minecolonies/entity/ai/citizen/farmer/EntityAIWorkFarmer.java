@@ -32,6 +32,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private static final int MAX_BLOCKS_HARVESTED = 32;
 
     /**
+     * Changed after finished harvesting in order to dump the inventory.
+     */
+    private boolean finishedHarvestingJob = false;
+
+    /**
      * Constructor for the Farmer.
      * Defines the tasks the Farmer executes.
      *
@@ -226,7 +231,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
     }
 
-
     /**
      * Called to check when the InventoryShouldBeDumped
      * @return true if the conditions are met
@@ -234,11 +238,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     @Override
     protected boolean wantInventoryDumped()
     {
-        /*if (getBlocksMined() > MAX_BLOCKS_HARVESTED)
+        if(finishedHarvestingJob)
         {
-            clearBlocksMined();
+            finishedHarvestingJob = false;
             return true;
-        }*/
+        }
         return false;
     }
 

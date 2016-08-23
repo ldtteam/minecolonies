@@ -186,5 +186,5 @@ com.minecolonies.gui.workerHuts.workOrder=Work Orders
 
 
 farmer
-scarecrow
+com.minecolonies.gui.inventory.scarecrow= Scarecrow
 

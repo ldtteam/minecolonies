@@ -3,27 +3,19 @@ package com.minecolonies.blocks;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.creativetab.ModCreativeTabs;
-import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockDoor;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -31,10 +23,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
+/**
+ * The class handling the fieldBlocks, placement and activation.
+ */
 public class BlockHutField extends BlockContainer implements ITileEntityProvider
 {
 
@@ -74,45 +66,45 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
     private static final double HEIGHT_COLLISION = 2.5;
 
     /**
-     * Its inventory.
+     * Constructor called on block placement.
      */
-    private final InventoryField inventoryField;
-
-
-
-    public BlockHutField()
+    BlockHutField()
     {
         super(Material.wood);
-        //todo language String
-        this.inventoryField = new InventoryField("Scarecrow", true);
         initBlock();
     }
 
-    public String getName() {
+    /**
+     * Getter of the description of the blockHut.
+     * @return the name as a String.
+     */
+    public String getName()
+    {
         return "blockHutField";
     }
 
+    /**
+     * Method called by constructor.
+     * Sets basic details of the block.
+     */
     private void initBlock()
     {
         setRegistryName(getName());
         setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + getName());
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        //Blast resistance for creepers etc. makes them explosion proof
+        //Blast resistance for creepers etc. makes them explosion proof.
         setResistance(RESISTANCE);
-        //Hardness of 10 takes a long time to mine to not loose progress
+        //Hardness of 10 takes a long time to mine to not loose progress.
         setHardness(HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         GameRegistry.registerBlock(this);
         setBlockBounds((float)START_COLLISION, (float)BOTTOM_COLLISION, (float)START_COLLISION, (float)END_COLLISION, (float)HEIGHT_COLLISION, (float)END_COLLISION);
-
     }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
-        /*
-        Only work on server side
-        */
+        //Only work on server side.
         if(worldIn.isRemote)
         {
             return;
@@ -124,16 +116,14 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
 
             if (colony != null)
             {
+                InventoryField inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"), true);
+
+                ((ScarecrowTileEntity)worldIn.getTileEntity(pos)).setInventoryField(inventoryField);
                 colony.addNewField(inventoryField, ((EntityPlayer) placer).inventory, pos, worldIn);
             }
         }
     }
 
-    /**
-     * Used to determine ambient occlusion and culling when rebuilding chunks for render.
-     *
-     * @return true
-     */
     @Override
     public boolean isOpaqueCube()
     {
@@ -166,15 +156,16 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
     // ======================= Rendering & IBlockState =======================
     // =======================================================================
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    {
         EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
-    // render as a solid block, we don't want transparency here
     @Override
     @SideOnly(Side.CLIENT)
-    public EnumWorldBlockLayer getBlockLayer() {
+    public EnumWorldBlockLayer getBlockLayer()
+    {
         return EnumWorldBlockLayer.SOLID;
     }
 
@@ -190,18 +181,21 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
     }
 
     @Override
-    public int getMetaFromState(IBlockState state) {
-        return ((EnumFacing)state.getValue(FACING)).getIndex();
+    public int getMetaFromState(IBlockState state)
+    {
+        return state.getValue(FACING).getIndex();
     }
 
     @Override
-    protected BlockState createBlockState() {
+    protected BlockState createBlockState()
+    {
         return new BlockState(this, FACING);
     }
 
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta) {
-        return new ScarecrowTileEntity(inventoryField);
+    public TileEntity createNewTileEntity(World worldIn, int meta)
+    {
+        return new ScarecrowTileEntity();
     }
     // =======================================================================
     // ===================== END of Rendering & Meta-Data ====================

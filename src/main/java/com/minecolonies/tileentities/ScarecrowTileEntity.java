@@ -24,7 +24,7 @@ public class ScarecrowTileEntity extends TileEntity
     /**
      * The inventory connected with the scarecrow.
      */
-    public final InventoryField inventoryField;
+    public InventoryField inventoryField;
 
     /**
      * Random generator.
@@ -46,15 +46,6 @@ public class ScarecrowTileEntity extends TileEntity
     }
 
     /**
-     * Public constructor which construct the tileEntity.
-     * @param inventoryField the fields inventory.
-     */
-    public ScarecrowTileEntity(InventoryField inventoryField)
-    {
-        this.inventoryField = inventoryField;
-    }
-
-    /**
      * Empty public constructor.
      */
     public ScarecrowTileEntity()
@@ -63,7 +54,8 @@ public class ScarecrowTileEntity extends TileEntity
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound) {
+    public void writeToNBT(NBTTagCompound compound)
+    {
         super.writeToNBT(compound);
         
         compound.setInteger(TAG_TYPE, this.getType().ordinal());
@@ -71,11 +63,17 @@ public class ScarecrowTileEntity extends TileEntity
     }
     
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
+    public void readFromNBT(NBTTagCompound compound)
+    {
         super.readFromNBT(compound);
         
         TYPE = ScareCrowType.values()[compound.getInteger(TAG_TYPE)];
         inventoryField.readFromNBT(compound);
+    }
+
+    public void setInventoryField(final InventoryField inventoryField)
+    {
+        this.inventoryField = inventoryField;
     }
 
     /**
