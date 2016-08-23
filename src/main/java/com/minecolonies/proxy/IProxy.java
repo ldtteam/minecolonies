@@ -1,7 +1,7 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.colony.CitizenDataView;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public interface IProxy
 {

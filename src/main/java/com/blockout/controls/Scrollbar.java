@@ -3,7 +3,9 @@ package com.blockout.controls;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.views.ScrollingContainer;
-import net.minecraft.util.MathHelper;
+
+import net.minecraft.util.math.MathHelper;
+
 import org.lwjgl.input.Mouse;
 
 public class Scrollbar extends Pane

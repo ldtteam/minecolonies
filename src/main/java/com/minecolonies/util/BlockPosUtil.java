@@ -11,8 +11,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -284,14 +284,14 @@ public final class BlockPosUtil
     }
 
     /**
-     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.BlockPos.MutableBlockPos#set(int, int, int)}.
+     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.MutableBlockPos#set(int, int, int)}.
      *
-     * @param pos {@link net.minecraft.util.BlockPos.MutableBlockPos}.
+     * @param pos {@link net.minecraft.util.math.BlockPos.MutableBlockPos}.
      * @param newPos The new position to set.
      */
     public static void set(BlockPos.MutableBlockPos pos, BlockPos newPos)
     {
-        pos.set(newPos.getX(), newPos.getY(), newPos.getZ());
+        pos.setPos(newPos.getX(), newPos.getY(), newPos.getZ());
     }
 
     /**

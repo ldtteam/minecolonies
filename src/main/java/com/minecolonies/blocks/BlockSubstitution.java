@@ -2,8 +2,11 @@ package com.minecolonies.blocks;
 
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemBlock;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
@@ -35,7 +38,7 @@ public class BlockSubstitution extends Block
      */
     public BlockSubstitution()
     {
-        super(Material.wood);
+        super(Material.WOOD);
         initBlock();
     }
 
@@ -48,7 +51,9 @@ public class BlockSubstitution extends Block
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        GameRegistry.registerBlock(this, BLOCK_NAME);
+        GameRegistry.register(this);
+        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
+        //GameRegistry.registerBlock(this, BLOCK_NAME);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
     }
@@ -59,7 +64,7 @@ public class BlockSubstitution extends Block
      * @return true
      */
     @Override
-    public boolean isOpaqueCube()
+    public boolean isOpaqueCube(IBlockState state)
     {
         return true;
     }

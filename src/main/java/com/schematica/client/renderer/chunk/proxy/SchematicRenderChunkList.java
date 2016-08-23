@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.chunk.ChunkCompileTaskGenerator;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.ListedRenderChunk;
 import net.minecraft.client.renderer.chunk.SetVisibility;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -16,9 +16,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class SchematicRenderChunkList extends ListedRenderChunk
 {
-    public SchematicRenderChunkList(final World world, final RenderGlobal renderGlobal, final BlockPos pos, final int index)
+    public SchematicRenderChunkList(final World world, final RenderGlobal renderGlobal, final int index)
     {
-        super(world, renderGlobal, pos, index);
+        super(world, renderGlobal, index);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class SchematicRenderChunkList extends ListedRenderChunk
             if (generator.getStatus() == ChunkCompileTaskGenerator.Status.COMPILING)
             {
                 final BlockPos from = getPosition();
-                final SchematicWorld schematic = (SchematicWorld) this.world;
+                final SchematicWorld schematic = (SchematicWorld) this.getWorld();
 
                 if (from.getX() < 0 || from.getZ() < 0 || from.getX() >= schematic.getWidth() || from.getZ() >= schematic.getLength())
                 {

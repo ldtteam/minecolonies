@@ -1,6 +1,6 @@
 package com.minecolonies.util;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * Useful math stuff to use statically.

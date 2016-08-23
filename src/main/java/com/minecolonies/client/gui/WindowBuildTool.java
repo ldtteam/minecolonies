@@ -1,5 +1,9 @@
 package com.minecolonies.client.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import com.blockout.controls.Button;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
@@ -12,14 +16,12 @@ import com.schematica.Settings;
 import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.client.util.RotationHelper;
 import com.schematica.world.storage.Schematic;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * BuildTool window.
@@ -283,7 +285,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private static boolean inventoryHasHut(InventoryPlayer inventory, String hut)
     {
-        return inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, DEFAULT_POS));
+    	return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
     }
 
     /**

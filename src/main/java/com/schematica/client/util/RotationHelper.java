@@ -15,9 +15,9 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3i;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 
@@ -146,22 +146,22 @@ public final class RotationHelper
         switch (axis)
         {
             case DOWN:
-                return rotated.set(pos.getZ(), pos.getY(), dimensions.getZ() - 1 - pos.getX());
+                return rotated.setPos(pos.getZ(), pos.getY(), dimensions.getZ() - 1 - pos.getX());
 
             case UP:
-                return rotated.set(dimensions.getX() - 1 - pos.getZ(), pos.getY(), pos.getX());
+                return rotated.setPos(dimensions.getX() - 1 - pos.getZ(), pos.getY(), pos.getX());
 
             case NORTH:
-                return rotated.set(dimensions.getX() - 1 - pos.getY(), pos.getX(), pos.getZ());
+                return rotated.setPos(dimensions.getX() - 1 - pos.getY(), pos.getX(), pos.getZ());
 
             case SOUTH:
-                return rotated.set(pos.getY(), dimensions.getY() - 1 - pos.getX(), pos.getZ());
+                return rotated.setPos(pos.getY(), dimensions.getY() - 1 - pos.getX(), pos.getZ());
 
             case WEST:
-                return rotated.set(pos.getX(), dimensions.getY() - 1 - pos.getZ(), pos.getY());
+                return rotated.setPos(pos.getX(), dimensions.getY() - 1 - pos.getZ(), pos.getY());
 
             case EAST:
-                return rotated.set(pos.getX(), pos.getZ(), dimensions.getZ() - 1 - pos.getY());
+                return rotated.setPos(pos.getX(), pos.getZ(), dimensions.getZ() - 1 - pos.getY());
             default:
                 throw new RotationException("'%s' is not a valid axis!", axis.getName());
         }

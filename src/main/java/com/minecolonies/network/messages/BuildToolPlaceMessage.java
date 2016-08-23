@@ -13,7 +13,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -145,13 +146,13 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
 
-        if (player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
+        if (player.inventory.hasItemStack(new ItemStack(block)) && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
             world.setBlockState(buildPos, block.getDefaultState());
             block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);
-
-            player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));
+            
+            player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
 
             AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 

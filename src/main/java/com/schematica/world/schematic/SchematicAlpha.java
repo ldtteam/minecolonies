@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
@@ -95,7 +95,7 @@ class SchematicAlpha extends SchematicFormat
                     }
 
                     final Block block = BLOCK_REGISTRY.getObjectById(blockID);
-                    pos.set(x, y, z);
+                    pos.setPos(x, y, z);
                     try
                     {
                         final IBlockState blockState = block.getStateFromMeta(meta);
@@ -168,7 +168,7 @@ class SchematicAlpha extends SchematicFormat
                 for (int z = 0; z < schematic.getLength(); z++)
                 {
                     final int index = x + (y * schematic.getLength() + z) * schematic.getWidth();
-                    final IBlockState blockState = schematic.getBlockState(pos.set(x, y, z));
+                    final IBlockState blockState = schematic.getBlockState(pos.setPos(x, y, z));
                     final Block block = blockState.getBlock();
                     final int blockId = BLOCK_REGISTRY.getId(block);
                     localBlocks[index] = (byte) blockId;
@@ -209,7 +209,7 @@ class SchematicAlpha extends SchematicFormat
                     Reference.logger.error("Block {}[{}] with TileEntity {} failed to save! Replacing with bedrock...",
                             block, block != null ? BLOCK_REGISTRY.getNameForObject(block) : "?", tileEntity.getClass().getName(), e);
                 }
-                localBlocks[index] = (byte) BLOCK_REGISTRY.getId(Blocks.bedrock);
+                localBlocks[index] = (byte) BLOCK_REGISTRY.getId(Blocks.BEDROCK);
                 localMetadata[index] = 0;
                 extraBlocks[index] = 0;
             }

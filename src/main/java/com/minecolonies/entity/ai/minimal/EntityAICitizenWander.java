@@ -3,9 +3,9 @@ package com.minecolonies.entity.ai.minimal;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 public class EntityAICitizenWander extends EntityAIBase
 {
@@ -34,13 +34,13 @@ public class EntityAICitizenWander extends EntityAIBase
         {
             return false;
         }
-        Vec3 vec3 = RandomPositionGenerator.findRandomTarget(citizen, 10, 7);
+        Vec3d vec3 = RandomPositionGenerator.findRandomTarget(citizen, 10, 7);
         if (vec3 == null)
         {
             return false;
         }
 
-        vec3 = new Vec3(vec3.xCoord, getValidHeight(vec3), vec3.zCoord);
+        vec3 = new Vec3d(vec3.xCoord, getValidHeight(vec3), vec3.zCoord);
 
         this.xPosition = vec3.xCoord;
         this.yPosition = vec3.yCoord;
@@ -55,7 +55,7 @@ public class EntityAICitizenWander extends EntityAIBase
      * @param position Current position of the entity
      * @return Ground level at (position.x, position.z)
      */
-    private double getValidHeight(Vec3 position)
+    private double getValidHeight(Vec3d position)
     {
         double returnHeight = position.yCoord;
         if (position.yCoord < 0)

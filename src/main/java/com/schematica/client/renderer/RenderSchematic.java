@@ -36,6 +36,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -60,7 +62,7 @@ public final class RenderSchematic extends RenderGlobal
 
     private static final ShaderProgram SHADER_ALPHA = new ShaderProgram("minecolonies", null, "shaders/alpha.frag");
     private static final double DOUBLE_EPSILON = 0.00000001D;
-    private static Vec3 playerPositionOffset = new Vec3(0, 0, 0);
+    private static Vec3d playerPositionOffset = new Vec3d(0, 0, 0);
     private final Minecraft mc;
     private final Profiler profiler;
     private final RenderManager renderManager;

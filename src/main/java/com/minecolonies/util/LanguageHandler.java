@@ -1,8 +1,8 @@
 package com.minecolonies.util;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.translation.I18n;
 
 import java.util.List;
 
@@ -45,25 +45,12 @@ public class LanguageHandler
      */
     public static String getString(String key)
     {
-        return getString(key, key);
-    }
-
-    /**
-     * Localize a non-formatted string.
-     *
-     * @param key          unlocalized key
-     * @param defaultValue the value to return if no key is found
-     * @return Localized string
-     */
-    public static String getString(String key, String defaultValue)
-    {
-        String value = LanguageRegistry.instance().getStringLocalization(key);
-        return "".equals(value) ? defaultValue : value;
+        return I18n.translateToLocal(key);
     }
 
     public static void sendPlayerMessage(EntityPlayer player, String message)
     {
-        player.addChatComponentMessage(new ChatComponentText(message));
+        player.addChatComponentMessage(new TextComponentString(message));
     }
 
     /**

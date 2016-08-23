@@ -5,11 +5,11 @@ import com.minecolonies.util.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
-import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -43,9 +43,9 @@ public final class Pathfinding
      * Add a job to the queue for processing.
      *
      * @param job PathJob
-     * @return a Future containing the PathEntity
+     * @return a Future containing the Path
      */
-    public static Future<PathEntity> enqueue(AbstractPathJob job)
+    public static Future<Path> enqueue(AbstractPathJob job)
     {
         return executor.submit(job);
     }
@@ -151,7 +151,7 @@ public final class Pathfinding
         GL11.glDepthMask(false);
 
         Tessellator tessellator   = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        VertexBuffer worldrenderer = tessellator.getBuffer();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
 
         worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);

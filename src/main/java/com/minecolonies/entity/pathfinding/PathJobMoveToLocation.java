@@ -2,8 +2,8 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.Log;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.pathfinding.Path;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
@@ -42,10 +42,10 @@ public class PathJobMoveToLocation extends AbstractPathJob
     /**
      * Perform the search
      *
-     * @return PathEntity of a path to the given location, a best-effort, or null
+     * @return Path of a path to the given location, a best-effort, or null
      */
     @Override
-    protected PathEntity search()
+    protected Path search()
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {

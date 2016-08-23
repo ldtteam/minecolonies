@@ -6,8 +6,10 @@ import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
 public class ItemScanTool extends AbstractItemMinecolonies
@@ -25,7 +27,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
         NBTTagCompound compound = stack.getTagCompound();
@@ -34,7 +36,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
         {
             BlockPosUtil.writeToNBT(compound, "pos1", pos);
             if(worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point");
-            return true;
+            return EnumActionResult.SUCCESS;
         }
         else if(!compound.hasKey("pos2"))
         {
@@ -44,10 +46,10 @@ public class ItemScanTool extends AbstractItemMinecolonies
             {
                 BlockPosUtil.writeToNBT(compound, "pos2", pos2);
                 if(worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point2");
-                return true;
+                return EnumActionResult.SUCCESS;
             }
             if (worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.samePoint");
-            return false;
+            return EnumActionResult.FAIL;
         }
         else
         {
@@ -60,7 +62,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
             }
             compound.removeTag("pos1");
             compound.removeTag("pos2");
-            return true;
+            return EnumActionResult.SUCCESS;
         }
     }
 }

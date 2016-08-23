@@ -1,6 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class Node implements Comparable<Node>
 {

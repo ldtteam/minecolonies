@@ -4,6 +4,7 @@ import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.Utils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -181,7 +182,7 @@ public class Permissions implements IPermissions
             UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
             Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
 
-            GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getProfileByUUID(id);
+            GameProfile gameprofile = Minecraft.getMinecraft().getIntegratedServer().getPlayerProfileCache().getProfileByUUID(id);
 
             players.put(id, new Player(id, gameprofile.getName(), rank));
         }
@@ -406,7 +407,7 @@ public class Permissions implements IPermissions
         }
         else
         {
-            GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getProfileByUUID(id);
+            GameProfile gameprofile = Minecraft.getMinecraft().getIntegratedServer().getPlayerProfileCache().getProfileByUUID(id);
 
             return gameprofile != null && addPlayer(gameprofile, rank);
 
@@ -424,7 +425,7 @@ public class Permissions implements IPermissions
      */
     public boolean addPlayer(String player, Rank rank)
     {
-        GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(player);
+        GameProfile gameprofile = Minecraft.getMinecraft().getIntegratedServer().getPlayerProfileCache().getGameProfileForUsername(player);
 
         //Check if the player already exists so that their rank isn't overridden
         return gameprofile != null && !players.containsKey(gameprofile.getId()) && addPlayer(gameprofile, rank);

@@ -23,7 +23,7 @@ public class ItemIcon extends Pane
         String itemName = params.getStringAttribute("item", null);
         if (itemName != null)
         {
-            Item item = (Item) Item.itemRegistry.getObject(new ResourceLocation(itemName));
+            Item item = (Item) Item.getByNameOrId(itemName);
             if (item != null)
             {
                 itemStack = new ItemStack(item, 1);

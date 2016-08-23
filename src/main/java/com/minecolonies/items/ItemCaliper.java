@@ -6,8 +6,10 @@ import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
 /**
@@ -41,12 +43,12 @@ public class ItemCaliper extends AbstractItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         // if client world, do nothing
         if(worldIn.isRemote)
         {
-            return false;
+            return EnumActionResult.FAIL;
         }
 
         // if attribute instance is not known, register it.
@@ -60,17 +62,17 @@ public class ItemCaliper extends AbstractItemMinecolonies
         {
             startPosition = pos;
             attribute.setBaseValue(1.0);
-            return true;
+            return EnumActionResult.SUCCESS;
         }
         attribute.setBaseValue(0.0);
         //Start == end, same location
         if(startPosition.getX() == pos.getX() && startPosition.getY() == pos.getY() && startPosition.getZ() == pos.getZ())
         {
             LanguageHandler.sendPlayerLocalizedMessage(playerIn, ITEM_CALIPER_MESSAGE_SAME);
-            return true;
+            return EnumActionResult.SUCCESS;
         }
 
-        return handlePlayerMessage(playerIn, pos);
+        return handlePlayerMessage(playerIn, pos) ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
     }
 
     private boolean handlePlayerMessage(EntityPlayer playerIn, BlockPos pos)

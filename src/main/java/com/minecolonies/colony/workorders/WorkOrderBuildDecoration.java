@@ -1,7 +1,7 @@
 package com.minecolonies.colony.workorders;
 
 import com.minecolonies.colony.Colony;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * A work order that the build can take to build decorations.

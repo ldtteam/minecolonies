@@ -1,11 +1,12 @@
 package com.minecolonies.util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,7 +38,7 @@ public final class ServerUtils
      * @return the Player
      */
     @Nullable
-    public static EntityPlayer getPlayerFromUUID(@NotNull World world, @NotNull UUID id)
+    public static EntityPlayer getPlayerFromUUID(@Nonnull World world, @Nonnull UUID id)
     {
         for (int i = 0; i < world.playerEntities.size(); ++i)
         {
@@ -56,8 +57,8 @@ public final class ServerUtils
      * @param ids   List of UUIDs
      * @return list of EntityPlayers
      */
-    @NotNull
-    public static List<EntityPlayer> getPlayersFromUUID(@NotNull World world, @NotNull Collection<UUID> ids)
+    @Nonnull
+    public static List<EntityPlayer> getPlayersFromUUID(@Nonnull World world, @Nonnull Collection<UUID> ids)
     {
         final List<EntityPlayer> players = new ArrayList<>();
 
@@ -94,7 +95,7 @@ public final class ServerUtils
         {
             return null;
         }
-        final List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+        final List<EntityPlayerMP> allPlayers = Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerList();
         for (final EntityPlayerMP player : allPlayers)
         {
             if (player.getUniqueID().equals(uuid))

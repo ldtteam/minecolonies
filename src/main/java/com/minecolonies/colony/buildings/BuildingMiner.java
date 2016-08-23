@@ -16,7 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -87,11 +87,11 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Defines the material used for the floor of the shaft.
      */
-    private Block floorBlock = Blocks.planks;
+    private Block floorBlock = Blocks.PLANKS;
     /**
      * Defines the material used for the fence of the shaft.
      */
-    private Block fenceBlock = Blocks.oak_fence;
+    private Block fenceBlock = Blocks.OAK_FENCE;
 
     /**
      * Here we can detect multiples of 5
@@ -472,8 +472,8 @@ public class BuildingMiner extends AbstractBuildingWorker
     {
         super.writeToNBT(compound);
 
-        compound.setString(TAG_FLOOR_BLOCK, Block.blockRegistry.getNameForObject(floorBlock).toString());
-        compound.setString(TAG_FENCE_BLOCK, Block.blockRegistry.getNameForObject(fenceBlock).toString());
+        compound.setString(TAG_FLOOR_BLOCK, Block.REGISTRY.getNameForObject(floorBlock).toString());
+        compound.setString(TAG_FENCE_BLOCK, Block.REGISTRY.getNameForObject(fenceBlock).toString());
         compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.setBoolean(TAG_CLEARED, clearedShaft);
         compound.setInteger(TAG_VECTORX, vectorX);
@@ -561,11 +561,11 @@ public class BuildingMiner extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            owner.triggerAchievement(ModAchievements.achievementBuildingMiner);
+            owner.addStat(ModAchievements.achievementBuildingMiner);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
+            owner.addStat(ModAchievements.achievementUpgradeMinerMax);
         }
     }
 

@@ -13,13 +13,15 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -90,7 +92,7 @@ public class Colony implements IColony
      */
     Colony(int id, World w, BlockPos c)
     {
-        this(id, w.provider.getDimensionId());
+        this(id, w.provider.getDimension());
         center = c;
         world = w;
     }
@@ -226,7 +228,7 @@ public class Colony implements IColony
      *
      * @return Dimension ID.
      */
-    public int getDimensionId()
+    public int getDimension()
     {
         return dimensionId;
     }
@@ -321,7 +323,7 @@ public class Colony implements IColony
      */
     public void onWorldLoad(World w)
     {
-        if (w.provider.getDimensionId() == dimensionId)
+        if (w.provider.getDimension() == dimensionId)
         {
             world = w;
         }
@@ -434,7 +436,7 @@ public class Colony implements IColony
 
         // Add owners
         subscribers.addAll(
-                MinecraftServer.getServer().getConfigurationManager().playerEntityList
+        		Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerList()
                         .stream()
                         .filter(permissions::isSubscriber)
                         .collect(Collectors.toList()));
@@ -679,7 +681,7 @@ public class Colony implements IColony
         }
 
         BlockPos spawnPoint =
-                Utils.scanForBlockNearPoint(world, center, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
+                Utils.scanForBlockNearPoint(world, center, 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
 
         if (spawnPoint != null)
         {
@@ -726,17 +728,17 @@ public class Colony implements IColony
         final ArrayList<Consumer<EntityPlayer>> consumers = new ArrayList<>();
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
-            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeSettlement));
+            consumers.add(player -> player.addStat(ModAchievements.achievementSizeSettlement));
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_TOWN)
         {
-            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeTown));
+            consumers.add(player -> player.addStat(ModAchievements.achievementSizeTown));
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
         {
-            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeCity));
+            consumers.add(player -> player.addStat(ModAchievements.achievementSizeCity));
         }
         this.getPermissions().getPlayers().values().stream()
                 .map(Permissions.Player::getID)

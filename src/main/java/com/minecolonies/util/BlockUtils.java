@@ -23,13 +23,13 @@ public final class BlockUtils
      */
     private static List<BiPredicate<Block, IBlockState>> freeToPlaceBlocks =
             Arrays.asList(
-                    (block, iBlockState) -> block.equals(Blocks.air),
-                    (block, iBlockState) -> block.getMaterial().isLiquid(),
+                    (block, iBlockState) -> block.equals(Blocks.AIR),
+                    (block, iBlockState) -> block.getMaterial(iBlockState).isLiquid(),
                     (block, iBlockState) -> BlockUtils.isWater(block.getDefaultState()),
-                    (block, iBlockState) -> block.equals(Blocks.leaves),
-                    (block, iBlockState) -> block.equals(Blocks.leaves2),
-                    (block, iBlockState) -> block.equals(Blocks.double_plant),
-                    (block, iBlockState) -> block.equals(Blocks.grass),
+                    (block, iBlockState) -> block.equals(Blocks.LEAVES),
+                    (block, iBlockState) -> block.equals(Blocks.LEAVES2),
+                    (block, iBlockState) -> block.equals(Blocks.DOUBLE_PLANT),
+                    (block, iBlockState) -> block.equals(Blocks.GRASS),
                     (block, iBlockState) -> block instanceof BlockDoor
                                             && iBlockState != null
                                             && iBlockState.getValue(PropertyBool.create("upper"))
@@ -55,7 +55,7 @@ public final class BlockUtils
     public static boolean shouldNeverBeMessedWith(Block block)
     {
         return block instanceof AbstractBlockHut
-               || Objects.equals(block, Blocks.bedrock);
+               || Objects.equals(block, Blocks.BEDROCK);
     }
 
     /**
@@ -104,8 +104,8 @@ public final class BlockUtils
      */
     public static boolean isWater(IBlockState iBlockState)
     {
-        return Objects.equals(iBlockState, Blocks.water.getDefaultState())
-               || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
+        return Objects.equals(iBlockState, Blocks.WATER.getDefaultState())
+               || Objects.equals(iBlockState, Blocks.FLOWING_WATER.getDefaultState());
     }
 
     /**
@@ -113,43 +113,43 @@ public final class BlockUtils
      * @param block input block.
      * @return output item.
      */
-    public static Item getItemFromBlock(Block block)
+    /*public static Item getItemFromBlock(Block block)
     {
         Item item = null;
 
         if(block instanceof BlockBanner)
         {
-            item = Items.banner;
+            item = Items.BANNER;
         }
         else if(block instanceof BlockBed)
         {
-            item = Items.bed;
+            item = Items.BED;
         }
         else if(block instanceof BlockBrewingStand)
         {
-            item = Items.brewing_stand;
+            item = Items.BREWING_STAND;
         }
         else if(block instanceof BlockCake)
         {
-            item = Items.cake;
+            item = Items.CAKE;
         }
         else if(block instanceof BlockCauldron)
         {
-            item = Items.cauldron;
+            item = Items.CAULDRON;
         }
         else if(block instanceof BlockCocoa)
         {
-            item = Items.dye;
+            item = Items.DYE;
         }
         else if(block instanceof BlockCrops)
         {
             if(block instanceof BlockCarrot)
             {
-                item = Items.carrot;
+                item = Items.CARROT;
             }
             else if(block instanceof BlockPotato)
             {
-                item = Items.potato;
+                item = Items.POTATO;
             }
             else
             {
@@ -242,5 +242,5 @@ public final class BlockUtils
         }
 
         return item;
-    }
+    }*/
 }

@@ -3,7 +3,7 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.client.gui.WindowTownHall;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class BuildingTownHall extends AbstractBuildingHut
 {

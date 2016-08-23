@@ -4,18 +4,19 @@ import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.EntityCitizen;
+
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.*;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.util.Constants;
 
 /**
@@ -293,9 +294,9 @@ public class InventoryCitizen implements IInventory
      * Get the formatted ChatComponent that will be used for the sender's username in chat
      */
     @Override
-    public IChatComponent getDisplayName()
+    public ITextComponent getDisplayName()
     {
-        return this.hasCustomName() ? new ChatComponentText(this.getName()) : new ChatComponentTranslation(this.getName());
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -439,7 +440,7 @@ public class InventoryCitizen implements IInventory
      *
      * @return {@link ItemStack} currently being held by citizen
      */
-    public ItemStack getHeldItem()
+    public ItemStack getHeldItemMainhand()
     {
         //TODO when tool breaks material handling isn't updated
         return getStackInSlot(heldItem);
@@ -573,7 +574,11 @@ public class InventoryCitizen implements IInventory
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
-                crashreportcategory.addCrashSectionCallable("Item name", itemStackIn::getDisplayName);
+                try{
+                	crashreportcategory.addCrashSection("Item name", itemStackIn.getDisplayName());
+                }catch (Throwable throwable){
+                	crashreportcategory.addCrashSectionThrowable("Item name", throwable);
+                }
                 throw new ReportedException(crashreport);
             }
         }
@@ -595,7 +600,7 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Gets slot that hold item that is being held by citizen.
-     * {@link #getHeldItem()}.
+     * {@link #getHeldItemMainhand()}.
      *
      * @return Slot index of held item
      */

@@ -13,7 +13,7 @@ import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.HireFireMessage;
 import com.minecolonies.util.LanguageHandler;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.ArrayList;
 import java.util.List;

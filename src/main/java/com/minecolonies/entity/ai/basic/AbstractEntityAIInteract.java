@@ -5,9 +5,9 @@ import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      *
      * @param job the job to fulfill
      */
-    public AbstractEntityAIInteract(@NotNull final J job)
+    public AbstractEntityAIInteract(@Nonnull final J job)
     {
         super(job);
         super.registerTargets(
@@ -59,7 +59,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param blockToMine the block that should be mined
      * @return true once we're done
      */
-    protected final boolean mineBlock(@NotNull final BlockPos blockToMine)
+    protected final boolean mineBlock(@Nonnull final BlockPos blockToMine)
     {
         return mineBlock(blockToMine, new BlockPos((int) worker.posX, (int) worker.posY, (int) worker.posZ));
     }
@@ -75,11 +75,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param safeStand   the block we want to stand on to do that
      * @return true once we're done
      */
-    protected final boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
+    protected final boolean mineBlock(@Nonnull final BlockPos blockToMine, @Nonnull final BlockPos safeStand)
     {
         Block curBlock = world.getBlockState(blockToMine).getBlock();
         if (curBlock == null
-            || curBlock.equals(Blocks.air)
+            || curBlock.equals(Blocks.AIR)
             || BlockUtils.shouldNeverBeMessedWith(curBlock))
         {
             //no need to mine block...
@@ -92,7 +92,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return false;
         }
 
-        final ItemStack tool = worker.getHeldItem();
+        final ItemStack tool = worker.getHeldItemMainhand();
 
         //calculate fortune enchantment
         int fortune = Utils.getFortuneOf(tool);
@@ -120,7 +120,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param blockToMine the block to mine eventually
      * @param safeStand   a safe stand to mine from (AIR Block!)
      */
-    private boolean checkMiningLocation(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
+    private boolean checkMiningLocation(@Nonnull final BlockPos blockToMine, @Nonnull final BlockPos safeStand)
     {
         Block curBlock = world.getBlockState(blockToMine).getBlock();
 
@@ -130,9 +130,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return true;
         }
 
-        ItemStack tool = worker.getHeldItem();
+        ItemStack tool = worker.getHeldItemMainhand();
 
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.bedrock)
+        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK)
         {
             Log.logger.info(String.format(
                     "ForgeHook not in sync with EfficientTool for %s and %s\n"
@@ -158,16 +158,16 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param pos   coordinate
      * @return the delay in ticks
      */
-    private int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
+    private int getBlockMiningDelay(@Nonnull final Block block, @Nonnull final BlockPos pos)
     {
-        if (worker.getHeldItem() == null)
+        if (worker.getHeldItemMainhand() == null)
         {
-            return (int) block.getBlockHardness(world, pos);
+            return (int) block.getBlockHardness(world.getBlockState(pos), world, pos);
         }
         return (int) ((DELAY_MODIFIER * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
-                      * (double) block.getBlockHardness(world, pos)
-                      / (double) (worker.getHeldItem().getItem()
-                                        .getDigSpeed(worker.getHeldItem(),
+                      * (double) block.getBlockHardness(world.getBlockState(pos), world, pos)
+                      / (double) (worker.getHeldItemMainhand().getItem()
+                                        .getStrVsBlock(worker.getHeldItemMainhand(),
                                                      block.getDefaultState())));
     }
 

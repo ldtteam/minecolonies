@@ -11,14 +11,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RegionRenderCache;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.chunk.ChunkCompileTaskGenerator;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.chunk.VisGraph;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.World;
@@ -28,9 +27,9 @@ public class RenderOverlay extends RenderChunk
 {
     private final VertexBuffer vertexBuffer;
 
-    public RenderOverlay(final World world, final RenderGlobal renderGlobal, final BlockPos pos, final int index)
+    public RenderOverlay(final World world, final RenderGlobal renderGlobal, final int index)
     {
-        super(world, renderGlobal, pos, index);
+        super(world, renderGlobal, index);
         this.vertexBuffer = OpenGlHelper.useVbo() ? new VertexBuffer(DefaultVertexFormats.POSITION_COLOR) : null;
     }
 
@@ -63,7 +62,7 @@ public class RenderOverlay extends RenderChunk
                 return;
             }
 
-            regionRenderCache = new RegionRenderCache(this.world, from.add(-1, -1, -1), to.add(1, 1, 1), 1);
+            regionRenderCache = new RegionRenderCache(this.getWorld(), from.add(-1, -1, -1), to.add(1, 1, 1), 1);
             generator.setCompiledChunk(compiledOverlay);
         }
         finally
@@ -80,7 +79,7 @@ public class RenderOverlay extends RenderChunk
             final World mcWorld = Minecraft.getMinecraft().theWorld;
 
             final EnumWorldBlockLayer layer = EnumWorldBlockLayer.TRANSLUCENT;
-            final WorldRenderer worldRenderer = generator.getRegionRenderCacheBuilder().getWorldRendererByLayer(layer);
+            final net.minecraft.client.renderer.VertexBuffer worldRenderer = generator.getRegionRenderCacheBuilder().getWorldRendererByLayer(layer);
 
             GeometryTessellator.setStaticDelta(ConfigurationHandler.blockDelta);
 

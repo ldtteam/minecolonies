@@ -13,8 +13,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
 /**
@@ -76,10 +78,10 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return if the chest has been successfully placed.
      */
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if(worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
-            return false;
+            return EnumActionResult.FAIL;
 
         EnumFacing facing = canShipBePlaced(worldIn, pos);
         if(facing != EnumFacing.DOWN)
@@ -87,12 +89,12 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             spawnShip(worldIn, pos, playerIn, facing);
             stack.stackSize--;
             
-            playerIn.triggerAchievement(ModAchievements.achievementGetSupply);
+            playerIn.addStat(ModAchievements.achievementGetSupply);
             
-            return true;
+            return EnumActionResult.SUCCESS;
         }
         LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.supplyChestDeployer.invalid");
-        return false;
+        return EnumActionResult.FAIL;
     }
 
     /**
@@ -224,7 +226,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private void spawnShip(World world, BlockPos pos, EntityPlayer entityPlayer, EnumFacing chestFacing)
     {
-    	world.setBlockState(pos.up(), Blocks.chest.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
+    	world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
 
         placeSupplyShip(world, pos, chestFacing);
 

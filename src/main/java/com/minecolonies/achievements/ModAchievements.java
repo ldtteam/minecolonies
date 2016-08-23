@@ -105,16 +105,16 @@ public final class ModAchievements
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_SETTLEMENT} citizens.
      */
-    public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.pioneer", "size.settlement", 2, -2, Items.iron_ingot, null).registerStat();
+    public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.pioneer", "size.settlement", 2, -2, Items.IRON_INGOT, null).registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_TOWN} citizens.
      */
-    public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", "size.town", 4, -2, Items.gold_ingot, achievementSizeSettlement)
+    public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", "size.town", 4, -2, Items.GOLD_INGOT, achievementSizeSettlement)
             .registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_CITY} citizens.
      */
-    public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", "size.city", 6, -2, Items.diamond, achievementSizeTown).registerStat();
+    public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", "size.city", 6, -2, Items.DIAMOND, achievementSizeTown).registerStat();
 
     // Achievement pages#+
     /**

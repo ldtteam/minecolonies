@@ -7,9 +7,10 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.ai.util.Structure;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.EntityUtils;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.EnumFacing;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -60,7 +61,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @param job the job class of the ai using this base class
      */
-    protected AbstractEntityAIStructure(@NotNull final J job)
+    protected AbstractEntityAIStructure(@Nonnull final J job)
     {
         super(job);
         this.registerTargets(
@@ -228,9 +229,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             //We need to deal with materials
             if (Configurations.builderInfiniteResources)
             {
-                worker.setCurrentItemOrArmor(0, null);
+                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
                 world.setBlockToAir(currentBlock.blockPosition);
-                worker.swingItem();
+                worker.swingArm(worker.getActiveHand());
                 setDelay(UNLIMITED_RESOURCES_TIMEOUT);
             }
             else

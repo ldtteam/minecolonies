@@ -1,7 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.ai.citizen.fisherman.Pond;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;

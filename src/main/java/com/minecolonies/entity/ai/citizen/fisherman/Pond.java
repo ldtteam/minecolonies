@@ -3,7 +3,7 @@ package com.minecolonies.entity.ai.citizen.fisherman;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 /**
@@ -46,7 +46,7 @@ public final class Pond
      */
     private static boolean checkWater(IBlockAccess world, BlockPos water)
     {
-        if (world.getBlockState(water).getBlock() != Blocks.water || !world.isAirBlock(water.up()))
+        if (world.getBlockState(water).getBlock() != Blocks.WATER || !world.isAirBlock(water.up()))
         {
             return false;
         }
@@ -78,7 +78,7 @@ public final class Pond
         //Check 6 blocks in direction +/- x
         for (int dx = x + WATER_POOL_WIDTH_REQUIREMENT * vector; dx <= x + WATER_POOL_WIDTH_REQUIREMENT * vector; dx++)
         {
-            if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.water)
+            if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.WATER)
             {
                 return false;
             }
@@ -103,7 +103,7 @@ public final class Pond
         //Check 3 blocks in direction +/- z
         for (int dz = z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz <= z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz++)
         {
-            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.water)
+            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.WATER)
             {
                 return false;
             }
@@ -127,7 +127,7 @@ public final class Pond
         //Check 6 blocks in direction +/- z
         for (int dz = z + WATER_POOL_WIDTH_REQUIREMENT * vector; dz <= z + WATER_POOL_WIDTH_REQUIREMENT * vector; dz++)
         {
-            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.water)
+            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.WATER)
             {
                 return false;
             }
@@ -152,7 +152,7 @@ public final class Pond
         //Check 3 blocks in direction +/- x
         for (int dx = x + WATER_POOL_HEIGHT_REQUIREMENT * vector; dx <= x + WATER_POOL_HEIGHT_REQUIREMENT * vector; dx++)
         {
-            if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.water)
+            if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.WATER)
             {
                 return false;
             }

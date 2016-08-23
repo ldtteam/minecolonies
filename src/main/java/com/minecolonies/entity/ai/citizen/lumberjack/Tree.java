@@ -8,7 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -168,7 +168,7 @@ public class Tree
      */
     private void checkTree(World world, BlockPos topLog)
     {
-        if (!world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ())).getBlock().getMaterial().isSolid())
+        if (!world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ())).getBlock().getMaterial(world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ()))).isSolid())
         {
             return;
         }
@@ -179,7 +179,7 @@ public class Tree
             {
                 for (int y = -1; y <= 1; y++)
                 {
-                    if (world.getBlockState(new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z)).getBlock().getMaterial().equals(Material.leaves))
+                    if (world.getBlockState(new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z)).getBlock().getMaterial(world.getBlockState(new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z))).equals(Material.LEAVES))
                     {
                         leafCount++;
                         if (leafCount >= NUMBER_OF_LEAVES)
@@ -246,8 +246,8 @@ public class Tree
         BlockPos basePos = getBaseLog(world, pos);
 
         //Make sure tree is on solid ground and tree is not build above cobblestone
-        return world.getBlockState(basePos.down()).getBlock().getMaterial().isSolid()
-                && world.getBlockState(basePos.down()).getBlock() != Blocks.cobblestone
+        return world.getBlockState(basePos.down()).getBlock().getMaterial(world.getBlockState(basePos.down())).isSolid()
+                && world.getBlockState(basePos.down()).getBlock() != Blocks.COBBLESTONE
                 && hasEnoughLeaves(world, pos);
     }
 
@@ -263,7 +263,7 @@ public class Tree
             {
                 for (int dy = -1; dy <= 1; dy++)
                 {
-                    if (world.getBlockState(topPos.add(dx, dy, dz)).getBlock().getMaterial().equals(Material.leaves))
+                    if (world.getBlockState(topPos.add(dx, dy, dz)).getBlock().getMaterial(world.getBlockState(topPos.add(dx, dy, dz))).equals(Material.LEAVES))
                     {
                         leafCount++;
                         if (leafCount >= NUMBER_OF_LEAVES)

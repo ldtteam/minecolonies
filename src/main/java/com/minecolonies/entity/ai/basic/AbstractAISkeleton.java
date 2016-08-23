@@ -8,7 +8,7 @@ import com.minecolonies.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +43,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      *
      * @param job the job class
      */
-    protected AbstractAISkeleton(@NotNull final J job)
+    protected AbstractAISkeleton(@Nonnull final J job)
     {
         this.targetList = new ArrayList<>();
         setMutexBits(MUTEX_MASK);

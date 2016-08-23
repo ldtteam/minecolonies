@@ -1,5 +1,7 @@
 package com.minecolonies.colony.jobs;
 
+import javax.annotation.Nullable;
+
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.AbstractBuilding;
@@ -9,8 +11,7 @@ import com.minecolonies.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.math.BlockPos;
 
 public class JobBuilder extends AbstractJob
 {

@@ -5,15 +5,15 @@ import com.minecolonies.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -21,7 +21,7 @@ import java.util.concurrent.Callable;
 /**
  * Abstract class for Jobs that run in the multithreaded path finder.
  */
-public abstract class AbstractPathJob implements Callable<PathEntity>
+public abstract class AbstractPathJob implements Callable<Path>
 {
     private static final int SHIFT_SOUTH = 1;
     private static final int SHIFT_WEST = 2;
@@ -121,7 +121,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      * @return path to follow or null
      */
     @Override
-    public final PathEntity call()
+    public final Path call()
     {
         try
         {
@@ -138,9 +138,9 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
     /**
      * Perform the search
      *
-     * @return PathEntity of a path to the given location, a best-effort, or null
+     * @return Path of a path to the given location, a best-effort, or null
      */
-    protected PathEntity search()
+    protected Path search()
     {
         Node bestNode = getAndSetupStartNode();
 
@@ -194,7 +194,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
             }
         }
 
-        PathEntity path = finalizePath(bestNode);
+        Path path = finalizePath(bestNode);
 
         handleDebugDraw();
 
@@ -305,7 +305,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
         }
     }
 
-    @NotNull
+    @Nonnull
     private Node getAndSetupStartNode()
     {
         Node startNode = new Node(start,
@@ -315,7 +315,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
         {
             startNode.isLadder = true;
         }
-        else if (world.getBlockState(start).getBlock().getMaterial().isLiquid())
+        else if (world.getBlockState(start).getBlock().getMaterial(world.getBlockState(start)).isLiquid())
         {
             startNode.isSwimming = true;
         }
@@ -346,9 +346,9 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
         if (entity.isInWater())
         {
-            while (b.getMaterial().isLiquid())
+            while (b.getMaterial(entity.worldObj.getBlockState(pos)).isLiquid())
             {
-                pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
+                pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
                 b = entity.worldObj.getBlockState(pos).getBlock();
             }
         }
@@ -360,24 +360,24 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
             if (dX < 0.1)
             {
-                pos.set(pos.getX() - 1, pos.getY(), pos.getZ());
+                pos.setPos(pos.getX() - 1, pos.getY(), pos.getZ());
             }
             else if (dX > 0.9)
             {
-                pos.set(pos.getX() + 1, pos.getY(), pos.getZ());
+                pos.setPos(pos.getX() + 1, pos.getY(), pos.getZ());
             }
 
             if (dZ < 0.1)
             {
-                pos.set(pos.getX(), pos.getY(), pos.getZ() - 1);
+                pos.setPos(pos.getX(), pos.getY(), pos.getZ() - 1);
             }
             else if (dZ > 0.9)
             {
-                pos.set(pos.getX(), pos.getY(), pos.getZ() + 1);
+                pos.setPos(pos.getX(), pos.getY(), pos.getZ() + 1);
             }
         }
-
-        return pos.getImmutable();
+        
+        return pos.toImmutable();
     }
 
     /**
@@ -386,7 +386,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      * @param targetNode
      * @return
      */
-    private PathEntity finalizePath(Node targetNode)
+    private Path finalizePath(Node targetNode)
     {
         //  Compute length of path, since we need to allocate an array.  This is cheaper/faster than building a List
         //  and converting it.  Yes, we have targetNode.steps, but I do not want to rely on that being accurate (I might
@@ -443,7 +443,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
         doDebugPrinting(points);
 
-        return new PathEntity(points);
+        return new Path(points);
     }
 
     private static void setLadderFacing(IBlockAccess world, BlockPos pos, PathPointExtended p)
@@ -671,10 +671,10 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
     private static boolean calculateSwimming(IBlockAccess world, BlockPos pos, Node node)
     {
-        return (node != null) ? node.isSwimming : world.getBlockState(pos.down()).getBlock().getMaterial().isLiquid();
+        return (node != null) ? node.isSwimming : world.getBlockState(pos.down()).getBlock().getMaterial(world.getBlockState(pos.down())).isLiquid();
     }
 
-    @NotNull
+    @Nonnull
     private Node createNode(Node parent, BlockPos pos, int nodeKey, boolean isSwimming, double heuristic, double cost, double score)
     {
         Node node;
@@ -758,7 +758,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
     {
         boolean isSwimming = parent != null && parent.isSwimming;
 
-        if (below.getMaterial().isLiquid())
+        if (below.getMaterial(this.world.getBlockState(pos)).isLiquid())
         {
             return handleInLiquid(pos, below, isSwimming);
         }
@@ -799,7 +799,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
             return pos.getY();
         }
 
-        if (allowSwimming && below.getMaterial() == Material.water)
+        if (allowSwimming && below.getMaterial(this.world.getBlockState(pos)) == Material.WATER)
         {
             //  This is water, and we are allowed to swim
             return pos.getY();
@@ -844,7 +844,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
         if (parent != null)
         {
             Block here = world.getBlockState(parent.pos.down()).getBlock();
-            if (here.getMaterial().isLiquid() && !isPassable(pos))
+            if (here.getMaterial(world.getBlockState(parent.pos.down())).isLiquid() && !isPassable(pos))
             {
                 return true;
             }
@@ -861,15 +861,15 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      */
     protected boolean isPassable(Block block, BlockPos pos)
     {
-        if (block.getMaterial() != Material.air)
+        if (block.getMaterial(this.world.getBlockState(pos)) != Material.AIR)
         {
-            if (block.getMaterial().blocksMovement())
+            if (block.getMaterial(this.world.getBlockState(pos)).blocksMovement())
             {
                 return block instanceof BlockDoor ||
                         //  block instanceof BlockTrapDoor ||
                         block instanceof BlockFenceGate;
             }
-            else if (block.getMaterial().isLiquid())
+            else if (block.getMaterial(this.world.getBlockState(pos)).isLiquid())
             {
                 return false;
             }
@@ -892,7 +892,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      */
     protected boolean isWalkableSurface(Block block, BlockPos pos)
     {
-        return block.getMaterial().isSolid() &&
+        return block.getMaterial(this.world.getBlockState(pos)).isSolid() &&
                 !(block instanceof BlockFence) &&
                 !(block instanceof BlockFenceGate) &&
                 !(block instanceof BlockWall);
@@ -906,7 +906,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      */
     protected boolean isLadder(Block block, BlockPos pos)
     {
-        return block.isLadder(world, pos, null);
+        return block.isLadder(this.world.getBlockState(pos), world, pos, null);
     }
 
     protected boolean isLadder(BlockPos pos)

@@ -2,7 +2,7 @@ package com.schematica.client.world.chunk;
 
 import com.schematica.client.world.SchematicWorld;
 import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;

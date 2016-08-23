@@ -10,9 +10,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public class TileEntityColonyBuilding extends TileEntityChest
 {
@@ -101,7 +101,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         if (colonyId == 0)
@@ -111,6 +111,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
                     colony == null ? "NO" : "valid"));
         }
         compound.setInteger(TAG_COLONY, colonyId);
+		return compound;
     }
 
     @Override
@@ -120,18 +121,18 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
     {
         NBTTagCompound compound = packet.getNbtCompound();
         colonyId = compound.getInteger(TAG_COLONY);
     }
 
     @Override
-    public S35PacketUpdateTileEntity getDescriptionPacket()
+    public SPacketUpdateTileEntity getUpdatePacket()
     {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(TAG_COLONY, colonyId);
-        return new S35PacketUpdateTileEntity(this.getPosition(), 0, compound);
+        return new SPacketUpdateTileEntity(this.getPosition(), 0, compound);
     }
 
     /**

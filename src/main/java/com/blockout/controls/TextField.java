@@ -5,9 +5,9 @@ import com.blockout.PaneParams;
 import com.blockout.View;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -282,7 +282,7 @@ public class TextField extends Pane
             GL11.glDisable(GL11.GL_TEXTURE_2D);
             GL11.glEnable(GL11.GL_COLOR_LOGIC_OP);
             GL11.glLogicOp(GL11.GL_OR_REVERSE);
-            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+            VertexBuffer worldrenderer = tessellator.getBuffer();
 
             // There are several to choose from, look at DefaultVertexFormats for more info
             //todo may need to choose a different Format

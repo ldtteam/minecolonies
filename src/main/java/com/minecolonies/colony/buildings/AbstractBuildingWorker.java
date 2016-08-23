@@ -1,5 +1,7 @@
 package com.minecolonies.colony.buildings;
 
+import javax.annotation.Nullable;
+
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
@@ -7,9 +9,8 @@ import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * The abstract class for each worker building.

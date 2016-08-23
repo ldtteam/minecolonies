@@ -8,9 +8,9 @@ import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -117,7 +117,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param job the job class
      */
-    protected AbstractEntityAIBasic(@NotNull final J job)
+    protected AbstractEntityAIBasic(@Nonnull final J job)
     {
         super(job);
         super.registerTargets(
@@ -372,7 +372,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param chat  the Item Name
      */
-    private void requestWithoutSpam(@NotNull final String chat)
+    private void requestWithoutSpam(@Nonnull final String chat)
     {
         chatSpamFilter.requestWithoutSpam(chat);
     }
@@ -397,7 +397,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param stand where to walk to
      * @return true while walking to the block
      */
-    protected final boolean walkToBlock(@NotNull final BlockPos stand)
+    protected final boolean walkToBlock(@Nonnull final BlockPos stand)
     {
         return walkToBlock(stand, DEFAULT_RANGE_FOR_DELAY);
     }
@@ -409,7 +409,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param range how close we need to be
      * @return true while walking to the block
      */
-    protected final boolean walkToBlock(@NotNull final BlockPos stand, final int range)
+    protected final boolean walkToBlock(@Nonnull final BlockPos stand, final int range)
     {
         if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), range))
         {
@@ -670,7 +670,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return a list with items nice to have for the worker
      */
-    @NotNull
+    @Nonnull
     protected List<ItemStack> itemsNiceToHave()
     {
         return new ArrayList<>();
@@ -783,7 +783,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return A InventoryCitizen matching this ai's citizen.
      */
-    @NotNull
+    @Nonnull
     protected InventoryCitizen getInventory()
     {
         return worker.getInventoryCitizen();
@@ -810,7 +810,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param target the block to mine
      * @return true if we have a tool for the job
      */
-    protected final boolean holdEfficientTool(@NotNull final Block target)
+    protected final boolean holdEfficientTool(@Nonnull final Block target)
     {
         int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
@@ -827,7 +827,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param target the block to mine
      */
-    private void requestTool(@NotNull final Block target)
+    private void requestTool(@Nonnull final Block target)
     {
         String tool     = target.getHarvestTool(target.getDefaultState());
         int    required = target.getHarvestLevel(target.getDefaultState());
@@ -841,7 +841,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tool     the tool needed
      * @param required the level needed (for pickaxe only)
      */
-    private void updateToolFlag(@NotNull final String tool, final int required)
+    private void updateToolFlag(@Nonnull final String tool, final int required)
     {
         switch (tool)
         {
@@ -869,7 +869,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param target the Block type to mine
      * @return the slot with the best tool
      */
-    private int getMostEfficientTool(@NotNull final Block target)
+    private int getMostEfficientTool(@Nonnull final Block target)
     {
         String           tool      = target.getHarvestTool(target.getDefaultState());
         int              required  = target.getHarvestLevel(target.getDefaultState());

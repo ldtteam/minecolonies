@@ -8,10 +8,14 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFishFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,17 +41,17 @@ public final class EntityFishHook extends Entity
      * possible drop list for level 2 building with speed
      */
     private static final List junkDrops = Arrays.asList(
-            (new WeightedRandomFishable(new ItemStack(Items.leather_boots), 10)).setMaxDamagePercent(0.9F),
-            new WeightedRandomFishable(new ItemStack(Items.leather), 10),
-            new WeightedRandomFishable(new ItemStack(Items.bone), 10),
-            new WeightedRandomFishable(new ItemStack(Items.potionitem), 10),
-            new WeightedRandomFishable(new ItemStack(Items.string), 5),
-            (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 2)).setMaxDamagePercent(0.9F),
-            new WeightedRandomFishable(new ItemStack(Items.bowl), 10),
-            new WeightedRandomFishable(new ItemStack(Items.stick), 5),
-            new WeightedRandomFishable(new ItemStack(Items.dye, 10, 0), 1),
-            new WeightedRandomFishable(new ItemStack(Blocks.tripwire_hook), 10),
-            new WeightedRandomFishable(new ItemStack(Items.rotten_flesh), 10));
+            (new WeightedRandomFishable(new ItemStack(Items.LEATHER_BOOTS), 10)).setMaxDamagePercent(0.9F),
+            new WeightedRandomFishable(new ItemStack(Items.LEATHER), 10),
+            new WeightedRandomFishable(new ItemStack(Items.BONE), 10),
+            new WeightedRandomFishable(new ItemStack(Items.POTIONITEM), 10),
+            new WeightedRandomFishable(new ItemStack(Items.STRING), 5),
+            (new WeightedRandomFishable(new ItemStack(Items.FISHING_ROD), 2)).setMaxDamagePercent(0.9F),
+            new WeightedRandomFishable(new ItemStack(Items.BOWL), 10),
+            new WeightedRandomFishable(new ItemStack(Items.STICK), 5),
+            new WeightedRandomFishable(new ItemStack(Items.DYE, 10, 0), 1),
+            new WeightedRandomFishable(new ItemStack(Blocks.TRIPWIRE_HOOK), 10),
+            new WeightedRandomFishable(new ItemStack(Items.ROTTEN_FLESH), 10));
 
     /**
      * Entity size to scale it down
@@ -58,21 +62,21 @@ public final class EntityFishHook extends Entity
      * possible drop list for level 3 building with luck
      */
     private static final List rareDrops = Arrays.asList(
-            new WeightedRandomFishable(new ItemStack(Blocks.waterlily), 1),
-            new WeightedRandomFishable(new ItemStack(Items.name_tag), 1),
-            new WeightedRandomFishable(new ItemStack(Items.saddle), 1),
-            (new WeightedRandomFishable(new ItemStack(Items.bow), 1)).setMaxDamagePercent(0.25F).setEnchantable(),
-            (new WeightedRandomFishable(new ItemStack(Items.fishing_rod), 1)).setMaxDamagePercent(0.25F).setEnchantable(),
-            (new WeightedRandomFishable(new ItemStack(Items.book), 1)).setEnchantable());
+            new WeightedRandomFishable(new ItemStack(Blocks.WATERLILY), 1),
+            new WeightedRandomFishable(new ItemStack(Items.NAME_TAG), 1),
+            new WeightedRandomFishable(new ItemStack(Items.SADDLE), 1),
+            (new WeightedRandomFishable(new ItemStack(Items.BOW), 1)).setMaxDamagePercent(0.25F).setEnchantable(),
+            (new WeightedRandomFishable(new ItemStack(Items.FISHING_ROD), 1)).setMaxDamagePercent(0.25F).setEnchantable(),
+            (new WeightedRandomFishable(new ItemStack(Items.BOOK), 1)).setEnchantable());
 
     /**
      * possible drop list for level 1 building and without luck or speed
      */
     private static final List fishDrops = Arrays.asList(
-            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.COD.getMetadata()), 60),
-            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.SALMON.getMetadata()), 25),
-            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.CLOWNFISH.getMetadata()), 2),
-            new WeightedRandomFishable(new ItemStack(Items.fish, 1, ItemFishFood.FishType.PUFFERFISH.getMetadata()), 13));
+            new WeightedRandomFishable(new ItemStack(Items.FISH, 1, ItemFishFood.FishType.COD.getMetadata()), 60),
+            new WeightedRandomFishable(new ItemStack(Items.FISH, 1, ItemFishFood.FishType.SALMON.getMetadata()), 25),
+            new WeightedRandomFishable(new ItemStack(Items.FISH, 1, ItemFishFood.FishType.CLOWNFISH.getMetadata()), 2),
+            new WeightedRandomFishable(new ItemStack(Items.FISH, 1, ItemFishFood.FishType.PUFFERFISH.getMetadata()), 13));
     /**
      * 180 degree used in trig. functions
      */
@@ -368,7 +372,7 @@ public final class EntityFishHook extends Entity
                     this.getEntityBoundingBox().maxZ);
 
             //If the hook is swimming
-            if (this.worldObj.isAABBInMaterial(axisAlignedBB1, Material.water))
+            if (this.worldObj.isAABBInMaterial(axisAlignedBB1, Material.WATER))
             {
                 waterDensity += 1.0 / numSteps;
             }
@@ -564,7 +568,7 @@ public final class EntityFishHook extends Entity
     private void showFishBiteAnimation(final WorldServer worldServer)
     {
         this.motionY -= 0.20000000298023224D;
-        this.playSound("random.splash", ENTITY_SIZE, (float) (1.0D + this.rand.nextGaussian() * 0.4D));
+        this.playSound(SoundEvents.ENTITY_BOBBER_SPLASH, ENTITY_SIZE, (float) (1.0D + this.rand.nextGaussian() * 0.4D));
         double bubbleY = Math.floor(this.getEntityBoundingBox().minY);
         worldServer.spawnParticle(WATER_BUBBLE,
                                   this.posX,

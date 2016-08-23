@@ -7,16 +7,20 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.GameType;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeProvider;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraftforge.common.BiomeManager.BiomeEntry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -24,7 +28,7 @@ import java.util.List;
 
 public class SchematicWorld extends WorldClient
 {
-    private static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
+    private static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, WorldSettings.getGameTypeById(GameType.CREATIVE.getID()), false, false, WorldType.FLAT);
 
     private Schematic schematic;
 
@@ -50,7 +54,7 @@ public class SchematicWorld extends WorldClient
     {
         if (this.isRenderingLayer && this.renderingLayer != pos.getY())
         {
-            return Blocks.air.getDefaultState();
+            return Blocks.AIR.getDefaultState();
         }
 
         return this.schematic.getBlockState(pos);
@@ -102,28 +106,9 @@ public class SchematicWorld extends WorldClient
     @Override
     public boolean isBlockNormalCube(final BlockPos pos, final boolean ignored)
     {
-        return getBlockState(pos).getBlock().isNormalCube(this, pos);
+        return getBlockState(pos).getBlock().isNormalCube(getBlockState(pos), this, pos);
     }
 
-    @Override
-    public void calculateInitialSkylight()
-    {
-        //Not needed
-    }
-
-    @Override
-    protected void calculateInitialWeather()
-    {
-        //Not needed
-    }
-
-    @Override
-    public void setSpawnPoint(final BlockPos pos)
-    {
-        //Not needed
-    }
-
-    @Override
     protected int getRenderDistanceChunks()
     {
         return 0;
@@ -132,13 +117,13 @@ public class SchematicWorld extends WorldClient
     @Override
     public boolean isAirBlock(final BlockPos pos)
     {
-        return getBlockState(pos).getBlock().isAir(this, pos);
+        return getBlockState(pos).getBlock().isAir(getBlockState(pos), this, pos);
     }
 
     @Override
-    public BiomeGenBase getBiomeGenForCoords(final BlockPos pos)
+    public Biome getBiomeGenForCoords(final BlockPos pos)
     {
-        return BiomeGenBase.jungle;
+        return Biomes.JUNGLE;
     }
 
     public int getWidth()
@@ -158,7 +143,6 @@ public class SchematicWorld extends WorldClient
     }
 
     @SideOnly(Side.CLIENT)
-    @Override
     public boolean extendedLevelsInChunkCache()
     {
         return false;
@@ -185,7 +169,7 @@ public class SchematicWorld extends WorldClient
     @Override
     public boolean isSideSolid(final BlockPos pos, final EnumFacing side, final boolean ignored)
     {
-        return getBlockState(pos).getBlock().isSideSolid(this, pos, side);
+        return getBlockState(pos).getBlock().isSideSolid(getBlockState(pos), this, pos, side);
     }
 
     public void setSchematic(final Schematic schematic)

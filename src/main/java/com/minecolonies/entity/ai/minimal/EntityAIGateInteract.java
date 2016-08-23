@@ -5,10 +5,10 @@ import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * Used for gate interaction for the citizens.
@@ -79,7 +79,7 @@ public class EntityAIGateInteract extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        return this.theEntity.isCollidedHorizontally && checkPathEntity();
+        return this.theEntity.isCollidedHorizontally && checkPath();
     }
 
     /**
@@ -87,25 +87,25 @@ public class EntityAIGateInteract extends EntityAIBase
      *
      * @return true if the fence gate can be passed.
      */
-    private boolean checkPathEntity()
+    private boolean checkPath()
     {
         PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
-        PathEntity         pathentity         = pathnavigateground.getPath();
-        return pathentity != null && !pathentity.isFinished() && pathnavigateground.getEnterDoors() && checkFenceGate(pathentity);
+        Path         Path         = pathnavigateground.getPath();
+        return Path != null && !Path.isFinished() && pathnavigateground.getEnterDoors() && checkFenceGate(Path);
     }
 
     /**
      * Checks if the citizen is close enough to an existing fence gate.
      *
-     * @param pathentity the path through the fence.
+     * @param Path the path through the fence.
      * @return true if the gate can be passed
      */
-    private boolean checkFenceGate(PathEntity pathentity)
+    private boolean checkFenceGate(Path Path)
     {
-        int maxLengthToCheck = Math.min(pathentity.getCurrentPathIndex() + LENGTH_TO_CHECK, pathentity.getCurrentPathLength());
+        int maxLengthToCheck = Math.min(Path.getCurrentPathIndex() + LENGTH_TO_CHECK, Path.getCurrentPathLength());
         for (int i = 0; i < maxLengthToCheck; ++i)
         {
-            PathPoint pathpoint = pathentity.getPathPointFromIndex(i);
+            PathPoint pathpoint = Path.getPathPointFromIndex(i);
             for (int level = 0; level < HEIGHT_TO_CHECK; level++)
             {
                 this.gatePosition = new BlockPos(pathpoint.xCoord, pathpoint.yCoord + level, pathpoint.zCoord);
@@ -134,12 +134,12 @@ public class EntityAIGateInteract extends EntityAIBase
     private BlockFenceGate getBlockFence(BlockPos pos)
     {
         Block block = this.theEntity.worldObj.getBlockState(pos).getBlock();
-        if (!(block instanceof BlockFenceGate && block.getMaterial() == Material.wood))
+        if (!(block instanceof BlockFenceGate && block.getMaterial(this.theEntity.worldObj.getBlockState(pos)) == Material.WOOD))
         {
             block = this.theEntity.worldObj.getBlockState(this.theEntity.getPosition()).getBlock();
             gatePosition = this.theEntity.getPosition();
         }
-        return block instanceof BlockFenceGate && block.getMaterial() == Material.wood ? (BlockFenceGate) block : null;
+        return block instanceof BlockFenceGate && block.getMaterial(this.theEntity.worldObj.getBlockState(pos)) == Material.WOOD ? (BlockFenceGate) block : null;
     }
 
     /**

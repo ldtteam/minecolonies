@@ -9,11 +9,13 @@ import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -360,7 +362,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean plantSapling(BlockPos location)
     {
-        if (BlockPosUtil.getBlock(world, location) != Blocks.air)
+        if (BlockPosUtil.getBlock(world, location) != Blocks.AIR)
         {
             return false;
         }
@@ -374,14 +376,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             worker.setHeldItem(saplingSlot);
 
             placeSaplings(saplingSlot, stack, block);
-
-            world.playSoundEffect((float) location.getX() + HALF_BLOCK_OFFSET,
-                                  (float) location.getY() + HALF_BLOCK_OFFSET,
-                                  (float) location.getZ() + HALF_BLOCK_OFFSET,
-                                  block.stepSound.getBreakSound(),
-                                  block.stepSound.getVolume(),
-                                  block.stepSound.getFrequency());
-            worker.swingItem();
+            
+            world.playSound((EntityPlayer)null, this.worker.getPosition(), block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
+            worker.swingArm(worker.getActiveHand());
         }
 
         if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
@@ -513,7 +510,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 for (int z = playerZ - radius; z < playerZ + radius; z++)
                 {
                     BlockPos pos = new BlockPos(x, y, z);
-                    if (world.getBlockState(pos).getBlock().isLeaves(world, pos))
+                    if (world.getBlockState(pos).getBlock().isLeaves(world.getBlockState(pos), world, pos))
                     {
                         return pos;
                     }

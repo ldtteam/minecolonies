@@ -5,13 +5,13 @@ import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.lib.Literals;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.Vec3d;
 
 /**
  * Determines how the fish hook is rendered.
@@ -74,7 +74,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         GlStateManager.scale(0.5F, 0.5F, 0.5F);
         this.bindEntityTexture(entity);
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        VertexBuffer worldrenderer = tessellator.getBuffer();
 
         GlStateManager.rotate((float) (180.0D - this.renderManager.playerViewY), 0.0F, 1.0F, 0.0F);
         GlStateManager.rotate(-this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
@@ -107,7 +107,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         {
             final double orientation      = citizen.getSwingProgress(partialTicks);
             final double finalOrientation = Math.sin(Math.sqrt(orientation) * Math.PI);
-            final Vec3   vec3             = new Vec3(-0.36D, 0.03D, 0.35D);
+            final Vec3d   vec3             = new Vec3d(-0.36D, 0.03D, 0.35D);
 
             vec3.rotatePitch((float) (-((double)citizen.prevRotationPitch + ((double)citizen.rotationPitch - (double)citizen.prevRotationPitch) * partialTicks)
                     * Math.PI / Literals.HALF_CIRCKLE));
