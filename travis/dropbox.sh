@@ -16,6 +16,8 @@ else
     ~/dropbox_uploader.sh upload ./build/libs/*univ*.jar "pr/$TRAVIS_PULL_REQUEST"
 fi
 
-curl -Is $UPLOADER_GENERATE_URL
+if [$TRAVIS_BRANCH = "develop"] || [$TRAVIS_BRANCH = "master"] || [$TRAVIS_BRANCH == release/*]; then
+    curl -Is $UPLOADER_GENERATE_URL
+fi
 
 exit 0
