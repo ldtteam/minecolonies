@@ -77,6 +77,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         super(job);
         super.registerTargets(
+                new AITarget(this::checkIfCanceled, IDLE),
                 new AITarget(this::checkIfExecute, this::getState),
                 new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
@@ -91,6 +92,19 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         worker.setCanPickUpLoot(true);
     }
 
+    private boolean checkIfCanceled()
+    {
+        WorkOrderBuild wo = job.getWorkOrder();
+
+        if(wo == null)
+        {
+            resetTask();
+            return true;
+        }
+
+        return false;
+    }
+
     private boolean checkIfExecute()
     {
         setDelay(1);
@@ -101,13 +115,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         WorkOrderBuild wo = job.getWorkOrder();
-
-        if(wo == null)
-        {
-            resetTask();
-            this.
-            return true;
-        }
 
         if (job.getColony().getBuilding(wo.getBuildingLocation()) == null && !(wo instanceof WorkOrderBuildDecoration))
         {
