@@ -94,7 +94,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private boolean checkIfCanceled()
     {
-        WorkOrderBuild wo = job.getWorkOrder();
+        final WorkOrderBuild wo = job.getWorkOrder();
 
         if(wo == null)
         {
