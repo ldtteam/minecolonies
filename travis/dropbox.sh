@@ -17,7 +17,7 @@ else
 fi
 
 if [$TRAVIS_BRANCH = "develop"] || [$TRAVIS_BRANCH = "master"] || [$TRAVIS_BRANCH == release/*]; then
-    curl -Is $UPLOADER_GENERATE_URL
+    curl -s $UPLOADER_GENERATE_URL
 fi
 
 exit 0
