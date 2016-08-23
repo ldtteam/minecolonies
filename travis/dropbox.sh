@@ -16,4 +16,6 @@ else
     ~/dropbox_uploader.sh upload ./build/libs/*univ*.jar "pr/$TRAVIS_PULL_REQUEST"
 fi
 
+curl -Is $UPLOADER_GENERATE_URL
+
 exit 0
