@@ -548,7 +548,7 @@ public final class SchematicWrapper
 
         }
         //Check for air blocks and if blocks below the hut are different from the schematicWorld
-        while((worldBlockAir() || (progressPos.getY() <= getOffset().getY() && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
+        while((worldBlockAir() ||  doesSchematicBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
