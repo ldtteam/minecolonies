@@ -3,7 +3,6 @@ package com.minecolonies.items;
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
@@ -211,7 +210,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest())
+        if(Configurations.allowInfiniteSupplyChests/* || !PlayerProperties.get(player).hasPlacedSupplyChest()*/)
             return true;
         LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.error.supplyChestAlreadyPlaced");
         return false;
@@ -231,7 +230,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         placeSupplyShip(world, pos, chestFacing);
 
         fillChest((TileEntityChest) world.getTileEntity(pos.up()));
-        PlayerProperties.get(entityPlayer).placeSupplyChest();
+        //PlayerProperties.get(entityPlayer).placeSupplyChest();
     }
 
     private void placeSupplyShip(World world, BlockPos pos, EnumFacing direction)

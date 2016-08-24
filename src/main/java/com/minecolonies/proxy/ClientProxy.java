@@ -3,7 +3,6 @@ package com.minecolonies.proxy;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.client.gui.WindowBuildTool;
 import com.minecolonies.client.gui.WindowCitizen;
-import com.minecolonies.client.model.ModelEntityLumberjackMale;
 import com.minecolonies.client.render.EmptyTileEntitySpecialRenderer;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.client.render.RenderFishHook;
@@ -14,16 +13,16 @@ import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.schematica.Settings;
+import com.schematica.client.renderer.RenderSchematic;
+import com.schematica.handler.client.TickHandler;
+import com.schematica.handler.client.WorldHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 public class ClientProxy extends CommonProxy
@@ -42,9 +41,9 @@ public class ClientProxy extends CommonProxy
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 
         //Schematica
-        /*MinecraftForge.EVENT_BUS.register(RenderSchematic.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(RenderSchematic.INSTANCE);
         MinecraftForge.EVENT_BUS.register(TickHandler.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(new WorldHandler());*/
+        MinecraftForge.EVENT_BUS.register(new WorldHandler());
     }
 
     @Override

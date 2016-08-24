@@ -1,5 +1,15 @@
 package com.schematica.client.renderer;
 
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.util.vector.Vector3f;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.schematica.Settings;
@@ -17,10 +27,15 @@ import com.schematica.client.world.SchematicWorld;
 import com.schematica.core.client.renderer.GeometryMasks;
 import com.schematica.core.client.renderer.GeometryTessellator;
 import com.schematica.handler.ConfigurationHandler;
+
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.RenderChunk;
@@ -30,12 +45,11 @@ import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -45,11 +59,6 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.util.vector.Vector3f;
-
-import java.util.*;
 
 @SideOnly(Side.CLIENT)
 public final class RenderSchematic extends RenderGlobal
@@ -420,7 +429,7 @@ public final class RenderSchematic extends RenderGlobal
         final int entityPass = 0;
 
         this.profiler.startSection("prepare");
-        TileEntityRendererDispatcher.instance.cacheActiveRenderInfo(this.world, this.mc.getTextureManager(), this.mc.fontRendererObj, renderViewEntity, partialTicks);
+        TileEntityRendererDispatcher.instance.func_190056_a(this.world, this.mc.getTextureManager(), this.mc.fontRendererObj, renderViewEntity, this.mc.objectMouseOver, partialTicks);
         this.renderManager.cacheActiveRenderInfo(this.world, this.mc.fontRendererObj, renderViewEntity, this.mc.pointedEntity, this.mc.gameSettings, partialTicks);
 
         this.countEntitiesTotal = 0;
@@ -711,11 +720,11 @@ public final class RenderSchematic extends RenderGlobal
         {
             if (this.world.getBlockState(mutableBlockPos).isOpaqueCube())
             {
-                visgraph.func_178606_a(mutableBlockPos);
+                visgraph.setOpaqueCube(mutableBlockPos);
             }
         }
 
-        return visgraph.func_178609_b(pos);
+        return visgraph.getVisibleFacings(pos);
     }
 
     private RenderChunk getNeighborRenderChunk(final BlockPos posEye, final BlockPos posChunk, final EnumFacing side)
@@ -878,14 +887,13 @@ public final class RenderSchematic extends RenderGlobal
             overlayIterator.remove();
         }
     }
-
+    
     @Override
-    public void markBlockForUpdate(final BlockPos pos)
-    {
+    public void notifyBlockUpdate(final World world, final BlockPos pos, final IBlockState oldState, final IBlockState newState, final int flags) {
         final int x = pos.getX();
         final int y = pos.getY();
         final int z = pos.getZ();
-        markBlocksForUpdate(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1);
+        markBlocksForUpdate(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1, (flags & 8) != 0);
     }
 
     @Override
@@ -894,16 +902,16 @@ public final class RenderSchematic extends RenderGlobal
         final int x = pos.getX();
         final int y = pos.getY();
         final int z = pos.getZ();
-        markBlocksForUpdate(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1);
+        markBlocksForUpdate(x - 1, y - 1, z - 1, x + 1, y + 1, z + 1, true);
     }
 
     @Override
     public void markBlockRangeForRenderUpdate(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
     {
-        markBlocksForUpdate(x1 - 1, y1 - 1, z1 - 1, x2 + 1, y2 + 1, z2 + 1);
+        markBlocksForUpdate(x1 - 1, y1 - 1, z1 - 1, x2 + 1, y2 + 1, z2 + 1, true);
     }
 
-    private void markBlocksForUpdate(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
+    private void markBlocksForUpdate(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2, final boolean needsUpdate)
     {
         if (this.world == null)
         {
@@ -911,7 +919,7 @@ public final class RenderSchematic extends RenderGlobal
         }
 
         final BlockPos.MutableBlockPos position = this.world.position;
-        this.viewFrustum.markBlocksForUpdate(x1 - position.getX(), y1 - position.getY(), z1 - position.getZ(), x2 - position.getX(), y2 - position.getY(), z2 - position.getZ());
+        this.viewFrustum.markBlocksForUpdate(x1 - position.getX(), y1 - position.getY(), z1 - position.getZ(), x2 - position.getX(), y2 - position.getY(), z2 - position.getZ(), needsUpdate);
     }
 
     @Override

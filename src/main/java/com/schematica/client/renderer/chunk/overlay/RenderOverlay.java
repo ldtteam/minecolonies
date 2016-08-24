@@ -80,8 +80,8 @@ public class RenderOverlay extends RenderChunk
 
             final World mcWorld = Minecraft.getMinecraft().theWorld;
 
-            //final BlockRenderLayer layer = BlockRenderLayer.TRANSLUCENT;
-            //final net.minecraft.client.renderer.VertexBuffer worldRenderer = generator.getRegionRenderCacheBuilder().getWorldRendererByLayer(layer);
+            final BlockRenderLayer layer = BlockRenderLayer.TRANSLUCENT;
+            final net.minecraft.client.renderer.VertexBuffer worldRenderer = generator.getRegionRenderCacheBuilder().getWorldRendererByLayer(layer);
 
             GeometryTessellator.setStaticDelta(ConfigurationHandler.blockDelta);
 

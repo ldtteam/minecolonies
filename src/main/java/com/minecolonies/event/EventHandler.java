@@ -6,7 +6,6 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.IColony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
-import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.MathUtils;
 import net.minecraft.block.Block;

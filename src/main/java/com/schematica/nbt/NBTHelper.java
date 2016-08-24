@@ -15,7 +15,8 @@ public class NBTHelper
 
     public static TileEntity readTileEntityFromCompound(final NBTTagCompound tileEntityCompound)
     {
-        return TileEntity.createAndLoadEntity(tileEntityCompound);
+    	return null;
+        //return TileEntity.createAndLoadEntity(tileEntityCompound);
     }
 
     public static NBTTagCompound writeEntityToCompound(final Entity entity)

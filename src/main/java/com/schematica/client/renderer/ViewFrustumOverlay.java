@@ -98,9 +98,9 @@ class ViewFrustumOverlay extends ViewFrustum
     }
 
     @Override
-    public void markBlocksForUpdate(final int fromX, final int fromY, final int fromZ, final int toX, final int toY, final int toZ)
+    public void markBlocksForUpdate(final int fromX, final int fromY, final int fromZ, final int toX, final int toY, final int toZ, final boolean needsUpdate)
     {
-        super.markBlocksForUpdate(fromX, fromY, fromZ, toX, toY, toZ);
+    	super.markBlocksForUpdate(fromX, fromY, fromZ, toX, toY, toZ, needsUpdate);
 
         final int x0 = MathHelper.bucketInt(fromX, 16);
         final int y0 = MathHelper.bucketInt(fromY, 16);
