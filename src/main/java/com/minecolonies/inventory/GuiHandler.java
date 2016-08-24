@@ -16,7 +16,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class GuiHandler implements IGuiHandler
 {
     @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
         BlockPos            pos        = new BlockPos(x,y,z);
         ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
@@ -24,7 +24,7 @@ public class GuiHandler implements IGuiHandler
     }
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
         BlockPos            pos        = new BlockPos(x,y,z);
         ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);

@@ -301,7 +301,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private AIState waitForNeededItems()
     {
-
         delay = DELAY_RECHECK;
         return lookForNeededItems();
     }

@@ -440,7 +440,7 @@ public class Field extends Container
 
                 if(stack.getItem() != null && stack.getItem() instanceof ItemSeeds)
                 {
-                    seed = (ItemSeeds)stack.getItem();
+                    this.seed = (ItemSeeds)stack.getItem();
                 }
             }
         }

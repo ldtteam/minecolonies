@@ -24,6 +24,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeCache;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -680,6 +681,12 @@ public class Colony implements IColony
         if (removedBuildings != null)
         {
             removedBuildings.forEach(AbstractBuilding::destroy);
+        }
+
+        List<BlockPos> removedFields = fields.keySet().stream().filter(loc -> world.getTileEntity(loc) == null).collect(Collectors.toList());
+        for(BlockPos field: removedFields)
+        {
+            fields.remove(field);
         }
     }
 
