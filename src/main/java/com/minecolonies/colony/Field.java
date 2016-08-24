@@ -353,7 +353,7 @@ public class Field extends Container
      */
     public ItemSeeds getSeed()
     {
-        return seed;
+        return inventory.getStackInSlot(0).getItem() instanceof ItemSeeds ? (ItemSeeds)inventory.getStackInSlot(0).getItem() : null;
     }
 
     /**

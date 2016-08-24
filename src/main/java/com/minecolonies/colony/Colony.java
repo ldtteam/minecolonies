@@ -12,7 +12,6 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.network.messages.*;
-import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +23,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeCache;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -754,8 +752,7 @@ public class Colony implements IColony
     {
         // the colonies size
         final int size = this.citizens.size();
-
-
+        
         final ArrayList<Consumer<EntityPlayer>> consumers = new ArrayList<>();
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {

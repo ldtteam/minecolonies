@@ -144,15 +144,18 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public void synchWithColony()
     {
-        ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
-        tempFields.stream().filter(field -> getColony().getField(field.getID()) == null).forEach(field ->
-                                                                                                 {
-                                                                                                     farmerFields.remove(field);
-                                                                                                     if (currentField.getID() == field.getID())
+        if(!farmerFields.isEmpty())
+        {
+            ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
+            tempFields.stream().filter(field -> getColony().getField(field.getID()) == null).forEach(field ->
                                                                                                      {
-                                                                                                         currentField = null;
-                                                                                                     }
-                                                                                                 });
+                                                                                                         farmerFields.remove(field);
+                                                                                                         if (currentField.getID() == field.getID())
+                                                                                                         {
+                                                                                                             currentField = null;
+                                                                                                         }
+                                                                                                     });
+        }
     }
 
     @Override
@@ -164,6 +167,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
+        //todo get field from colony, only store id
         super.readFromNBT(compound);
         NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.tagCount(); ++i)

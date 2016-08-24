@@ -353,7 +353,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
-    private boolean isInHut(@Nullable final ItemStack is)
+    public boolean isInHut(@Nullable final ItemStack is)
     {
         @Nullable final AbstractBuildingWorker buildingMiner = getOwnBuilding();
         return buildingMiner != null &&
