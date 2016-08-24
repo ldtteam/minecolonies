@@ -1,9 +1,12 @@
 package com.schematica.client.renderer;
 
+import javax.annotation.Nullable;
+
 import com.schematica.client.renderer.chunk.overlay.ISchematicRenderChunkFactory;
 import com.schematica.client.renderer.chunk.overlay.RenderOverlay;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.ViewFrustum;
+import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -168,6 +171,38 @@ class ViewFrustumOverlay extends ViewFrustum
 
             final int index = (z * this.countChunksY + y) * this.countChunksX + x;
             return this.renderOverlays[index];
+        }
+        else
+        {
+            return null;
+        }
+    }
+    
+    @Nullable
+    protected RenderChunk getRenderChunk(BlockPos pos)
+    {
+        int i = MathHelper.bucketInt(pos.getX(), 16);
+        int j = MathHelper.bucketInt(pos.getY(), 16);
+        int k = MathHelper.bucketInt(pos.getZ(), 16);
+
+        if (j >= 0 && j < this.countChunksY)
+        {
+            i = i % this.countChunksX;
+
+            if (i < 0)
+            {
+                i += this.countChunksX;
+            }
+
+            k = k % this.countChunksZ;
+
+            if (k < 0)
+            {
+                k += this.countChunksZ;
+            }
+
+            int l = (k * this.countChunksY + j) * this.countChunksX + i;
+            return this.renderChunks[l];
         }
         else
         {
