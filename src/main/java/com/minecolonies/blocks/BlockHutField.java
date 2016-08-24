@@ -152,6 +152,25 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
         return false;
     }
 
+    @Override
+    public void onBlockDestroyedByPlayer(final World worldIn, final BlockPos pos, final IBlockState state)
+    {
+        super.onBlockDestroyedByPlayer(worldIn, pos, state);
+        //Only work on server side.
+        if(worldIn.isRemote)
+        {
+            return;
+        }
+
+
+        Colony colony = ColonyManager.getColony(worldIn, pos);
+
+        if (colony != null)
+        {
+            colony.removeField(pos);
+        }
+    }
+
     // =======================================================================
     // ======================= Rendering & IBlockState =======================
     // =======================================================================

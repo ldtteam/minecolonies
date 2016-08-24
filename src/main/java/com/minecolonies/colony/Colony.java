@@ -1135,4 +1135,13 @@ public class Colony implements IColony
     {
         building.onUpgradeComplete(level);
     }
+
+    /**
+     * Removes a field from the farmerFields list.
+     * @param pos the position-id.
+     */
+    public void removeField(final BlockPos pos)
+    {
+        fields.remove(pos);
+    }
 }

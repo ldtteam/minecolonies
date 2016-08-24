@@ -196,7 +196,7 @@ public class Field extends Container
      */
     private int searchNextBlock(int blocksChecked, BlockPos position, EnumFacing direction, World world)
     {
-        if(blocksChecked == getMaxRange() || isPartOfField(world, position))
+        if(blocksChecked == getMaxRange() || isNoPartOfField(world, position))
         {
             return blocksChecked;
         }
@@ -209,7 +209,7 @@ public class Field extends Container
      * @param position the position.
      * @return true if it is.
      */
-    public boolean isPartOfField(World world, BlockPos position)
+    public boolean isNoPartOfField(World world, BlockPos position)
     {
         return world.isAirBlock(position) || world.getBlockState(position.up()).getBlock().getMaterial().isSolid();
     }

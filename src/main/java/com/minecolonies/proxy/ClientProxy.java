@@ -98,7 +98,7 @@ public class ClientProxy extends CommonProxy
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockHutTownHall), 0, new ModelResourceLocation(ModBlocks.blockHutTownHall.getRegistryName(), "inventory"));
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockHutWarehouse), 0, new ModelResourceLocation(ModBlocks.blockHutWarehouse.getRegistryName(), "inventory"));
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockSubstitution), 0, new ModelResourceLocation(ModBlocks.blockSubstitution.getRegistryName(), "inventory"));
-        //Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockHutField), 0, new ModelResourceLocation(ModBlocks.blockHutField.getRegistryName(), "inventory"));
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(ModBlocks.blockHutField), 0, new ModelResourceLocation(ModBlocks.blockHutField.getRegistryName(), "inventory"));
     	
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(ModItems.buildTool, 0, new ModelResourceLocation(ModItems.buildTool.getRegistryName(), "inventory"));
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(ModItems.caliper, 0, new ModelResourceLocation(ModItems.caliper.getRegistryName(), "inventory"));

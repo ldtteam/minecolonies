@@ -9,6 +9,8 @@ import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.InventoryUtils;
+import net.minecraft.block.BlockCrops;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 
@@ -35,6 +37,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * Changed after finished harvesting in order to dump the inventory.
      */
     private boolean finishedHarvestingJob = false;
+
+    private BlockPos workingOffset;
 
     /**
      * Constructor for the Farmer.
@@ -77,31 +81,34 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private AIState prepareForFarming()
     {
-        if(getOwnBuilding() != null && getOwnBuilding().getBuildingLevel() < 1)
+
+        if(getOwnBuilding() != null && getOwnBuilding().getBuildingLevel() < 0)
         {
             return AIState.PREPARING;
         }
 
-        if(job.getFarmerFields().size() < getOwnBuilding().getBuildingLevel())
+        getOwnBuilding().synchWithColony();
+
+        if(getOwnBuilding().getFarmerFields().size() <= getOwnBuilding().getBuildingLevel())
         {
             searchAndAddFields();
         }
 
-        if(job.getFarmerFields().isEmpty())
+        if(getOwnBuilding().hasNoFields())
         {
             chatSpamFilter.talkWithoutSpam("entity.farmer.noFreeFields");
             return AIState.PREPARING;
         }
 
         //If the farmer has no currentField and there is no field which needs work, check fields.
-        if(job.getCurrentField() == null && job.getFieldToWorkOn() == null)
+        if(getOwnBuilding().getCurrentField() == null && getOwnBuilding().getFieldToWorkOn() == null)
         {
             return AIState.FARMER_CHECK_FIELDS;
         }
 
-        if(job.getCurrentField().needsWork() && !walkToBlock(job.getCurrentField().getLocation()))
+        if(getOwnBuilding().getCurrentField().needsWork() && !walkToBlock(getOwnBuilding().getCurrentField().getLocation()))
         {
-            switch (job.getCurrentField().getFieldStage())
+            switch (getOwnBuilding().getCurrentField().getFieldStage())
             {
                 case EMPTY:
                     if(checkForHoe())
@@ -117,7 +124,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
         else
         {
-            job.setCurrentField(null);
+            getOwnBuilding().setCurrentField(null);
         }
 
         if (checkForHoe())
@@ -136,20 +143,44 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private AIState hoe()
     {
-        //todo request hoe
-        Field    field    = job.getCurrentField();
-        BlockPos position = field.getLocation();
+        Field field = getOwnBuilding().getCurrentField();
 
-        //hoe it, set work false, set status hoed
-        //todo important only harvest, plant, hoe if the field has no crops in it.
-
-        //todo if work is done
-        if(true)
+        //todo go to the field
+        //todo do the mining.
+        
+        if(workingOffset == null)
         {
-            job.getCurrentField().setNeedsWork(false);
-            job.getCurrentField().setFieldStage(HOED);
+            workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
+        }
+        else
+        {
+            if(workingOffset.getX() >= field.getLengthPlusX())
+            {
+                workingOffset = new BlockPos(-field.getLengthMinusX(), 0, workingOffset.getZ()+1);
+            }
+            else if(workingOffset.getZ() >= field.getWidthPlusZ())
+            {
+                getOwnBuilding().getCurrentField().setNeedsWork(false);
+                getOwnBuilding().getCurrentField().setFieldStage(HOED);
+                workingOffset = null;
+                return AIState.IDLE;
+            }
+            else
+            {
+                workingOffset = new BlockPos(workingOffset.getX()+1, 0, workingOffset.getZ());
+            }
         }
 
+        BlockPos position = field.getLocation().down().north(workingOffset.getZ()).west(workingOffset.getX());
+
+
+        if (!field.isNoPartOfField(world, position.up()) && !(world.getBlockState(position) instanceof BlockCrops))
+        {
+            world.setBlockState(position, Blocks.farmland.getDefaultState());
+            mineBlock(position.up());
+        }
+
+        setDelay(10);
         return AIState.FARMER_HOE;
     }
 
@@ -159,26 +190,25 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private AIState plant()
     {
-
-        Field    field    = job.getCurrentField();
+        Field    field    = getOwnBuilding().getCurrentField();
         BlockPos position = field.getLocation();
 
         //todo If not the right seed in inventory and if nothing planted on field yet, request seed and setFieldNull
 
         //calculate position t check
         //if it applies to our field rule
-        //if(job.getCurrentField().isPartOfField(world, positionOff))
+        //if(job.getCurrentField().isNoPartOfField(world, positionOff))
 
         //plant it, set work false, set status seeded
 
         //todo if work is done
         if(true)
         {
-            job.getCurrentField().setNeedsWork(false);
-            job.getCurrentField().setFieldStage(PLANTED);
+            getOwnBuilding().getCurrentField().setNeedsWork(false);
+            getOwnBuilding().getCurrentField().setFieldStage(PLANTED);
         }
 
-        return AIState.FARMER_PLANT;
+        return AIState.FARMER_HOE;
     }
 
     /**
@@ -187,7 +217,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private AIState harvest()
     {
-        Field    field    = job.getCurrentField();
+        Field    field    = getOwnBuilding().getCurrentField();
         BlockPos position = field.getLocation();
 
         //harvest it, set work false, set status empty
@@ -195,8 +225,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         //todo if work is done
         if(true)
         {
-            job.getCurrentField().setNeedsWork(false);
-            job.getCurrentField().setFieldStage(EMPTY);
+            getOwnBuilding().getCurrentField().setNeedsWork(false);
+            getOwnBuilding().getCurrentField().setFieldStage(EMPTY);
         }
 
         return AIState.FARMER_HARVEST;
@@ -211,7 +241,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         //if status = hoed -> check if seeded, if not set workTodo else, set seeded
         //if status = seeded -> if more than 50% ready, set workTodo
 
-        return AIState.FARMER_HOE;
+        getOwnBuilding().setCurrentField(getOwnBuilding().getFarmerFields().get(0));
+        getOwnBuilding().getCurrentField().setNeedsWork(true);
+        return AIState.PREPARING;
     }
 
     /**
@@ -226,7 +258,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
             if(newField!=null)
             {
-                job.getFarmerFields().add(newField);
+                getOwnBuilding().addFarmerFields(newField);
             }
         }
     }

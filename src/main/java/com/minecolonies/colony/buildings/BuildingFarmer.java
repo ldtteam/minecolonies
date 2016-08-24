@@ -4,89 +4,207 @@ import com.minecolonies.client.gui.WindowHutFarmer;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.Field;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.common.util.Constants;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Class which handles the farmer building.
+ */
 public class BuildingFarmer extends AbstractBuildingWorker
 {
-
-    public                  int     wheat    = 100;
-    public                  int     potato   = 0;
-    public                  int     carrot   = 0;
-    public                  int     melon    = 0;
-    public                  int     pumpkin  = 0;
-
-    public  static final    String  WHEAT_TAG    = "wheat";
-    public  static final    String  POTATO_TAG   = "potato";
-    public  static final    String  CARROT_TAG   = "carrot";
-    public  static final    String  MELON_TAG    = "melon";
-    public  static final    String  PUMPKIN_TAG  = "pumpkin";
-
+    /**
+     * Descriptive string of the profession.
+     */
     private static final    String  FARMER      = "Farmer";
-    private static final    String  TAG_FARMER  = "farmer";
 
+    /**
+     * The maximum building level of the hut.
+     */
+    private static final    int     MAX_BUILDING_LEVEL = 3;
+
+    /**
+     * NBTTag to store the fields.
+     */
+    private static final String TAG_FIELDS = "fields";
+
+    /**
+     * NBTTag to store the currentField.
+     */
+    private static final String TAG_CURRENT_FIELD = "currentField";
+
+    /**
+     * The list of the fields the farmer manages.
+     */
+    private ArrayList<Field> farmerFields = new ArrayList<>();
+
+    /**
+     * The field the farmer is currently working on.
+     */
+    private Field currentField;
+
+    /**
+     * Public constructor which instantiates the building.
+     * @param c the colony the building is in.
+     * @param l the position it has been placed (it's id).
+     */
     public BuildingFarmer(Colony c, BlockPos l)
     {
         super(c, l);
     }
 
-    @Override
-    public String getSchematicName(){ return FARMER; }
+
+    /**
+     * Returns list of fields of the farmer.
+     * @return a list of field objects.
+     */
+    public List<Field> getFarmerFields()
+    {
+        return Collections.unmodifiableList(farmerFields);
+    }
+
+    /**
+     * Checks if the farmer has any fields.
+     * @return true if he has none.
+     */
+    public boolean hasNoFields()
+    {
+        return farmerFields.isEmpty();
+    }
+
+    /**
+     * Assigns a field list to the field list.
+     * @param field the field to add.
+     */
+    public void addFarmerFields(Field field)
+    {
+        farmerFields.add(field);
+    }
+
+    /**
+     * Getter of the current field.
+     * @return a field object.
+     */
+    public Field getCurrentField()
+    {
+        return currentField;
+    }
+
+    /**
+     * Sets the field the farmer is currently working on.
+     * @param currentField the field to work on.
+     */
+    public void setCurrentField(final Field currentField)
+    {
+        this.currentField = currentField;
+    }
+
+    public Field getFieldToWorkOn()
+    {
+        for(Field field: farmerFields)
+        {
+            if(field.needsWork())
+            {
+                currentField = field;
+                return field;
+            }
+        }
+        return null;
+    }
 
     @Override
-    public int getMaxBuildingLevel(){ return 3; }
+    public String getSchematicName()
+    {
+        return FARMER;
+    }
 
     @Override
-    public String getJobName(){ return FARMER; }
+    public int getMaxBuildingLevel()
+    {
+        return MAX_BUILDING_LEVEL;
+    }
+
+    @Override
+    public String getJobName()
+    {
+        return FARMER;
+    }
+
+    /**
+     * Synchronize field list with colony.
+     */
+    public void synchWithColony()
+    {
+        ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
+        tempFields.stream().filter(field -> getColony().getField(field.getID()) == null).forEach(field ->
+                                                                                                 {
+                                                                                                     farmerFields.remove(field);
+                                                                                                     if (currentField.getID() == field.getID())
+                                                                                                     {
+                                                                                                         currentField = null;
+                                                                                                     }
+                                                                                                 });
+    }
 
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
-        return new JobFarmer(citizen); //TODO Implement Later
+        return new JobFarmer(citizen);
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
+        NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < fieldTagList.tagCount(); ++i)
+        {
+            NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
 
-        NBTTagCompound farmerCompound = compound.getCompoundTag(TAG_FARMER);
-
-        wheat = farmerCompound.getInteger(WHEAT_TAG);
-        potato = farmerCompound.getInteger(POTATO_TAG);
-        carrot = farmerCompound.getInteger(CARROT_TAG);
-        melon = farmerCompound.getInteger(MELON_TAG);
-        pumpkin = farmerCompound.getInteger(PUMPKIN_TAG);
+            Field f = Field.createFromNBT(getColony(), fieldCompound);
+            if (f != null)
+            {
+                farmerFields.add(f);
+            }
+        }
+        currentField = farmerFields.get(compound.getInteger(TAG_CURRENT_FIELD));
     }
 
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-
-        NBTTagCompound farmerCompound = new NBTTagCompound();
-
-        farmerCompound.setInteger(WHEAT_TAG,wheat);
-        farmerCompound.setInteger(POTATO_TAG,potato);
-        farmerCompound.setInteger(CARROT_TAG,carrot);
-        farmerCompound.setInteger(MELON_TAG,melon);
-        farmerCompound.setInteger(PUMPKIN_TAG, pumpkin);
-
-        compound.setTag(TAG_FARMER, farmerCompound);
+        NBTTagList fieldTagList = new NBTTagList();
+        for (Field f : farmerFields)
+        {
+            NBTTagCompound fieldCompound = new NBTTagCompound();
+            f.writeToNBT(fieldCompound);
+            fieldTagList.appendTag(fieldCompound);
+        }
+        compound.setTag(TAG_FIELDS, fieldTagList);
+        compound.setInteger(TAG_CURRENT_FIELD,farmerFields.indexOf(currentField));
     }
 
+    /**
+     * Provides a view of the miner building class.
+     */
     public static class View extends AbstractBuildingWorker.View
     {
-        public int wheat = 100,
-                potato = 0,
-                carrot = 0,
-                melon = 0,
-                pumpkin = 0;
-
-
+        /**
+         * Public constructor of the view, creates an instance of it.
+         *
+         * @param c the colony.
+         * @param l the position.
+         */
         public View(ColonyView c, BlockPos l)
         {
             super(c, l);
@@ -96,39 +214,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             return new WindowHutFarmer(this);
         }
-
-        @Override
-        public void deserialize(ByteBuf buf)
-        {
-            super.deserialize(buf);
-
-            wheat = buf.readInt();
-            potato = buf.readInt();
-            carrot = buf.readInt();
-            melon = buf.readInt();
-            pumpkin = buf.readInt();
-        }
-    }
-
-    @Override
-    public void serializeToView(ByteBuf buf)
-    {
-        super.serializeToView(buf);
-
-        buf.writeInt(wheat);
-        buf.writeInt(potato);
-        buf.writeInt(carrot);
-        buf.writeInt(melon);
-        buf.writeInt(pumpkin);
-    }
-
-    /**
-     * Returns the farm radius of the building
-     *
-     * @return      Farm radius
-     */
-    public int getFarmRadius()
-    {
-        return getBuildingLevel()+3;
     }
 }
+

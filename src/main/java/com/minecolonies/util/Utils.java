@@ -2,6 +2,7 @@ package com.minecolonies.util;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
@@ -339,7 +340,7 @@ public final class Utils
      */
     public static boolean isTool(ItemStack itemStack, String toolType)
     {
-        return getMiningLevel(itemStack, toolType) >= 0;
+        return getMiningLevel(itemStack, toolType) >= 0 || (itemStack != null && itemStack.getItem() instanceof ItemHoe && "hoe".equals(toolType)) ;
     }
 
     /**

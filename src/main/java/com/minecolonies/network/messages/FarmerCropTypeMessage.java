@@ -40,12 +40,6 @@ public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCr
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-
-        this.wheat = building.wheat;
-        this.potato = building.potato;
-        this.carrot = building.carrot;
-        this.melon = building.melon;
-        this.pumpkin = building.pumpkin;
     }
 
     @Override
@@ -85,11 +79,7 @@ public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCr
                 BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
                 if (building != null)
                 {
-                    building.wheat = wheat;
-                    building.potato = potato;
-                    building.carrot = carrot;
-                    building.melon = melon;
-                    building.pumpkin = pumpkin;
+
                 }
             }
         }
