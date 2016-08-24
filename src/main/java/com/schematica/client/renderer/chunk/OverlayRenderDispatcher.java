@@ -20,7 +20,7 @@ public class OverlayRenderDispatcher extends ChunkRenderDispatcher
         {
             return super.uploadChunk(layer, worldRenderer, renderChunk, compiledChunk, par5);
         }
-
+        
         uploadDisplayList(worldRenderer, ((RenderOverlayList) renderChunk).getDisplayList(layer, compiledChunk), renderChunk);
 
         worldRenderer.setTranslation(0.0, 0.0, 0.0);
