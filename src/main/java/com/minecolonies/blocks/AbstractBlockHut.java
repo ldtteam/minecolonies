@@ -57,7 +57,6 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     public AbstractBlockHut()
     {
         super(Material.WOOD);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         initBlock();
     }
 

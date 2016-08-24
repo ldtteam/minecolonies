@@ -1,15 +1,17 @@
 package com.schematica.client.renderer.chunk.overlay;
 
+import org.lwjgl.opengl.GL11;
+
 import com.schematica.client.renderer.chunk.CompiledOverlay;
 import com.schematica.client.world.SchematicWorld;
 import com.schematica.core.client.renderer.GeometryMasks;
 import com.schematica.core.client.renderer.GeometryTessellator;
 import com.schematica.handler.ConfigurationHandler;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RegionRenderCache;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.chunk.ChunkCompileTaskGenerator;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
@@ -17,11 +19,11 @@ import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.chunk.VisGraph;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
-import org.lwjgl.opengl.GL11;
 
 public class RenderOverlay extends RenderChunk
 {
@@ -46,8 +48,8 @@ public class RenderOverlay extends RenderChunk
         final BlockPos from = getPosition();
         final BlockPos to = from.add(15, 15, 15);
         generator.getLock().lock();
-        RegionRenderCache regionRenderCache;
-        final SchematicWorld schematic = (SchematicWorld) this.world;
+        ChunkCache regionRenderCache;
+        final SchematicWorld schematic = (SchematicWorld) this.getWorld();
 
         try
         {
@@ -62,7 +64,7 @@ public class RenderOverlay extends RenderChunk
                 return;
             }
 
-            regionRenderCache = new RegionRenderCache(this.getWorld(), from.add(-1, -1, -1), to.add(1, 1, 1), 1);
+            regionRenderCache = this.createRegionRenderCache(this.getWorld(), from.add(-1, -1, -1), to.add(1, 1, 1), 1);
             generator.setCompiledChunk(compiledOverlay);
         }
         finally
@@ -78,8 +80,8 @@ public class RenderOverlay extends RenderChunk
 
             final World mcWorld = Minecraft.getMinecraft().theWorld;
 
-            final EnumWorldBlockLayer layer = EnumWorldBlockLayer.TRANSLUCENT;
-            final net.minecraft.client.renderer.VertexBuffer worldRenderer = generator.getRegionRenderCacheBuilder().getWorldRendererByLayer(layer);
+            //final BlockRenderLayer layer = BlockRenderLayer.TRANSLUCENT;
+            //final net.minecraft.client.renderer.VertexBuffer worldRenderer = generator.getRegionRenderCacheBuilder().getWorldRendererByLayer(layer);
 
             GeometryTessellator.setStaticDelta(ConfigurationHandler.blockDelta);
 
@@ -97,9 +99,9 @@ public class RenderOverlay extends RenderChunk
                 final IBlockState schBlockState = schematic.getBlockState(pos);
                 final Block schBlock = schBlockState.getBlock();
 
-                if (schBlock.isOpaqueCube())
+                if (schBlockState.isOpaqueCube())
                 {
-                    visgraph.func_178606_a(pos);
+                    visgraph.setOpaqueCube(pos);
                 }
 
                 final BlockPos mcPos = pos.add(schematic.position);
@@ -155,7 +157,7 @@ public class RenderOverlay extends RenderChunk
                         preRenderBlocks(worldRenderer, from);
                     }
 
-                    GeometryTessellator.drawCuboid(worldRenderer, pos, sides, 0x3F000000 | color);
+                    GeometryTessellator.getInstance().drawCuboid(pos, sides, 0x3F000000 | color);
                     compiledOverlay.setLayerUsed(layer);
                 }
             }
@@ -177,44 +179,55 @@ public class RenderOverlay extends RenderChunk
     private static int getSides(final Block block, final World world, final BlockPos pos, int s)
     {
         int sides = s;
-        if (block.shouldSideBeRendered(world, pos.offset(EnumFacing.DOWN), EnumFacing.DOWN))
+        IBlockState blockState = world.getBlockState(pos);
+        if (blockState.shouldSideBeRendered(world, pos.offset(EnumFacing.DOWN), EnumFacing.DOWN))
         {
             sides |= GeometryMasks.Quad.DOWN;
         }
 
-        if (block.shouldSideBeRendered(world, pos.offset(EnumFacing.UP), EnumFacing.UP))
+        if (blockState.shouldSideBeRendered(world, pos.offset(EnumFacing.UP), EnumFacing.UP))
         {
             sides |= GeometryMasks.Quad.UP;
         }
 
-        if (block.shouldSideBeRendered(world, pos.offset(EnumFacing.NORTH), EnumFacing.NORTH))
+        if (blockState.shouldSideBeRendered(world, pos.offset(EnumFacing.NORTH), EnumFacing.NORTH))
         {
             sides |= GeometryMasks.Quad.NORTH;
         }
 
-        if (block.shouldSideBeRendered(world, pos.offset(EnumFacing.SOUTH), EnumFacing.SOUTH))
+        if (blockState.shouldSideBeRendered(world, pos.offset(EnumFacing.SOUTH), EnumFacing.SOUTH))
         {
             sides |= GeometryMasks.Quad.SOUTH;
         }
 
-        if (block.shouldSideBeRendered(world, pos.offset(EnumFacing.WEST), EnumFacing.WEST))
+        if (blockState.shouldSideBeRendered(world, pos.offset(EnumFacing.WEST), EnumFacing.WEST))
         {
             sides |= GeometryMasks.Quad.WEST;
         }
 
-        if (block.shouldSideBeRendered(world, pos.offset(EnumFacing.EAST), EnumFacing.EAST))
+        if (blockState.shouldSideBeRendered(world, pos.offset(EnumFacing.EAST), EnumFacing.EAST))
         {
             sides |= GeometryMasks.Quad.EAST;
         }
 
         return sides;
     }
-
-    @Override
-    public void preRenderBlocks(final WorldRenderer worldRenderer, final BlockPos pos)
+    
+    private void preRenderBlocks(net.minecraft.client.renderer.VertexBuffer worldRendererIn, BlockPos pos)
     {
-        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        worldRenderer.setTranslation(-pos.getX(), -pos.getY(), -pos.getZ());
+        worldRendererIn.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        worldRendererIn.setTranslation((double)(-pos.getX()), (double)(-pos.getY()), (double)(-pos.getZ()));
+    }
+
+    private void postRenderBlocks(BlockRenderLayer layer, float x, float y, float z, net.minecraft.client.renderer.VertexBuffer worldRendererIn, CompiledChunk compiledChunkIn)
+    {
+        if (layer == BlockRenderLayer.TRANSLUCENT && !compiledChunkIn.isLayerEmpty(layer))
+        {
+            worldRendererIn.sortVertexData(x, y, z);
+            compiledChunkIn.setState(worldRendererIn.getVertexState());
+        }
+
+        worldRendererIn.finishDrawing();
     }
 
     @Override

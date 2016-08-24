@@ -2,13 +2,13 @@ package com.schematica.client.renderer.chunk.proxy;
 
 import com.schematica.client.renderer.SchematicRenderCache;
 import com.schematica.client.world.SchematicWorld;
-import net.minecraft.client.renderer.RegionRenderCache;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.chunk.ChunkCompileTaskGenerator;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.chunk.SetVisibility;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -16,9 +16,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class SchematicRenderChunkVbo extends RenderChunk
 {
-    public SchematicRenderChunkVbo(final World world, final RenderGlobal renderGlobal, final BlockPos pos, final int index)
+    public SchematicRenderChunkVbo(final World world, final RenderGlobal renderGlobal, final int index)
     {
-        super(world, renderGlobal, pos, index);
+        super(world, renderGlobal, index);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class SchematicRenderChunkVbo extends RenderChunk
             if (generator.getStatus() == ChunkCompileTaskGenerator.Status.COMPILING)
             {
                 final BlockPos from = getPosition();
-                final SchematicWorld schematic = (SchematicWorld) this.world;
+                final SchematicWorld schematic = (SchematicWorld) this.getWorld();
 
                 if (from.getX() < 0 || from.getZ() < 0 || from.getX() >= schematic.getWidth() || from.getZ() >= schematic.getLength())
                 {
@@ -55,7 +55,7 @@ public class SchematicRenderChunkVbo extends RenderChunk
     }
 
     @Override
-    protected RegionRenderCache createRegionRenderCache(final World world, final BlockPos from, final BlockPos to, final int subtract)
+    protected ChunkCache createRegionRenderCache(final World world, final BlockPos from, final BlockPos to, final int subtract)
     {
         return new SchematicRenderCache(world, from, to, subtract);
     }

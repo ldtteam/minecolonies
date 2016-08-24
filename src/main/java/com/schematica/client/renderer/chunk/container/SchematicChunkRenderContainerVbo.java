@@ -1,21 +1,23 @@
 package com.schematica.client.renderer.chunk.container;
 
+import java.util.List;
+
+import org.lwjgl.opengl.GL11;
+
 import com.schematica.client.renderer.chunk.overlay.RenderOverlay;
+
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.EnumWorldBlockLayer;
-import org.lwjgl.opengl.GL11;
-
-import java.util.List;
+import net.minecraft.util.BlockRenderLayer;
 
 public class SchematicChunkRenderContainerVbo extends AbstractSchematicChunkRenderContainer
 {
     @Override
-    public void renderChunkLayer(final EnumWorldBlockLayer layer)
+    public void renderChunkLayer(final BlockRenderLayer layer)
     {
         preRenderChunk();
 
@@ -100,7 +102,7 @@ public class SchematicChunkRenderContainerVbo extends AbstractSchematicChunkRend
 
             for (final RenderOverlay renderOverlay : this.renderOverlays)
             {
-                final VertexBuffer vertexBuffer = renderOverlay.getVertexBufferByLayer(EnumWorldBlockLayer.TRANSLUCENT.ordinal());
+                final VertexBuffer vertexBuffer = renderOverlay.getVertexBufferByLayer(BlockRenderLayer.TRANSLUCENT.ordinal());
                 GlStateManager.pushMatrix();
                 preRenderChunk(renderOverlay);
                 renderOverlay.multModelviewMatrix();

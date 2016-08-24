@@ -9,16 +9,16 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.RenderChunk;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockRenderLayer;
 
 public class OverlayRenderDispatcher extends ChunkRenderDispatcher
 {
     @Override
-    public ListenableFuture<Object> uploadChunk(final EnumWorldBlockLayer layer, final WorldRenderer worldRenderer, final RenderChunk renderChunk, final CompiledChunk compiledChunk)
+    public ListenableFuture<Object> uploadChunk(final BlockRenderLayer layer, final VertexBuffer worldRenderer, final RenderChunk renderChunk, final CompiledChunk compiledChunk, final double par5)
     {
         if (!Minecraft.getMinecraft().isCallingFromMinecraftThread() || OpenGlHelper.useVbo())
         {
-            return super.uploadChunk(layer, worldRenderer, renderChunk, compiledChunk);
+            return super.uploadChunk(layer, worldRenderer, renderChunk, compiledChunk, par5);
         }
 
         uploadDisplayList(worldRenderer, ((RenderOverlayList) renderChunk).getDisplayList(layer, compiledChunk), renderChunk);

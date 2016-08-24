@@ -18,6 +18,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -38,45 +40,10 @@ public final class EntityFishHook extends Entity
     private static final int TTL = 360;
 
     /**
-     * possible drop list for level 2 building with speed
-     */
-    private static final List junkDrops = Arrays.asList(
-            (new WeightedRandomFishable(new ItemStack(Items.LEATHER_BOOTS), 10)).setMaxDamagePercent(0.9F),
-            new WeightedRandomFishable(new ItemStack(Items.LEATHER), 10),
-            new WeightedRandomFishable(new ItemStack(Items.BONE), 10),
-            new WeightedRandomFishable(new ItemStack(Items.POTIONITEM), 10),
-            new WeightedRandomFishable(new ItemStack(Items.STRING), 5),
-            (new WeightedRandomFishable(new ItemStack(Items.FISHING_ROD), 2)).setMaxDamagePercent(0.9F),
-            new WeightedRandomFishable(new ItemStack(Items.BOWL), 10),
-            new WeightedRandomFishable(new ItemStack(Items.STICK), 5),
-            new WeightedRandomFishable(new ItemStack(Items.DYE, 10, 0), 1),
-            new WeightedRandomFishable(new ItemStack(Blocks.TRIPWIRE_HOOK), 10),
-            new WeightedRandomFishable(new ItemStack(Items.ROTTEN_FLESH), 10));
-
-    /**
      * Entity size to scale it down
      */
     private static final float ENTITY_SIZE = 0.25F;
-
-    /**
-     * possible drop list for level 3 building with luck
-     */
-    private static final List rareDrops = Arrays.asList(
-            new WeightedRandomFishable(new ItemStack(Blocks.WATERLILY), 1),
-            new WeightedRandomFishable(new ItemStack(Items.NAME_TAG), 1),
-            new WeightedRandomFishable(new ItemStack(Items.SADDLE), 1),
-            (new WeightedRandomFishable(new ItemStack(Items.BOW), 1)).setMaxDamagePercent(0.25F).setEnchantable(),
-            (new WeightedRandomFishable(new ItemStack(Items.FISHING_ROD), 1)).setMaxDamagePercent(0.25F).setEnchantable(),
-            (new WeightedRandomFishable(new ItemStack(Items.BOOK), 1)).setEnchantable());
-
-    /**
-     * possible drop list for level 1 building and without luck or speed
-     */
-    private static final List fishDrops = Arrays.asList(
-            new WeightedRandomFishable(new ItemStack(Items.FISH, 1, ItemFishFood.FishType.COD.getMetadata()), 60),
-            new WeightedRandomFishable(new ItemStack(Items.FISH, 1, ItemFishFood.FishType.SALMON.getMetadata()), 25),
-            new WeightedRandomFishable(new ItemStack(Items.FISH, 1, ItemFishFood.FishType.CLOWNFISH.getMetadata()), 2),
-            new WeightedRandomFishable(new ItemStack(Items.FISH, 1, ItemFishFood.FishType.PUFFERFISH.getMetadata()), 13));
+    
     /**
      * 180 degree used in trig. functions
      */
@@ -753,7 +720,11 @@ public final class EntityFishHook extends Entity
 
         if (random < speedBonus || buildingLevel == 1)
         {
-            return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, fishDrops)).getItemStack(this.rand);
+            LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.worldObj);
+            for (ItemStack itemstack : this.worldObj.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING).generateLootForPools(this.rand, lootcontext$builder.build()))
+            {
+                return itemstack;
+            }
         }
         else
         {
@@ -761,13 +732,22 @@ public final class EntityFishHook extends Entity
 
             if (random < lootBonus || buildingLevel == 2)
             {
-                return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, junkDrops)).getItemStack(this.rand);
+                LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.worldObj);
+                for (ItemStack itemstack : this.worldObj.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_JUNK).generateLootForPools(this.rand, lootcontext$builder.build()))
+                {
+                    return itemstack;
+                }
             }
             else
             {
-                return ((WeightedRandomFishable) WeightedRandom.getRandomItem(this.rand, rareDrops)).getItemStack(this.rand);
+                LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.worldObj);
+                for (ItemStack itemstack : this.worldObj.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_TREASURE).generateLootForPools(this.rand, lootcontext$builder.build()))
+                {
+                    return itemstack;
+                }
             }
         }
+		return null;
     }
 
     /**

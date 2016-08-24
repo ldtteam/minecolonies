@@ -481,7 +481,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
         if (worldObj.isRemote)
         {
-            //updateColonyClient(); TODO TO CHECK IF NEEDED
+            updateColonyClient();
         }
         else
         {
@@ -509,16 +509,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
             citizenData.markDirty();
         }
     }
-
-    //TODO TO CHECK IF NEEDED
-    /*private void updateColonyClient()
+    
+    private void updateColonyClient()
     {
-        if (dataManager.isDirty())
-        {
-        	Iterator itr = dataManager.getDirty().iterator();
-        	while(itr.hasNext()){
-        		
-        	}
+    	if(dataManager.isDirty())
+    	{
             if (colonyId == 0)
             {
                 colonyId = dataManager.get(DATA_COLONY_ID);
@@ -531,19 +526,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
             female = dataManager.get(DATA_IS_FEMALE) != 0;
             level = dataManager.get(DATA_LEVEL);
-            modelId = RenderBipedCitizen.Model.valueOf(dataWatcher.getWatchableObjectString(DATA_MODEL));
+            modelId = RenderBipedCitizen.Model.valueOf(dataManager.get(DATA_MODEL));
             textureId = dataManager.get(DATA_TEXTURE);
-            renderMetadata = dataWatcher.getWatchableObjectString(DATA_RENDER_METADATA);
-
+            renderMetadata = dataManager.get(DATA_RENDER_METADATA);
             setTexture();
-
-            // clear hasChanges
-            dataManager.setDirty(key);
-            dataWatcher.func_111144_e();
-        }
-
+            dataManager.setClean();
+    	}
         updateArmSwingProgress();
-    }*/
+    }
 
     /**
      * Sets the textures of all citizens and distinguishes between male and female
@@ -851,6 +841,19 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     public ResourceLocation getTexture()
     {
+        if (!worldObj.isRemote)
+        {
+            return null;
+        }
+
+        RenderBipedCitizen.Model model = getModelID();
+
+        String textureBase = "textures/entity/";
+        textureBase += model.textureBase;
+        textureBase += female ? "Female" : "Male";
+
+        int moddedTextureId = (textureId % model.numTextures) + 1;
+        texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
         return texture;
     }
 

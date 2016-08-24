@@ -3771,7 +3771,7 @@ Build 1.8-11.14.1.1397:
 	Parker Young: Fixes MC-52974: Host's skin doesn't load in LAN
 
 Build 1.8-11.14.1.1396:
-	Zaggy1024: Removed @SideOnly(Side.CLIENT) from EnumWorldBlockLayer.
+	Zaggy1024: Removed @SideOnly(Side.CLIENT) from BlockRenderLayer.
 
 Build 1.7.10-10.13.3.1395-1710ls:
 	cpw: MinecraftForge/FML@94821fac98e64d9b8ad7434ed23a621850a8e11c Add a config file that lets you add additional soft dependencies at runtime - injectedDependencies.json

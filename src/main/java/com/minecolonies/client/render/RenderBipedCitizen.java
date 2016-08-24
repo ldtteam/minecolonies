@@ -2,6 +2,8 @@ package com.minecolonies.client.render;
 
 import com.minecolonies.client.model.*;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.lib.Constants;
+
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -103,6 +105,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
 
     @Override
     protected ResourceLocation getEntityTexture(EntityCitizen entity) {
-    	return entity.getTexture();
+    	//System.out.println();
+    	return entity.getTexture();//new ResourceLocation(Constants.MOD_ID, "textures/entity/BuilderMale1.png");//
     }
 }
