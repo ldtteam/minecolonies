@@ -6,7 +6,10 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
@@ -14,12 +17,12 @@ import java.util.Objects;
 import java.util.function.BiPredicate;
 
 /**
- * Utility class for all Block type checking
+ * Utility class for all Block type checking.
  */
 public final class BlockUtils
 {
     /**
-     * Predicated to determine if a block is free to place
+     * Predicated to determine if a block is free to place.
      */
     private static List<BiPredicate<Block, IBlockState>> freeToPlaceBlocks =
             Arrays.asList(
@@ -38,10 +41,11 @@ public final class BlockUtils
 
 
     /**
-     * Private constructor to hide the public one
+     * Private constructor to hide the public one.
      */
     private BlockUtils()
     {
+        //Hides implicit constructor.
     }
 
     /**
@@ -59,12 +63,12 @@ public final class BlockUtils
     }
 
     /**
-     * Checks if this block type is something we can place for free
+     * Checks if this block type is something we can place for free.
      * <p>
-     * The builder uses this to determine if he need resources for the block
+     * The builder uses this to determine if he need resources for the block.
      *
-     * @param block the block to check
-     * @return true if we can just place it
+     * @param block the block to check.
+     * @return true if we can just place it.
      */
     public static boolean freeToPlace(final Block block)
     {
@@ -72,15 +76,15 @@ public final class BlockUtils
     }
 
     /**
-     * Checks if this block type is something we can place for free
+     * Checks if this block type is something we can place for free.
      * <p>
-     * The builder uses this to determine if he need resources for the block
+     * The builder uses this to determine if he need resources for the block.
      *
-     * @param block    the block to check
-     * @param metadata the matadata this block has
-     * @return true if we can just place it
+     * @param block      the block to check.
+     * @param blockState the state this block has.
+     * @return true if we can just place it.
      */
-    public static boolean freeToPlace(final Block block, final IBlockState metadata)
+    public static boolean freeToPlace(final Block block, final IBlockState blockState)
     {
         if (block == null)
         {
@@ -88,7 +92,7 @@ public final class BlockUtils
         }
         for (BiPredicate<Block, IBlockState> predicate : freeToPlaceBlocks)
         {
-            if (predicate.test(block, metadata))
+            if (predicate.test(block, blockState))
             {
                 return true;
             }
@@ -97,9 +101,9 @@ public final class BlockUtils
     }
 
     /**
-     * Checks if the block is water
+     * Checks if the block is water.
      *
-     * @param iBlockState block state to be checked
+     * @param iBlockState block state to be checked.
      * @return true if is water.
      */
     public static boolean isWater(IBlockState iBlockState)
@@ -109,138 +113,201 @@ public final class BlockUtils
     }
 
     /**
-     * Gets an item from a block.
-     * @param block input block.
-     * @return output item.
+     * Mimics pick block.
+     * @param blockState the block and state we are creating an ItemStack for.
+     * @return ItemStack fromt the BlockState.
      */
-    public static Item getItemFromBlock(Block block)
+    public static ItemStack getItemStackFromBlockState(IBlockState blockState)
     {
-        Item item = null;
+        Item item = getItem(blockState);
 
-        if(block instanceof BlockBanner)
+        if (item == null)
         {
-            item = Items.banner;
-        }
-        else if(block instanceof BlockBed)
-        {
-            item = Items.bed;
-        }
-        else if(block instanceof BlockBrewingStand)
-        {
-            item = Items.brewing_stand;
-        }
-        else if(block instanceof BlockCake)
-        {
-            item = Items.cake;
-        }
-        else if(block instanceof BlockCauldron)
-        {
-            item = Items.cauldron;
-        }
-        else if(block instanceof BlockCocoa)
-        {
-            item = Items.dye;
-        }
-        else if(block instanceof BlockCrops)
-        {
-            if(block instanceof BlockCarrot)
-            {
-                item = Items.carrot;
-            }
-            else if(block instanceof BlockPotato)
-            {
-                item = Items.potato;
-            }
-            else
-            {
-                item = Items.wheat_seeds;
-            }
-        }
-        else if(block instanceof BlockDaylightDetector)
-        {
-            item = Item.getItemFromBlock(Blocks.daylight_detector);
-        }
-        else if(block instanceof BlockDoor)
-        {
-            item = block == Blocks.iron_door ? Items.iron_door
-                                             : (block == Blocks.spruce_door ? Items.spruce_door
-                                             : (block == Blocks.birch_door ? Items.birch_door
-                                             : (block == Blocks.jungle_door ? Items.jungle_door
-                                             : (block == Blocks.acacia_door ? Items.acacia_door
-                                             : (block == Blocks.dark_oak_door ? Items.dark_oak_door
-                                             : Items.oak_door)))));
-        }
-        else if(block instanceof BlockFarmland)
-        {
-            item = Item.getItemFromBlock(Blocks.dirt);
-        }
-        else if(block instanceof BlockFlowerPot)
-        {
-            item = Items.flower_pot;
-        }
-        else if(block instanceof BlockFurnace)
-        {
-            item = Item.getItemFromBlock(Blocks.furnace);
-        }
-        else if(block instanceof BlockNetherWart)
-        {
-            item = Items.nether_wart;
-        }
-        else if(block instanceof BlockRedstoneComparator)
-        {
-            item = Items.comparator;
-        }
-        else if(block instanceof BlockRedstoneLight)
-        {
-            item = Item.getItemFromBlock(Blocks.redstone_lamp);
-        }
-        else if(block instanceof BlockRedstoneRepeater)
-        {
-            item = Items.repeater;
-        }
-        else if(block instanceof BlockRedstoneTorch)
-        {
-            item = Item.getItemFromBlock(Blocks.redstone_torch);
-        }
-        else if(block instanceof BlockRedstoneWire)
-        {
-            item = Items.redstone;
-        }
-        else if(block instanceof BlockReed)
-        {
-            item = Items.reeds;
-        }
-        else if(block instanceof BlockSign)
-        {
-            item = Items.sign;
-        }
-        else if(block instanceof BlockSkull)
-        {
-            item = Items.skull;
-        }
-        else if(block instanceof BlockStem)
-        {
-            item =  block == Blocks.pumpkin ? Items.pumpkin_seeds
-                                                 : (block == Blocks.melon_block ? Items.melon_seeds
-                                                 : null);
-        }
-        else if(block instanceof BlockStoneSlab)
-        {
-            item = Item.getItemFromBlock(Blocks.stone_slab);
-        }
-        else if(block instanceof BlockStoneSlabNew)
-        {
-            item = Item.getItemFromBlock(Blocks.stone_slab2);
-        }
-        else if(block instanceof BlockTripWire)
-        {
-            item = Items.string;
-        }
-        else if(block instanceof BlockWoodSlab)
-        {
-            item = Item.getItemFromBlock(Blocks.wooden_slab);
+            return null;
         }
 
-        return item;
+        Block block = blockState.getBlock();
+        if (item instanceof ItemBlock && !block.isFlowerPot())
+        {
+            block = Block.getBlockFromItem(item);
+        }
+
+        return new ItemStack(item, 1, getDamageValue(block, blockState));
+    }
+
+    private static Item getItem(IBlockState blockState)
+    {
+        if (blockState.getBlock() instanceof BlockBanner)
+        {
+            return Items.banner;
+        }
+        else if (blockState.getBlock() instanceof BlockBed)
+        {
+            return Items.bed;
+        }
+        else if (blockState.getBlock() instanceof BlockBrewingStand)
+        {
+            return Items.brewing_stand;
+        }
+        else if (blockState.getBlock() instanceof BlockCake)
+        {
+            return Items.cake;
+        }
+        else if (blockState.getBlock() instanceof BlockCauldron)
+        {
+            return Items.cauldron;
+        }
+        else if (blockState.getBlock() instanceof BlockCocoa)
+        {
+            return Items.dye;
+        }
+        else if (blockState.getBlock() instanceof BlockCrops)
+        {
+            if (blockState.getBlock() instanceof BlockCarrot)
+            {
+                return Items.carrot;
+            }
+            else if (blockState.getBlock() instanceof BlockPotato)
+            {
+                return Items.potato;
+            }
+            return Items.wheat_seeds;
+        }
+        else if(blockState.getBlock() instanceof BlockDaylightDetector)
+        {
+             return Item.getItemFromBlock(Blocks.daylight_detector);
+        }
+        else if (blockState.getBlock() instanceof BlockDoor)
+        {
+            return ((BlockDoor) blockState.getBlock()).getItem();
+        }
+        else if (blockState.getBlock() instanceof BlockFarmland)
+        {
+            return Item.getItemFromBlock(Blocks.dirt);
+        }
+        else if (blockState.getBlock() instanceof BlockFlowerPot)
+        {
+            return Items.flower_pot;
+        }
+        else if(blockState.getBlock() instanceof BlockFurnace)
+        {
+            return Item.getItemFromBlock(Blocks.furnace);
+        }
+        else if (blockState.getBlock() instanceof BlockHugeMushroom)
+        {
+            // Can the builder even build this?
+            return blockState.getBlock().getItemDropped(null, null, 0);
+        }
+        else if (blockState.getBlock() instanceof BlockNetherWart)
+        {
+            return Items.nether_wart;
+        }
+        else if (blockState.getBlock() instanceof BlockPistonExtension)
+        {
+            // Not really sure what we want to do here...
+            return blockState.getValue(BlockPistonExtension.TYPE) == BlockPistonExtension.EnumPistonType.STICKY
+                    ? Item.getItemFromBlock(Blocks.sticky_piston)
+                    : Item.getItemFromBlock(Blocks.piston);
+        }
+        else if (blockState.getBlock() instanceof BlockRedstoneComparator)
+        {
+            return Items.comparator;
+        }
+        else if(blockState.getBlock() instanceof BlockRedstoneLight)
+        {
+            return Item.getItemFromBlock(Blocks.redstone_lamp);
+        }
+        else if (blockState.getBlock() instanceof BlockRedstoneRepeater)
+        {
+            return Items.repeater;
+        }
+        else if(blockState.getBlock() instanceof BlockRedstoneTorch)
+        {
+            return Item.getItemFromBlock(Blocks.redstone_torch);
+        }
+        else if (blockState.getBlock() instanceof BlockRedstoneWire)
+        {
+            return Items.redstone;
+        }
+        else if (blockState.getBlock() instanceof BlockReed)
+        {
+            return Items.reeds;
+        }
+        else if (blockState.getBlock() instanceof BlockSign)
+        {
+            return Items.sign;
+        }
+        else if (blockState.getBlock() instanceof BlockSkull)
+        {
+            return Items.skull;
+        }
+        else if (blockState.getBlock() instanceof BlockStem)
+        {
+            return ((BlockStem) blockState.getBlock()).getSeedItem();
+        }
+        else if (blockState.getBlock() instanceof BlockStoneSlab)
+        {
+            //Builder won't know how to build double stone slab
+            return Item.getItemFromBlock(Blocks.stone_slab);
+        }
+        else if (blockState.getBlock() instanceof BlockStoneSlabNew)
+        {
+            return Item.getItemFromBlock(Blocks.stone_slab2);
+        }
+        else if (blockState.getBlock() instanceof BlockTripWire)
+        {
+            return Items.string;
+        }
+        else if (blockState.getBlock() instanceof BlockWoodSlab)
+        {
+            //Builder will also have trouble with double wood slab
+            return Item.getItemFromBlock(Blocks.wooden_slab);
+        }
+        else
+        {
+            return Item.getItemFromBlock(blockState.getBlock());
+        }
+    }
+
+    private static int getDamageValue(Block block, IBlockState blockState)
+    {
+        if (block instanceof BlockCocoa)
+        {
+            return EnumDyeColor.BROWN.getDyeDamage();
+        }
+        else if (block instanceof BlockDirt)
+        {
+            return blockState.getValue(BlockDirt.VARIANT).getMetadata();
+        }
+        else if (block instanceof BlockDoublePlant
+                && blockState.getValue(BlockDoublePlant.HALF) == BlockDoublePlant.EnumBlockHalf.LOWER)
+        {
+            //If upper part we can't do much here
+            return blockState.getValue(BlockDoublePlant.VARIANT).getMeta();
+        }
+        else if (block instanceof BlockNewLeaf)
+        {
+            return block.getMetaFromState(blockState) & 3;
+        }
+        else if (block instanceof BlockOre)
+        {
+            return 0;
+        }
+        else if (block instanceof BlockSilverfish)
+        {
+            return block.getMetaFromState(blockState);
+        }
+        else if (block instanceof BlockSlab)
+        {
+            return block.damageDropped(blockState) & 7;
+        }
+        else if (block instanceof BlockTallGrass)
+        {
+            return block.getMetaFromState(blockState);
+        }
+        else
+        {
+            return block.damageDropped(blockState);
+        }
     }
 }
