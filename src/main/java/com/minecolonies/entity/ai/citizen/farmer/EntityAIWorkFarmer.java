@@ -279,7 +279,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             if (shouldPlant(position, field))
             {
                 plantCrop(buildingFarmer.getCurrentField().getSeed(), position);
-                mineBlock(position.up());
             }
         }
 
@@ -310,8 +309,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         int slot = worker.findFirstSlotInInventoryWith(item);
         if (slot != -1)
         {
-            //todo isn't working.
-            world.setBlockState(position, Block.getBlockFromItem(item).getDefaultState());
+            ItemSeeds seed = (ItemSeeds)item;
+            world.setBlockState(position.up(),seed.getPlant(world, position));
             getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
         }
@@ -354,7 +353,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             requestSeeds = false;
         }
-        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position) instanceof BlockCrops)
+        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock().getItem(world, position) instanceof ItemSeeds)
                && !(world.getBlockState(position).getBlock() instanceof BlockHutField) && world.getBlockState(position).getBlock() == Blocks.farmland;
     }
 
@@ -366,7 +365,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean shouldHoe(BlockPos position, Field field)
     {
-        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position) instanceof BlockCrops)
+        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock().getItem(world, position) instanceof ItemSeeds)
                && !(world.getBlockState(position).getBlock() instanceof BlockHutField);
     }
 
