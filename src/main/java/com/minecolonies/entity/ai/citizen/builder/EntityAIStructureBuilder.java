@@ -461,9 +461,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         final IBlockState blockState = job.getSchematic().getBlockState();
 
         final BlockPos coordinates = job.getSchematic().getBlockPosition();
-        final int x = coordinates.getX();
-        final int y = coordinates.getY();
-        final int z = coordinates.getZ();
 
         final Block worldBlock = world.getBlockState(coordinates).getBlock();
 
@@ -471,7 +468,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (block == null)
         {
             BlockPos local = job.getSchematic().getLocalPosition();
-            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            Log.logger.error(String.format("Schematic has null block at %s - local(%s)", coordinates, local));
             findNextBlockSolid();
             return this.getState();
         }
@@ -491,32 +488,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return this.getState();
         }
 
-        if (block == Blocks.air)
-        {
-            worker.setCurrentItemOrArmor(0, null);
-
-            if (!world.setBlockToAir(coordinates))
-            {
-                Log.logger.error(String.format("Block break failure at %d, %d, %d", x, y, z));
-                //TODO handle - for now, just skipping
-            }
-        }
-        else
-        {
-            Item item = Item.getItemFromBlock(block);
-            worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1) : null);
-
-            if (placeBlock(new BlockPos(x, y, z), block, blockState))
-            {
-                setTileEntity(new BlockPos(x, y, z));
-            }
-            else
-            {
-                Log.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
-                //TODO handle - for now, just skipping
-            }
-            worker.swingItem();
-        }
+        placeBlockAt(block, blockState, coordinates);
 
         return findNextBlockSolid();
     }
@@ -541,9 +513,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         final IBlockState blockState = job.getSchematic().getBlockState();
 
         final BlockPos coords = job.getSchematic().getBlockPosition();
-        final int x = coords.getX();
-        final int y = coords.getY();
-        final int z = coords.getZ();
 
         final Block worldBlock = world.getBlockState(coords).getBlock();
 
@@ -551,7 +520,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (block == null)
         {
             BlockPos local = job.getSchematic().getLocalPosition();
-            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            Log.logger.error(String.format("Schematic has null block at %s- local(%s)", coords, local));
             findNextBlockNonSolid();
             return this.getState();
         }
@@ -570,21 +539,38 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return this.getState();
         }
 
-        Item item = Item.getItemFromBlock(block);
-        worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1) : null);
+        placeBlockAt(block, blockState, coords);
 
-        if (placeBlock(new BlockPos(x, y, z), block, blockState))
+        return findNextBlockNonSolid();
+    }
+
+    private void placeBlockAt(Block block, IBlockState blockState, BlockPos coords) {
+        if (block == Blocks.air)
         {
-            setTileEntity(new BlockPos(x, y, z));
+            worker.setCurrentItemOrArmor(0, null);
+
+            if (!world.setBlockToAir(coords))
+            {
+                Log.logger.error(String.format("Block break failure at %s", coords));
+                //TODO handle - for now, just skipping
+            }
         }
         else
         {
-            Log.logger.error(String.format("Block place failure %s at %d, %d, %d", block.getUnlocalizedName(), x, y, z));
-            //TODO handle - for now, just skipping
-        }
-        worker.swingItem();
+            Item item = Item.getItemFromBlock(block);
+            worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1) : null);
 
-        return findNextBlockNonSolid();
+            if (placeBlock(coords, block, blockState))
+            {
+                setTileEntity(coords);
+            }
+            else
+            {
+                Log.logger.error(String.format("Block place failure %s at %s", block.getUnlocalizedName(), coords));
+                //TODO handle - for now, just skipping
+            }
+            worker.swingItem();
+        }
     }
 
     //TODO handle resources
@@ -715,6 +701,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
+        if (stack == null)
+        {
+            Log.logger.warn("Block causes NPE: " + blockState.getBlock());
+        }
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
         if (slot != -1)
