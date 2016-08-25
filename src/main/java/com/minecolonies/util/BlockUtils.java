@@ -119,7 +119,7 @@ public final class BlockUtils
      */
     public static ItemStack getItemStackFromBlockState(IBlockState blockState)
     {
-        Item item = getItem(blockState);
+        final Item item = getItem(blockState);
 
         if (item == null)
         {
@@ -293,17 +293,13 @@ public final class BlockUtils
         {
             return 0;
         }
-        else if (block instanceof BlockSilverfish)
+        else if (block instanceof BlockSilverfish || block instanceof BlockTallGrass)
         {
             return block.getMetaFromState(blockState);
         }
         else if (block instanceof BlockSlab)
         {
             return block.damageDropped(blockState) & 7;
-        }
-        else if (block instanceof BlockTallGrass)
-        {
-            return block.getMetaFromState(blockState);
         }
         else
         {

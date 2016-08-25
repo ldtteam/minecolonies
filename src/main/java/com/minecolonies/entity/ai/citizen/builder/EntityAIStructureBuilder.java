@@ -544,7 +544,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return findNextBlockNonSolid();
     }
 
-    private void placeBlockAt(Block block, IBlockState blockState, BlockPos coords) {
+    private void placeBlockAt(Block block, IBlockState blockState, BlockPos coords)
+    {
         if (block == Blocks.air)
         {
             worker.setCurrentItemOrArmor(0, null);
@@ -617,7 +618,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     private boolean handleMaterials(Block block, IBlockState blockState)
     {
         //Breaking blocks doesn't require taking materials from the citizens inventory
-        if (block == Blocks.air) {
+        if (block == Blocks.air)
+        {
             return true;
         }
 
@@ -703,7 +705,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
         if (stack == null)
         {
-            Log.logger.warn("Block causes NPE: " + blockState.getBlock());
+            Log.logger.error("Block causes NPE: " + blockState.getBlock());
+            return false;
         }
 
         int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
