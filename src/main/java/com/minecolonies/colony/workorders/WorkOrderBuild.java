@@ -152,6 +152,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     public void attemptToFulfill(Colony colony)
     {
         boolean sendMessage = true;
+        boolean hasBuilder = false;
 
         for (CitizenData citizen : colony.getCitizens().values())
         {
@@ -161,6 +162,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
             {
                 continue;
             }
+
+            hasBuilder = true;
 
             final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
 
@@ -187,11 +190,17 @@ public class WorkOrderBuild extends AbstractWorkOrder
             }
         }
 
-        if (sendMessage && !hasSentMessageForThisWorkOrder)
+        if (!hasBuilder && !hasSentMessageForThisWorkOrder)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
-                                                        "entity.builder.messageBuilderNecessary", this.upgradeLevel);
+            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+                    "entity.builder.messageNoBuilder");
+        }
+        else if (sendMessage && !hasSentMessageForThisWorkOrder)
+        {
+            hasSentMessageForThisWorkOrder = true;
+            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+                    "entity.builder.messageBuilderNecessary", this.upgradeLevel);
         }
     }
 

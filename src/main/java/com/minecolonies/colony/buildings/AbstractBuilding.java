@@ -481,8 +481,7 @@ public abstract class AbstractBuilding
         }
 
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
-        LanguageHandler.sendPlayersLocalizedMessage(
-                ServerUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()), "com.minecolonies.workOrderAdded");
+        LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(), "com.minecolonies.workOrderAdded");
     }
 
     /**

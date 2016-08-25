@@ -136,9 +136,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (wo instanceof WorkOrderBuildDecoration)
             {
-                LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
-                                                            "entity.builder.messageBuildStart",
-                                                            job.getSchematic().getName());
+                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildStart",
+                        job.getSchematic().getName());
 
                 if (!job.hasSchematic() || !job.getSchematic().decrementBlock())
                 {
@@ -157,9 +157,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     return this.getState();
                 }
 
-                LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
-                                                            "entity.builder.messageBuildStart",
-                                                            job.getSchematic().getName());
+                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildStart",
+                        job.getSchematic().getName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -763,9 +763,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         job.getSchematic().getEntities().forEach(this::spawnEntity);
 
         String schematicName = job.getSchematic().getName();
-        LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(world, worker.getColony().getPermissions().getMessagePlayers()),
-                                                    "entity.builder.messageBuildComplete",
-                                                    schematicName);
+        LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
+                "entity.builder.messageBuildComplete",
+                schematicName);
 
         WorkOrderBuild wo = job.getWorkOrder();
         if (wo != null)
