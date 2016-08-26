@@ -53,12 +53,12 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
     /**
      * Start of the collision box at x and z.
      */
-    private static final double START_COLLISION = 0.2;
+    private static final double START_COLLISION = 0.1;
 
     /**
      * End of the collision box.
      */
-    private static final double END_COLLISION = 0.8;
+    private static final double END_COLLISION = 0.9;
 
     /**
      * Height of the collision box.

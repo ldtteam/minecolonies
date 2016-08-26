@@ -179,7 +179,7 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockDoor)
         {
-            return ((BlockDoor) blockState.getBlock()).getItem();
+            //return ((BlockDoor) blockState.getBlock()).getItem();
         }
         else if (blockState.getBlock() instanceof BlockFarmland)
         {
@@ -243,7 +243,7 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockStem)
         {
-            return ((BlockStem) blockState.getBlock()).getSeedItem();
+            //return ((BlockStem) blockState.getBlock()).getSeedItem();
         }
         else if (blockState.getBlock() instanceof BlockStoneSlab)
         {
@@ -267,6 +267,7 @@ public final class BlockUtils
         {
             return Item.getItemFromBlock(blockState.getBlock());
         }
+        return null;
     }
 
     private static int getDamageValue(Block block, IBlockState blockState)

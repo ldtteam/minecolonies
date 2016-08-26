@@ -163,6 +163,7 @@ public class Colony implements IColony
             }
         }
 
+        //todo update fields from tileEntity.
         // Fields
         NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.tagCount(); ++i)

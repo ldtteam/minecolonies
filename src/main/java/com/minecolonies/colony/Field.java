@@ -7,12 +7,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -351,13 +353,13 @@ public class Field extends Container
      * Getter of the seed of the field
      * @return the ItemSeed
      */
-    public ItemSeeds getSeed()
+    public Item getSeed()
     {
-        if(inventory.getStackInSlot(0) == null || !(inventory.getStackInSlot(0).getItem() instanceof ItemSeeds))
+        if(inventory.getStackInSlot(0) == null || !(inventory.getStackInSlot(0).getItem()  instanceof IPlantable))
         {
             return null;
         }
-        return (ItemSeeds)inventory.getStackInSlot(0).getItem();
+        return inventory.getStackInSlot(0).getItem();
     }
 
     /**

@@ -10,11 +10,18 @@ import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.InventoryUtils;
+import net.minecraft.block.BlockCrops;
+import net.minecraft.block.IGrowable;
+import net.minecraft.block.properties.PropertyInteger;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.common.IPlantable;
+
+import java.util.Collections;
 
 import static com.minecolonies.colony.Field.FieldStage.*;
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -120,14 +127,15 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.PREPARING;
         }
 
-        Field currentField = building.getCurrentField();
 
         //If the farmer has no currentField and there is no field which needs work, check fields.
-        if(currentField == null && building.getFieldToWorkOn() == null)
+        if(building.getCurrentField() == null && building.getFieldToWorkOn() == null)
         {
             building.resetFields();
             return AIState.IDLE;
         }
+
+        Field currentField = building.getCurrentField();
 
         if(currentField.needsWork() && !walkToBlock(currentField.getLocation()))
         {
@@ -178,8 +186,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 return AIState.FARMER_HOE;
             }
 
-            if (shouldHoe(position, field) && checkForHoe())
+            if (shouldHoe(position, field))
             {
+                if(checkForHoe())
+                {
+                    return AIState.PREPARING;
+                }
                 equipHoe();
                 worker.swingItem();
                 world.setBlockState(position, Blocks.farmland.getDefaultState());
@@ -309,7 +321,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         int slot = worker.findFirstSlotInInventoryWith(item);
         if (slot != -1)
         {
-            ItemSeeds seed = (ItemSeeds)item;
+            IPlantable seed = (IPlantable)item;
             world.setBlockState(position.up(),seed.getPlant(world, position));
             getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
@@ -322,10 +334,65 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private AIState harvest()
     {
-        //harvest it, set work false, set status empty
+        BuildingFarmer buildingFarmer = getOwnBuilding();
 
-        return AIState.FARMER_HOE;
+        if(buildingFarmer == null || buildingFarmer.getCurrentField() == null)
+        {
+            return AIState.PREPARING;
+        }
+        Field field = getOwnBuilding().getCurrentField();
+
+        if(workingOffset != null)
+        {
+            BlockPos position = field.getLocation().down().north(workingOffset.getZ()).west(workingOffset.getX());
+            if (walkToBlock(position.up()))
+            {
+                return AIState.FARMER_HARVEST;
+            }
+
+            if (shouldHarvest(position))
+            {
+                mineBlock(position.up());
+            }
+        }
+
+        if(!handleOffset(field))
+        {
+            buildingFarmer.getCurrentField().setNeedsWork(false);
+            buildingFarmer.getCurrentField().setFieldStage(EMPTY);
+            return AIState.IDLE;
+        }
+        BlockPos position = field.getLocation().down().north(workingOffset.getZ()).west(workingOffset.getX());
+        if (shouldHarvest(position))
+        {
+            mineBlock(position.up());
+        }
+
+        setDelay(workingDelay);
+        return AIState.FARMER_HARVEST;
     }
+
+
+    /**
+     * Checks if the crop should be harvested.
+     * @param position the position to check.
+     * @return true if should be hoed.
+     */
+    private boolean shouldHarvest(BlockPos position)
+    {
+        IBlockState state = world.getBlockState(position.up());
+
+        if(state.getBlock() instanceof IGrowable)
+        {
+            BlockCrops block = (BlockCrops) state.getBlock();
+
+            int maxAge = Collections.max(block.AGE.getAllowedValues());
+            return state.getValue(BlockCrops.AGE) == maxAge;
+        }
+
+        return false;
+    }
+
 
     /**
      * Checks if the ground should be planted.
