@@ -60,7 +60,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     curl -sL -w "\\nMod Version Publish CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt -H 'X-Requested-With: XMLHttpRequest' \
         "$SOLDER_URL/modpack/modify/published?build=$MODPACK_VERSION&published=1"
     
-    if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ]; then
+    if ([ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ]) && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
         echo "Setting new version as Latest..."
         curl -sL -w "\\nMod Version Latest CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt -H 'X-Requested-With: XMLHttpRequest' \
             "$SOLDER_URL/modpack/modify/latest?modpack=1&latest=$JAR_VERSION"
