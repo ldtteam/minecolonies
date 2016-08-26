@@ -97,7 +97,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if(wo == null)
         {
-            resetTask();
+            cancelTask();
             return true;
         }
 
@@ -812,10 +812,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * Resets the builders current task.
      */
-    @Override
-    public void resetTask()
+    public void cancelTask()
     {
-        super.resetTask();
         job.setWorkOrder(null);
         workFrom = null;
         job.setSchematic(null);
