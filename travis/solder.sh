@@ -37,7 +37,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     
     MODPACK_OLD_VERSION=$(curl -s -b cookies.txt -c cookies.txt $SOLDER_URL/modpack/view/1 | grep Manage | tail -n 1 | cut -d'"' -f2 | cut -d'/' -f6)
         
-    echo Old Modpack Version: MODPACK_OLD_VERSION
+    echo Old Modpack Version: $MODPACK_OLD_VERSION
     
     INSERT_TOKEN=$(curl -sL -b cookies.txt -c cookies.txt $SOLDER_URL/modpack/add-build/1 | grep token | cut -d'"' -f12)
     
