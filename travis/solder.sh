@@ -2,7 +2,7 @@
 
 SOLDER_DIR="solder"
 
-if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ([ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [[ $TRAVIS_BRANCH == release* ]]); then
     mkdir $SOLDER_DIR
     mv ./build/libs/*univ*.jar $SOLDER_DIR
     cd $SOLDER_DIR
@@ -60,7 +60,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     curl -sL -w "\\nMod Version Publish CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt -H 'X-Requested-With: XMLHttpRequest' \
         "$SOLDER_URL/modpack/modify/published?build=$MODPACK_VERSION&published=1"
     
-    if ([ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ]) && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+    if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ]; then
         echo "Setting new version as Latest..."
         curl -sL -w "\\nMod Version Latest CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt -H 'X-Requested-With: XMLHttpRequest' \
             "$SOLDER_URL/modpack/modify/latest?modpack=1&latest=$JAR_VERSION"
@@ -71,6 +71,8 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
                 "$SOLDER_URL/modpack/modify/recommended?modpack=1&recommended=$JAR_VERSION"
         fi
     fi
+else
+    echo "Branch $TRAVIS_BRANCH with pr $TRAVIS_PULL_REQUEST does not need to be on solder!"
 fi
 
 exit 0
