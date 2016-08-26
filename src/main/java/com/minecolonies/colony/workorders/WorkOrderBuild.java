@@ -6,7 +6,6 @@ import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.ServerUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
@@ -152,6 +151,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     public void attemptToFulfill(Colony colony)
     {
         boolean sendMessage = true;
+        boolean hasBuilder = false;
 
         for (CitizenData citizen : colony.getCitizens().values())
         {
@@ -161,6 +161,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
             {
                 continue;
             }
+
+            hasBuilder = true;
 
             final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
 
@@ -187,11 +189,28 @@ public class WorkOrderBuild extends AbstractWorkOrder
             }
         }
 
-        if (sendMessage && !hasSentMessageForThisWorkOrder)
+        sendBuilderMessage(colony, hasBuilder, sendMessage);
+    }
+
+    private void sendBuilderMessage(Colony colony, boolean hasBuilder, boolean sendMessage)
+    {
+        if (hasSentMessageForThisWorkOrder)
+        {
+            return;
+        }
+
+        if (hasBuilder && sendMessage)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
-                                                        "entity.builder.messageBuilderNecessary", this.upgradeLevel);
+            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+                    "entity.builder.messageBuilderNecessary", this.upgradeLevel);
+        }
+
+        if (!hasBuilder)
+        {
+            hasSentMessageForThisWorkOrder = true;
+            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+                    "entity.builder.messageNoBuilder");
         }
     }
 

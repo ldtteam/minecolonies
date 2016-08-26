@@ -733,19 +733,13 @@ public final class SchematicWrapper
     public Item getItem()
     {
         Block block = this.getBlock();
-        IBlockState metadata = this.getMetadata();
-        if(block == null || metadata == null)
+        IBlockState blockState = this.getBlockState();
+        if(block == null || blockState == null)
         {
             return null;
         }
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
 
-        //In some cases getItemFromBlock returns null. We then have to get the item the safer way.
-        if(stack.getItem() == null)
-        {
-            stack = new ItemStack(BlockUtils.getItemFromBlock(block));
-        }
-        return stack.getItem();
+        return BlockUtils.getItemStackFromBlockState(blockState).getItem();
     }
 
     /**
@@ -762,16 +756,6 @@ public final class SchematicWrapper
             return null;
         }
         return state.getBlock();
-    }
-
-    /**
-     * Calculate the current block's metadata in the schematic
-     *
-     * @return the current block's metadata or null if not initialized
-     */
-    public IBlockState getMetadata()
-    {
-        return getBlockState();
     }
 
     /**
