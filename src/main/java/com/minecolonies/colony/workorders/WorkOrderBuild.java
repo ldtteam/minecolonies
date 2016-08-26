@@ -199,17 +199,18 @@ public class WorkOrderBuild extends AbstractWorkOrder
             return;
         }
 
+        if (hasBuilder && sendMessage)
+        {
+            hasSentMessageForThisWorkOrder = true;
+            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+                    "entity.builder.messageBuilderNecessary", this.upgradeLevel);
+        }
+
         if (!hasBuilder)
         {
             hasSentMessageForThisWorkOrder = true;
             LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
                     "entity.builder.messageNoBuilder");
-        }
-        else if (sendMessage)
-        {
-            hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
-                    "entity.builder.messageBuilderNecessary", this.upgradeLevel);
         }
     }
 
