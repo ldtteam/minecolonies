@@ -177,7 +177,7 @@ public class Field extends Container
      * @param position the start position.
      * @param world the world the field is in.
      */
-    private void calculateSize(World world, BlockPos position)
+    public void calculateSize(World world, BlockPos position)
     {
         //Calculate in all 4 directions
         this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);
@@ -353,7 +353,11 @@ public class Field extends Container
      */
     public ItemSeeds getSeed()
     {
-        return inventory.getStackInSlot(0).getItem() instanceof ItemSeeds ? (ItemSeeds)inventory.getStackInSlot(0).getItem() : null;
+        if(inventory.getStackInSlot(0) == null || !(inventory.getStackInSlot(0).getItem() instanceof ItemSeeds))
+        {
+            return null;
+        }
+        return (ItemSeeds)inventory.getStackInSlot(0).getItem();
     }
 
     /**

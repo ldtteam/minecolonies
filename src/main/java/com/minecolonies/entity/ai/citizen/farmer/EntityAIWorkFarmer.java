@@ -10,8 +10,6 @@ import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.InventoryUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockCrops;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemSeeds;
@@ -75,7 +73,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 new AITarget(IDLE, () -> START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
                 new AITarget(PREPARING, this::prepareForFarming),
-                new AITarget(FARMER_CHECK_FIELDS, this::checkFields),
                 new AITarget(FARMER_HOE, this::hoe),
                 new AITarget(FARMER_PLANT, this::plant),
                 new AITarget(FARMER_HARVEST, this::harvest)
@@ -126,9 +123,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         Field currentField = building.getCurrentField();
 
         //If the farmer has no currentField and there is no field which needs work, check fields.
-        if(currentField == null || building.getFieldToWorkOn() == null)
+        if(currentField == null && building.getFieldToWorkOn() == null)
         {
-            return AIState.FARMER_CHECK_FIELDS;
+            building.resetFields();
+            return AIState.IDLE;
         }
 
         if(currentField.needsWork() && !walkToBlock(currentField.getLocation()))
@@ -180,10 +178,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 return AIState.FARMER_HOE;
             }
 
-            if (shouldHoe(position, field))
+            if (shouldHoe(position, field) && checkForHoe())
             {
-                //todo use hoe for that.
+                equipHoe();
+                worker.swingItem();
                 world.setBlockState(position, Blocks.farmland.getDefaultState());
+                worker.damageItemInHand(1);
                 mineBlock(position.up());
             }
         }
@@ -217,11 +217,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
         else
         {
-            if(workingOffset.getX() >= field.getLengthPlusX())
+            if(workingOffset.getX() > field.getLengthPlusX())
             {
                 workingOffset = new BlockPos(-field.getLengthMinusX(), 0, workingOffset.getZ()+1);
             }
-            else if(workingOffset.getZ() >= field.getWidthPlusZ())
+            else if(workingOffset.getZ() > field.getWidthPlusZ())
             {
                 workingOffset = null;
                 return false;
@@ -243,7 +243,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if(currentField.getSeed() == null)
         {
-            //todo please define a crop in the scarecrow inventory.
+            chatSpamFilter.talkWithoutSpam("entity.farmer.noSeedSet");
             buildingFarmer.setCurrentField(null);
             return false;
         }
@@ -278,7 +278,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
             if (shouldPlant(position, field))
             {
-                plantCrop(buildingFarmer.getCurrentField().getSeed(), position);
+                plantCrop(field.getSeed(), position);
             }
         }
 
@@ -286,7 +286,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             if(requestSeeds)
             {
-                //todo request seed
+                chatSpamFilter.talkWithoutSpam("entity.farmer.NeedSeed", field.getSeed().getUnlocalizedName());
             }
             shouldDumpInventory = true;
             buildingFarmer.getCurrentField().setNeedsWork(false);
@@ -327,20 +327,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return AIState.FARMER_HOE;
     }
 
-    private AIState checkFields()
-    {
-        //todo goTo current field
-        //check status
-        //if status = empty, check if hoed if not set workTodo else set hoed.
-
-        //if status = hoed -> check if seeded, if not set workTodo else, set seeded
-        //if status = seeded -> if more than 50% ready, set workTodo
-
-        getOwnBuilding().setCurrentField(getOwnBuilding().getFarmerFields().get(0));
-        getOwnBuilding().getCurrentField().setNeedsWork(true);
-        return AIState.PREPARING;
-    }
-
     /**
      * Checks if the ground should be planted.
      * @param position the position to check.
@@ -379,7 +365,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             Field newField = colony.getFreeField();
 
-            if(newField!=null)
+            if(newField!=null && getOwnBuilding() != null)
             {
                 getOwnBuilding().addFarmerFields(newField);
             }

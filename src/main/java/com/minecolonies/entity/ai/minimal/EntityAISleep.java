@@ -28,7 +28,14 @@ public class EntityAISleep extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP;
+        if (citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
+        {
+            return true;
+        }
+
+        citizen.onWakeUp();
+
+        return false;
     }
 
     @Override

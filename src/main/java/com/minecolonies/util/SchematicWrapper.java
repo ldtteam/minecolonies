@@ -8,9 +8,11 @@ import com.schematica.world.schematic.SchematicFormat;
 import com.schematica.world.storage.Schematic;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.item.EntityMinecart;
@@ -492,14 +494,12 @@ public final class SchematicWrapper
 
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
-        if(schematicBlock instanceof BlockDoor || schematicBlock == Blocks.flower_pot)
+        if(schematicBlock instanceof BlockDoor || schematicBlock == Blocks.flower_pot
+           || (schematicBlock instanceof  BlockStairs && BlockStairs.isSameStair(world, worldPos, schematicBlockState)))
         {
             return schematicBlock == worldBlockState.getBlock();
         }
-        else if(schematicBlock instanceof  BlockStairs && BlockStairs.isSameStair(world, worldPos, schematicBlockState))
-        {
-            return true;
-        }
+
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
         return worldPos.getY() <= 0
                 || schematicBlockState == worldBlockState;

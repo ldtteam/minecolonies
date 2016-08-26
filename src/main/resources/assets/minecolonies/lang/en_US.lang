@@ -185,6 +185,7 @@ com.minecolonies.gui.workerHuts.workOrderAdded=Construction added to build queue
 com.minecolonies.gui.workerHuts.workOrder=Work Orders
 
 
-farmer
+com.minecolonies.gui.workerHuts.farmer= Farm
 com.minecolonies.gui.inventory.scarecrow= Scarecrow
-
+entity.farmer.noSeedSet= Please define a seed to grow in the scarecrow.
+entity.farmer.NeedSeed= I need %s to plant.

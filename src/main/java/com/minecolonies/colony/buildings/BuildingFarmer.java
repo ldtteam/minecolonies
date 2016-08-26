@@ -7,7 +7,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.Field;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
-import io.netty.buffer.ByteBuf;
+import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
@@ -108,8 +108,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
         this.currentField = currentField;
     }
 
+    /**
+     * Retrieves a random field to work on for the farmer.
+     * @return a field to work on.
+     */
     public Field getFieldToWorkOn()
     {
+        Collections.shuffle(farmerFields);
         for(Field field: farmerFields)
         {
             if(field.needsWork())
@@ -158,6 +163,28 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
     }
 
+    /**
+     * Resets the fields to need work again.
+     */
+    public void resetFields()
+    {
+        for(Field field: farmerFields)
+        {
+            field.setNeedsWork(true);
+            field.calculateSize(getColony().getWorld(), field.getLocation().down());
+        }
+    }
+
+    @Override
+    public void onDestroyed()
+    {
+        super.onDestroyed();
+        for(Field field: farmerFields)
+        {
+            field.setTaken(false);
+        }
+    }
+
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -167,14 +194,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
-        //todo get field from colony, only store id
         super.readFromNBT(compound);
         NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.tagCount(); ++i)
         {
             NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
-
-            Field f = Field.createFromNBT(getColony(), fieldCompound);
+            BlockPos loc = BlockPosUtil.readFromNBT(fieldCompound, "fieldId");
+            Field f = getColony().getField(loc);
             if (f != null)
             {
                 farmerFields.add(f);
@@ -191,7 +217,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         for (Field f : farmerFields)
         {
             NBTTagCompound fieldCompound = new NBTTagCompound();
-            f.writeToNBT(fieldCompound);
+            BlockPosUtil.writeToNBT(fieldCompound, "fieldId", f.getID());
             fieldTagList.appendTag(fieldCompound);
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
