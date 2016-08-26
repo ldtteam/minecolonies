@@ -11,7 +11,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     mkdir $SOLDER_DIR/modpack/mods
     cp $SOLDER_DIR/$JAR_FILE $SOLDER_DIR/modpack/mods/$JAR_FILE
     zip -r $SOLDER_DIR/minecolonies.zip $SOLDER_DIR/modpack
-    echo unzip -l $SOLDER_DIR/minecolonies.zip
+    echo $(unzip -l $SOLDER_DIR/minecolonies.zip)
 fi
 
 exit 0
