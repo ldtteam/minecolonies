@@ -59,12 +59,12 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
         $SOLDER_URL/modpack/modify/published?build=$MODPACK_VERSION&published=1
     
     #if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ]; then
-        curl -sL -w "\\nMod Version Latest CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
-            $SOLDER_URL/modpack/modify/latest?modpack=1&latest=$JAR_VERSION
+    curl -sL -w "\\nMod Version Latest CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
+        $SOLDER_URL/modpack/modify/latest?modpack=1&latest=$JAR_VERSION
             
         #if [ "$TRAVIS_BRANCH" = "master" ]; then
-            curl -sL -w "\\nMod Version Recommend CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
-                $SOLDER_URL/modpack/modify/recommended?modpack=1&recommended=$JAR_VERSION
+    curl -sL -w "\\nMod Version Recommend CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
+        $SOLDER_URL/modpack/modify/recommended?modpack=1&recommended=$JAR_VERSION
         #fi
     #fi
 fi
