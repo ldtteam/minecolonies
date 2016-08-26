@@ -16,7 +16,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     JAR_VERSION=$(echo $JAR_FILE | cut -d'-' -f4 | rev | cut -c5- | rev)
     echo $JAR_VERSION
     
-    $ZIP_NAME=minecolonies-$JAR_VERSION.zip
+    $ZIP_NAME="minecolonies-$JAR_VERSION.zip"
     mv minecolonies.zip $ZIP_NAME
     
     curl -T $ZIP_NAME -u $SOLDER_USER:$SOLDER_PASS $SOLDER_FTP/minecolonies/
