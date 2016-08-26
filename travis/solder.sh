@@ -60,17 +60,17 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     curl -sL -w "\\nMod Version Publish CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt -H 'X-Requested-With: XMLHttpRequest' \
         "$SOLDER_URL/modpack/modify/published?build=$MODPACK_VERSION&published=1"
     
-    #if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ]; then
-    echo "Setting new version as Latest..."
-    curl -sL -w "\\nMod Version Latest CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt -H 'X-Requested-With: XMLHttpRequest' \
-        "$SOLDER_URL/modpack/modify/latest?modpack=1&latest=$JAR_VERSION"
+    if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ]; then
+        echo "Setting new version as Latest..."
+        curl -sL -w "\\nMod Version Latest CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt -H 'X-Requested-With: XMLHttpRequest' \
+            "$SOLDER_URL/modpack/modify/latest?modpack=1&latest=$JAR_VERSION"
             
-        #if [ "$TRAVIS_BRANCH" = "master" ]; then
-    echo "Setting new version as Recommended..."
-    curl -sL -w "\\nMod Version Recommend CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt -H 'X-Requested-With: XMLHttpRequest' \
-        "$SOLDER_URL/modpack/modify/recommended?modpack=1&recommended=$JAR_VERSION"
-        #fi
-    #fi
+        if [ "$TRAVIS_BRANCH" = "master" ]; then
+            echo "Setting new version as Recommended..."
+            curl -sL -w "\\nMod Version Recommend CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt -H 'X-Requested-With: XMLHttpRequest' \
+                "$SOLDER_URL/modpack/modify/recommended?modpack=1&recommended=$JAR_VERSION"
+        fi
+    fi
 fi
 
 exit 0
