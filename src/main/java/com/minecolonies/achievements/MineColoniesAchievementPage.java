@@ -10,8 +10,7 @@ import net.minecraftforge.common.AchievementPage;
  *
  * @since 0.2
  */
-public class MineColoniesAchievementPage extends AchievementPage
-{
+public class MineColoniesAchievementPage extends AchievementPage {
 
     /**
      * Create a new achievement page.
@@ -19,8 +18,7 @@ public class MineColoniesAchievementPage extends AchievementPage
      * @param name         The name this page should have
      * @param achievements A list of achievements to display
      */
-    public MineColoniesAchievementPage(final String name, final Achievement... achievements)
-    {
+    public MineColoniesAchievementPage(final String name, final Achievement... achievements) {
         super(name, achievements);
     }
 }

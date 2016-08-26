@@ -12,8 +12,7 @@ import net.minecraft.stats.Achievement;
  *
  * @since 0.2
  */
-public class MineColoniesAchievement extends Achievement
-{
+public class MineColoniesAchievement extends Achievement {
 
     /**
      * Create a new Achievement.
@@ -25,8 +24,7 @@ public class MineColoniesAchievement extends Achievement
      * @param itemIcon The icon to show
      * @param parent   the parent achievement
      */
-    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final Item itemIcon, final Achievement parent)
-    {
+    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final Item itemIcon, final Achievement parent) {
         super(id, name, offsetX, offsetY, itemIcon, parent);
     }
 
@@ -40,8 +38,7 @@ public class MineColoniesAchievement extends Achievement
      * @param blockIcon The icon to show
      * @param parent    the parent achievement
      */
-    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final Block blockIcon, final Achievement parent)
-    {
+    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final Block blockIcon, final Achievement parent) {
         super(id, name, offsetX, offsetY, blockIcon, parent);
     }
 
@@ -55,8 +52,7 @@ public class MineColoniesAchievement extends Achievement
      * @param itemStackIcon The icon to show
      * @param parent        the parent achievement
      */
-    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final ItemStack itemStackIcon, final Achievement parent)
-    {
+    public MineColoniesAchievement(final String id, final String name, final int offsetX, final int offsetY, final ItemStack itemStackIcon, final Achievement parent) {
         super(id, name, offsetX, offsetY, itemStackIcon, parent);
     }
 }
