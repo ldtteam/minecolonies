@@ -47,13 +47,26 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
         
     echo Created Modpack Version: $MODPACK_VERSION
     
-    MODVERSION_ID=$(curl -s -b cookies.txt -c cookies.txt $SOLDER_URL/modpack/build/49 | awk '/(minecolonies)/,/Forge/' | grep modversion_id | head -n 1 | cut -d'"' -f8)
+    MODVERSION_ID=$(curl -s -b cookies.txt -c cookies.txt $SOLDER_URL/modpack/build/$MODPACK_VERSION | awk '/(minecolonies)/,/Forge/' | grep modversion_id | head -n 1 | cut -d'"' -f8)
 
     echo Modversion ID: $MODVERSION_ID
     
     curl -sL -w "\\nMod Version Update CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
         --data "build_id=$MODPACK_VERSION&modversion_id=$MODVERSION_ID&action=version&version=$MOD_VERSION" -H 'X-Requested-With: XMLHttpRequest' \
         $SOLDER_URL/modpack/modify/version
+        
+    curl -sL -w "\\nMod Version Publish CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
+        $SOLDER_URL/modpack/modify/published?build=$MODPACK_VERSION&published=1
+    
+    #if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ]; then
+        curl -sL -w "\\nMod Version Latest CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
+            $SOLDER_URL/modpack/modify/latest?modpack=1&latest=$JAR_VERSION
+            
+        #if [ "$TRAVIS_BRANCH" = "master" ]; then
+            curl -sL -w "\\nMod Version Recommend CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
+                $SOLDER_URL/modpack/modify/recommended?modpack=1&recommended=$JAR_VERSION
+        #fi
+    #fi
 fi
 
 exit 0
