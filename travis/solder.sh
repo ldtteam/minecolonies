@@ -46,6 +46,10 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     MODPACK_VERSION=$(curl -sL -w "%{url_effective}\\n" -b cookies.txt -c cookies.txt --data "_token=$INSERT_TOKEN&version=$JAR_VERSION&minecraft=1.8.9&clone=$MODPACK_OLD_VERSION&java-version=1.8" -H 'X-Requested-With: XMLHttpRequest' $SOLDER_URL/modpack/add-build/1  -o /dev/null | cut -d'/' -f6)
         
     echo Created Modpack Version: $MODPACK_VERSION
+    
+    curl -sL -w "\\nMod Version Update CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
+        --data "build_id=$MODPACK_VERSION&modversion_id=40&action=version&version=$MOD_VERSION" -H 'X-Requested-With: XMLHttpRequest' \
+        $SOLDER_URL/modpack/modify/version
 fi
 
 exit 0
