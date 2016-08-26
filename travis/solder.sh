@@ -25,23 +25,27 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     curl -sL -w "Login CODE: %{http_code}\\n" -c cookies.txt \
         -d "password=$SOLDER_WEB_PASS&email=$SOLDER_WEB_USER&login=Log In" $SOLDER_URL/login -o /dev/null
     
-    curl -si -b cookies.txt -c cookies.txt $SOLDER_URL/mod/view/1
+    curl -s -w "View Mod CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt $SOLDER_URL/mod/view/1 -o /dev/null
     
-    curl -si -b cookies.txt -c cookies.txt \
+    curl -s -w "\\nAdd Mod CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
         --data "mod-id=1&add-version=$JAR_VERSION&add-md5=" -H 'X-Requested-With: XMLHttpRequest' \
         $SOLDER_URL/mod/add-version
         
-    curl -siL -w "%{url_effective}\\n" -b cookies.txt -c cookies.txt \
-        --data "version=$JAR_VERSION&minecraft=1.8.9&clone=33&java-version=1.8" -H 'X-Requested-With: XMLHttpRequest' \
-        $SOLDER_URL/modpack/add-build/1 -o /dev/null | cut -d'/' -f6
+    MOD_VERSION=$(curl -s -b cookies.txt -c cookies.txt $SOLDER_URL/mod/view/1 | grep version-id |head -n 1 | cut -d'"' -f6)
+        
+    echo Mod Version: $MOD_VERSION
+    
+    MODPACK_OLD_VERSION=$(curl -s -b cookies.txt -c cookies.txt $SOLDER_URL/modpack/view/1 | grep Manage | tail -n 1 | cut -d'"' -f2 | cut -d'/' -f6)
+        
+    echo Old Modpack Version: MODPACK_OLD_VERSION
     
     INSERT_TOKEN=$(curl -sL -b cookies.txt -c cookies.txt $SOLDER_URL/modpack/add-build/1 | grep token | cut -d'"' -f12)
     
-    echo $INSERT_TOKEN
+    echo Token: $INSERT_TOKEN
     
-    MODPACK_VERSION=$(curl -sL -w "%{url_effective}\\n" -b cookies.txt -c cookies.txt --data "_token=$INSERT_TOKEN&version=$JAR_VERSION&minecraft=1.8.9&clone=33&java-version=1.8" -H 'X-Requested-With: XMLHttpRequest' $SOLDER_URL/modpack/add-build/1  -o /dev/null | cut -d'/' -f6)
+    MODPACK_VERSION=$(curl -sL -w "%{url_effective}\\n" -b cookies.txt -c cookies.txt --data "_token=$INSERT_TOKEN&version=$JAR_VERSION&minecraft=1.8.9&clone=$MODPACK_OLD_VERSION&java-version=1.8" -H 'X-Requested-With: XMLHttpRequest' $SOLDER_URL/modpack/add-build/1  -o /dev/null | cut -d'/' -f6)
         
-    echo $MODPACK_VERSION
+    echo Created Modpack Version: $MODPACK_VERSION
 fi
 
 exit 0
