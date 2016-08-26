@@ -130,6 +130,7 @@ entity.builder.messageBuildStart=Started building %s
 entity.builder.messageBuildComplete=Finished building %s
 entity.builder.messageNeedMaterial=I need %s (Amount: %d)
 entity.builder.messageBuilderNecessary=Requiring a builder of level %d in order to build or upgrade this building.
+entity.builder.messageNoBuilder=You need a builder in order to build or upgrade this building.
 
 entity.miner.messageNeedTools=Need tool %s!
 entity.miner.messageNeedBlockAndItem=I need %s!

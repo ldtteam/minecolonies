@@ -815,9 +815,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(worldObj, colony.getPermissions().getMessagePlayers()),
-                                                        "tile.blockHutTownHall.messageColonistDead",
-                                                        citizenData.getName());
+            LanguageHandler.sendPlayersLocalizedMessage(
+                    colony.getMessageEntityPlayers(),
+                    "tile.blockHutTownHall.messageColonistDead",
+                    citizenData.getName());
+
             colony.removeCitizen(getCitizenData());
         }
         super.onDeath(par1DamageSource);
@@ -1241,7 +1243,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
         statusMessages.put(msg, ticksExisted);
 
         LanguageHandler.sendPlayersMessage(
-                ServerUtils.getPlayersFromUUID(worldObj, getColony().getPermissions().getMessagePlayers()),
+                colony.getMessageEntityPlayers(),
+                //TODO does this need to go through the LanguageHandler#format?
                 LanguageHandler.format(this.getColonyJob().getName()) + " " + this.getCustomNameTag() + ": " + msg);
     }
 

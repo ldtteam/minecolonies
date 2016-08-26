@@ -729,7 +729,7 @@ public class Colony implements IColony
                 {
                     //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersLocalizedMessage(
-                            ServerUtils.getPlayersFromUUID(world, permissions.getMessagePlayers()),
+                            this.getMessageEntityPlayers(),
                             "tile.blockHutTownHall.messageMaxSize");
                 }
             }
@@ -1138,6 +1138,11 @@ public class Colony implements IColony
     public void onBuildingUpgradeComplete(AbstractBuilding building, int level)
     {
         building.onUpgradeComplete(level);
+    }
+
+    public List<EntityPlayer> getMessageEntityPlayers()
+    {
+        return ServerUtils.getPlayersFromUUID(this.world, this.getPermissions().getMessagePlayers());
     }
 
     /**

@@ -22,7 +22,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
       --request POST \
       --data '{"state":"failure",
-      "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/${TRAVIS_BUILD_ID}",
+      "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/'$TRAVIS_BUILD_ID'",
       "description":"Sonarqube build failed, please check logs!",
       "context":"sonarqube"}' \
       "https://api.github.com/repos/Minecolonies/minecolonies/statuses/${TRAVIS_COMMIT}"
@@ -33,7 +33,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
   curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
     --request POST \
     --data '{"state":"pending",
-    "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/{$TRAVIS_BUILD_ID}",
+    "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/'$TRAVIS_BUILD_ID'",
     "description": "Sonarqube report in progress...",
     "context":"sonarqube-report"}' \
     "https://api.github.com/repos/Minecolonies/minecolonies/statuses/${TRAVIS_COMMIT}"
@@ -51,7 +51,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
       --request POST \
       --data '{"state":"failure",
-      "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/${TRAVIS_BUILD_ID}",
+      "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/'$TRAVIS_BUILD_ID'",
       "description":"Sonarqube report failed, please check logs!",
       "context":"sonarqube-report"}' \
       "https://api.github.com/repos/Minecolonies/minecolonies/statuses/${TRAVIS_COMMIT}"
@@ -59,7 +59,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
       --request POST \
       --data '{"state":"success",
-      "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/${TRAVIS_BUILD_ID}",
+      "target_url":"https://travis-ci.org/Minecolonies/minecolonies/builds/'$TRAVIS_BUILD_ID'",
       "description":"Sonarqube report passed!",
       "context":"sonarqube-report"}' \
       "https://api.github.com/repos/Minecolonies/minecolonies/statuses/${TRAVIS_COMMIT}"    

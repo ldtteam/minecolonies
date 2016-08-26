@@ -3,7 +3,7 @@
 [![Comment Lines](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true&metric=comment_lines_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
 [![Public API](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true&metric=public_documented_api_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
 [![Lines of Code](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true&metric=ncloc)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
-[![Stories in Ready](https://badge.waffle.io/Minecolonies/minecolonies.png?label=ready&title=Ready)](http://waffle.io/Minecolonies/minecolonies)
+[![Stories in Ready](https://badge.waffle.io/Minecolonies/minecolonies.png?label=help%20wanted&title=Help%20Wanted)](http://waffle.io/Minecolonies/minecolonies)
 
 For Users
 --
