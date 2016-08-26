@@ -12,7 +12,6 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.IGrowable;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -137,8 +136,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         Field currentField = building.getCurrentField();
 
-        if(currentField.needsWork() && !walkToBlock(currentField.getLocation()))
+        if(currentField.needsWork())
         {
+            if(walkToBlock(currentField.getLocation()))
+            {
+                return AIState.PREPARING;
+            }
             switch (currentField.getFieldStage())
             {
                 case EMPTY:
@@ -216,6 +219,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return AIState.FARMER_HOE;
     }
 
+    //todo check with field size 0
     /**
      * Handles the offset of the field for the farmer.
      * @param field the field object.
@@ -229,11 +233,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
         else
         {
-            if(workingOffset.getX() > field.getLengthPlusX())
+            if(workingOffset.getX() >= field.getLengthPlusX())
             {
                 workingOffset = new BlockPos(-field.getLengthMinusX(), 0, workingOffset.getZ()+1);
             }
-            else if(workingOffset.getZ() > field.getWidthPlusZ())
+            else if(workingOffset.getZ() >= field.getWidthPlusZ())
             {
                 workingOffset = null;
                 return false;
@@ -288,21 +292,30 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 return AIState.FARMER_PLANT;
             }
 
-            if (shouldPlant(position, field))
+            if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
             {
-                plantCrop(field.getSeed(), position);
+                shouldDumpInventory = true;
+                buildingFarmer.getCurrentField().setNeedsWork(false);
+                buildingFarmer.getCurrentField().setFieldStage(PLANTED);
+                return AIState.IDLE;
             }
+
         }
 
         if(!handleOffset(field))
         {
             if(requestSeeds)
             {
+                //todo request the correct seed
                 chatSpamFilter.talkWithoutSpam("entity.farmer.NeedSeed", field.getSeed().getUnlocalizedName());
             }
-            shouldDumpInventory = true;
-            buildingFarmer.getCurrentField().setNeedsWork(false);
-            buildingFarmer.getCurrentField().setFieldStage(PLANTED);
+            else
+            {
+                shouldDumpInventory = true;
+                buildingFarmer.getCurrentField().setNeedsWork(false);
+                buildingFarmer.getCurrentField().setFieldStage(PLANTED);
+                requestSeeds = true;
+            }
             return AIState.IDLE;
         }
 
@@ -316,7 +329,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param item the crop.
      * @param position the location.
      */
-    private void plantCrop(Item item, BlockPos position)
+    private boolean plantCrop(Item item, BlockPos position)
     {
         int slot = worker.findFirstSlotInInventoryWith(item);
         if (slot != -1)
@@ -325,6 +338,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             world.setBlockState(position.up(),seed.getPlant(world, position));
             getInventory().decrStackSize(slot, 1);
             //Flag 1+2 is needed for updates
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -382,10 +400,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         IBlockState state = world.getBlockState(position.up());
 
-        if(state.getBlock() instanceof IGrowable)
+        if(state.getBlock() instanceof IGrowable && state.getBlock() instanceof BlockCrops)
         {
             BlockCrops block = (BlockCrops) state.getBlock();
 
+            //todo this may not work for modded crops which have less or more than 7 stages.
             int maxAge = Collections.max(block.AGE.getAllowedValues());
             return state.getValue(BlockCrops.AGE) == maxAge;
         }
@@ -419,7 +438,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private boolean shouldHoe(BlockPos position, Field field)
     {
         return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock().getItem(world, position) instanceof ItemSeeds)
-               && !(world.getBlockState(position).getBlock() instanceof BlockHutField);
+               && !(world.getBlockState(position).getBlock() instanceof BlockHutField)
+               && (world.getBlockState(position).getBlock() == Blocks.dirt || world.getBlockState(position).getBlock() == Blocks.grass);
     }
 
     /**
