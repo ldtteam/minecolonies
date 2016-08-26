@@ -16,6 +16,8 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     JAR_VERSION=$(echo $JAR_FILE | cut -d'-' -f4 | rev | cut -c5- | rev)
     echo $JAR_VERSION
     
+    curl -T $JAR_FILE -u $SOLDER_USER:$SOLDER_PASS $SOLDER_FTP/minecolonies/
+    
     curl -sL -w "CODE: %{http_code}\\n" -c cookies.txt \
         -d "password=$SOLDER_WEB_PASS&email=$SOLDER_WEB_USER&login=Log In" $SOLDER_URL -o /dev/null
     
