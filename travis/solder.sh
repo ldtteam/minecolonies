@@ -22,8 +22,8 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     
     curl -T $ZIP_NAME -u $SOLDER_USER:$SOLDER_PASS $SOLDER_FTP/minecolonies/
     
-    curl -sL -w "CODE: %{http_code}\\n" -c cookies.txt \
-        -d "password=$SOLDER_WEB_PASS&email=$SOLDER_WEB_USER&login=Log In" $SOLDER_URL -o /dev/null
+    curl -sL -w "Login CODE: %{http_code}\\n" -c cookies.txt \
+        -d "password=$SOLDER_WEB_PASS&email=$SOLDER_WEB_USER&login=Log In" $SOLDER_URL/login -o /dev/null
     
     curl -si -b cookies.txt -c cookies.txt $SOLDER_URL/mod/view/1
     
