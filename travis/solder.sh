@@ -47,8 +47,12 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
         
     echo Created Modpack Version: $MODPACK_VERSION
     
+    MODVERSION_ID=$(curl -s -b cookies.txt -c cookies.txt $SOLDER_URL/modpack/build/49 | awk '/(minecolonies)/,/Forge/' | grep modversion_id | head -n 1 | cut -d'"' -f8)
+
+    echo Modversion ID: $MODVERSION_ID
+    
     curl -sL -w "\\nMod Version Update CODE: %{http_code}\\n" -b cookies.txt -c cookies.txt \
-        --data "build_id=$MODPACK_VERSION&modversion_id=40&action=version&version=$MOD_VERSION" -H 'X-Requested-With: XMLHttpRequest' \
+        --data "build_id=$MODPACK_VERSION&modversion_id=$MODVERSION_ID&action=version&version=$MOD_VERSION" -H 'X-Requested-With: XMLHttpRequest' \
         $SOLDER_URL/modpack/modify/version
 fi
 
