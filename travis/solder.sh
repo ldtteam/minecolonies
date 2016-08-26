@@ -23,7 +23,7 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
         --data "mod-id=1&add-version=$JAR_VERSION&add-md5=" -H 'X-Requested-With: XMLHttpRequest' \
         $SOLDER_URL/mod/add-version -o /dev/null
         
-    MODPACK_VERSION=$(curl -sL -w "%{url_effective}\\n" -b cookies.txt -c cookies.txt --data "version=$JAR_VERSION&minecraft=1.8.9&clone=33&java-version=1.8" -H 'X-Requested-With: XMLHttpRequest' $SOLDER_URL/modpack/add-build/1 -o /dev/null | cut -d'/' -f6)
+    MODPACK_VERSION=$(curl -sL -w "%{url_effective}\\n" -b cookies.txt -c cookies.txt --data "version=$JAR_VERSION&minecraft=1.8.9&clone=33&java-version=1.8" -H 'X-Requested-With: XMLHttpRequest' $SOLDER_URL/modpack/add-build/1)
         
     echo $MODPACK_VERSION
 fi
