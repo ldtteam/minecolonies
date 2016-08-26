@@ -17,7 +17,7 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
       -Dsonar.sources=src/main/java \
       -Dsonar.branch=$BRANCH \
       -Dsonar.java.binaries=build/classes/main \
-      -DXmx3g
+      -DXmx4g
   if [ $? -ne 0 ]; then
     curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
       --request POST \
@@ -46,7 +46,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
     -Dsonar.sources=src/main/java \
     -Dsonar.branch=$BRANCH \
     -Dsonar.java.binaries=build/classes/main \
-    -DXmx3g
+    -DXmx4g
   if [ $? -ne 0 ]; then
     curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
       --request POST \
