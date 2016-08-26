@@ -25,13 +25,13 @@ if [ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [ "$TR
     curl -sL -w "CODE: %{http_code}\\n" -c cookies.txt \
         -d "password=$SOLDER_WEB_PASS&email=$SOLDER_WEB_USER&login=Log In" $SOLDER_URL -o /dev/null
     
-    curl -s -b cookies.txt -c cookies.txt $SOLDER_URL/mod/view/1
+    curl -si -b cookies.txt -c cookies.txt $SOLDER_URL/mod/view/1
     
-    curl -s -b cookies.txt -c cookies.txt \
+    curl -si -b cookies.txt -c cookies.txt \
         --data "mod-id=1&add-version=$JAR_VERSION&add-md5=" -H 'X-Requested-With: XMLHttpRequest' \
         $SOLDER_URL/mod/add-version
         
-    curl -sL -w "%{url_effective}\\n" -b cookies.txt -c cookies.txt \
+    curl -siL -w "%{url_effective}\\n" -b cookies.txt -c cookies.txt \
         --data "version=$JAR_VERSION&minecraft=1.8.9&clone=33&java-version=1.8" -H 'X-Requested-With: XMLHttpRequest' \
         $SOLDER_URL/modpack/add-build/1 -o /dev/null | cut -d'/' -f6
     
