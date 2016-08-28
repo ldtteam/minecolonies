@@ -1,5 +1,6 @@
 package com.minecolonies.items;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.PlayerProperties;
@@ -85,6 +86,9 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         {
             spawnShip(worldIn, pos, playerIn, facing);
             stack.stackSize--;
+            
+            playerIn.triggerAchievement(ModAchievements.achievementGetSupply);
+            
             return true;
         }
         LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.supplyChestDeployer.invalid");
@@ -93,13 +97,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     /**
      * Checks if the ship can be placed and returns the direction it can face.
-     * <p/>
+     * <pre>
      * 0: cannot be placed.
      * 2: can be placed at north.
      * 3: can be placed at south.
      * 4: can be placed at west.
      * 5: can be placed at east.
-     *
+     * </pre>
      * @param world world obj.
      * @param pos    coordinate clicked.
      * @return      facings it can be placed at.
@@ -205,7 +209,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     boolean isFirstPlacing(EntityPlayer player)
     {
-        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).getHasPlacedSupplyChest())
+        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest())
             return true;
         LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.error.supplyChestAlreadyPlaced");
         return false;

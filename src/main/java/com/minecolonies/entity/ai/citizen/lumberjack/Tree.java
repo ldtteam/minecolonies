@@ -325,9 +325,9 @@ public class Tree
     }
 
     /**
-     * Check if the found tree has any logs
+     * Check if the found tree has any logs.
      *
-     * @return true if size > 0
+     * @return true if there are wood blocks associated with the tree.
      */
     public boolean hasLogs()
     {

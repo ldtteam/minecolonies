@@ -153,7 +153,7 @@ public final class Loader
     }
 
     /**
-     * Parse an XML Document into contents for a View
+     * Parse an XML Document into contents for a View.
      *
      * @param doc    xml document.
      * @param parent parent view.
@@ -175,7 +175,7 @@ public final class Loader
     }
 
     /**
-     * Parse XML from an InputSource into contents for a View
+     * Parse XML from an InputSource into contents for a View.
      *
      * @param input  xml file.
      * @param parent parent view.
@@ -197,10 +197,10 @@ public final class Loader
     }
 
     /**
-     * Parse an XML String into contents for a View
+     * Parse an XML String into contents for a View.
      *
-     * @param xmlString
-     * @param parent
+     * @param xmlString the xml data.
+     * @param parent parent view.
      */
     public static void createFromXML(String xmlString, View parent)
     {
@@ -208,10 +208,10 @@ public final class Loader
     }
 
     /**
-     * Parse XML contains in a ResourceLocation into contents for a Window
+     * Parse XML contains in a ResourceLocation into contents for a Window.
      *
-     * @param filename
-     * @param parent
+     * @param filename the xml file.
+     * @param parent parent view.
      */
     public static void createFromXMLFile(String filename, View parent)
     {
@@ -219,10 +219,10 @@ public final class Loader
     }
 
     /**
-     * Parse XML contains in a ResourceLocation into contents for a Window
+     * Parse XML contains in a ResourceLocation into contents for a Window.
      *
-     * @param resource
-     * @param parent
+     * @param resource xml as a {@link ResourceLocation}.
+     * @param parent parent view.
      */
     public static void createFromXMLFile(ResourceLocation resource, View parent)
     {
@@ -230,10 +230,10 @@ public final class Loader
     }
 
     /**
-     * Create an InputStream from a ResourceLocation
+     * Create an InputStream from a ResourceLocation.
      *
-     * @param res
-     * @return
+     * @param res ResourceLocation to get an InputStream from.
+     * @return the InputStream created from the ResourceLocation.
      */
     private static InputStream createInputStream(ResourceLocation res)
     {

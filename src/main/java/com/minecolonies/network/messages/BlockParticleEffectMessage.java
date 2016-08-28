@@ -38,9 +38,9 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
      */
     public BlockParticleEffectMessage(BlockPos pos, IBlockState state, int side)
     {
-    	this.pos = pos;
-    	this.block = state.getBlock();
-    	this.metadata = state.getBlock().getMetaFromState(state);
+        this.pos = pos;
+        this.block = state.getBlock();
+        this.metadata = state.getBlock().getMetaFromState(state);
         this.side = side;
     }
 
@@ -73,7 +73,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
         else
         {
             // TODO: test if this works
-        	FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, EnumFacing.getFront(message.side));
+            FMLClientHandler.instance().getClient().effectRenderer.addBlockHitEffects(message.pos, EnumFacing.getFront(message.side));
         }
         return null;
     }

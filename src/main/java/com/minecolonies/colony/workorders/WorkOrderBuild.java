@@ -5,8 +5,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.EntityUtils;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.ServerUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
@@ -57,6 +57,17 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.cleared = level > 1;
     }
 
+    @Override
+    protected WorkOrderType getType()
+    {
+        return WorkOrderType.BUILD;
+    }
+
+    @Override
+    protected String getValue()
+    {
+        return upgradeName;
+    }
     /**
      * Returns the name after upgrade.
      *
@@ -153,8 +164,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
 
             final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
 
-            //check if correct level >= 2 etc
-            if (builderLevel >= upgradeLevel || builderLevel == 2)
+            // don't send a message if we have a valid worker that is busy.
+            if (canBuildHut(builderLevel, citizen, colony))
             {
                 sendMessage = false;
             }
@@ -168,9 +179,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
             //  - The Builder's Work AbstractBuilding is built
             //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
             //  - OR the WorkOrder is for the TownHall
-            if (extraChecks(builderLevel) ||
-                citizen.getWorkBuilding().getID().equals(buildingLocation) ||
-                (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation)))
+            if (canBuildHut(builderLevel, citizen, colony))
             {
                 job.setWorkOrder(this);
                 this.setClaimedBy(citizen);
@@ -181,7 +190,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         if (sendMessage && !hasSentMessageForThisWorkOrder)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
+            LanguageHandler.sendPlayersLocalizedMessage(ServerUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
                                                         "entity.builder.messageBuilderNecessary", this.upgradeLevel);
         }
     }
@@ -191,9 +200,16 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @param builderLevel the builder level.
      * @return true if he is able to.
      */
-    private boolean extraChecks(int builderLevel)
+    private boolean canBuildHut(int builderLevel, CitizenData citizen, Colony colony)
     {
-        return builderLevel >= upgradeLevel || builderLevel == 2;
+        return builderLevel >= upgradeLevel || builderLevel == 2
+                || citizen.getWorkBuilding().getID().equals(buildingLocation)
+                || isLocationTownhall(colony, buildingLocation);
+    }
+
+    private boolean isLocationTownhall(Colony colony, BlockPos buildingLocation)
+    {
+        return colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation);
     }
 
     /**

@@ -9,8 +9,7 @@ import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.Log;
+import com.minecolonies.util.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
@@ -355,7 +354,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Sets the tile entity field to  {@param te}
+     * Sets the tile entity for the building.
      *
      * @param te    {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
      */
@@ -482,6 +481,8 @@ public abstract class AbstractBuilding
         }
 
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
+        LanguageHandler.sendPlayersLocalizedMessage(
+                ServerUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()), "com.minecolonies.workOrderAdded");
     }
 
     /**
@@ -554,6 +555,16 @@ public abstract class AbstractBuilding
     public MaterialStore getMaterialStore()
     {
         return materialStore;
+    }
+
+    /**
+     * Called upon completion of an upgrade process.
+     *
+     * @param newLevel The new level
+     */
+    public void onUpgradeComplete(int newLevel)
+    {
+        // Does nothing here
     }
 
     /**
