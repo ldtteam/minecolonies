@@ -1,10 +1,9 @@
 [![Build Status](https://travis-ci.org/Minecolonies/minecolonies.svg?branch=develop)](https://travis-ci.org/Minecolonies/minecolonies)
-[![Quality Gate](http://home.kk-sc.de:9000/api/badges/gate?key=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F&blinking=true)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F)
-[![Comment Lines](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F&blinking=true&metric=comment_lines_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F)
-[![Public API](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F&blinking=true&metric=public_documented_api_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F)
-[![Lines of Code](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F&blinking=true&metric=ncloc)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3AMINECOL-JAR35-JOB1%3Adevelop%2F)
-[![Stories in Ready](https://badge.waffle.io/Minecolonies/minecolonies.png?label=ready&title=Ready)](http://waffle.io/Minecolonies/minecolonies)
-[![ReviewNinja](https://app.review.ninja/65616760/badge)](https://app.review.ninja/Minecolonies/minecolonies)
+[![Quality Gate](http://home.kk-sc.de:9000/api/badges/gate?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
+[![Comment Lines](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true&metric=comment_lines_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
+[![Public API](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true&metric=public_documented_api_density)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
+[![Lines of Code](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true&metric=ncloc)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
+[![Stories in Ready](https://badge.waffle.io/Minecolonies/minecolonies.png?label=help%20wanted&title=Help%20Wanted)](http://waffle.io/Minecolonies/minecolonies)
 
 For Users
 --
@@ -64,7 +63,7 @@ This section assumes that you're using the command-line version of Git.
 
 1. Open up your command line.
 2. Navigate to a place where you want to download MineColonies source (eg `C:\Github\MineColonies\`) by executing `cd [folder location]`.  This location is known as `basefolder` from now on.
-3. Execute `git clone https://github.com/MinecoloniesDevs/Minecolonies.git`.  This will download MineColonies' source into `basefolder`.
+3. Execute `git clone https://github.com/Minecolonies/minecolonies.git`.  This will download MineColonies' source into `basefolder`.
 4. Right now, you should have a directory that looks something like:
 
 ***
@@ -108,26 +107,23 @@ So you found a bug in our code?  Think you can make it more efficient?  Want to 
 MineColonies crashes every time?  Have a suggestion?  Found a bug?  Create an issue now!
 
 1. Make sure your issue hasn't already been answered or fixed.  Also think about whether your issue is a valid one before submitting it.
-2. Go to [the issues page](http://home.kk-sc.de:4480/secure/CreateIssue!default.jspa).
-3. Click `Create Issue`
+2. Go to [the issues page](https://github.com/Minecolonies/minecolonies/issues).
+3. Click `New Issue`
 4. Fill in the form:
     * `Title`: Short summary of your issue
     * `Description`: A description of what your problem is, with additional info. What have you tried to fix it etc.
     * `Assignee`: (Optional) Assign someone to the issue.
-    * `Kind`: Select the kind of issue
-    * `Priority`: Select the priority. Think very well if it is a major issue before you select that!
     * `Attachments`: Add the latest.log from %appdata%/.minecraft/logs
     
-5. Click `Create Issue`, and wait for feedback!
+5. Click `Submit New Issue`, and wait for feedback!
 
-NOTE: A video explaining how to is [here](http://youtu.be/2SscjHmLvss)
+~~NOTE: A video explaining how to is [here](http://youtu.be/2SscjHmLvss).~~
 
 For Developers
 --
 
-Do not push to the main branch anymore!
-Only PR's (pull requests) are acceptable for this branch.
+PR's (pull requests) are required to get code onto the develop and master branches.
 
 To do this, the easiest way is to download [sourcetree](http://www.sourcetreeapp.com/) or [gitkraken](https://www.gitkraken.com/). Install it, and add a repository (either clone, or select working directory)
-Then, click on branch, and create a new one. You can push to your own branch! Make sure your branch is selected, before you push! [Example](http://gyazo.com/4b453a55a8baf59f573bb1c4636a5ca2) So it should be big black. Once you are satisfied, go to [github](https://github.com/MinecoloniesDevs/Minecolonies/compare), and create a pull request.
+Then, click on branch, and create a new one. You can push to your own branch! Make sure your branch is selected, before you push! [Example](http://gyazo.com/4b453a55a8baf59f573bb1c4636a5ca2) So it should be big black. Once you are satisfied, go to [github](https://github.com/Minecolonies/minecolonies/compare), and create a pull request.
 

@@ -379,7 +379,7 @@ public final class SchematicWrapper
                     }
 
                     TileEntity tileEntity = world.getTileEntity(worldPos);
-                    saveTileEntity(schematic, tileEntity, tileEntity.getPos().subtract(minPos));
+                    saveTileEntity(schematic, tileEntity, minPos);
                 }
             }
         }
@@ -402,12 +402,13 @@ public final class SchematicWrapper
      *
      * @param schematic Schematic to add the TileEntity to.
      * @param tileEntity The tile entity.
-     * @param newPos The schematic pos of the tile entity.
+     * @param minPos The schematic min pos to subtract of the tile entity.
      */
-    private static void saveTileEntity(Schematic schematic, TileEntity tileEntity, BlockPos newPos)
+    private static void saveTileEntity(Schematic schematic, TileEntity tileEntity, BlockPos minPos)
     {
         if (tileEntity != null)
         {
+            BlockPos newPos = tileEntity.getPos().subtract(minPos);
             NBTTagCompound tileEntityNBT = new NBTTagCompound();
             tileEntity.writeToNBT(tileEntityNBT);
 
@@ -547,7 +548,7 @@ public final class SchematicWrapper
 
         }
         //Check for air blocks and if blocks below the hut are different from the schematicWorld
-        while((worldBlockAir() || (progressPos.getY() <= getOffset().getY() && doesSchematicBlockEqualWorldBlock())) && count < Configurations.maxBlocksCheckedByBuilder);
+        while((worldBlockAir() ||  doesSchematicBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -732,19 +733,13 @@ public final class SchematicWrapper
     public Item getItem()
     {
         Block block = this.getBlock();
-        IBlockState metadata = this.getMetadata();
-        if(block == null || metadata == null)
+        IBlockState blockState = this.getBlockState();
+        if(block == null || blockState == null)
         {
             return null;
         }
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
 
-        //In some cases getItemFromBlock returns null. We then have to get the item the safer way.
-        if(stack.getItem() == null)
-        {
-            stack = new ItemStack(block.getItem(null, null));
-        }
-        return stack.getItem();
+        return BlockUtils.getItemStackFromBlockState(blockState).getItem();
     }
 
     /**
@@ -761,16 +756,6 @@ public final class SchematicWrapper
             return null;
         }
         return state.getBlock();
-    }
-
-    /**
-     * Calculate the current block's metadata in the schematic
-     *
-     * @return the current block's metadata or null if not initialized
-     */
-    public IBlockState getMetadata()
-    {
-        return getBlockState();
     }
 
     /**

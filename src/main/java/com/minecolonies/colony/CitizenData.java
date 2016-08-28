@@ -221,14 +221,6 @@ public class CitizenData
     }
 
     /**
-     * Sets the experience of the citizen.
-     */
-    public void setExperience(double xp)
-    {
-        this.experience = xp;
-    }
-
-    /**
      * Adds experience of the citizen.
      *
      * @param xp the amount of xp to add.
@@ -239,7 +231,9 @@ public class CitizenData
     }
 
     /**
-     * Sets the level of the citizen
+     * Sets the level of the citizen.
+     *
+     * @param lvl the new level for the citizen.
      */
     public void setLevel(int lvl)
     {
@@ -427,9 +421,8 @@ public class CitizenData
         {
             return type.cast(job);
         }
-        catch(ClassCastException exc)
+        catch(ClassCastException ignored)
         {
-            Log.logger.catching(exc);
             return null;
         }
     }

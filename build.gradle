@@ -30,6 +30,13 @@ sonarqube {
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
+apply plugin: 'jacoco'
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
 dependencies {
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:1.+"
@@ -83,6 +90,11 @@ processResources {
     }
 }
 
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
 //task sourceJar(type: Jar) {
 //    from sourceSets.main.allSource
 //    appendix = 'src'
@@ -106,7 +118,7 @@ task incrementBuildNumber() {
 
 jar {
     appendix = 'universal'
-    archiveName = "minecolonies-universal-" + config.minecraft_version + "-" + project.version + ".jar"
+    archiveName = "minecolonies-universal-" + project.version + ".jar"
 
     manifest {
         attributes 'FMLAT': "minecolonies_at.cfg"

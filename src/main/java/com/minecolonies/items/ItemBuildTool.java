@@ -1,6 +1,8 @@
 package com.minecolonies.items;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.achievements.ModAchievements;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -22,6 +24,16 @@ public class ItemBuildTool extends AbstractItemMinecolonies
     }
 
     @Override
+    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
+        if (world.isRemote)
+        {
+            MineColonies.proxy.openBuildToolWindow(null);
+        }
+
+        return stack;
+    }
+
+    @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if(!worldIn.isRemote)
@@ -29,29 +41,8 @@ public class ItemBuildTool extends AbstractItemMinecolonies
             return false;
         }
 
-        switch(side)
-        {
-        case DOWN:
-            pos.down();
-            break;
-        case UP:
-            pos.up();
-            break;
-        case NORTH:
-            pos.north();
-            break;
-        case SOUTH:
-            pos.south();
-            break;
-        case WEST:
-            pos.west();
-            break;
-        case EAST:
-            pos.east();
-            break;
-        }
-
-        MineColonies.proxy.openBuildToolWindow(pos);
+        playerIn.triggerAchievement(ModAchievements.achievementWandOfbuilding);
+        MineColonies.proxy.openBuildToolWindow(pos.offset(side));
         return false;
     }
 }

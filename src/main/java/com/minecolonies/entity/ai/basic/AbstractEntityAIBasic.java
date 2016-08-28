@@ -21,6 +21,8 @@ import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * This class provides basic ai functionality.
+ *
+ * @param <J> The job this ai has to fulfil
  */
 public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
 {
@@ -190,6 +192,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Calculates after how many actions the ai should dump it's inventory.
+     * <p>
+     * Override this to change the value.
+     *
+     * @return the number of actions done before item dump.
+     */
+    protected int getActionsDoneUntilDumping()
+    {
+        return ACTIONS_UNTIL_DUMP;
+    }
+
+    /**
      * Check for null on important variables to prevent crashes.
      *
      * @return IDLE if all ready, else stay in INIT
@@ -292,7 +306,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return lookForNeededItems();
     }
 
-
     /**
      * Utility method to search for items currently needed.
      * Poll this until all items are there.
@@ -306,7 +319,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             job.clearItemsNeeded();
             return IDLE;
         }
-        if (walkToBuilding())
+        if (!walkToBuilding())
         {
             delay += DELAY_RECHECK;
             ItemStack first = itemsCurrentlyNeeded.get(0);
@@ -357,7 +370,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Request an Item without spamming the chat.
      *
-     * @param chat the Item Name
+     * @param chat  the Item Name
      */
     private void requestWithoutSpam(@NotNull final String chat)
     {
@@ -393,6 +406,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Sets the block the AI is currently walking to.
      *
      * @param stand where to walk to
+     * @param range how close we need to be
      * @return true while walking to the block
      */
     protected final boolean walkToBlock(@NotNull final BlockPos stand, final int range)
@@ -683,7 +697,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return walkToBuilding()
                || InventoryFunctions.matchFirstInInventory(
-                worker.getInventoryCitizen(), (i, stack) -> {
+                worker.getInventoryCitizen(), (i, stack) ->
+                {
                     if (buildingWorker == null || stack == null || keepIt.test(stack))
                     {
                         return false;
@@ -713,6 +728,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
                && (buildingWorker != null
                    && InventoryUtils.isInventoryFull(buildingWorker.getTileEntity()));
+    }
+
+    /**
+     * Clear the amount of blocks mined.
+     * Call this when dumping into the chest.
+     */
+    private void clearActionsDone()
+    {
+        this.actionsDone = 0;
     }
 
     /**
@@ -907,26 +931,5 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected final void incrementActionsDone()
     {
         actionsDone++;
-    }
-
-    /**
-     * Clear the amount of blocks mined.
-     * Call this when dumping into the chest.
-     */
-    private void clearActionsDone()
-    {
-        this.actionsDone = 0;
-    }
-
-    /**
-     * Calculates after how many actions the ai should dump it's inventory.
-     * <p>
-     * Override this to change the value.
-     *
-     * @return the number of actions done before item dump.
-     */
-    protected int getActionsDoneUntilDumping()
-    {
-        return ACTIONS_UNTIL_DUMP;
     }
 }
