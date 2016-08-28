@@ -1,0 +1,16 @@
+[
+{
+  "modid": "placementpreview",
+  "name": "Placement Preview",
+  "description": "Shows a preview of the block that will be placed",
+  "version": "${mod_version}",
+  "mcversion": "${minecraft_version}",
+  "url": "http://minecraft.curseforge.com/projects/placement-preview",
+  "updateUrl": "",
+  "authorList": ["masa"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
