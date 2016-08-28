@@ -678,8 +678,7 @@ public class Colony implements IColony
             return;
         }
 
-        BlockPos spawnPoint =
-                Utils.scanForBlockNearPoint(world, center, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer);
+        BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, center, 1, 1, 1, 2, Blocks.air, Blocks.snow_layer);
 
         if (spawnPoint != null)
         {
@@ -705,7 +704,7 @@ public class Colony implements IColony
 
             entity.setColony(this, citizenData);
 
-            entity.setPosition(spawnPoint.getX(), spawnPoint.getY(), spawnPoint.getZ());
+            entity.setPosition(spawnPoint.getX() + 0.5D, spawnPoint.getY() + 0.1D, spawnPoint.getZ() + 0.5D);
             world.spawnEntityInWorld(entity);
 
             checkAchievements();

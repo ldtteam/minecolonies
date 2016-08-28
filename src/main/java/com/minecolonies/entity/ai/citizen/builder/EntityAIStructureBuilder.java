@@ -25,9 +25,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
-
 import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
@@ -78,6 +76,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         super(job);
         super.registerTargets(
+                new AITarget(this::checkIfCanceled, IDLE),
                 new AITarget(this::checkIfExecute, this::getState),
                 new AITarget(IDLE, START_WORKING),
                 new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
@@ -92,6 +91,19 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         worker.setCanPickUpLoot(true);
     }
 
+    private boolean checkIfCanceled()
+    {
+        final WorkOrderBuild wo = job.getWorkOrder();
+
+        if(wo == null)
+        {
+            cancelTask();
+            return true;
+        }
+
+        return false;
+    }
+
     private boolean checkIfExecute()
     {
         setDelay(1);
@@ -102,7 +114,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         WorkOrderBuild wo = job.getWorkOrder();
-        if (wo == null || (job.getColony().getBuilding(wo.getBuildingLocation()) == null && !(wo instanceof WorkOrderBuildDecoration)))
+
+        if (job.getColony().getBuilding(wo.getBuildingLocation()) == null && !(wo instanceof WorkOrderBuildDecoration))
         {
             job.complete();
             return true;
@@ -330,6 +343,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     private AIState clearStep()
     {
         WorkOrderBuild wo = job.getWorkOrder();
+
         if (wo.isCleared())
         {
             return AIState.BUILDER_STRUCTURE_STEP;
@@ -756,6 +770,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         job.getSchematic().getEntities().forEach(this::spawnEntity);
 
         String schematicName = job.getSchematic().getName();
+
         LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
                 "entity.builder.messageBuildComplete",
                 schematicName);
@@ -778,6 +793,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                                                    wo.getBuildingLocation()));
                 }
             }
+            job.complete();
         }
         else
         {
@@ -787,7 +803,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                                            job.getWorkOrderId()));
         }
 
-        job.complete();
         resetTask();
         worker.addExperience(XP_EACH_BUILDING);
         workFrom = null;
@@ -795,6 +810,16 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return AIState.IDLE;
     }
 
+    /**
+     * Resets the builders current task.
+     */
+    public void cancelTask()
+    {
+        super.resetTask();
+        job.setWorkOrder(null);
+        workFrom = null;
+        job.setSchematic(null);
+    }
 
     /**
      * Calculates after how many actions the ai should dump it's inventory.
