@@ -9,6 +9,7 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.IGrowable;
@@ -200,6 +201,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 world.setBlockState(position, Blocks.farmland.getDefaultState());
                 worker.damageItemInHand(1);
                 mineBlock(position.up());
+
             }
         }
 
@@ -219,7 +221,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return AIState.FARMER_HOE;
     }
 
-    //todo check with field size 0
     /**
      * Handles the offset of the field for the farmer.
      * @param field the field object.
@@ -227,21 +228,22 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean handleOffset(Field field)
     {
-        if(workingOffset == null)
+        if (workingOffset == null)
         {
             workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
         }
         else
         {
-            if(workingOffset.getX() >= field.getLengthPlusX())
-            {
-                workingOffset = new BlockPos(-field.getLengthMinusX(), 0, workingOffset.getZ()+1);
-            }
-            else if(workingOffset.getZ() >= field.getWidthPlusZ())
+            if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() >= field.getLengthPlusX())
             {
                 workingOffset = null;
                 return false;
             }
+            else if (workingOffset.getX() >= field.getLengthPlusX())
+            {
+                workingOffset = new BlockPos(-field.getLengthMinusX(), 0, workingOffset.getZ()+1);
+            }
+
             else
             {
                 workingOffset = new BlockPos(workingOffset.getX()+1, 0, workingOffset.getZ());
@@ -292,7 +294,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 return AIState.FARMER_PLANT;
             }
 
-            if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
+            if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position) && !requestSeeds)
             {
                 shouldDumpInventory = true;
                 buildingFarmer.getCurrentField().setNeedsWork(false);
@@ -337,6 +339,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             IPlantable seed = (IPlantable)item;
             world.setBlockState(position.up(),seed.getPlant(world, position));
             getInventory().decrStackSize(slot, 1);
+            requestSeeds = false;
             //Flag 1+2 is needed for updates
             return true;
         }
@@ -421,7 +424,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean shouldPlant(BlockPos position, Field field)
     {
-        if(ItemSeeds.getItemFromBlock(world.getBlockState(position).getBlock()) == field.getSeed())
+        ItemStack itemStack = BlockUtils.getItemStackFromBlockState(world.getBlockState(position.up()));
+
+        if(itemStack != null && itemStack.getItem() == field.getSeed())
         {
             requestSeeds = false;
         }

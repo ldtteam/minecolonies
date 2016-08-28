@@ -104,6 +104,6 @@ public class ClientProxy extends CommonProxy
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(ModItems.caliper, 0, new ModelResourceLocation(ModItems.caliper.getRegistryName(), "inventory"));
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(ModItems.scanTool, 0, new ModelResourceLocation(ModItems.scanTool.getRegistryName(), "inventory"));
     	Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(ModItems.supplyChest, 0, new ModelResourceLocation(ModItems.supplyChest.getRegistryName(), "inventory"));
-    	ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(ModBlocks.blockHutField), 0, ScarecrowTileEntity.class);
+    	//ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(ModBlocks.blockHutField), 0, ScarecrowTileEntity.class);
     }
 }

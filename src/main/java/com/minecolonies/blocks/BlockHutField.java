@@ -172,13 +172,6 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
     }
 
 
-    @Override
-    public void onBlockHarvested(final World worldIn, final BlockPos pos, final IBlockState state, final EntityPlayer player)
-    {
-        super.onBlockHarvested(worldIn, pos, state, player);
-    }
-
-
     // =======================================================================
     // ======================= Rendering & IBlockState =======================
     // =======================================================================

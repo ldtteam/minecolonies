@@ -190,3 +190,4 @@ com.minecolonies.gui.workerHuts.farmer= Farm
 com.minecolonies.gui.inventory.scarecrow= Scarecrow
 entity.farmer.noSeedSet= Please define a seed to grow in the scarecrow.
 entity.farmer.NeedSeed= I need %s to plant.
+entity.farmer.noFreeFields= Place fields to get me workin.

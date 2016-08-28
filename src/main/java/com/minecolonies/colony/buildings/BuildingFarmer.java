@@ -152,6 +152,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         if(!farmerFields.isEmpty())
         {
             ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
+
             tempFields.stream().filter(field -> getColony().getField(field.getID()) == null).forEach(field ->
                                                                                                      {
                                                                                                          farmerFields.remove(field);
