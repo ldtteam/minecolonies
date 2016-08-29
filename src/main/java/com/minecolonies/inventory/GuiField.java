@@ -27,6 +27,8 @@ public class GuiField extends GuiContainer
      * Constructor of the GUI.
      * @param parInventoryPlayer the player inventory.
      * @param fieldInventory the field inventory.
+     * @param world the world the field is in.
+     * @param location the location the field is at.
      */
     protected GuiField(InventoryPlayer parInventoryPlayer, IInventory fieldInventory, World world, BlockPos location)
     {

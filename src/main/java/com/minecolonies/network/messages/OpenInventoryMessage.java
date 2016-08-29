@@ -1,6 +1,5 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.colony.CitizenDataView;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
@@ -13,14 +12,19 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.StringUtils;
-import net.minecraft.world.WorldManager;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+/**
+ * Message sent to open an inventory.
+ */
 public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInventoryMessage, IMessage>
 {
+    /**
+     * Type of inventory.
+     */
     public enum InventoryType
     {
         INVENTORY_CITIZEN,
@@ -83,7 +87,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     public OpenInventoryMessage(AbstractBuilding.View building)
     {
         inventoryType = InventoryType.INVENTORY_CHEST;
-        name = ""; //builderHut.getName();
+        name = "";
         tePos = building.getLocation();
     }
 
@@ -91,6 +95,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
      * Creates an open inventory message for a field
      *
      * @param field       {@link AbstractBuilding.View}
+     * @param colonyId    the colony associated with the inventory.
      */
     public OpenInventoryMessage(BlockPos field, int colonyId)
     {
@@ -99,7 +104,6 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
         tePos = field;
         this.colonyId = colonyId;
     }
-
 
 
     @Override
@@ -169,7 +173,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
                 if(!StringUtils.isNullOrEmpty(message.name))
                 {
-                    //inventoryField.setCustomName(message.name);
+                    inventoryField.setCustomName(message.name);
                 }
                 player.displayGUIChest(inventoryField);
                 break;

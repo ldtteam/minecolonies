@@ -891,8 +891,10 @@ public class Colony implements IColony
 
     /**
      * Creates a field from a tile entity and adds it to the colony.
-     *
+     * @param inventoryField the inventory of the field.
+     * @param inventoryPlayer the inventory of the player.
      * @param pos Position where the field has been placed.
+     * @param world the world of the field.
      */
     public void addNewField(InventoryField inventoryField, InventoryPlayer inventoryPlayer, BlockPos pos, World world)
     {
