@@ -25,10 +25,11 @@ public class GuiField extends GuiContainer
 
     /**
      * Constructor of the GUI.
+     *
      * @param parInventoryPlayer the player inventory.
-     * @param fieldInventory the field inventory.
-     * @param world the world the field is in.
-     * @param location the location the field is at.
+     * @param fieldInventory     the field inventory.
+     * @param world              the world the field is in.
+     * @param location           the location the field is at.
      */
     protected GuiField(InventoryPlayer parInventoryPlayer, IInventory fieldInventory, World world, BlockPos location)
     {
@@ -37,17 +38,18 @@ public class GuiField extends GuiContainer
 
     /**
      * Does draw the background of the GUI.
+     *
      * @param partialTicks the ticks delivered.
-     * @param mouseX the mouseX position.
-     * @param mouseY the mouseY position.
+     * @param mouseX       the mouseX position.
+     * @param mouseY       the mouseY position.
      */
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(TEXTURE);
-        int marginHorizontal = (width - xSize) / 2;
-        int marginVertical   = (height - ySize) / 2;
+        final int marginHorizontal = (width - xSize) / 2;
+        final int marginVertical = (height - ySize) / 2;
         drawTexturedModalRect(marginHorizontal, marginVertical, 0, 0, xSize, ySize);
     }
 }

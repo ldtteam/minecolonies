@@ -3,7 +3,6 @@ package com.minecolonies.client.model;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.common.IPlantable;
 
 public class ModelScarecrowBottom extends ModelBase
 {

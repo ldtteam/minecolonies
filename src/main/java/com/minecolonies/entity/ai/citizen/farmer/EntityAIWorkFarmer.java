@@ -32,10 +32,6 @@ import static com.minecolonies.entity.ai.util.AIState.*;
 public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 {
     /**
-     * The tool the farmer always needs
-     */
-    private static final String  TOOL_TYPE_HOE       = "hoe";
-    /**
      * The standard delay the farmer should have.
      */
     private static final int     STANDARD_DELAY      = 5;
@@ -326,7 +322,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private int getHoeSlot()
     {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_HOE);
+        return InventoryUtils.getFirstSlotContainingTool(getInventory(), Utils.HOE);
     }
 
     /**

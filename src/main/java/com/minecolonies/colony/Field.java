@@ -312,10 +312,12 @@ public class Field extends Container
     /**
      * Calculates recursively the length of the field until a certain point.
      *
+     * This mutates the field!
+     *
      * @param position the start position.
      * @param world    the world the field is in.
      */
-    public void calculateSize(World world, BlockPos position)
+    public final void calculateSize(World world, BlockPos position)
     {
         //Calculate in all 4 directions
         this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);

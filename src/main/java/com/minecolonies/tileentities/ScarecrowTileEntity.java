@@ -74,7 +74,7 @@ public class ScarecrowTileEntity extends TileEntity
      *
      * @param inventoryField the field to set it to
      */
-    public void setInventoryField(final InventoryField inventoryField)
+    public final void setInventoryField(final InventoryField inventoryField)
     {
         this.inventoryField = inventoryField;
     }
