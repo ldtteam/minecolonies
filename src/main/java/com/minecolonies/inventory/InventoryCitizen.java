@@ -461,7 +461,6 @@ public class InventoryCitizen implements IInventory
      */
     public ItemStack getHeldItem()
     {
-        //TODO when tool breaks material handling isn't updated
         return getStackInSlot(heldItem);
     }
 

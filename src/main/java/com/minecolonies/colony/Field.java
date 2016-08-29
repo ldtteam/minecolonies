@@ -8,7 +8,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -22,6 +21,26 @@ import org.jetbrains.annotations.NotNull;
  */
 public class Field extends Container
 {
+    /**
+     * The size of a normal inventory.
+     */
+    private static final int MAX_INVENTORY_INDEX = 28;
+
+    /**
+     * The size of the the inventory hotbar.
+     */
+    private static final int INVENTORY_BAR_SIZE = 8;
+
+    /**
+     * X-Offset of the inventory slot in the GUI of the scarecrow.
+     */
+    private static final int X_OFFSET = 80;
+
+    /**
+     * Y-Offset of the inventory slot in the GUI of the scarecrow.
+     */
+    private static final int Y_OFFSET = 34;
+
     /**
      * Tag to store the location.
      */
@@ -58,6 +77,36 @@ public class Field extends Container
     private static final String TAG_STAGE = "stage";
 
     /**
+     * Amount of rows in the player inventory.
+     */
+    private static final int PLAYER_INVENTORY_ROWS             = 3;
+
+    /**
+     * Amount of columns in the player inventory.
+     */
+    private static final int PLAYER_INVENTORY_COLUMNS          = 9;
+
+    /**
+     * Initial x-offset of the inventory slot.
+     */
+    private static final int PLAYER_INVENTORY_INITIAL_X_OFFSET = 8;
+
+    /**
+     * Initial y-offset of the inventory slot.
+     */
+    private static final int PLAYER_INVENTORY_INITIAL_Y_OFFSET = 84;
+
+    /**
+     * Each offset of the inventory slots.
+     */
+    private static final int PLAYER_INVENTORY_OFFSET_EACH      = 18;
+
+    /**
+     * Initial y-offset of the inventory slots in the hotbar.
+     */
+    private static final int PLAYER_INVENTORY_HOTBAR_OFFSET    = 142;
+
+    /**
      * The max width/length of a field.
      */
     private static final int MAX_RANGE = 5;
@@ -78,7 +127,7 @@ public class Field extends Container
     private boolean taken = false;
 
     /**
-     * Checks if the field needsWork (Hoeig, Seedings, Farming etc)
+     * Checks if the field needsWork (Hoeig, Seedings, Farming etc).
      */
     private boolean needsWork = false;
 
@@ -86,11 +135,6 @@ public class Field extends Container
      * Has the field been planted?
      */
     private FieldStage fieldStage = FieldStage.EMPTY;
-
-    /**
-     * The set seed type for the field.
-     */
-    private ItemSeeds seed;
 
     /**
      * The length to plus x of the field.
@@ -128,14 +172,14 @@ public class Field extends Container
         PLANTED
     }
 
-
-     /**
+    /**
      * Private constructor to create field from NBT.
      * @param colony the colony the field belongs to.
      */
     private Field(Colony colony)
     {
-       this.colony = colony;
+        super();
+        this.colony = colony;
     }
 
     /**
@@ -147,29 +191,30 @@ public class Field extends Container
      */
     public Field(InventoryField inventory, InventoryPlayer playerInventory, World world, BlockPos location)
     {
+        super();
         this.colony = ColonyManager.getColony(world,location);
         this.location = location;
 
         this.inventory = inventory;
 
-        addSlotToContainer(new Slot(inventory, 0, 80, 34));
+        addSlotToContainer(new Slot(inventory, 0, X_OFFSET, Y_OFFSET));
 
         //Ddd player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
         int i;
-        for (i = 0; i < 3; ++i)
+        for (i = 0; i < PLAYER_INVENTORY_ROWS; ++i)
         {
-            for (int j = 0; j < 9; ++j)
+            for (int j = 0; j < PLAYER_INVENTORY_COLUMNS; ++j)
             {
-                addSlotToContainer(new Slot(playerInventory, j+i*9+9,
-                                            8+j*18, 84+i*18));
+                addSlotToContainer(new Slot(playerInventory, j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
+                                            PLAYER_INVENTORY_INITIAL_X_OFFSET+j*PLAYER_INVENTORY_OFFSET_EACH, PLAYER_INVENTORY_INITIAL_Y_OFFSET+i*PLAYER_INVENTORY_OFFSET_EACH));
             }
         }
 
-        for (i = 0; i < 9; ++i)
+        for (i = 0; i < PLAYER_INVENTORY_COLUMNS; ++i)
         {
-            addSlotToContainer(new Slot(playerInventory, i, 8 + i * 18,
-                                        142));
+            addSlotToContainer(new Slot(playerInventory, i, PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                                        PLAYER_INVENTORY_HOTBAR_OFFSET));
         }
         calculateSize(world,location.down());
     }
@@ -217,9 +262,9 @@ public class Field extends Container
     }
 
     /**
-     * Returns the {@link BlockPos} of the current object, also used as ID
+     * Returns the {@link BlockPos} of the current object, also used as ID.
      *
-     * @return          {@link BlockPos} of the current object
+     * @return          {@link BlockPos} of the current object.
      */
     public BlockPos getID()
     {
@@ -228,9 +273,9 @@ public class Field extends Container
     }
 
     /**
-     * Returns the colony of the field
+     * Returns the colony of the field.
      *
-     * @return          {@link com.minecolonies.colony.Colony} of the current object
+     * @return          {@link com.minecolonies.colony.Colony} of the current object.
      */
     public Colony getColony()
     {
@@ -238,10 +283,10 @@ public class Field extends Container
     }
 
     /**
-     * Create and load a Field given it's saved NBTTagCompound
+     * Create and load a Field given it's saved NBTTagCompound.
      *
-     * @param colony    The owning colony
-     * @param compound  The saved data
+     * @param colony    The owning colony.
+     * @param compound  The saved data.
      * @return          {@link com.minecolonies.colony.Field} created from the compound.
      */
     public static Field createFromNBT(Colony colony, NBTTagCompound compound)
@@ -255,7 +300,7 @@ public class Field extends Container
      * Save data to NBT compound.
      * Writes the {@link #location} value.
      *
-     * @param compound      {@link net.minecraft.nbt.NBTTagCompound} to write data to
+     * @param compound      {@link net.minecraft.nbt.NBTTagCompound} to write data to.
      */
     public void writeToNBT(NBTTagCompound compound)
     {
@@ -273,7 +318,7 @@ public class Field extends Container
      * Save data to NBT compound.
      * Writes the {@link #location} value.
      *
-     * @param compound      {@link net.minecraft.nbt.NBTTagCompound} to write data to
+     * @param compound      {@link net.minecraft.nbt.NBTTagCompound} to write data to.
      */
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -300,7 +345,8 @@ public class Field extends Container
      * Sets the field taken.
      * @param taken is field free or not
      */
-    public void setTaken(boolean taken) {
+    public void setTaken(boolean taken)
+    {
         this.taken = taken;
     }
 
@@ -323,7 +369,7 @@ public class Field extends Container
     }
 
     /**
-     * Checks if the field needs work (planting, hoeing)
+     * Checks if the field needs work (planting, hoeing).
      * @return true if so.
      */
     public boolean needsWork()
@@ -332,7 +378,7 @@ public class Field extends Container
     }
 
     /**
-     * Sets that the field needs work
+     * Sets that the field needs work.
      * @param needsWork true if work needed, false after completing the job.
      */
     public void setNeedsWork(boolean needsWork)
@@ -344,7 +390,7 @@ public class Field extends Container
      * Getter for MAX_RANGE.
      * @return the max range.
      */
-    public int getMaxRange()
+    private static int getMaxRange()
     {
         return MAX_RANGE;
     }
@@ -355,7 +401,6 @@ public class Field extends Container
      */
     public Item getSeed()
     {
-        //todo update seed @farmer
         if(inventory.getStackInSlot(0) == null || !(inventory.getStackInSlot(0).getItem()  instanceof IPlantable))
         {
             return null;
@@ -444,19 +489,14 @@ public class Field extends Container
         }
         else if(inventory.getStackInSlot(0) == null)
         {
-            int playerIndex = slotIndex < 28 ? (slotIndex + 8) : (slotIndex - 28);
+            int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
             if(playerIn.inventory.getStackInSlot(playerIndex) != null)
             {
-                ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
+                final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
                 inventory.setInventorySlotContents(0, stack);
                 if(playerIn.inventory.getStackInSlot(playerIndex).stackSize == 0)
                 {
                     playerIn.inventory.removeStackFromSlot(playerIndex);
-                }
-
-                if(stack.getItem() != null && stack.getItem() instanceof ItemSeeds)
-                {
-                    this.seed = (ItemSeeds)stack.getItem();
                 }
             }
         }

@@ -1,5 +1,4 @@
 package com.minecolonies.inventory;
-import com.minecolonies.colony.materials.MaterialSystem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -75,6 +74,11 @@ public class InventoryField extends InventoryCitizen
         return 0;
     }
 
+    /**
+     * Getter for the stack in the inventory. Since there is only one slot return always that one.
+     * @param index the slot.
+     * @return the itemStack in it.
+     */
     public ItemStack getStackInSlot(int index)
     {
         return this.stackResult[0];
