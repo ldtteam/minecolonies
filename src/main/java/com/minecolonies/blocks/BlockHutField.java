@@ -9,7 +9,6 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
@@ -19,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,9 +27,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
-public class BlockHutField extends BlockContainer implements ITileEntityProvider
+public class BlockHutField extends BlockContainer
 {
-
     /**
      * Hardness of the block.
      */
@@ -102,6 +101,32 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
     }
 
     @Override
+    public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos)
+    {
+        setBlockBounds((float)START_COLLISION, (float)BOTTOM_COLLISION, (float)START_COLLISION, (float)END_COLLISION, (float)HEIGHT_COLLISION, (float)END_COLLISION);
+    }
+
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state)
+    {
+        this.setBlockBoundsBasedOnState(worldIn, pos);
+        this.maxY = 2D;
+        return super.getCollisionBoundingBox(worldIn, pos, state);
+    }
+
+    @Override
+    public boolean isFullCube()
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
+    {
+        return false;
+    }
+
+    @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         //Only work on server side.
@@ -171,6 +196,11 @@ public class BlockHutField extends BlockContainer implements ITileEntityProvider
         }
     }
 
+    @Override
+    public boolean hasTileEntity(final IBlockState state)
+    {
+        return true;
+    }
 
     // =======================================================================
     // ======================= Rendering & IBlockState =======================

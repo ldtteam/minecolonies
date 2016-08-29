@@ -1,5 +1,6 @@
 {
-    "variants": {
+    "variants":
+    {
         "facing=up": { "model": "minecolonies:blockHutField" },
         "facing=east": { "model": "minecolonies:blockHutField", "y": 0},
         "facing=south": { "model": "minecolonies:blockHutField", "y": 90 },

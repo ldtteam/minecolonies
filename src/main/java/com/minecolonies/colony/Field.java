@@ -355,6 +355,7 @@ public class Field extends Container
      */
     public Item getSeed()
     {
+        //todo update seed @farmer
         if(inventory.getStackInSlot(0) == null || !(inventory.getStackInSlot(0).getItem()  instanceof IPlantable))
         {
             return null;
@@ -416,6 +417,15 @@ public class Field extends Container
     public InventoryField getInventoryField()
     {
         return inventory;
+    }
+
+    /**
+     * Sets the inventory of the field.
+     * @param inventory the inventory to set.
+     */
+    public void setInventoryField(InventoryField inventory)
+    {
+        this.inventory = inventory;
     }
 
     @Override

@@ -7,10 +7,12 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.Field;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
+import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
@@ -146,21 +148,34 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Synchronize field list with colony.
+     * @param world the world the building is in.
      */
-    public void synchWithColony()
+    public void synchWithColony(World world)
     {
         if(!farmerFields.isEmpty())
         {
             ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
 
-            tempFields.stream().filter(field -> getColony().getField(field.getID()) == null).forEach(field ->
-                                                                                                     {
-                                                                                                         farmerFields.remove(field);
-                                                                                                         if (currentField != null && currentField.getID() == field.getID())
-                                                                                                         {
-                                                                                                             currentField = null;
-                                                                                                         }
-                                                                                                     });
+            for(Field field: tempFields)
+            {
+                ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
+                if(scarecrow == null)
+                {
+                    farmerFields.remove(field);
+                    if (currentField != null && currentField.getID() == field.getID())
+                    {
+                        currentField = null;
+                    }
+                }
+                else
+                {
+                    field.setInventoryField(scarecrow.inventoryField);
+                    if(currentField != null && currentField.getID() == field.getID())
+                    {
+                        currentField.setInventoryField(scarecrow.inventoryField);
+                    }
+                }
+            }
         }
     }
 

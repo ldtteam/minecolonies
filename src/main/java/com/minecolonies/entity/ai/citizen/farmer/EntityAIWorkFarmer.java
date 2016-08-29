@@ -21,8 +21,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.IPlantable;
 
-import java.util.Collections;
-
 import static com.minecolonies.colony.Field.FieldStage.*;
 import static com.minecolonies.entity.ai.util.AIState.*;
 
@@ -35,7 +33,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     /**
      * The tool the farmer always needs
      */
-    private static final String TOOL_TYPE_HOE           = "hoe";
+    private static final String TOOL_TYPE_HOE = "hoe";
 
     /**
      * Changed after finished harvesting in order to dump the inventory.
@@ -114,7 +112,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.PREPARING;
         }
 
-        building.synchWithColony();
+        building.synchWithColony(world);
 
         if(building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel())
         {
@@ -159,6 +157,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     break;
                 case PLANTED:
                     return AIState.FARMER_HARVEST;
+                default:
+                    break;
             }
         }
         else
@@ -207,6 +207,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if(!handleOffset(field))
         {
+            requestSeeds = true;
             buildingFarmer.getCurrentField().setNeedsWork(true);
             buildingFarmer.getCurrentField().setFieldStage(HOED);
             return AIState.IDLE;
@@ -308,11 +309,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             if(requestSeeds)
             {
-                //todo request the correct seed
-                chatSpamFilter.talkWithoutSpam("entity.farmer.NeedSeed", field.getSeed().getUnlocalizedName());
+                chatSpamFilter.talkWithoutSpam("entity.farmer.NeedSeed", field.getSeed().getItemStackDisplayName(new ItemStack(field.getSeed())));
             }
             else
             {
+                requestSeeds = true;
                 shouldDumpInventory = true;
                 buildingFarmer.getCurrentField().setNeedsWork(false);
                 buildingFarmer.getCurrentField().setFieldStage(PLANTED);
@@ -406,10 +407,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if(state.getBlock() instanceof IGrowable && state.getBlock() instanceof BlockCrops)
         {
             BlockCrops block = (BlockCrops) state.getBlock();
-
-            //todo this may not work for modded crops which have less or more than 7 stages.
-            int maxAge = Collections.max(block.AGE.getAllowedValues());
-            return state.getValue(BlockCrops.AGE) == maxAge;
+            return !block.canGrow(world, position.up(), state, false);
         }
 
         return false;
@@ -510,7 +508,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private static boolean isStackHoe(ItemStack stack)
     {
-        return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_HOE);
+        return stack != null && stack.getItem().getUnlocalizedName().contains("hoe");
     }
 
     /**
