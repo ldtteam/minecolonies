@@ -101,20 +101,6 @@ public class BlockHutField extends BlockContainer
     }
 
     @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos)
-    {
-        setBlockBounds((float)START_COLLISION, (float)BOTTOM_COLLISION, (float)START_COLLISION, (float)END_COLLISION, (float)HEIGHT_COLLISION, (float)END_COLLISION);
-    }
-
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(World worldIn, BlockPos pos, IBlockState state)
-    {
-        this.setBlockBoundsBasedOnState(worldIn, pos);
-        this.maxY = 2D;
-        return super.getCollisionBoundingBox(worldIn, pos, state);
-    }
-
-    @Override
     public boolean isFullCube()
     {
         return false;

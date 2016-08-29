@@ -1,5 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
+import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.Log;
 import net.minecraft.block.*;
@@ -352,7 +353,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
                 b = entity.worldObj.getBlockState(pos).getBlock();
             }
         }
-        else if (b instanceof BlockFence || b instanceof BlockWall)
+        else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof BlockHutField)
         {
             //  Push away from fence
             double dX = entity.posX - Math.floor(entity.posX);
@@ -381,10 +382,10 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
     }
 
     /**
-     * Generate the path to the target node
+     * Generate the path to the target node.
      *
-     * @param targetNode
-     * @return
+     * @param targetNode the node to path to.
+     * @return the path.
      */
     private PathEntity finalizePath(Node targetNode)
     {
@@ -446,6 +447,12 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
         return new PathEntity(points);
     }
 
+    /**
+     * Sets the direction where the ladder is facing.
+     * @param world the world in.
+     * @param pos the position.
+     * @param p the path.
+     */
     private static void setLadderFacing(IBlockAccess world, BlockPos pos, PathPointExtended p)
     {
         if(world.getBlockState(pos).getBlock() instanceof BlockVine)
@@ -475,12 +482,23 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
         }
     }
 
+    /**
+     * Checks if entity is on a ladder.
+     * @param node the path node.
+     * @param nextInPath the next path point.
+     * @param pos the position.
+     * @return true if on a ladder.
+     */
     private static boolean onALadder(Node node, Node nextInPath, BlockPos pos)
     {
         return nextInPath != null && node.isLadder &&
                 (nextInPath.pos.getX() == pos.getX() && nextInPath.pos.getZ() == pos.getZ());
     }
 
+    /**
+     * Turns on debug printing.
+     * @param points the points to print.
+     */
     private void doDebugPrinting(PathPoint[] points)
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
@@ -895,7 +913,8 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
         return block.getMaterial().isSolid() &&
                 !(block instanceof BlockFence) &&
                 !(block instanceof BlockFenceGate) &&
-                !(block instanceof BlockWall);
+                !(block instanceof BlockWall) &&
+                !(block instanceof BlockHutField);
     }
 
     /**
