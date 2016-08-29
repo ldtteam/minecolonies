@@ -20,7 +20,7 @@ public class GuiHandler implements IGuiHandler
     {
         final BlockPos            pos        = new BlockPos(x,y,z);
         final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
-        return new Field(tileEntity.inventoryField, player.inventory, world, pos);
+        return new Field(tileEntity.getInventoryField(), player.inventory, world, pos);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class GuiHandler implements IGuiHandler
     {
         final BlockPos            pos        = new BlockPos(x,y,z);
         final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
-        return new GuiField(player.inventory, tileEntity.inventoryField, world, pos);
+        return new GuiField(player.inventory, tileEntity.getInventoryField(), world, pos);
 
     }
 }

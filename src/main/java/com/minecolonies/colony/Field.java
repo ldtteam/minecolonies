@@ -79,12 +79,12 @@ public class Field extends Container
     /**
      * Amount of rows in the player inventory.
      */
-    private static final int PLAYER_INVENTORY_ROWS             = 3;
+    private static final int PLAYER_INVENTORY_ROWS = 3;
 
     /**
      * Amount of columns in the player inventory.
      */
-    private static final int PLAYER_INVENTORY_COLUMNS          = 9;
+    private static final int PLAYER_INVENTORY_COLUMNS = 9;
 
     /**
      * Initial x-offset of the inventory slot.
@@ -99,28 +99,25 @@ public class Field extends Container
     /**
      * Each offset of the inventory slots.
      */
-    private static final int PLAYER_INVENTORY_OFFSET_EACH      = 18;
+    private static final int PLAYER_INVENTORY_OFFSET_EACH = 18;
 
     /**
      * Initial y-offset of the inventory slots in the hotbar.
      */
-    private static final int PLAYER_INVENTORY_HOTBAR_OFFSET    = 142;
+    private static final int PLAYER_INVENTORY_HOTBAR_OFFSET = 142;
 
     /**
      * The max width/length of a field.
      */
     private static final int MAX_RANGE = 5;
-
-    /**
-     * The fields location.
-     */
-    private BlockPos location;
-
     /**
      * The colony of the field.
      */
-    private final Colony colony;
-
+    private final Colony   colony;
+    /**
+     * The fields location.
+     */
+    private       BlockPos location;
     /**
      * Has the field be taken by any worker?
      */
@@ -162,18 +159,8 @@ public class Field extends Container
     private InventoryField inventory;
 
     /**
-     * Describes the stage the field is in.
-     * Like if it has been hoed, planted or is empty.
-     */
-    public enum FieldStage
-    {
-        EMPTY,
-        HOED,
-        PLANTED
-    }
-
-    /**
      * Private constructor to create field from NBT.
+     *
      * @param colony the colony the field belongs to.
      */
     private Field(Colony colony)
@@ -184,15 +171,16 @@ public class Field extends Container
 
     /**
      * Creates an instance of our field container, this may be serve to open the GUI.
-     * @param inventory the field inventory.
+     *
+     * @param inventory       the field inventory.
      * @param playerInventory the player inventory.
-     * @param world the world.
-     * @param location the position of the field.
+     * @param world           the world.
+     * @param location        the position of the field.
      */
     public Field(InventoryField inventory, InventoryPlayer playerInventory, World world, BlockPos location)
     {
         super();
-        this.colony = ColonyManager.getColony(world,location);
+        this.colony = ColonyManager.getColony(world, location);
         this.location = location;
 
         this.inventory = inventory;
@@ -202,92 +190,36 @@ public class Field extends Container
         //Ddd player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
         int i;
-        for (i = 0; i < PLAYER_INVENTORY_ROWS; ++i)
+        for (i = 0; i < PLAYER_INVENTORY_ROWS; i++)
         {
-            for (int j = 0; j < PLAYER_INVENTORY_COLUMNS; ++j)
+            for (int j = 0; j < PLAYER_INVENTORY_COLUMNS; j++)
             {
-                addSlotToContainer(new Slot(playerInventory, j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
-                                            PLAYER_INVENTORY_INITIAL_X_OFFSET+j*PLAYER_INVENTORY_OFFSET_EACH, PLAYER_INVENTORY_INITIAL_Y_OFFSET+i*PLAYER_INVENTORY_OFFSET_EACH));
+                addSlotToContainer(new Slot(
+                        playerInventory,
+                        j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
+                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH
+                ));
             }
         }
 
-        for (i = 0; i < PLAYER_INVENTORY_COLUMNS; ++i)
+        for (i = 0; i < PLAYER_INVENTORY_COLUMNS; i++)
         {
-            addSlotToContainer(new Slot(playerInventory, i, PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                                        PLAYER_INVENTORY_HOTBAR_OFFSET));
+            addSlotToContainer(new Slot(
+                    playerInventory, i,
+                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                    PLAYER_INVENTORY_HOTBAR_OFFSET
+            ));
         }
-        calculateSize(world,location.down());
-    }
-
-    /**
-     * Calculates recursively the length of the field until a certain point.
-     * @param position the start position.
-     * @param world the world the field is in.
-     */
-    public void calculateSize(World world, BlockPos position)
-    {
-        //Calculate in all 4 directions
-        this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);
-        this.lengthMinusX= searchNextBlock(0, position.west(), EnumFacing.WEST, world);
-        this.widthPlusZ  = searchNextBlock(0, position.south(), EnumFacing.SOUTH, world);
-        this.widthMinusZ = searchNextBlock(0, position.north(), EnumFacing.NORTH, world);
-    }
-
-    /**
-     * Calculates the field size into a specific direction.
-     * @param blocksChecked how many blocks have been checked.
-     * @param position the start position.
-     * @param direction the direction to search.
-     * @param world the world object.
-     * @return the distance.
-     */
-    private int searchNextBlock(int blocksChecked, BlockPos position, EnumFacing direction, World world)
-    {
-        if(blocksChecked == getMaxRange() || isNoPartOfField(world, position))
-        {
-            return blocksChecked;
-        }
-        return  searchNextBlock(blocksChecked+1,position.offset(direction),direction,world);
-    }
-
-    /**
-     * Checks if a certain position is part of the field. Complies with the definition of field block.
-     * @param world the world object.
-     * @param position the position.
-     * @return true if it is.
-     */
-    public boolean isNoPartOfField(World world, BlockPos position)
-    {
-        return world.isAirBlock(position) || world.getBlockState(position.up()).getBlock().getMaterial().isSolid();
-    }
-
-    /**
-     * Returns the {@link BlockPos} of the current object, also used as ID.
-     *
-     * @return          {@link BlockPos} of the current object.
-     */
-    public BlockPos getID()
-    {
-        // Location doubles as ID
-        return this.location;
-    }
-
-    /**
-     * Returns the colony of the field.
-     *
-     * @return          {@link com.minecolonies.colony.Colony} of the current object.
-     */
-    public Colony getColony()
-    {
-        return this.colony;
+        calculateSize(world, location.down());
     }
 
     /**
      * Create and load a Field given it's saved NBTTagCompound.
      *
-     * @param colony    The owning colony.
-     * @param compound  The saved data.
-     * @return          {@link com.minecolonies.colony.Field} created from the compound.
+     * @param colony   The owning colony.
+     * @param compound The saved data.
+     * @return {@link com.minecolonies.colony.Field} created from the compound.
      */
     public static Field createFromNBT(Colony colony, NBTTagCompound compound)
     {
@@ -300,25 +232,7 @@ public class Field extends Container
      * Save data to NBT compound.
      * Writes the {@link #location} value.
      *
-     * @param compound      {@link net.minecraft.nbt.NBTTagCompound} to write data to.
-     */
-    public void writeToNBT(NBTTagCompound compound)
-    {
-        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
-        compound.setBoolean(TAG_TAKEN, taken);
-        compound.setInteger(TAG_STAGE, fieldStage.ordinal());
-        compound.setInteger(TAG_LENGTH_PLUS, lengthPlusX);
-        compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
-        compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
-        compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
-        inventory.writeToNBT(compound);
-    }
-
-    /**
-     * Save data to NBT compound.
-     * Writes the {@link #location} value.
-     *
-     * @param compound      {@link net.minecraft.nbt.NBTTagCompound} to write data to.
+     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
      */
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -334,7 +248,144 @@ public class Field extends Container
     }
 
     /**
+     * Getter for MAX_RANGE.
+     *
+     * @return the max range.
+     */
+    private static int getMaxRange()
+    {
+        return MAX_RANGE;
+    }
+
+    /**
+     * Adds an item slot to this container
+     * <p>
+     * Overridden to protect it from getting changed.
+     */
+    @Override
+    protected final Slot addSlotToContainer(final Slot slotIn)
+    {
+        return super.addSlotToContainer(slotIn);
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex)
+    {
+        if (slotIndex == 0)
+        {
+            playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
+            inventory.setInventorySlotContents(0, null);
+        }
+        else if (inventory.getStackInSlot(0) == null)
+        {
+            final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
+            if (playerIn.inventory.getStackInSlot(playerIndex) != null)
+            {
+                final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
+                inventory.setInventorySlotContents(0, stack);
+                if (playerIn.inventory.getStackInSlot(playerIndex).stackSize == 0)
+                {
+                    playerIn.inventory.removeStackFromSlot(playerIndex);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer playerIn)
+    {
+        return getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS);
+    }
+
+    /**
+     * Returns the colony of the field.
+     *
+     * @return {@link com.minecolonies.colony.Colony} of the current object.
+     */
+    public Colony getColony()
+    {
+        return this.colony;
+    }
+
+    /**
+     * Calculates recursively the length of the field until a certain point.
+     *
+     * @param position the start position.
+     * @param world    the world the field is in.
+     */
+    public void calculateSize(World world, BlockPos position)
+    {
+        //Calculate in all 4 directions
+        this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);
+        this.lengthMinusX = searchNextBlock(0, position.west(), EnumFacing.WEST, world);
+        this.widthPlusZ = searchNextBlock(0, position.south(), EnumFacing.SOUTH, world);
+        this.widthMinusZ = searchNextBlock(0, position.north(), EnumFacing.NORTH, world);
+    }
+
+    /**
+     * Calculates the field size into a specific direction.
+     *
+     * @param blocksChecked how many blocks have been checked.
+     * @param position      the start position.
+     * @param direction     the direction to search.
+     * @param world         the world object.
+     * @return the distance.
+     */
+    private int searchNextBlock(int blocksChecked, BlockPos position, EnumFacing direction, World world)
+    {
+        if (blocksChecked == getMaxRange() || isNoPartOfField(world, position))
+        {
+            return blocksChecked;
+        }
+        return searchNextBlock(blocksChecked + 1, position.offset(direction), direction, world);
+    }
+
+    /**
+     * Checks if a certain position is part of the field. Complies with the definition of field block.
+     *
+     * @param world    the world object.
+     * @param position the position.
+     * @return true if it is.
+     */
+    public boolean isNoPartOfField(World world, BlockPos position)
+    {
+        return world.isAirBlock(position) || world.getBlockState(position.up()).getBlock().getMaterial().isSolid();
+    }
+
+    /**
+     * Returns the {@link BlockPos} of the current object, also used as ID.
+     *
+     * @return {@link BlockPos} of the current object.
+     */
+    public BlockPos getID()
+    {
+        // Location doubles as ID
+        return this.location;
+    }
+
+    /**
+     * Save data to NBT compound.
+     * Writes the {@link #location} value.
+     *
+     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
+     */
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
+        compound.setBoolean(TAG_TAKEN, taken);
+        compound.setInteger(TAG_STAGE, fieldStage.ordinal());
+        compound.setInteger(TAG_LENGTH_PLUS, lengthPlusX);
+        compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
+        compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
+        compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
+        inventory.writeToNBT(compound);
+    }
+
+    /**
      * Has the field been taken?
+     *
      * @return true if the field is not free to use, false after releasing it.
      */
     public boolean isTaken()
@@ -344,6 +395,7 @@ public class Field extends Container
 
     /**
      * Sets the field taken.
+     *
      * @param taken is field free or not
      */
     public void setTaken(boolean taken)
@@ -353,6 +405,7 @@ public class Field extends Container
 
     /**
      * Checks if the field has been planted.
+     *
      * @return true if there are crops planted.
      */
     public FieldStage getFieldStage()
@@ -362,6 +415,7 @@ public class Field extends Container
 
     /**
      * Sets if there are any crops planted.
+     *
      * @param fieldStage true after planting, false after harvesting.
      */
     public void setFieldStage(FieldStage fieldStage)
@@ -371,6 +425,7 @@ public class Field extends Container
 
     /**
      * Checks if the field needs work (planting, hoeing).
+     *
      * @return true if so.
      */
     public boolean needsWork()
@@ -380,6 +435,7 @@ public class Field extends Container
 
     /**
      * Sets that the field needs work.
+     *
      * @param needsWork true if work needed, false after completing the job.
      */
     public void setNeedsWork(boolean needsWork)
@@ -388,21 +444,13 @@ public class Field extends Container
     }
 
     /**
-     * Getter for MAX_RANGE.
-     * @return the max range.
-     */
-    private static int getMaxRange()
-    {
-        return MAX_RANGE;
-    }
-
-    /**
-     * Getter of the seed of the field
+     * Getter of the seed of the field.
+     *
      * @return the ItemSeed
      */
     public Item getSeed()
     {
-        if(inventory.getStackInSlot(0).getItem()  instanceof IPlantable)
+        if (inventory.getStackInSlot(0).getItem() instanceof IPlantable)
         {
             return inventory.getStackInSlot(0).getItem();
         }
@@ -411,6 +459,7 @@ public class Field extends Container
 
     /**
      * Getter of the length in plus x direction.
+     *
      * @return field length.
      */
     public int getLengthPlusX()
@@ -420,6 +469,7 @@ public class Field extends Container
 
     /**
      * Getter of the with in plus z direction.
+     *
      * @return field width.
      */
     public int getWidthPlusZ()
@@ -429,6 +479,7 @@ public class Field extends Container
 
     /**
      * Getter of the length in minus x direction.
+     *
      * @return field length.
      */
     public int getLengthMinusX()
@@ -438,6 +489,7 @@ public class Field extends Container
 
     /**
      * Getter of the with in minus z direction.
+     *
      * @return field width.
      */
     public int getWidthMinusZ()
@@ -447,6 +499,7 @@ public class Field extends Container
 
     /**
      * Location getter.
+     *
      * @return the location of the scarecrow of the field.
      */
     public BlockPos getLocation()
@@ -467,6 +520,7 @@ public class Field extends Container
 
     /**
      * Sets the inventory of the field.
+     *
      * @param inventory the inventory to set.
      */
     public void setInventoryField(InventoryField inventory)
@@ -474,35 +528,14 @@ public class Field extends Container
         this.inventory = inventory;
     }
 
-    @Override
-    public boolean canInteractWith(EntityPlayer playerIn)
+    /**
+     * Describes the stage the field is in.
+     * Like if it has been hoed, planted or is empty.
+     */
+    public enum FieldStage
     {
-        return getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS);
+        EMPTY,
+        HOED,
+        PLANTED
     }
-
-    @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex)
-    {
-        if (slotIndex == 0)
-        {
-            playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
-            inventory.setInventorySlotContents(0, null);
-        }
-        else if(inventory.getStackInSlot(0) == null)
-        {
-            final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
-            if(playerIn.inventory.getStackInSlot(playerIndex) != null)
-            {
-                final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
-                inventory.setInventorySlotContents(0, stack);
-                if(playerIn.inventory.getStackInSlot(playerIndex).stackSize == 0)
-                {
-                    playerIn.inventory.removeStackFromSlot(playerIndex);
-                }
-            }
-        }
-
-        return null;
-    }
-
 }

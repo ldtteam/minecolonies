@@ -168,10 +168,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 }
                 else
                 {
-                    field.setInventoryField(scarecrow.inventoryField);
+                    field.setInventoryField(scarecrow.getInventoryField());
                     if(currentField != null && currentField.getID() == field.getID())
                     {
-                        currentField.setInventoryField(scarecrow.inventoryField);
+                        currentField.setInventoryField(scarecrow.getInventoryField());
                     }
                 }
             }
