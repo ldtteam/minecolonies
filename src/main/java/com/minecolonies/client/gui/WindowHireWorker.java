@@ -77,11 +77,12 @@ public class WindowHireWorker extends Window implements Button.Handler
     /**
      * The colony.
      */
-    private                 ColonyView  colony;
+    private ColonyView colony;
 
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
-     * @param c the colony view
+     *
+     * @param c          the colony view
      * @param buildingId the building position
      */
     public WindowHireWorker(ColonyView c, BlockPos buildingId)
@@ -102,7 +103,7 @@ public class WindowHireWorker extends Window implements Button.Handler
 
         //Removes all citizens which already have a job.
         citizens = colony.getCitizens().values().stream()
-                .filter(citizen -> citizen.getWorkBuilding()==null)
+                .filter(citizen -> citizen.getWorkBuilding() == null)
                 .collect(Collectors.toList());
     }
 
@@ -141,11 +142,11 @@ public class WindowHireWorker extends Window implements Button.Handler
                 CitizenDataView citizen = citizens.get(index);
 
                 //Creates the list of attributes for each citizen
-                String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength",citizen.getStrength()) + " " +
-                        LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma",citizen.getCharisma()) + " " +
-                        LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity",citizen.getDexterity()) + " " +
-                        LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance",citizen.getEndurance()) + " " +
-                        LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence",citizen.getIntelligence());
+                String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()) + " " +
+                        LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.getCharisma()) + " " +
+                        LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.getDexterity()) + " " +
+                        LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.getEndurance()) + " " +
+                        LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.getIntelligence());
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes);
@@ -165,6 +166,7 @@ public class WindowHireWorker extends Window implements Button.Handler
 
     /**
      * Called when any button has been clicked.
+     *
      * @param button the clicked button.
      */
     @Override
@@ -172,15 +174,14 @@ public class WindowHireWorker extends Window implements Button.Handler
     {
         if (button.getID().equals(BUTTON_DONE))
         {
-            final Label idLabel = (Label)button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
+            final Label idLabel = (Label) button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
             final int id = Integer.parseInt(idLabel.getLabelText());
 
             if (building instanceof AbstractBuildingWorker.View)
             {
                 ((AbstractBuildingWorker.View) building).setWorkerId(id);
             }
-            MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building,true, id));
-
+            MineColonies.getNetwork().sendToServer(new HireFireMessage(this.building, true, id));
         }
         else if (!button.getID().equals(BUTTON_CANCEL))
         {

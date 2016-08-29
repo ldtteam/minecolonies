@@ -34,11 +34,10 @@ public final class BlockUtils
                     (block, iBlockState) -> block.equals(Blocks.double_plant),
                     (block, iBlockState) -> block.equals(Blocks.grass),
                     (block, iBlockState) -> block instanceof BlockDoor
-                                            && iBlockState != null
-                                            && iBlockState.getValue(PropertyBool.create("upper"))
+                            && iBlockState != null
+                            && iBlockState.getValue(PropertyBool.create("upper"))
 
-                         );
-
+            );
 
     /**
      * Private constructor to hide the public one.
@@ -59,7 +58,7 @@ public final class BlockUtils
     public static boolean shouldNeverBeMessedWith(Block block)
     {
         return block instanceof AbstractBlockHut
-               || Objects.equals(block, Blocks.bedrock);
+                || Objects.equals(block, Blocks.bedrock);
     }
 
     /**
@@ -109,11 +108,12 @@ public final class BlockUtils
     public static boolean isWater(IBlockState iBlockState)
     {
         return Objects.equals(iBlockState, Blocks.water.getDefaultState())
-               || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
+                || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
     }
 
     /**
      * Mimics pick block.
+     *
      * @param blockState the block and state we are creating an ItemStack for.
      * @return ItemStack fromt the BlockState.
      */
@@ -173,9 +173,9 @@ public final class BlockUtils
             }
             return Items.wheat_seeds;
         }
-        else if(blockState.getBlock() instanceof BlockDaylightDetector)
+        else if (blockState.getBlock() instanceof BlockDaylightDetector)
         {
-             return Item.getItemFromBlock(Blocks.daylight_detector);
+            return Item.getItemFromBlock(Blocks.daylight_detector);
         }
         else if (blockState.getBlock() instanceof BlockDoor)
         {
@@ -189,7 +189,7 @@ public final class BlockUtils
         {
             return Items.flower_pot;
         }
-        else if(blockState.getBlock() instanceof BlockFurnace)
+        else if (blockState.getBlock() instanceof BlockFurnace)
         {
             return Item.getItemFromBlock(Blocks.furnace);
         }
@@ -213,7 +213,7 @@ public final class BlockUtils
         {
             return Items.comparator;
         }
-        else if(blockState.getBlock() instanceof BlockRedstoneLight)
+        else if (blockState.getBlock() instanceof BlockRedstoneLight)
         {
             return Item.getItemFromBlock(Blocks.redstone_lamp);
         }
@@ -221,7 +221,7 @@ public final class BlockUtils
         {
             return Items.repeater;
         }
-        else if(blockState.getBlock() instanceof BlockRedstoneTorch)
+        else if (blockState.getBlock() instanceof BlockRedstoneTorch)
         {
             return Item.getItemFromBlock(Blocks.redstone_torch);
         }

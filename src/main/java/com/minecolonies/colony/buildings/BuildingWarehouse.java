@@ -13,32 +13,32 @@ import net.minecraft.util.BlockPos;
 public class BuildingWarehouse extends AbstractBuildingWorker
 {
 
-    private static final    String  WAREHOUSE               = "Warehouse";
-    private static final    String  DELIVERYMAN             = "Deliveryman";
+    private static final String WAREHOUSE   = "Warehouse";
+    private static final String DELIVERYMAN = "Deliveryman";
 
-    private static final    String  TAG_DELIVERY            = "delivery";
-    private static final    String  TAG_BLACKSMITH          = "blacksmith";
-    private static final    String  TAG_GOLD                = "gold";
-    private static final    String  TAG_DIAMOND             = "diamond";
-    private static final    String  TAG_STONEMASON          = "stonemason";
-    private static final    String  TAG_STONE               = "stone";
-    private static final    String  TAG_SAND                = "sand";
-    private static final    String  TAG_NETHERRACK          = "netherrack";
-    private static final    String  TAG_QUARTZ              = "quartz";
-    private static final    String  TAG_GUARD               = "guard";
-    private static final    String  TAG_ARMOR               = "armor";
-    private static final    String  TAG_WEAPON              = "weapon";
-    private static final    String  TAG_CITIZEN             = "citizen";
+    private static final String TAG_DELIVERY   = "delivery";
+    private static final String TAG_BLACKSMITH = "blacksmith";
+    private static final String TAG_GOLD       = "gold";
+    private static final String TAG_DIAMOND    = "diamond";
+    private static final String TAG_STONEMASON = "stonemason";
+    private static final String TAG_STONE      = "stone";
+    private static final String TAG_SAND       = "sand";
+    private static final String TAG_NETHERRACK = "netherrack";
+    private static final String TAG_QUARTZ     = "quartz";
+    private static final String TAG_GUARD      = "guard";
+    private static final String TAG_ARMOR      = "armor";
+    private static final String TAG_WEAPON     = "weapon";
+    private static final String TAG_CITIZEN    = "citizen";
 
-    public                  boolean blacksmithGold          = false;
-    public                  boolean blacksmithDiamond       = false;
-    public                  boolean stonemasonStone         = false;
-    public                  boolean stonemasonSand          = false;
-    public                  boolean stonemasonNetherrack    = false;
-    public                  boolean stonemasonQuartz        = false;
-    public                  boolean guardArmor              = false;
-    public                  boolean guardWeapon             = false;
-    public                  boolean citizenVisit            = false;
+    public boolean blacksmithGold       = false;
+    public boolean blacksmithDiamond    = false;
+    public boolean stonemasonStone      = false;
+    public boolean stonemasonSand       = false;
+    public boolean stonemasonNetherrack = false;
+    public boolean stonemasonQuartz     = false;
+    public boolean guardArmor           = false;
+    public boolean guardWeapon          = false;
+    public boolean citizenVisit         = false;
 
     public BuildingWarehouse(Colony c, BlockPos l)
     {
@@ -130,20 +130,43 @@ public class BuildingWarehouse extends AbstractBuildingWorker
         compound.setTag(TAG_DELIVERY, deliveryCompound);
     }
 
+    @Override
+    public void serializeToView(ByteBuf buf)
+    {
+        super.serializeToView(buf);
+
+        //  Blacksmith
+        buf.writeBoolean(blacksmithGold);
+        buf.writeBoolean(blacksmithDiamond);
+
+        //  Stonemason
+        buf.writeBoolean(stonemasonStone);
+        buf.writeBoolean(stonemasonSand);
+        buf.writeBoolean(stonemasonNetherrack);
+        buf.writeBoolean(stonemasonQuartz);
+
+        //  Guard
+        buf.writeBoolean(guardArmor);
+        buf.writeBoolean(guardWeapon);
+
+        //  Misc
+        buf.writeBoolean(citizenVisit);
+    }
+
     /**
      * BuildingWarehouse View
      */
     public static class View extends AbstractBuildingWorker.View
     {
-        public boolean blacksmithGold = false;
-        public boolean blacksmithDiamond = false;
-        public boolean stonemasonStone = false;
-        public boolean stonemasonSand = false;
+        public boolean blacksmithGold       = false;
+        public boolean blacksmithDiamond    = false;
+        public boolean stonemasonStone      = false;
+        public boolean stonemasonSand       = false;
         public boolean stonemasonNetherrack = false;
-        public boolean stonemasonQuartz = false;
-        public boolean guardArmor = false;
-        public boolean guardWeapon = false;
-        public boolean citizenVisit = false;
+        public boolean stonemasonQuartz     = false;
+        public boolean guardArmor           = false;
+        public boolean guardWeapon          = false;
+        public boolean citizenVisit         = false;
 
         public View(ColonyView c, BlockPos l)
         {
@@ -177,28 +200,5 @@ public class BuildingWarehouse extends AbstractBuildingWorker
             //  Misc
             citizenVisit = buf.readBoolean();
         }
-    }
-
-    @Override
-    public void serializeToView(ByteBuf buf)
-    {
-        super.serializeToView(buf);
-
-        //  Blacksmith
-        buf.writeBoolean(blacksmithGold);
-        buf.writeBoolean(blacksmithDiamond);
-
-        //  Stonemason
-        buf.writeBoolean(stonemasonStone);
-        buf.writeBoolean(stonemasonSand);
-        buf.writeBoolean(stonemasonNetherrack);
-        buf.writeBoolean(stonemasonQuartz);
-
-        //  Guard
-        buf.writeBoolean(guardArmor);
-        buf.writeBoolean(guardWeapon);
-
-        //  Misc
-        buf.writeBoolean(citizenVisit);
     }
 }

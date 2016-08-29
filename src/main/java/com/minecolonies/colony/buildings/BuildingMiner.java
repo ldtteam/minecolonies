@@ -30,84 +30,87 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * The NBT Tag to store the floorBlock
      */
-    private static final String TAG_FLOOR_BLOCK    = "floorBlock";
+    private static final String  TAG_FLOOR_BLOCK    = "floorBlock";
     /**
      * The NBT Tag to store the fenceBlock
      */
-    private static final String TAG_FENCE_BLOCK    = "fenceBlock";
+    private static final String  TAG_FENCE_BLOCK    = "fenceBlock";
     /**
      * The NBT Tag to store the starting level of the shaft.
      */
-    private static final String TAG_STARTING_LEVEL = "startingLevelShaft";
+    private static final String  TAG_STARTING_LEVEL = "startingLevelShaft";
     /**
      * The NBT Tag to store list of levels.
      */
-    private static final String TAG_LEVELS         = "levels";
+    private static final String  TAG_LEVELS         = "levels";
     /**
      * The NBT Tag to store if the shaft has been cleared.
      */
-    private static final String TAG_CLEARED        = "clearedShaft";
+    private static final String  TAG_CLEARED        = "clearedShaft";
     /**
      * The NBT Tag to store the location of the shaft.
      */
-    private static final String TAG_SLOCATION      = "shaftLocation";
+    private static final String  TAG_SLOCATION      = "shaftLocation";
     /**
      * The NBT Tag to store the vector-x of the shaft
      */
-    private static final String TAG_VECTORX        = "vectorx";
+    private static final String  TAG_VECTORX        = "vectorx";
     /**
      * The NBT Tag to store the vector-z of the shaft
      */
-    private static final String TAG_VECTORZ        = "vectorz";
+    private static final String  TAG_VECTORZ        = "vectorz";
     /**
      * The NBT Tag to store the location of the cobblestone at the shaft.
      */
-    private static final String TAG_CLOCATION      = "cobblelocation";
+    private static final String  TAG_CLOCATION      = "cobblelocation";
     /**
      * The NBT Tag to store the active node the miner is working on.
      */
-    private static final String TAG_ACTIVE         = "activeNodeint";
+    private static final String  TAG_ACTIVE         = "activeNodeint";
     /**
      * The NBT Tag to store the current level the miner is working in.
      */
-    private static final String TAG_CURRENT_LEVEL  = "currentLevel";
+    private static final String  TAG_CURRENT_LEVEL  = "currentLevel";
     /**
      * The NBT Tag to store the starting node.
      */
-    private static final String TAG_SN             = "StartingNode";
+    private static final String  TAG_SN             = "StartingNode";
     /**
      * The NBT Tag to store the location of the ladder.
      */
-    private static final String TAG_LLOCATION      = "ladderlocation";
+    private static final String  TAG_LLOCATION      = "ladderlocation";
     /**
      * The NBT Tag to store if a ladder has been found yet.
      */
-    private static final String TAG_LADDER         = "found_ladder";
-
+    private static final String  TAG_LADDER         = "found_ladder";
+    /**
+     * The maximum upgrade of the building.
+     */
+    private static final int     MAX_BUILDING_LEVEL = 3;
+    /**
+     * The job description.
+     */
+    private static final String  MINER              = "Miner";
+    /**
+     * True if shaft is at bottom limit
+     */
+    public               boolean clearedShaft       = false;
     /**
      * Defines the material used for the floor of the shaft.
      */
-    private Block floorBlock = Blocks.planks;
+    private              Block   floorBlock         = Blocks.planks;
     /**
      * Defines the material used for the fence of the shaft.
      */
-    private Block fenceBlock = Blocks.oak_fence;
-
+    private              Block   fenceBlock         = Blocks.oak_fence;
     /**
      * Here we can detect multiples of 5
      */
-    private int startingLevelShaft = 0;
-
+    private              int     startingLevelShaft = 0;
     /**
      * The location of the topmost cobblestone the ladder starts at
      */
     private BlockPos cobbleLocation;
-
-    /**
-     * True if shaft is at bottom limit
-     */
-    public boolean clearedShaft = false;
-
     /**
      * The starting level of the node.
      */
@@ -124,40 +127,26 @@ public class BuildingMiner extends AbstractBuildingWorker
      * The position of the start of the shaft.
      */
     private BlockPos shaftStart;
-
     /**
      * Ladder orientation in x
      */
     private int vectorX = 1;
-
     /**
      * Ladder orientation in y
      */
     private int vectorZ = 1;
-
     /**
      * The location of the topmost ladder in the shaft
      */
     private BlockPos ladderLocation;
-
     /**
      * True if a ladder is found
      */
-    private boolean foundLadder = false;
-
+    private boolean     foundLadder = false;
     /**
      * Stores the levels of the miners mine. This could be a map<depth,level>
      */
-    private List<Level> levels = new ArrayList<>();
-
-    /**
-     * The maximum upgrade of the building.
-     */
-    private static final int    MAX_BUILDING_LEVEL = 3;
-    /**
-     * The job description.
-     */
-    private static final String MINER              = "Miner";
+    private List<Level> levels      = new ArrayList<>();
 
     /**
      * Required constructor.
@@ -179,6 +168,26 @@ public class BuildingMiner extends AbstractBuildingWorker
     public String getSchematicName()
     {
         return MINER;
+    }
+
+    /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
+
+        if (newLevel == 1)
+        {
+            owner.triggerAchievement(ModAchievements.achievementBuildingMiner);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            owner.triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
+        }
     }
 
     /**
@@ -216,6 +225,111 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
+     * Reads the information from NBT from permanent storage.
+     *
+     * @param compound the compound key.
+     */
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+
+        if (compound.hasKey(TAG_FLOOR_BLOCK))
+        {
+            floorBlock = Block.getBlockFromName(compound.getString(TAG_FLOOR_BLOCK));
+        }
+        if (compound.hasKey(TAG_FENCE_BLOCK))
+        {
+            fenceBlock = Block.getBlockFromName(compound.getString(TAG_FENCE_BLOCK));
+        }
+
+        startingLevelShaft = compound.getInteger(TAG_STARTING_LEVEL);
+        clearedShaft = compound.getBoolean(TAG_CLEARED);
+
+        vectorX = compound.getInteger(TAG_VECTORX);
+        vectorZ = compound.getInteger(TAG_VECTORZ);
+
+        active = compound.getInteger(TAG_ACTIVE);
+        currentLevel = compound.getInteger(TAG_CURRENT_LEVEL);
+
+        ladderLocation = BlockPosUtil.readFromNBT(compound, TAG_LLOCATION);
+
+        foundLadder = compound.getBoolean(TAG_LADDER);
+
+        shaftStart = BlockPosUtil.readFromNBT(compound, TAG_SLOCATION);
+        cobbleLocation = BlockPosUtil.readFromNBT(compound, TAG_CLOCATION);
+
+        startingLevelNode = compound.getInteger(TAG_SN);
+
+        NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < levelTagList.tagCount(); i++)
+        {
+            Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
+            this.levels.add(level);
+        }
+    }
+
+    /**
+     * Writes the information to NBT to store it permanently.
+     *
+     * @param compound the compound key.
+     */
+    @Override
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+
+        compound.setString(TAG_FLOOR_BLOCK, Block.blockRegistry.getNameForObject(floorBlock).toString());
+        compound.setString(TAG_FENCE_BLOCK, Block.blockRegistry.getNameForObject(fenceBlock).toString());
+        compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
+        compound.setBoolean(TAG_CLEARED, clearedShaft);
+        compound.setInteger(TAG_VECTORX, vectorX);
+        compound.setInteger(TAG_VECTORZ, vectorZ);
+        compound.setInteger(TAG_ACTIVE, active);
+        compound.setInteger(TAG_CURRENT_LEVEL, currentLevel);
+        compound.setBoolean(TAG_LADDER, foundLadder);
+        compound.setInteger(TAG_SN, startingLevelNode);
+
+        if (shaftStart != null && cobbleLocation != null)
+        {
+            BlockPosUtil.writeToNBT(compound, TAG_SLOCATION, shaftStart);
+            BlockPosUtil.writeToNBT(compound, TAG_CLOCATION, cobbleLocation);
+        }
+
+        if (ladderLocation != null)
+        {
+            BlockPosUtil.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
+        }
+
+        NBTTagList levelTagList = new NBTTagList();
+        for (Level level : levels)
+        {
+            NBTTagCompound levelCompound = new NBTTagCompound();
+            level.writeToNBT(levelCompound);
+            levelTagList.appendTag(levelCompound);
+        }
+        compound.setTag(TAG_LEVELS, levelTagList);
+    }
+
+    /**
+     * Method to serialize data to send it to the view.
+     *
+     * @param buf the used ByteBuffer.
+     */
+    @Override
+    public void serializeToView(ByteBuf buf)
+    {
+        super.serializeToView(buf);
+        buf.writeInt(currentLevel);
+        buf.writeInt(levels.size());
+
+        for (Level level : levels)
+        {
+            buf.writeInt(level.getNumberOfNodes());
+        }
+    }
+
+    /**
      * Adds a level to the levels list
      *
      * @param currentLevel {@link Level}to add
@@ -250,21 +364,13 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * Method to serialize data to send it to the view.
+     * Sets the current level the miner is at.
      *
-     * @param buf the used ByteBuffer.
+     * @param currentLevel the level to set.
      */
-    @Override
-    public void serializeToView(ByteBuf buf)
+    public void setCurrentLevel(int currentLevel)
     {
-        super.serializeToView(buf);
-        buf.writeInt(currentLevel);
-        buf.writeInt(levels.size());
-
-        for (Level level : levels)
-        {
-            buf.writeInt(level.getNumberOfNodes());
-        }
+        this.currentLevel = currentLevel;
     }
 
     /**
@@ -347,16 +453,6 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * Getter of the Z-vector.
-     *
-     * @return the vectorZ.
-     */
-    public int getVectorZ()
-    {
-        return vectorZ;
-    }
-
-    /**
      * Setter of the X-vector.
      *
      * @param vectorX the vector to set +1 or -1.
@@ -364,6 +460,16 @@ public class BuildingMiner extends AbstractBuildingWorker
     public void setVectorX(int vectorX)
     {
         this.vectorX = vectorX;
+    }
+
+    /**
+     * Getter of the Z-vector.
+     *
+     * @return the vectorZ.
+     */
+    public int getVectorZ()
+    {
+        return vectorZ;
     }
 
     /**
@@ -433,16 +539,6 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * Sets the current level the miner is at.
-     *
-     * @param currentLevel the level to set.
-     */
-    public void setCurrentLevel(int currentLevel)
-    {
-        this.currentLevel = currentLevel;
-    }
-
-    /**
      * Getter of the floor block.
      *
      * @return the material of the floor block.
@@ -460,113 +556,6 @@ public class BuildingMiner extends AbstractBuildingWorker
     public Block getFenceBlock()
     {
         return fenceBlock;
-    }
-
-    /**
-     * Writes the information to NBT to store it permanently.
-     *
-     * @param compound the compound key.
-     */
-    @Override
-    public void writeToNBT(NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-
-        compound.setString(TAG_FLOOR_BLOCK, Block.blockRegistry.getNameForObject(floorBlock).toString());
-        compound.setString(TAG_FENCE_BLOCK, Block.blockRegistry.getNameForObject(fenceBlock).toString());
-        compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
-        compound.setBoolean(TAG_CLEARED, clearedShaft);
-        compound.setInteger(TAG_VECTORX, vectorX);
-        compound.setInteger(TAG_VECTORZ, vectorZ);
-        compound.setInteger(TAG_ACTIVE, active);
-        compound.setInteger(TAG_CURRENT_LEVEL, currentLevel);
-        compound.setBoolean(TAG_LADDER, foundLadder);
-        compound.setInteger(TAG_SN, startingLevelNode);
-
-        if (shaftStart != null && cobbleLocation != null)
-        {
-            BlockPosUtil.writeToNBT(compound, TAG_SLOCATION, shaftStart);
-            BlockPosUtil.writeToNBT(compound, TAG_CLOCATION, cobbleLocation);
-        }
-
-        if (ladderLocation != null)
-        {
-            BlockPosUtil.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
-        }
-
-        NBTTagList levelTagList = new NBTTagList();
-        for (Level level : levels)
-        {
-            NBTTagCompound levelCompound = new NBTTagCompound();
-            level.writeToNBT(levelCompound);
-            levelTagList.appendTag(levelCompound);
-        }
-        compound.setTag(TAG_LEVELS, levelTagList);
-    }
-
-    /**
-     * Reads the information from NBT from permanent storage.
-     *
-     * @param compound the compound key.
-     */
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-
-        if (compound.hasKey(TAG_FLOOR_BLOCK))
-        {
-            floorBlock = Block.getBlockFromName(compound.getString(TAG_FLOOR_BLOCK));
-        }
-        if (compound.hasKey(TAG_FENCE_BLOCK))
-        {
-            fenceBlock = Block.getBlockFromName(compound.getString(TAG_FENCE_BLOCK));
-        }
-
-        startingLevelShaft = compound.getInteger(TAG_STARTING_LEVEL);
-        clearedShaft = compound.getBoolean(TAG_CLEARED);
-
-        vectorX = compound.getInteger(TAG_VECTORX);
-        vectorZ = compound.getInteger(TAG_VECTORZ);
-
-        active = compound.getInteger(TAG_ACTIVE);
-        currentLevel = compound.getInteger(TAG_CURRENT_LEVEL);
-
-        ladderLocation = BlockPosUtil.readFromNBT(compound, TAG_LLOCATION);
-
-        foundLadder = compound.getBoolean(TAG_LADDER);
-
-        shaftStart = BlockPosUtil.readFromNBT(compound, TAG_SLOCATION);
-        cobbleLocation = BlockPosUtil.readFromNBT(compound, TAG_CLOCATION);
-
-        startingLevelNode = compound.getInteger(TAG_SN);
-
-        NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < levelTagList.tagCount(); i++)
-        {
-            Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
-            this.levels.add(level);
-        }
-    }
-
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
-
-        if (newLevel == 1)
-        {
-            owner.triggerAchievement(ModAchievements.achievementBuildingMiner);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
-        }
     }
 
     /**

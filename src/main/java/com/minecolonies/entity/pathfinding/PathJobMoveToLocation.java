@@ -11,25 +11,20 @@ import net.minecraft.world.World;
  */
 public class PathJobMoveToLocation extends AbstractPathJob
 {
-    private final BlockPos destination;
-
-    private static final float DESTINATION_SLACK_NONE = 0.1F;
-
+    private static final float  DESTINATION_SLACK_NONE     = 0.1F;
     // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
-    private static final float DESTINATION_SLACK_ADJACENT = 3.1F;
-
+    private static final float  DESTINATION_SLACK_ADJACENT = 3.1F;
+    private static final double TIE_BREAKER                = 1.001D;
+    private final BlockPos destination;
     // 0 = exact match
     private float destinationSlack = DESTINATION_SLACK_NONE;
-
-    private static final double TIE_BREAKER = 1.001D;
-
 
     /**
      * Prepares the PathJob for the path finding system.
      *
      * @param world world the entity is in.
      * @param start starting location.
-     * @param end target location.
+     * @param end   target location.
      * @param range max search range.
      */
     public PathJobMoveToLocation(World world, BlockPos start, BlockPos end, int range)

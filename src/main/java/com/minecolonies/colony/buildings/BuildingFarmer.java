@@ -13,20 +13,18 @@ import net.minecraft.util.BlockPos;
 public class BuildingFarmer extends AbstractBuildingWorker
 {
 
-    public                  int     wheat    = 100;
-    public                  int     potato   = 0;
-    public                  int     carrot   = 0;
-    public                  int     melon    = 0;
-    public                  int     pumpkin  = 0;
-
-    public  static final    String  WHEAT_TAG    = "wheat";
-    public  static final    String  POTATO_TAG   = "potato";
-    public  static final    String  CARROT_TAG   = "carrot";
-    public  static final    String  MELON_TAG    = "melon";
-    public  static final    String  PUMPKIN_TAG  = "pumpkin";
-
-    private static final    String  FARMER      = "Farmer";
-    private static final    String  TAG_FARMER  = "farmer";
+    public static final  String WHEAT_TAG   = "wheat";
+    public static final  String POTATO_TAG  = "potato";
+    public static final  String CARROT_TAG  = "carrot";
+    public static final  String MELON_TAG   = "melon";
+    public static final  String PUMPKIN_TAG = "pumpkin";
+    private static final String FARMER      = "Farmer";
+    private static final String TAG_FARMER  = "farmer";
+    public               int    wheat       = 100;
+    public               int    potato      = 0;
+    public               int    carrot      = 0;
+    public               int    melon       = 0;
+    public               int    pumpkin     = 0;
 
     public BuildingFarmer(Colony c, BlockPos l)
     {
@@ -34,13 +32,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     @Override
-    public String getSchematicName(){ return FARMER; }
+    public String getSchematicName() { return FARMER; }
 
     @Override
-    public int getMaxBuildingLevel(){ return 3; }
+    public int getMaxBuildingLevel() { return 3; }
 
     @Override
-    public String getJobName(){ return FARMER; }
+    public String getJobName() { return FARMER; }
 
     @Override
     public AbstractJob createJob(CitizenData citizen)
@@ -69,23 +67,44 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         NBTTagCompound farmerCompound = new NBTTagCompound();
 
-        farmerCompound.setInteger(WHEAT_TAG,wheat);
-        farmerCompound.setInteger(POTATO_TAG,potato);
-        farmerCompound.setInteger(CARROT_TAG,carrot);
-        farmerCompound.setInteger(MELON_TAG,melon);
+        farmerCompound.setInteger(WHEAT_TAG, wheat);
+        farmerCompound.setInteger(POTATO_TAG, potato);
+        farmerCompound.setInteger(CARROT_TAG, carrot);
+        farmerCompound.setInteger(MELON_TAG, melon);
         farmerCompound.setInteger(PUMPKIN_TAG, pumpkin);
 
         compound.setTag(TAG_FARMER, farmerCompound);
     }
 
+    @Override
+    public void serializeToView(ByteBuf buf)
+    {
+        super.serializeToView(buf);
+
+        buf.writeInt(wheat);
+        buf.writeInt(potato);
+        buf.writeInt(carrot);
+        buf.writeInt(melon);
+        buf.writeInt(pumpkin);
+    }
+
+    /**
+     * Returns the farm radius of the building
+     *
+     * @return Farm radius
+     */
+    public int getFarmRadius()
+    {
+        return getBuildingLevel() + 3;
+    }
+
     public static class View extends AbstractBuildingWorker.View
     {
         public int wheat = 100,
-                potato = 0,
-                carrot = 0,
-                melon = 0,
-                pumpkin = 0;
-
+                potato   = 0,
+                carrot   = 0,
+                melon    = 0,
+                pumpkin  = 0;
 
         public View(ColonyView c, BlockPos l)
         {
@@ -108,27 +127,5 @@ public class BuildingFarmer extends AbstractBuildingWorker
             melon = buf.readInt();
             pumpkin = buf.readInt();
         }
-    }
-
-    @Override
-    public void serializeToView(ByteBuf buf)
-    {
-        super.serializeToView(buf);
-
-        buf.writeInt(wheat);
-        buf.writeInt(potato);
-        buf.writeInt(carrot);
-        buf.writeInt(melon);
-        buf.writeInt(pumpkin);
-    }
-
-    /**
-     * Returns the farm radius of the building
-     *
-     * @return      Farm radius
-     */
-    public int getFarmRadius()
-    {
-        return getBuildingLevel()+3;
     }
 }

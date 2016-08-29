@@ -22,6 +22,7 @@ public final class SoundUtils
 
     /**
      * {@link #playSound(World, String, double, double, double, float, float)}.
+     *
      * @param world World to play sound in
      * @param name  Name of the sound to play
      * @param x     X-coordinate
@@ -31,8 +32,8 @@ public final class SoundUtils
     public static void playSound(World world, String name, int x, int y, int z)
     {
         playSound(world, name,
-                  x + HALF_BLOCK_OFFSET, y + HALF_BLOCK_OFFSET, z + HALF_BLOCK_OFFSET,
-                  1.0F, (float) (world.rand.nextDouble() * RANDOM_PITCH_VALUE + STATIC_PITCH_VALUE));
+                x + HALF_BLOCK_OFFSET, y + HALF_BLOCK_OFFSET, z + HALF_BLOCK_OFFSET,
+                1.0F, (float) (world.rand.nextDouble() * RANDOM_PITCH_VALUE + STATIC_PITCH_VALUE));
     }
 
     /**

@@ -24,14 +24,12 @@ import java.util.List;
 
 public class SchematicWorld extends WorldClient
 {
-    private static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
-
-    private Schematic schematic;
-
-    public final BlockPos.MutableBlockPos position = new BlockPos.MutableBlockPos();
-    public boolean isRendering;
-    public final boolean isRenderingLayer;
-    public final int renderingLayer;
+    private static final WorldSettings            WORLD_SETTINGS = new WorldSettings(0, WorldSettings.GameType.CREATIVE, false, false, WorldType.FLAT);
+    public final         BlockPos.MutableBlockPos position       = new BlockPos.MutableBlockPos();
+    public final boolean   isRenderingLayer;
+    public final int       renderingLayer;
+    public       boolean   isRendering;
+    private      Schematic schematic;
 
     public SchematicWorld(final Schematic schematic)
     {
@@ -46,6 +44,37 @@ public class SchematicWorld extends WorldClient
     }
 
     @Override
+    public BiomeGenBase getBiomeGenForCoords(final BlockPos pos)
+    {
+        return BiomeGenBase.jungle;
+    }
+
+    @Override
+    public boolean isAirBlock(final BlockPos pos)
+    {
+        return getBlockState(pos).getBlock().isAir(this, pos);
+    }
+
+    @Override
+    public boolean setBlockState(final BlockPos pos, final IBlockState state, final int flags)
+    {
+        return this.schematic.setBlockState(pos, state);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public int getLightFromNeighborsFor(final EnumSkyBlock type, final BlockPos pos)
+    {
+        return 15;
+    }
+
+    @Override
+    public float getLightBrightness(final BlockPos pos)
+    {
+        return 1.0F;
+    }
+
+    @Override
     public IBlockState getBlockState(final BlockPos pos)
     {
         if (this.isRenderingLayer && this.renderingLayer != pos.getY())
@@ -54,12 +83,6 @@ public class SchematicWorld extends WorldClient
         }
 
         return this.schematic.getBlockState(pos);
-    }
-
-    @Override
-    public boolean setBlockState(final BlockPos pos, final IBlockState state, final int flags)
-    {
-        return this.schematic.setBlockState(pos, state);
     }
 
     @Override
@@ -84,19 +107,6 @@ public class SchematicWorld extends WorldClient
     public void removeTileEntity(final BlockPos pos)
     {
         this.schematic.removeTileEntity(pos);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public int getLightFromNeighborsFor(final EnumSkyBlock type, final BlockPos pos)
-    {
-        return 15;
-    }
-
-    @Override
-    public float getLightBrightness(final BlockPos pos)
-    {
-        return 1.0F;
     }
 
     @Override
@@ -124,34 +134,6 @@ public class SchematicWorld extends WorldClient
     }
 
     @Override
-    protected int getRenderDistanceChunks()
-    {
-        return 0;
-    }
-
-    @Override
-    public boolean isAirBlock(final BlockPos pos)
-    {
-        return getBlockState(pos).getBlock().isAir(this, pos);
-    }
-
-    @Override
-    public BiomeGenBase getBiomeGenForCoords(final BlockPos pos)
-    {
-        return BiomeGenBase.jungle;
-    }
-
-    public int getWidth()
-    {
-        return this.schematic.getWidth();
-    }
-
-    public int getLength()
-    {
-        return this.schematic.getLength();
-    }
-
-    @Override
     public int getHeight()
     {
         return this.schematic.getHeight();
@@ -165,18 +147,6 @@ public class SchematicWorld extends WorldClient
     }
 
     @Override
-    protected IChunkProvider createChunkProvider()
-    {
-        return new ChunkProviderSchematic(this);
-    }
-
-    @Override
-    public Entity getEntityByID(final int id)
-    {
-        return null;
-    }
-
-    @Override
     public boolean isSideSolid(final BlockPos pos, final EnumFacing side)
     {
         return isSideSolid(pos, side, false);
@@ -186,21 +156,6 @@ public class SchematicWorld extends WorldClient
     public boolean isSideSolid(final BlockPos pos, final EnumFacing side, final boolean ignored)
     {
         return getBlockState(pos).getBlock().isSideSolid(this, pos, side);
-    }
-
-    public void setSchematic(final Schematic schematic)
-    {
-        this.schematic = schematic;
-    }
-
-    public Schematic getSchematic()
-    {
-        return this.schematic;
-    }
-
-    public List<TileEntity> getTileEntities()
-    {
-        return schematic.getTileEntities();
     }
 
     public void initializeTileEntity(final TileEntity tileEntity)
@@ -218,6 +173,39 @@ public class SchematicWorld extends WorldClient
         }
     }
 
+    @Override
+    protected IChunkProvider createChunkProvider()
+    {
+        return new ChunkProviderSchematic(this);
+    }
+
+    @Override
+    public Entity getEntityByID(final int id)
+    {
+        return null;
+    }
+
+    @Override
+    protected int getRenderDistanceChunks()
+    {
+        return 0;
+    }
+
+    public Schematic getSchematic()
+    {
+        return this.schematic;
+    }
+
+    public void setSchematic(final Schematic schematic)
+    {
+        this.schematic = schematic;
+    }
+
+    public List<TileEntity> getTileEntities()
+    {
+        return schematic.getTileEntities();
+    }
+
     public boolean isInside(final BlockPos pos)
     {
         final int x = pos.getX();
@@ -230,5 +218,15 @@ public class SchematicWorld extends WorldClient
     private static boolean xyzGreaterThan0(int x, int y, int z)
     {
         return x < 0 && y < 0 && z < 0;
+    }
+
+    public int getWidth()
+    {
+        return this.schematic.getWidth();
+    }
+
+    public int getLength()
+    {
+        return this.schematic.getLength();
     }
 }

@@ -15,14 +15,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     private Map<String, List<String>> hutStyleMap;
     private Map<String, List<String>> decorationStyleMap;
 
-    public ColonyStylesMessage(){}
-
-    @Override
-    public void toBytes(ByteBuf buf)
-    {
-        writeStyleMapToByteBuf(buf, Schematics.getHuts(), Schematics::getStylesForHut);
-        writeStyleMapToByteBuf(buf, Schematics.getDecorations(), Schematics::getStylesForDecoration);
-    }
+    public ColonyStylesMessage() {}
 
     @Override
     public void fromBytes(ByteBuf buf)
@@ -31,15 +24,22 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         decorationStyleMap = readStyleMapFromByteBuf(buf);
     }
 
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+        writeStyleMapToByteBuf(buf, Schematics.getHuts(), Schematics::getStylesForHut);
+        writeStyleMapToByteBuf(buf, Schematics.getDecorations(), Schematics::getStylesForDecoration);
+    }
+
     private static void writeStyleMapToByteBuf(ByteBuf buf, Set<String> objects, Function<String, List<String>> getStyles)
     {
         buf.writeInt(objects.size());
-        for(String object : objects)
+        for (String object : objects)
         {
             List<String> styles = getStyles.apply(object);
 
             buf.writeInt(styles.size());
-            for(String style : styles)
+            for (String style : styles)
             {
                 ByteBufUtils.writeUTF8String(buf, style);
             }
@@ -53,11 +53,11 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         Map<String, List<String>> map = new HashMap<>();
 
         int count = buf.readInt();
-        for(int i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
             List<String> styles = new ArrayList<>();
             int numStyles = buf.readInt();
-            for(int j = 0; j < numStyles; j++)
+            for (int j = 0; j < numStyles; j++)
             {
                 styles.add(ByteBufUtils.readUTF8String(buf));
             }
@@ -69,12 +69,12 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Sets the styles of the huts to the given value in the message
      *
-     * @param message       Message
-     * @param ctx           Context
-     * @return              Null
+     * @param message Message
+     * @param ctx     Context
+     * @return Null
      */
     @Override
     public IMessage onMessage(ColonyStylesMessage message, MessageContext ctx)

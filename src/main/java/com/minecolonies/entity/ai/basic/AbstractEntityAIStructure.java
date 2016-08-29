@@ -97,7 +97,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                  * todo: implement
                  */
                 new AITarget(AIState.COMPLETE_BUILD, () -> AIState.IDLE)
-                            );
+        );
     }
 
     /**
@@ -114,9 +114,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
         Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
-        Supplier<Structure.Result>         advanceBlock    = () -> currentStructure.advanceBlock();
+        Supplier<Structure.Result> advanceBlock = () -> currentStructure.advanceBlock();
 
-        return () -> {
+        return () ->
+        {
             Structure.SchematicBlock currentBlock = getCurrentBlock.get();
             /*
             check if we have not found a block (when block == null
@@ -124,7 +125,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             (which changes stuff, so only execute on valid block!)
             */
             if (currentBlock.block == null
-                || evaluationFunction.apply(currentBlock))
+                    || evaluationFunction.apply(currentBlock))
             {
                 Structure.Result result = advanceBlock.get();
                 if (result == Structure.Result.AT_END)
@@ -187,9 +188,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return currentStructure.getCurrentBlockPosition();
         }
         //get length or width either is larger.
-        int          length     = currentStructure.getLength();
-        int          width      = currentStructure.getWidth();
-        int          distance   = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD + offset;
+        int length = currentStructure.getLength();
+        int width = currentStructure.getWidth();
+        int distance = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD + offset;
         EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
 
         //then get a solid place with two air spaces above it in any direction.

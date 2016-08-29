@@ -15,13 +15,13 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
     private int    colonyId;
     private String name;
 
-    public TownHallRenameMessage(){}
+    public TownHallRenameMessage() {}
 
     /**
      * Object creation for the town hall rename message
      *
-     * @param colony    Colony the rename is going to occur in
-     * @param name      New name of the town hall
+     * @param colony Colony the rename is going to occur in
+     * @param name   New name of the town hall
      */
     public TownHallRenameMessage(ColonyView colony, String name)
     {
@@ -30,17 +30,17 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        ByteBufUtils.writeUTF8String(buf, name);
-    }
-
-    @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
         name = ByteBufUtils.readUTF8String(buf);
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        ByteBufUtils.writeUTF8String(buf, name);
     }
 
     @Override

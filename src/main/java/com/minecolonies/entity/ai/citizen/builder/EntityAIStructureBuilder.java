@@ -25,7 +25,9 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import org.jetbrains.annotations.Nullable;
+
 import java.util.List;
+
 import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
@@ -85,9 +87,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 new AITarget(BUILDER_STRUCTURE_STEP, this::structureStep),
                 new AITarget(BUILDER_DECORATION_STEP, this::decorationStep),
                 new AITarget(BUILDER_COMPLETE_BUILD, this::completeBuild)
-                             );
+        );
         worker.setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
-                                + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
+                + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
     }
 
@@ -95,13 +97,24 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         final WorkOrderBuild wo = job.getWorkOrder();
 
-        if(wo == null)
+        if (wo == null)
         {
             cancelTask();
             return true;
         }
 
         return false;
+    }
+
+    /**
+     * Resets the builders current task.
+     */
+    public void cancelTask()
+    {
+        super.resetTask();
+        job.setWorkOrder(null);
+        workFrom = null;
+        job.setSchematic(null);
     }
 
     private boolean checkIfExecute()
@@ -142,8 +155,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             {
                 Log.logger.error(
                         String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)",
-                                      worker.getColony().getID(),
-                                      worker.getCitizenData().getId(), job.getWorkOrderId()));
+                                worker.getColony().getID(),
+                                worker.getCitizenData().getId(), job.getWorkOrderId()));
                 return this.getState();
             }
 
@@ -166,7 +179,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 {
                     Log.logger.error(
                             String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)",
-                                          worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()));
+                                    worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()));
                     return this.getState();
                 }
 
@@ -200,12 +213,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return AIState.IDLE;
     }
 
-    private boolean incrementBlock()
-    {
-        //method returns false if there is no next block (schematic finished)
-        return job.getSchematic().incrementBlock();
-    }
-
     private void loadSchematic()
     {
         WorkOrderBuild workOrder = job.getWorkOrder();
@@ -237,6 +244,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         job.getSchematic().rotate(workOrder.getRotation());
         job.getSchematic().setPosition(pos);
         workOrder.setCleared(false);
+    }
+
+    private boolean incrementBlock()
+    {
+        //method returns false if there is no next block (schematic finished)
+        return job.getSchematic().incrementBlock();
     }
 
     private AIState startWorkingAtOwnBuilding()
@@ -288,9 +301,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return job.getSchematic().getBlockPosition();
         }
         //get length or width either is larger.
-        int          length     = job.getSchematic().getLength();
-        int          width      = job.getSchematic().getWidth();
-        int          distance   = width > length ? width : length;
+        int length = job.getSchematic().getLength();
+        int width = job.getSchematic().getWidth();
+        int distance = width > length ? width : length;
         EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
 
         //then get a solid place with two air spaces above it in any direction.
@@ -350,12 +363,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         BlockPos coordinates = job.getSchematic().getBlockPosition();
-        Block    worldBlock  = world.getBlockState(coordinates).getBlock();
+        Block worldBlock = world.getBlockState(coordinates).getBlock();
 
         if (worldBlock != Blocks.air
-             && !(worldBlock instanceof AbstractBlockHut)
-             && worldBlock != Blocks.bedrock
-             && job.getSchematic().getBlock() != ModBlocks.blockSubstitution)
+                && !(worldBlock instanceof AbstractBlockHut)
+                && worldBlock != Blocks.bedrock
+                && job.getSchematic().getBlock() != ModBlocks.blockSubstitution)
         {
             //Fill workFrom with the position from where the builder should build.
             if (!goToConstructionSite())
@@ -411,18 +424,18 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     continue;
                 }
 
-                Block     block     = job.getSchematic().getBlock();
+                Block block = job.getSchematic().getBlock();
                 ItemStack itemstack = new ItemStack(block, 1);
 
                 Block worldBlock = BlockPosUtil.getBlock(world, job.getSchematic().getBlockPosition());
 
                 if (itemstack.getItem() != null
-                    && block != null
-                    && block != Blocks.air
-                    && worldBlock != Blocks.bedrock
-                    && !(worldBlock instanceof AbstractBlockHut)
-                    && !isBlockFree(block, 0)
-                    && checkOrRequestItems(new ItemStack(block)))
+                        && block != null
+                        && block != Blocks.air
+                        && worldBlock != Blocks.bedrock
+                        && !(worldBlock instanceof AbstractBlockHut)
+                        && !isBlockFree(block, 0)
+                        && checkOrRequestItems(new ItemStack(block)))
                 {
                     job.getSchematic().reset();
                     return this.getState();
@@ -444,13 +457,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     private boolean isBlockFree(Block block, int metadata)
     {
         return block == null
-               || BlockUtils.isWater(block.getDefaultState())
-               || block.equals(Blocks.leaves)
-               || block.equals(Blocks.leaves2)
-               || (block.equals(Blocks.double_plant) && Utils.testFlag(metadata, 0x08))
-               || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08))
-               || block.equals(Blocks.grass)
-               || block.equals(Blocks.dirt);
+                || BlockUtils.isWater(block.getDefaultState())
+                || block.equals(Blocks.leaves)
+                || block.equals(Blocks.leaves2)
+                || (block.equals(Blocks.double_plant) && Utils.testFlag(metadata, 0x08))
+                || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08))
+                || block.equals(Blocks.grass)
+                || block.equals(Blocks.dirt);
     }
 
     private AIState structureStep()
@@ -461,8 +474,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         if (job.getSchematic().getBlock() == null
-            || job.getSchematic().doesSchematicBlockEqualWorldBlock()
-            || (!job.getSchematic().getBlock().getMaterial().isSolid()
+                || job.getSchematic().doesSchematicBlockEqualWorldBlock()
+                || (!job.getSchematic().getBlock().getMaterial().isSolid()
                 && job.getSchematic().getBlock() != Blocks.air))
         {
             //findNextBlock count was reached and we can ignore this block
@@ -489,15 +502,15 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         //don't overwrite huts or bedrock, nor place huts
         if (worldBlock instanceof AbstractBlockHut
-            || worldBlock == Blocks.bedrock
-            || block instanceof AbstractBlockHut)
+                || worldBlock == Blocks.bedrock
+                || block instanceof AbstractBlockHut)
         {
             return findNextBlockSolid();
         }
 
         //We need to deal with materials
         if (!Configurations.builderInfiniteResources
-            && !handleMaterials(block, blockState))
+                && !handleMaterials(block, blockState))
         {
             return this.getState();
         }
@@ -515,7 +528,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         //|| job.getSchematic().getBlock() == Blocks.air
         if (job.getSchematic().doesSchematicBlockEqualWorldBlock()
-            || job.getSchematic().getBlock().getMaterial().isSolid())
+                || job.getSchematic().getBlock().getMaterial().isSolid())
         {
             //findNextBlock count was reached and we can ignore this block
             return findNextBlockNonSolid();
@@ -540,8 +553,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         //don't overwrite huts or bedrock, nor place huts
         if (worldBlock instanceof AbstractBlockHut
-            || worldBlock == Blocks.bedrock
-            || block instanceof AbstractBlockHut)
+                || worldBlock == Blocks.bedrock
+                || block instanceof AbstractBlockHut)
         {
             findNextBlockNonSolid();
             return this.getState();
@@ -649,18 +662,18 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         //Move out of the way when placing blocks
         if (MathHelper.floor_double(worker.posX) == pos.getX()
-            && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
-            && MathHelper.floor_double(worker.posZ) == pos.getZ()
-            && worker.getNavigator().noPath())
+                && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
+                && MathHelper.floor_double(worker.posZ) == pos.getZ()
+                && worker.getNavigator().noPath())
         {
             worker.getNavigator().moveAwayFromXYZ(pos, 4.1, 1.0);
         }
 
         //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
         if (blockState.getBlock() instanceof BlockStairs
-            && world.getBlockState(pos).getBlock() instanceof BlockStairs
-            && world.getBlockState(pos).getValue(BlockStairs.FACING) == blockState.getValue(BlockStairs.FACING)
-            && blockState.getBlock() == world.getBlockState(pos).getBlock())
+                && world.getBlockState(pos).getBlock() instanceof BlockStairs
+                && world.getBlockState(pos).getValue(BlockStairs.FACING) == blockState.getValue(BlockStairs.FACING)
+                && blockState.getBlock() == world.getBlockState(pos).getBlock())
         {
             return true;
         }
@@ -788,9 +801,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 else
                 {
                     Log.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                                                   worker.getColony().getID(),
-                                                   worker.getCitizenData().getId(),
-                                                   wo.getBuildingLocation()));
+                            worker.getColony().getID(),
+                            worker.getCitizenData().getId(),
+                            wo.getBuildingLocation()));
                 }
             }
             job.complete();
@@ -798,9 +811,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         else
         {
             Log.logger.error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
-                                           worker.getColony().getID(),
-                                           worker.getCitizenData().getId(),
-                                           job.getWorkOrderId()));
+                    worker.getColony().getID(),
+                    worker.getCitizenData().getId(),
+                    job.getWorkOrderId()));
         }
 
         resetTask();
@@ -808,17 +821,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         workFrom = null;
 
         return AIState.IDLE;
-    }
-
-    /**
-     * Resets the builders current task.
-     */
-    public void cancelTask()
-    {
-        super.resetTask();
-        job.setWorkOrder(null);
-        workFrom = null;
-        job.setSchematic(null);
     }
 
     /**

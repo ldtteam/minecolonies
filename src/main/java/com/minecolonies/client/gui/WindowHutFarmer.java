@@ -56,6 +56,22 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     }
 
     /**
+     * Action performed when wheat button is clicked
+     *
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
+     */
+    private void wheatClicked(Button ignored)
+    {
+        if (building.wheat >= MAX_AMOUNT)
+        {
+            return;
+        }
+        building.wheat++;
+        removeOthers(WHEAT);
+    }
+
+    /**
      * Remove one of the materials, described by s
      * Possible inputs are:
      * - potato
@@ -114,26 +130,10 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     }
 
     /**
-     * Action performed when wheat button is clicked
-     *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
-     */
-    private void wheatClicked(Button ignored)
-    {
-        if (building.wheat >= MAX_AMOUNT)
-        {
-            return;
-        }
-        building.wheat++;
-        removeOthers(WHEAT);
-    }
-
-    /**
      * Action performed when potato button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void potatoClicked(Button ignored)
     {
@@ -148,8 +148,8 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Action performed when melon button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void melonClicked(Button ignored)
     {
@@ -161,12 +161,11 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         removeOthers(MELON);
     }
 
-
     /**
      * Action performed when pumpkin button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void pumpkinClicked(Button ignored)
     {
@@ -178,12 +177,11 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         removeOthers(PUMPKIN);
     }
 
-
     /**
      * Action performed when carrot button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void carrotClicked(Button ignored)
     {
@@ -224,7 +222,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             findPaneOfTypeByID(BUTTON_CARROT, ButtonVanilla.class).setLabel(Integer.toString(building.carrot));
             findPaneOfTypeByID(BUTTON_MELON, ButtonVanilla.class).setLabel(Integer.toString(building.melon));
             findPaneOfTypeByID(BUTTON_PUMPKIN, ButtonVanilla.class).setLabel(Integer.toString(building.pumpkin));
-
         }
         catch (RuntimeException exc)
         {
@@ -232,12 +229,11 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         }
     }
 
-
     /**
      * Action performed when previous button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void prevClicked(Button ignored)
     {
@@ -246,12 +242,11 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         buttonNextPage.setEnabled(true);
     }
 
-
     /**
      * Action performed when next button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void nextClicked(Button ignored)
     {

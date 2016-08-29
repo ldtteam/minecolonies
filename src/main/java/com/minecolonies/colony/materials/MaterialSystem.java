@@ -60,6 +60,51 @@ public class MaterialSystem
         return getMaterialCount(getMaterial(item));
     }
 
+    private int getMaterialCount(Material material)
+    {
+        Integer count = materials.get(material);
+
+        if (count == null)
+        {
+            removeItemFromCache(material);
+            return 0;
+        }
+
+        return count;
+    }
+
+    Material getMaterial(Item item)
+    {
+        if (item == null)
+        {
+            return null;
+        }
+
+        return getMaterial(Item.getIdFromItem(item));
+    }
+
+    private void removeItemFromCache(Material material)
+    {
+        materialCache.remove(material.getID());
+    }
+
+    /**
+     * Gets a material from the cache, or create it if it doesn't exist.
+     *
+     * @return Material from cache
+     */
+    private Material getMaterial(Integer id)
+    {
+        Material material = materialCache.get(id);
+        if (material == null)
+        {
+            material = new Material(id);
+            materialCache.put(id, material);
+        }
+
+        return material;
+    }
+
     /**
      * Finds how much extra(unneeded) blocks we have in the system(colony).
      *
@@ -71,53 +116,14 @@ public class MaterialSystem
         return getMaterialCount(getMaterial(block));
     }
 
-    private int getMaterialCount(Material material)
-    {
-        Integer count = materials.get(material);
-
-        if(count == null)
-        {
-            removeItemFromCache(material);
-            return 0;
-        }
-
-        return count;
-    }
-
-    /**
-     * Gets a material from the cache, or create it if it doesn't exist.
-     *
-     * @return Material from cache
-     */
-    private Material getMaterial(Integer id)
-    {
-        Material material = materialCache.get(id);
-        if(material == null)
-        {
-            material = new Material(id);
-            materialCache.put(id, material);
-        }
-
-        return material;
-    }
-
-    Material getMaterial(Item item)
-    {
-        if(item == null) return null;
-
-        return getMaterial(Item.getIdFromItem(item));
-    }
-
     Material getMaterial(Block block)
     {
-        if(block == null) return null;
+        if (block == null)
+        {
+            return null;
+        }
 
         return getMaterial(Block.getIdFromBlock(block));
-    }
-
-    private void removeItemFromCache(Material material)
-    {
-        materialCache.remove(material.getID());
     }
 
     /**
@@ -129,7 +135,7 @@ public class MaterialSystem
     void addMaterial(Material material, int quantity)
     {
         Integer count = materials.get(material);
-        if(count == null)
+        if (count == null)
         {
             materials.put(material, quantity);
         }
@@ -148,11 +154,11 @@ public class MaterialSystem
     void removeMaterial(Material material, int quantity)
     {
         Integer count = materials.get(material);
-        if(count == null || count < quantity)
+        if (count == null || count < quantity)
         {
             throw new QuantityNotFound("MaterialSystem", material.getID(), count == null ? 0 : count, quantity);
         }
-        else if(count == quantity)
+        else if (count == quantity)
         {
             materials.remove(material);
             removeItemFromCache(material);
@@ -165,8 +171,6 @@ public class MaterialSystem
 
     /**
      * Adds a MaterialStore to the stores set. Called inside of the MaterialStore constructor.
-     *
-     * @param store
      */
     void addStore(MaterialStore store)
     {
@@ -175,8 +179,6 @@ public class MaterialSystem
 
     /**
      * Removes a MaterialStore from the store set. This should be called when a building is destroyed(removed from colony).
-     *
-     * @param store
      */
     void removeStore(MaterialStore store)
     {

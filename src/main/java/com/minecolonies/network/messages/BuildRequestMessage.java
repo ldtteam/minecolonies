@@ -19,26 +19,25 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
 {
     /**
+     * The int mode for a build job.
+     */
+    public static final int BUILD  = 0;
+    /**
+     * The int mode for a repair job.
+     */
+    public static final int REPAIR = 1;
+    /**
      * The id of the building.
      */
     private BlockPos buildingId;
     /**
      * The id of the colony.
      */
-    private int colonyId;
+    private int      colonyId;
     /**
      * The mode id.
      */
-    private int mode;
-
-    /**
-     * The int mode for a build job.
-     */
-    public static final int              BUILD  = 0;
-    /**
-     * The int mode for a repair job.
-     */
-    public static final int              REPAIR = 1;
+    private int      mode;
 
     /**
      * Empty constructor
@@ -53,8 +52,8 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     /**
      * Creates a build request message
      *
-     * @param building      AbstractBuilding of the request
-     * @param mode          Mode of the request, 1 is repair, 0 is build
+     * @param building AbstractBuilding of the request
+     * @param mode     Mode of the request, 1 is repair, 0 is build
      */
     public BuildRequestMessage(AbstractBuilding.View building, int mode)
     {
@@ -64,19 +63,19 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-        buf.writeInt(mode);
-    }
-
-    @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         mode = buf.readInt();
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeInt(mode);
     }
 
     @Override
@@ -93,8 +92,8 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
         {
             return null;
         }
-        
-        switch(message.mode)
+
+        switch (message.mode)
         {
             case BUILD:
                 building.requestUpgrade();

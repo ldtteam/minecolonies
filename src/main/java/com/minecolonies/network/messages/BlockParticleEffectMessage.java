@@ -32,9 +32,9 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
     /**
      * Sends a message for particle effect.
      *
-     * @param pos       Coordinates
-     * @param state     Block State
-     * @param side      Side of the block causing effect
+     * @param pos   Coordinates
+     * @param state Block State
+     * @param side  Side of the block causing effect
      */
     public BlockParticleEffectMessage(BlockPos pos, IBlockState state, int side)
     {
@@ -65,7 +65,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
     @Override
     public IMessage onMessage(BlockParticleEffectMessage message, MessageContext ctx)
     {
-        if(message.side == BREAK_BLOCK)
+        if (message.side == BREAK_BLOCK)
         {
             //TODO check default state, mw, trans 1.7
             Minecraft.getMinecraft().effectRenderer.addBlockDestroyEffects(message.pos, message.block.getDefaultState());

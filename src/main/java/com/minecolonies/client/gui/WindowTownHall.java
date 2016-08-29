@@ -162,7 +162,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Id of the workOrder list in the GUI.
      */
-    private static final String LIST_WORKORDER = "workOrderList";
+    private static final String LIST_WORKORDER     = "workOrderList";
     /**
      * Id of the current specializations label in the GUI.
      */
@@ -191,12 +191,12 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Id of the total assignee label in the GUI.
      */
-    private static final String ASSIGNEE_LABEL =  "assignee";
+    private static final String ASSIGNEE_LABEL = "assignee";
 
     /**
      * Id of the total work label in the GUI.
      */
-    private static final String WORK_LABEL =  "work";
+    private static final String WORK_LABEL = "work";
 
     /**
      * Id of the hidden workorder id in the GUI.
@@ -221,37 +221,32 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * The deliverymen job description string.
      */
-    private static final String DELIVERYMEN_JOB = "com.minecolonies.job.Deliveryman";
-
+    private static final String              DELIVERYMEN_JOB = "com.minecolonies.job.Deliveryman";
+    /**
+     * List of workOrders.
+     */
+    private final        List<WorkOrderView> workOrders      = new ArrayList<>();
     /**
      * The view of the current building.
      */
     private BuildingTownHall.View townHall;
-
     /**
      * List of added users.
      */
-    private List<Permissions.Player> users = new ArrayList<>();
-
+    private List<Permissions.Player> users       = new ArrayList<>();
     /**
      * List of citizens.
      */
-    private List<CitizenDataView> citizens = new ArrayList<>();
-
-    /**
-     * List of workOrders.
-     */
-    private final List<WorkOrderView> workOrders = new ArrayList<>();
-
+    private List<CitizenDataView>    citizens    = new ArrayList<>();
     /**
      * Map of the pages.
      */
-    private Map<String, String> tabsToPages = new HashMap<>();
+    private Map<String, String>      tabsToPages = new HashMap<>();
 
     /**
      * The button f the last tab -> will be filled later on.
      */
-    private Button        lastTabButton;
+    private Button lastTabButton;
 
     /**
      * The ScrollingList of the users.
@@ -286,66 +281,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_REMOVE_PLAYER, this::removePlayerClicked);
         registerButton(BUTTON_PROMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
-        registerButton(BUTTON_RECALL,this::doNothing);
+        registerButton(BUTTON_RECALL, this::doNothing);
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
 
         registerButton(BUTTON_UP, this::updatePriority);
         registerButton(BUTTON_DOWN, this::updatePriority);
         registerButton(BUTTON_DELETE, this::deleteWorkOrder);
-    }
-
-    /**
-     * On Button click update the priority.
-     * @param button the clicked button.
-     */
-    private void updatePriority(Button button)
-    {
-        final Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
-        final int id = Integer.parseInt(idLabel.getLabelText());
-        final String buttonLabel = button.getID();
-
-        for (int i = 0; i < workOrders.size(); i++)
-        {
-            final WorkOrderView workOrder = workOrders.get(i);
-            if (workOrder.getId() == id)
-            {
-                if(buttonLabel.equals(BUTTON_UP) && i > 0)
-                {
-                    workOrder.setPriority(workOrders.get(i - 1).getPriority() + 1);
-                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false , workOrder.getPriority()));
-                }
-                else if (buttonLabel.equals(BUTTON_DOWN) && i <= workOrders.size())
-                {
-                    workOrder.setPriority(workOrders.get(i + 1).getPriority() - 1);
-                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
-                }
-
-                Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
-                window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
-                return;
-            }
-        }
-    }
-
-    /**
-     * On Button click remove the workOrder.
-     * @param button the clicked button.
-     */
-    private void deleteWorkOrder(Button button)
-    {
-        final Label idLabel = (Label)button.getParent().getChildren().get(HIDDEN_ID_POSITION);
-        final int id = Integer.parseInt(idLabel.getLabelText());
-        for(int i = 0; i < workOrders.size(); i++)
-        {
-            if(workOrders.get(i).getId() == id)
-            {
-                workOrders.remove(i);
-                break;
-            }
-        }
-        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id , true, 0));
-        window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
     }
 
     /**
@@ -378,19 +320,100 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
+     * On Button click update the priority.
+     *
+     * @param button the clicked button.
+     */
+    private void updatePriority(Button button)
+    {
+        final Label idLabel = (Label) button.getParent().getChildren().get(HIDDEN_ID_POSITION);
+        final int id = Integer.parseInt(idLabel.getLabelText());
+        final String buttonLabel = button.getID();
+
+        for (int i = 0; i < workOrders.size(); i++)
+        {
+            final WorkOrderView workOrder = workOrders.get(i);
+            if (workOrder.getId() == id)
+            {
+                if (buttonLabel.equals(BUTTON_UP) && i > 0)
+                {
+                    workOrder.setPriority(workOrders.get(i - 1).getPriority() + 1);
+                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
+                }
+                else if (buttonLabel.equals(BUTTON_DOWN) && i <= workOrders.size())
+                {
+                    workOrder.setPriority(workOrders.get(i + 1).getPriority() - 1);
+                    MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
+                }
+
+                Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
+                window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
+                return;
+            }
+        }
+    }
+
+    /**
+     * On Button click remove the workOrder.
+     *
+     * @param button the clicked button.
+     */
+    private void deleteWorkOrder(Button button)
+    {
+        final Label idLabel = (Label) button.getParent().getChildren().get(HIDDEN_ID_POSITION);
+        final int id = Integer.parseInt(idLabel.getLabelText());
+        for (int i = 0; i < workOrders.size(); i++)
+        {
+            if (workOrders.get(i).getId() == id)
+            {
+                workOrders.remove(i);
+                break;
+            }
+        }
+        MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, true, 0));
+        window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
+    }
+
+    /**
+     * Executed when <code>WindowTownHall</code> is opened.
+     * Does tasks like setting buttons
+     */
+    @Override
+    public void onOpened()
+    {
+        super.onOpened();
+
+        createAndSetStatistics();
+
+        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
+
+        lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
+        lastTabButton.setEnabled(false);
+
+        fillUserList();
+        fillCitizensList();
+        fillWorkOrderList();
+
+        if (townHall.getColony().isManualHiring())
+        {
+            findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
+        }
+    }
+
+    /**
      * Creates several statistics and sets them in the townHall GUI.
      */
     private void createAndSetStatistics()
     {
         final int citizensSize = townHall.getColony().getCitizens().size();
 
-        int workers     = 0;
-        int builders    = 0;
+        int workers = 0;
+        int builders = 0;
         int deliverymen = 0;
 
-        for(final CitizenDataView citizen: citizens)
+        for (final CitizenDataView citizen : citizens)
         {
-            switch(citizen.getJob())
+            switch (citizen.getJob())
             {
                 case BUILDER_JOB:
                     builders++;
@@ -402,14 +425,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     break;
                 default:
                     workers++;
-
             }
             workers += deliverymen + builders;
         }
 
-        String numberOfCitizens    = LanguageHandler.format("com.minecolonies.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
-        String numberOfUnemployed  = LanguageHandler.format("com.minecolonies.gui.townHall.population.unemployed", citizensSize - workers);
-        String numberOfBuilders    = LanguageHandler.format("com.minecolonies.gui.townHall.population.builders", builders);
+        String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
+        String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townHall.population.unemployed", citizensSize - workers);
+        String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townHall.population.builders", builders);
         String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townHall.population.deliverymen", deliverymen);
 
         findPaneOfTypeByID(CURRENT_SPEC_LABEL, Label.class).setLabelText("<Industrial>");
@@ -474,7 +496,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void fillWorkOrderList()
     {
-        final ScrollingList workOrderList =  findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class);
+        final ScrollingList workOrderList = findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class);
         workOrderList.enable();
         workOrderList.show();
 
@@ -493,9 +515,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 final WorkOrderView workOrder = workOrders.get(index);
                 String claimingCitizen = "";
 
-                if(index == 0)
+                if (index == 0)
                 {
-                    if(getElementCount() == 1)
+                    if (getElementCount() == 1)
                     {
                         rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
                     }
@@ -505,15 +527,15 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     }
                     rowPane.findPaneOfTypeByID(BUTTON_UP, Button.class).hide();
                 }
-                else if(index == getElementCount() - 1)
+                else if (index == getElementCount() - 1)
                 {
                     rowPane.findPaneOfTypeByID(BUTTON_DOWN, Button.class).hide();
                 }
 
                 //Searches citizen of id x
-                for(final CitizenDataView citizen: citizens)
+                for (final CitizenDataView citizen : citizens)
                 {
-                    if(citizen.getID() == workOrder.getClaimedBy())
+                    if (citizen.getID() == workOrder.getClaimedBy())
                     {
                         claimingCitizen = citizen.getName();
                         break;
@@ -525,32 +547,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rowPane.findPaneOfTypeByID(HIDDEN_WORKORDER_ID, Label.class).setLabelText(Integer.toString(workOrder.getId()));
             }
         });
-    }
-
-    /**
-     * Executed when <code>WindowTownHall</code> is opened.
-     * Does tasks like setting buttons
-     */
-    @Override
-    public void onOpened()
-    {
-        super.onOpened();
-
-        createAndSetStatistics();
-
-        findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(PAGE_ACTIONS);
-
-        lastTabButton = findPaneOfTypeByID(BUTTON_ACTIONS, Button.class);
-        lastTabButton.setEnabled(false);
-
-        fillUserList();
-        fillCitizensList();
-        fillWorkOrderList();
-
-        if(townHall.getColony().isManualHiring())
-        {
-            findPaneOfTypeByID("toggleJob", Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
-        }
     }
 
     /**
@@ -566,12 +562,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
     /**
      * Toggles the allocation of a certain job. Manual or automatic.
+     *
      * @param button the pressed button
      */
     private void toggleHiring(Button button)
     {
         boolean toggle;
-        if(button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
+        if (button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
         {
             button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
             toggle = true;
@@ -581,7 +578,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.off"));
             toggle = false;
         }
-        MineColonies.getNetwork().sendToServer(new ToggleJobMessage(this.building.getColony(),toggle));
+        MineColonies.getNetwork().sendToServer(new ToggleJobMessage(this.building.getColony(), toggle));
     }
 
     /**
@@ -620,8 +617,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Action performed when rename button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void renameClicked(Button ignored)
     {
@@ -629,12 +626,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         window.open();
     }
 
-
     /**
      * Action performed when add player button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void addPlayerCLicked(Button ignored)
     {
@@ -643,11 +639,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         input.setText("");
     }
 
-
     /**
      * Action performed when remove player button is clicked
      *
-     * @param button    Button that holds the user clicked on
+     * @param button Button that holds the user clicked on
      */
     private void removePlayerClicked(Button button)
     {
@@ -662,11 +657,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         }
     }
 
-
     /**
      * Action performed when promote or demote button is clicked
      *
-     * @param button    Button that holds the  user clicked on
+     * @param button Button that holds the  user clicked on
      */
     private void promoteDemoteClicked(Button button)
     {
@@ -677,11 +671,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
             if (button.getID().equals(BUTTON_PROMOTE))
             {
-                MineColonies.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.PROMOTE));
+                MineColonies.getNetwork()
+                        .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.PROMOTE));
             }
             else
             {
-                MineColonies.getNetwork().sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
+                MineColonies.getNetwork()
+                        .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
             }
         }
     }

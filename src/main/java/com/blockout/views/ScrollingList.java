@@ -13,30 +13,9 @@ import java.util.List;
  */
 public class ScrollingList extends ScrollingView
 {
-    /**
-     * Interface for a data provider that updates pane scrolling list pane info.
-     */
-    public interface DataProvider
-    {
-        /**
-         * Override this to provide the number of rows.
-         *
-         * @return number of rows in the list
-         */
-        int getElementCount();
-
-        /**
-         * Override this to update the Panes for a given row.
-         *
-         * @param index   the index of the row/list element
-         * @param rowPane the parent Pane for the row, containing the elements to update
-         */
-        void updateElement(int index, Pane rowPane);
-    }
-
     //  Runtime
     protected DataProvider dataProvider;
-    private PaneParams listNodeParams;
+    private   PaneParams   listNodeParams;
 
     /**
      * Default constructor required by Blockout.
@@ -99,5 +78,26 @@ public class ScrollingList extends ScrollingView
     public int getListElementIndexByPane(Pane pane)
     {
         return ((ScrollingListContainer) container).getListElementIndexByPane(pane);
+    }
+
+    /**
+     * Interface for a data provider that updates pane scrolling list pane info.
+     */
+    public interface DataProvider
+    {
+        /**
+         * Override this to provide the number of rows.
+         *
+         * @return number of rows in the list
+         */
+        int getElementCount();
+
+        /**
+         * Override this to update the Panes for a given row.
+         *
+         * @param index   the index of the row/list element
+         * @param rowPane the parent Pane for the row, containing the elements to update
+         */
+        void updateElement(int index, Pane rowPane);
     }
 }

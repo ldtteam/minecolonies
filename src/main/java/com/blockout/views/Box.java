@@ -10,7 +10,7 @@ import com.blockout.View;
 public class Box extends View
 {
     private float lineWidth = 1.0F;
-    private int color = 0xff000000;
+    private int   color     = 0xff000000;
 
     /**
      * Required default constructor.

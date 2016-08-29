@@ -57,9 +57,9 @@ public final class Pond
 
         //If not one direction contains a pool with length at least 6 and width 7
         return checkWaterPoolInDirectionXThenZ(world, x, y, z, 1)
-               || checkWaterPoolInDirectionXThenZ(world, x, y, z, -1)
-               ||               checkWaterPoolInDirectionZThenX(world, x, y, z, 1)
-               || checkWaterPoolInDirectionZThenX(world, x, y, z, -1);
+                || checkWaterPoolInDirectionXThenZ(world, x, y, z, -1)
+                || checkWaterPoolInDirectionZThenX(world, x, y, z, 1)
+                || checkWaterPoolInDirectionZThenX(world, x, y, z, -1);
     }
 
     /**
@@ -85,30 +85,7 @@ public final class Pond
         }
         //Takes the middle x block and searches 3 water blocks to both sides
         return checkWaterPoolInDirectionZ(world, x + WATER_POOL_HEIGHT_REQUIREMENT * vector, y, z, 1) && checkWaterPoolInDirectionZ(world, x + WATER_POOL_HEIGHT_REQUIREMENT
-                                                                                                                                               * vector, y, z, -1);
-    }
-
-    /**
-     * Checks if all blocks in direction Z are Pond
-     *
-     * @param world  World
-     * @param x      posX
-     * @param y      posY
-     * @param z      posZ
-     * @param vector direction
-     * @return true if all blocks are water, else false
-     */
-    private static boolean checkWaterPoolInDirectionZ(IBlockAccess world, int x, int y, int z, int vector)
-    {
-        //Check 3 blocks in direction +/- z
-        for (int dz = z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz <= z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz++)
-        {
-            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.water)
-            {
-                return false;
-            }
-        }
-        return true;
+                * vector, y, z, -1);
     }
 
     /**
@@ -134,7 +111,30 @@ public final class Pond
         }
         //Takes the middle z block and searches 3 water blocks to both sides
         return checkWaterPoolInDirectionX(world, x, y, z + WATER_POOL_HEIGHT_REQUIREMENT * vector, 1) && checkWaterPoolInDirectionX(world, x, y, z + WATER_POOL_HEIGHT_REQUIREMENT
-                                                                                                                                                     * vector, -1);
+                * vector, -1);
+    }
+
+    /**
+     * Checks if all blocks in direction Z are Pond
+     *
+     * @param world  World
+     * @param x      posX
+     * @param y      posY
+     * @param z      posZ
+     * @param vector direction
+     * @return true if all blocks are water, else false
+     */
+    private static boolean checkWaterPoolInDirectionZ(IBlockAccess world, int x, int y, int z, int vector)
+    {
+        //Check 3 blocks in direction +/- z
+        for (int dz = z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz <= z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz++)
+        {
+            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.water)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-
 /**
  * A simple target the AI tries to accomplish.
  * It has a state matcher,

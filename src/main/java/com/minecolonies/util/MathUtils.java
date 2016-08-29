@@ -40,8 +40,9 @@ public final class MathUtils
 
     /**
      * Calculates the distance between two points without considering the y-value.
+     *
      * @param position the start position.
-     * @param target the end position.
+     * @param target   the end position.
      * @return the distance.
      */
     public static double twoDimDistance(BlockPos position, BlockPos target)
@@ -52,6 +53,6 @@ public final class MathUtils
         final int z2 = target.getZ();
 
         //Hypot returns sqrt(x²+ y²) without intermediate overflow or underflow.
-        return Math.hypot((double)x2-x1,(double)z2-z1);
+        return Math.hypot((double) x2 - x1, (double) z2 - z1);
     }
 }

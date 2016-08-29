@@ -18,23 +18,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCropTypeMessage, IMessage>
 {
-    private int              colonyId;
-    private BlockPos         buildingId;
+    private int      colonyId;
+    private BlockPos buildingId;
 
-    private int              wheat;
-    private int              potato;
-    private int              carrot;
-    private int              melon;
-    private int              pumpkin;
+    private int wheat;
+    private int potato;
+    private int carrot;
+    private int melon;
+    private int pumpkin;
 
-    public FarmerCropTypeMessage(){}
+    public FarmerCropTypeMessage() {}
 
     /**
      * Object for the crop type message.
      * Used to change crop percentages
      * Reads objects from {@link com.minecolonies.colony.buildings.BuildingFarmer.View}
      *
-     * @param building      The view of the {@link BuildingFarmer}
+     * @param building The view of the {@link BuildingFarmer}
      */
     public FarmerCropTypeMessage(BuildingFarmer.View building)
     {
@@ -46,19 +46,6 @@ public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCr
         this.carrot = building.carrot;
         this.melon = building.melon;
         this.pumpkin = building.pumpkin;
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-
-        buf.writeInt(wheat);
-        buf.writeInt(potato);
-        buf.writeInt(carrot);
-        buf.writeInt(melon);
-        buf.writeInt(pumpkin);
     }
 
     @Override
@@ -75,9 +62,22 @@ public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCr
     }
 
     @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
+
+        buf.writeInt(wheat);
+        buf.writeInt(potato);
+        buf.writeInt(carrot);
+        buf.writeInt(melon);
+        buf.writeInt(pumpkin);
+    }
+
+    @Override
     public IMessage onMessage(FarmerCropTypeMessage message, MessageContext ctx)
     {
-        if(validatePacket())
+        if (validatePacket())
         {
             Colony colony = ColonyManager.getColony(message.colonyId);
             if (colony != null)
@@ -98,6 +98,6 @@ public class FarmerCropTypeMessage implements IMessage, IMessageHandler<FarmerCr
 
     private boolean validatePacket()
     {
-        return wheat+potato+carrot+melon+pumpkin == 100;
+        return wheat + potato + carrot + melon + pumpkin == 100;
     }
 }

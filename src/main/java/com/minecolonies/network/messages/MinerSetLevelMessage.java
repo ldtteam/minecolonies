@@ -12,31 +12,23 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetLevelMessage, IMessage>
 {
-    private int              colonyId;
-    private BlockPos         buildingId;
-    private int              level;
+    private int      colonyId;
+    private BlockPos buildingId;
+    private int      level;
 
-    public MinerSetLevelMessage(){}
+    public MinerSetLevelMessage() {}
 
     /**
      * Creates object for the miner set level message
      *
-     * @param building       View of the building to read data from
-     * @param level          Level of the miner
+     * @param building View of the building to read data from
+     * @param level    Level of the miner
      */
     public MinerSetLevelMessage(BuildingMiner.View building, int level)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.level = level;
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-        buf.writeInt(level);
     }
 
     @Override
@@ -48,6 +40,14 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
     }
 
     @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeInt(level);
+    }
+
+    @Override
     public IMessage onMessage(MinerSetLevelMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
@@ -56,7 +56,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
             BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
             if (building != null)
             {
-                if(message.level >= 0 && message.level < building.getNumberOfLevels())
+                if (message.level >= 0 && message.level < building.getNumberOfLevels())
                 {
                     building.setCurrentLevel(message.level);
                 }

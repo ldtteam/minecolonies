@@ -13,16 +13,15 @@ import static org.mockito.Mockito.*;
 
 public class ChatSpamFilterTest
 {
-    @Mock
-    private EntityCitizen citizen;
-
-    private ChatSpamFilter filter;
-
     private static final String MESSAGE_1 = "Whatever";
     private static final String MESSAGE_2 = "Whatever2";
+    @Mock
+    private EntityCitizen  citizen;
+    private ChatSpamFilter filter;
 
     @Before
-    public void setup() {
+    public void setup()
+    {
         MockitoAnnotations.initMocks(this);
         filter = new ChatSpamFilter(citizen);
         when(citizen.getOffsetTicks()).thenReturn(0);

@@ -10,10 +10,10 @@ import org.lwjgl.opengl.GL11;
  */
 public final class Render
 {
-    private static final int ALPHA_SHIFT = 24;
-    private static final int RED_SHIFT = 16;
-    private static final int GREEN_SHIFT = 8;
-    private static final int COLOR_MASK = 255;
+    private static final int    ALPHA_SHIFT   = 24;
+    private static final int    RED_SHIFT     = 16;
+    private static final int    GREEN_SHIFT   = 8;
+    private static final int    COLOR_MASK    = 255;
     private static final double COLOR_DIVISOR = 255.0;
 
     private Render()

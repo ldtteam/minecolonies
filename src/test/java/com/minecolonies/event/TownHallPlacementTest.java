@@ -24,22 +24,17 @@ import static org.powermock.api.mockito.PowerMockito.*;
 @RunWith(PowerMockRunner.class)
 public class TownHallPlacementTest
 {
+    private static final BlockPos PLACE_POS = new BlockPos(0, 0, 0);
     @Mock
     private ColonyManager colonyManager;
-
     @Mock
-    private Colony colony;
-
+    private Colony        colony;
     @Mock
-    private World world;
-
+    private World         world;
     @Mock
-    private EntityPlayer player;
-
+    private EntityPlayer  player;
     @Mock
-    private Permissions permissions;
-
-    private static final BlockPos PLACE_POS = new BlockPos(0, 0, 0);
+    private Permissions   permissions;
 
     @Before
     public void setup() throws Exception

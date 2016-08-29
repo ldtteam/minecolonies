@@ -9,9 +9,10 @@ class QuantityNotFound extends MaterialException
 {
     /**
      * Create a new Exception fo this type.
+     *
      * @param location the location where this occured.
-     * @param id the material id
-     * @param count the number of items currently there
+     * @param id       the material id
+     * @param count    the number of items currently there
      * @param quantity the quantity needed/requested
      */
     public QuantityNotFound(String location, int id, int count, int quantity)

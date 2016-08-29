@@ -17,7 +17,7 @@ public class ScrollingView extends View
 
     //  Runtime
     protected ScrollingContainer container;
-    protected Scrollbar scrollbar;
+    protected Scrollbar          scrollbar;
 
     /**
      * Required defualt constructor.
@@ -25,17 +25,6 @@ public class ScrollingView extends View
     public ScrollingView()
     {
         super();
-        setup();
-    }
-
-    /**
-     * Load from xml.
-     *
-     * @param params xml parameters.
-     */
-    public ScrollingView(PaneParams params)
-    {
-        super(params);
         setup();
     }
 
@@ -55,6 +44,17 @@ public class ScrollingView extends View
     protected ScrollingContainer createScrollingContainer()
     {
         return new ScrollingContainer(this);
+    }
+
+    /**
+     * Load from xml.
+     *
+     * @param params xml parameters.
+     */
+    public ScrollingView(PaneParams params)
+    {
+        super(params);
+        setup();
     }
 
     public ScrollingContainer getContainer()

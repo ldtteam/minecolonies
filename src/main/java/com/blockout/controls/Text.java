@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  */
 public class Text extends AbstractTextElement
 {
-    protected String textContent;
+    protected String       textContent;
     protected List<String> formattedText;
 
     protected int textHeight;

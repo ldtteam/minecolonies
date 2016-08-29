@@ -88,7 +88,6 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
         findPaneOfTypeByID(BUTTON_GUARD_ARMOR, ButtonVanilla.class).setLabel(getYesOrNo(building.guardArmor));
         findPaneOfTypeByID(BUTTON_GUARD_WEAPON, ButtonVanilla.class).setLabel(getYesOrNo(building.guardWeapon));
         findPaneOfTypeByID(BUTTON_CITIZEN_CHESTS, ButtonVanilla.class).setLabel(getYesOrNo(building.citizenVisit));
-
     }
 
     /**

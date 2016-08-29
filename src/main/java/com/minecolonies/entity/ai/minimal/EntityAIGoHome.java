@@ -25,8 +25,14 @@ public class EntityAIGoHome extends EntityAIBase
     public boolean shouldExecute()
     {
         return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP &&
-               !citizen.isAtHome() &&
-               citizen.getNavigator().noPath();
+                !citizen.isAtHome() &&
+                citizen.getNavigator().noPath();
+    }
+
+    @Override
+    public boolean continueExecuting()
+    {
+        return !citizen.getNavigator().noPath();
     }
 
     @Override
@@ -40,11 +46,5 @@ public class EntityAIGoHome extends EntityAIBase
         }
 
         citizen.getNavigator().tryMoveToXYZ((double) pos.getX() + 0.5D, (double) pos.getY(), (double) pos.getZ() + 0.5D, 1.0D);
-    }
-
-    @Override
-    public boolean continueExecuting()
-    {
-        return !citizen.getNavigator().noPath();
     }
 }

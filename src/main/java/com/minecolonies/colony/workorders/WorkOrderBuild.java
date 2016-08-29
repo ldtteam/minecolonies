@@ -6,7 +6,6 @@ import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.ServerUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
@@ -26,11 +25,10 @@ public class WorkOrderBuild extends AbstractWorkOrder
     protected BlockPos buildingLocation;
     protected int      buildingRotation;
     protected String   schematicName;
+    protected boolean  cleared;
     private   int      upgradeLevel;
     private   String   upgradeName;
-    protected boolean  cleared;
     private boolean hasSentMessageForThisWorkOrder = false;
-
 
     /**
      * Unused constructor for reflection.
@@ -57,17 +55,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.cleared = level > 1;
     }
 
-    @Override
-    protected WorkOrderType getType()
-    {
-        return WorkOrderType.BUILD;
-    }
-
-    @Override
-    protected String getValue()
-    {
-        return upgradeName;
-    }
     /**
      * Returns the name after upgrade.
      *
@@ -76,36 +63,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private String getUpgradeName()
     {
         return upgradeName;
-    }
-
-    /**
-     * Returns the level up level of the building.
-     *
-     * @return Level after upgrade.
-     */
-    public int getUpgradeLevel()
-    {
-        return upgradeLevel;
-    }
-
-    /**
-     * Save the Work Order to an NBTTagCompound.
-     *
-     * @param compound NBT tag compound.
-     */
-    @Override
-    public void writeToNBT(NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
-        if(!(this instanceof WorkOrderBuildDecoration))
-        {
-            compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
-            compound.setString(TAG_UPGRADE_NAME, upgradeName);
-        }
-        compound.setBoolean(TAG_IS_CLEARED, cleared);
-        compound.setString(TAG_SCHEMATIC_NAME, schematicName);
-        compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
     }
 
     /**
@@ -118,7 +75,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     {
         super.readFromNBT(compound);
         buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
-        if(!(this instanceof WorkOrderBuildDecoration))
+        if (!(this instanceof WorkOrderBuildDecoration))
         {
             upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
             upgradeName = compound.getString(TAG_UPGRADE_NAME);
@@ -126,6 +83,26 @@ public class WorkOrderBuild extends AbstractWorkOrder
         cleared = compound.getBoolean(TAG_IS_CLEARED);
         schematicName = compound.getString(TAG_SCHEMATIC_NAME);
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
+    }
+
+    /**
+     * Save the Work Order to an NBTTagCompound.
+     *
+     * @param compound NBT tag compound.
+     */
+    @Override
+    public void writeToNBT(NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
+        if (!(this instanceof WorkOrderBuildDecoration))
+        {
+            compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
+            compound.setString(TAG_UPGRADE_NAME, upgradeName);
+        }
+        compound.setBoolean(TAG_IS_CLEARED, cleared);
+        compound.setString(TAG_SCHEMATIC_NAME, schematicName);
+        compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
     }
 
     /**
@@ -193,6 +170,31 @@ public class WorkOrderBuild extends AbstractWorkOrder
         sendBuilderMessage(colony, hasBuilder, sendMessage);
     }
 
+    @Override
+    protected WorkOrderType getType()
+    {
+        return WorkOrderType.BUILD;
+    }
+
+    @Override
+    protected String getValue()
+    {
+        return upgradeName;
+    }
+
+    /**
+     * Checks if a builder may accept this workOrder.
+     *
+     * @param builderLevel the builder level.
+     * @return true if he is able to.
+     */
+    private boolean canBuildHut(int builderLevel, CitizenData citizen, Colony colony)
+    {
+        return builderLevel >= upgradeLevel || builderLevel == 2
+                || citizen.getWorkBuilding().getID().equals(buildingLocation)
+                || isLocationTownhall(colony, buildingLocation);
+    }
+
     private void sendBuilderMessage(Colony colony, boolean hasBuilder, boolean sendMessage)
     {
         if (hasSentMessageForThisWorkOrder)
@@ -215,21 +217,19 @@ public class WorkOrderBuild extends AbstractWorkOrder
         }
     }
 
-    /**
-     * Checks if a builder may accept this workOrder.
-     * @param builderLevel the builder level.
-     * @return true if he is able to.
-     */
-    private boolean canBuildHut(int builderLevel, CitizenData citizen, Colony colony)
-    {
-        return builderLevel >= upgradeLevel || builderLevel == 2
-                || citizen.getWorkBuilding().getID().equals(buildingLocation)
-                || isLocationTownhall(colony, buildingLocation);
-    }
-
     private boolean isLocationTownhall(Colony colony, BlockPos buildingLocation)
     {
         return colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation);
+    }
+
+    /**
+     * Returns the level up level of the building.
+     *
+     * @return Level after upgrade.
+     */
+    public int getUpgradeLevel()
+    {
+        return upgradeLevel;
     }
 
     /**
@@ -263,16 +263,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
     }
 
     /**
-     * Set whether or not the building has been cleared.
-     *
-     * @param cleared true if the building has been cleared.
-     */
-    public void setCleared(boolean cleared)
-    {
-        this.cleared = cleared;
-    }
-
-    /**
      * Gets whether or not the building has been cleared.
      *
      * @return true if the building has been cleared.
@@ -280,5 +270,15 @@ public class WorkOrderBuild extends AbstractWorkOrder
     public boolean isCleared()
     {
         return cleared;
+    }
+
+    /**
+     * Set whether or not the building has been cleared.
+     *
+     * @param cleared true if the building has been cleared.
+     */
+    public void setCleared(boolean cleared)
+    {
+        this.cleared = cleared;
     }
 }

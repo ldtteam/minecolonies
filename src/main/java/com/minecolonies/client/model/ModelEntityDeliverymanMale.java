@@ -43,7 +43,6 @@ public class ModelEntityDeliverymanMale extends ModelBiped
         backpack.addBox(-4F, 0F, 0F, 8, 10, 6, scale);
         backpack.setRotationPoint(0F, 1F, -2F);
         backpack.rotateAngleX = 0.34907F;
-
     }
 
     @Override
@@ -73,7 +72,7 @@ public class ModelEntityDeliverymanMale extends ModelBiped
         bipedLeftLeg.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + 3.141593F) * 1.4F * limbSwingAmount;
         bipedRightLeg.rotateAngleY = 0.0F;
         bipedLeftLeg.rotateAngleY = 0.0F;
-        if(isRiding)
+        if (isRiding)
         {
             bipedRightArm.rotateAngleX += -0.6283185F;
             bipedLeftArm.rotateAngleX += -0.6283185F;
@@ -84,7 +83,7 @@ public class ModelEntityDeliverymanMale extends ModelBiped
         }
         bipedRightArm.rotateAngleY = 0.0F;
         bipedLeftArm.rotateAngleY = 0.0F;
-        if(swingProgress > -9990F)
+        if (swingProgress > -9990F)
         {
             float f6 = swingProgress;
             bipedBody.rotateAngleY = MathHelper.sin(MathHelper.sqrt_float(f6) * 3.141593F * 2.0F) * 0.2F;
@@ -106,7 +105,7 @@ public class ModelEntityDeliverymanMale extends ModelBiped
             bipedRightArm.rotateAngleY += bipedBody.rotateAngleY * 2.0F;
             bipedRightArm.rotateAngleZ = MathHelper.sin(swingProgress * 3.141593F) * -0.4F;
         }
-        if(isSneak)
+        if (isSneak)
         {
             bipedBody.rotateAngleX = 0.5F;
             bipedRightLeg.rotateAngleX -= 0.0F;
@@ -140,7 +139,6 @@ public class ModelEntityDeliverymanMale extends ModelBiped
             bipedLeftLeg.rotationPointZ = 0.0F;
             bipedRightLeg.rotationPointY = 12F;
             bipedLeftLeg.rotationPointY = 12F;
-
         }
         bipedRightArm.rotateAngleZ += MathHelper.cos(ageInTicks * 0.09F) * 0.01F + 0.05F;
         bipedLeftArm.rotateAngleZ -= MathHelper.cos(ageInTicks * 0.09F) * 0.01F + 0.05F;

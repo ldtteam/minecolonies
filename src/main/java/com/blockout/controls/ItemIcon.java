@@ -15,7 +15,6 @@ public class ItemIcon extends Pane
         super();
     }
 
-
     public ItemIcon(PaneParams params)
     {
         super(params);

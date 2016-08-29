@@ -143,5 +143,4 @@ public final class ModAchievements
     {
         AchievementPage.registerAchievementPage(achievementPageMineColonies);
     }
-
 }

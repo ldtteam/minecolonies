@@ -23,7 +23,7 @@ public abstract class AbstractBuildingHut extends AbstractBuilding
     /**
      * Returns the max amount of inhabitants.
      *
-     * @return  Max inhabitants.
+     * @return Max inhabitants.
      */
     public int getMaxInhabitants()
     {

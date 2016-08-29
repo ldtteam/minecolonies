@@ -61,7 +61,7 @@ public class ChatSpamFilter
     /**
      * Request an Item without spamming the chat.
      *
-     * @param chat  the Item Name
+     * @param chat the Item Name
      */
     public void requestWithoutSpam(@NotNull String chat)
     {
@@ -73,8 +73,8 @@ public class ChatSpamFilter
      * It will be shown in certain delays.
      * Helpful for requesting items.
      *
-     * @param key   the translation key
-     * @param chat  the chat message
+     * @param key  the translation key
+     * @param chat the chat message
      */
     public void talkWithoutSpam(String key, String... chat)
     {
@@ -100,7 +100,7 @@ public class ChatSpamFilter
 
         worker.sendLocalizedChat(key, (Object[]) chat);
         speechDelayString = key + Arrays.toString(chat);
-        
+
         // (BASE_TIMEOUT << speechRepeat) is the same as BASE_TIMEOUT * pow(2, speachRepeat), but uses integers
         speechDelay = Math.min(BASE_TIMEOUT << speechRepeat, MAX_TIMEOUT) + worker.getOffsetTicks();
     }

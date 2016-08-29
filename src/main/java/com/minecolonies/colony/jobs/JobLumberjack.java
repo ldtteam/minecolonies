@@ -29,6 +29,22 @@ public class JobLumberjack extends AbstractJob
     }
 
     /**
+     * Restore the Job from an NBTTagCompound
+     *
+     * @param compound NBTTagCompound containing saved Job data
+     */
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+
+        if (compound.hasKey(TAG_TREE))
+        {
+            tree = Tree.readFromNBT(compound.getCompoundTag(TAG_TREE));
+        }
+    }
+
+    /**
      * Return a Localization textContent for the Job
      *
      * @return localization textContent String
@@ -62,25 +78,9 @@ public class JobLumberjack extends AbstractJob
 
         NBTTagCompound treeTag = new NBTTagCompound();
 
-        if(tree != null)
+        if (tree != null)
         {
             tree.writeToNBT(treeTag);
-        }
-    }
-
-    /**
-     * Restore the Job from an NBTTagCompound
-     *
-     * @param compound NBTTagCompound containing saved Job data
-     */
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-
-        if(compound.hasKey(TAG_TREE))
-        {
-            tree = Tree.readFromNBT(compound.getCompoundTag(TAG_TREE));
         }
     }
 
@@ -94,5 +94,4 @@ public class JobLumberjack extends AbstractJob
     {
         return new EntityAIWorkLumberjack(this);
     }
-
 }

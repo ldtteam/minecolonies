@@ -16,15 +16,27 @@ import net.minecraft.util.BlockPos;
 
 public class TileEntityColonyBuilding extends TileEntityChest
 {
-    private              int        colonyId    = 0;
-    private              Colony     colony;
+    private final static String TAG_COLONY = "colony";
+    private              int    colonyId   = 0;
+    private Colony           colony;
     private AbstractBuilding building;
 
-    private final static String     TAG_COLONY  = "colony";
-
-    public TileEntityColonyBuilding(){}
+    public TileEntityColonyBuilding() {}
 
     @Override
+    public S35PacketUpdateTileEntity getDescriptionPacket()
+    {
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger(TAG_COLONY, colonyId);
+        return new S35PacketUpdateTileEntity(this.getPosition(), 0, compound);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
+    {
+        NBTTagCompound compound = packet.getNbtCompound();
+        colonyId = compound.getInteger(TAG_COLONY);
+    }    @Override
     public void update()
     {
         super.update();
@@ -33,12 +45,33 @@ public class TileEntityColonyBuilding extends TileEntityChest
         {
             if (colonyId == 0)
             {
-                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId", worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
+                        worldObj.getWorldInfo().getWorldName(),
+                        pos.getX(),
+                        pos.getY(),
+                        pos.getZ()));
             }
         }
     }
 
+    @Override
+    public void onChunkUnload()
+    {
+        if (building != null)
+        {
+            building.setTileEntity(null);
+        }
+    }
+
     /**
+     * Returns the position of the tile entity
+     *
+     * @return Block Coordinates of the tile entity
+     */
+    public BlockPos getPosition()
+    {
+        return pos;
+    }    /**
      * Synchronises colony references from the tile entity
      */
     private void updateColonyReferences()
@@ -78,16 +111,41 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
     }
 
-    @Override
-    public void onChunkUnload()
+    /**
+     * Returns the colony ID
+     *
+     * @return ID of the colony
+     */
+    public int getColonyId()
     {
-        if (building != null)
-        {
-            building.setTileEntity(null);
-        }
+        return colonyId;
     }
 
-    @Override
+    /**
+     * Returns the colony of the tile entity
+     *
+     * @return Colony of the tile entity
+     */
+    public Colony getColony()
+    {
+        if (colony == null)
+        {
+            updateColonyReferences();
+        }
+        return colony;
+    }
+
+    /**
+     * Sets the colony of the tile entity
+     *
+     * @param c Colony to set in references
+     */
+    public void setColony(Colony c)
+    {
+        colony = c;
+        colonyId = c.getID();
+        markDirty();
+    }    @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
@@ -100,7 +158,29 @@ public class TileEntityColonyBuilding extends TileEntityChest
         updateColonyReferences();
     }
 
-    @Override
+    /**
+     * Returns the building associated with the tile entity
+     *
+     * @return {@link AbstractBuilding} associated with the tile entity
+     */
+    public AbstractBuilding getBuilding()
+    {
+        if (building == null)
+        {
+            updateColonyReferences();
+        }
+        return building;
+    }
+
+    /**
+     * Sets the building associated with the tile entity
+     *
+     * @param b {@link AbstractBuilding} to associate with the tile entity
+     */
+    public void setBuilding(AbstractBuilding b)
+    {
+        building = b;
+    }    @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
@@ -113,113 +193,41 @@ public class TileEntityColonyBuilding extends TileEntityChest
         compound.setInteger(TAG_COLONY, colonyId);
     }
 
+    /**
+     * Returns the view of the building associated with the tile entity
+     *
+     * @return {@link AbstractBuilding.View} the tile entity is associated with
+     */
+    public AbstractBuilding.View getBuildingView()
+    {
+        ColonyView c = ColonyManager.getColonyView(colonyId);
+        return c != null ? c.getBuilding(getPosition()) : null;
+    }
+
     @Override
     public boolean isUseableByPlayer(EntityPlayer player)
     {
         return super.isUseableByPlayer(player) && this.hasAccessPermission(player);
     }
 
-    @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet)
-    {
-        NBTTagCompound compound = packet.getNbtCompound();
-        colonyId = compound.getInteger(TAG_COLONY);
-    }
 
-    @Override
-    public S35PacketUpdateTileEntity getDescriptionPacket()
-    {
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger(TAG_COLONY, colonyId);
-        return new S35PacketUpdateTileEntity(this.getPosition(), 0, compound);
-    }
 
-    /**
-     * Returns the colony ID
-     *
-     * @return      ID of the colony
-     */
-    public int getColonyId()
-    {
-        return colonyId;
-    }
 
-    /**
-     * Returns the colony of the tile entity
-     *
-     * @return    Colony of the tile entity
-     */
-    public Colony getColony()
-    {
-        if (colony == null) updateColonyReferences();
-        return colony;
-    }
 
-    /**
-     * Sets the colony of the tile entity
-     *
-     * @param c     Colony to set in references
-     */
-    public void setColony(Colony c)
-    {
-        colony = c;
-        colonyId = c.getID();
-        markDirty();
-    }
 
-    /**
-     * Returns the building associated with the tile entity
-     *
-     * @return      {@link AbstractBuilding} associated with the tile entity
-     */
-    public AbstractBuilding getBuilding()
-    {
-        if (building == null) updateColonyReferences();
-        return building;
-    }
-
-    /**
-     *  Sets the building associated with the tile entity
-     *
-     * @param b     {@link AbstractBuilding} to associate with the tile entity
-     */
-    public void setBuilding(AbstractBuilding b)
-    {
-        building = b;
-    }
-
-    /**
-     * Returns the view of the building associated with the tile entity
-     *
-     * @return      {@link AbstractBuilding.View} the tile entity is associated with
-     */
-    public AbstractBuilding.View getBuildingView()
-    {
-        ColonyView c = ColonyManager.getColonyView(colonyId);
-        return c!= null ? c.getBuilding(getPosition()) : null;
-    }
 
     /**
      * Checks if the player has permission to access the hut
      *
-     * @param player    Player to check permission of
-     * @return          True when player has access, or building doesn't exist, otherwise false.
+     * @param player Player to check permission of
+     * @return True when player has access, or building doesn't exist, otherwise false.
      */
     public boolean hasAccessPermission(EntityPlayer player)//TODO This is called every tick the GUI is open. Is that bad?
     {
         return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
-
     }
 
-    /**
-     * Returns the position of the tile entity
-     *
-     * @return      Block Coordinates of the tile entity
-     */
-    public BlockPos getPosition()
-    {
-        return pos;
-    }
+
 
     //-----------------------------Material Handling--------------------------------
 
@@ -230,7 +238,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public ItemStack getStackInSlot(int index)
     {
         ItemStack stack = super.getStackInSlot(index);
-        if(stack == null)
+        if (stack == null)
         {
             return null;
         }
@@ -270,11 +278,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
     private void addStackToMaterialStore(ItemStack stack)
     {
-        if(stack == null){
+        if (stack == null)
+        {
             return;
         }
 
-        if(MaterialSystem.isEnabled)
+        if (MaterialSystem.isEnabled)
         {
             building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
         }
@@ -282,11 +291,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
     private void removeStackFromMaterialStore(ItemStack stack)
     {
-        if(stack == null){
+        if (stack == null)
+        {
             return;
         }
 
-        if(MaterialSystem.isEnabled)
+        if (MaterialSystem.isEnabled)
         {
             building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
         }

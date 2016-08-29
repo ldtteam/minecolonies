@@ -22,27 +22,20 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage, IMessageHandl
     public ColonyViewRemoveWorkOrderMessage()
     {
         /**
-        * Intentionally left empty.
-        **/
+         * Intentionally left empty.
+         **/
     }
 
     /**
      * Creates an object for the remove message for citizen.
      *
-     * @param colony  colony the workOrder is in.
+     * @param colony      colony the workOrder is in.
      * @param workOrderId workOrder ID.
      */
     public ColonyViewRemoveWorkOrderMessage(Colony colony, int workOrderId)
     {
         this.colonyId = colony.getID();
         this.workOrderId = workOrderId;
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        buf.writeInt(workOrderId);
     }
 
     @Override
@@ -53,9 +46,15 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage, IMessageHandl
     }
 
     @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        buf.writeInt(workOrderId);
+    }
+
+    @Override
     public IMessage onMessage(ColonyViewRemoveWorkOrderMessage message, MessageContext ctx)
     {
         return ColonyManager.handleColonyViewRemoveWorkOrderMessage(message.colonyId, message.workOrderId);
     }
-
 }

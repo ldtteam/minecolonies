@@ -20,7 +20,7 @@ import java.util.*;
  */
 public abstract class AbstractJob
 {
-    private static final String TAG_TYPE = "type";
+    private static final String TAG_TYPE         = "type";
     private static final String TAG_ITEMS_NEEDED = "itemsNeeded";
 
     private static final String MAPPING_PLACEHOLDER = "Placeholder";
@@ -38,7 +38,6 @@ public abstract class AbstractJob
     //  Job and View Class Mapping
     private static Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
     private static Map<Class<? extends AbstractJob>, String> classToNameMap = new HashMap<>();
-
     static
     {
         addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
@@ -72,19 +71,19 @@ public abstract class AbstractJob
      */
     private static void addMapping(String name, Class<? extends AbstractJob> jobClass)
     {
-        if(nameToClassMap.containsKey(name))
+        if (nameToClassMap.containsKey(name))
         {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding Job class mapping");
         }
         try
         {
-            if(jobClass.getDeclaredConstructor(CitizenData.class) != null)
+            if (jobClass.getDeclaredConstructor(CitizenData.class) != null)
             {
                 nameToClassMap.put(name, jobClass);
                 classToNameMap.put(jobClass, name);
             }
         }
-        catch(NoSuchMethodException exception)
+        catch (NoSuchMethodException exception)
         {
             throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Job class mapping", exception);
         }
@@ -106,24 +105,24 @@ public abstract class AbstractJob
         {
             oclass = nameToClassMap.get(compound.getString(TAG_TYPE));
 
-            if(oclass != null)
+            if (oclass != null)
             {
                 Constructor<?> constructor = oclass.getDeclaredConstructor(CitizenData.class);
                 job = (AbstractJob) constructor.newInstance(citizen);
             }
         }
-        catch(NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e)
+        catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e)
         {
             Log.logger.trace(e);
         }
 
-        if(job != null)
+        if (job != null)
         {
             try
             {
                 job.readFromNBT(compound);
             }
-            catch(RuntimeException ex)
+            catch (RuntimeException ex)
             {
                 Log.logger.error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                         compound.getString(TAG_TYPE), oclass.getName()), ex);
@@ -146,7 +145,7 @@ public abstract class AbstractJob
     public void readFromNBT(NBTTagCompound compound)
     {
         NBTTagList itemsNeededTag = compound.getTagList(TAG_ITEMS_NEEDED, Constants.NBT.TAG_COMPOUND);
-        for(int i = 0; i < itemsNeededTag.tagCount(); i++)
+        for (int i = 0; i < itemsNeededTag.tagCount(); i++)
         {
             NBTTagCompound itemCompound = itemsNeededTag.getCompoundTagAt(i);
             itemsNeeded.add(ItemStack.loadItemStackFromNBT(itemCompound));
@@ -199,17 +198,17 @@ public abstract class AbstractJob
     {
         String s = classToNameMap.get(this.getClass());
 
-        if(s == null)
+        if (s == null)
         {
             throw new IllegalStateException(this.getClass() + " is missing a mapping! This is a bug!");
         }
 
         compound.setString(TAG_TYPE, s);
 
-        if(!itemsNeeded.isEmpty())
+        if (!itemsNeeded.isEmpty())
         {
             NBTTagList itemsNeededTag = new NBTTagList();
-            for(ItemStack itemstack : itemsNeeded)
+            for (ItemStack itemstack : itemsNeeded)
             {
                 NBTTagCompound itemCompound = new NBTTagCompound();
                 itemstack.writeToNBT(itemCompound);
@@ -250,13 +249,14 @@ public abstract class AbstractJob
     /**
      * Add (or increment) an ItemStack to the items needed by the Job
      * We're not comparing item damage values since i.e a damaged rod is the same as a normal rod for our purpose.
+     *
      * @param stack Item+count needed to do the job
      */
     public void addItemNeeded(ItemStack stack)
     {
-        for(ItemStack neededItem : itemsNeeded)
+        for (ItemStack neededItem : itemsNeeded)
         {
-            if((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
+            if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
             {
                 neededItem.stackSize += stack.stackSize;
                 return;
@@ -269,21 +269,22 @@ public abstract class AbstractJob
     /**
      * Remove a items from those required to do the Job.
      * We're not comparing item damage values since i.e a damaged rod is the same as a normal rod for our purpose.
+     *
      * @param stack ItemStack (item+count) to remove from the list of needed items.
      * @return modified ItemStack with remaining items (or null).
      */
     public ItemStack removeItemNeeded(ItemStack stack)
     {
         ItemStack stackCopy = stack.copy();
-        for(ItemStack neededItem : itemsNeeded)
+        for (ItemStack neededItem : itemsNeeded)
         {
-            if((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
+            if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
             {
                 int itemsToRemove = Math.min(neededItem.stackSize, stackCopy.stackSize);
                 neededItem.stackSize -= itemsToRemove;
                 stackCopy.stackSize -= itemsToRemove;
 
-                if(neededItem.stackSize == 0)
+                if (neededItem.stackSize == 0)
                 {
                     itemsNeeded.remove(neededItem);
                 }
@@ -303,7 +304,7 @@ public abstract class AbstractJob
     public void addTasks(EntityAITasks tasks)
     {
         AbstractAISkeleton aiTask = generateAI();
-        if(aiTask != null)
+        if (aiTask != null)
         {
             tasks.addTask(TASK_PRIORITY, aiTask);
         }

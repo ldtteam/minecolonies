@@ -2,7 +2,7 @@
 .gradle/
 classes/
 build/
-eclipse/
+eclipse-outdated/
 logs/
 mods/
 out/

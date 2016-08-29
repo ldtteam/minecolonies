@@ -63,6 +63,26 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
+
+        if (newLevel == 1)
+        {
+            owner.triggerAchievement(ModAchievements.achievementBuildingLumberjack);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            owner.triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
+        }
+    }
+
+    /**
      * Getter of the job description.
      *
      * @return the description of the lumberjacks job.
@@ -83,26 +103,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public AbstractJob createJob(CitizenData citizen)
     {
         return new JobLumberjack(citizen);
-    }
-
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
-
-        if (newLevel == 1)
-        {
-            owner.triggerAchievement(ModAchievements.achievementBuildingLumberjack);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
-        }
     }
 
     /**
