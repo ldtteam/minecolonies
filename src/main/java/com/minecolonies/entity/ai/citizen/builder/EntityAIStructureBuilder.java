@@ -770,6 +770,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         job.getSchematic().getEntities().forEach(this::spawnEntity);
 
         String schematicName = job.getSchematic().getName();
+
         LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
                 "entity.builder.messageBuildComplete",
                 schematicName);
@@ -814,6 +815,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      */
     public void cancelTask()
     {
+        super.resetTask();
         job.setWorkOrder(null);
         workFrom = null;
         job.setSchematic(null);
