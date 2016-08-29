@@ -48,8 +48,8 @@ public class Colony implements IColony
     private boolean             manualHiring     = false;
 
     //  General Attributes
-    private String name = "ERROR(Wasn't placed by player)";
     private final int      dimensionId;
+    private String name = "ERROR(Wasn't placed by player)";
     private       BlockPos center;
 
     //  Administration/permissions
@@ -57,9 +57,9 @@ public class Colony implements IColony
     //private int autoHostile = 0;//Off
 
     //  Buildings
-    private BuildingTownHall                                townHall;
-    private                 Map<BlockPos, AbstractBuilding>         buildings                       = new HashMap<>();
-    final private                 Map<BlockPos, Field>            fields                          = new HashMap<>();
+    private final Map<BlockPos, Field>            fields    = new HashMap<>();
+    private BuildingTownHall townHall;
+    private       Map<BlockPos, AbstractBuilding> buildings = new HashMap<>();
 
     //  Citizenry
     private Map<Integer, CitizenData> citizens     = new HashMap<>();
