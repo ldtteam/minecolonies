@@ -25,7 +25,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     /**
      * Type of inventory.
      */
-    public enum InventoryType
+    private enum InventoryType
     {
         INVENTORY_CITIZEN,
         INVENTORY_CHEST,
@@ -154,7 +154,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
         switch(message.inventoryType)
         {
             case INVENTORY_CITIZEN:
-                InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
+                final InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
                 if(!StringUtils.isNullOrEmpty(message.name))
                 {
                     citizenInventory.setCustomName(message.name);
@@ -162,7 +162,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 player.displayGUIChest(citizenInventory);
                 break;
             case INVENTORY_CHEST:
-                TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
+                final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
                 if(!StringUtils.isNullOrEmpty(message.name))
                 {
                     chest.setCustomName(message.name);
@@ -170,7 +170,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 player.displayGUIChest(chest);
                 break;
             case INVENTORY_FIELD:
-                InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
+                final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
                 if(!StringUtils.isNullOrEmpty(message.name))
                 {
                     inventoryField.setCustomName(message.name);
