@@ -910,11 +910,11 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      */
     protected boolean isWalkableSurface(Block block, BlockPos pos)
     {
-        return block.getMaterial().isSolid() &&
-                !(block instanceof BlockFence) &&
-                !(block instanceof BlockFenceGate) &&
-                !(block instanceof BlockWall) &&
-                !(block instanceof BlockHutField);
+        return block.getMaterial().isSolid()
+                && !(block instanceof BlockFence)
+                && !(block instanceof BlockFenceGate)
+                && !(block instanceof BlockWall)
+                && !(block instanceof BlockHutField);
     }
 
     /**
