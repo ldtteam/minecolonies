@@ -59,7 +59,9 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     /**
      * The public constructor for the renderer.
      */
-    public TileEntityScarecrowRenderer() { 
+    public TileEntityScarecrowRenderer()
+    {
+        super();
         this.model = new ModelScarecrowBoth();
     }
     
@@ -71,7 +73,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         //Set viewport to tile entity position to render it
         GlStateManager.translate(posX+BLOCK_MIDDLE, posY+YOFFSET, posZ+BLOCK_MIDDLE);
 
-        this.bindTexture(this.getResourceLocation(te));
+        this.bindTexture(getResourceLocation(te));
 
         GlStateManager.rotate(ROTATION, (float)XROTATIONOFFSET, (float)YROTATIONOFFSET, (float)ZROTATIONOFFSET);
         this.model.render((float) SIZERATIO);
@@ -86,7 +88,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
      * @param tileEntity the tileEntity of the scarecrow.
      * @return the location.
      */
-    private ResourceLocation getResourceLocation(ScarecrowTileEntity tileEntity)
+    private static ResourceLocation getResourceLocation(ScarecrowTileEntity tileEntity)
     {
         String loc;
         

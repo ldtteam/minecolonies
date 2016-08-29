@@ -291,7 +291,7 @@ public class Field extends Container
      */
     public static Field createFromNBT(Colony colony, NBTTagCompound compound)
     {
-        Field field = new Field(colony);
+        final Field field = new Field(colony);
         field.readFromNBT(compound);
         return field;
     }
@@ -337,7 +337,8 @@ public class Field extends Container
      * Has the field been taken?
      * @return true if the field is not free to use, false after releasing it.
      */
-    public boolean isTaken() {
+    public boolean isTaken()
+    {
         return this.taken;
     }
 
@@ -401,11 +402,11 @@ public class Field extends Container
      */
     public Item getSeed()
     {
-        if(inventory.getStackInSlot(0) == null || !(inventory.getStackInSlot(0).getItem()  instanceof IPlantable))
+        if(inventory.getStackInSlot(0).getItem()  instanceof IPlantable)
         {
-            return null;
+            return inventory.getStackInSlot(0).getItem();
         }
-        return inventory.getStackInSlot(0).getItem();
+        return null;
     }
 
     /**
@@ -489,7 +490,7 @@ public class Field extends Container
         }
         else if(inventory.getStackInSlot(0) == null)
         {
-            int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
+            final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
             if(playerIn.inventory.getStackInSlot(playerIndex) != null)
             {
                 final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);

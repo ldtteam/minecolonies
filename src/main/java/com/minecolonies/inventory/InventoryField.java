@@ -79,6 +79,7 @@ public class InventoryField extends InventoryCitizen
      * @param index the slot.
      * @return the itemStack in it.
      */
+    @Override
     public ItemStack getStackInSlot(int index)
     {
         return this.stackResult[0];
@@ -125,13 +126,13 @@ public class InventoryField extends InventoryCitizen
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
-        NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
         this.stackResult = new ItemStack[this.getSizeInventory()];
 
         for (int i = 0; i < nbttaglist.tagCount(); ++i)
         {
-            NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
-            int            j              = nbttagcompound.getByte(TAG_SLOT) & Byte.MAX_VALUE;
+            final NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+            final int            j              = nbttagcompound.getByte(TAG_SLOT) & Byte.MAX_VALUE;
 
             if (j != NO_SLOT && j < this.stackResult.length)
             {
@@ -152,13 +153,13 @@ public class InventoryField extends InventoryCitizen
     @Override
     public void writeToNBT(NBTTagCompound compound)
     {
-        NBTTagList nbttaglist = new NBTTagList();
+        final NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.stackResult.length; ++i)
         {
             if (this.stackResult[i] != null)
             {
-                NBTTagCompound nbttagcompound = new NBTTagCompound();
+                final NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte(TAG_SLOT, (byte) i);
                 this.stackResult[i].writeToNBT(nbttagcompound);
                 nbttaglist.appendTag(nbttagcompound);

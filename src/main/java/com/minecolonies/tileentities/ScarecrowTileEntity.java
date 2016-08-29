@@ -2,6 +2,7 @@ package com.minecolonies.tileentities;
 
 import java.util.Random;
 import com.minecolonies.inventory.InventoryField;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
@@ -16,12 +17,6 @@ public class ScarecrowTileEntity extends TileEntity
     private static final String TAG_TYPE = "type";
 
     /**
-     * The name of the inventory which shows up when opened.
-     */
-    private static final String INVENTORY_NAME = "Scarecrow";
-    //todo change to .lang term
-
-    /**
      * The inventory connected with the scarecrow.
      */
     public InventoryField inventoryField;
@@ -34,7 +29,7 @@ public class ScarecrowTileEntity extends TileEntity
     /**
      * The type of the scarecrow.
      */
-    private ScareCrowType TYPE;
+    private ScareCrowType type;
 
     /**
      * Enum describing the different textures the scarecrow has.
@@ -50,7 +45,8 @@ public class ScarecrowTileEntity extends TileEntity
      */
     public ScarecrowTileEntity()
     {
-        inventoryField = new InventoryField(INVENTORY_NAME, true);
+        super();
+        inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"), true);
     }
 
     @Override
@@ -67,7 +63,7 @@ public class ScarecrowTileEntity extends TileEntity
     {
         super.readFromNBT(compound);
         
-        TYPE = ScareCrowType.values()[compound.getInteger(TAG_TYPE)];
+        type = ScareCrowType.values()[compound.getInteger(TAG_TYPE)];
         inventoryField.readFromNBT(compound);
     }
 
@@ -82,10 +78,10 @@ public class ScarecrowTileEntity extends TileEntity
      */
     public ScareCrowType getType()
     {
-        if(this.TYPE == null)
+        if(this.type == null)
         {
-            this.TYPE = ScareCrowType.values()[this.random.nextInt(1)];
+            this.type = ScareCrowType.values()[this.random.nextInt(1)];
         }
-        return this.TYPE;
+        return this.type;
     }
 }

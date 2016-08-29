@@ -59,7 +59,7 @@ public class Colony implements IColony
     //  Buildings
     private BuildingTownHall                                townHall;
     private                 Map<BlockPos, AbstractBuilding>         buildings                       = new HashMap<>();
-    private                 Map<BlockPos, Field>            fields                          = new HashMap<>();
+    final private                 Map<BlockPos, Field>            fields                          = new HashMap<>();
 
     //  Citizenry
     private Map<Integer, CitizenData> citizens     = new HashMap<>();
@@ -142,34 +142,33 @@ public class Colony implements IColony
         permissions.loadPermissions(compound);
 
         //  Citizens before Buildings, because Buildings track the Citizens
-        NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, NBT.TAG_COMPOUND);
+        final NBTTagList citizenTagList = compound.getTagList(TAG_CITIZENS, NBT.TAG_COMPOUND);
         for (int i = 0; i < citizenTagList.tagCount(); ++i)
         {
-            NBTTagCompound citizenCompound = citizenTagList.getCompoundTagAt(i);
-            CitizenData data = CitizenData.createFromNBT(citizenCompound, this);
+            final NBTTagCompound citizenCompound = citizenTagList.getCompoundTagAt(i);
+            final CitizenData data = CitizenData.createFromNBT(citizenCompound, this);
             citizens.put(data.getId(), data);
             topCitizenId = Math.max(topCitizenId, data.getId());
         }
 
         //  Buildings
-        NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
+        final NBTTagList buildingTagList = compound.getTagList(TAG_BUILDINGS, NBT.TAG_COMPOUND);
         for (int i = 0; i < buildingTagList.tagCount(); ++i)
         {
-            NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
-            AbstractBuilding b = AbstractBuilding.createFromNBT(this, buildingCompound);
+            final NBTTagCompound buildingCompound = buildingTagList.getCompoundTagAt(i);
+            final AbstractBuilding b = AbstractBuilding.createFromNBT(this, buildingCompound);
             if (b != null)
             {
                 addBuilding(b);
             }
         }
 
-        //todo update fields from tileEntity.
         // Fields
-        NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, NBT.TAG_COMPOUND);
+        final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.tagCount(); ++i)
         {
-            NBTTagCompound      fieldCompound = fieldTagList.getCompoundTagAt(i);
-            Field               f             = Field.createFromNBT(this, fieldCompound);
+            final NBTTagCompound      fieldCompound = fieldTagList.getCompoundTagAt(i);
+            final Field               f             = Field.createFromNBT(this, fieldCompound);
             if (f != null)
             {
                 addField(f);
@@ -202,37 +201,37 @@ public class Colony implements IColony
         permissions.savePermissions(compound);
 
         //  Buildings
-        NBTTagList buildingTagList = new NBTTagList();
-        for (AbstractBuilding b : buildings.values())
+        final NBTTagList buildingTagList = new NBTTagList();
+        for (final AbstractBuilding b : buildings.values())
         {
-            NBTTagCompound buildingCompound = new NBTTagCompound();
+            final NBTTagCompound buildingCompound = new NBTTagCompound();
             b.writeToNBT(buildingCompound);
             buildingTagList.appendTag(buildingCompound);
         }
         compound.setTag(TAG_BUILDINGS, buildingTagList);
 
         // Fields
-        NBTTagList fieldTagList = new NBTTagList();
-        for (Field f : fields.values())
+        final NBTTagList fieldTagList = new NBTTagList();
+        for (final Field f : fields.values())
         {
-            NBTTagCompound fieldCompound = new NBTTagCompound();
+            final NBTTagCompound fieldCompound = new NBTTagCompound();
             f.writeToNBT(fieldCompound);
             fieldTagList.appendTag(fieldCompound);
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
 
         //  Citizens
-        NBTTagList citizenTagList = new NBTTagList();
-        for (CitizenData citizen : citizens.values())
+        final NBTTagList citizenTagList = new NBTTagList();
+        for (final CitizenData citizen : citizens.values())
         {
-            NBTTagCompound citizenCompound = new NBTTagCompound();
+            final NBTTagCompound citizenCompound = new NBTTagCompound();
             citizen.writeToNBT(citizenCompound);
             citizenTagList.appendTag(citizenCompound);
         }
         compound.setTag(TAG_CITIZENS, citizenTagList);
 
         //  Workload
-        NBTTagCompound workManagerCompound = new NBTTagCompound();
+        final NBTTagCompound workManagerCompound = new NBTTagCompound();
         workManager.writeToNBT(workManagerCompound);
         compound.setTag(TAG_WORK, workManagerCompound);
     }
@@ -665,7 +664,7 @@ public class Colony implements IColony
 
         for (AbstractBuilding building : buildings.values())
         {
-            BlockPos loc = building.getLocation();
+            final BlockPos loc = building.getLocation();
             if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
@@ -682,8 +681,8 @@ public class Colony implements IColony
             removedBuildings.forEach(AbstractBuilding::destroy);
         }
 
-        List<BlockPos> removedFields = fields.keySet().stream().filter(loc -> world.getTileEntity(loc) == null).collect(Collectors.toList());
-        for(BlockPos field: removedFields)
+        final List<BlockPos> removedFields = fields.keySet().stream().filter(loc -> world.getTileEntity(loc) == null).collect(Collectors.toList());
+        for(final BlockPos field: removedFields)
         {
             fields.remove(field);
         }
@@ -803,10 +802,10 @@ public class Colony implements IColony
 
 
     /**
-     * Get field in Colony by ID
+     * Get field in Colony by ID.
      *
-     * @param fieldId    ID (coordinates) of the field to get
-     * @return              Fuilding belonging to the given ID
+     * @param fieldId ID (coordinates) of the field to get.
+     * @return field belonging to the given ID.
      */
     public Field getField(BlockPos fieldId)
     {
@@ -819,7 +818,7 @@ public class Colony implements IColony
      */
     public Field getFreeField()
     {
-        for(Field field: fields.values())
+        for(final Field field: fields.values())
         {
             if(!field.isTaken())
             {
@@ -831,7 +830,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Get building in Colony by ID
+     * Get building in Colony by ID.
      *
      * @param buildingId    ID (coordinates) of the building to get.
      * @return              AbstractBuilding belonging to the given ID.
@@ -898,13 +897,13 @@ public class Colony implements IColony
      */
     public void addNewField(InventoryField inventoryField, InventoryPlayer inventoryPlayer, BlockPos pos, World world)
     {
-        Field field = new Field(inventoryField, inventoryPlayer, world, pos);
+        final Field field = new Field(inventoryField, inventoryPlayer, world, pos);
         addField(field);
         ColonyManager.markDirty();
     }
 
     /**
-     * Creates a building from a tile entity and adds it to the colony
+     * Creates a building from a tile entity and adds it to the colony.
      *
      * @param tileEntity Tile entity to build a building from.
      * @return AbstractBuilding that was created and added.
@@ -913,7 +912,7 @@ public class Colony implements IColony
     {
         tileEntity.setColony(this);
 
-        AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
+        final AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
         if (building != null)
         {
             addBuilding(building);

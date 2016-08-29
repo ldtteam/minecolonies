@@ -18,16 +18,16 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
-        BlockPos            pos        = new BlockPos(x,y,z);
-        ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
+        final BlockPos            pos        = new BlockPos(x,y,z);
+        final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
         return new Field(tileEntity.inventoryField, player.inventory, world, pos);
     }
 
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
-        BlockPos            pos        = new BlockPos(x,y,z);
-        ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
+        final BlockPos            pos        = new BlockPos(x,y,z);
+        final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
         return new GuiField(player.inventory, tileEntity.inventoryField, world, pos);
 
     }

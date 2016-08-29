@@ -46,7 +46,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * The list of the fields the farmer manages.
      */
-    private ArrayList<Field> farmerFields = new ArrayList<>();
+    private final ArrayList<Field> farmerFields = new ArrayList<>();
 
     /**
      * The field the farmer is currently working on.
@@ -153,11 +153,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
     {
         if(!farmerFields.isEmpty())
         {
-            ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
+            final ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
 
-            for(Field field: tempFields)
+            for(final Field field: tempFields)
             {
-                ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
+                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
                 if(scarecrow == null)
                 {
                     farmerFields.remove(field);
@@ -183,7 +183,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public void resetFields()
     {
-        for(Field field: farmerFields)
+        for(final Field field: farmerFields)
         {
             field.setNeedsWork(true);
             field.calculateSize(getColony().getWorld(), field.getLocation().down());
@@ -194,7 +194,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void onDestroyed()
     {
         super.onDestroyed();
-        for(Field field: farmerFields)
+        for(final Field field: farmerFields)
         {
             field.setTaken(false);
         }
@@ -211,11 +211,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < fieldTagList.tagCount(); ++i)
         {
-            NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
-            Field f = Field.createFromNBT(getColony(), fieldCompound);
+            final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
+            final Field f = Field.createFromNBT(getColony(), fieldCompound);
             if (f != null)
             {
                 farmerFields.add(f);
@@ -227,10 +227,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        NBTTagList fieldTagList = new NBTTagList();
-        for (Field f : farmerFields)
+        final NBTTagList fieldTagList = new NBTTagList();
+        for (final Field f : farmerFields)
         {
-            NBTTagCompound fieldCompound = new NBTTagCompound();
+            final NBTTagCompound fieldCompound = new NBTTagCompound();
             f.writeToNBT(fieldCompound);
             fieldTagList.appendTag(fieldCompound);
         }

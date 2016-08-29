@@ -1,7 +1,5 @@
 package com.minecolonies.entity.ai.util;
 
-import static com.minecolonies.client.render.RenderBipedCitizen.Model.FARMER;
-
 /**
  * Basic state enclosing states all ai's use.
  * Please extend this class with the states your ai needs.
@@ -52,38 +50,38 @@ public enum AIState
      */
     START_BUILDING,
     /**
-     * Clears the building area
+     * Clears the building area.
      */
     CLEAR_STEP,
     /**
-     * Requests materials
+     * Requests materials.
      */
     REQUEST_MATERIALS,
     /**
-     * Creates the solid structure
+     * Creates the solid structure.
      */
     BUILDING_STEP,
     /**
-     * Sets decorative blocks
+     * Sets decorative blocks.
      */
     DECORATION_STEP,
     /**
-     * Spawns all entities
+     * Spawns all entities.
      */
     SPAWN_STEP,
     /**
-     * Completes the building
+     * Completes the building.
      */
     COMPLETE_BUILD,
     /*
 ###FISHERMAN###
      */
     /**
-     * The fisherman is looking for water
+     * The fisherman is looking for water.
      */
     FISHERMAN_SEARCHING_WATER,
     /**
-     * The fisherman has found water and can start fishing
+     * The fisherman has found water and can start fishing.
      */
     FISHERMAN_WALKING_TO_WATER,
     FISHERMAN_CHECK_WATER,
@@ -93,19 +91,19 @@ public enum AIState
 ###Lumberjack###
      */
     /**
-     * The lumberjack is looking for trees
+     * The lumberjack is looking for trees.
      */
     LUMBERJACK_SEARCHING_TREE,
     /**
-     * The lumberjack has found trees and can start cutting them
+     * The lumberjack has found trees and can start cutting them.
      */
     LUMBERJACK_CHOP_TREE,
     /**
-     * The Lumberjack is gathering saplings
+     * The Lumberjack is gathering saplings.
      */
     LUMBERJACK_GATHERING,
     /**
-     * There are no trees in his search range
+     * There are no trees in his search range.
      */
     LUMBERJACK_NO_TREES_FOUND,
 
@@ -113,27 +111,27 @@ public enum AIState
 ###Miner###
      */
     /**
-     * Check if there is a mineshaft
+     * Check if there is a mineshaft.
      */
     MINER_CHECK_MINESHAFT,
     /**
-     * The Miner searches for the ladder
+     * The Miner searches for the ladder.
      */
     MINER_SEARCHING_LADDER,
     /**
-     * The Miner walks to the ladder
+     * The Miner walks to the ladder.
      */
     MINER_WALKING_TO_LADDER,
     /**
-     * The Miner mines his shaft
+     * The Miner mines his shaft.
      */
     MINER_MINING_SHAFT,
     /**
-     * The Miner builds his shaft
+     * The Miner builds his shaft.
      */
     MINER_BUILDING_SHAFT,
     /**
-     * The Miner mines one node
+     * The Miner mines one node.
      */
     MINER_MINING_NODE,
 
@@ -142,23 +140,23 @@ public enum AIState
      */
 
     /**
-     * Clears the building area
+     * Clears the building area.
      */
     BUILDER_CLEAR_STEP,
     /**
-     * Requests materials
+     * Requests materials.
      */
     BUILDER_REQUEST_MATERIALS,
     /**
-     * Creates the building structure
+     * Creates the building structure.
      */
     BUILDER_STRUCTURE_STEP,
     /**
-     * Sets decorative blocks
+     * Sets decorative blocks.
      */
     BUILDER_DECORATION_STEP,
     /**
-     * Completes the building
+     * Completes the building.
      */
     BUILDER_COMPLETE_BUILD,
 
@@ -167,7 +165,7 @@ public enum AIState
     */
 
     /**
-     * Check if the fields need any work
+     * Check if the fields need any work.
      */
     FARMER_CHECK_FIELDS,
 
@@ -177,7 +175,7 @@ public enum AIState
     FARMER_HOE,
 
     /**
-     * Plant the seeds
+     * Plant the seeds.
      */
     FARMER_PLANT,
 

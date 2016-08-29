@@ -35,11 +35,11 @@ public class BlockHutFarmer extends AbstractBlockHut
             return;
         }
 
-        TileEntity tileEntity = worldIn.getTileEntity(pos);
+        final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if(placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
-            TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-            Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
+            final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
+            final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
 
             if (colony != null)
             {
