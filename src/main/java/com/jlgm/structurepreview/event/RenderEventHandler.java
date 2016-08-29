@@ -23,7 +23,7 @@ public class RenderEventHandler{
 		if((Minecraft.getMinecraft().thePlayer.getHeldItemMainhand() != null && Minecraft.getMinecraft().thePlayer.getHeldItemMainhand().getItem() == TESTItem.buildPreview) || TESTMain.instance.pinnedPos != null){
 			Structure structure;
 			if(TESTMain.instance.structure == null){
-				structure = new Structure(null, "prueba", new PlacementSettings().setRotation(TESTMath.getRotationFromYaw()).setMirror(Mirror.NONE));
+				structure = new Structure(null, "endcity/ship", new PlacementSettings().setRotation(TESTMath.getRotationFromYaw()).setMirror(Mirror.NONE));
 			}else{
 				structure = TESTMain.instance.structure;
 			}

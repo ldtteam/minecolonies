@@ -35,7 +35,7 @@ public class ItemBuildPreview extends Item{
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
 		if(!playerIn.isSneaking()){
 			TESTMain.instance.pinnedPos = pos.up();
-			TESTMain.instance.structure = new Structure(null, "prueba", new PlacementSettings().setRotation(TESTMath.getRotationFromYaw()).setMirror(Mirror.NONE));
+			TESTMain.instance.structure = new Structure(null, "endcity/ship", new PlacementSettings().setRotation(TESTMath.getRotationFromYaw()).setMirror(Mirror.NONE));
 			playerIn.addChatMessage(new TextComponentString("Structure pinned at X:" + pos.getX() + ", Y:" + pos.getY() + 1 + ", Z:" + pos.getZ()));
 	        return EnumActionResult.SUCCESS;
 		}
