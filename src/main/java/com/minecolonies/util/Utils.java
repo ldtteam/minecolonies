@@ -7,6 +7,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -52,9 +54,10 @@ public final class Utils
      * @param blocks  Blocks to test for
      * @return the coordinates of the found block
      */
-    public static BlockPos scanForBlockNearPoint(World world, BlockPos point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
+    @Nullable
+    public static BlockPos scanForBlockNearPoint(@NotNull World world, @NotNull BlockPos point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
     {
-        BlockPos closestCoords = null;
+        @Nullable BlockPos closestCoords = null;
         double           minDistance   = Double.MAX_VALUE;
 
         for (int i = point.getX() - radiusX; i <= point.getX() + radiusX; i++)
@@ -65,7 +68,7 @@ public final class Utils
                 {
                     if (checkHeight(world, i, j, k, height, blocks))
                     {
-                        BlockPos tempCoords = new BlockPos(i, j, k);
+                        @NotNull BlockPos tempCoords = new BlockPos(i, j, k);
 
                         double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
                         if (closestCoords == null || distance < minDistance)
@@ -91,7 +94,7 @@ public final class Utils
      * @param blocks the block types required
      * @return true if all blocks are of that type
      */
-    private static boolean checkHeight(World world, int x, int y, int z, int height, Block... blocks)
+    private static boolean checkHeight(@NotNull World world, int x, int y, int z, int height, @NotNull Block... blocks)
     {
         for (int dy = 0; dy < height; dy++)
         {
@@ -110,7 +113,7 @@ public final class Utils
      * @param key   Object to look for
      * @return True if found, otherwise false
      */
-    private static boolean arrayContains(Object[] array, Object key)
+    private static boolean arrayContains(@NotNull Object[] array, Object key)
     {
         for (Object o : array)
         {
@@ -133,7 +136,7 @@ public final class Utils
      * @param range the range to check around the point
      * @return true if he found the block
      */
-    public static boolean isBlockInRange(World world, Block block, int posX, int posY, int posZ, int range)
+    public static boolean isBlockInRange(@NotNull World world, Block block, int posX, int posY, int posZ, int range)
     {
         for (int x = posX - range; x < posX + range; x++)
         {
@@ -159,7 +162,7 @@ public final class Utils
      * @param z     z coordinate
      * @return yCoordinate
      */
-    public static int findTopGround(World world, int x, int z)
+    public static int findTopGround(@NotNull World world, int x, int z)
     {
         int yHolder = 1;
         while (!world.canBlockSeeSky(new BlockPos(x, yHolder, z)))
@@ -265,7 +268,7 @@ public final class Utils
      * @param block    Block that makes the sound
      * @param metadata Metadata of the block that makes sound
      */
-    public static void blockBreakSoundAndEffect(World world, BlockPos pos, Block block, int metadata)
+    public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata)
     {
         world.playAuxSFX(SOUND_EVENT_ID, pos , Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
     }
@@ -315,7 +318,7 @@ public final class Utils
      * @param itemStack Item to check
      * @return True if mining tool, otherwise false
      */
-    public static boolean isMiningTool(ItemStack itemStack)
+    public static boolean isMiningTool(@Nullable ItemStack itemStack)
     {
         return isPickaxe(itemStack) || isShovel(itemStack);
     }
@@ -326,9 +329,31 @@ public final class Utils
      * @param itemStack Item to check
      * @return True if item is shovel, otherwise false
      */
-    public static boolean isShovel(ItemStack itemStack)
+    public static boolean isShovel(@Nullable ItemStack itemStack)
     {
         return isTool(itemStack, SHOVEL);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as a Hoe.
+     *
+     * @param itemStack Item to check
+     * @return True if item is hoe, otherwise false
+     */
+    public static boolean isHoe(@Nullable ItemStack itemStack)
+    {
+        return isTool(itemStack, HOE);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as an Axe.
+     *
+     * @param itemStack Item to check
+     * @return True if item is axe, otherwise false
+     */
+    public static boolean isAxe(@Nullable ItemStack itemStack)
+    {
+        return isTool(itemStack, AXE);
     }
 
     /**
@@ -338,7 +363,7 @@ public final class Utils
      * @param toolType  Type of the tool
      * @return true if item can be used, otherwise false
      */
-    public static boolean isTool(ItemStack itemStack, String toolType)
+    public static boolean isTool(@Nullable ItemStack itemStack, String toolType)
     {
         return getMiningLevel(itemStack, toolType) >= 0 || (itemStack != null && itemStack.getItem() instanceof ItemHoe && "hoe".equals(toolType)) ;
     }
@@ -350,7 +375,7 @@ public final class Utils
      * @param tool  the tool category
      * @return integer value for mining level &gt;= 0 is okay
      */
-    public static int getMiningLevel(ItemStack stack, String tool)
+    public static int getMiningLevel(@Nullable ItemStack stack, @Nullable String tool)
     {
         if (tool == null)
         {
@@ -370,7 +395,7 @@ public final class Utils
      * @param itemStack Item to check
      * @return True if item is a pick axe, otherwise false
      */
-    public static boolean isPickaxe(ItemStack itemStack)
+    public static boolean isPickaxe(@Nullable ItemStack itemStack)
     {
         return isTool(itemStack, PICKAXE);
     }
@@ -381,7 +406,7 @@ public final class Utils
      * @param tool the tool to check
      * @return fortune level
      */
-    public static int getFortuneOf(ItemStack tool)
+    public static int getFortuneOf(@Nullable ItemStack tool)
     {
         if (tool == null)
         {

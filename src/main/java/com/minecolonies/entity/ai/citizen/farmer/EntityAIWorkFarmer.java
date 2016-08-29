@@ -11,6 +11,7 @@ import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.InventoryUtils;
+import com.minecolonies.util.Utils;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
@@ -540,20 +541,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     @Override
     protected boolean neededForWorker(ItemStack stack)
     {
-        return isStackHoe(stack);
-    }
-
-    /**
-     * Checks if a given stack equals a hoe.
-     *
-     * todo: replace this with utils class/forgehook
-     *
-     * @param stack the stack to decide on
-     * @return if the stack matches
-     */
-    private static boolean isStackHoe(ItemStack stack)
-    {
-        return stack != null && stack.getItem().getUnlocalizedName().contains("hoe");
+        return stack != null && Utils.isHoe(stack);
     }
 
     /**
