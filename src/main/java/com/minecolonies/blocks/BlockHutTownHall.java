@@ -45,7 +45,7 @@ public class BlockHutTownHall extends AbstractBlockHut
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        if(placer instanceof EntityPlayer)
+        if (placer instanceof EntityPlayer)
         {
             final EntityPlayer player = (EntityPlayer) placer;
             player.triggerAchievement(ModAchievements.achievementBuildingTownhall);

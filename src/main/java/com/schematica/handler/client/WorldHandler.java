@@ -28,6 +28,14 @@ public class WorldHandler
         }
     }
 
+    private static void addWorldAccess(final World world, final IWorldAccess schematic)
+    {
+        if (world != null && schematic != null)
+        {
+            world.addWorldAccess(schematic);
+        }
+    }
+
     /**
      * Called when a world is unloaded. Removes the {@link RenderSchematic} {@link IWorldAccess} from the {@link SchematicWorld}.
      *
@@ -39,14 +47,6 @@ public class WorldHandler
         if (event.world.isRemote)
         {
             removeWorldAccess(event.world, RenderSchematic.INSTANCE);
-        }
-    }
-
-    private static void addWorldAccess(final World world, final IWorldAccess schematic)
-    {
-        if (world != null && schematic != null)
-        {
-            world.addWorldAccess(schematic);
         }
     }
 

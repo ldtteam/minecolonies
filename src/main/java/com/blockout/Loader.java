@@ -31,7 +31,6 @@ public final class Loader
     private static final Logger logger = LogManager.getLogger("BlockOut");
 
     private static Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<>();
-
     static
     {
         register("view", View.class);
@@ -48,15 +47,14 @@ public final class Loader
         register("itemicon", ItemIcon.class);
         register("switch", SwitchView.class);
     }
-
     private Loader()
     {
         // Hides default constructor.
     }
 
-    private static String makeFactoryKey(String name, String style)
+    private static void register(String name, Class<? extends Pane> paneClass)
     {
-        return name + ":" + (style != null ? style : "");
+        register(name, null, paneClass);
     }
 
     private static void register(String name, String style, Class<? extends Pane> paneClass)
@@ -83,11 +81,10 @@ public final class Loader
         }
     }
 
-    private static void register(String name, Class<? extends Pane> paneClass)
+    private static String makeFactoryKey(String name, String style)
     {
-        register(name, null, paneClass);
+        return name + ":" + (style != null ? style : "");
     }
-
 
     private static Pane createFromPaneParams(PaneParams params)
     {
@@ -200,7 +197,7 @@ public final class Loader
      * Parse an XML String into contents for a View.
      *
      * @param xmlString the xml data.
-     * @param parent parent view.
+     * @param parent    parent view.
      */
     public static void createFromXML(String xmlString, View parent)
     {
@@ -211,7 +208,7 @@ public final class Loader
      * Parse XML contains in a ResourceLocation into contents for a Window.
      *
      * @param filename the xml file.
-     * @param parent parent view.
+     * @param parent   parent view.
      */
     public static void createFromXMLFile(String filename, View parent)
     {
@@ -222,7 +219,7 @@ public final class Loader
      * Parse XML contains in a ResourceLocation into contents for a Window.
      *
      * @param resource xml as a {@link ResourceLocation}.
-     * @param parent parent view.
+     * @param parent   parent view.
      */
     public static void createFromXMLFile(ResourceLocation resource, View parent)
     {

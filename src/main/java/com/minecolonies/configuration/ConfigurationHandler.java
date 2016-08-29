@@ -13,11 +13,11 @@ import static com.minecolonies.configuration.Configurations.*;
  */
 public final class ConfigurationHandler
 {
-    private static final String CATEGORY_GAMEPLAY       = "gameplay";
-    private static final String CATEGORY_PATHFINDING    = "pathfinding";
-    private static final String CATEGORY_NAMES          = "names";
+    private static final String CATEGORY_GAMEPLAY    = "gameplay";
+    private static final String CATEGORY_PATHFINDING = "pathfinding";
+    private static final String CATEGORY_NAMES       = "names";
 
-    private static final String FORMAT_RANGE            = "%s (range: %s ~ %s, default: %s)";
+    private static final String FORMAT_RANGE = "%s (range: %s ~ %s, default: %s)";
 
     private ConfigurationHandler()
     {
@@ -29,7 +29,7 @@ public final class ConfigurationHandler
      * Reads all options from the file, and sets those parameters, and saves those in {@link Configurations}
      * Saves file after reading
      *
-     * @param file      File to read input from
+     * @param file File to read input from
      */
     public static synchronized void init(File file)
     {
@@ -75,14 +75,14 @@ public final class ConfigurationHandler
     /**
      * Returns the value in the config for <code>key</code>
      *
-     * @param config        {@link Configuration} object
-     * @param category      Category of the value to read
-     * @param key           Key of the value to read
-     * @param defaultValue  Default value for the value to read
-     * @param min           Minimum accepted value
-     * @param max           Maximum accepted vakue
-     * @param comment       Comment in config file
-     * @return              Value in the configuration file
+     * @param config       {@link Configuration} object
+     * @param category     Category of the value to read
+     * @param key          Key of the value to read
+     * @param defaultValue Default value for the value to read
+     * @param min          Minimum accepted value
+     * @param max          Maximum accepted vakue
+     * @param comment      Comment in config file
+     * @return Value in the configuration file
      */
     private static int getClampedInt(Configuration config, String category, String key, int defaultValue, int min, int max, String comment)
     {

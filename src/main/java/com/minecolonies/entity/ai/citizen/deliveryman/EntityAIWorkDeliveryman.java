@@ -20,5 +20,4 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         super(deliveryman);
     }
-
 }

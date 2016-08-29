@@ -17,7 +17,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
     /**
      * Constructor for the skeleton class of the windows.
      *
-     * @param resource      Resource location string.
+     * @param resource Resource location string.
      */
     public AbstractWindowSkeleton(final String resource)
     {
@@ -29,8 +29,8 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
     /**
      * Register a button on the window.
      *
-     * @param id        Button ID.
-     * @param action    Consumer with the action to be performed.
+     * @param id     Button ID.
+     * @param action Consumer with the action to be performed.
      */
     public final void registerButton(String id, Consumer<Button> action)
     {
@@ -61,7 +61,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
     /**
      * Button clicked without an action. Method does nothing.
      *
-     * @param ignored   Parameter is ignored. Since some actions require a button, we must accept a button parameter.
+     * @param ignored Parameter is ignored. Since some actions require a button, we must accept a button parameter.
      */
     public final void doNothing(Button ignored)
     {

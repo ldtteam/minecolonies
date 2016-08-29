@@ -20,7 +20,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
 
     /**
      * Empty public constructor.
-    */
+     */
     public ColonyViewWorkOrderMessage()
     {
         /**
@@ -31,7 +31,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     /**
      * Updates a {@link com.minecolonies.colony.WorkOrderView} of the workOrders.
      *
-     * @param colony  colony of the workOrder.
+     * @param colony    colony of the workOrder.
      * @param workOrder workOrder of the colony to update view.
      */
     public ColonyViewWorkOrderMessage(Colony colony, AbstractWorkOrder workOrder)
@@ -43,19 +43,19 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        buf.writeInt(workOrderId);
-        buf.writeBytes(workOrderBuffer);
-    }
-
-    @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
         workOrderId = buf.readInt();
         workOrderBuffer = buf;
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        buf.writeInt(workOrderId);
+        buf.writeBytes(workOrderBuffer);
     }
 
     @Override

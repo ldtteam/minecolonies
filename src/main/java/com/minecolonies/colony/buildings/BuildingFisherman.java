@@ -59,6 +59,26 @@ public class BuildingFisherman extends AbstractBuildingWorker
     }
 
     /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(this.getColony().getPermissions().getOwner());
+
+        if (newLevel == 1)
+        {
+            owner.triggerAchievement(ModAchievements.achievementBuildingFisher);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            owner.triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
+        }
+    }
+
+    /**
      * Getter of the job description.
      *
      * @return the description of the fisherman job.
@@ -79,26 +99,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
     public AbstractJob createJob(CitizenData citizen)
     {
         return new JobFisherman(citizen);
-    }
-
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(this.getColony().getPermissions().getOwner());
-
-        if (newLevel == 1)
-        {
-            owner.triggerAchievement(ModAchievements.achievementBuildingFisher);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
-        }
     }
 
     /**
@@ -127,6 +127,5 @@ public class BuildingFisherman extends AbstractBuildingWorker
         {
             return new WindowHutFisherman(this);
         }
-
     }
 }

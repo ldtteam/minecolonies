@@ -8,7 +8,7 @@ public interface IProxy
     /**
      * Returns whether or not the proxy is client sided or server sided
      *
-     * @return      true when client, false when server
+     * @return true when client, false when server
      */
     boolean isClient();
 
@@ -40,17 +40,17 @@ public interface IProxy
     /**
      * Method to display the citizen window
      *
-     * @param citizen       {@link CitizenDataView}
+     * @param citizen {@link CitizenDataView}
      */
     void showCitizenWindow(CitizenDataView citizen);
 
     /**
      * Opens a build tool window
      *
-     * @param pos     coordinates
+     * @param pos coordinates
      */
     void openBuildToolWindow(BlockPos pos);
-    
+
     /**
      * Registers all block and item renderers.
      */

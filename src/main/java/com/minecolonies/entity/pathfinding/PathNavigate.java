@@ -24,16 +24,16 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
 {
     //  Parent class private members
     private EntityLiving entity;
-    private double walkSpeed;
+    private double       walkSpeed;
 
-    private BlockPos destination;
+    private BlockPos           destination;
     private Future<PathEntity> future;
-    private PathResult pathResult;
+    private PathResult         pathResult;
 
     private boolean shouldAvoidWater = false;
-    private boolean canEnterDoors = false;
-    private boolean canBreakDoors = false;
-    private boolean canSwim = false;
+    private boolean canEnterDoors    = false;
+    private boolean canBreakDoors    = false;
+    private boolean canSwim          = false;
 
     public PathNavigate(EntityLiving entity, World world)
     {
@@ -48,10 +48,22 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     }
 
     @Override
-    public PathEntity getPathToPos(BlockPos pos)
+    protected boolean canNavigate()
     {
-        //Because this directly returns PathEntity we can't do it async.
-        return null;
+        return true;
+    }
+
+    @Override
+    protected Vec3 getEntityPosition()
+    {
+        return this.entity.getPositionVector();
+    }
+
+    @Override
+    protected boolean isDirectPathBetweenPoints(final Vec3 vec3, final Vec3 vec31, final int i, final int i1, final int i2)
+    {
+        //we don't use, so it doesn't matter
+        return false;
     }
 
     public double getSpeed()
@@ -66,16 +78,29 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     }
 
     @Override
+    public PathEntity getPathToPos(BlockPos pos)
+    {
+        //Because this directly returns PathEntity we can't do it async.
+        return null;
+    }
+
+    @Override
     public boolean tryMoveToXYZ(double x, double y, double z, double speed)
     {
         moveToXYZ(x, y, z, speed);
         return true;
     }
 
+    @Override
+    public boolean tryMoveToEntityLiving(Entity e, double speed)
+    {
+        return tryMoveToXYZ(e.posX, e.posY, e.posZ, speed);
+    }
+
     public PathResult moveToXYZ(double x, double y, double z, double speed)
     {
         int newX = MathHelper.floor_double(x);
-        int newY = (int)y;
+        int newY = (int) y;
         int newZ = MathHelper.floor_double(z);
 
         if (!noPath() &&
@@ -89,47 +114,44 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         BlockPos dest = new BlockPos(newX, newY, newZ);
 
         return setPathJob(
-                new PathJobMoveToLocation(entity.worldObj, start, dest, (int)getPathSearchRange()),
+                new PathJobMoveToLocation(entity.worldObj, start, dest, (int) getPathSearchRange()),
                 dest, speed);
     }
 
-    public PathResult moveAwayFromXYZ(BlockPos avoid, double range, double speed)
+    private PathResult setPathJob(AbstractPathJob job, BlockPos dest, double speed)
     {
-        BlockPos start = AbstractPathJob.prepareStart(entity);
+        clearPathEntity();
 
-        return setPathJob(
-                new PathJobMoveAwayFromLocation(entity.worldObj, start, avoid, (int)range, (int)getPathSearchRange()),
-                null, speed);
-    }
+        this.destination = dest;
+        this.walkSpeed = speed;
 
-    public PathJobFindTree.TreePathResult moveToTree(int range, double speed)
-    {
-        BlockPos start = AbstractPathJob.prepareStart(entity);
-        return (PathJobFindTree.TreePathResult) setPathJob(
-                new PathJobFindTree(entity.worldObj, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range), null, speed);
-    }
-
-    public PathJobFindWater.WaterPathResult moveToWater(int range, double speed, List<BlockPos> ponds)
-    {
-        BlockPos start = AbstractPathJob.prepareStart(entity);
-        return (PathJobFindWater.WaterPathResult) setPathJob(
-                new PathJobFindWater(entity.worldObj, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, ponds), null, speed);
+        future = Pathfinding.enqueue(job);
+        pathResult = job.getResult();
+        return pathResult;
     }
 
     @Override
-    public boolean tryMoveToEntityLiving(Entity e, double speed)
+    public boolean setPath(PathEntity path, double speed)
     {
-        return tryMoveToXYZ(e.posX, e.posY, e.posZ, speed);
-    }
+        int pathLength = path.getCurrentPathLength();
+        if (pathLength > 0 && !(path.getPathPointFromIndex(0) instanceof PathPointExtended))
+        {
+            //  Fix vanilla PathPoints to be PathPointExtended
+            PathPointExtended[] newPoints = new PathPointExtended[pathLength];
 
-    public PathResult moveToEntityLiving(Entity e, double speed)
-    {
-        return moveToXYZ(e.posX, e.posY, e.posZ, speed);
-    }
+            for (int i = 0; i < pathLength; ++i)
+            {
+                PathPoint point = path.getPathPointFromIndex(i);
+                newPoints[i] = new PathPointExtended(new BlockPos(point.xCoord, point.yCoord, point.zCoord));
+            }
 
-    public PathResult moveAwayFromEntityLiving(Entity e, double distance, double speed)
-    {
-        return moveAwayFromXYZ(e.getPosition(), distance, speed);
+            path = new PathEntity(newPoints);
+
+            PathPointExtended finalPoint = newPoints[pathLength - 1];
+            destination = new BlockPos(finalPoint.xCoord, finalPoint.yCoord, finalPoint.zCoord);
+        }
+
+        return super.setPath(path, speed);
     }
 
     @Override
@@ -172,7 +194,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         //  Ladder Workaround
         if (!this.noPath())
         {
-            PathPointExtended pEx = (PathPointExtended)this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
+            PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
 
             if (pEx.isOnLadder)
             {
@@ -186,16 +208,16 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
                     {
                         //  Any of these values is climbing, so adjust our direction of travel towards the ladder
                         case NORTH:
-                            vec3.addVector(0,0,1);
+                            vec3.addVector(0, 0, 1);
                             break;
                         case SOUTH:
-                            vec3.addVector(0,0,-1);
+                            vec3.addVector(0, 0, -1);
                             break;
                         case WEST:
-                            vec3.addVector(1,0,0);
+                            vec3.addVector(1, 0, 0);
                             break;
                         case EAST:
-                            vec3.addVector(-1,0,0);
+                            vec3.addVector(-1, 0, 0);
                             break;
                         //  Any other value is going down, so lets not move at all
                         default:
@@ -273,59 +295,37 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         super.clearPathEntity();
     }
 
-    @Override
-    protected Vec3 getEntityPosition()
+    public PathJobFindTree.TreePathResult moveToTree(int range, double speed)
     {
-        return this.entity.getPositionVector();
+        BlockPos start = AbstractPathJob.prepareStart(entity);
+        return (PathJobFindTree.TreePathResult) setPathJob(
+                new PathJobFindTree(entity.worldObj, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range), null, speed);
     }
 
-    @Override
-    protected boolean canNavigate()
+    public PathJobFindWater.WaterPathResult moveToWater(int range, double speed, List<BlockPos> ponds)
     {
-        return true;
+        BlockPos start = AbstractPathJob.prepareStart(entity);
+        return (PathJobFindWater.WaterPathResult) setPathJob(
+                new PathJobFindWater(entity.worldObj, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, ponds), null, speed);
     }
 
-    @Override
-    protected boolean isDirectPathBetweenPoints(final Vec3 vec3, final Vec3 vec31, final int i, final int i1, final int i2)
+    public PathResult moveToEntityLiving(Entity e, double speed)
     {
-        //we don't use, so it doesn't matter
-        return false;
+        return moveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
 
-    @Override
-    public boolean setPath(PathEntity path, double speed)
+    public PathResult moveAwayFromEntityLiving(Entity e, double distance, double speed)
     {
-        int pathLength = path.getCurrentPathLength();
-        if (pathLength > 0 && !(path.getPathPointFromIndex(0) instanceof PathPointExtended))
-        {
-            //  Fix vanilla PathPoints to be PathPointExtended
-            PathPointExtended[] newPoints = new PathPointExtended[pathLength];
-
-            for (int i = 0; i < pathLength; ++i)
-            {
-                PathPoint point = path.getPathPointFromIndex(i);
-                newPoints[i] = new PathPointExtended(new BlockPos(point.xCoord, point.yCoord, point.zCoord));
-            }
-
-            path = new PathEntity(newPoints);
-
-            PathPointExtended finalPoint = newPoints[pathLength - 1];
-            destination = new BlockPos(finalPoint.xCoord, finalPoint.yCoord, finalPoint.zCoord);
-        }
-
-        return super.setPath(path, speed);
+        return moveAwayFromXYZ(e.getPosition(), distance, speed);
     }
 
-    private PathResult setPathJob(AbstractPathJob job, BlockPos dest, double speed)
+    public PathResult moveAwayFromXYZ(BlockPos avoid, double range, double speed)
     {
-        clearPathEntity();
+        BlockPos start = AbstractPathJob.prepareStart(entity);
 
-        this.destination = dest;
-        this.walkSpeed = speed;
-
-        future = Pathfinding.enqueue(job);
-        pathResult = job.getResult();
-        return pathResult;
+        return setPathJob(
+                new PathJobMoveAwayFromLocation(entity.worldObj, start, avoid, (int) range, (int) getPathSearchRange()),
+                null, speed);
     }
 
     public boolean isUnableToReachDestination()

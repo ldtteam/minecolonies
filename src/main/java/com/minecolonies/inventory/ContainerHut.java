@@ -32,6 +32,12 @@ public class ContainerHut extends Container //ContainerChest in future
     }
 
     @Override
+    public void detectAndSendChanges()
+    {
+        super.detectAndSendChanges();
+    }
+
+    @Override
     public boolean canInteractWith(EntityPlayer player)
     {
         assert !hut.getWorld().isRemote;
@@ -50,11 +56,5 @@ public class ContainerHut extends Container //ContainerChest in future
             }
         }
         return false;
-    }
-
-    @Override
-    public void detectAndSendChanges()
-    {
-        super.detectAndSendChanges();
     }
 }

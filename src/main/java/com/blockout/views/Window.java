@@ -15,13 +15,24 @@ import org.lwjgl.input.Keyboard;
  */
 public class Window extends View
 {
-    private static final int DEFAULT_WIDTH = 420;
+    private static final int DEFAULT_WIDTH  = 420;
     private static final int DEFAULT_HEIGHT = 240;
 
     protected Screen screen;
 
     protected boolean windowPausesGame = true;
-    protected boolean lightbox = true;
+    protected boolean lightbox         = true;
+
+    /**
+     * Create a window from an xml file.
+     *
+     * @param resource ResourceLocation to get file from.
+     */
+    public Window(ResourceLocation resource)
+    {
+        this();
+        Loader.createFromXMLFile(resource, this);
+    }
 
     /**
      * Make default sized window.
@@ -44,17 +55,6 @@ public class Window extends View
 
         screen = new Screen(this);
         window = this;
-    }
-
-    /**
-     * Create a window from an xml file.
-     *
-     * @param resource ResourceLocation to get file from.
-     */
-    public Window(ResourceLocation resource)
-    {
-        this();
-        Loader.createFromXMLFile(resource, this);
     }
 
     /**
@@ -119,16 +119,6 @@ public class Window extends View
     }
 
     /**
-     * Windows wrap a GuiScreen
-     *
-     * @return The current GuiScreen
-     */
-    public GuiScreen getScreen()
-    {
-        return screen;
-    }
-
-    /**
      * Return <tt>true</tt> if the 'lightbox' (default dark background) should be displayed
      *
      * @return <tt>true</tt> if the 'lightbox' should be displayed
@@ -160,12 +150,13 @@ public class Window extends View
     }
 
     /**
-     * Close the Window
+     * Windows wrap a GuiScreen
+     *
+     * @return The current GuiScreen
      */
-    public void close()
+    public GuiScreen getScreen()
     {
-        this.mc.thePlayer.closeScreen();
-        this.mc.setIngameFocus();
+        return screen;
     }
 
     /**
@@ -218,6 +209,15 @@ public class Window extends View
         {
             close();
         }
+    }
+
+    /**
+     * Close the Window
+     */
+    public void close()
+    {
+        this.mc.thePlayer.closeScreen();
+        this.mc.setIngameFocus();
     }
 
     /**

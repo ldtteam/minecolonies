@@ -24,28 +24,23 @@ import java.util.*;
 public final class ColonyView implements IColony
 {
     //  General Attributes
-    private final   int                                     id;
-    private         String                                  name            = "Unknown";
-    private         int                                     dimensionId;
-    private         BlockPos                                center;
-
+    private final int id;
+    private final Map<Integer, WorkOrderView> workOrders = new HashMap<>();
+    private       String                      name       = "Unknown";
+    private int      dimensionId;
+    private BlockPos center;
     /**
      * Defines if workers are hired manually or automatically.
      */
-    private boolean manualHiring = false;
-
+    private boolean          manualHiring = false;
     //  Administration/permissions
-    private Permissions.View permissions = new Permissions.View();
-
+    private Permissions.View permissions  = new Permissions.View();
     //  Buildings
     private BuildingTownHall.View townHall;
-    private Map<BlockPos, AbstractBuilding.View> buildings = new HashMap<>();
-
+    private Map<BlockPos, AbstractBuilding.View> buildings   = new HashMap<>();
     //  Citizenry
-    private Map<Integer, CitizenDataView> citizens = new HashMap<>();
-    private final Map<Integer, WorkOrderView> workOrders = new HashMap<>();
-
-    private int maxCitizens = 0;
+    private Map<Integer, CitizenDataView>        citizens    = new HashMap<>();
+    private int                                  maxCitizens = 0;
 
     /**
      * Base constructor for a colony.
@@ -60,12 +55,31 @@ public final class ColonyView implements IColony
     /**
      * Create a ColonyView given a UUID and NBTTagCompound.
      *
-     * @param id    Id of the colony view.
-     * @return      the new colony view.
+     * @param id Id of the colony view.
+     * @return the new colony view.
      */
     public static ColonyView createFromNetwork(int id)
     {
         return new ColonyView(id);
+    }
+
+    /**
+     * Populate an NBT compound for a network packet representing a ColonyView.
+     *
+     * @param colony            Colony to write data about.
+     * @param buf               {@link ByteBuf} to write data in.
+     * @param isNewSubScription true if this is a new subscription.
+     */
+    public static void serializeNetworkData(Colony colony, ByteBuf buf, boolean isNewSubScription)
+    {
+        //  General Attributes
+        ByteBufUtils.writeUTF8String(buf, colony.getName());
+        buf.writeInt(colony.getDimensionId());
+        BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
+        buf.writeBoolean(colony.isManualHiring());
+        //  Citizenry
+        buf.writeInt(colony.getMaxCitizens());
+        //  Citizens are sent as a separate packet
     }
 
     /**
@@ -81,7 +95,7 @@ public final class ColonyView implements IColony
     /**
      * Returns the dimension ID of the view.
      *
-     * @return      dimension ID of the view.
+     * @return dimension ID of the view.
      */
     public int getDimensionId()
     {
@@ -89,18 +103,8 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Sets the name of the view.
-     *
-     * @param name  Name of the view.
-     */
-    public void setName(String name)
-    {
-        this.name = name;
-        MineColonies.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
-    }
-
-    /**
      * Getter for the manual hiring or not.
+     *
      * @return the boolean true or false.
      */
     public boolean isManualHiring()
@@ -110,6 +114,7 @@ public final class ColonyView implements IColony
 
     /**
      * Sets if workers should be hired manually.
+     *
      * @param manualHiring true if manually.
      */
     public void setManualHiring(boolean manualHiring)
@@ -130,10 +135,10 @@ public final class ColonyView implements IColony
     /**
      * Get a AbstractBuilding.View for a given building (by coordinate-id) using raw x,y,z.
      *
-     * @param x     x-coordinate
-     * @param y     y-coordinate
-     * @param z     z-coordinate
-     * @return      {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @param z z-coordinate
+     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
      */
     public AbstractBuilding.View getBuilding(int x, int y, int z)
     {
@@ -143,8 +148,8 @@ public final class ColonyView implements IColony
     /**
      * Get a AbstractBuilding.View for a given building (by coordinate-id) using ChunkCoordinates.
      *
-     * @param buildingId        Coordinates/ID of the AbstractBuilding
-     * @return                  {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
+     * @param buildingId Coordinates/ID of the AbstractBuilding
+     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
      */
     public AbstractBuilding.View getBuilding(BlockPos buildingId)
     {
@@ -155,7 +160,7 @@ public final class ColonyView implements IColony
      * Returns a map of players in the colony.
      * Key is the UUID, value is {@link com.minecolonies.colony.permissions.Permissions.Player}
      *
-     * @return                  Map of UUID's and {@link com.minecolonies.colony.permissions.Permissions.Player}
+     * @return Map of UUID's and {@link com.minecolonies.colony.permissions.Permissions.Player}
      */
     public Map<UUID, Permissions.Player> getPlayers()
     {
@@ -165,8 +170,8 @@ public final class ColonyView implements IColony
     /**
      * Sets a specific permission to a rank. If the permission wasn't already set, it sends a message to the server.
      *
-     * @param rank              Rank to get the permission.
-     * @param action            Permission to get.
+     * @param rank   Rank to get the permission.
+     * @param action Permission to get.
      */
     public void setPermission(Permissions.Rank rank, Permissions.Action action)
     {
@@ -179,8 +184,8 @@ public final class ColonyView implements IColony
     /**
      * removes a specific permission to a rank. If the permission was set, it sends a message to the server.
      *
-     * @param rank              Rank to remove permission from.
-     * @param action            Action to remove permission of.
+     * @param rank   Rank to remove permission from.
+     * @param action Action to remove permission of.
      */
     public void removePermission(Permissions.Rank rank, Permissions.Action action)
     {
@@ -191,11 +196,10 @@ public final class ColonyView implements IColony
     }
 
     /**
-     *
      * Toggles a specific permission to a rank. Sends a message to the server.
      *
-     * @param rank      Rank to toggle permission of.
-     * @param action    Action to toggle permission of.
+     * @param rank   Rank to toggle permission of.
+     * @param action Action to toggle permission of.
      */
     public void togglePermission(Permissions.Rank rank, Permissions.Action action)
     {
@@ -203,11 +207,10 @@ public final class ColonyView implements IColony
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
     }
 
-
     /**
      * Returns the maximum amount of citizen in the colony.
      *
-     * @return          maximum amount of citizens.
+     * @return maximum amount of citizens.
      */
     public int getMaxCitizens()
     {
@@ -216,6 +219,7 @@ public final class ColonyView implements IColony
 
     /**
      * Getter for the citizens map.
+     *
      * @return a unmodifiable Map of the citizen.
      */
     public Map<Integer, CitizenDataView> getCitizens()
@@ -225,6 +229,7 @@ public final class ColonyView implements IColony
 
     /**
      * Getter for the workOrders.
+     *
      * @return a unmodifiable Collection of the workOrders.
      */
     public Collection<WorkOrderView> getWorkOrders()
@@ -244,29 +249,10 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Populate an NBT compound for a network packet representing a ColonyView.
-     *
-     * @param colony        Colony to write data about.
-     * @param buf           {@link ByteBuf} to write data in.
-     * @param isNewSubScription true if this is a new subscription.
-     */
-    public static void serializeNetworkData(Colony colony, ByteBuf buf, boolean isNewSubScription)
-    {
-        //  General Attributes
-        ByteBufUtils.writeUTF8String(buf, colony.getName());
-        buf.writeInt(colony.getDimensionId());
-        BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
-        buf.writeBoolean(colony.isManualHiring());
-        //  Citizenry
-        buf.writeInt(colony.getMaxCitizens());
-        //  Citizens are sent as a separate packet
-    }
-
-    /**
      * Populate a ColonyView from the network data
      *
-     * @param buf                   {@link ByteBuf} to read from
-     * @param isNewSubscription     Whether this is a new subscription of not
+     * @param buf               {@link ByteBuf} to read from
+     * @param isNewSubscription Whether this is a new subscription of not
      * @return null == no response
      */
     public IMessage handleColonyViewMessage(ByteBuf buf, boolean isNewSubscription)
@@ -305,8 +291,8 @@ public final class ColonyView implements IColony
      * Update a ColonyView's workOrders given a network data ColonyView update packet.
      * This uses a full-replacement - workOrders do not get updated and are instead overwritten.
      *
-     * @param buf       Network data
-     * @return          null == no response
+     * @param buf Network data
+     * @return null == no response
      */
     public IMessage handleColonyViewWorkOrderMessage(ByteBuf buf)
     {
@@ -320,9 +306,9 @@ public final class ColonyView implements IColony
      * Update a ColonyView's citizens given a network data ColonyView update packet
      * This uses a full-replacement - citizens do not get updated and are instead overwritten
      *
-     * @param id        ID of the citizen
-     * @param buf       Network data
-     * @return          null == no response
+     * @param id  ID of the citizen
+     * @param buf Network data
+     * @return null == no response
      */
     public IMessage handleColonyViewCitizensMessage(int id, ByteBuf buf)
     {
@@ -339,7 +325,7 @@ public final class ColonyView implements IColony
      * Remove a citizen from the ColonyView.
      *
      * @param citizen citizen ID
-     * @return          null == no response
+     * @return null == no response
      */
     public IMessage handleColonyViewRemoveCitizenMessage(int citizen)
     {
@@ -351,7 +337,7 @@ public final class ColonyView implements IColony
      * Remove a building from the ColonyView.
      *
      * @param buildingId location of the building.
-     * @return          null == no response
+     * @return null == no response
      */
     public IMessage handleColonyViewRemoveBuildingMessage(BlockPos buildingId)
     {
@@ -367,7 +353,7 @@ public final class ColonyView implements IColony
      * Remove a workOrder from the ColonyView.
      *
      * @param workOrderId id of the workOrder.
-     * @return          null == no response
+     * @return null == no response
      */
     public IMessage handleColonyViewRemoveWorkOrderMessage(final int workOrderId)
     {
@@ -376,14 +362,13 @@ public final class ColonyView implements IColony
         return null;
     }
 
-
     /**
      * Update a ColonyView's buildings given a network data ColonyView update packet.
      * This uses a full-replacement - buildings do not get updated and are instead overwritten.
      *
      * @param buildingId location of the building.
-     * @param buf buffer containing ColonyBuilding information.
-     * @return          null == no response
+     * @param buf        buffer containing ColonyBuilding information.
+     * @return null == no response
      */
     public IMessage handleColonyBuildingViewMessage(BlockPos buildingId, ByteBuf buf)
     {
@@ -394,7 +379,7 @@ public final class ColonyView implements IColony
 
             if (building instanceof BuildingTownHall.View)
             {
-                townHall = (BuildingTownHall.View)building;
+                townHall = (BuildingTownHall.View) building;
             }
         }
 
@@ -422,11 +407,34 @@ public final class ColonyView implements IColony
     }
 
     @Override
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     * Sets the name of the view.
+     *
+     * @param name Name of the view.
+     */
+    public void setName(String name)
+    {
+        this.name = name;
+        MineColonies.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
+    }
+
+    @Override
+    public Permissions.View getPermissions()
+    {
+        return permissions;
+    }
+
+    @Override
     public boolean isCoordInColony(World w, BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.provider.getDimensionId() == dimensionId &&
-               BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
+                BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
     }
 
     @Override
@@ -437,21 +445,8 @@ public final class ColonyView implements IColony
     }
 
     @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    @Override
     public boolean hasTownHall()
     {
         return townHall != null;
     }
-
-    @Override
-    public Permissions.View getPermissions()
-    {
-        return permissions;
-    }
-
 }

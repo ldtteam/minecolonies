@@ -161,7 +161,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * Check if inventory has to be dumped.
                  */
                 new AITarget(this::inventoryNeedsDump, INVENTORY_FULL)
-                             );
+        );
     }
 
     /**
@@ -176,19 +176,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean inventoryNeedsDump()
     {
         return worker.isInventoryFull()
-               || actionsDone >= getActionsDoneUntilDumping()
-               || wantInventoryDumped();
-    }
-
-    /**
-     * Has to be overridden by classes to specify when to dump inventory.
-     * Always dump on inventory full.
-     *
-     * @return true if inventory needs to be dumped now
-     */
-    protected boolean wantInventoryDumped()
-    {
-        return false;
+                || actionsDone >= getActionsDoneUntilDumping()
+                || wantInventoryDumped();
     }
 
     /**
@@ -201,6 +190,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected int getActionsDoneUntilDumping()
     {
         return ACTIONS_UNTIL_DUMP;
+    }
+
+    /**
+     * Has to be overridden by classes to specify when to dump inventory.
+     * Always dump on inventory full.
+     *
+     * @return true if inventory needs to be dumped now
+     */
+    protected boolean wantInventoryDumped()
+    {
+        return false;
     }
 
     /**
@@ -262,6 +262,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * The worker will move and animate correctly while he waits.
      *
      * @return true if we have to wait for something
+     *
      * @see #currentStandingLocation @see #currentWorkingLocation
      * @see #DEFAULT_RANGE_FOR_DELAY @see #delay
      */
@@ -270,7 +271,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (delay > 0)
         {
             if (currentStandingLocation != null &&
-                !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
+                    !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
             {
                 //Don't decrease delay as we are just walking...
                 return true;
@@ -346,6 +347,20 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Walk the worker to it's building chest.
+     * Please return immediately if this returns true.
+     *
+     * @return false if the worker is at his building
+     */
+    protected final boolean walkToBuilding()
+    {
+        @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
+        //Return true if the building is null to stall the worker
+        return ownBuilding == null
+                || walkToBlock(ownBuilding.getLocation());
+    }
+
+    /**
      * Finds the first @see ItemStack the type of {@code is}.
      * It will be taken from the chest and placed in the workers inventory.
      * Make sure that the worker stands next the chest to not break immersion.
@@ -358,37 +373,23 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingMiner = getOwnBuilding();
         return buildingMiner != null &&
-               is != null &&
-               InventoryFunctions
-                       .matchFirstInInventory(
-                               buildingMiner.getTileEntity(),
-                               stack -> stack != null && is.isItemEqual(stack),
-                               this::takeItemStackFromChest
-                                             );
+                is != null &&
+                InventoryFunctions
+                        .matchFirstInInventory(
+                                buildingMiner.getTileEntity(),
+                                stack -> stack != null && is.isItemEqual(stack),
+                                this::takeItemStackFromChest
+                        );
     }
 
     /**
      * Request an Item without spamming the chat.
      *
-     * @param chat  the Item Name
+     * @param chat the Item Name
      */
     private void requestWithoutSpam(@NotNull final String chat)
     {
         chatSpamFilter.requestWithoutSpam(chat);
-    }
-
-    /**
-     * Walk the worker to it's building chest.
-     * Please return immediately if this returns true.
-     *
-     * @return false if the worker is at his building
-     */
-    protected final boolean walkToBuilding()
-    {
-        @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
-        //Return true if the building is null to stall the worker
-        return ownBuilding == null
-               || walkToBlock(ownBuilding.getLocation());
     }
 
     /**
@@ -506,11 +507,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return buildingWorker != null
-               && InventoryFunctions.matchFirstInInventory(
+                && InventoryFunctions.matchFirstInInventory(
                 buildingWorker.getTileEntity(),
                 stack -> Utils.isTool(stack, tool),
                 this::takeItemStackFromChest);
-
     }
 
     /**
@@ -630,7 +630,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return buildingWorker != null
-               && InventoryFunctions.matchFirstInInventory(
+                && InventoryFunctions.matchFirstInInventory(
                 buildingWorker.getTileEntity(),
                 stack -> Utils.checkIfPickaxeQualifies(
                         minlevel,
@@ -664,6 +664,29 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Dump the workers inventory into his building chest.
+     * Only useful tools are kept!
+     * Only dumps one block at a time!
+     */
+    private boolean dumpOneMoreSlot()
+    {
+        return dumpOneMoreSlot(this::neededForWorker);
+    }
+
+    /**
+     * Checks if the worker inventory and his building chest are full
+     *
+     * @return true if both are full, else false
+     */
+    private boolean isInventoryAndChestFull()
+    {
+        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
+                && (buildingWorker != null
+                && InventoryUtils.isInventoryFull(buildingWorker.getTileEntity()));
+    }
+
+    /**
      * Can be overridden by implementations to specify items useful for the worker.
      * When the workers inventory is full, he will try to keep these items.
      * ItemStack amounts are ignored, the first stack found will be taken.
@@ -677,13 +700,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Dump the workers inventory into his building chest.
-     * Only useful tools are kept!
-     * Only dumps one block at a time!
+     * Clear the amount of blocks mined.
+     * Call this when dumping into the chest.
      */
-    private boolean dumpOneMoreSlot()
+    private void clearActionsDone()
     {
-        return dumpOneMoreSlot(this::neededForWorker);
+        this.actionsDone = 0;
     }
 
     /**
@@ -696,7 +718,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return walkToBuilding()
-               || InventoryFunctions.matchFirstInInventory(
+                || InventoryFunctions.matchFirstInInventory(
                 worker.getInventoryCitizen(), (i, stack) ->
                 {
                     if (buildingWorker == null || stack == null || keepIt.test(stack))
@@ -715,28 +737,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                     // into a full inventory.
                     return stack.stackSize != returnStack.stackSize;
                 });
-    }
-
-    /**
-     * Checks if the worker inventory and his building chest are full
-     *
-     * @return true if both are full, else false
-     */
-    private boolean isInventoryAndChestFull()
-    {
-        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
-               && (buildingWorker != null
-                   && InventoryUtils.isInventoryFull(buildingWorker.getTileEntity()));
-    }
-
-    /**
-     * Clear the amount of blocks mined.
-     * Call this when dumping into the chest.
-     */
-    private void clearActionsDone()
-    {
-        this.actionsDone = 0;
     }
 
     /**
@@ -763,7 +763,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             int countOfItem = worker.getItemCountInInventory(stack.getItem());
             if (countOfItem < stack.stackSize)
             {
-                int       itemsLeft     = stack.stackSize - countOfItem;
+                int itemsLeft = stack.stackSize - countOfItem;
                 ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
                 itemsCurrentlyNeeded.add(requiredStack);
                 allClear = false;
@@ -829,8 +829,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private void requestTool(@NotNull final Block target)
     {
-        String tool     = target.getHarvestTool(target.getDefaultState());
-        int    required = target.getHarvestLevel(target.getDefaultState());
+        String tool = target.getHarvestTool(target.getDefaultState());
+        int required = target.getHarvestLevel(target.getDefaultState());
         updateToolFlag(tool, required);
     }
 
@@ -871,15 +871,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private int getMostEfficientTool(@NotNull final Block target)
     {
-        String           tool      = target.getHarvestTool(target.getDefaultState());
-        int              required  = target.getHarvestLevel(target.getDefaultState());
-        int              bestSlot  = -1;
-        int              bestLevel = Integer.MAX_VALUE;
+        String tool = target.getHarvestTool(target.getDefaultState());
+        int required = target.getHarvestLevel(target.getDefaultState());
+        int bestSlot = -1;
+        int bestLevel = Integer.MAX_VALUE;
         InventoryCitizen inventory = worker.getInventoryCitizen();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack item  = inventory.getStackInSlot(i);
-            int       level = Utils.getMiningLevel(item, tool);
+            ItemStack item = inventory.getStackInSlot(i);
+            int level = Utils.getMiningLevel(item, tool);
             if (level >= required && level < bestLevel)
             {
                 bestSlot = i;

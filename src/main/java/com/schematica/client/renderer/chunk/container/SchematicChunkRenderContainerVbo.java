@@ -52,6 +52,16 @@ public class SchematicChunkRenderContainerVbo extends AbstractSchematicChunkRend
         GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
     }
 
+    private void setupArrayPointers()
+    {
+        GL11.glVertexPointer(3, GL11.GL_FLOAT, 28, 0L);
+        GL11.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 28, 12L);
+        GL11.glTexCoordPointer(2, GL11.GL_FLOAT, 28, 16L);
+        OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GL11.glTexCoordPointer(2, GL11.GL_SHORT, 28, 24L);
+        OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+    }
+
     private void postRenderChunk()
     {
         final List<VertexFormatElement> elements = DefaultVertexFormats.BLOCK.getElements();
@@ -79,16 +89,6 @@ public class SchematicChunkRenderContainerVbo extends AbstractSchematicChunkRend
                     break;
             }
         }
-    }
-
-    private void setupArrayPointers()
-    {
-        GL11.glVertexPointer(3, GL11.GL_FLOAT, 28, 0L);
-        GL11.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 28, 12L);
-        GL11.glTexCoordPointer(2, GL11.GL_FLOAT, 28, 16L);
-        OpenGlHelper.setClientActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GL11.glTexCoordPointer(2, GL11.GL_SHORT, 28, 24L);
-        OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
     @Override
@@ -124,15 +124,15 @@ public class SchematicChunkRenderContainerVbo extends AbstractSchematicChunkRend
         GL11.glEnableClientState(GL11.GL_COLOR_ARRAY);
     }
 
-    private void postRenderOverlay()
-    {
-        GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
-        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-    }
-
     private void setupArrayPointersOverlay()
     {
         GL11.glVertexPointer(3, GL11.GL_FLOAT, 16, 0);
         GL11.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, 16, 12);
+    }
+
+    private void postRenderOverlay()
+    {
+        GL11.glDisableClientState(GL11.GL_COLOR_ARRAY);
+        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
     }
 }

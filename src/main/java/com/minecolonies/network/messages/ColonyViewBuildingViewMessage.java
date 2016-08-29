@@ -15,15 +15,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<ColonyViewBuildingViewMessage, IMessage>
 {
-    private int              colonyId;
-    private BlockPos         buildingId;
-    private ByteBuf          buildingData;
+    private int      colonyId;
+    private BlockPos buildingId;
+    private ByteBuf  buildingData;
 
-    public ColonyViewBuildingViewMessage(){}
+    public ColonyViewBuildingViewMessage() {}
 
     /**
      * Creates a
-     * @param building      AbstractBuilding to add or update a view for
+     *
+     * @param building AbstractBuilding to add or update a view for
      */
     public ColonyViewBuildingViewMessage(AbstractBuilding building)
     {
@@ -34,20 +35,20 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-        buf.writeBytes(buildingData);
-    }
-
-    @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
         buildingData = Unpooled.buffer(buf.readableBytes());
         buf.readBytes(buildingData, buf.readableBytes());
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBytes(buildingData);
     }
 
     @Override

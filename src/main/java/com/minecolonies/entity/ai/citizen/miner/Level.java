@@ -39,7 +39,7 @@ public class Level
      * Create a new level model.
      *
      * @param buildingMiner reference to the miner building.
-     * @param depth the depth of this level.
+     * @param depth         the depth of this level.
      */
     public Level(BuildingMiner buildingMiner, int depth)
     {

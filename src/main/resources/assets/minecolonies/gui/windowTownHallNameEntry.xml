@@ -1,5 +1,5 @@
-<window pause="true" lightbox="true"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" pause="true"
+        lightbox="true"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
     <label size="100% 11" pos="0 100" textalign="TopMiddle" color="white" label="$(com.minecolonies.gui.townHall.rename.title)"/>
     <input id="name" size="150 18" pos="135 110" maxlength="128"/>

@@ -11,17 +11,17 @@ import com.minecolonies.lib.Constants;
  */
 public class WindowTownHallNameEntry extends Window implements Button.Handler
 {
-    private static final    String      BUTTON_DONE                     = "done";
-    private static final    String      BUTTON_CANCEL                   = "cancel";
-    private static final    String      INPUT_NAME                      = "name";
-    private static final    String      TOWNHALL_NAME_RESOURCE_SUFFIX   = ":gui/windowTownHallNameEntry.xml";
+    private static final String BUTTON_DONE                   = "done";
+    private static final String BUTTON_CANCEL                 = "cancel";
+    private static final String INPUT_NAME                    = "name";
+    private static final String TOWNHALL_NAME_RESOURCE_SUFFIX = ":gui/windowTownHallNameEntry.xml";
 
-    private                 ColonyView  colony;
+    private ColonyView colony;
 
     /**
      * Constructor for a town hall rename entry window
      *
-     * @param c         {@link ColonyView}
+     * @param c {@link ColonyView}
      */
     public WindowTownHallNameEntry(ColonyView c)
     {
@@ -41,7 +41,7 @@ public class WindowTownHallNameEntry extends Window implements Button.Handler
         if (button.getID().equals(BUTTON_DONE))
         {
             String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
-            if(!name.isEmpty())
+            if (!name.isEmpty())
             {
                 colony.setName(name);
             }

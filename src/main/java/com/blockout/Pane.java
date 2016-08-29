@@ -15,29 +15,23 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  */
 public class Pane extends Gui
 {
-    protected Minecraft mc = Minecraft.getMinecraft();
-
+    protected static Pane lastClickedPane;
+    protected static Pane focus;
+    protected static boolean             debugging         = false;
+    private static   Deque<ScissorsInfo> scissorsInfoStack = new ConcurrentLinkedDeque<>();
+    protected        Minecraft           mc                = Minecraft.getMinecraft();
     //  Attributes
-    protected String    id = "";
-    protected int       x  = 0;
-    protected int       y  = 0;
-
-    protected int       width  = 0;
-    protected int       height = 0;
-
-    protected Alignment alignment = Alignment.TopLeft;
-    protected boolean   visible   = true;
-    protected boolean   enabled   = true;
-
+    protected        String              id                = "";
+    protected        int                 x                 = 0;
+    protected        int                 y                 = 0;
+    protected        int                 width             = 0;
+    protected        int                 height            = 0;
+    protected        Alignment           alignment         = Alignment.TopLeft;
+    protected        boolean             visible           = true;
+    protected        boolean             enabled           = true;
     //  Runtime
-    protected        Window window;
-    protected        View   parent;
-    protected static Pane   lastClickedPane;
-    protected static Pane   focus;
-
-    protected static boolean debugging = false;
-
-    private static Deque<ScissorsInfo> scissorsInfoStack = new ConcurrentLinkedDeque<>();
+    protected Window window;
+    protected View   parent;
 
     /**
      * Default constructor
@@ -82,8 +76,42 @@ public class Pane extends Gui
         }
 
         alignment = params.getEnumAttribute("align", Alignment.class, alignment);
-        visible   = params.getBooleanAttribute("visible", visible);
-        enabled   = params.getBooleanAttribute("enabled", enabled);
+        visible = params.getBooleanAttribute("visible", visible);
+        enabled = params.getBooleanAttribute("enabled", enabled);
+    }
+
+    /**
+     * Returns the currently focused Pane
+     *
+     * @return the currently focused Pane
+     */
+    public static synchronized Pane getFocus()
+    {
+        return focus;
+    }
+
+    /**
+     * Clear the currently focused Pane.
+     */
+    public static void clearFocus()
+    {
+        setFocus(null);
+    }
+
+    /**
+     * Override to respond to the Pane losing focus
+     */
+    public void onFocusLost()
+    {
+        // Can be overloaded
+    }
+
+    /**
+     * Override to respond to the Pane becoming the current focus
+     */
+    public void onFocus()
+    {
+        // Can be overloaded
     }
 
     public void parseChildren(PaneParams params)
@@ -102,33 +130,12 @@ public class Pane extends Gui
         this.id = id;
     }
 
-    //  Dimensions
-    public int getWidth()
-    {
-        return width;
-    }
-
-    public int getHeight()
-    {
-        return height;
-    }
-
     public void setSize(int w, int h)
     {
         width = w;
         height = h;
     }
 
-    //  Position
-    public int getX()
-    {
-        return x;
-    }
-
-    public int getY()
-    {
-        return y;
-    }
     public void setPosition(int newX, int newY)
     {
         x = newX;
@@ -197,12 +204,21 @@ public class Pane extends Gui
     //  Focus
 
     /**
-     * Returns the currently focused Pane
-     * @return the currently focused Pane
+     * Set Focus to this Pane.
      */
-    public static synchronized Pane getFocus()
+    public final void setFocus()
     {
-        return focus;
+        setFocus(this);
+    }
+
+    /**
+     * Return <tt>true</tt> if this Pane is the current focus.
+     *
+     * @return <tt>true</tt> if this Pane is the current focus
+     */
+    public final synchronized boolean isFocus()
+    {
+        return focus == this;
     }
 
     /**
@@ -226,50 +242,6 @@ public class Pane extends Gui
     }
 
     /**
-     * Clear the currently focused Pane.
-     */
-    public static void clearFocus()
-    {
-        setFocus(null);
-    }
-
-    /**
-     * Set Focus to this Pane.
-     */
-    public final void setFocus()
-    {
-        setFocus(this);
-    }
-
-    /**
-     * Return <tt>true</tt> if this Pane is the current focus.
-     *
-     * @return <tt>true</tt> if this Pane is the current focus
-     */
-    public final synchronized boolean isFocus()
-    {
-        return focus == this;
-    }
-
-    /**
-     * Override to respond to the Pane losing focus
-     */
-    public void onFocusLost()
-    {
-        // Can be overloaded
-    }
-
-    /**
-     * Override to respond to the Pane becoming the current focus
-     */
-    public void onFocus()
-    {
-        // Can be overloaded
-    }
-
-    //  Drawing
-
-    /**
      * Draw the current Pane if visible.
      *
      * @param mx mouse x
@@ -290,7 +262,7 @@ public class Pane extends Gui
                 boolean isMouseOver = isPointInPane(mx, my);
                 int color = isMouseOver ? 0xFF00FF00 : 0xFF0000FF;
 
-                Render.drawOutlineRect(x, y, x+getWidth(), y+getHeight(), color);
+                Render.drawOutlineRect(x, y, x + getWidth(), y + getHeight(), color);
 
                 if (isMouseOver && !id.isEmpty())
                 {
@@ -305,7 +277,7 @@ public class Pane extends Gui
 
     /**
      * Draw self.  The graphics port is already relative to the appropriate location
-     *
+     * <p>
      * Override this to actually draw.
      *
      * @param mx Mouse x (relative to parent)
@@ -314,6 +286,55 @@ public class Pane extends Gui
     protected void drawSelf(int mx, int my)
     {
         // Can be overloaded
+    }
+
+    /**
+     * Is a point relative to the parent's origin within the pane?
+     *
+     * @param mx point x
+     * @param my point y
+     * @return true if the point is in the pane
+     */
+    protected boolean isPointInPane(int mx, int my)
+    {
+        return mx >= x && mx < (x + width) &&
+                my >= y && my < (y + height);
+    }
+
+    //  Dimensions
+    public int getWidth()
+    {
+        return width;
+    }
+
+    //  Drawing
+
+    public int getHeight()
+    {
+        return height;
+    }
+
+    /**
+     * Returns the first Pane (depth-first search) of a given ID,
+     * if it matches the specified type.
+     * Performs a depth-first search on the hierarchy of Panes and Views.
+     *
+     * @param id   ID of Pane to find
+     * @param type Class of the desired Pane type
+     * @param <T>  The type of pane returned
+     * @return a Pane of the given ID, if it matches the specified type
+     */
+    public final <T extends Pane> T findPaneOfTypeByID(String id, Class<T> type)
+    {
+        Pane p = findPaneByID(id);
+        try
+        {
+            return type.cast(p);
+        }
+        catch (ClassCastException e)
+        {
+            throw new IllegalArgumentException(String.format("No pane with id %s and type %s was found.", id, type), e);
+        }
     }
 
     //  Subpanes
@@ -328,29 +349,6 @@ public class Pane extends Gui
     public Pane findPaneByID(String id)
     {
         return this.id.equals(id) ? this : null;
-    }
-
-    /**
-     * Returns the first Pane (depth-first search) of a given ID,
-     * if it matches the specified type.
-     * Performs a depth-first search on the hierarchy of Panes and Views.
-     *
-     * @param id ID of Pane to find
-     * @param type Class of the desired Pane type
-     * @param <T> The type of pane returned
-     * @return a Pane of the given ID, if it matches the specified type
-     */
-    public final <T extends Pane> T findPaneOfTypeByID(String id, Class<T> type)
-    {
-        Pane p = findPaneByID(id);
-        try
-        {
-            return type.cast(p);
-        }
-        catch (ClassCastException e)
-        {
-            throw new IllegalArgumentException(String.format("No pane with id %s and type %s was found.", id, type), e);
-        }
     }
 
     /**
@@ -398,42 +396,16 @@ public class Pane extends Gui
         }
     }
 
-    //  Mouse
-
-    /**
-     * Is a point relative to the parent's origin within the pane?
-     *
-     * @param mx point x
-     * @param my point y
-     * @return true if the point is in the pane
-     */
-    protected boolean isPointInPane(int mx, int my)
-    {
-        return mx >= x && mx < (x + width) &&
-               my >= y && my < (y + height);
-    }
-
     public boolean isClickable()
     {
         return visible && enabled;
     }
 
-    /**
-     * Process a click on the Pane
-     *
-     * Override this to process the actual click
-     *
-     * @param mx mouse X coordinate, relative to Pane's top-left
-     * @param my mouse Y coordinate, relative to Pane's top-left
-     */
-    public void handleClick(int mx, int my)
-    {
-        // Can be overloaded
-    }
+    //  Mouse
 
     /**
      * Process a mouse down on the Pane.
-     *
+     * <p>
      * It is advised that only containers of other panes override this method
      *
      * @param mx mouse X coordinate, relative to parent's top-left
@@ -450,6 +422,19 @@ public class Pane extends Gui
         lastClickedPane = pane;
     }
 
+    /**
+     * Process a click on the Pane
+     * <p>
+     * Override this to process the actual click
+     *
+     * @param mx mouse X coordinate, relative to Pane's top-left
+     * @param my mouse Y coordinate, relative to Pane's top-left
+     */
+    public void handleClick(int mx, int my)
+    {
+        // Can be overloaded
+    }
+
     public boolean canHandleClick(int mx, int my)
     {
         return visible && enabled && isPointInPane(mx, my);
@@ -463,22 +448,6 @@ public class Pane extends Gui
     public void onUpdate()
     {
         // Can be overloaded
-    }
-
-    private static class ScissorsInfo
-    {
-        private int x;
-        private int y;
-        private int width;
-        private int height;
-
-        ScissorsInfo(int x, int y, int w, int h)
-        {
-            this.x = x;
-            this.y = y;
-            this.width = w;
-            this.height = h;
-        }
     }
 
     protected synchronized void scissorsStart()
@@ -515,6 +484,17 @@ public class Pane extends Gui
         GL11.glScissor(info.x * scale, mc.displayHeight - ((info.y + info.height) * scale), info.width * scale, info.height * scale);
     }
 
+    //  Position
+    public int getX()
+    {
+        return x;
+    }
+
+    public int getY()
+    {
+        return y;
+    }
+
     protected synchronized void scissorsEnd()
     {
         scissorsInfoStack.pop();
@@ -529,6 +509,21 @@ public class Pane extends Gui
             int scale = Screen.getScale();
             GL11.glScissor(info.x * scale, mc.displayHeight - ((info.y + info.height) * scale), info.width * scale, info.height * scale);
         }
+    }
 
+    private static class ScissorsInfo
+    {
+        private int x;
+        private int y;
+        private int width;
+        private int height;
+
+        ScissorsInfo(int x, int y, int w, int h)
+        {
+            this.x = x;
+            this.y = y;
+            this.width = w;
+            this.height = h;
+        }
     }
 }

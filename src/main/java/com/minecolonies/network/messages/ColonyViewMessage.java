@@ -18,13 +18,13 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     private boolean isNewSubscription;
     private ByteBuf colonyBuffer;
 
-    public ColonyViewMessage(){}
+    public ColonyViewMessage() {}
 
     /**
      * Add or Update a ColonyView on the client
      *
-     * @param colony                Colony of the view to update
-     * @param isNewSubscription     Boolean whether or not this is a new subscription
+     * @param colony            Colony of the view to update
+     * @param isNewSubscription Boolean whether or not this is a new subscription
      */
     public ColonyViewMessage(Colony colony, boolean isNewSubscription)
     {
@@ -35,19 +35,19 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        buf.writeBoolean(isNewSubscription);
-        buf.writeBytes(colonyBuffer);
-    }
-
-    @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
         isNewSubscription = buf.readBoolean();
         colonyBuffer = buf;
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        buf.writeBoolean(isNewSubscription);
+        buf.writeBytes(colonyBuffer);
     }
 
     @Override

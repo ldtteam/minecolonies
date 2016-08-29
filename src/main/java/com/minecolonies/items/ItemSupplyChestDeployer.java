@@ -29,19 +29,19 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * The space on the left side of the ship (left side of the chest).
      */
-    private static final int SPACE_LEFT = 20;
+    private static final int SPACE_LEFT  = 20;
     /**
      * The total length of the ship.
      */
-    private static final int LENGTH = 32;
+    private static final int LENGTH      = 32;
     /**
      * The total width of the ship.
      */
-    private static final int WIDTH = 20;
+    private static final int WIDTH       = 20;
     /**
      * The distance between the ship and the chest.
      */
-    private static final int DISTANCE = 4;
+    private static final int DISTANCE    = 4;
 
     /**
      * Creates a new supplychest deployer. The item is not stackable.
@@ -54,6 +54,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
     /**
      * Getter of the name.
+     *
      * @return the name of the item/block.
      */
     @Override
@@ -65,33 +66,52 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * This method will be executed on placement of the ship.
      * If the ship can be placed at the current position the function will execute successfully.
-     * @param stack the item.
+     *
+     * @param stack    the item.
      * @param playerIn the player placing.
-     * @param worldIn the world.
-     * @param pos the position.
-     * @param side the direction it faces (not used).
-     * @param hitX the hitBox x position (not used).
-     * @param hitY the hitBox y position (not used).
-     * @param hitZ the hitBox z position (not used).
+     * @param worldIn  the world.
+     * @param pos      the position.
+     * @param side     the direction it faces (not used).
+     * @param hitX     the hitBox x position (not used).
+     * @param hitY     the hitBox y position (not used).
+     * @param hitZ     the hitBox z position (not used).
      * @return if the chest has been successfully placed.
      */
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        if(worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
+        if (worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
+        {
             return false;
+        }
 
         EnumFacing facing = canShipBePlaced(worldIn, pos);
-        if(facing != EnumFacing.DOWN)
+        if (facing != EnumFacing.DOWN)
         {
             spawnShip(worldIn, pos, playerIn, facing);
             stack.stackSize--;
-            
+
             playerIn.triggerAchievement(ModAchievements.achievementGetSupply);
-            
+
             return true;
         }
         LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.supplyChestDeployer.invalid");
+        return false;
+    }
+
+    /**
+     * Checks if the player already placed a supply chest.
+     *
+     * @param player the player.
+     * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
+     */
+    boolean isFirstPlacing(EntityPlayer player)
+    {
+        if (Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest())
+        {
+            return true;
+        }
+        LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.error.supplyChestAlreadyPlaced");
         return false;
     }
 
@@ -104,115 +124,30 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * 4: can be placed at west.
      * 5: can be placed at east.
      * </pre>
+     *
      * @param world world obj.
-     * @param pos    coordinate clicked.
-     * @return      facings it can be placed at.
+     * @param pos   coordinate clicked.
+     * @return facings it can be placed at.
      */
     public EnumFacing canShipBePlaced(World world, BlockPos pos)
     {
-        if(check(world, pos.west(), true, false))
+        if (check(world, pos.west(), true, false))
         {
             return EnumFacing.WEST;
         }
-        else if(check(world, pos.east(), true, true))
+        else if (check(world, pos.east(), true, true))
         {
             return EnumFacing.EAST;
         }
-        else if(check(world, pos.south(), false, true))
+        else if (check(world, pos.south(), false, true))
         {
             return EnumFacing.SOUTH;
         }
-        else if(check(world, pos.north(), false, false))
+        else if (check(world, pos.north(), false, false))
         {
             return EnumFacing.NORTH;
         }
         return EnumFacing.DOWN;
-    }
-
-    /**
-     * Checks the area for the ship to be placed.
-     *
-     * @param world                  world obj.
-     * @param pos                    coordinate clicked.
-     * @param shouldCheckX           boolean whether the x-sides should be checks.
-     * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false).
-     * @return                       whether the space in the I shape is free or not.
-     */
-    private boolean check(World world, BlockPos pos, boolean shouldCheckX, boolean isCoordPositivelyAdded)
-    {
-        int k = isCoordPositivelyAdded ? 1 : -1;
-
-
-
-        int horizontalX = isCoordPositivelyAdded ? SPACE_LEFT : SPACE_RIGHT;
-        int horizontalZ = isCoordPositivelyAdded ? SPACE_RIGHT : SPACE_LEFT;
-
-        int spaceRightK = SPACE_RIGHT * k;
-        int spaceLeftK = SPACE_LEFT * k;
-
-        int widthK = WIDTH * k;
-        int widthKHalf = widthK / 2;
-
-        if(shouldCheckX)
-        {
-            for(int i = DISTANCE; i < WIDTH; i++)
-            {
-                int j = k * i;
-                if(!BlockUtils.isWater(world.getBlockState(pos.add(j, 0, 0))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, spaceRightK))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, -spaceLeftK))))
-                {
-                    return false;
-                }
-            }
-            for(int i = 0; i < LENGTH; i++)
-            {
-                if(!BlockUtils.isWater(world.getBlockState(pos.add(DISTANCE*k, 0, -horizontalX + i))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(widthKHalf, 0, -horizontalX + i))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(widthK, 0, -horizontalX + i))))
-                {
-                    return false;
-                }
-            }
-        }
-        else
-        {
-            for(int i = DISTANCE; i < WIDTH; i++)
-            {
-                int j = k * i;
-                if(!BlockUtils.isWater(world.getBlockState(pos.add(0, 0, j))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(-spaceRightK,0, j))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(spaceLeftK, 0, j))))
-                {
-                    return false;
-                }
-            }
-
-            for(int i = 0; i < LENGTH; i++)
-            {
-                if(!BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, DISTANCE*k))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthKHalf))) ||
-                   !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthK))))
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Checks if the player already placed a supply chest.
-     *
-     * @param player    the player.
-     * @return          boolean, returns true when player hasn't placed before, or when infinite placing is on.
-     */
-    boolean isFirstPlacing(EntityPlayer player)
-    {
-        if(Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest())
-            return true;
-        LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.error.supplyChestAlreadyPlaced");
-        return false;
     }
 
     /**
@@ -224,7 +159,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private void spawnShip(World world, BlockPos pos, EntityPlayer entityPlayer, EnumFacing chestFacing)
     {
-    	world.setBlockState(pos.up(), Blocks.chest.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
+        world.setBlockState(pos.up(), Blocks.chest.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
 
         placeSupplyShip(world, pos, chestFacing);
 
@@ -232,9 +167,80 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         PlayerProperties.get(entityPlayer).placeSupplyChest();
     }
 
+    /**
+     * Checks the area for the ship to be placed.
+     *
+     * @param world                  world obj.
+     * @param pos                    coordinate clicked.
+     * @param shouldCheckX           boolean whether the x-sides should be checks.
+     * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false).
+     * @return whether the space in the I shape is free or not.
+     */
+    private boolean check(World world, BlockPos pos, boolean shouldCheckX, boolean isCoordPositivelyAdded)
+    {
+        int k = isCoordPositivelyAdded ? 1 : -1;
+
+
+        int horizontalX = isCoordPositivelyAdded ? SPACE_LEFT : SPACE_RIGHT;
+        int horizontalZ = isCoordPositivelyAdded ? SPACE_RIGHT : SPACE_LEFT;
+
+        int spaceRightK = SPACE_RIGHT * k;
+        int spaceLeftK = SPACE_LEFT * k;
+
+        int widthK = WIDTH * k;
+        int widthKHalf = widthK / 2;
+
+        if (shouldCheckX)
+        {
+            for (int i = DISTANCE; i < WIDTH; i++)
+            {
+                int j = k * i;
+                if (!BlockUtils.isWater(world.getBlockState(pos.add(j, 0, 0))) ||
+                        !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, spaceRightK))) ||
+                        !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, -spaceLeftK))))
+                {
+                    return false;
+                }
+            }
+            for (int i = 0; i < LENGTH; i++)
+            {
+                if (!BlockUtils.isWater(world.getBlockState(pos.add(DISTANCE * k, 0, -horizontalX + i))) ||
+                        !BlockUtils.isWater(world.getBlockState(pos.add(widthKHalf, 0, -horizontalX + i))) ||
+                        !BlockUtils.isWater(world.getBlockState(pos.add(widthK, 0, -horizontalX + i))))
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            for (int i = DISTANCE; i < WIDTH; i++)
+            {
+                int j = k * i;
+                if (!BlockUtils.isWater(world.getBlockState(pos.add(0, 0, j))) ||
+                        !BlockUtils.isWater(world.getBlockState(pos.add(-spaceRightK, 0, j))) ||
+                        !BlockUtils.isWater(world.getBlockState(pos.add(spaceLeftK, 0, j))))
+                {
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < LENGTH; i++)
+            {
+                if (!BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, DISTANCE * k))) ||
+                        !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthKHalf))) ||
+                        !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthK))))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void placeSupplyShip(World world, BlockPos pos, EnumFacing direction)
     {
-        switch(direction)
+        switch (direction)
         {
             case SOUTH://North 2
                 SchematicWrapper.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-11, -2, 5), 3);
@@ -249,17 +255,18 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                 SchematicWrapper.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-21, -2, -11), 0);
                 break;
             default:
-            	break;
+                break;
         }
     }
 
     /**
      * Fills the content of the supplychest with the buildTool and townHall.
+     *
      * @param chest the chest to fill.
      */
     private void fillChest(TileEntityChest chest)
     {
-        if(chest == null)
+        if (chest == null)
         {
             Log.logger.error("Supply chest tile entity was null.");
             return;

@@ -39,7 +39,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private BlockPos currentFarmLand;
     private int    harvestCounter = 0;
     private String needItem       = "";
-    private int delay = 0;
+    private int    delay          = 0;
 
     //TODO Check for duplicates
     public EntityAIWorkFarmer(JobFarmer job)
@@ -49,23 +49,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     //TODO Planting randomly depending on option in Hut, each level, one more crop type
     //TODO Adding Language Strings in files
 
+    private static boolean isStackTool(ItemStack stack)
+    {
+        return stack != null && (stack.getUnlocalizedName().contains(TOOL_TYPE_HOE) || stack.getItem().getToolClasses(
+                stack).contains(TOOL_TYPE_SHOVEL));
+    }
+
     @Override
     protected BuildingFarmer getOwnBuilding()
     {
         return (BuildingFarmer) (worker.getWorkBuilding());
-    }
-
-    /**
-     *
-     */
-    private void checkForCrops()
-    {
-        if (crops.isEmpty() && !crops2.isEmpty())
-        {
-            crops.addAll(crops2);
-            crops2.clear();
-            job.setStage(Stage.NEED_SEEDS);
-        }
     }
 
     @Override
@@ -112,6 +105,19 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         return item.toString().contains("Seed") || item.toString().contains("potatoe") || item.toString().contains(
                 "carrot");
+    }
+
+    /**
+     *
+     */
+    private void checkForCrops()
+    {
+        if (crops.isEmpty() && !crops2.isEmpty())
+        {
+            crops.addAll(crops2);
+            crops2.clear();
+            job.setStage(Stage.NEED_SEEDS);
+        }
     }
 
     private boolean waitingForSomething()
@@ -169,8 +175,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 Item content = stack.getItem();
                 if (content.equals(item)
-                    || content.getToolClasses(stack).contains(needItem)
-                    || stack.getUnlocalizedName().contains(needItem))
+                        || content.getToolClasses(stack).contains(needItem)
+                        || stack.getUnlocalizedName().contains(needItem))
                 {
                     ItemStack returnStack = InventoryUtils.setStack(getInventory(), stack);
 
@@ -181,7 +187,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     else
                     {
                         worker.getWorkBuilding().getTileEntity().decrStackSize(i,
-                                                                               stack.stackSize - returnStack.stackSize);
+                                stack.stackSize - returnStack.stackSize);
                     }
                     return true;
                 }
@@ -208,10 +214,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
 
         int hasSpade = InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_SHOVEL);
-        int hasHoe   = InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_HOE);
+        int hasHoe = InventoryUtils.getFirstSlotContainingTool(getInventory(), TOOL_TYPE_HOE);
 
         boolean spade = hasSpade > -1 || hasSpadeInHand;
-        boolean hoe   = hasHoeInHand || hasHoe > -1;
+        boolean hoe = hasHoeInHand || hasHoe > -1;
 
         if (!spade)
         {
@@ -347,12 +353,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     Block blockAbove = world.getBlockState(new BlockPos(x, buildingY, z)).getBlock();
 
                     if (blockAbove == Blocks.wheat
-                        || blockAbove == Blocks.potatoes
-                        || blockAbove == Blocks.carrots
-                        || blockAbove == Blocks.melon_stem
-                        || blockAbove == Blocks.melon_block
-                        || blockAbove == Blocks.pumpkin
-                        || blockAbove == Blocks.pumpkin_stem)
+                            || blockAbove == Blocks.potatoes
+                            || blockAbove == Blocks.carrots
+                            || blockAbove == Blocks.melon_stem
+                            || blockAbove == Blocks.melon_block
+                            || blockAbove == Blocks.pumpkin
+                            || blockAbove == Blocks.pumpkin_stem)
                     {
                         if (crops.isEmpty() || !crops.contains(new BlockPos(x, buildingY, z)))
                         {
@@ -374,25 +380,25 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (!farmAbleLand.isEmpty())
         {
             if (world.getBlockState(new BlockPos(farmAbleLand.get(0).getX(), farmAbleLand.get(0).getY() - 1, farmAbleLand.get(0).getZ())).getBlock()
-                != Blocks.farmland)
+                    != Blocks.farmland)
             {
                 delay = 20;
                 world.setBlockState(new BlockPos(farmAbleLand.get(0).getX(),
-                                                 farmAbleLand.get(0).getY() - 1,
-                                                 farmAbleLand.get(0).getZ()),
-                                    Blocks.farmland.getDefaultState());
+                                farmAbleLand.get(0).getY() - 1,
+                                farmAbleLand.get(0).getZ()),
+                        Blocks.farmland.getDefaultState());
                 currentFarmLand = new BlockPos(farmAbleLand.get(0).getX(),
-                                               farmAbleLand.get(0).getY() - 1,
-                                               farmAbleLand.get(0).getZ());
+                        farmAbleLand.get(0).getY() - 1,
+                        farmAbleLand.get(0).getZ());
             }
 
             if (plowedLand.isEmpty() || !plowedLand.contains(new BlockPos(farmAbleLand.get(0).getX(),
-                                                                          farmAbleLand.get(0).getY(),
-                                                                          farmAbleLand.get(0).getZ())))
+                    farmAbleLand.get(0).getY(),
+                    farmAbleLand.get(0).getZ())))
             {
                 plowedLand.add(new BlockPos(farmAbleLand.get(0).getX(),
-                                            farmAbleLand.get(0).getY(),
-                                            farmAbleLand.get(0).getZ()));
+                        farmAbleLand.get(0).getY(),
+                        farmAbleLand.get(0).getZ()));
                 farmAbleLand.remove(0);
             }
         }
@@ -421,10 +427,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     world.setBlockState(plowedLand.get(0), Blocks.farmland.getDefaultState());
                     delay = 20;
                     currentFarmLand = new BlockPos(plowedLand.get(0).getX(),
-                                                   plowedLand.get(0).getY() - 1,
-                                                   plowedLand.get(0).getZ());
+                            plowedLand.get(0).getY() - 1,
+                            plowedLand.get(0).getZ());
 
-                    int       slot = getFirstSeed();
+                    int slot = getFirstSeed();
                     ItemStack seed = getInventory().getStackInSlot(slot);
                     if (seed == null)
                     {
@@ -457,24 +463,24 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 }
 
                 if (crops.isEmpty() || !crops.contains(new BlockPos(plowedLand.get(0).getX(),
-                                                                      plowedLand.get(0).getY(),
-                                                                      plowedLand.get(0).getZ())))
+                        plowedLand.get(0).getY(),
+                        plowedLand.get(0).getZ())))
                 {
                     crops.add(new BlockPos(plowedLand.get(0).getX(),
-                                           plowedLand.get(0).getY(),
-                                           plowedLand.get(0).getZ()));
+                            plowedLand.get(0).getY(),
+                            plowedLand.get(0).getZ()));
                     plowedLand.remove(0);
                 }
             }
             else
             {
                 if (farmAbleLand.isEmpty() || !farmAbleLand.contains(new BlockPos(plowedLand.get(0).getX(),
-                                                                                  plowedLand.get(0).getY(),
-                                                                                  plowedLand.get(0).getZ())))
+                        plowedLand.get(0).getY(),
+                        plowedLand.get(0).getZ())))
                 {
                     farmAbleLand.add(new BlockPos(plowedLand.get(0).getX(),
-                                                  plowedLand.get(0).getY(),
-                                                  plowedLand.get(0).getZ()));
+                            plowedLand.get(0).getY(),
+                            plowedLand.get(0).getZ()));
                     plowedLand.remove(0);
                 }
             }
@@ -522,7 +528,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 //todo should be age, may be different!
                 if (block == Blocks.melon_block || block == Blocks.pumpkin || world.getBlockState(crops.get(0)).getValue(BlockCrops.AGE)
-                                                                              == 0x7)
+                        == 0x7)
                 {
                     List<ItemStack> items = BlockPosUtil.getBlockDrops(world, crops.get(0), 0);
 
@@ -592,7 +598,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     else
                     {
                         worker.getWorkBuilding().getTileEntity().decrStackSize(i,
-                                                                               stack.stackSize - returnStack.stackSize);
+                                stack.stackSize - returnStack.stackSize);
                     }
 
                     return true;
@@ -625,12 +631,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
             job.setStage(Stage.WORKING);
         }
-    }
-
-    private static boolean isStackTool(ItemStack stack)
-    {
-        return stack != null && (stack.getUnlocalizedName().contains(TOOL_TYPE_HOE) || stack.getItem().getToolClasses(
-                stack).contains(TOOL_TYPE_SHOVEL));
     }
 
     public enum Stage

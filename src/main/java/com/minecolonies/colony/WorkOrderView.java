@@ -44,6 +44,7 @@ public class WorkOrderView
 
     /**
      * Priority getter.
+     *
      * @return the priority.
      */
     public int getPriority()
@@ -52,7 +53,18 @@ public class WorkOrderView
     }
 
     /**
+     * Setter for the priority.
+     *
+     * @param priority the new priority.
+     */
+    public void setPriority(int priority)
+    {
+        this.priority = priority;
+    }
+
+    /**
      * Value getter.
+     *
      * @return the value String.
      */
     public String getValue()
@@ -62,6 +74,7 @@ public class WorkOrderView
 
     /**
      * Type getter.
+     *
      * @return the type (defined by Enum).
      */
     public AbstractWorkOrder.WorkOrderType getType()
@@ -71,6 +84,7 @@ public class WorkOrderView
 
     /**
      * Id getter.
+     *
      * @return the id.
      */
     public int getId()
@@ -80,6 +94,7 @@ public class WorkOrderView
 
     /**
      * Id setter.
+     *
      * @param id the id to set.
      */
     public void setId(int id)
@@ -89,6 +104,7 @@ public class WorkOrderView
 
     /**
      * ClaimedBy getter.
+     *
      * @return citizen id who claimed the workOrder.
      */
     public int getClaimedBy()
@@ -98,20 +114,12 @@ public class WorkOrderView
 
     /**
      * ClaimedBy setter.
+     *
      * @param claimedBy sets a citizen who claims the workOrder.
      */
     public void setClaimedBy(int claimedBy)
     {
         this.claimedBy = claimedBy;
-    }
-
-    /**
-     * Setter for the priority.
-     * @param priority the new priority.
-     */
-    public void setPriority(int priority)
-    {
-        this.priority = priority;
     }
 
     /**

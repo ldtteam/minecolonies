@@ -13,11 +13,6 @@ import net.minecraft.world.World;
  */
 public class PathJobFindTree extends AbstractPathJob
 {
-    public static class TreePathResult extends PathResult
-    {
-        public BlockPos treeLocation;
-    }
-
     private BlockPos hutLocation;
 
     /**
@@ -25,7 +20,7 @@ public class PathJobFindTree extends AbstractPathJob
      *
      * @param world the world within which to path
      * @param start the start position from which to path from
-     * @param home   the position of the workers hut
+     * @param home  the position of the workers hut
      * @param range maximum path range
      */
     public PathJobFindTree(World world, BlockPos start, BlockPos home, int range)
@@ -33,6 +28,11 @@ public class PathJobFindTree extends AbstractPathJob
         super(world, start, start, range, new TreePathResult());
 
         hutLocation = home;
+    }
+
+    public static class TreePathResult extends PathResult
+    {
+        public BlockPos treeLocation;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(BlockPos pos)
     {
-        if(Tree.checkTree(world, pos))
+        if (Tree.checkTree(world, pos))
         {
             getResult().treeLocation = pos;
             return true;

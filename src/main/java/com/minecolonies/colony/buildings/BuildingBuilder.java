@@ -48,6 +48,26 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
+
+        if (newLevel == 1)
+        {
+            owner.triggerAchievement(ModAchievements.achievementBuildingBuilder);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            owner.triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
+        }
+    }
+
+    /**
      * Getter of the max building level.
      *
      * @return the integer.
@@ -79,26 +99,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public AbstractJob createJob(CitizenData citizen)
     {
         return new JobBuilder(citizen);
-    }
-
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
-
-        if (newLevel == 1)
-        {
-            owner.triggerAchievement(ModAchievements.achievementBuildingBuilder);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
-        }
     }
 
     /**

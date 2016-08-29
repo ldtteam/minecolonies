@@ -25,11 +25,11 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * Constructor.
      *
-     * @param entity current entity.
-     * @param targetEntityClass entity class we want to avoid.
+     * @param entity             current entity.
+     * @param targetEntityClass  entity class we want to avoid.
      * @param distanceFromEntity how far we want to stay away.
-     * @param farSpeed how fast we should move when we are far away.
-     * @param nearSpeed how fast we should move when we are close.
+     * @param farSpeed           how fast we should move when we are far away.
+     * @param nearSpeed          how fast we should move when we are close.
      */
     public EntityAICitizenAvoidEntity(EntityCitizen entity, Class targetEntityClass, float distanceFromEntity, double farSpeed, double nearSpeed)
     {

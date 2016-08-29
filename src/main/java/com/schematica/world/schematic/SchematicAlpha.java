@@ -265,6 +265,5 @@ class SchematicAlpha extends SchematicFormat
         tagCompound.setShort(OFFSET_X, (short) schematic.getOffset().getX());
         tagCompound.setShort(OFFSET_Y, (short) schematic.getOffset().getY());
         tagCompound.setShort(OFFSET_Z, (short) schematic.getOffset().getZ());
-
     }
 }

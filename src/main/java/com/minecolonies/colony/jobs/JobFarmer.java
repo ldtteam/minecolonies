@@ -21,7 +21,14 @@ public class JobFarmer extends AbstractJob
     }
 
     @Override
-    public String getName(){ return "com.minecolonies.job.Farmer"; }
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        stage = EntityAIWorkFarmer.Stage.valueOf(compound.getString(TAG_STAGE));
+    }
+
+    @Override
+    public String getName() { return "com.minecolonies.job.Farmer"; }
 
     @Override
     public RenderBipedCitizen.Model getModel()
@@ -34,13 +41,6 @@ public class JobFarmer extends AbstractJob
     {
         super.writeToNBT(compound);
         compound.setString(TAG_STAGE, stage.name());
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        stage = EntityAIWorkFarmer.Stage.valueOf(compound.getString(TAG_STAGE));
     }
 
     /**
@@ -83,9 +83,9 @@ public class JobFarmer extends AbstractJob
     {
         List<ItemStack> itemsNeeded = super.getItemsNeeded();
 
-        for(ItemStack neededItem : itemsNeeded)
+        for (ItemStack neededItem : itemsNeeded)
         {
-            if(stack.isItemEqual(neededItem))
+            if (stack.isItemEqual(neededItem))
             {
                 return;
             }

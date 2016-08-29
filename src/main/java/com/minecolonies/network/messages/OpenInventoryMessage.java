@@ -17,22 +17,22 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInventoryMessage, IMessage>
 {
-    private static final int              IpumpkinNVENTORY_NULL     = -1;
-    private static final int              INVENTORY_CITIZEN         = 0;
-    private static final int              INVENTORY_CHEST           = 1;
-    private              String           name;
+    private static final int IpumpkinNVENTORY_NULL = -1;
+    private static final int INVENTORY_CITIZEN     = 0;
+    private static final int INVENTORY_CHEST       = 1;
+    private String name;
 
-    private              int              inventoryType;
+    private int inventoryType;
 
-    private              int              entityID;
-    private              BlockPos         tePos;
+    private int      entityID;
+    private BlockPos tePos;
 
-    public OpenInventoryMessage(){}
+    public OpenInventoryMessage() {}
 
     /**
      * Creates an open inventory message for a citizen
      *
-     * @param citizen       {@link CitizenDataView}
+     * @param citizen {@link CitizenDataView}
      */
     public OpenInventoryMessage(CitizenDataView citizen)
     {
@@ -44,7 +44,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     /**
      * Creates an open inventory message for a building
      *
-     * @param building       {@link AbstractBuilding.View}
+     * @param building {@link AbstractBuilding.View}
      */
     public OpenInventoryMessage(AbstractBuilding.View building)
     {
@@ -53,6 +53,21 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
         tePos = building.getLocation();
     }
 
+    @Override
+    public void fromBytes(ByteBuf buf)
+    {
+        inventoryType = buf.readInt();
+        name = ByteBufUtils.readUTF8String(buf);
+        switch (inventoryType)
+        {
+            case INVENTORY_CITIZEN:
+                entityID = buf.readInt();
+                break;
+            case INVENTORY_CHEST:
+                tePos = BlockPosUtil.readFromByteBuf(buf);
+                break;
+        }
+    }
 
     @Override
     public void toBytes(ByteBuf buf)
@@ -71,38 +86,26 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     }
 
     @Override
-    public void fromBytes(ByteBuf buf)
-    {
-        inventoryType = buf.readInt();
-        name = ByteBufUtils.readUTF8String(buf);
-        switch(inventoryType)
-        {
-            case INVENTORY_CITIZEN:
-                entityID = buf.readInt();
-                break;
-            case INVENTORY_CHEST:
-                tePos = BlockPosUtil.readFromByteBuf(buf);
-                break;
-        }
-    }
-
-    @Override
     public IMessage onMessage(OpenInventoryMessage message, MessageContext ctx)
     {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
 
-        switch(message.inventoryType)
+        switch (message.inventoryType)
         {
             case INVENTORY_CITIZEN:
                 InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
-                if(!StringUtils.isNullOrEmpty(message.name))
+                if (!StringUtils.isNullOrEmpty(message.name))
+                {
                     citizenInventory.setCustomName(message.name);   //SetInventoryName
+                }
                 player.displayGUIChest(citizenInventory);
                 break;
             case INVENTORY_CHEST:
                 TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
-                if(!StringUtils.isNullOrEmpty(message.name))
+                if (!StringUtils.isNullOrEmpty(message.name))
+                {
                     chest.setCustomName(message.name);              //SetInventoryName
+                }
                 player.displayGUIChest(chest);
                 break;
         }

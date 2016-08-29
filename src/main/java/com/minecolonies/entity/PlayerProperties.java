@@ -12,7 +12,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
 {
     private boolean hasPlacedSupplyChest = false;
 
-    private PlayerProperties(){}
+    private PlayerProperties() {}
 
     /**
      * Registers player property. Should be checked if already exists, and called in onEntityConstruct event.
@@ -22,6 +22,21 @@ public final class PlayerProperties implements IExtendedEntityProperties
     public static void register(EntityPlayer player)
     {
         player.registerExtendedProperties(Constants.PLAYER_PROPERTY_NAME, new PlayerProperties());
+    }
+
+    /**
+     * Saves NBT data to proxy HashMap.
+     *
+     * @param player to save data for
+     */
+    public static void saveProxyData(EntityPlayer player)
+    {
+        final PlayerProperties playerData = PlayerProperties.get(player);
+        final NBTTagCompound savedData = new NBTTagCompound();
+
+        playerData.saveNBTData(savedData);
+
+        CommonProxy.storeEntityData(getSaveKey(player), savedData);
     }
 
     /**
@@ -68,21 +83,6 @@ public final class PlayerProperties implements IExtendedEntityProperties
     private static String getSaveKey(EntityPlayer player)
     {
         return player.getGameProfile().getId().toString() + ":" + Constants.PLAYER_PROPERTY_NAME;
-    }
-
-    /**
-     * Saves NBT data to proxy HashMap.
-     *
-     * @param player to save data for
-     */
-    public static void saveProxyData(EntityPlayer player)
-    {
-        final PlayerProperties playerData = PlayerProperties.get(player);
-        final NBTTagCompound savedData = new NBTTagCompound();
-
-        playerData.saveNBTData(savedData);
-
-        CommonProxy.storeEntityData(getSaveKey(player), savedData);
     }
 
     /**

@@ -34,10 +34,12 @@ public class InventoryFunctions
      * @param action    the function to use if a slot matches
      * @return true if it found a stack
      */
-    public static boolean matchFirstInInventory(IInventory inventory, Predicate<ItemStack> tester,
-                                                Consumer<Integer> action)
+    public static boolean matchFirstInInventory(
+            IInventory inventory, Predicate<ItemStack> tester,
+            Consumer<Integer> action)
     {
-        return matchFirstInInventory(inventory, inv -> slot -> stack -> {
+        return matchFirstInInventory(inventory, inv -> slot -> stack ->
+        {
             if (tester.test(stack))
             {
                 action.accept(slot);
@@ -54,7 +56,8 @@ public class InventoryFunctions
      * @param tester    the function to use for testing slots
      * @return true if it found a stack
      */
-    private static boolean matchFirstInInventory(IInventory inventory, Function<IInventory, Function<Integer,
+    private static boolean matchFirstInInventory(
+            IInventory inventory, Function<IInventory, Function<Integer,
             Predicate<ItemStack>>> tester)
     {
         return matchInInventory(inventory, tester, true);
@@ -69,14 +72,15 @@ public class InventoryFunctions
      * @param stopAfterFirst if it should stop executing after finding one stack that applies
      * @return true if it found a stack
      */
-    private static boolean matchInInventory(IInventory inventory, Function<IInventory, Function<Integer,
+    private static boolean matchInInventory(
+            IInventory inventory, Function<IInventory, Function<Integer,
             Predicate<ItemStack>>> tester, boolean stopAfterFirst)
     {
         if (inventory == null)
         {
             return false;
         }
-        int     size     = inventory.getSizeInventory();
+        int size = inventory.getSizeInventory();
         boolean foundOne = false;
         for (int slot = 0; slot < size; slot++)
         {

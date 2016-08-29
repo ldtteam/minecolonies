@@ -9,23 +9,23 @@ import org.lwjgl.input.Mouse;
 public class Scrollbar extends Pane
 {
     //  Params
-    protected int scrollbarBackground = 0xFF000000;
-    protected int scrollbarColor = 0xFFC0C0C0;
+    protected int scrollbarBackground     = 0xFF000000;
+    protected int scrollbarColor          = 0xFFC0C0C0;
     protected int scrollbarColorHighlight = 0xFF808080;
 
     protected ScrollingContainer container;
-    protected int barClickY = 0;
+    protected int     barClickY  = 0;
     protected boolean barClicked = false;
-
-    public Scrollbar(ScrollingContainer container)
-    {
-        this.container = container;
-    }
 
     public Scrollbar(ScrollingContainer container, PaneParams params)
     {
         this(container);
         //  TODO: Parse Scrollbar-specific Params
+    }
+
+    public Scrollbar(ScrollingContainer container)
+    {
+        this.container = container;
     }
 
     public void dragScroll(int my)

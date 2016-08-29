@@ -15,13 +15,13 @@ public class ColonyViewRemoveCitizenMessage implements IMessage, IMessageHandler
     private int colonyId;
     private int citizenId;
 
-    public ColonyViewRemoveCitizenMessage(){}
+    public ColonyViewRemoveCitizenMessage() {}
 
     /**
      * Creates an object for the remove message for citizen
      *
-     * @param colony        Colony the citizen is in
-     * @param citizen       Citizen ID
+     * @param colony  Colony the citizen is in
+     * @param citizen Citizen ID
      */
     public ColonyViewRemoveCitizenMessage(Colony colony, int citizen)
     {
@@ -30,17 +30,17 @@ public class ColonyViewRemoveCitizenMessage implements IMessage, IMessageHandler
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        buf.writeInt(citizenId);
-    }
-
-    @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        buf.writeInt(citizenId);
     }
 
     @Override

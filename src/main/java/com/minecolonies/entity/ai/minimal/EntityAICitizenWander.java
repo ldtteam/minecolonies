@@ -50,6 +50,22 @@ public class EntityAICitizenWander extends EntityAIBase
     }
 
     /**
+     * Returns whether or not the citizen is too old to wander
+     * True when age >= 100;
+     *
+     * @return True when age => 100, otherwise false
+     */
+    private boolean isToOld()
+    {
+        return citizen.getAge() >= 100;
+    }
+
+    private boolean checkForRandom()
+    {
+        return citizen.getRNG().nextInt(120) != 0;
+    }
+
+    /**
      * Returns the right height for the given position (ground block)
      *
      * @param position Current position of the entity
@@ -64,8 +80,8 @@ public class EntityAICitizenWander extends EntityAIBase
         }
 
         while (returnHeight >= 1 && citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord),
-                                                                             (int) returnHeight - 1,
-                                                                             MathHelper.floor_double(position.zCoord))))
+                (int) returnHeight - 1,
+                MathHelper.floor_double(position.zCoord))))
         {
             returnHeight -= 1.0D;
         }
@@ -75,22 +91,6 @@ public class EntityAICitizenWander extends EntityAIBase
             returnHeight += 1.0D;
         }
         return returnHeight;
-    }
-
-    /**
-     * Returns whether or not the citizen is too old to wander
-     * True when age >= 100;
-     *
-     * @return True when age => 100, otherwise false
-     */
-    private boolean isToOld()
-    {
-        return citizen.getAge() >= 100;
-    }
-
-    private boolean checkForRandom()
-    {
-        return citizen.getRNG().nextInt(120) != 0;
     }
 
     /**

@@ -47,10 +47,9 @@ public class InventoryTest
     @Test
     public void addStackTest()
     {
-        Item            testItem = mock(Item.class);
-        final ItemStack stuff    = new ItemStack(testItem, 3);
+        Item testItem = mock(Item.class);
+        final ItemStack stuff = new ItemStack(testItem, 3);
         inventory.setInventorySlotContents(0, stuff);
         //assertThat(inventory.getStackInSlot(0), is(stuff));
     }
-
 }

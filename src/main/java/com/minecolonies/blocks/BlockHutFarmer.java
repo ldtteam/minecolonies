@@ -1,4 +1,5 @@
 package com.minecolonies.blocks;
+
 /**
  * Hut for the Farmer.
  * No different from {@link AbstractBlockHut}

@@ -27,33 +27,45 @@ public class ItemScanTool extends AbstractItemMinecolonies
     @Override
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        if (!stack.hasTagCompound())
+        {
+            stack.setTagCompound(new NBTTagCompound());
+        }
         NBTTagCompound compound = stack.getTagCompound();
 
-        if(!compound.hasKey("pos1"))
+        if (!compound.hasKey("pos1"))
         {
             BlockPosUtil.writeToNBT(compound, "pos1", pos);
-            if(worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point");
+            if (worldIn.isRemote)
+            {
+                LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point");
+            }
             return true;
         }
-        else if(!compound.hasKey("pos2"))
+        else if (!compound.hasKey("pos2"))
         {
             BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
             BlockPos pos2 = pos;
-            if(pos2.distanceSq(pos1) > 0)
+            if (pos2.distanceSq(pos1) > 0)
             {
                 BlockPosUtil.writeToNBT(compound, "pos2", pos2);
-                if(worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point2");
+                if (worldIn.isRemote)
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point2");
+                }
                 return true;
             }
-            if (worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.samePoint");
+            if (worldIn.isRemote)
+            {
+                LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.samePoint");
+            }
             return false;
         }
         else
         {
             BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
             BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
-            if(worldIn.isRemote)
+            if (worldIn.isRemote)
             {
                 String result = SchematicWrapper.saveSchematic(worldIn, pos1, pos2);
                 LanguageHandler.sendPlayerMessage(player, result);

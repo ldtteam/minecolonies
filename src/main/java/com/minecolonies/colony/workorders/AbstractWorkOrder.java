@@ -18,33 +18,21 @@ import java.util.Map;
  */
 public abstract class AbstractWorkOrder
 {
-    protected int id;
-    private   int claimedBy;
-    private   int priority;
-
+    private static final String                                          TAG_TYPE       = "type";
+    private static final String                                          TAG_ID         = "id";
+    private static final String                                          TAG_CLAIMED_BY = "claimedBy";
     //  Job and View Class Mapping
-    private static Map<String, Class<? extends AbstractWorkOrder>> nameToClassMap = new HashMap<>();
-    private static Map<Class<? extends AbstractWorkOrder>, String> classToNameMap = new HashMap<>();
-
-    private static final String TAG_TYPE       = "type";
-    private static final String TAG_ID         = "id";
-    private static final String TAG_CLAIMED_BY = "claimedBy";
-
-    private boolean changed = false;
-
-    /**
-     * Contains all classes which inherit directly from this class.
-     */
-    public enum WorkOrderType
-    {
-        BUILD
-    }
-
+    private static       Map<String, Class<? extends AbstractWorkOrder>> nameToClassMap = new HashMap<>();
+    private static       Map<Class<? extends AbstractWorkOrder>, String> classToNameMap = new HashMap<>();
     static
     {
         addMapping("build", WorkOrderBuild.class);
         addMapping("decoration", WorkOrderBuildDecoration.class);
     }
+    protected int id;
+    private   int claimedBy;
+    private   int priority;
+    private boolean changed = false;
 
     /**
      * Default constructor; we also start with a new id and replace it during loading;
@@ -54,59 +42,6 @@ public abstract class AbstractWorkOrder
     {
         //Should be overridden
     }
-
-    /**
-     * Setter for the priority.
-     *
-     * @param priority the new priority.
-     */
-    public void setPriority(int priority)
-    {
-        this.priority = priority;
-    }
-
-    /**
-     * Getter for the priority.
-     *
-     * @return the priority of the work order.
-     */
-    public int getPriority()
-    {
-        return this.priority;
-    }
-
-
-    /**
-     * Checks if the workOrder has changed.
-     *
-     * @return true if so.
-     */
-    public boolean hasChanged()
-    {
-        return changed;
-    }
-
-    /**
-     * Resets the changed variable.
-     */
-    public void resetChange()
-    {
-        changed = false;
-    }
-
-    /**
-     * Gets of the WorkOrder Type. Overwrite this for the different implementations.
-     *
-     * @return the type.
-     */
-    protected abstract WorkOrderType getType();
-
-    /**
-     * Gets the value of the WorkOrder. Overwrite this in every subclass.
-     *
-     * @return a description string.
-     */
-    protected abstract String getValue();
 
     /**
      * Add a given Work Order mapping.
@@ -133,6 +68,124 @@ public abstract class AbstractWorkOrder
         {
             throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Work Order class mapping", exception);
         }
+    }
+
+    /**
+     * Create a Work Order from a saved NBTTagCompound.
+     *
+     * @param compound the compound that contains the data for the Work Order
+     * @return {@link AbstractWorkOrder} from the NBT
+     */
+    public static AbstractWorkOrder createFromNBT(NBTTagCompound compound)
+    {
+        AbstractWorkOrder order = null;
+        Class<? extends AbstractWorkOrder> oclass = null;
+
+        try
+        {
+            oclass = nameToClassMap.get(compound.getString(TAG_TYPE));
+
+            if (oclass != null)
+            {
+                final Constructor<?> constructor = oclass.getDeclaredConstructor();
+                order = (AbstractWorkOrder) constructor.newInstance();
+            }
+        }
+        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
+        {
+            Log.logger.trace(e);
+        }
+
+        if (order == null)
+        {
+            Log.logger.warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            return null;
+        }
+        try
+        {
+            order.readFromNBT(compound);
+        }
+        catch (RuntimeException ex)
+        {
+            Log.logger.error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                    compound.getString(TAG_TYPE), oclass.getName()), ex);
+            return null;
+        }
+
+        return order;
+    }
+
+    /**
+     * Read the WorkOrder data from the NBTTagCompound.
+     *
+     * @param compound NBT Tag compound
+     */
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        id = compound.getInteger(TAG_ID);
+        claimedBy = compound.getInteger(TAG_CLAIMED_BY);
+    }
+
+    /**
+     * Create a WorkOrder View from a buffer.
+     *
+     * @param buf The network data
+     * @return View object of the workOrder
+     */
+    public static WorkOrderView createWorkOrderView(ByteBuf buf)
+    {
+        WorkOrderView workOrderView = new WorkOrderView();
+
+        try
+        {
+            workOrderView.deserialize(buf);
+        }
+        catch (RuntimeException ex)
+        {
+            Log.logger.error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                    workOrderView.getId()), ex);
+            workOrderView = null;
+        }
+
+        return workOrderView;
+    }
+
+    /**
+     * Getter for the priority.
+     *
+     * @return the priority of the work order.
+     */
+    public int getPriority()
+    {
+        return this.priority;
+    }
+
+    /**
+     * Setter for the priority.
+     *
+     * @param priority the new priority.
+     */
+    public void setPriority(int priority)
+    {
+        this.priority = priority;
+    }
+
+    /**
+     * Checks if the workOrder has changed.
+     *
+     * @return true if so.
+     */
+    public boolean hasChanged()
+    {
+        return changed;
+    }
+
+    /**
+     * Resets the changed variable.
+     */
+    public void resetChange()
+    {
+        changed = false;
     }
 
     /**
@@ -202,51 +255,6 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Create a Work Order from a saved NBTTagCompound.
-     *
-     * @param compound the compound that contains the data for the Work Order
-     * @return {@link AbstractWorkOrder} from the NBT
-     */
-    public static AbstractWorkOrder createFromNBT(NBTTagCompound compound)
-    {
-        AbstractWorkOrder order = null;
-        Class<? extends AbstractWorkOrder> oclass = null;
-
-        try
-        {
-            oclass = nameToClassMap.get(compound.getString(TAG_TYPE));
-
-            if (oclass != null)
-            {
-                final Constructor<?> constructor = oclass.getDeclaredConstructor();
-                order = (AbstractWorkOrder) constructor.newInstance();
-            }
-        }
-        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
-        {
-            Log.logger.trace(e);
-        }
-
-        if (order == null)
-        {
-            Log.logger.warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
-            return null;
-        }
-        try
-        {
-            order.readFromNBT(compound);
-        }
-        catch (RuntimeException ex)
-        {
-            Log.logger.error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    compound.getString(TAG_TYPE), oclass.getName()), ex);
-            return null;
-        }
-
-        return order;
-    }
-
-    /**
      * Save the Work Order to an NBTTagCompound.
      *
      * @param compound NBT tag compount
@@ -269,17 +277,6 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Read the WorkOrder data from the NBTTagCompound.
-     *
-     * @param compound NBT Tag compound
-     */
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        id = compound.getInteger(TAG_ID);
-        claimedBy = compound.getInteger(TAG_CLAIMED_BY);
-    }
-
-    /**
      * Is this WorkOrder still valid?  If not, it will be deleted.
      *
      * @param colony The colony that owns the Work Order
@@ -298,7 +295,6 @@ public abstract class AbstractWorkOrder
      */
     public abstract void attemptToFulfill(Colony colony);
 
-
     /**
      * Writes the workOrders data to a byte buf for transition.
      *
@@ -315,26 +311,24 @@ public abstract class AbstractWorkOrder
     }
 
     /**
-     * Create a WorkOrder View from a buffer.
+     * Gets of the WorkOrder Type. Overwrite this for the different implementations.
      *
-     * @param buf The network data
-     * @return View object of the workOrder
+     * @return the type.
      */
-    public static WorkOrderView createWorkOrderView(ByteBuf buf)
+    protected abstract WorkOrderType getType();
+
+    /**
+     * Gets the value of the WorkOrder. Overwrite this in every subclass.
+     *
+     * @return a description string.
+     */
+    protected abstract String getValue();
+
+    /**
+     * Contains all classes which inherit directly from this class.
+     */
+    public enum WorkOrderType
     {
-        WorkOrderView workOrderView = new WorkOrderView();
-
-        try
-        {
-            workOrderView.deserialize(buf);
-        }
-        catch (RuntimeException ex)
-        {
-            Log.logger.error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    workOrderView.getId()), ex);
-            workOrderView = null;
-        }
-
-        return workOrderView;
+        BUILD
     }
 }

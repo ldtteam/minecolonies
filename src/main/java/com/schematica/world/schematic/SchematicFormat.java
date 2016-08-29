@@ -15,11 +15,12 @@ public abstract class SchematicFormat
 {
     private static final Map<String, SchematicFormat> FORMATS = new HashMap<>();
     private static final String FORMAT_DEFAULT;
+    static
+    {
+        FORMATS.put(Names.NBT.FORMAT_ALPHA, new SchematicAlpha());
 
-    protected abstract Schematic readFromNBT(NBTTagCompound tagCompound);
-
-    protected abstract void writeToNBT(NBTTagCompound tagCompound, Schematic schematic);
-
+        FORMAT_DEFAULT = Names.NBT.FORMAT_ALPHA;
+    }
     public static Schematic readFromStream(InputStream stream)
     {
         try
@@ -40,6 +41,8 @@ public abstract class SchematicFormat
             throw new IllegalStateException("Failed to read schematic!", ex);
         }
     }
+
+    protected abstract Schematic readFromNBT(NBTTagCompound tagCompound);
 
     public static boolean writeToFile(final File file, final Schematic schematic)
     {
@@ -70,10 +73,5 @@ public abstract class SchematicFormat
         return false;
     }
 
-    static
-    {
-        FORMATS.put(Names.NBT.FORMAT_ALPHA, new SchematicAlpha());
-
-        FORMAT_DEFAULT = Names.NBT.FORMAT_ALPHA;
-    }
+    protected abstract void writeToNBT(NBTTagCompound tagCompound, Schematic schematic);
 }

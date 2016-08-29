@@ -18,13 +18,13 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     private int     citizenId;
     private ByteBuf citizenBuffer;
 
-    public ColonyViewCitizenViewMessage(){}
+    public ColonyViewCitizenViewMessage() {}
 
     /**
      * Updates a {@link com.minecolonies.colony.CitizenDataView} of the citizens.
      *
-     * @param colony     Colony of the citizen
-     * @param citizen    Citizen data of the citizen to update view
+     * @param colony  Colony of the citizen
+     * @param citizen Citizen data of the citizen to update view
      */
     public ColonyViewCitizenViewMessage(Colony colony, CitizenData citizen)
     {
@@ -35,20 +35,20 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        buf.writeInt(citizenId);
-        buf.writeBytes(citizenBuffer);
-    }
-
-    @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
         this.citizenBuffer = Unpooled.buffer();
         buf.readBytes(citizenBuffer, buf.readableBytes());
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        buf.writeInt(citizenId);
+        buf.writeBytes(citizenBuffer);
     }
 
     @Override

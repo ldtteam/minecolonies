@@ -19,18 +19,15 @@ import java.util.stream.Stream;
  */
 public final class Schematics
 {
+    private static final String                    NULL_STYLE            = "schematics";
+    private static final String                    SCHEMATIC_EXTENSION   = ".schematic";
+    private static final String                    SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
     //Hut, Styles
-    private static Map<String, List<String>> hutStyleMap = new HashMap<>();
-
+    private static       Map<String, List<String>> hutStyleMap           = new HashMap<>();
     //Hut, Levels
-    private static Map<String, Integer> hutLevelsMap = new HashMap<>();
-
+    private static       Map<String, Integer>      hutLevelsMap          = new HashMap<>();
     //Decoration, Style
-    private static Map<String, List<String>> decorationStyleMap = new HashMap<>();
-
-    private static final String NULL_STYLE            = "schematics";
-    private static final String SCHEMATIC_EXTENSION   = ".schematic";
-    private static final String SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
+    private static       Map<String, List<String>> decorationStyleMap    = new HashMap<>();
 
     /**
      * Private constructor so Schematics objects can't be made.
@@ -57,7 +54,7 @@ public final class Schematics
     {
         try
         {
-            URI  uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
+            URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
             Path basePath;
 
             if ("jar".equals(uri.getScheme()))
@@ -73,7 +70,6 @@ public final class Schematics
                 basePath = Paths.get(uri);
                 loadStyleMaps(basePath);
             }
-            
         }
         catch (IOException | URISyntaxException e)
         {
@@ -94,7 +90,7 @@ public final class Schematics
                 String style = path.getParent().getFileName().toString();
 
                 //Don't treat generic schematics as decorations or huts - ex: supply ship
-                if(NULL_STYLE.equals(style))
+                if (NULL_STYLE.equals(style))
                 {
                     continue;
                 }
@@ -102,7 +98,7 @@ public final class Schematics
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
                     String filename = path.getFileName().toString().split("\\.schematic")[0];
-                    String hut      = filename.split("\\d+")[0];
+                    String hut = filename.split("\\d+")[0];
 
                     if (isSchematicHut(hut))
                     {
@@ -118,6 +114,11 @@ public final class Schematics
         }
     }
 
+    private static boolean isSchematicHut(String name)
+    {
+        return Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + name) != null;
+    }
+
     private static void addHutStyle(String hut, String style)
     {
         if (!hutStyleMap.containsKey(hut))
@@ -125,10 +126,22 @@ public final class Schematics
             hutStyleMap.put(hut, new ArrayList<>());
         }
 
-        if(!hutStyleMap.get(hut).contains(style))
+        if (!hutStyleMap.get(hut).contains(style))
         {
             hutStyleMap.get(hut).add(style);
         }
+    }
+
+    private static void incrementHutMaxLevel(String hut)
+    {
+        //Only count the number of huts in 1 style.
+        if (getStylesForHut(hut).size() > 1)
+        {
+            return;
+        }
+
+        Integer level = hutLevelsMap.getOrDefault(hut, 0);
+        hutLevelsMap.put(hut, level + 1);
     }
 
     private static void addDecorationStyle(String decoration, String style)
@@ -140,21 +153,15 @@ public final class Schematics
         decorationStyleMap.get(decoration).add(style);
     }
 
-    private static void incrementHutMaxLevel(String hut)
+    /**
+     * Returns a list of styles for one specific hut.
+     *
+     * @param hut Hut to get styles for.
+     * @return List of styles.
+     */
+    public static List<String> getStylesForHut(String hut)
     {
-        //Only count the number of huts in 1 style.
-        if(getStylesForHut(hut).size() > 1)
-        {
-            return;
-        }
-
-        Integer level = hutLevelsMap.getOrDefault(hut, 0);
-        hutLevelsMap.put(hut, level + 1);
-    }
-
-    private static boolean isSchematicHut(String name)
-    {
-        return Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + name) != null;
+        return hutStyleMap.get(hut);
     }
 
     /**
@@ -166,17 +173,6 @@ public final class Schematics
     public static Set<String> getHuts()
     {
         return hutStyleMap.keySet();
-    }
-
-    /**
-     * Returns a list of styles for one specific hut.
-     *
-     * @param hut Hut to get styles for.
-     * @return List of styles.
-     */
-    public static List<String> getStylesForHut(String hut)
-    {
-        return hutStyleMap.get(hut);
     }
 
     /**

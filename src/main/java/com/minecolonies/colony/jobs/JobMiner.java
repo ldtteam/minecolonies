@@ -20,7 +20,13 @@ public class JobMiner extends AbstractJob
     }
 
     @Override
-    public String getName(){ return "com.minecolonies.job.Miner"; }
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+    }
+
+    @Override
+    public String getName() { return "com.minecolonies.job.Miner"; }
 
     @Override
     public RenderBipedCitizen.Model getModel()
@@ -32,12 +38,6 @@ public class JobMiner extends AbstractJob
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
     }
 
     /**
@@ -61,9 +61,9 @@ public class JobMiner extends AbstractJob
         List<ItemStack> itemsNeeded = super.getItemsNeeded();
 
         //check if stack is already in itemsNeeded
-        for(ItemStack neededItem : itemsNeeded)
+        for (ItemStack neededItem : itemsNeeded)
         {
-            if(stack.isItemEqual(neededItem))
+            if (stack.isItemEqual(neededItem))
             {
                 return;
             }
@@ -71,13 +71,13 @@ public class JobMiner extends AbstractJob
         addItemNeeded(stack);
     }
 
-    public void setSchematic(SchematicWrapper schematic)
-    {
-        this.schematic = schematic;
-    }
-
     public SchematicWrapper getSchematic()
     {
         return schematic;
+    }
+
+    public void setSchematic(SchematicWrapper schematic)
+    {
+        this.schematic = schematic;
     }
 }

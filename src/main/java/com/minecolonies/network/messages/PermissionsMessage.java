@@ -19,6 +19,20 @@ public class PermissionsMessage
 {
     private static final String COLONY_DOES_NOT_EXIST = "Colony #%d does not exist.";
 
+    /**
+     * Enums for Message Type for the permission message
+     * <p>
+     * SET_PERMISSION       Setting a permission
+     * REMOVE_PERMISSION    Removing a permission
+     * TOGGLE_PERMISSION    Toggeling a permission
+     */
+    public enum MessageType
+    {
+        SET_PERMISSION,
+        REMOVE_PERMISSION,
+        TOGGLE_PERMISSION
+    }
+
     public static class View implements IMessage, IMessageHandler<View, IMessage>
     {
         private int     colonyID;
@@ -37,13 +51,6 @@ public class PermissionsMessage
         }
 
         @Override
-        public void toBytes(ByteBuf buf)
-        {
-            buf.writeInt(colonyID);
-            buf.writeBytes(data);
-        }
-
-        @Override
         public void fromBytes(ByteBuf buf)
         {
             colonyID = buf.readInt();
@@ -54,29 +61,22 @@ public class PermissionsMessage
         public IMessage onMessage(View message, MessageContext ctx)
         {
             return ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
+        }        @Override
+        public void toBytes(ByteBuf buf)
+        {
+            buf.writeInt(colonyID);
+            buf.writeBytes(data);
         }
-    }
 
-    /**
-     * Enums for Message Type for the permission message
-     *
-     * SET_PERMISSION       Setting a permission
-     * REMOVE_PERMISSION    Removing a permission
-     * TOGGLE_PERMISSION    Toggeling a permission
-     */
-    public enum MessageType
-    {
-        SET_PERMISSION,
-        REMOVE_PERMISSION,
-        TOGGLE_PERMISSION
+
     }
 
     public static class Permission implements IMessage, IMessageHandler<Permission, IMessage>
     {
-        private int                 colonyID;
-        private MessageType         type;
-        private Permissions.Rank    rank;
-        private Permissions.Action  action;
+        private int                colonyID;
+        private MessageType        type;
+        private Permissions.Rank   rank;
+        private Permissions.Action action;
 
         public Permission()
         {
@@ -86,10 +86,10 @@ public class PermissionsMessage
         /**
          * {@link Permission}.
          *
-         * @param colony        Colony the permission is set in
-         * @param type          Type of permission {@link MessageType}
-         * @param rank          Rank of the permission {@link com.minecolonies.colony.permissions.Permissions.Rank}
-         * @param action        Action of the permission {@link com.minecolonies.colony.permissions.Permissions.Action}
+         * @param colony Colony the permission is set in
+         * @param type   Type of permission {@link MessageType}
+         * @param rank   Rank of the permission {@link com.minecolonies.colony.permissions.Permissions.Rank}
+         * @param action Action of the permission {@link com.minecolonies.colony.permissions.Permissions.Action}
          */
         public Permission(ColonyView colony, MessageType type, Permissions.Rank rank, Permissions.Action action)
         {
@@ -130,24 +130,24 @@ public class PermissionsMessage
             }
 
             //Verify player has permission to do edit permissions
-            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.EDIT_PERMISSIONS))
+            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.EDIT_PERMISSIONS))
             {
                 return null;
             }
 
             switch (message.type)
             {
-            case SET_PERMISSION:
-                colony.getPermissions().setPermission(message.rank, message.action);
-                break;
-            case REMOVE_PERMISSION:
-                colony.getPermissions().removePermission(message.rank, message.action);
-                break;
-            case TOGGLE_PERMISSION:
-                colony.getPermissions().togglePermission(message.rank, message.action);
-                break;
-            default:
-                Log.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
+                case SET_PERMISSION:
+                    colony.getPermissions().setPermission(message.rank, message.action);
+                    break;
+                case REMOVE_PERMISSION:
+                    colony.getPermissions().removePermission(message.rank, message.action);
+                    break;
+                case TOGGLE_PERMISSION:
+                    colony.getPermissions().togglePermission(message.rank, message.action);
+                    break;
+                default:
+                    Log.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
             }
             return null;
         }
@@ -169,8 +169,8 @@ public class PermissionsMessage
         /**
          * Constructor for adding player to permission message
          *
-         * @param colony        Colony the permission is set in
-         * @param player        New player name to be added
+         * @param colony Colony the permission is set in
+         * @param player New player name to be added
          */
         public AddPlayer(ColonyView colony, String player)
         {
@@ -219,12 +219,6 @@ public class PermissionsMessage
         private UUID playerID;
         private Type type;
 
-        public enum Type
-        {
-            PROMOTE,
-            DEMOTE
-        }
-
         public ChangePlayerRank()
         {
             //Required
@@ -233,15 +227,21 @@ public class PermissionsMessage
         /**
          * Constructor for setting a player rank.
          *
-         * @param colony        Colony the rank is set in.
-         * @param player        UUID of the player to set rank.
-         * @param type          Promote or demote.
+         * @param colony Colony the rank is set in.
+         * @param player UUID of the player to set rank.
+         * @param type   Promote or demote.
          */
         public ChangePlayerRank(ColonyView colony, UUID player, Type type)
         {
             this.colonyID = colony.getID();
             this.playerID = player;
             this.type = type;
+        }
+
+        public enum Type
+        {
+            PROMOTE,
+            DEMOTE
         }
 
         @Override
@@ -266,17 +266,17 @@ public class PermissionsMessage
 
             Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if(colony == null)
+            if (colony == null)
             {
                 Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
-            if(message.type == Type.PROMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE))
+            if (message.type == Type.PROMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE))
             {
                 colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)));
             }
-            else if(message.type == Type.DEMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE))
+            else if (message.type == Type.DEMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE))
             {
                 colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)));
             }
@@ -301,8 +301,8 @@ public class PermissionsMessage
         /**
          * Constructor for removing player from permission set
          *
-         * @param colony        Colony the player is removed from the permission
-         * @param player        UUID of the removed player
+         * @param colony Colony the player is removed from the permission
+         * @param player UUID of the removed player
          */
         public RemovePlayer(ColonyView colony, UUID player)
         {
@@ -330,14 +330,14 @@ public class PermissionsMessage
 
             Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if(colony == null)
+            if (colony == null)
             {
                 Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
             Permissions.Player player = colony.getPermissions().getPlayers().get(message.playerID);
-            if((player.getRank() == Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE)) ||
+            if ((player.getRank() == Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE)) ||
                     (player.getRank() != Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE)))
             {
                 colony.getPermissions().removePlayer(message.playerID);
