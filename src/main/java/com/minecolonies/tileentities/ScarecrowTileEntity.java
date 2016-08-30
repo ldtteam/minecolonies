@@ -8,7 +8,6 @@ import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 
@@ -42,8 +41,14 @@ public class ScarecrowTileEntity extends TileEntityChest
     public ScarecrowTileEntity()
     {
         super();
-        World world = getWorld();
         this.inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"), true);
+    }
+
+    @Override
+    public void onLoad()
+    {
+        super.onLoad();
+        World world = getWorld();
 
         if(world != null)
         {
