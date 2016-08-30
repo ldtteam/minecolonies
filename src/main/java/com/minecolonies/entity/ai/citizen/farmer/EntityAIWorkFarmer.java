@@ -291,6 +291,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean handleOffset(Field field)
     {
+        //todo need to debug this better, something is going wrong...
         if (workingOffset == null)
         {
             workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
@@ -306,7 +307,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 workingOffset = new BlockPos(-field.getLengthMinusX(), 0, workingOffset.getZ() + 1);
             }
-
             else
             {
                 workingOffset = new BlockPos(workingOffset.getX() + 1, 0, workingOffset.getZ());
