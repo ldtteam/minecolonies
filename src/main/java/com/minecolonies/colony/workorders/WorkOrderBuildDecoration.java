@@ -37,4 +37,10 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
     {
         return true;
     }
+
+    @Override
+    protected String getValue()
+    {
+        return schematicName;
+    }
 }

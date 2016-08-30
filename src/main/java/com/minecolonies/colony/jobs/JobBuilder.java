@@ -187,7 +187,10 @@ public class JobBuilder extends AbstractJob
         final BlockPos buildingLocation = this.getWorkOrder().getBuildingLocation();
         final AbstractBuilding building = this.getCitizen().getColony().getBuilding(buildingLocation);
 
-        this.getCitizen().getColony().onBuildingUpgradeComplete(building, this.getWorkOrder().getUpgradeLevel());
+        if(building != null)
+        {
+            this.getCitizen().getColony().onBuildingUpgradeComplete(building, this.getWorkOrder().getUpgradeLevel());
+        }
 
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);

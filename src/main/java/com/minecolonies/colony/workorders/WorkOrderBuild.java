@@ -67,6 +67,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     {
         return upgradeName;
     }
+
     /**
      * Returns the name after upgrade.
      *

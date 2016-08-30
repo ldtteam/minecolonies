@@ -1,16 +1,23 @@
 package com.minecolonies.tileentities;
 
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.inventory.InventoryField;
+import com.minecolonies.util.EntityUtils;
 import com.minecolonies.util.LanguageHandler;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.world.World;
 
 import java.util.Random;
 
 /**
  * The scarecrow tile entity to store extra data.
  */
-public class ScarecrowTileEntity extends TileEntity
+public class ScarecrowTileEntity extends TileEntityChest
 {
     /**
      * NBTTag to store the type.
@@ -30,12 +37,28 @@ public class ScarecrowTileEntity extends TileEntity
     private ScareCrowType  type;
 
     /**
-     * Empty public constructor.
+     * Creates an instance of the tileEntity.
      */
     public ScarecrowTileEntity()
     {
         super();
-        setInventoryField(new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"), true));
+        World world = getWorld();
+        this.inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"), true);
+
+        if(world != null)
+        {
+            Colony colony = ColonyManager.getColony(world, pos);
+
+            if (colony != null && colony.getField(pos) == null)
+            {
+                Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
+
+                if (entity instanceof EntityPlayer)
+                {
+                    colony.addNewField(inventoryField, ((EntityPlayer) entity).inventory, pos, world);
+                }
+            }
+        }
     }
 
     @Override

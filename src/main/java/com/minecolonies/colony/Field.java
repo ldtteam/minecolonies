@@ -452,7 +452,7 @@ public class Field extends Container
      */
     public Item getSeed()
     {
-        if (inventory.getStackInSlot(0).getItem() instanceof IPlantable)
+        if (inventory.getStackInSlot(0) != null && inventory.getStackInSlot(0).getItem() instanceof IPlantable)
         {
             return inventory.getStackInSlot(0).getItem();
         }

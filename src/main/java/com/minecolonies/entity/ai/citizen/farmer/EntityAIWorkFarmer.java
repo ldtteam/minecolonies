@@ -246,7 +246,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (!handleOffset(field))
         {
-            requestSeeds = true;
+            resetVariables();
             buildingFarmer.getCurrentField().setNeedsWork(true);
             buildingFarmer.getCurrentField().setFieldStage(HOED);
             return AIState.IDLE;
@@ -350,8 +350,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
             if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position) && !requestSeeds)
             {
-                shouldDumpInventory = true;
-                shouldTryToGetSeed = true;
+                resetVariables();
                 buildingFarmer.getCurrentField().setNeedsWork(false);
                 buildingFarmer.getCurrentField().setFieldStage(PLANTED);
                 return AIState.IDLE;
@@ -383,7 +382,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             requestSeeds = false;
         }
-        return !field.isNoPartOfField(world, position) && world.getBlockState(position.up()) instanceof IGrowable
+
+
+        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof BlockCrops)
                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField) && world.getBlockState(position).getBlock() == Blocks.farmland;
     }
 
@@ -426,13 +427,21 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
         else
         {
-            requestSeeds = true;
-            shouldDumpInventory = true;
+            resetVariables();
             buildingFarmer.getCurrentField().setNeedsWork(false);
             buildingFarmer.getCurrentField().setFieldStage(PLANTED);
-            requestSeeds = true;
         }
         return AIState.IDLE;
+    }
+
+    /**
+     * Resets the basic variables of the class.
+     */
+    private void resetVariables()
+    {
+        requestSeeds = true;
+        shouldDumpInventory = true;
+        shouldTryToGetSeed = true;
     }
 
     /**
