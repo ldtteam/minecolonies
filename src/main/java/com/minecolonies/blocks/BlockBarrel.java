@@ -151,7 +151,7 @@ public class BlockBarrel extends Block
         }
 
 
-        while (BarrelState==1)
+        if (BarrelState==1)
         {
             timer++;
         }
