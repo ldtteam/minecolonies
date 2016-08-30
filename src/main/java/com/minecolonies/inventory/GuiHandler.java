@@ -12,7 +12,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 /**
  * Class which handles the GUI inventory.
  */
-@SideOnly(Side.CLIENT)
 public class GuiHandler implements IGuiHandler
 {
     @Override
