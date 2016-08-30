@@ -16,10 +16,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 /**
  * Created by Northstar on 8/29/2016.
  */
@@ -27,15 +23,10 @@ import java.util.Random;
 public class BlockBarrel extends Block
 {
 
-
-    List list =new ArrayList();
-
-    public int timer=0;
-    public int BarrelState=0;
     //barrel's fullnes state
     private  int fullnes =0;
     //is compost cooked ?
-    private  boolean isCompostReady =false;
+    private  boolean isCompostReady =true;
     /**
      * The hardness this block has.
      */
@@ -83,14 +74,6 @@ public class BlockBarrel extends Block
         return true;
     }
 
-    public void ListManager()
-    {
-        list.add(Items.rotten_flesh);
-        list.add(Items.spider_eye);
-        list.add(Items.fish);
-    }
-
-
     //whenever player right click to barrel call this.
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
     {
@@ -99,67 +82,36 @@ public class BlockBarrel extends Block
             return true;
         }
         else
-        {
-
-            if(isCompostReady==true&&BarrelState==2)
             {
-                playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost,8));
-                isCompostReady = false;
-                BarrelState=0;
-                return true;
-            }
+                //check what current item player has.
+                ItemStack itemstack = playerIn.inventory.getCurrentItem();
+                Item item = itemstack.getItem();
 
-            //check what current item player has.
-            ItemStack itemstack = playerIn.inventory.getCurrentItem();
+                if(isCompostReady==true)
+                {
+                   playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost,8));
+                    isCompostReady = false;
+                }
 
-            if (itemstack == null)
-            {
-                return true;
-            }
-            Item item = itemstack.getItem();
-
-
-
-            if (item== Items.rotten_flesh && fullnes<100 && BarrelState==0)
+            else if (item== Items.rotten_flesh && fullnes<100)
             {
                 itemstack.stackSize--;
                 fullnes+=10;
+
+                return true;
             }
 
-            /*
-             if (list.contains(item) && fullnes<100 && BarrelState==0)
+
+            if (fullnes>=100)
             {
-                itemstack.stackSize--;
-                fullnes+=10;
+                fullnes=0;
+                isCompostReady=true;
             }
-            */
 
         }
 
         return true;
     }
 
-    @Override
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
-    {
-        super.updateTick(worldIn, pos, state, rand);
 
-
-        if (fullnes>=100)
-        {
-            BarrelState=1;
-        }
-
-
-        while (BarrelState==1)
-        {
-            timer++;
-        }
-        if (timer>=80)
-        {
-            fullnes=0;
-            BarrelState=2;
-            isCompostReady=true;
-        }
-    }
 }
