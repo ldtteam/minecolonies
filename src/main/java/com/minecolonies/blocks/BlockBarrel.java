@@ -6,7 +6,6 @@ import com.minecolonies.lib.Constants;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -15,9 +14,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -26,11 +22,8 @@ import java.util.Random;
 
 public class BlockBarrel extends Block
 {
-
-
-    List list =new ArrayList();
-
     public int timer=0;
+
     public int BarrelState=0;
     //barrel's fullnes state
     private  int fullnes =0;
@@ -54,8 +47,8 @@ public class BlockBarrel extends Block
 
     public BlockBarrel()
     {
-        //this line doens't work . i guess i need to register render. TURN BACK HERE WHEN EVERYTHING ELSE OK.
         super(Material.wood);
+        this.setTickRandomly(true);
         initBlock();
     }
 
@@ -83,17 +76,10 @@ public class BlockBarrel extends Block
         return true;
     }
 
-    public void ListManager()
-    {
-        list.add(Items.rotten_flesh);
-        list.add(Items.spider_eye);
-        list.add(Items.fish);
-    }
-
-
     //whenever player right click to barrel call this.
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
     {
+        System.out.println("activated block");
         if (worldIn.isRemote)
         {
             return true;
@@ -118,48 +104,35 @@ public class BlockBarrel extends Block
             }
             Item item = itemstack.getItem();
 
+            if (item== Items.spider_eye && fullnes<100 && BarrelState==0) { itemstack.stackSize--; fullnes+=10; System.out.println("item consumed, new fullness: " + fullnes); }
+            if (item== Items.fish && fullnes<100 && BarrelState==0) { itemstack.stackSize--; fullnes+=5; System.out.println("item consumed, new fullness: " + fullnes); }
+            if (item== Items.rotten_flesh && fullnes<100 && BarrelState==0) { itemstack.stackSize--; fullnes+=15; System.out.println("item consumed, new fullness: " + fullnes); }
 
-
-            if (item== Items.rotten_flesh && fullnes<100 && BarrelState==0)
+            if (fullnes>=100&&BarrelState==0)
             {
-                itemstack.stackSize--;
-                fullnes+=10;
+                BarrelState=1;
+                System.out.println("fullnes reached " +fullnes + "and Barrel State changed to " + BarrelState);
             }
-
-            /*
-             if (list.contains(item) && fullnes<100 && BarrelState==0)
-            {
-                itemstack.stackSize--;
-                fullnes+=10;
-            }
-            */
-
         }
-
         return true;
     }
 
     @Override
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
-    {
-        super.updateTick(worldIn, pos, state, rand);
-
-
-        if (fullnes>=100)
-        {
-            BarrelState=1;
-        }
-
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+        System.out.println("Update method being called");
 
         if (BarrelState==1)
         {
             timer++;
+            System.out.println("timer start ticking: "+timer);
         }
-        if (timer>=80)
+        if (timer>=2)
         {
             fullnes=0;
             BarrelState=2;
             isCompostReady=true;
+            timer=0;
+            System.out.println("timer reached to"+timer+" , set fullnes=0, curr. fullness"+fullnes+" and Barrel State=" + BarrelState);
         }
     }
 }
