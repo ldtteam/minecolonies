@@ -8,10 +8,6 @@ public final class ModItems
     public static final Item buildTool   = new ItemBuildTool();
     public static final Item scanTool    = new ItemScanTool();
     public static final Item caliper     = new ItemCaliper();
-
-
-
-    // this line added by northstar for testing. feel free to do anything you want with it.
     public static final Item compost    = new ItemCompost();
 
     /**

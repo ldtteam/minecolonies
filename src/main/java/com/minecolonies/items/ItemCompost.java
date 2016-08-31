@@ -16,13 +16,19 @@ import net.minecraft.world.World;
 
 public class ItemCompost extends AbstractItemMinecolonies
 {
-    //max stack size = 64.
+    /**
+     * Compost constructor, Set max stack size to 64 like all other items.
+      */
     public ItemCompost()
     {
         super();
         maxStackSize = 64;
     }
-
+    @Override
+    public String getName()
+    {
+        return "compost";
+    }
     //whenever player right click a block with this "compost item", call this method
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
@@ -47,15 +53,6 @@ public class ItemCompost extends AbstractItemMinecolonies
             }
         }
         return true;
-    }
-
-
-
-
-    @Override
-    public String getName()
-    {
-        return "compost";
     }
 }
 
