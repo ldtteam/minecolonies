@@ -141,5 +141,5 @@ achievement.size.town=Town
 achievement.size.town.desc=A healthy colony
 achievement.size.city=City
 achievement.size.city.desc=The Capital
-com.minecolonies.gui.workerHuts.workOrderAdded=
-com.minecolonies.gui.workerHuts.workOrder=
+#com.minecolonies.gui.workerHuts.workOrderAdded=
+#com.minecolonies.gui.workerHuts.workOrder=

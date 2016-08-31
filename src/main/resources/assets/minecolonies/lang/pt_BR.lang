@@ -141,5 +141,5 @@ achievement.size.town=Cidade
 achievement.size.town.desc=Uma colônia saudável
 achievement.size.city=Metrópole
 achievement.size.city.desc=A capital
-com.minecolonies.gui.workerHuts.workOrderAdded=
-com.minecolonies.gui.workerHuts.workOrder=
+#com.minecolonies.gui.workerHuts.workOrderAdded=
+#com.minecolonies.gui.workerHuts.workOrder=

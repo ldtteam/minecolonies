@@ -167,5 +167,5 @@ achievement.size.town=Pueblo
 achievement.size.town.desc=Una Colonia Saludable
 achievement.size.city=Ciudad
 achievement.size.city.desc=La Capital
-com.minecolonies.gui.workerHuts.workOrderAdded=
-com.minecolonies.gui.workerHuts.workOrder=
+#com.minecolonies.gui.workerHuts.workOrderAdded=
+#com.minecolonies.gui.workerHuts.workOrder=

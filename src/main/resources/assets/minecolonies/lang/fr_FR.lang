@@ -141,5 +141,5 @@ achievement.size.town=Ville
 achievement.size.town.desc=Une colonie en plein essor
 achievement.size.city=Grande Ville
 achievement.size.city.desc=La Capitale
-com.minecolonies.gui.workerHuts.workOrderAdded=
-com.minecolonies.gui.workerHuts.workOrder=
+#com.minecolonies.gui.workerHuts.workOrderAdded=
+#com.minecolonies.gui.workerHuts.workOrder=

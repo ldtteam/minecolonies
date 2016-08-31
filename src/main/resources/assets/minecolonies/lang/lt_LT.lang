@@ -141,5 +141,5 @@ achievement.size.town=Miestelis
 achievement.size.town.desc=Sveika kolonija
 achievement.size.city=Miestas
 achievement.size.city.desc=Sostinė
-com.minecolonies.gui.workerHuts.workOrderAdded=
-com.minecolonies.gui.workerHuts.workOrder=
+#com.minecolonies.gui.workerHuts.workOrderAdded=
+#com.minecolonies.gui.workerHuts.workOrder=
