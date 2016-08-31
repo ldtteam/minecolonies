@@ -224,7 +224,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (workingOffset != null)
         {
-            BlockPos position = field.getLocation().down().north(workingOffset.getZ()).west(workingOffset.getX());
+            BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
             if (walkToBlock(position.up()))
             {
                 return AIState.FARMER_HOE;
@@ -251,7 +251,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             buildingFarmer.getCurrentField().setFieldStage(HOED);
             return AIState.IDLE;
         }
-        BlockPos position = field.getLocation().down().north(workingOffset.getZ()).west(workingOffset.getX());
+        BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
         if (shouldHoe(position, field))
         {
             mineBlock(position.up());
@@ -291,25 +291,24 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean handleOffset(Field field)
     {
-        //todo need to debug this better, something is going wrong...
         if (workingOffset == null)
         {
-            workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
+            workingOffset = new BlockPos(field.getLengthPlusX(), 0, field.getWidthPlusZ());
         }
         else
         {
-            if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() >= field.getLengthPlusX())
+            if (workingOffset.getZ() <= -field.getWidthMinusZ() && workingOffset.getX() <= -field.getLengthMinusX())
             {
                 workingOffset = null;
                 return false;
             }
-            else if (workingOffset.getX() >= field.getLengthPlusX())
+            else if (workingOffset.getX() <= -field.getLengthMinusX())
             {
-                workingOffset = new BlockPos(-field.getLengthMinusX(), 0, workingOffset.getZ() + 1);
+                workingOffset = new BlockPos(field.getLengthPlusX(), 0, workingOffset.getZ() -1);
             }
             else
             {
-                workingOffset = new BlockPos(workingOffset.getX() + 1, 0, workingOffset.getZ());
+                workingOffset = new BlockPos(workingOffset.getX() -1, 0, workingOffset.getZ());
             }
         }
         return true;
@@ -342,7 +341,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (workingOffset != null)
         {
-            BlockPos position = field.getLocation().down().north(workingOffset.getZ()).west(workingOffset.getX());
+            BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
             if (walkToBlock(position.up()))
             {
                 return AIState.FARMER_PLANT;
@@ -461,7 +460,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (workingOffset != null)
         {
-            BlockPos position = field.getLocation().down().north(workingOffset.getZ()).west(workingOffset.getX());
+            BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
             if (walkToBlock(position.up()))
             {
                 return AIState.FARMER_HARVEST;
@@ -479,7 +478,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             buildingFarmer.getCurrentField().setFieldStage(EMPTY);
             return AIState.IDLE;
         }
-        BlockPos position = field.getLocation().down().north(workingOffset.getZ()).west(workingOffset.getX());
+        BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
         if (shouldHarvest(position))
         {
             mineBlock(position.up());
