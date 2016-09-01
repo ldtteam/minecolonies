@@ -32,6 +32,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.Random;
 
+import static net.minecraft.util.EnumFacing.*;
+
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
@@ -50,7 +52,7 @@ public class BlockHutField extends BlockContainer
     /**
      * The position it faces.
      */
-    private static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
+    public static final PropertyDirection FACING = PropertyDirection.create("FACING", Plane.HORIZONTAL);
 
     /**
      * Start of the collision box at y.
@@ -99,7 +101,7 @@ public class BlockHutField extends BlockContainer
         setResistance(RESISTANCE);
         //Hardness of 10 takes a long time to mine to not loose progress.
         setHardness(HARDNESS);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
         GameRegistry.registerBlock(this);
         setBlockBounds((float) START_COLLISION, (float) BOTTOM_COLLISION, (float) START_COLLISION, (float) END_COLLISION, (float) HEIGHT_COLLISION, (float) END_COLLISION);
     }
@@ -113,10 +115,20 @@ public class BlockHutField extends BlockContainer
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumFacing facing = EnumFacing.getFront(meta);
-        if (facing.getAxis() == EnumFacing.Axis.Y)
+        EnumFacing facing;
+        switch (getFront(meta))
         {
-            facing = EnumFacing.NORTH;
+            case WEST:
+                facing = WEST;
+                break;
+            case EAST:
+                facing = EAST;
+                break;
+            case NORTH:
+                facing = NORTH;
+                break;
+            default:
+                facing = SOUTH;
         }
         return this.getDefaultState().withProperty(FACING, facing);
     }
@@ -174,7 +186,7 @@ public class BlockHutField extends BlockContainer
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
-        final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+        final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 

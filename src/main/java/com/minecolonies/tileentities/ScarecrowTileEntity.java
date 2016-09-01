@@ -93,7 +93,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     {
         if (this.type == null)
         {
-            this.type = ScareCrowType.values()[this.random.nextInt(1)];
+            this.type = ScareCrowType.values()[this.random.nextInt(2)];
         }
         return this.type;
     }
