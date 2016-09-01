@@ -183,7 +183,6 @@ public class Field extends Container
         super();
         this.colony = ColonyManager.getColony(world, location);
         this.location = location;
-
         this.inventory = scarecrowTileEntity.getInventoryField();
 
         addSlotToContainer(new Slot(inventory, 0, X_OFFSET, Y_OFFSET));

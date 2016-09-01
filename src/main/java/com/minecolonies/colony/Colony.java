@@ -10,7 +10,6 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;

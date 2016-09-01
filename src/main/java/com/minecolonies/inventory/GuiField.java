@@ -6,7 +6,6 @@ import com.minecolonies.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -28,7 +27,7 @@ public class GuiField extends GuiContainer
      * Constructor of the GUI.
      *
      * @param parInventoryPlayer the player inventory.
-     * @param fieldInventory     the field inventory.
+     * @param tileEntity         the tileEntity of the field, contains the inventory.
      * @param world              the world the field is in.
      * @param location           the location the field is at.
      */
