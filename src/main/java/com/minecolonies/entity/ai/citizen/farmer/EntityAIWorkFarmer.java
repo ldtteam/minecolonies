@@ -349,6 +349,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
             if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position) && !requestSeeds)
             {
+                workingOffset = null;
                 resetVariables();
                 buildingFarmer.getCurrentField().setNeedsWork(false);
                 buildingFarmer.getCurrentField().setFieldStage(PLANTED);
@@ -468,6 +469,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
             if (shouldHarvest(position))
             {
+                worker.addExperience(0.5);
                 mineBlock(position.up());
             }
         }
