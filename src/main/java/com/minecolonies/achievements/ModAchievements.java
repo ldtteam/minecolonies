@@ -37,7 +37,7 @@ public final class ModAchievements
     /**
      * Use the building tool.
      */
-    public static final Achievement achievementWandOfbuilding = new MineColoniesAchievement("wandofbuilding", "wandofbuilding", 0, -2, ModItems.buildTool, achievementGetSupply)
+    public static final Achievement achievementWandOfbuilding = new MineColoniesAchievement("wandofbuilding", "wandofbuilding", 0, -2, ModItems.buildTool, null)
             .registerStat();
 
     /**

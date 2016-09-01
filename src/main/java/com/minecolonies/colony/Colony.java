@@ -19,13 +19,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.stats.Achievement;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -62,6 +62,8 @@ public class Colony implements IColony
     private Map<Integer, CitizenData> citizens     = new HashMap<>();
     private int                       topCitizenId = 0;
     private int                       maxCitizens  = Configurations.maxCitizens;
+
+    private List<Achievement> colonyAchievements;
 
     //  Settings
     private static final int CITIZEN_CLEANUP_TICK_INCREMENT = 5 * 20;
@@ -105,6 +107,8 @@ public class Colony implements IColony
     {
         this.id = id;
         this.dimensionId = dim;
+
+        this.colonyAchievements = new ArrayList<Achievement>();
     }
 
     /**
@@ -721,26 +725,20 @@ public class Colony implements IColony
         // the colonies size
         final int size = this.citizens.size();
 
-
-        final ArrayList<Consumer<EntityPlayer>> consumers = new ArrayList<>();
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
-            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeSettlement));
+            this.triggerAchievement(ModAchievements.achievementSizeSettlement);
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_TOWN)
         {
-            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeTown));
+            this.triggerAchievement(ModAchievements.achievementSizeTown);
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
         {
-            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeCity));
+            this.triggerAchievement(ModAchievements.achievementSizeCity);
         }
-        this.getPermissions().getPlayers().values().stream()
-                .map(Permissions.Player::getID)
-                .map(ServerUtils::getPlayerFromUUID)
-                .forEach(player -> consumers.forEach(consumer -> consumer.accept(player)));
     }
 
     /**
@@ -1062,4 +1060,19 @@ public class Colony implements IColony
     {
         return ServerUtils.getPlayersFromUUID(this.world, this.getPermissions().getMessagePlayers());
     }
+
+    public void triggerAchievement(Achievement achievement) {
+        if (this.colonyAchievements.contains(achievement)) {
+            return;
+        }
+
+        this.colonyAchievements.add(achievement);
+
+        AchievementUtils.syncAchievements(this);
+    }
+
+    public List<Achievement> getAchievements() {
+        return Collections.unmodifiableList(this.colonyAchievements);
+    }
+
 }

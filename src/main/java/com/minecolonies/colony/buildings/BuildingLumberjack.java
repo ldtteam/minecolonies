@@ -97,11 +97,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            owner.triggerAchievement(ModAchievements.achievementBuildingLumberjack);
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
         }
     }
 
