@@ -60,7 +60,7 @@ public class ScarecrowTileEntity extends TileEntityChest
 
                 if (entity instanceof EntityPlayer)
                 {
-                    colony.addNewField(inventoryField, ((EntityPlayer) entity).inventory, pos, world);
+                    colony.addNewField(this, ((EntityPlayer) entity).inventory, pos, world);
                 }
             }
         }

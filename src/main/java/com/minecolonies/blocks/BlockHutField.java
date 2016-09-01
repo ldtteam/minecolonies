@@ -196,7 +196,7 @@ public class BlockHutField extends BlockContainer
                 final InventoryField inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"), true);
 
                 ((ScarecrowTileEntity) worldIn.getTileEntity(pos)).setInventoryField(inventoryField);
-                colony.addNewField(inventoryField, ((EntityPlayer) placer).inventory, pos, worldIn);
+                colony.addNewField((ScarecrowTileEntity) worldIn.getTileEntity(pos), ((EntityPlayer) placer).inventory, pos, worldIn);
             }
         }
     }

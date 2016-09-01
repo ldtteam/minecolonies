@@ -94,7 +94,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         
         if(tileEntity.getType() == ScarecrowTileEntity.ScareCrowType.PUMPKINHEAD)
         {
-            loc = "/textures/blocks/blockScarecrowPumpkin.png";
+            loc = "textures/blocks/blockScarecrowPumpkin.png";
         }
         else
         {

@@ -12,6 +12,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.network.messages.*;
+import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
 import net.minecraft.entity.player.EntityPlayer;
@@ -890,14 +891,14 @@ public class Colony implements IColony
 
     /**
      * Creates a field from a tile entity and adds it to the colony.
-     * @param inventoryField the inventory of the field.
+     * @param tileEntity the scarecrow which contains the inventory.
      * @param inventoryPlayer the inventory of the player.
      * @param pos Position where the field has been placed.
      * @param world the world of the field.
      */
-    public void addNewField(InventoryField inventoryField, InventoryPlayer inventoryPlayer, BlockPos pos, World world)
+    public void addNewField(ScarecrowTileEntity tileEntity, InventoryPlayer inventoryPlayer, BlockPos pos, World world)
     {
-        final Field field = new Field(inventoryField, inventoryPlayer, world, pos);
+        final Field field = new Field(tileEntity, inventoryPlayer, world, pos);
         addField(field);
         ColonyManager.markDirty();
     }

@@ -2,6 +2,7 @@ package com.minecolonies.colony;
 
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.inventory.InventoryField;
+import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -172,18 +173,18 @@ public class Field extends Container
     /**
      * Creates an instance of our field container, this may be serve to open the GUI.
      *
-     * @param inventory       the field inventory.
+     * @param scarecrowTileEntity       the tileEntity of the field containing the inventory.
      * @param playerInventory the player inventory.
      * @param world           the world.
      * @param location        the position of the field.
      */
-    public Field(InventoryField inventory, InventoryPlayer playerInventory, World world, BlockPos location)
+    public Field(ScarecrowTileEntity scarecrowTileEntity, InventoryPlayer playerInventory, World world, BlockPos location)
     {
         super();
         this.colony = ColonyManager.getColony(world, location);
         this.location = location;
 
-        this.inventory = inventory;
+        this.inventory = scarecrowTileEntity.getInventoryField();
 
         addSlotToContainer(new Slot(inventory, 0, X_OFFSET, Y_OFFSET));
 
@@ -255,17 +256,6 @@ public class Field extends Container
     private static int getMaxRange()
     {
         return MAX_RANGE;
-    }
-
-    /**
-     * Adds an item slot to this container
-     * <p>
-     * Overridden to protect it from getting changed.
-     */
-    @Override
-    protected final Slot addSlotToContainer(final Slot slotIn)
-    {
-        return super.addSlotToContainer(slotIn);
     }
 
     @Override

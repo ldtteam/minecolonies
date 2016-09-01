@@ -2,6 +2,7 @@ package com.minecolonies.inventory;
 
 import com.minecolonies.colony.Field;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -31,9 +32,9 @@ public class GuiField extends GuiContainer
      * @param world              the world the field is in.
      * @param location           the location the field is at.
      */
-    protected GuiField(InventoryPlayer parInventoryPlayer, IInventory fieldInventory, World world, BlockPos location)
+    protected GuiField(InventoryPlayer parInventoryPlayer, ScarecrowTileEntity tileEntity, World world, BlockPos location)
     {
-        super(new Field((InventoryField) fieldInventory, parInventoryPlayer, world, location));
+        super(new Field(tileEntity, parInventoryPlayer, world, location));
     }
 
     /**

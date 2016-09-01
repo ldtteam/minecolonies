@@ -1,4 +1,5 @@
 package com.minecolonies.inventory;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -55,6 +56,9 @@ public class InventoryField extends InventoryCitizen
         super(title, localeEnabled);
         customName = title;
     }
+
+
+
 
     @Override
     public int getSizeInventory()
