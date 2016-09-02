@@ -73,15 +73,17 @@ public class Colony implements IColony
 
     private final MaterialSystem materialSystem = new MaterialSystem();
 
-    private static final String TAG_ID            = "id";
-    private static final String TAG_NAME          = "name";
-    private static final String TAG_DIMENSION     = "dimension";
-    private static final String TAG_CENTER        = "center";
-    private static final String TAG_MAX_CITIZENS  = "maxCitizens";
-    private static final String TAG_BUILDINGS     = "buildings";
-    private static final String TAG_CITIZENS      = "citizens";
-    private static final String TAG_WORK          = "work";
-    private static final String TAG_MANUAL_HIRING = "manualHiring";
+    private static final String TAG_ID               = "id";
+    private static final String TAG_NAME             = "name";
+    private static final String TAG_DIMENSION        = "dimension";
+    private static final String TAG_CENTER           = "center";
+    private static final String TAG_MAX_CITIZENS     = "maxCitizens";
+    private static final String TAG_BUILDINGS        = "buildings";
+    private static final String TAG_CITIZENS         = "citizens";
+    private static final String TAG_ACHIEVEMENT      = "achievement";
+    private static final String TAG_ACHIEVEMENT_LIST = "achievementlist";
+    private static final String TAG_WORK             = "work";
+    private static final String TAG_MANUAL_HIRING    = "manualHiring";
 
     /**
      * Constructor for a newly created Colony.
@@ -164,6 +166,18 @@ public class Colony implements IColony
             }
         }
 
+        // Restore colony achievements
+        NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, NBT.TAG_COMPOUND);
+        this.colonyAchievements = new ArrayList<>();
+        for (int i = 0; i < achievementTagList.tagCount(); ++i)
+        {
+            NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
+            final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
+            // todo: retrieve this
+            Achievement a = null;
+            colonyAchievements.add(a);
+        }
+
         //  Workload
         workManager.readFromNBT(compound.getCompoundTag(TAG_WORK));
     }
@@ -208,6 +222,18 @@ public class Colony implements IColony
             citizenTagList.appendTag(citizenCompound);
         }
         compound.setTag(TAG_CITIZENS, citizenTagList);
+
+        //  Achievements
+        NBTTagList achievementsTagList = new NBTTagList();
+        for (Achievement achievement : this.colonyAchievements)
+        {
+            //todo: get the key from the achievement
+            String achievementKey = "";
+            NBTTagCompound achievementCompound = new NBTTagCompound();
+            achievementCompound.setString(TAG_ACHIEVEMENT, achievementKey);
+            achievementsTagList.appendTag(achievementCompound);
+        }
+        compound.setTag(TAG_ACHIEVEMENT_LIST, achievementsTagList);
 
         //  Workload
         NBTTagCompound workManagerCompound = new NBTTagCompound();
