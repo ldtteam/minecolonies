@@ -20,6 +20,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.Achievement;
+import net.minecraft.stats.StatBase;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -63,7 +65,7 @@ public class Colony implements IColony
     private int                       topCitizenId = 0;
     private int                       maxCitizens  = Configurations.maxCitizens;
 
-    private List<Achievement> colonyAchievements;
+    private final List<Achievement> colonyAchievements;
 
     //  Settings
     private static final int CITIZEN_CLEANUP_TICK_INCREMENT = 5 * 20;
@@ -168,14 +170,16 @@ public class Colony implements IColony
 
         // Restore colony achievements
         NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, NBT.TAG_COMPOUND);
-        this.colonyAchievements = new ArrayList<>();
         for (int i = 0; i < achievementTagList.tagCount(); ++i)
         {
             NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
             final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
-            // todo: retrieve this
-            Achievement a = null;
-            colonyAchievements.add(a);
+            // TODO: Validate this
+            StatBase statBase = StatList.getOneShotStat(achievementKey);
+            if (statBase instanceof Achievement) {
+                colonyAchievements.add((Achievement)statBase);
+            }
+
         }
 
         //  Workload
@@ -227,8 +231,8 @@ public class Colony implements IColony
         NBTTagList achievementsTagList = new NBTTagList();
         for (Achievement achievement : this.colonyAchievements)
         {
-            //todo: get the key from the achievement
-            String achievementKey = "";
+            // TODO: Validate this
+            String achievementKey = achievement.statId;
             NBTTagCompound achievementCompound = new NBTTagCompound();
             achievementCompound.setString(TAG_ACHIEVEMENT, achievementKey);
             achievementsTagList.appendTag(achievementCompound);
