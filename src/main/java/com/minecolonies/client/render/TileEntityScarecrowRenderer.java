@@ -1,10 +1,12 @@
 package com.minecolonies.client.render;
 
+import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.client.model.ModelScarecrowBoth;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -55,6 +57,26 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
      */
     private static final float ZROTATIONOFFSET = 2.845F;
 
+    /**
+     * Basic rotation to achieve a certain direction.
+     */
+    private static final int BASIC_ROTATION = 90;
+
+    /**
+     * Rotate by amount to go east.
+     */
+    private static final int ROTATE_EAST = 1;
+
+    /**
+     * Rotate by amount to go south.
+     */
+    private static final int ROTATE_SOUTH = 2;
+
+    /**
+     * Rotate by amount to go west.
+     */
+    private static final int ROTATE_WEST = 3;
+
 
     /**
      * The public constructor for the renderer.
@@ -68,6 +90,8 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     @Override
     public void renderTileEntityAt(ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage)
     {
+        EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
+
         //Store the transformation
         GlStateManager.pushMatrix();
         //Set viewport to tile entity position to render it
@@ -76,6 +100,22 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         this.bindTexture(getResourceLocation(te));
 
         GlStateManager.rotate(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET);
+
+        switch (facing)
+        {
+            case EAST:
+                GlStateManager.rotate(BASIC_ROTATION*ROTATE_EAST, 0, 1, 0);
+                break;
+            case SOUTH:
+                GlStateManager.rotate(BASIC_ROTATION*ROTATE_SOUTH, 0, 1, 0);
+                break;
+            case WEST:
+                GlStateManager.rotate(BASIC_ROTATION*ROTATE_WEST, 0, 1, 0);
+                break;
+            default:
+                //don't rotate at all.
+        }
+
         this.model.render((float) SIZERATIO);
         
         /* ============ Rendering Code stops here =========== */
