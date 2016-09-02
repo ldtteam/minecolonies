@@ -24,6 +24,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -110,7 +111,7 @@ public class Colony implements IColony
         this.id = id;
         this.dimensionId = dim;
 
-        this.colonyAchievements = new ArrayList<Achievement>();
+        this.colonyAchievements = new ArrayList<>();
     }
 
     /**
@@ -167,14 +168,14 @@ public class Colony implements IColony
         }
 
         // Restore colony achievements
-        NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, NBT.TAG_COMPOUND);
+        final NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, NBT.TAG_COMPOUND);
         this.colonyAchievements = new ArrayList<>();
         for (int i = 0; i < achievementTagList.tagCount(); ++i)
         {
-            NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
+            final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
             final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
             // todo: retrieve this
-            Achievement a = null;
+            final Achievement a = null;
             colonyAchievements.add(a);
         }
 
@@ -224,12 +225,12 @@ public class Colony implements IColony
         compound.setTag(TAG_CITIZENS, citizenTagList);
 
         //  Achievements
-        NBTTagList achievementsTagList = new NBTTagList();
-        for (Achievement achievement : this.colonyAchievements)
+        final NBTTagList achievementsTagList = new NBTTagList();
+        for (final Achievement achievement : this.colonyAchievements)
         {
             //todo: get the key from the achievement
-            String achievementKey = "";
-            NBTTagCompound achievementCompound = new NBTTagCompound();
+            final String achievementKey = "";
+            final NBTTagCompound achievementCompound = new NBTTagCompound();
             achievementCompound.setString(TAG_ACHIEVEMENT, achievementKey);
             achievementsTagList.appendTag(achievementCompound);
         }
@@ -1087,7 +1088,8 @@ public class Colony implements IColony
         return ServerUtils.getPlayersFromUUID(this.world, this.getPermissions().getMessagePlayers());
     }
 
-    public void triggerAchievement(Achievement achievement)
+    // todo: document!
+    public void triggerAchievement(@NotNull Achievement achievement)
     {
         if (this.colonyAchievements.contains(achievement))
         {
@@ -1099,6 +1101,7 @@ public class Colony implements IColony
         AchievementUtils.syncAchievements(this);
     }
 
+    @NotNull
     public List<Achievement> getAchievements()
     {
         return Collections.unmodifiableList(this.colonyAchievements);

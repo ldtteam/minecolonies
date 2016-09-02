@@ -10,15 +10,19 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * todo: explain this class
+ * todo: explain this class.
  */
 public final class PermissionUtils
 {
 
+    /**
+     * Private constructor to hide the implicit public one.
+     */
     private PermissionUtils()
     {
     }
 
+    // todo: document!
     @NotNull
     public static List<Permissions.Player> getPlayersWithAtleastRank(@NotNull Colony colony, @NotNull Permissions.Rank rank)
     {
@@ -27,7 +31,7 @@ public final class PermissionUtils
         final Permissions permissions = colony.getPermissions();
         final Map<UUID, Permissions.Player> players = permissions.getPlayers();
 
-        for (@NotNull Permissions.Player player : players.values())
+        for (@NotNull final Permissions.Player player : players.values())
         {
             if (player.getRank().ordinal() <= rank.ordinal())
             {
