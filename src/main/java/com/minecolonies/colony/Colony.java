@@ -177,8 +177,10 @@ public class Colony implements IColony
             final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
             final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
             // todo: retrieve this
-            final Achievement a = null;
-            colonyAchievements.add(a);
+            final StatBase statBase = StatList.getOneShotStat(achievementKey);
+            if (statBase instanceof Achievement) {
+                colonyAchievements.add((Achievement) statBase);
+            }
         }
 
         //  Workload
