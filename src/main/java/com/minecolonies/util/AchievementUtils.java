@@ -10,13 +10,13 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * todo: explain this class
+ * todo: explain this class.
  */
 public final class AchievementUtils
 {
 
     /**
-     * Private Constructor to deny instances
+     * Private constructor to hide the implicit public one.
      */
     private AchievementUtils()
     {
@@ -29,9 +29,9 @@ public final class AchievementUtils
 
         @NotNull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players);
 
-        for (@Nullable EntityPlayer player : lPlayer)
+        for (@Nullable final EntityPlayer player : lPlayer)
         {
-            for (Achievement achievement : colony.getAchievements())
+            for (final Achievement achievement : colony.getAchievements())
             {
                 if (player == null)
                 {
