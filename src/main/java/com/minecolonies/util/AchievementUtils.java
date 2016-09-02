@@ -18,7 +18,9 @@ public final class AchievementUtils
     /**
      * Private Constructor to deny instances
      */
-    private AchievementUtils() {}
+    private AchievementUtils()
+    {
+    }
 
     //todo document
     public static void syncAchievements(@NotNull final Colony colony)
