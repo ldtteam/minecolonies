@@ -1087,8 +1087,10 @@ public class Colony implements IColony
         return ServerUtils.getPlayersFromUUID(this.world, this.getPermissions().getMessagePlayers());
     }
 
-    public void triggerAchievement(Achievement achievement) {
-        if (this.colonyAchievements.contains(achievement)) {
+    public void triggerAchievement(Achievement achievement)
+    {
+        if (this.colonyAchievements.contains(achievement))
+        {
             return;
         }
 
@@ -1097,7 +1099,8 @@ public class Colony implements IColony
         AchievementUtils.syncAchievements(this);
     }
 
-    public List<Achievement> getAchievements() {
+    public List<Achievement> getAchievements()
+    {
         return Collections.unmodifiableList(this.colonyAchievements);
     }
 

@@ -60,13 +60,13 @@ public final class ServerUtils
     @NotNull
     public static List<EntityPlayer> getPlayersFromUUID(@NotNull World world, @NotNull Collection<UUID> ids)
     {
-        final List<EntityPlayer> players = new ArrayList<>();
+        @NotNull final List<EntityPlayer> players = new ArrayList<>();
 
         for (final Object o : world.playerEntities)
         {
             if (o instanceof EntityPlayer)
             {
-                final EntityPlayer player = (EntityPlayer) o;
+                @NotNull final EntityPlayer player = (EntityPlayer) o;
                 if (ids.contains(player.getGameProfile().getId()))
                 {
                     players.add(player);
@@ -78,6 +78,27 @@ public final class ServerUtils
             }
         }
         return players;
+    }
+
+    //todo: document
+    @NotNull
+    public static List<EntityPlayer> getPlayersFromPermPlayer(@NotNull List<Permissions.Player> players)
+    {
+        @NotNull final List<EntityPlayer> playerList = new ArrayList<>();
+
+        for (@NotNull Permissions.Player player : players)
+        {
+            playerList.add(ServerUtils.getPlayerFromPermPlayer(player));
+        }
+
+        return playerList;
+    }
+
+    //todo: document!
+    @Nullable
+    public static EntityPlayer getPlayerFromPermPlayer(@NotNull Permissions.Player player)
+    {
+        return ServerUtils.getPlayerFromUUID(player.getID());
     }
 
     /**
@@ -96,7 +117,7 @@ public final class ServerUtils
             return null;
         }
         final List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-        for (final EntityPlayerMP player : allPlayers)
+        for (@NotNull final EntityPlayerMP player : allPlayers)
         {
             if (player.getUniqueID().equals(uuid))
             {
@@ -105,19 +126,4 @@ public final class ServerUtils
         }
         return null;
     }
-
-    public static EntityPlayer getPlayerFromPermPlayer(Permissions.Player player) {
-        return ServerUtils.getPlayerFromUUID(player.getID());
-    }
-
-    public static List<EntityPlayer> getPlayersFromPermPlayer(List<Permissions.Player> players) {
-        List<EntityPlayer> lPlayers = new ArrayList<>();
-
-        for (Permissions.Player player : players) {
-            lPlayers.add(ServerUtils.getPlayerFromPermPlayer(player));
-        }
-
-        return lPlayers;
-    }
-
 }
