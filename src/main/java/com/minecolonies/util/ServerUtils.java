@@ -1,5 +1,6 @@
 package com.minecolonies.util;
 
+import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -103,6 +104,20 @@ public final class ServerUtils
             }
         }
         return null;
+    }
+
+    public static EntityPlayer getPlayerFromPermPlayer(Permissions.Player player) {
+        return ServerUtils.getPlayerFromUUID(player.getID());
+    }
+
+    public static List<EntityPlayer> getPlayersFromPermPlayer(List<Permissions.Player> players) {
+        List<EntityPlayer> lPlayers = new ArrayList<>();
+
+        for (Permissions.Player player : players) {
+            lPlayers.add(ServerUtils.getPlayerFromPermPlayer(player));
+        }
+
+        return lPlayers;
     }
 
 }
