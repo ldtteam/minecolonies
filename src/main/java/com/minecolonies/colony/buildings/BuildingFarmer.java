@@ -4,10 +4,14 @@ import com.minecolonies.client.gui.WindowHutFarmer;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.colony.Field;
+import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
+import com.minecolonies.entity.ai.citizen.farmer.FieldView;
+import com.minecolonies.entity.ai.citizen.miner.Level;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
+import com.minecolonies.util.BlockPosUtil;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
@@ -43,6 +47,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     private static final String TAG_CURRENT_FIELD = "currentField";
 
+    private static final String TAG_ASSIGN_MANUALLY = "assign";
     /**
      * The list of the fields the farmer manages.
      */
@@ -52,6 +57,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * The field the farmer is currently working on.
      */
     private Field currentField;
+
+    /**
+     * Fields should be assigned manually to the farmer?
+     */
+    private boolean assignFieldManually = false;
 
     /**
      * Public constructor which instantiates the building.
@@ -197,7 +207,17 @@ public class BuildingFarmer extends AbstractBuildingWorker
         for(final Field field: farmerFields)
         {
             field.setTaken(false);
+            field.setOwner("");
         }
+    }
+
+    /**
+     * Getter for the assign manually.
+     * @return true if he should.
+     */
+    public boolean assignManually()
+    {
+        return assignFieldManually;
     }
 
     @Override
@@ -221,6 +241,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 farmerFields.add(f);
             }
         }
+        assignFieldManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
     }
 
     @Override
@@ -235,7 +256,23 @@ public class BuildingFarmer extends AbstractBuildingWorker
             fieldTagList.appendTag(fieldCompound);
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
-        compound.setInteger(TAG_CURRENT_FIELD,farmerFields.indexOf(currentField));
+        compound.setBoolean(TAG_ASSIGN_MANUALLY, assignFieldManually);
+    }
+
+    /**
+     * Method to serialize data to send it to the view.
+     *
+     * @param buf the used ByteBuffer.
+     */
+    @Override
+    public void serializeToView(ByteBuf buf)
+    {
+        for(Field field: getFarmerFields())
+        {
+            FieldView fieldView = new FieldView(field);
+            fieldView.serializeViewNetworkData(buf);
+        }
+        BlockPosUtil.writeToByteBuf(buf, this.getID());
     }
 
     /**
@@ -243,6 +280,19 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public static class View extends AbstractBuildingWorker.View
     {
+        //todo add to window.
+        /**
+         * Checks if fields should be assigned manually.
+         */
+        public boolean assignFieldManually;
+
+        /**
+         * Contains a view object of all the fields in the colony.
+         */
+        private List<FieldView> fields = new ArrayList<>();
+
+        private BlockPos buildingLocation;
+
         /**
          * Public constructor of the view, creates an instance of it.
          *
@@ -257,6 +307,38 @@ public class BuildingFarmer extends AbstractBuildingWorker
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutFarmer(this);
+        }
+
+        @Override
+        public void deserialize(ByteBuf buf)
+        {
+            super.deserialize(buf);
+            assignFieldManually = buf.readBoolean();
+            while(buf.isReadable())
+            {
+                FieldView fieldView = new FieldView();
+                fieldView.serializeViewNetworkData(buf);
+                fields.add(fieldView);
+            }
+            buildingLocation = BlockPosUtil.readFromByteBuf(buf);
+        }
+
+        /**
+         * Getter of the fields list.
+         * @return an unmodifiable List.
+         */
+        public List<FieldView> getFields()
+        {
+            return Collections.unmodifiableList(fields);
+        }
+
+        /**
+         * Getter of the building location.
+         * @return the blockPos.
+         */
+        private BlockPos getBuildingLocation()
+        {
+            return buildingLocation;
         }
     }
 }

@@ -10,6 +10,7 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
@@ -800,6 +801,14 @@ public class Colony implements IColony
         return townHall != null;
     }
 
+    /**
+     * Getter of a unmodifiable version of the farmerFields map.
+     * @return map of fields and their id.
+     */
+    public Map<BlockPos, Field> getFields()
+    {
+        return Collections.unmodifiableMap(fields);
+    }
 
     /**
      * Get field in Colony by ID.
@@ -816,13 +825,14 @@ public class Colony implements IColony
      * Returns a field which has not been taken yet.
      * @return a field if there is one available, else null.
      */
-    public Field getFreeField()
+    public Field getFreeField(String owner)
     {
         for(final Field field: fields.values())
         {
             if(!field.isTaken())
             {
                 field.setTaken(true);
+                field.setOwner(owner);
                 return field;
             }
         }

@@ -1,6 +1,6 @@
 package com.minecolonies.inventory;
 
-import com.minecolonies.colony.Field;
+import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import net.minecraft.client.gui.inventory.GuiContainer;

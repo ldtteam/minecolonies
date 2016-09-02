@@ -5,17 +5,18 @@
         <view id="pageActions" size="100% 100%">
             <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
         </view>
-        <view id="pageSettings" size="100% 100%" pos="0 1">
+        <view id="pageFields" size="100% 100%" pos="0 1">
 
             <view size="100% 100" pos="0 0">
                 <label size="100% 11" pos="0 0" label="Plant:" color="black" textalign="BottomMiddle"/>
 
                 <list id="fields" size="70% 120" pos="60 70" align="TopMiddle">
-
+                    <label id="worker"/>
+                    <label id="distance"/>
+                    <label id="direction"/>
+                    <button id="assign" label="Assign"/>
+                    <itemicon id="icon" size = "30 30"/>
                 </list>
-
-                <itemicon id="icon" size = "30 30" item="Wheat"/>
-
             </view>
 
         </view>

@@ -2,7 +2,6 @@ package com.minecolonies.entity.ai.citizen.farmer;
 
 import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.colony.Colony;
-import com.minecolonies.colony.Field;
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.jobs.JobFarmer;
 import com.minecolonies.entity.EntityCitizen;
@@ -22,7 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.IPlantable;
 
-import static com.minecolonies.colony.Field.FieldStage.*;
+import static com.minecolonies.entity.ai.citizen.farmer.Field.FieldStage.*;
 import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
@@ -113,7 +112,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         building.synchWithColony(world);
 
-        if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel())
+        if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !building.assignManually())
         {
             searchAndAddFields();
         }
@@ -170,7 +169,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         Colony colony = worker.getColony();
         if (colony != null)
         {
-            Field newField = colony.getFreeField();
+            Field newField = colony.getFreeField(worker.getName());
 
             if (newField != null && getOwnBuilding() != null)
             {

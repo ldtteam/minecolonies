@@ -1,5 +1,7 @@
-package com.minecolonies.colony;
+package com.minecolonies.entity.ai.citizen.farmer;
 
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
@@ -115,10 +117,12 @@ public class Field extends Container
      * The colony of the field.
      */
     private final Colony   colony;
+
     /**
      * The fields location.
      */
-    private       BlockPos location;
+    private BlockPos location;
+
     /**
      * Has the field be taken by any worker?
      */
@@ -158,6 +162,11 @@ public class Field extends Container
      * The inventorySlot of the field.
      */
     private InventoryField inventory;
+
+    /**
+     * Name of the citizen claiming the field.
+     */
+    private String owner = "";
 
     /**
      * Private constructor to create field from NBT.
@@ -219,7 +228,7 @@ public class Field extends Container
      *
      * @param colony   The owning colony.
      * @param compound The saved data.
-     * @return {@link com.minecolonies.colony.Field} created from the compound.
+     * @return {@link Field} created from the compound.
      */
     public static Field createFromNBT(Colony colony, NBTTagCompound compound)
     {
@@ -517,6 +526,24 @@ public class Field extends Container
     public void setInventoryField(InventoryField inventory)
     {
         this.inventory = inventory;
+    }
+
+    /**
+     * Sets the owner of the field.
+     * @param owner the name of the citizen.
+     */
+    public void setOwner(final String owner)
+    {
+        this.owner = owner;
+    }
+
+    /**
+     * Getter of the owner of the field.
+     * @return the string description of the citizen.
+     */
+    public String getOwner()
+    {
+        return owner;
     }
 
     /**

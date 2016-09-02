@@ -43,17 +43,17 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     /**
      * Rotate it on the following x offset.
      */
-    private static final double XROTATIONOFFSET = 0.311;
+    private static final float XROTATIONOFFSET = 0.311F;
 
     /**
      * Rotate it on the following y offset.
      */
-    private static final double YROTATIONOFFSET = 0.0;
+    private static final float YROTATIONOFFSET = 0.0F;
 
     /**
      * Rotate it on the following z offset.
      */
-    private static final double ZROTATIONOFFSET = 2.845;
+    private static final float ZROTATIONOFFSET = 2.845F;
 
 
     /**
@@ -75,7 +75,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
 
         this.bindTexture(getResourceLocation(te));
 
-        GlStateManager.rotate(ROTATION, (float)XROTATIONOFFSET, (float)YROTATIONOFFSET, (float)ZROTATIONOFFSET);
+        GlStateManager.rotate(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET);
         this.model.render((float) SIZERATIO);
         
         /* ============ Rendering Code stops here =========== */

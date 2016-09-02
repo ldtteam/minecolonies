@@ -1,13 +1,11 @@
 package com.minecolonies.inventory;
 
-import com.minecolonies.colony.Field;
+import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Class which handles the GUI inventory.
