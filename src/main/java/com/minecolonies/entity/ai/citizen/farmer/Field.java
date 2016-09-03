@@ -80,6 +80,11 @@ public class Field extends Container
     private static final String TAG_STAGE = "stage";
 
     /**
+     * Tag to store the owner.
+     */
+    private static final String TAG_OWNER = "owner";
+
+    /**
      * Amount of rows in the player inventory.
      */
     private static final int PLAYER_INVENTORY_ROWS = 3;
@@ -113,10 +118,11 @@ public class Field extends Container
      * The max width/length of a field.
      */
     private static final int MAX_RANGE = 5;
+
     /**
      * The colony of the field.
      */
-    private final Colony   colony;
+    private final Colony colony;
 
     /**
      * The fields location.
@@ -252,8 +258,9 @@ public class Field extends Container
         widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
         lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
         widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
-        inventory = new InventoryField("Scarecrow", true);
+        inventory = new InventoryField("Scarecrow");
         inventory.readFromNBT(compound);
+        owner = compound.getString(TAG_OWNER);
     }
 
     /**
@@ -381,6 +388,7 @@ public class Field extends Container
         compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
         compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
         inventory.writeToNBT(compound);
+        compound.setString(TAG_OWNER, owner);
     }
 
     /**

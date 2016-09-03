@@ -110,7 +110,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.PREPARING;
         }
 
-        building.synchWithColony(world);
+        building.syncWithColony(world);
 
         if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !building.assignManually())
         {

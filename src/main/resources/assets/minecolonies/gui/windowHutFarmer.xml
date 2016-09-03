@@ -8,14 +8,20 @@
         <view id="pageFields" size="100% 100%" pos="0 1">
 
             <view size="100% 100" pos="0 0">
-                <label size="100% 11" pos="0 0" label="Plant:" color="black" textalign="BottomMiddle"/>
+                <label id="AssignmentModeLabel" label="$(com.minecolonies.gui.workerHuts.farmerHut.AssignmentMode)" pos = "20 30"/>
+                <button id="assignmentMode" size = "60 15" label = "$(com.minecolonies.gui.hiring.off)" pos = "50 40"/>
 
-                <list id="fields" size="70% 120" pos="60 70" align="TopMiddle">
-                    <label id="worker"/>
-                    <label id="distance"/>
-                    <label id="direction"/>
-                    <button id="assign" label="Assign"/>
-                    <itemicon id="icon" size = "30 30"/>
+                <label size="100% 11" pos="0 0" label="Fields:" color="black" textalign="BottomMiddle"/>
+
+                <list id="fields" size="85% 120" pos="5 60" align="TopMiddle">
+                    <box size="100% 30" linewidth="2">
+                        <button id="assign" pos = "95 10" size="40 15"/>
+                        <itemicon id="icon" pos = "0 0"/>
+                        <label id="worker" color="black" pos = "20 5"/>
+                        <label id="dist" color="black" pos = "15 15"/>
+                        <label id="dir" color="black" pos = "35 15"/>
+                        <label id="hiddenId" pos = "0 30"/>
+                    </box>
                 </list>
             </view>
 

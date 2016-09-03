@@ -3,6 +3,7 @@ package com.minecolonies.colony;
 import com.minecolonies.MineColonies;
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.colony.materials.MaterialSystem;
@@ -449,6 +450,22 @@ public class Colony implements IColony
     }
 
     /**
+     * Updates all subscribers of fields etc.
+     */
+    private void markFieldsDirty()
+    {
+        ColonyManager.markDirty();
+
+        for (AbstractBuilding building : buildings.values())
+        {
+            if (building instanceof BuildingFarmer)
+            {
+                subscribers.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+            }
+        }
+    }
+
+    /**
      * Update Subscribers with Colony, Citizen, and AbstractBuilding Views.
      */
     public void updateSubscribers()
@@ -682,11 +699,22 @@ public class Colony implements IColony
             removedBuildings.forEach(AbstractBuilding::destroy);
         }
 
-        final List<BlockPos> removedFields = fields.keySet().stream().filter(loc -> world.getTileEntity(loc) == null).collect(Collectors.toList());
-        for(final BlockPos field: removedFields)
+        final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
+
+        for(final Field field: tempFields)
         {
-            fields.remove(field);
+            final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
+            if(scarecrow == null)
+            {
+                fields.remove(field.getID());
+            }
+            else
+            {
+                field.setInventoryField(scarecrow.getInventoryField());
+            }
         }
+
+        markFieldsDirty();
     }
 
     /**
@@ -823,6 +851,7 @@ public class Colony implements IColony
 
     /**
      * Returns a field which has not been taken yet.
+     * @param owner name of the owner of the field.
      * @return a field if there is one available, else null.
      */
     public Field getFreeField(String owner)
@@ -833,6 +862,7 @@ public class Colony implements IColony
             {
                 field.setTaken(true);
                 field.setOwner(owner);
+                markFieldsDirty();
                 return field;
             }
         }
@@ -909,7 +939,7 @@ public class Colony implements IColony
     {
         final Field field = new Field(tileEntity, inventoryPlayer, world, pos);
         addField(field);
-        ColonyManager.markDirty();
+        markFieldsDirty();
     }
 
     /**

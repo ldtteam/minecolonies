@@ -58,8 +58,6 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     public void onOpened()
     {
         super.onOpened();
-
-
         findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
 
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);

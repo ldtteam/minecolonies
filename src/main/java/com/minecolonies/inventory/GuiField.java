@@ -46,6 +46,7 @@ public class GuiField extends GuiContainer
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
+        //todo add field owned by x.
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(TEXTURE);
         final int marginHorizontal = (width - xSize) / 2;

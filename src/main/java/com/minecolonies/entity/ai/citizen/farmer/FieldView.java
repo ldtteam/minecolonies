@@ -1,7 +1,9 @@
 package com.minecolonies.entity.ai.citizen.farmer;
 
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.BlockUtils;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
@@ -16,6 +18,7 @@ public class FieldView
     private BlockPos id;
     private boolean  taken;
     private String   owner;
+    private Item     item;
 
     /**
      * Constructor to instantiate field to fill it from a byteBuffer.
@@ -37,6 +40,7 @@ public class FieldView
         this.id = field.getID();
         this.taken = field.isTaken();
         this.owner = field.getOwner();
+        this.item = field.getSeed();
     }
 
     /**
@@ -94,6 +98,8 @@ public class FieldView
         BlockPosUtil.writeToByteBuf(buf, id);
         buf.writeBoolean(taken);
         ByteBufUtils.writeUTF8String(buf, owner);
+        int itemId = item == null? 0 : Item.getIdFromItem(item);
+        buf.writeInt(itemId);
     }
 
     /**
@@ -107,6 +113,17 @@ public class FieldView
         id = BlockPosUtil.readFromByteBuf(buf);
         taken = buf.readBoolean();
         owner = ByteBufUtils.readUTF8String(buf);
+        int itemId = buf.readInt();
+        item = itemId == 0? null : Item.getItemById(itemId);
         return this;
+    }
+
+    /**
+     * Returns the item of the field.
+     * @return an item object.
+     */
+    public Item getItem()
+    {
+        return item;
     }
 }

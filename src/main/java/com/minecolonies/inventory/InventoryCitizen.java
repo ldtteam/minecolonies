@@ -351,6 +351,7 @@ public class InventoryCitizen implements IInventory
         }
         return false;
     }
+
     /**
      * Do not give this method the name canInteractWith because it clashes with Container
      * @param player the player acessing the inventory.

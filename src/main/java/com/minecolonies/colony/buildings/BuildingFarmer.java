@@ -8,15 +8,14 @@ import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
 import com.minecolonies.entity.ai.citizen.farmer.FieldView;
-import com.minecolonies.entity.ai.citizen.miner.Level;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
-import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,11 +42,10 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private static final String TAG_FIELDS = "fields";
 
     /**
-     * NBTTag to store the currentField.
+     * NBT tag to store assign manually.
      */
-    private static final String TAG_CURRENT_FIELD = "currentField";
-
     private static final String TAG_ASSIGN_MANUALLY = "assign";
+
     /**
      * The list of the fields the farmer manages.
      */
@@ -61,7 +59,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * Fields should be assigned manually to the farmer?
      */
-    private boolean assignFieldManually = false;
+    private boolean assignManually = false;
 
     /**
      * Public constructor which instantiates the building.
@@ -72,7 +70,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
     {
         super(c, l);
     }
-
 
     /**
      * Returns list of fields of the farmer.
@@ -159,7 +156,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * Synchronize field list with colony.
      * @param world the world the building is in.
      */
-    public void synchWithColony(World world)
+    public void syncWithColony(World world)
     {
         if(!farmerFields.isEmpty())
         {
@@ -206,8 +203,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
         super.onDestroyed();
         for(final Field field: farmerFields)
         {
-            field.setTaken(false);
-            field.setOwner("");
+            Field tempField = getColony().getField(field.getID());
+
+            if(tempField != null)
+            {
+                tempField.setTaken(false);
+                tempField.setOwner("");
+            }
         }
     }
 
@@ -217,12 +219,24 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public boolean assignManually()
     {
-        return assignFieldManually;
+        return assignManually;
     }
 
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
+        if(!farmerFields.isEmpty())
+        {
+            for(Field field: farmerFields)
+            {
+                Field colonyField = getColony().getField(field.getID());
+                if(colonyField != null)
+                {
+                    colonyField.setOwner(citizen.getName());
+                }
+                field.setOwner(citizen.getName());
+            }
+        }
         return new JobFarmer(citizen);
     }
 
@@ -241,7 +255,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 farmerFields.add(f);
             }
         }
-        assignFieldManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
+        assignManually = compound.getBoolean(TAG_ASSIGN_MANUALLY);
     }
 
     @Override
@@ -256,7 +270,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             fieldTagList.appendTag(fieldCompound);
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
-        compound.setBoolean(TAG_ASSIGN_MANUALLY, assignFieldManually);
+        compound.setBoolean(TAG_ASSIGN_MANUALLY, assignManually);
     }
 
     /**
@@ -267,12 +281,89 @@ public class BuildingFarmer extends AbstractBuildingWorker
     @Override
     public void serializeToView(ByteBuf buf)
     {
-        for(Field field: getFarmerFields())
+        super.serializeToView(buf);
+        buf.writeBoolean(assignManually);
+
+        int size = 0;
+
+        for(Field field: getColony().getFields().values())
         {
-            FieldView fieldView = new FieldView(field);
-            fieldView.serializeViewNetworkData(buf);
+            if(field.isTaken())
+            {
+                if(getWorker() == null || field.getOwner().equals(getWorker().getName()))
+                {
+                    size++;
+                }
+            }
+            else
+            {
+                size++;
+            }
         }
-        BlockPosUtil.writeToByteBuf(buf, this.getID());
+
+        buf.writeInt(size);
+
+        for(Field field: getColony().getFields().values())
+        {
+            if(field.isTaken())
+            {
+                if(getWorker() == null || field.getOwner().equals(getWorker().getName()))
+                {
+                    FieldView fieldView = new FieldView(field);
+                    fieldView.serializeViewNetworkData(buf);
+                }
+            }
+            else
+            {
+                FieldView fieldView = new FieldView(field);
+                fieldView.serializeViewNetworkData(buf);
+            }
+        }
+
+        if(getWorker() == null)
+        {
+            ByteBufUtils.writeUTF8String(buf, "");
+        }
+        else
+        {
+            ByteBufUtils.writeUTF8String(buf, getWorker().getName());
+        }
+    }
+
+    /**
+     * Method called to free a field.
+     * @param position id of the field.
+     */
+    public void freeField(BlockPos position)
+    {
+        //Get the field with matching id, if none found return null.
+        Field tempField = farmerFields.stream().filter(field -> field.getID() == position).findFirst().orElse(null);
+
+        if(tempField != null)
+        {
+            farmerFields.remove(tempField);
+        }
+    }
+
+    /**
+     * Method called to assign a field to the farmer.
+     * @param position id of the field.
+     */
+    public void assignField(BlockPos position)
+    {
+        Field field = getColony().getField(position);
+        field.setTaken(true);
+        field.setOwner(getWorker().getName());
+        farmerFields.add(field);
+    }
+
+    /**
+     * Switches the assignManually of the farmer.
+     * @param assignManually true if assignment should be manual.
+     */
+    public void setAssignManually(final boolean assignManually)
+    {
+        this.assignManually = assignManually;
     }
 
     /**
@@ -280,18 +371,25 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public static class View extends AbstractBuildingWorker.View
     {
-        //todo add to window.
         /**
          * Checks if fields should be assigned manually.
          */
-        public boolean assignFieldManually;
+        private boolean assignFieldManually;
 
         /**
          * Contains a view object of all the fields in the colony.
          */
         private List<FieldView> fields = new ArrayList<>();
 
-        private BlockPos buildingLocation;
+        /**
+         * Name of the worker of the building.
+         */
+        private String workerName;
+
+        /**
+         * The amount of fields the farmer owns;
+         */
+        private int amountOfFields;
 
         /**
          * Public constructor of the view, creates an instance of it.
@@ -312,15 +410,30 @@ public class BuildingFarmer extends AbstractBuildingWorker
         @Override
         public void deserialize(ByteBuf buf)
         {
+            fields = new ArrayList<>();
             super.deserialize(buf);
             assignFieldManually = buf.readBoolean();
-            while(buf.isReadable())
+            int size = buf.readInt();
+            for(int i = 1; i <= size; i++)
             {
                 FieldView fieldView = new FieldView();
-                fieldView.serializeViewNetworkData(buf);
+                fieldView.deserialize(buf);
                 fields.add(fieldView);
+                if(fieldView.isTaken())
+                {
+                    amountOfFields++;
+                }
             }
-            buildingLocation = BlockPosUtil.readFromByteBuf(buf);
+            workerName = ByteBufUtils.readUTF8String(buf);
+        }
+
+        /**
+         * Should the farmer be assigned manually to the fields?
+         * @return true if yes.
+         */
+        public boolean assignFieldManually()
+        {
+            return assignFieldManually;
         }
 
         /**
@@ -333,12 +446,21 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
 
         /**
-         * Getter of the building location.
-         * @return the blockPos.
+         * Getter of the worker name.
+         * @return the name of the worker.
          */
-        private BlockPos getBuildingLocation()
+        public String getWorkerName()
         {
-            return buildingLocation;
+            return workerName;
+        }
+
+        /**
+         * Getter for amount of fields.
+         * @return the amount of fields.
+         */
+        public int getAmountOfFields()
+        {
+            return amountOfFields;
         }
     }
 }

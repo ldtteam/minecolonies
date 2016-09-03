@@ -1,13 +1,19 @@
 package com.minecolonies.inventory;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants;
 
 /**
  * The custom chest of the field.
  */
-public class InventoryField extends InventoryCitizen
+public class InventoryField implements IInventory
 {
     /**
      * NBTTag to store the slot.
@@ -45,19 +51,20 @@ public class InventoryField extends InventoryCitizen
     private String customName         = "";
 
     /**
+     * Updated after the inventory has been changed.
+     */
+    private boolean inventoryChanged = false;
+
+    /**
      * Creates the inventory of the citizen.
      *
-     * @param title         Title of the inventory.
-     * @param localeEnabled Boolean whether the inventory has a custom name.
+     * @param title Title of the inventory.
      */
-    public InventoryField(final String title, final boolean localeEnabled)
+    public InventoryField(final String title)
     {
-        super(title, localeEnabled);
-        customName = title;
+        super();
+        this.customName = title;
     }
-
-
-
 
     @Override
     public int getSizeInventory()
@@ -72,11 +79,107 @@ public class InventoryField extends InventoryCitizen
     }
 
     @Override
-    public int getHotbarSize()
+    public void markDirty()
+    {
+        this.inventoryChanged = true;
+    }
+
+    /**
+     * Checks if the inventory has been changed and then resets the boolean.
+     * @return true if it changed.
+     */
+    public boolean hasInventoryChanged()
+    {
+        if(inventoryChanged)
+        {
+            inventoryChanged = false;
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isUseableByPlayer(final EntityPlayer entityPlayer)
+    {
+        return true;//colony.getPermissions().hasPermission(entityPlayer, Permissions.Action.ACCESS_HUTS);
+    }
+
+    /**
+     *  Called when inventory is opened by a player.
+     * @param entityPlayer the player who opened the inventory.
+     */
+    @Override
+    public void openInventory(final EntityPlayer entityPlayer)
+    {
+        /*
+         * This may be filled in order to specify some custom handling.
+         */
+    }
+
+    /**
+     * Called after the inventory has been closed by a player.
+     * @param entityPlayer the player who opened the inventory.
+     */
+    @Override
+    public void closeInventory(final EntityPlayer entityPlayer)
+    {
+        /*
+         * This may be filled in order to specify some custom handling.
+         */
+    }
+
+    @Override
+    public boolean isItemValidForSlot(final int index, final ItemStack itemStack)
+    {
+        return index == 0 && itemStack != null && itemStack.getItem() instanceof ItemSeeds;
+    }
+
+    /**
+     * This may be used in order to return values of different GUI areas like the ones in the beacon.
+     * @param id the id of the field.
+     * @return the value of the field.
+     */
+    @Override
+    public int getField(int id)
     {
         return 0;
     }
 
+    /**
+     * This may be used to set GUI areas with a certain id and value.
+     * @param id some id.
+     * @param value some value.
+     */
+    @Override
+    public void setField(int id, int value)
+    {
+        /*
+         * We currently need no fields.
+         */
+    }
+
+    /**
+     * Returns the number of fields.
+     * @return the amount.
+     */
+    @Override
+    public int getFieldCount()
+    {
+        return 0;
+    }
+
+    /**
+     * Completely clears the inventory.
+     */
+    @Override
+    public void clear()
+    {
+        for (int i = 0; i < this.stackResult.length; ++i)
+        {
+            this.stackResult[i] = null;
+        }
+    }
+    
     /**
      * Getter for the stack in the inventory. Since there is only one slot return always that one.
      * @param index the slot.
@@ -89,9 +192,62 @@ public class InventoryField extends InventoryCitizen
     }
 
     @Override
+    public ItemStack decrStackSize(int index, int count)
+    {
+        if (this.stackResult[index] != null)
+        {
+            if (this.stackResult[index].stackSize <= count)
+            {
+                ItemStack itemStack1 = this.stackResult[index];
+                this.stackResult[index] = null;
+                this.markDirty();
+                return itemStack1;
+            }
+            else
+            {
+                ItemStack itemstack = this.stackResult[index].splitStack(count);
+
+                if (this.stackResult[index].stackSize == 0)
+                {
+                    this.stackResult[index] = null;
+                }
+
+                this.markDirty();
+                return itemstack;
+            }
+
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    @Override
+    public ItemStack removeStackFromSlot(final int index)
+    {
+        if (this.stackResult[index] != null)
+        {
+            ItemStack itemstack = this.stackResult[index];
+            this.stackResult[index] = null;
+            return itemstack;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    @Override
     public boolean hasCustomName()
     {
         return true;
+    }
+
+    @Override
+    public IChatComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new ChatComponentText(this.getName()) : new ChatComponentTranslation(this.getName());
     }
 
     /**
@@ -126,7 +282,6 @@ public class InventoryField extends InventoryCitizen
      * Used to retrieve variables.
      * @param compound with the give tag.
      */
-    @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         final NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
@@ -153,7 +308,6 @@ public class InventoryField extends InventoryCitizen
      * Used to store variables.
      * @param compound with the given tag.
      */
-    @Override
     public void writeToNBT(NBTTagCompound compound)
     {
         final NBTTagList nbttaglist = new NBTTagList();
@@ -177,5 +331,14 @@ public class InventoryField extends InventoryCitizen
         }
 
         compound.setTag(TAG_INVENTORY, nbttaglist);
+    }
+
+    /**
+     * Setter of the customName of the inventory.
+     * @param customName the name to set.
+     */
+    public void setCustomName(final String customName)
+    {
+        this.customName = customName;
     }
 }
