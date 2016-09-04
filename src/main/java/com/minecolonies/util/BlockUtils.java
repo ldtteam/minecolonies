@@ -127,7 +127,7 @@ public final class BlockUtils
         }
 
         Block block = blockState.getBlock();
-        if (item instanceof ItemBlock && !block.isFlowerPot())
+        if (item instanceof ItemBlock)
         {
             block = Block.getBlockFromItem(item);
         }
