@@ -6,12 +6,9 @@ import com.blockout.controls.ItemIcon;
 import com.blockout.controls.Label;
 import com.blockout.views.ScrollingList;
 import com.blockout.views.SwitchView;
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.entity.ai.citizen.farmer.FieldView;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.messages.AssignFieldMessage;
-import com.minecolonies.network.messages.AssignmentModeMessage;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
@@ -139,22 +136,19 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         final int row = fieldList.getListElementIndexByPane(button);
         final FieldView field = fields.get(row);
 
+
         if (button.getLabel().equals(RED_X))
         {
             button.setLabel(APPROVE);
-            MineColonies.getNetwork().sendToServer(new AssignFieldMessage(building, false, field.getId()));
-            fields.get(row).setTaken(false);
-            field.setOwner("");
-            building.reduceAmountOfFields(1);
+            building.changeFields(field.getId(), false, row);
         }
         else
         {
             button.setLabel(RED_X);
-            MineColonies.getNetwork().sendToServer(new AssignFieldMessage(building, true, field.getId()));
-            field.setTaken(true);
-            field.setOwner(building.getWorkerName());
+            building.changeFields(field.getId(), true, row);
         }
 
+        pullLevelsFromHut();
         window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
     }
 
@@ -167,12 +161,12 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         if(button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
         {
             button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
-            MineColonies.getNetwork().sendToServer(new AssignmentModeMessage(building, true));
+            building.setAssignFieldManually(true);
         }
         else
         {
             button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.off"));
-            MineColonies.getNetwork().sendToServer(new AssignmentModeMessage(building, false));
+            building.setAssignFieldManually(false);
         }
         window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
     }
@@ -235,6 +229,10 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 {
                     rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).disable();
                 }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).enable();
+                }
 
                 if (field.isTaken())
                 {
@@ -246,6 +244,10 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                     if(building.getBuildingLevel() <= building.getAmountOfFields())
                     {
                         rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).disable();
+                    }
+                    else
+                    {
+                        rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).enable();
                     }
                 }
 

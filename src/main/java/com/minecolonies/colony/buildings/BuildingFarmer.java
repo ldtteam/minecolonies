@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.client.gui.WindowHutFarmer;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -8,6 +9,8 @@ import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
 import com.minecolonies.entity.ai.citizen.farmer.FieldView;
+import com.minecolonies.network.messages.AssignFieldMessage;
+import com.minecolonies.network.messages.AssignmentModeMessage;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
@@ -476,12 +479,31 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
 
         /**
-         * Reduces the amount of fields by i.
-         * @param i the number to reduce.
+         * Sets the assignedFieldManually in the view.
+         * @param assignFieldManually variable to set.
          */
-        public void reduceAmountOfFields(final int i)
+        public void setAssignFieldManually(final boolean assignFieldManually)
         {
-            amountOfFields-=i;
+            MineColonies.getNetwork().sendToServer(new AssignmentModeMessage(this, assignFieldManually));
+            this.assignFieldManually = assignFieldManually;
+        }
+
+        public void changeFields(final BlockPos id, boolean addNewField, int row)
+        {
+            MineColonies.getNetwork().sendToServer(new AssignFieldMessage(this, addNewField, id));
+            fields.get(row).setTaken(addNewField);
+
+            if(addNewField)
+            {
+                fields.get(row).setOwner(workerName);
+                amountOfFields++;
+            }
+            else
+            {
+                fields.get(row).setOwner("");
+                amountOfFields--;
+            }
+
         }
     }
 }
