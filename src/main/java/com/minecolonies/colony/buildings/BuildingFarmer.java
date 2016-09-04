@@ -124,7 +124,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public Field getFieldToWorkOn()
     {
         Collections.shuffle(farmerFields);
-        for(Field field: farmerFields)
+        for(final Field field: farmerFields)
         {
             if(field.needsWork())
             {
@@ -177,6 +177,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 else
                 {
                     scarecrow.getInventoryField().setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
+                    scarecrow.markDirty();
                     field.setInventoryField(scarecrow.getInventoryField());
                     if(currentField != null && currentField.getID() == field.getID())
                     {
@@ -205,13 +206,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
         super.onDestroyed();
         for(final Field field: farmerFields)
         {
-            Field tempField = getColony().getField(field.getID());
+            final Field tempField = getColony().getField(field.getID());
 
             if(tempField != null)
             {
                 tempField.setTaken(false);
                 tempField.setOwner("");
-                ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+                final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
                 scarecrowTileEntity.getInventoryField().
                         setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
             }
@@ -232,9 +233,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
     {
         if(!farmerFields.isEmpty())
         {
-            for(Field field: farmerFields)
+            for(final Field field: farmerFields)
             {
-                Field colonyField = getColony().getField(field.getID());
+                final Field colonyField = getColony().getField(field.getID());
                 if(colonyField != null)
                 {
                     colonyField.setOwner(citizen.getName());
@@ -308,19 +309,19 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         buf.writeInt(size);
 
-        for(Field field: getColony().getFields().values())
+        for(final Field field: getColony().getFields().values())
         {
             if(field.isTaken())
             {
                 if(getWorker() == null || field.getOwner().equals(getWorker().getName()))
                 {
-                    FieldView fieldView = new FieldView(field);
+                    final FieldView fieldView = new FieldView(field);
                     fieldView.serializeViewNetworkData(buf);
                 }
             }
             else
             {
-                FieldView fieldView = new FieldView(field);
+                final FieldView fieldView = new FieldView(field);
                 fieldView.serializeViewNetworkData(buf);
             }
         }
@@ -342,7 +343,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void freeField(BlockPos position)
     {
         //Get the field with matching id, if none found return null.
-        Field tempField = farmerFields.stream().filter(field -> field.getID().equals(position)).findFirst().orElse(null);
+        final Field tempField = farmerFields.stream().filter(field -> field.getID().equals(position)).findFirst().orElse(null);
 
         if(tempField != null)
         {
@@ -359,7 +360,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public void assignField(BlockPos position)
     {
-        Field field = getColony().getField(position);
+        final Field field = getColony().getField(position);
         field.setTaken(true);
         field.setOwner(getWorker().getName());
         farmerFields.add(field);
@@ -424,7 +425,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             int size = buf.readInt();
             for(int i = 1; i <= size; i++)
             {
-                FieldView fieldView = new FieldView();
+                final FieldView fieldView = new FieldView();
                 fieldView.deserialize(buf);
                 fields.add(fieldView);
                 if(fieldView.isTaken())

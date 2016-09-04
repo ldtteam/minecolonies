@@ -1,7 +1,6 @@
 package com.minecolonies.entity.ai.citizen.farmer;
 
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.BlockUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
@@ -16,8 +15,20 @@ public class FieldView
      * Unique id of the field.
      */
     private BlockPos id;
+
+    /**
+     * Has the field been taken yet?
+     */
     private boolean  taken;
+
+    /**
+     * Owner of the field.
+     */
     private String   owner;
+
+    /**
+     * Set item of the field - might be null.
+     */
     private Item     item;
 
     /**

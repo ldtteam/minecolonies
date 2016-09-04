@@ -141,8 +141,8 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      */
     private void assignClicked(Button button)
     {
-        int row = fieldList.getListElementIndexByPane(button);
-        FieldView field = fields.get(row);
+        final int row = fieldList.getListElementIndexByPane(button);
+        final FieldView field = fields.get(row);
 
         if (button.getLabel().equals(RED_X))
         {
@@ -226,10 +226,10 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             @Override
             public void updateElement(int index, Pane rowPane)
             {
-                FieldView field = fields.get(index);
-                String distance = Integer.toString((int)Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
-                String direction = calcDirection(building.getLocation(), field.getId());
-                String owner = field.getOwner().isEmpty() ? ("<" + LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
+                final FieldView field = fields.get(index);
+                final String distance = Integer.toString((int)Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
+                final String direction = calcDirection(building.getLocation(), field.getId());
+                final String owner = field.getOwner().isEmpty() ? ("<" + LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
 
                 rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance  + "m");
@@ -297,7 +297,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     @Override
     public void onUpdate()
     {
-        String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_FIELDS))
         {
             pullLevelsFromHut();
