@@ -83,7 +83,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     @Override
     public Packet getDescriptionPacket()
     {
-        NBTTagCompound tag = new NBTTagCompound();
+        final NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
         return new S35PacketUpdateTileEntity(this.getPos(), 0, tag);
     }

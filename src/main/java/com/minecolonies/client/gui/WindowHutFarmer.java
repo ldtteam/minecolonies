@@ -74,17 +74,12 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Id of the the assign button inside the GUI.
      */
-    private static final String TAG_BUTTON_ASSIGN       = "assign";
+    private static final String TAG_BUTTON_ASSIGN       = "assignFarm";
 
     /**
      * Id of the the assignmentMode button inside the GUI.
      */
     private static final String TAG_BUTTON_ASSIGNMENT_MODE = "assignmentMode";
-
-    /**
-     * Id of the hiddenId label inside the GUI.
-     */
-    private static final String TAG_HIDDEN_ID = "hiddenId";
 
     /**
      * String which displays the release of a field.
@@ -235,7 +230,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance  + "m");
 
                 rowPane.findPaneOfTypeByID(TAG_DIRECTION, Label.class).setLabelText(direction);
-                rowPane.findPaneOfTypeByID(TAG_HIDDEN_ID, Label.class).setLabelText(Integer.toString(index));
 
                 if(!building.assignFieldManually())
                 {

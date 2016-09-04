@@ -109,7 +109,7 @@ public class FieldView
         BlockPosUtil.writeToByteBuf(buf, id);
         buf.writeBoolean(taken);
         ByteBufUtils.writeUTF8String(buf, owner);
-        int itemId = item == null? 0 : Item.getIdFromItem(item);
+        final int itemId = item == null? 0 : Item.getIdFromItem(item);
         buf.writeInt(itemId);
     }
 
@@ -124,7 +124,7 @@ public class FieldView
         id = BlockPosUtil.readFromByteBuf(buf);
         taken = buf.readBoolean();
         owner = ByteBufUtils.readUTF8String(buf);
-        int itemId = buf.readInt();
+        final int itemId = buf.readInt();
         item = itemId == 0? null : Item.getItemById(itemId);
         return this;
     }

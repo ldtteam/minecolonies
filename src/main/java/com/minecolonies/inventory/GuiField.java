@@ -58,10 +58,11 @@ public class GuiField extends GuiContainer
     }
 
     /**
-     * Method called to draw the foreground of the GUI
+     * Method called to draw the foreground of the GUI.
      * @param layer1 the first layer.
      * @param layer2 the second layer.
      */
+    @Override
     protected void drawGuiContainerForegroundLayer(int layer1, int layer2)
     {
         this.fontRendererObj.drawString(tileEntity.getDesc(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
