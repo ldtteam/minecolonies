@@ -90,7 +90,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     @Override
     public void renderTileEntityAt(ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage)
     {
-        EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
+        final EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
 
         //Store the transformation
         GlStateManager.pushMatrix();
@@ -104,13 +104,13 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         switch (facing)
         {
             case EAST:
-                GlStateManager.rotate(BASIC_ROTATION*ROTATE_EAST, 0, 1, 0);
+                GlStateManager.rotate((float)(BASIC_ROTATION*ROTATE_EAST), 0, 1, 0);
                 break;
             case SOUTH:
-                GlStateManager.rotate(BASIC_ROTATION*ROTATE_SOUTH, 0, 1, 0);
+                GlStateManager.rotate((float)(BASIC_ROTATION*ROTATE_SOUTH), 0, 1, 0);
                 break;
             case WEST:
-                GlStateManager.rotate(BASIC_ROTATION*ROTATE_WEST, 0, 1, 0);
+                GlStateManager.rotate((float)(BASIC_ROTATION*ROTATE_WEST), 0, 1, 0);
                 break;
             default:
                 //don't rotate at all.

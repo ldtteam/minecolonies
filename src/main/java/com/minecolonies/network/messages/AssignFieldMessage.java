@@ -66,10 +66,10 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
     @Override
     public IMessage onMessage(AssignFieldMessage message, MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
-            BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
+            final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
             if (building != null)
             {
                 if(message.assign)

@@ -198,14 +198,14 @@ public class InventoryField implements IInventory
         {
             if (this.stackResult[index].stackSize <= count)
             {
-                ItemStack itemStack1 = this.stackResult[index];
+                final ItemStack itemStack1 = this.stackResult[index];
                 this.stackResult[index] = null;
                 this.markDirty();
                 return itemStack1;
             }
             else
             {
-                ItemStack itemstack = this.stackResult[index].splitStack(count);
+                final ItemStack itemstack = this.stackResult[index].splitStack(count);
 
                 if (this.stackResult[index].stackSize == 0)
                 {
@@ -228,7 +228,7 @@ public class InventoryField implements IInventory
     {
         if (this.stackResult[index] != null)
         {
-            ItemStack itemstack = this.stackResult[index];
+            final ItemStack itemstack = this.stackResult[index];
             this.stackResult[index] = null;
             return itemstack;
         }

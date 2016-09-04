@@ -22,18 +22,31 @@ public class ScarecrowTileEntity extends TileEntityChest
      * NBTTag to store the type.
      */
     private static final String TAG_TYPE = "type";
+
+    /**
+     * NBTag to store the name.
+     */
+    private static final String TAG_NAME = "name";
+
     /**
      * Random generator.
      */
-    private final Random random = new Random();
+    private final Random random          = new Random();
+
     /**
      * The inventory connected with the scarecrow.
      */
     private InventoryField inventoryField;
+
     /**
      * The type of the scarecrow.
      */
     private ScareCrowType  type;
+
+    /**
+     * Name of the scarecrow, string set in the GUI.
+     */
+    private String name = LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone"));
 
     /**
      * Creates an instance of the tileEntity.
@@ -41,22 +54,40 @@ public class ScarecrowTileEntity extends TileEntityChest
     public ScarecrowTileEntity()
     {
         super();
-        this.inventoryField = new InventoryField(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
+        this.inventoryField = new InventoryField(name);
+    }
+
+    /**
+     * Getter of the name of the tileEntity.
+     * @return the string.
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+    /**
+     * Setter for the name.
+     * @param name string to set.
+     */
+    public void setName(String name)
+    {
+         this.name = name;
     }
 
     @Override
     public void onLoad()
     {
         super.onLoad();
-        World world = getWorld();
+        final World world = getWorld();
 
         if(world != null)
         {
-            Colony colony = ColonyManager.getColony(world, pos);
+            final Colony colony = ColonyManager.getColony(world, pos);
 
             if (colony != null && colony.getField(pos) == null)
             {
-                Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
+                final Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
 
                 if (entity instanceof EntityPlayer)
                 {
@@ -73,6 +104,7 @@ public class ScarecrowTileEntity extends TileEntityChest
 
         type = ScareCrowType.values()[compound.getInteger(TAG_TYPE)];
         getInventoryField().readFromNBT(compound);
+        name = compound.getString(TAG_NAME);
     }
 
     @Override
@@ -82,6 +114,7 @@ public class ScarecrowTileEntity extends TileEntityChest
 
         compound.setInteger(TAG_TYPE, this.getType().ordinal());
         getInventoryField().writeToNBT(compound);
+        compound.setString(TAG_NAME, name);
     }
 
     /**

@@ -176,7 +176,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 }
                 else
                 {
-                    scarecrow.getInventoryField().setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
+                    scarecrow.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
                     scarecrow.markDirty();
                     field.setInventoryField(scarecrow.getInventoryField());
                     if(currentField != null && currentField.getID() == field.getID())
@@ -213,8 +213,8 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 tempField.setTaken(false);
                 tempField.setOwner("");
                 final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
-                scarecrowTileEntity.getInventoryField().
-                        setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
+                scarecrowTileEntity.markDirty();
+                scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
             }
         }
     }
@@ -422,7 +422,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             fields = new ArrayList<>();
             super.deserialize(buf);
             assignFieldManually = buf.readBoolean();
-            int size = buf.readInt();
+            final int size = buf.readInt();
             for(int i = 1; i <= size; i++)
             {
                 final FieldView fieldView = new FieldView();
@@ -478,7 +478,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
          */
         public void reduceAmountOfFields(final int i)
         {
-            amountOfFields-=1;
+            amountOfFields-=i;
         }
     }
 }

@@ -39,7 +39,11 @@ public class GuiField extends GuiContainer
      */
     private static final int TEXT_COLOR = 0x404040;
 
+    /**
+     * Tile entity of the scarecrow.
+     */
     private final ScarecrowTileEntity tileEntity;
+
     /**
      * Constructor of the GUI.
      *
@@ -61,7 +65,7 @@ public class GuiField extends GuiContainer
      */
     protected void drawGuiContainerForegroundLayer(int layer1, int layer2)
     {
-        this.fontRendererObj.drawString(tileEntity.getInventoryField().getDisplayName().getUnformattedText(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        this.fontRendererObj.drawString(tileEntity.getName(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
     }
 
     /**

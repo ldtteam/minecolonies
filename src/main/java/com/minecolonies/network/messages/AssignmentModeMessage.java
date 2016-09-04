@@ -31,9 +31,9 @@ public class AssignmentModeMessage implements IMessage, IMessageHandler<Assignme
     }
 
     /**
-     * Creates object for the miner set level message
+     * Creates object for the assignmentMode message.
      *
-     * @param building View of the building to read data from
+     * @param building View of the building to read data from.
      * @param assignmentMode assignmentMode of the particular farmer.
      */
     public AssignmentModeMessage(BuildingFarmer.View building, boolean assignmentMode)
@@ -62,10 +62,10 @@ public class AssignmentModeMessage implements IMessage, IMessageHandler<Assignme
     @Override
     public IMessage onMessage(AssignmentModeMessage message, MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
-            BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
+            final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
             if (building != null)
             {
                 building.setAssignManually(message.assignmentMode);

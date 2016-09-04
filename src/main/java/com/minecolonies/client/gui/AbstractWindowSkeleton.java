@@ -65,6 +65,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
      */
     public final void doNothing(Button ignored)
     {
+       System.out.print("lalala");
         //do nothing with that event
     }
 }
