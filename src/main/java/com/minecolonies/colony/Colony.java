@@ -27,6 +27,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.apache.commons.codec.language.bm.Lang;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -938,6 +939,7 @@ public class Colony implements IColony
     public void addNewField(ScarecrowTileEntity tileEntity, InventoryPlayer inventoryPlayer, BlockPos pos, World world)
     {
         final Field field = new Field(tileEntity, inventoryPlayer, world, pos);
+        field.setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         addField(field);
         markFieldsDirty();
     }

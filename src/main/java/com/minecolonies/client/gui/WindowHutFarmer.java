@@ -2,7 +2,6 @@ package com.minecolonies.client.gui;
 
 import com.blockout.Pane;
 import com.blockout.controls.Button;
-import com.blockout.controls.ButtonVanilla;
 import com.blockout.controls.ItemIcon;
 import com.blockout.controls.Label;
 import com.blockout.views.ScrollingList;
@@ -13,14 +12,11 @@ import com.minecolonies.entity.ai.citizen.farmer.FieldView;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.AssignFieldMessage;
 import com.minecolonies.network.messages.AssignmentModeMessage;
-import com.minecolonies.network.messages.MinerSetLevelMessage;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -154,6 +150,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             MineColonies.getNetwork().sendToServer(new AssignFieldMessage(building, false, field.getId()));
             fields.get(row).setTaken(false);
             field.setOwner("");
+            building.reduceAmountOfFields(1);
         }
         else
         {
@@ -163,7 +160,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             field.setOwner(building.getWorkerName());
         }
 
-        fieldList.refreshElementPanes();
+        window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
     }
 
     /**
@@ -182,6 +179,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.off"));
             MineColonies.getNetwork().sendToServer(new AssignmentModeMessage(building, false));
         }
+        window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
     }
 
     @Override
@@ -231,7 +229,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 FieldView field = fields.get(index);
                 String distance = Integer.toString((int)Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
                 String direction = calcDirection(building.getLocation(), field.getId());
-                String owner = ("").equals(field.getOwner()) ? ("<" + LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
+                String owner = field.getOwner().isEmpty() ? ("<" + LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
 
                 rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance  + "m");
@@ -273,22 +271,22 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      */
     private String calcDirection(BlockPos building, BlockPos field)
     {
-        String dist;
+        String dist = "";
 
-        if(field.getZ() > building.getZ())
+        if(field.getZ() > building.getZ()+1)
         {
             dist = LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.South");
         }
-        else
+        else if(field.getZ() < building.getZ()-1)
         {
             dist = LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.North");
         }
 
-        if(field.getX() > building.getX())
+        if(field.getX() > building.getX()+1)
         {
             dist += LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.East");
         }
-        else
+        else if(field.getX() < building.getX()-1)
         {
             dist += LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.West");
         }

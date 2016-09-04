@@ -1,5 +1,6 @@
 package com.minecolonies.inventory;
 
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
@@ -24,6 +25,22 @@ public class GuiField extends GuiContainer
     private static final ResourceLocation TEXTURE = new ResourceLocation(Constants.MOD_ID, "textures/gui/scarecrow.png");
 
     /**
+     * The X-OFFSET of the string in the GUI.
+     */
+    private static final int X_OFFSET = 8;
+
+    /**
+     * Y-OFFSET of the string in the GUI
+     */
+    private static final int Y_OFFSET = 6;
+
+    /**
+     * The text color of the string in the GUI.
+     */
+    private static final int TEXT_COLOR = 0x404040;
+
+    private final ScarecrowTileEntity tileEntity;
+    /**
      * Constructor of the GUI.
      *
      * @param parInventoryPlayer the player inventory.
@@ -34,6 +51,17 @@ public class GuiField extends GuiContainer
     protected GuiField(InventoryPlayer parInventoryPlayer, ScarecrowTileEntity tileEntity, World world, BlockPos location)
     {
         super(new Field(tileEntity, parInventoryPlayer, world, location));
+        this.tileEntity = tileEntity;
+    }
+
+    /**
+     * Method called to draw the foreground of the GUI
+     * @param layer1 the first layer.
+     * @param layer2 the second layer.
+     */
+    protected void drawGuiContainerForegroundLayer(int layer1, int layer2)
+    {
+        this.fontRendererObj.drawString(tileEntity.getInventoryField().getDisplayName().getUnformattedText(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
     }
 
     /**
@@ -46,7 +74,6 @@ public class GuiField extends GuiContainer
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
     {
-        //todo add field owned by x.
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(TEXTURE);
         final int marginHorizontal = (width - xSize) / 2;

@@ -6,6 +6,7 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -258,9 +259,9 @@ public class Field extends Container
         widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
         lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
         widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
-        inventory = new InventoryField("Scarecrow");
+        inventory = new InventoryField("");
         inventory.readFromNBT(compound);
-        owner = compound.getString(TAG_OWNER);
+        setOwner(compound.getString(TAG_OWNER));
     }
 
     /**
@@ -542,6 +543,14 @@ public class Field extends Container
      */
     public void setOwner(final String owner)
     {
+        if(owner.isEmpty())
+        {
+            this.inventory.setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
+        }
+        else
+        {
+            this.inventory.setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", owner));
+        }
         this.owner = owner;
     }
 
@@ -552,6 +561,15 @@ public class Field extends Container
     public String getOwner()
     {
         return owner;
+    }
+
+    /**
+     * Setter for a custom description of the inventory.
+     * @param customName the name to set.
+     */
+    public void setCustomName(final String customName)
+    {
+        this.inventory.setCustomName(customName);
     }
 
     /**

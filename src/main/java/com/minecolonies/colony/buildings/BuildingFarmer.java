@@ -9,6 +9,7 @@ import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
 import com.minecolonies.entity.ai.citizen.farmer.FieldView;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
+import com.minecolonies.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -175,6 +176,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 }
                 else
                 {
+                    scarecrow.getInventoryField().setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
                     field.setInventoryField(scarecrow.getInventoryField());
                     if(currentField != null && currentField.getID() == field.getID())
                     {
@@ -209,6 +211,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
             {
                 tempField.setTaken(false);
                 tempField.setOwner("");
+                ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+                scarecrowTileEntity.getInventoryField().
+                        setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
             }
         }
     }
@@ -337,11 +342,14 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void freeField(BlockPos position)
     {
         //Get the field with matching id, if none found return null.
-        Field tempField = farmerFields.stream().filter(field -> field.getID() == position).findFirst().orElse(null);
+        Field tempField = farmerFields.stream().filter(field -> field.getID().equals(position)).findFirst().orElse(null);
 
         if(tempField != null)
         {
             farmerFields.remove(tempField);
+            Field field = getColony().getField(position);
+            field.setTaken(false);
+            field.setOwner("");
         }
     }
 
@@ -461,6 +469,15 @@ public class BuildingFarmer extends AbstractBuildingWorker
         public int getAmountOfFields()
         {
             return amountOfFields;
+        }
+
+        /**
+         * Reduces the amount of fields by i.
+         * @param i the number to reduce.
+         */
+        public void reduceAmountOfFields(final int i)
+        {
+            amountOfFields-=1;
         }
     }
 }

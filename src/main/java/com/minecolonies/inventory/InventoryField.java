@@ -48,7 +48,7 @@ public class InventoryField implements IInventory
     /**
      * The custom name of the inventory.
      */
-    private String customName         = "";
+    private String customName = "";
 
     /**
      * Updated after the inventory has been changed.
@@ -101,7 +101,7 @@ public class InventoryField implements IInventory
     @Override
     public boolean isUseableByPlayer(final EntityPlayer entityPlayer)
     {
-        return true;//colony.getPermissions().hasPermission(entityPlayer, Permissions.Action.ACCESS_HUTS);
+        return true;
     }
 
     /**
