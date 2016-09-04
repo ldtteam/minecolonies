@@ -22,7 +22,7 @@
                             <label id="worker" color="black" pos = "20 5"/>
                             <label id="dist" color="black" pos = "15 15"/>
                             <label id="dir" color="black" pos = "35 15"/>
-                            <label id="hiddenId" pos = "100 100"/>
+                            <label id="hiddenId" size = "1 1" pos = "100 100"/>
 
                         </box>
                     </view>

@@ -8,6 +8,9 @@ import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 
@@ -61,7 +64,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      * Getter of the name of the tileEntity.
      * @return the string.
      */
-    public String getName()
+    public String getDesc()
     {
         return name;
     }
@@ -74,6 +77,24 @@ public class ScarecrowTileEntity extends TileEntityChest
     {
          this.name = name;
     }
+
+    ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
+
+    @Override
+    public Packet getDescriptionPacket()
+    {
+        NBTTagCompound tag = new NBTTagCompound();
+        writeToNBT(tag);
+        return new S35PacketUpdateTileEntity(this.getPos(), 0, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
+    {
+        readFromNBT(pkt.getNbtCompound());
+    }
+
+    /////////////--------------------------- End Synchronization-area ---------------------------- /////////////
 
     @Override
     public void onLoad()

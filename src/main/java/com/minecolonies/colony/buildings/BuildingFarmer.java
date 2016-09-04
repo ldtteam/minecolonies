@@ -177,7 +177,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 else
                 {
                     scarecrow.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
-                    scarecrow.markDirty();
+                    getColony().getWorld().markBlockForUpdate(scarecrow.getPos());
                     field.setInventoryField(scarecrow.getInventoryField());
                     if(currentField != null && currentField.getID() == field.getID())
                     {
@@ -213,7 +213,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 tempField.setTaken(false);
                 tempField.setOwner("");
                 final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
-                scarecrowTileEntity.markDirty();
+                getColony().getWorld().markBlockForUpdate(scarecrowTileEntity.getPos());
                 scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
             }
         }
@@ -351,6 +351,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
             Field field = getColony().getField(position);
             field.setTaken(false);
             field.setOwner("");
+            final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+            getColony().getWorld().markBlockForUpdate(scarecrowTileEntity.getPos());
+            scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         }
     }
 

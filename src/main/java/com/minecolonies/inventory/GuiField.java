@@ -1,6 +1,5 @@
 package com.minecolonies.inventory;
 
-import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
@@ -65,7 +64,7 @@ public class GuiField extends GuiContainer
      */
     protected void drawGuiContainerForegroundLayer(int layer1, int layer2)
     {
-        this.fontRendererObj.drawString(tileEntity.getName(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
+        this.fontRendererObj.drawString(tileEntity.getDesc(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
     }
 
     /**
