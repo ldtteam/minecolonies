@@ -111,7 +111,12 @@ public final class BlockUtils
                || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
     }
 
-
+    /**
+     * Checks if a certain block returns a seed as the item.
+     * @param world the world the block is in.
+     * @param pos the position the block is at.
+     * @return true if is a seed.
+     */
     public static boolean isBlockSeed(World world, BlockPos pos)
     {
         return BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())) != null
