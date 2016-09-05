@@ -6,10 +6,9 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.Arrays;
 import java.util.List;
@@ -110,6 +109,13 @@ public final class BlockUtils
     {
         return Objects.equals(iBlockState, Blocks.water.getDefaultState())
                || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
+    }
+
+
+    public static boolean isBlockSeed(World world, BlockPos pos)
+    {
+        return BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())) != null
+            && BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())).getItem() instanceof ItemSeeds;
     }
 
     /**

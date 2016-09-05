@@ -172,8 +172,6 @@ com.minecolonies.gui.inventory.scarecrow= Scarecrow
 entity.farmer.noSeedSet= Please define a seed to grow in the scarecrow.
 entity.farmer.NeedSeed= I need %s to plant.
 entity.farmer.noFreeFields= Place more fields to get me working.
-
-
 com.minecolonies.gui.workerHuts.farmerHut.AssignmentMode=Assign fields to farmer:
 com.minecolonies.gui.workerHuts.farmerHut.North=North
 com.minecolonies.gui.workerHuts.farmerHut.South=South
