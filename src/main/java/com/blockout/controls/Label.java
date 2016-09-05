@@ -2,7 +2,6 @@ package com.blockout.controls;
 
 import com.blockout.PaneParams;
 import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
 
 /**
  * BlockOut label pane. Used to render a piece of text.

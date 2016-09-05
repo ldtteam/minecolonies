@@ -3,7 +3,6 @@ package com.blockout.controls;
 import com.blockout.PaneParams;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatAllowedCharacters;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Mimics Vanilla text fields.

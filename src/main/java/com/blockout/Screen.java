@@ -6,7 +6,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Wraps MineCrafts GuiScreen for BlockOut's Window

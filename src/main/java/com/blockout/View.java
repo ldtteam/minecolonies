@@ -2,7 +2,6 @@ package com.blockout;
 
 import com.blockout.views.Window;
 import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
 import java.util.List;

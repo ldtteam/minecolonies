@@ -3,7 +3,6 @@ package com.blockout.controls;
 import com.blockout.Alignment;
 import com.blockout.PaneParams;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import org.lwjgl.opengl.GL11;

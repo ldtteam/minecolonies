@@ -4,7 +4,6 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
 import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Basic scrollable pane.
