@@ -178,5 +178,5 @@ com.minecolonies.gui.workerHuts.farmerHut.South=South
 com.minecolonies.gui.workerHuts.farmerHut.East=East
 com.minecolonies.gui.workerHuts.farmerHut.West=West
 com.minecolonies.gui.workerHuts.farmerHut.unused=unused
-com.minecolonies.gui.scarecrow.user=Field used by: <%s>
+com.minecolonies.gui.scarecrow.user=Field used by: %s
 com.minecolonies.gui.scarecrow.user.noone=no-one

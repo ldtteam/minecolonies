@@ -29,7 +29,7 @@ public class GuiField extends GuiContainer
     private static final int X_OFFSET = 8;
 
     /**
-     * Y-OFFSET of the string in the GUI
+     * Y-OFFSET of the string in the GUI.
      */
     private static final int Y_OFFSET = 6;
 

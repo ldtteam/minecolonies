@@ -43,7 +43,7 @@ public class InventoryField implements IInventory
     /**
      * The inventory stack.
      */
-    private ItemStack[] stackResult   = new ItemStack[1];
+    private ItemStack[] stackResult = new ItemStack[1];
 
     /**
      * The custom name of the inventory.
@@ -86,11 +86,12 @@ public class InventoryField implements IInventory
 
     /**
      * Checks if the inventory has been changed and then resets the boolean.
+     *
      * @return true if it changed.
      */
     public boolean hasInventoryChanged()
     {
-        if(inventoryChanged)
+        if (inventoryChanged)
         {
             inventoryChanged = false;
             return true;
@@ -105,7 +106,8 @@ public class InventoryField implements IInventory
     }
 
     /**
-     *  Called when inventory is opened by a player.
+     * Called when inventory is opened by a player.
+     *
      * @param entityPlayer the player who opened the inventory.
      */
     @Override
@@ -118,6 +120,7 @@ public class InventoryField implements IInventory
 
     /**
      * Called after the inventory has been closed by a player.
+     *
      * @param entityPlayer the player who opened the inventory.
      */
     @Override
@@ -136,6 +139,7 @@ public class InventoryField implements IInventory
 
     /**
      * This may be used in order to return values of different GUI areas like the ones in the beacon.
+     *
      * @param id the id of the field.
      * @return the value of the field.
      */
@@ -147,7 +151,8 @@ public class InventoryField implements IInventory
 
     /**
      * This may be used to set GUI areas with a certain id and value.
-     * @param id some id.
+     *
+     * @param id    some id.
      * @param value some value.
      */
     @Override
@@ -160,6 +165,7 @@ public class InventoryField implements IInventory
 
     /**
      * Returns the number of fields.
+     *
      * @return the amount.
      */
     @Override
@@ -179,9 +185,10 @@ public class InventoryField implements IInventory
             this.stackResult[i] = null;
         }
     }
-    
+
     /**
      * Getter for the stack in the inventory. Since there is only one slot return always that one.
+     *
      * @param index the slot.
      * @return the itemStack in it.
      */
@@ -194,48 +201,43 @@ public class InventoryField implements IInventory
     @Override
     public ItemStack decrStackSize(int index, int count)
     {
-        if (this.stackResult[index] != null)
+        if (this.stackResult[index] == null)
         {
-            if (this.stackResult[index].stackSize <= count)
-            {
-                final ItemStack itemStack1 = this.stackResult[index];
-                this.stackResult[index] = null;
-                this.markDirty();
-                return itemStack1;
-            }
-            else
-            {
-                final ItemStack itemstack = this.stackResult[index].splitStack(count);
+            return null;
+        }
 
-                if (this.stackResult[index].stackSize == 0)
-                {
-                    this.stackResult[index] = null;
-                }
-
-                this.markDirty();
-                return itemstack;
-            }
-
+        if (this.stackResult[index].stackSize <= count)
+        {
+            final ItemStack itemStack1 = this.stackResult[index];
+            this.stackResult[index] = null;
+            this.markDirty();
+            return itemStack1;
         }
         else
         {
-            return null;
+            final ItemStack itemstack = this.stackResult[index].splitStack(count);
+
+            if (this.stackResult[index].stackSize == 0)
+            {
+                this.stackResult[index] = null;
+            }
+
+            this.markDirty();
+            return itemstack;
         }
     }
 
     @Override
     public ItemStack removeStackFromSlot(final int index)
     {
-        if (this.stackResult[index] != null)
-        {
-            final ItemStack itemstack = this.stackResult[index];
-            this.stackResult[index] = null;
-            return itemstack;
-        }
-        else
+        if (this.stackResult[index] == null)
         {
             return null;
         }
+
+        final ItemStack itemstack = this.stackResult[index];
+        this.stackResult[index] = null;
+        return itemstack;
     }
 
     @Override

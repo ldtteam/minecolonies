@@ -230,6 +230,12 @@ public class Field extends Container
         calculateSize(world, location.down());
     }
 
+    @Override
+    protected final Slot addSlotToContainer(final Slot slotToAdd)
+    {
+        return super.addSlotToContainer(slotToAdd);
+    }
+
     /**
      * Create and load a Field given it's saved NBTTagCompound.
      *
