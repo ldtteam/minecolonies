@@ -24,9 +24,6 @@ public final class ModBlocks
     public static final Block blockHutFarmer     = new BlockHutFarmer();
     public static final Block blockHutFisherman  = new BlockHutFisherman();
     public static final Block blockSubstitution  = new BlockSubstitution();
-
-
-    // this line added by northstar for testing. feel free to do anything you want with it.
     public static final Block blockBarrel = new BlockBarrel();
 
     /**
