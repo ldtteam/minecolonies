@@ -3,7 +3,7 @@ package com.minecolonies.achievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
-
+import net.minecraft.init.Items;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
 
@@ -29,11 +29,6 @@ public final class ModAchievements
      * Population size to achieve {@link ModAchievements#achievementSizeCity}.
      */
     public static final int ACHIEVEMENT_SIZE_CITY = 20;
-    
-    /**
-     * Population size to achieve {@link ModAchievements#achievementSizeMetropolis}.
-     */
-    public static final int ACHIEVEMENT_SIZE_METROPOLIS = 50;
 
     /**
      * Place a supply chest.
@@ -48,7 +43,7 @@ public final class ModAchievements
     /**
      * Place a townhall.
      */
-    public static final Achievement achievementBuildingTownhall = new MineColoniesAchievement("townhall", "townhall", -2, 0, ModBlocks.blockHutTownHall, null)
+    public static final Achievement achievementBuildingTownhall = new MineColoniesAchievement("townhall", "townhall", -2, 0, ModBlocks.blockHutTownHall, achievementGetSupply)
             .registerStat();
 
     /**
@@ -110,21 +105,16 @@ public final class ModAchievements
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_SETTLEMENT} citizens.
      */
-    public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.pioneer", "size.settlement", 2, -2, ModItems.itemProxySizeSettlement, null).registerStat();
+    public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.pioneer", "size.settlement", 2, -2, Items.iron_ingot, null).registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_TOWN} citizens.
      */
-    public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", "size.town", 4, -2, ModItems.itemProxySizeTown, achievementSizeSettlement)
+    public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", "size.town", 4, -2, Items.gold_ingot, achievementSizeSettlement)
             .registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_CITY} citizens.
      */
-    public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", "size.city", 6, -2, ModItems.itemProxySizeCity, achievementSizeTown).registerStat();
-    
-    /**
-     * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_CITY} citizens.
-     */
-    public static final Achievement achievementSizeMetropolis       = new MineColoniesAchievement("size.metropolis", "size.metropolis", 8, -2, ModItems.itemProxySizeMetropolis, achievementSizeCity).registerStat();
+    public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", "size.city", 6, -2, Items.diamond, achievementSizeTown).registerStat();
 
     // Achievement pages#+
     /**
@@ -134,7 +124,7 @@ public final class ModAchievements
             Constants.MOD_NAME,
             achievementGetSupply, achievementWandOfbuilding, achievementBuildingTownhall, achievementBuildingBuilder, achievementBuildingColonist, achievementBuildingLumberjack,
             achievementBuildingMiner, achievementBuildingFisher, achievementSizeSettlement, achievementSizeTown, achievementSizeCity, achievementUpgradeColonistMax,
-            achievementUpgradeBuilderMax, achievementUpgradeLumberjackMax, achievementUpgradeMinerMax, achievementUpgradeFisherMax, achievementSizeMetropolis
+            achievementUpgradeBuilderMax, achievementUpgradeLumberjackMax, achievementUpgradeMinerMax, achievementUpgradeFisherMax
     );
 
     /**
