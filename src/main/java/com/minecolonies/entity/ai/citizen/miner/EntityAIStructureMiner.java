@@ -26,13 +26,8 @@ import java.util.*;
 import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
- * Miner AI class
- * Created: December 20, 2014
- *
- * @author Raycoms, Kostronor
+ * Class which handles the miner behaviour.
  */
-
-//Todo liquid handling + dump inventory
 public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 {
 
@@ -46,12 +41,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
     private static final Set<Block> notReplacedInSecuringMine = new HashSet<>(Arrays.asList(Blocks.cobblestone, Blocks.stone, Blocks.dirt));
-    public static final  int DELAY_TIMEOUT = 10;
-    public static final int LADDER_SEARCH_RANGE = 10;
-    public static final int SHAFT_RADIUS = 3;
-    public static final int SAFE_CHECK_RANGE = 5;
-    public static final int SAFE_CHECK_UPPER_BOUND = 4;
-    public static final int SAFE_CHECK_LOWER_BOUND = -7;
+    private static final  int DELAY_TIMEOUT = 10;
+    private static final int LADDER_SEARCH_RANGE = 10;
+    private static final int SHAFT_RADIUS = 3;
+    private static final int SAFE_CHECK_RANGE = 5;
+    private static final int SAFE_CHECK_UPPER_BOUND = 4;
+    private static final int SAFE_CHECK_LOWER_BOUND = -7;
     //The current block to mine
     private BlockPos currentWorkingLocation;
     //the last safe location now being air
@@ -99,7 +94,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private AIState prepareForMining()
     {
-        if (!getOwnBuilding().hasFoundLadder())
+        if (getOwnBuilding() != null && !getOwnBuilding().hasFoundLadder())
         {
             return MINER_SEARCHING_LADDER;
         }
@@ -258,10 +253,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private void validateLadderOrientation()
     {
         BuildingMiner buildingMiner = getOwnBuilding();
-
-        //TODO: for 1.8 change to getBlockState
         EnumFacing ladderOrientation = world.getBlockState(buildingMiner.getLadderLocation()).getValue(BlockLadder.FACING);
-        //http://minecraft.gamepedia.com/Ladder
 
         if (ladderOrientation == EnumFacing.WEST)
         {
@@ -686,7 +678,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private void mineNodeFromStand(Node mineNode, BlockPos standingPosition, int direction)
     {
-        //todo decide if bend right or left
         //Preload schematics
         if (job.getSchematic() == null)
         {
@@ -733,12 +724,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 for (int y = 0; y <= 4; y++)
                 {
                     BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
-                    if (((Math.abs(x) >= 2) && (Math.abs(z) >= 2)) || (getBlock(curBlock) != Blocks.air) || (y < 1) || (y > 3))
+                    if ((((Math.abs(x) >= 2) && (Math.abs(z) >= 2)) || (getBlock(curBlock) != Blocks.air) || (y < 1) || (y > 3)) && !secureBlock(curBlock, standingPosition))
                     {
-                        if (!secureBlock(curBlock, standingPosition))
-                        {
-                            return;
-                        }
+                        return;
                     }
                 }
             }
@@ -811,7 +799,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
         //Build middle
         //TODO: make it look nicer!
-        if (!buildNodeSupportStructure(mineNode, standingPosition))
+        if (!buildNodeSupportStructure(mineNode))
         {
             return;
         }
@@ -824,7 +812,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         workingNode = null;
     }
 
-    private boolean buildNodeSupportStructure(Node mineNode, BlockPos standingPosition)
+    private boolean buildNodeSupportStructure(Node mineNode)
     {
         if (mineNode.getStyle() == Node.NodeType.CROSSROAD || mineNode.getStyle() == Node.NodeType.BEND || mineNode.getStyle() == Node.NodeType.TUNNEL)
         {
@@ -832,7 +820,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         if (mineNode.getStyle() == Node.NodeType.LADDER_BACK)
         {
-            return true; //already done
+            //already done
+            return true;
         }
         Log.logger.info("None of the above: " + mineNode);
         return false;
@@ -919,15 +908,17 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
         Block worldBlock = world.getBlockState(coordinates).getBlock();
 
-        if (block == null)//should never happen
+        //should never happen
+        if (block == null)
         {
             BlockPos local = job.getSchematic().getLocalPosition();
             Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockNonSolid();
             return false;
         }
+        //don't overwrite huts or bedrock, nor place huts
         if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
-            block instanceof AbstractBlockHut)//don't overwrite huts or bedrock, nor place huts
+            block instanceof AbstractBlockHut)
         {
             findNextBlockNonSolid();
             return false;
@@ -970,15 +961,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
         Block worldBlock = world.getBlockState(coordinates).getBlock();
 
-        if (block == null)//should never happen
+        //should never happen
+        if (block == null)
         {
             BlockPos local = job.getSchematic().getLocalPosition();
             Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
             return false;
         }
+
+        //don't overwrite huts or bedrock, nor place huts
         if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.bedrock ||
-            block instanceof AbstractBlockHut || job.getSchematic().getBlock() == Blocks.stone)//don't overwrite huts or bedrock, nor place huts
+            block instanceof AbstractBlockHut || job.getSchematic().getBlock() == Blocks.stone)
         {
             findNextBlockSolid();
             return false;
@@ -1003,10 +997,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private boolean findNextBlockNonSolid()
     {
-        if (!job.getSchematic().findNextBlockNonSolid())//method returns false if there is no next block (schematic finished)
+        //method returns false if there is no next block (schematic finished)
+        if (!job.getSchematic().findNextBlockNonSolid())
         {
             job.getSchematic().incrementBlock();
             job.getSchematic().reset();
+            job.setSchematic(null);
             return false;
         }
         return true;
@@ -1014,7 +1010,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private boolean findNextBlockSolid()
     {
-        if (!job.getSchematic().findNextBlockSolid())//method returns false if there is no next block (schematic finished)
+        //method returns false if there is no next block (schematic finished)
+        if (!job.getSchematic().findNextBlockSolid())
         {
             job.getSchematic().incrementBlock();
             job.getSchematic().reset();
@@ -1271,14 +1268,17 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                     {
                         if (visited.contains(first.get()))
                         {
-                            continue;//Stop endless loops
+                            //Stop endless loops
+                            continue;
                         }
                         if (getNodeStatusForDirection(first.get(), invertDirection(dir)) == Node.NodeStatus.WALL)
                         {
-                            continue; //We got to a wall, not useful
+                            //We got to a wall, not useful
+                            continue;
                         }
                         currentNode = first.get();
-                        break; //Out of direction for loop
+                        //Out of direction for loop
+                        break;
                     }
 
                     Node newnode = createNewNodeInDirectionFromNode(currentNode, dir);
