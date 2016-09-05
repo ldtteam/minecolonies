@@ -10,14 +10,18 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 public abstract class AbstractItemMinecolonies extends Item
 {
+    private final String name;
+
     /**
      * Sets the name, creative tab, and registers the item.
      */
-    public AbstractItemMinecolonies()
+    public AbstractItemMinecolonies(String name)
     {
-        super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + getName());
+        this.name = name;
+        
+        super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + this.name);
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        setRegistryName(getName());
+        setRegistryName(this.name);
         GameRegistry.registerItem(this);
     }
 
@@ -26,5 +30,7 @@ public abstract class AbstractItemMinecolonies extends Item
      *
      * @return      Name of the item
      */
-    public abstract String getName();
+    public String getName() {
+        return name;
+    }
 }

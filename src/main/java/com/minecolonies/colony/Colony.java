@@ -770,6 +770,11 @@ public class Colony implements IColony
         {
             this.triggerAchievement(ModAchievements.achievementSizeCity);
         }
+        
+        if (size >= ModAchievements.ACHIEVEMENT_SIZE_METROPOLIS)
+        {
+            this.triggerAchievement(ModAchievements.achievementSizeMetropolis);
+        }
     }
 
     /**
