@@ -2,6 +2,7 @@ package com.blockout.controls;
 
 import com.blockout.Alignment;
 import com.blockout.PaneParams;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -585,16 +586,16 @@ public class ButtonImage extends Button
         this.mc.getTextureManager().bindTexture(texture);
         if (this.enabled || this.imageDisabled != null)
         {
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         }
         else
         {
-            GL11.glColor4f(HALF, HALF, HALF, 1.0F);
+            GlStateManager.color(HALF, HALF, HALF, 1.0F);
         }
 
-        GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     /**
@@ -629,10 +630,10 @@ public class ButtonImage extends Button
                 offsetY += (getHeight() - getTextHeight()) / 2;
             }
 
-            GL11.glPushMatrix();
-            GL11.glTranslatef((float) textScale, (float) textScale, (float) textScale);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate((float) textScale, (float) textScale, (float) textScale);
             mc.fontRendererObj.drawString(label, (float) (getX() + offsetX), (float) (getY() + offsetY), color, shadow);
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
         }
     }
 }

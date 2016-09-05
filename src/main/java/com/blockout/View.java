@@ -1,6 +1,7 @@
 package com.blockout;
 
 import com.blockout.views.Window;
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -129,12 +130,12 @@ public class View extends Pane
     protected void drawSelf(int mx, int my)
     {
         //  Translate the drawing origin to our x,y
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
 
         int paddedX = x + padding;
         int paddedY = y + padding;
 
-        GL11.glTranslatef((float) paddedX, (float) paddedY, 0);
+        GlStateManager.translate((float) paddedX, (float) paddedY, 0);
 
         //  Translate Mouse into the View
         int drawX = mx - paddedX;
@@ -142,7 +143,7 @@ public class View extends Pane
 
         children.stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
 
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 
     @Override

@@ -132,10 +132,11 @@ public class Image extends Pane
     {
         // Some other texture must need to be ticked, I tried ticking the current one.
         // This fixes the problem, even if you put it after the draw call. So I guess I'll keep it.
-        this.mc.getTextureManager().tick();
-        this.mc.getTextureManager().bindTexture(resourceLocation);
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
+        this.mc.getTextureManager().bindTexture(resourceLocation);
+
         //Draw
         drawModalRectWithCustomSizedTexture(x, y,
                 imageOffsetX, imageOffsetY,

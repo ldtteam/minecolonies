@@ -3,6 +3,7 @@ package com.blockout.views;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -106,10 +107,10 @@ public class ScrollingContainer extends View
         scissorsStart();
 
         //  Translate the scroll
-        GL11.glPushMatrix();
-        GL11.glTranslatef(0, -scrollY, 0);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, -scrollY, 0);
         super.drawSelf(mx, my + scrollY);
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
 
         scissorsEnd();
     }
