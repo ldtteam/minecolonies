@@ -6,7 +6,6 @@ import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.ServerUtils;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 
@@ -68,6 +67,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     {
         return upgradeName;
     }
+
     /**
      * Returns the name after upgrade.
      *

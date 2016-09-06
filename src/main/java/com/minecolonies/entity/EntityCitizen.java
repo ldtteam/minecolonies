@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.*;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.configuration.Configurations;
@@ -105,6 +106,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private static final double BLOCK_BREAK_PARTICLE_RANGE = 16.0D;
 
+    /**
+     * Divide experience by a factor to ensure more levels fit in an int.
+     */
+    private static final int    EXP_DIVIDER                = 10;
 
     private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
     private String                   renderMetadata;
@@ -113,16 +118,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     protected   Status           status = Status.IDLE;
     private     InventoryCitizen inventory;
 
-    private int         colonyId;
-    private int         citizenId = 0;
-    private int         level;
-    private int         textureId;
+    private int colonyId;
+    private int citizenId = 0;
+    private int level;
+    private int textureId;
 
     /**
      * Skill modifier defines how fast a citizen levels in a certain skill
      */
-    private int         skillModifier = 0;
-    private boolean     female;
+    private double skillModifier = 0;
+    private boolean female;
 
     private Colony      colony;
     private CitizenData citizenData;
@@ -415,7 +420,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
 
-        double localXp = xp * skillModifier;
+        double localXp = xp * skillModifier / EXP_DIVIDER;
         if (localXp > maxValue)
         {
             localXp = maxValue;
@@ -962,6 +967,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
+     * We override this method and execute no code to avoid citizens travelling to the nether.
+     * @param dimension dimension to travel to.
+     */
+    @Override
+    public void travelToDimension(final int dimension)
+    {
+        //do nothing for now. We may add some funny easter eggs here later (Phrases like: "Nah I won't go there - too hot!").
+    }
+
+    /**
      * Drop the equipment for this entity.
      */
     @Override
@@ -1217,11 +1232,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
         hitBlockWithToolInHand(blockPos, true);
     }
 
+    /**
+     * Sends a localized message from the citizen containing a language string with a key and arguments.
+     * @param key the key to retrieve the string.
+     * @param args additional arguments.
+     */
     public void sendLocalizedChat(String key, Object... args)
     {
         sendChat(LanguageHandler.format(key, args));
     }
 
+    /**
+     * Sends a chat string close to the citizen.
+     * @param msg the message string.
+     */
     private void sendChat(String msg)
     {
         if (msg == null || msg.length() == 0 || statusMessages.containsKey(msg))
@@ -1296,6 +1320,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return citizenData.getLevel();
     }
 
+    /**
+     * Called when the citizen wakes up.
+     */
+    public void onWakeUp()
+    {
+        if(this.getWorkBuilding() instanceof BuildingFarmer)
+        {
+            ((BuildingFarmer) this.getWorkBuilding()).resetFields();
+        }
+    }
+
+    /**
+     * Enum describing the citizens activity.
+     */
     public enum DesiredActivity
     {
         SLEEP,

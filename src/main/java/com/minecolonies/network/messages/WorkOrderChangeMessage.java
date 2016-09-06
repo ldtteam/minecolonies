@@ -101,6 +101,12 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
         {
+            //Verify player has permission to do edit permissions
+            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            {
+                return null;
+            }
+
             if (message.removeWorkOrder)
             {
                 colony.getWorkManager().removeWorkOrder(message.workOrderId);

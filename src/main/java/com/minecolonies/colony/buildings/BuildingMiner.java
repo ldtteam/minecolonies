@@ -570,12 +570,17 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     public static class View extends AbstractBuildingWorker.View
     {
+        /**
+         * The different miner levels the miner already has.
+         */
         public int[] levels;
+        /**
+         * The level the miner currently works on.
+         */
         public int   current;
 
         /**
          * Public constructor of the view, creates an instance of it.
-         *
          * @param c the colony.
          * @param l the position.
          */
@@ -584,22 +589,12 @@ public class BuildingMiner extends AbstractBuildingWorker
             super(c, l);
         }
 
-        /**
-         * Gets the blockOut Window.
-         *
-         * @return the window of the lumberjack building.
-         */
         @Override
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutMiner(this);
         }
 
-        /**
-         * Deserializes the information the building class sent to store it in the view.
-         *
-         * @param buf the buffer to read from.
-         */
         @Override
         public void deserialize(ByteBuf buf)
         {

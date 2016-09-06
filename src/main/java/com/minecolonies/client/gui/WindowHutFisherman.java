@@ -1,7 +1,5 @@
 package com.minecolonies.client.gui;
 
-import com.blockout.controls.Button;
-import com.blockout.views.SwitchView;
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.lib.Constants;
 

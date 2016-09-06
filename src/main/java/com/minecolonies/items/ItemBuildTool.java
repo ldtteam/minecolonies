@@ -2,7 +2,6 @@ package com.minecolonies.items;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.achievements.ModAchievements;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;

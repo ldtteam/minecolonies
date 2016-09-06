@@ -24,6 +24,7 @@ public final class ModBlocks
     public static final Block blockHutFarmer     = new BlockHutFarmer();
     public static final Block blockHutFisherman  = new BlockHutFisherman();
     public static final Block blockSubstitution  = new BlockSubstitution();
+    public static final Block blockHutField      = new BlockHutField();
 
     /**
      * private constructor to hide the implicit public one.
