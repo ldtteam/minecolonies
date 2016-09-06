@@ -63,7 +63,7 @@ public class ButtonVanilla extends Button
     public void drawSelf(int mx, int my)
     {
         mc.renderEngine.bindTexture(TEXTURE);
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         boolean isMouseOver = isPointInPane(mx, my);
 

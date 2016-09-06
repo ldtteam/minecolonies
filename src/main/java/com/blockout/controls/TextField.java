@@ -4,6 +4,7 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -278,10 +279,10 @@ public class TextField extends Pane
             }
 
             Tessellator tessellator = Tessellator.getInstance();
-            GL11.glColor4f(0.0F, 0.0F, 255.0F, 255.0F);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glEnable(GL11.GL_COLOR_LOGIC_OP);
-            GL11.glLogicOp(GL11.GL_OR_REVERSE);
+            GlStateManager.color(0.0F, 0.0F, 255.0F, 255.0F);
+            GlStateManager.disableTexture2D();
+            GlStateManager.enableColorLogic();
+            GlStateManager.colorLogicOp(GL11.GL_OR_REVERSE);
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 
             // There are several to choose from, look at DefaultVertexFormats for more info
@@ -294,8 +295,8 @@ public class TextField extends Pane
             worldrenderer.pos((double) selectionEndX, (double) drawY - 1, 0.0D).endVertex();
             worldrenderer.pos((double) selectionStartX, (double) drawY - 1, 0.0D).endVertex();
             tessellator.draw();
-            GL11.glDisable(GL11.GL_COLOR_LOGIC_OP);
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GlStateManager.disableColorLogic();
+            GlStateManager.enableTexture2D();
         }
     }
 

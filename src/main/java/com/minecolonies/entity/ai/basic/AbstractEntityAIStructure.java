@@ -64,40 +64,40 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         super(job);
         this.registerTargets(
-                /**
-                 * Check if we have to build something.
-                 */
-                new AITarget(this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
-                /**
-                 * Select the appropriate State to do next.
-                 */
-                new AITarget(AIState.START_BUILDING, this::startBuilding),
-                /**
-                 * Clear out the building area
-                 * todo: implement
-                 */
-                new AITarget(AIState.CLEAR_STEP, generateSchematicIterator(this::clearStep, AIState.BUILDER_STRUCTURE_STEP)),
-                /**
-                 * Build the structure and foundation of the building
-                 * todo: implement
-                 */
-                new AITarget(AIState.BUILDING_STEP, () -> AIState.IDLE),
-                /**
-                 * Decorate the AbstractBuilding with torches etc.
-                 * todo: implement
-                 */
-                new AITarget(AIState.DECORATION_STEP, () -> AIState.IDLE),
-                /**
-                 * Spawn entities on the structure
-                 * todo: implement
-                 */
-                new AITarget(AIState.SPAWN_STEP, () -> AIState.IDLE),
-                /**
-                 * Finalize the building and give back control to the ai.
-                 * todo: implement
-                 */
-                new AITarget(AIState.COMPLETE_BUILD, () -> AIState.IDLE)
-                            );
+          /**
+           * Check if we have to build something.
+           */
+          new AITarget(this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
+          /**
+           * Select the appropriate State to do next.
+           */
+          new AITarget(AIState.START_BUILDING, this::startBuilding),
+          /**
+           * Clear out the building area
+           * todo: implement
+           */
+          new AITarget(AIState.CLEAR_STEP, generateSchematicIterator(this::clearStep, AIState.BUILDER_STRUCTURE_STEP)),
+          /**
+           * Build the structure and foundation of the building
+           * todo: implement
+           */
+          new AITarget(AIState.BUILDING_STEP, () -> AIState.IDLE),
+          /**
+           * Decorate the AbstractBuilding with torches etc.
+           * todo: implement
+           */
+          new AITarget(AIState.DECORATION_STEP, () -> AIState.IDLE),
+          /**
+           * Spawn entities on the structure
+           * todo: implement
+           */
+          new AITarget(AIState.SPAWN_STEP, () -> AIState.IDLE),
+          /**
+           * Finalize the building and give back control to the ai.
+           * todo: implement
+           */
+          new AITarget(AIState.COMPLETE_BUILD, () -> AIState.IDLE)
+        );
     }
 
     /**
@@ -109,14 +109,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param nextState          the next state to change to once done iterating.
      * @return the new state this AI will be in after one pass
      */
-    private Supplier<AIState> generateSchematicIterator(Function<Structure.SchematicBlock, Boolean> evaluationFunction, AIState nextState)
+    private Supplier<AIState> generateSchematicIterator(@NotNull Function<Structure.SchematicBlock, Boolean> evaluationFunction, @NotNull AIState nextState)
     {
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
-        Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
-        Supplier<Structure.Result>         advanceBlock    = () -> currentStructure.advanceBlock();
+        @NotNull Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
+        @NotNull Supplier<Structure.Result> advanceBlock = () -> currentStructure.advanceBlock();
 
-        return () -> {
+        return () ->
+        {
             Structure.SchematicBlock currentBlock = getCurrentBlock.get();
             /*
             check if we have not found a block (when block == null
@@ -124,7 +125,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             (which changes stuff, so only execute on valid block!)
             */
             if (currentBlock.block == null
-                || evaluationFunction.apply(currentBlock))
+                  || evaluationFunction.apply(currentBlock))
             {
                 Structure.Result result = advanceBlock.get();
                 if (result == Structure.Result.AT_END)
@@ -187,15 +188,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return currentStructure.getCurrentBlockPosition();
         }
         //get length or width either is larger.
-        int          length     = currentStructure.getLength();
-        int          width      = currentStructure.getWidth();
-        int          distance   = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD + offset;
-        EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
+        int length = currentStructure.getLength();
+        int width = currentStructure.getWidth();
+        int distance = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD + offset;
+        @NotNull EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
 
         //then get a solid place with two air spaces above it in any direction.
         for (EnumFacing direction : directions)
         {
-            BlockPos positionInDirection = getPositionInDirection(direction, distance);
+            @NotNull BlockPos positionInDirection = getPositionInDirection(direction, distance);
             if (EntityUtils.checkForFreeSpace(world, positionInDirection))
             {
                 return positionInDirection;
@@ -211,7 +212,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @return the next step once done
      */
-    private boolean clearStep(Structure.SchematicBlock currentBlock)
+    private boolean clearStep(@NotNull Structure.SchematicBlock currentBlock)
     {
 
         //Don't break bedrock etc.
@@ -252,6 +253,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param distance the distance
      * @return a BlockPos position.
      */
+    @NotNull
     private BlockPos getPositionInDirection(EnumFacing facing, int distance)
     {
         return getFloor(currentStructure.getCurrentBlockPosition().offset(facing, distance));
@@ -263,7 +265,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param position input position
      * @return returns BlockPos position with air above
      */
-    private BlockPos getFloor(BlockPos position)
+    @NotNull
+    private BlockPos getFloor(@NotNull BlockPos position)
     {
         //If the position is floating in Air go downwards
         if (!EntityUtils.solidOrLiquid(world, position))
@@ -295,6 +298,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @return the new State to start in.
      */
+    @NotNull
     private AIState startBuilding()
     {
         switch (currentStructure.getStage())

@@ -279,14 +279,10 @@ public class Pane extends Gui
     {
         if (visible)
         {
-            GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
             drawSelf(mx, my);
-            GL11.glPopAttrib();
 
             if (debugging)
             {
-                GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-
                 boolean isMouseOver = isPointInPane(mx, my);
                 int color = isMouseOver ? 0xFF00FF00 : 0xFF0000FF;
 
@@ -297,8 +293,6 @@ public class Pane extends Gui
                     int stringWidth = mc.fontRendererObj.getStringWidth(id);
                     mc.fontRendererObj.drawString(id, x + getWidth() - stringWidth, y + getHeight() - mc.fontRendererObj.FONT_HEIGHT, color);
                 }
-
-                GL11.glPopAttrib();
             }
         }
     }

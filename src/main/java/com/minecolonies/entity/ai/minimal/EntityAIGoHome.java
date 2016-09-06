@@ -25,8 +25,14 @@ public class EntityAIGoHome extends EntityAIBase
     public boolean shouldExecute()
     {
         return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP &&
-               !citizen.isAtHome() &&
-               citizen.getNavigator().noPath();
+                 !citizen.isAtHome() &&
+                 citizen.getNavigator().noPath();
+    }
+
+    @Override
+    public boolean continueExecuting()
+    {
+        return !citizen.getNavigator().noPath();
     }
 
     @Override
@@ -39,12 +45,17 @@ public class EntityAIGoHome extends EntityAIBase
             return;
         }
 
-        citizen.getNavigator().tryMoveToXYZ((double) pos.getX() + 0.5D, (double) pos.getY(), (double) pos.getZ() + 0.5D, 1.0D);
-    }
+        if (citizen.getWorkBuilding() != null)
+        {
+            /*
+            Temp fix for pathfinding in the night.
+            Citizens can't find a path home.
+             */
+            final BlockPos workBuilding = citizen.getWorkBuilding().getLocation();
+            citizen.isWorkerAtSiteWithMove(workBuilding, 2);
+            return;
+        }
 
-    @Override
-    public boolean continueExecuting()
-    {
-        return !citizen.getNavigator().noPath();
+        citizen.getNavigator().tryMoveToXYZ((double) pos.getX() + 0.5D, (double) pos.getY(), (double) pos.getZ() + 0.5D, 1.0D);
     }
 }
