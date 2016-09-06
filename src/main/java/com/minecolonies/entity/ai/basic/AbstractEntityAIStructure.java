@@ -64,39 +64,39 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         super(job);
         this.registerTargets(
-                /**
-                 * Check if we have to build something.
-                 */
-                new AITarget(this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
-                /**
-                 * Select the appropriate State to do next.
-                 */
-                new AITarget(AIState.START_BUILDING, this::startBuilding),
-                /**
-                 * Clear out the building area
-                 * todo: implement
-                 */
-                new AITarget(AIState.CLEAR_STEP, generateSchematicIterator(this::clearStep, AIState.BUILDER_STRUCTURE_STEP)),
-                /**
-                 * Build the structure and foundation of the building
-                 * todo: implement
-                 */
-                new AITarget(AIState.BUILDING_STEP, () -> AIState.IDLE),
-                /**
-                 * Decorate the AbstractBuilding with torches etc.
-                 * todo: implement
-                 */
-                new AITarget(AIState.DECORATION_STEP, () -> AIState.IDLE),
-                /**
-                 * Spawn entities on the structure
-                 * todo: implement
-                 */
-                new AITarget(AIState.SPAWN_STEP, () -> AIState.IDLE),
-                /**
-                 * Finalize the building and give back control to the ai.
-                 * todo: implement
-                 */
-                new AITarget(AIState.COMPLETE_BUILD, () -> AIState.IDLE)
+          /**
+           * Check if we have to build something.
+           */
+          new AITarget(this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
+          /**
+           * Select the appropriate State to do next.
+           */
+          new AITarget(AIState.START_BUILDING, this::startBuilding),
+          /**
+           * Clear out the building area
+           * todo: implement
+           */
+          new AITarget(AIState.CLEAR_STEP, generateSchematicIterator(this::clearStep, AIState.BUILDER_STRUCTURE_STEP)),
+          /**
+           * Build the structure and foundation of the building
+           * todo: implement
+           */
+          new AITarget(AIState.BUILDING_STEP, () -> AIState.IDLE),
+          /**
+           * Decorate the AbstractBuilding with torches etc.
+           * todo: implement
+           */
+          new AITarget(AIState.DECORATION_STEP, () -> AIState.IDLE),
+          /**
+           * Spawn entities on the structure
+           * todo: implement
+           */
+          new AITarget(AIState.SPAWN_STEP, () -> AIState.IDLE),
+          /**
+           * Finalize the building and give back control to the ai.
+           * todo: implement
+           */
+          new AITarget(AIState.COMPLETE_BUILD, () -> AIState.IDLE)
         );
     }
 
@@ -125,7 +125,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             (which changes stuff, so only execute on valid block!)
             */
             if (currentBlock.block == null
-                    || evaluationFunction.apply(currentBlock))
+                  || evaluationFunction.apply(currentBlock))
             {
                 Structure.Result result = advanceBlock.get();
                 if (result == Structure.Result.AT_END)

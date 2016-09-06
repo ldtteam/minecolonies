@@ -128,43 +128,43 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 /*
                  * Init safety checks and transition to IDLE
                  */
-                new AITarget(INIT, this::initSafetyChecks),
+          new AITarget(INIT, this::initSafetyChecks),
                 /*
                  * Update chestbelt and nametag
                  * Will be executed every time
                  * and does not stop execution
                  */
-                new AITarget(this::updateVisualState),
+          new AITarget(this::updateVisualState),
                 /*
                  * If waitingForSomething returns true
                  * stop execution to wait for it.
                  * this keeps the current state
                  * (returning null would not stop execution)
                  */
-                new AITarget(this::waitingForSomething, this::getState),
+          new AITarget(this::waitingForSomething, this::getState),
                 /*
                  * Check if any items are needed.
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-                new AITarget(() -> !itemsCurrentlyNeeded.isEmpty(), this::waitForNeededItems),
+          new AITarget(() -> !itemsCurrentlyNeeded.isEmpty(), this::waitForNeededItems),
                 /*
                  * Wait for different tools.
                  */
-                new AITarget(() -> this.needsShovel, this::waitForShovel),
-                new AITarget(() -> this.needsAxe, this::waitForAxe),
-                new AITarget(() -> this.needsHoe, this::waitForHoe),
-                new AITarget(() -> this.needsPickaxe, this::waitForPickaxe),
+          new AITarget(() -> this.needsShovel, this::waitForShovel),
+          new AITarget(() -> this.needsAxe, this::waitForAxe),
+          new AITarget(() -> this.needsHoe, this::waitForHoe),
+          new AITarget(() -> this.needsPickaxe, this::waitForPickaxe),
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
                  * to resolve state.
                  */
-                new AITarget(INVENTORY_FULL, this::dumpInventory),
+          new AITarget(INVENTORY_FULL, this::dumpInventory),
                 /*
                  * Check if inventory has to be dumped.
                  */
-                new AITarget(this::inventoryNeedsDump, INVENTORY_FULL)
+          new AITarget(this::inventoryNeedsDump, INVENTORY_FULL)
         );
     }
 
@@ -180,8 +180,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean inventoryNeedsDump()
     {
         return worker.isInventoryFull()
-                || actionsDone >= getActionsDoneUntilDumping()
-                || wantInventoryDumped();
+                 || actionsDone >= getActionsDoneUntilDumping()
+                 || wantInventoryDumped();
     }
 
     /**
@@ -276,7 +276,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (delay > 0)
         {
             if (currentStandingLocation != null &&
-                    !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
+                  !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
             {
                 //Don't decrease delay as we are just walking...
                 return true;
@@ -367,7 +367,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
         //Return true if the building is null to stall the worker
         return ownBuilding == null
-                || walkToBlock(ownBuilding.getLocation());
+                 || walkToBlock(ownBuilding.getLocation());
     }
 
     /**
@@ -383,13 +383,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingMiner = getOwnBuilding();
         return buildingMiner != null &&
-                is != null &&
-                InventoryFunctions
-                        .matchFirstInInventory(
-                                buildingMiner.getTileEntity(),
-                                stack -> stack != null && is.isItemEqual(stack),
-                                this::takeItemStackFromChest
-                        );
+                 is != null &&
+                 InventoryFunctions
+                   .matchFirstInInventory(
+                     buildingMiner.getTileEntity(),
+                     stack -> stack != null && is.isItemEqual(stack),
+                     this::takeItemStackFromChest
+                   );
     }
 
     /**
@@ -493,10 +493,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean checkForTool(@NotNull String tool)
     {
         boolean needsTool = !InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventoryCitizen(),
-                        stack -> Utils.isTool(stack, tool),
-                        InventoryFunctions::doNothing);
+                               .matchFirstInInventory(
+                                 worker.getInventoryCitizen(),
+                                 stack -> Utils.isTool(stack, tool),
+                                 InventoryFunctions::doNothing
+                               );
         if (!needsTool)
         {
             return false;
@@ -518,10 +519,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return buildingWorker != null
-                && InventoryFunctions.matchFirstInInventory(
-                buildingWorker.getTileEntity(),
-                stack -> Utils.isTool(stack, tool),
-                this::takeItemStackFromChest);
+                 && InventoryFunctions.matchFirstInInventory(
+          buildingWorker.getTileEntity(),
+          stack -> Utils.isTool(stack, tool),
+          this::takeItemStackFromChest
+        );
     }
 
     /**
@@ -607,11 +609,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         //Check for a pickaxe
         needsPickaxe = !InventoryFunctions
-                .matchFirstInInventory(
-                        worker.getInventoryCitizen(),
-                        stack -> Utils.checkIfPickaxeQualifies(
-                                minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
-                        InventoryFunctions::doNothing);
+                          .matchFirstInInventory(
+                            worker.getInventoryCitizen(),
+                            stack -> Utils.checkIfPickaxeQualifies(
+                              minlevel, Utils.getMiningLevel(stack, Utils.PICKAXE)),
+                            InventoryFunctions::doNothing
+                          );
 
         delay += DELAY_RECHECK;
 
@@ -644,12 +647,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return buildingWorker != null
-                && InventoryFunctions.matchFirstInInventory(
-                buildingWorker.getTileEntity(),
-                stack -> Utils.checkIfPickaxeQualifies(
-                        minlevel,
-                        Utils.getMiningLevel(stack, Utils.PICKAXE)),
-                this::takeItemStackFromChest);
+                 && InventoryFunctions.matchFirstInInventory(
+          buildingWorker.getTileEntity(),
+          stack -> Utils.checkIfPickaxeQualifies(
+            minlevel,
+            Utils.getMiningLevel(stack, Utils.PICKAXE)
+          ),
+          this::takeItemStackFromChest
+        );
     }
 
     /**
@@ -697,8 +702,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return InventoryUtils.isInventoryFull(worker.getInventoryCitizen())
-                && (buildingWorker != null
-                && InventoryUtils.isInventoryFull(buildingWorker.getTileEntity()));
+                 && (buildingWorker != null
+                       && InventoryUtils.isInventoryFull(buildingWorker.getTileEntity()));
     }
 
     /**
@@ -733,25 +738,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return walkToBuilding()
-                || InventoryFunctions.matchFirstInInventory(
-                worker.getInventoryCitizen(), (i, stack) ->
-                {
-                    if (buildingWorker == null || stack == null || keepIt.test(stack))
-                    {
-                        return false;
-                    }
+                 || InventoryFunctions.matchFirstInInventory(
+          worker.getInventoryCitizen(), (i, stack) ->
+          {
+              if (buildingWorker == null || stack == null || keepIt.test(stack))
+              {
+                  return false;
+              }
 
-                    ItemStack returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
-                    if (returnStack == null)
-                    {
-                        worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
-                        return true;
-                    }
-                    worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize);
-                    //Check that we are not inserting
-                    // into a full inventory.
-                    return stack.stackSize != returnStack.stackSize;
-                });
+              ItemStack returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
+              if (returnStack == null)
+              {
+                  worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
+                  return true;
+              }
+              worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+              //Check that we are not inserting
+              // into a full inventory.
+              return stack.stackSize != returnStack.stackSize;
+          });
     }
 
     /**
