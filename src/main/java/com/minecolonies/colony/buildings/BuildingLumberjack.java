@@ -7,8 +7,6 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobLumberjack;
-import com.minecolonies.util.ServerUtils;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 
 /**
@@ -92,8 +90,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
-
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
 
         if (newLevel == 1)
         {
