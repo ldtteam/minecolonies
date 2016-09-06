@@ -1235,7 +1235,6 @@ public class Colony implements IColony
     {
         return ServerUtils.getPlayersFromUUID(this.world, this.getPermissions().getMessagePlayers());
     }
-<<<<<<<
 
     /**
      * Triggers an achievement on this colony.
@@ -1262,10 +1261,9 @@ public class Colony implements IColony
         return Collections.unmodifiableList(this.colonyAchievements);
     }
 
-=======
-
     /**
      * Removes a field from the farmerFields list.
+     *
      * @param pos the position-id.
      */
     public void removeField(final BlockPos pos)
@@ -1273,5 +1271,4 @@ public class Colony implements IColony
         this.markFieldsDirty();
         fields.remove(pos);
     }
->>>>>>>
 }
