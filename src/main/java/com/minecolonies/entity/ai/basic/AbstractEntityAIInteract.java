@@ -34,7 +34,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     private static final double LEVEL_MODIFIER = 0.95D;
 
-
     /**
      * Creates the abstract part of the AI.
      * Always use this constructor!
@@ -45,8 +44,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     {
         super(job);
         super.registerTargets(
-                //no new targets for now
-                             );
+          //no new targets for now
+        );
     }
 
     /**
@@ -79,8 +78,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     {
         Block curBlock = world.getBlockState(blockToMine).getBlock();
         if (curBlock == null
-            || curBlock.equals(Blocks.air)
-            || BlockUtils.shouldNeverBeMessedWith(curBlock))
+              || curBlock.equals(Blocks.air)
+              || (curBlock.equals(Blocks.flowing_water)
+                    || curBlock.equals(Blocks.flowing_lava))
+              || BlockUtils.shouldNeverBeMessedWith(curBlock))
         {
             //no need to mine block...
             return true;
@@ -135,9 +136,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.bedrock)
         {
             Log.logger.info(String.format(
-                    "ForgeHook not in sync with EfficientTool for %s and %s\n"
-                    + "Please report to MineColonies with this text to add support!",
-                    curBlock, tool));
+              "ForgeHook not in sync with EfficientTool for %s and %s\n"
+                + "Please report to MineColonies with this text to add support!",
+              curBlock, tool));
         }
 
         if (walkToBlock(safeStand))
@@ -165,10 +166,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return (int) block.getBlockHardness(world, pos);
         }
         return (int) ((DELAY_MODIFIER * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
-                      * (double) block.getBlockHardness(world, pos)
-                      / (double) (worker.getHeldItem().getItem()
-                                        .getDigSpeed(worker.getHeldItem(),
-                                                     block.getDefaultState())));
+                        * (double) block.getBlockHardness(world, pos)
+                        / (double) (worker.getHeldItem().getItem()
+                                      .getDigSpeed(worker.getHeldItem(),
+                                        block.getDefaultState())));
     }
-
 }
