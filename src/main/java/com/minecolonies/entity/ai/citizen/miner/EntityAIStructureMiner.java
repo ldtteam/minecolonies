@@ -374,14 +374,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private BlockPos getNextBlockInShaftToMine()
     {
 
-        BlockPos ladderPos  = getOwnBuilding().getLadderLocation();
-        int      lastLadder = getLastLadder(ladderPos);
+        BlockPos ladderPos = getOwnBuilding().getLadderLocation();
+        int lastLadder = getLastLadder(ladderPos);
         if (currentWorkingLocation == null)
         {
             currentWorkingLocation = new BlockPos(ladderPos.getX(), lastLadder + 1, ladderPos.getZ());
         }
         Block block = getBlock(currentWorkingLocation);
-        if (block != null && block != Blocks.air && block != Blocks.ladder)
+        if (block != null
+              && block != Blocks.air
+              && block != Blocks.ladder
+              && !(block.equals(Blocks.flowing_water)
+                    || block.equals(Blocks.flowing_lava)))
         {
             return currentWorkingLocation;
         }
@@ -391,6 +395,28 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
         int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
         int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
+
+        //remove water for safety
+        for (int x = SHAFT_RADIUS + xOffset +2; x >= -SHAFT_RADIUS + xOffset -2; x--)
+        {
+            for (int z = -SHAFT_RADIUS + zOffset -2; z <= SHAFT_RADIUS + zOffset +2; z++)
+            {
+                if (x == 0 && 0 == z)
+                {
+                    continue;
+                }
+                BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
+                block = getBlock(curBlock);
+                if (block.equals(Blocks.water)
+                      || block.equals(Blocks.lava)
+                      || block.equals(Blocks.flowing_water)
+                      || block.equals(Blocks.flowing_lava))
+                {
+                    setBlockFromInventory(curBlock, Blocks.cobblestone);
+                }
+            }
+        }
+
 
         //7x7 shaft find nearest block
         //Beware from positive to negative! to draw the miner to a wall to go down
@@ -403,9 +429,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                     continue;
                 }
                 BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
-                double   distance = curBlock.distanceSq(ladderPos) + Math.pow(curBlock.distanceSq(currentWorkingLocation), 2);
-                if (distance < bestDistance && !world.isAirBlock(curBlock))
+                double distance = curBlock.distanceSq(ladderPos) + Math.pow(curBlock.distanceSq(currentWorkingLocation), 2);
+                block = getBlock(curBlock);
+                if (distance < bestDistance
+                      && !world.isAirBlock(curBlock))
                 {
+                    if (block.equals(Blocks.water)
+                          || block.equals(Blocks.lava)
+                          || block.equals(Blocks.flowing_water)
+                          || block.equals(Blocks.flowing_lava))
+                    {
+                        setBlockFromInventory(curBlock, Blocks.cobblestone);
+                    }
                     nextBlockToMine = curBlock;
                     bestDistance = distance;
                 }
@@ -713,6 +748,27 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 }
 
                 job.getSchematic().rotate(rotateTimes);
+            }
+        }
+
+
+        //Check for liquids
+        for (int x = -NODE_DISTANCE / 2 - 1; x <= NODE_DISTANCE / 2 + 1; x++)
+        {
+            for (int z = -NODE_DISTANCE / 2 - 1; z <= NODE_DISTANCE / 2 + 1; z++)
+            {
+                for (int y = -1; y <= 5; y++)
+                {
+                    BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
+                    Block block = getBlock(curBlock);
+                    if (block.equals(Blocks.water)
+                          || block.equals(Blocks.lava)
+                          || block.equals(Blocks.flowing_water)
+                          || block.equals(Blocks.flowing_lava))
+                    {
+                        setBlockFromInventory(curBlock, Blocks.cobblestone);
+                    }
+                }
             }
         }
 

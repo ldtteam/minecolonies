@@ -79,10 +79,13 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         Block curBlock = world.getBlockState(blockToMine).getBlock();
         if (curBlock == null
               || curBlock.equals(Blocks.air)
-              || (curBlock.equals(Blocks.flowing_water)
-                    || curBlock.equals(Blocks.flowing_lava))
+              || (curBlock.getMaterial().isLiquid())
               || BlockUtils.shouldNeverBeMessedWith(curBlock))
         {
+            if(curBlock != null
+                 && curBlock.getMaterial().isLiquid()){
+                world.setBlockToAir(blockToMine);
+            }
             //no need to mine block...
             return true;
         }
