@@ -162,12 +162,9 @@ entity.worker.inventoryFullChestFull=Please make space in my building chest. I a
 com.minecolonies.gui.townHall.currentSpecialization=Current Specialization:
 tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
 
-
 com.minecolonies.gui.workerHuts.workOrderAdded=Construction added to build queue.
 com.minecolonies.gui.workerHuts.workOrder=Work Orders
 
-
-com.minecolonies.gui.workerHuts.farmer= Farm
 com.minecolonies.gui.inventory.scarecrow= Scarecrow
 entity.farmer.noSeedSet= Please define a seed to grow in the scarecrow.
 entity.farmer.NeedSeed= I need %s to plant.

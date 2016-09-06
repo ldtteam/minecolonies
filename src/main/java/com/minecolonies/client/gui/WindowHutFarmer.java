@@ -174,7 +174,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.gui.workerHuts.farmer";
+        return "tile.minecolonies.blockHutFarmer.name";
     }
 
     /**
