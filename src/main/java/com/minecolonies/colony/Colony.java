@@ -66,7 +66,7 @@ public class Colony implements IColony
     private int                       topCitizenId = 0;
     private int                       maxCitizens  = Configurations.maxCitizens;
 
-    private List<Achievement> colonyAchievements;
+    private final List<Achievement> colonyAchievements;
 
     //  Settings
     private static final int CITIZEN_CLEANUP_TICK_INCREMENT = 5 * 20;
@@ -171,7 +171,6 @@ public class Colony implements IColony
 
         // Restore colony achievements
         final NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, NBT.TAG_COMPOUND);
-        this.colonyAchievements = new ArrayList<>();
         for (int i = 0; i < achievementTagList.tagCount(); ++i)
         {
             final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
@@ -1098,7 +1097,7 @@ public class Colony implements IColony
      *
      * @param achievement The achievement to trigger
      */
-    public void triggerAchievement(@NotNull Achievement achievement)
+    public void triggerAchievement(@NotNull final Achievement achievement)
     {
         if (this.colonyAchievements.contains(achievement))
         {
