@@ -18,10 +18,9 @@ import java.util.List;
 
 public class BuildingHome extends AbstractBuildingHut
 {
-    private List<CitizenData> residents = new ArrayList<>();
-
     private static final String TAG_RESIDENTS = "residents";
     private static final String CITIZEN       = "Citizen";
+    private List<CitizenData> residents = new ArrayList<>();
 
     public BuildingHome(Colony c, BlockPos l)
     {
@@ -38,96 +37,6 @@ public class BuildingHome extends AbstractBuildingHut
     public int getMaxBuildingLevel()
     {
         return 4;
-    }
-
-    @Override
-    public int getMaxInhabitants()
-    {
-        return 2;
-    }
-
-    @Override
-    public void setBuildingLevel(int level)
-    {
-        super.setBuildingLevel(level);
-        getColony().calculateMaxCitizens();
-    }
-
-    @Override
-    public void onDestroyed()
-    {
-        residents.stream().filter(citizen -> citizen != null).forEach(citizen -> citizen.setHomeBuilding(null));
-
-        super.onDestroyed();
-    }
-
-    @Override
-    public void onWorldTick(TickEvent.WorldTickEvent event)
-    {
-        if (event.phase != TickEvent.Phase.END)
-        {
-            return;
-        }
-
-        if (residents.size() < getMaxInhabitants())
-        {
-            // 'Capture' as many citizens into this house as possible
-            addHomelessCitizens();
-        }
-    }
-
-    /**
-     * Looks for a homeless citizen to add to the current building. Calls
-     * {@link #addResident(CitizenData)}
-     */
-    public void addHomelessCitizens()
-    {
-        for (CitizenData citizen : getColony().getCitizens().values())
-        {
-            if (citizen.getHomeBuilding() == null)
-            {
-                addResident(citizen);
-
-                if (residents.size() >= getMaxInhabitants())
-                {
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Adds the citizen to the building
-     *
-     * @param citizen Citizen to add
-     */
-    private void addResident(CitizenData citizen)
-    {
-        residents.add(citizen);
-        citizen.setHomeBuilding(this);
-
-        markDirty();
-    }
-
-    @Override
-    public void removeCitizen(CitizenData citizen)
-    {
-        if (residents.contains(citizen))
-        {
-            citizen.setHomeBuilding(null);
-            residents.remove(citizen);
-        }
-    }
-
-    /**
-     * Returns whether the citizen has this as home or not
-     *
-     * @param citizen Citizen to check
-     * @return True if citizen lives here, otherwise false
-     */
-    public boolean hasResident(CitizenData citizen)
-    {
-        return residents.contains(citizen);
     }
 
     @Override
@@ -167,6 +76,85 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
+    public void setBuildingLevel(int level)
+    {
+        super.setBuildingLevel(level);
+        getColony().calculateMaxCitizens();
+    }
+
+    @Override
+    public void onDestroyed()
+    {
+        residents.stream().filter(citizen -> citizen != null).forEach(citizen -> citizen.setHomeBuilding(null));
+
+        super.onDestroyed();
+    }
+
+    @Override
+    public void removeCitizen(CitizenData citizen)
+    {
+        if (residents.contains(citizen))
+        {
+            citizen.setHomeBuilding(null);
+            residents.remove(citizen);
+        }
+    }
+
+    @Override
+    public void onWorldTick(TickEvent.WorldTickEvent event)
+    {
+        if (event.phase != TickEvent.Phase.END)
+        {
+            return;
+        }
+
+        if (residents.size() < getMaxInhabitants())
+        {
+            // 'Capture' as many citizens into this house as possible
+            addHomelessCitizens();
+        }
+    }
+
+    @Override
+    public int getMaxInhabitants()
+    {
+        return 2;
+    }
+
+    /**
+     * Looks for a homeless citizen to add to the current building. Calls
+     * {@link #addResident(CitizenData)}
+     */
+    public void addHomelessCitizens()
+    {
+        for (CitizenData citizen : getColony().getCitizens().values())
+        {
+            if (citizen.getHomeBuilding() == null)
+            {
+                addResident(citizen);
+
+                if (residents.size() >= getMaxInhabitants())
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds the citizen to the building
+     *
+     * @param citizen Citizen to add
+     */
+    private void addResident(CitizenData citizen)
+    {
+        residents.add(citizen);
+        citizen.setHomeBuilding(this);
+
+        markDirty();
+    }
+
+    @Override
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
@@ -181,6 +169,29 @@ public class BuildingHome extends AbstractBuildingHut
         {
             owner.triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
         }
+    }
+
+    @Override
+    public void serializeToView(ByteBuf buf)
+    {
+        super.serializeToView(buf);
+
+        buf.writeInt(residents.size());
+        for (CitizenData citizen : residents)
+        {
+            buf.writeInt(citizen.getId());
+        }
+    }
+
+    /**
+     * Returns whether the citizen has this as home or not
+     *
+     * @param citizen Citizen to check
+     * @return True if citizen lives here, otherwise false
+     */
+    public boolean hasResident(CitizenData citizen)
+    {
+        return residents.contains(citizen);
     }
 
     public static class View extends AbstractBuildingHut.View
@@ -214,17 +225,4 @@ public class BuildingHome extends AbstractBuildingHut
             }
         }
     }
-
-    @Override
-    public void serializeToView(ByteBuf buf)
-    {
-        super.serializeToView(buf);
-
-        buf.writeInt(residents.size());
-        for (CitizenData citizen : residents)
-        {
-            buf.writeInt(citizen.getId());
-        }
-    }
-
 }

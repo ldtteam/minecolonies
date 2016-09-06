@@ -5,9 +5,9 @@ import com.minecolonies.client.gui.WindowHutFarmer;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFarmer;
+import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.entity.ai.citizen.farmer.FieldView;
 import com.minecolonies.network.messages.AssignFieldMessage;
 import com.minecolonies.network.messages.AssignmentModeMessage;
@@ -33,12 +33,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * Descriptive string of the profession.
      */
-    private static final    String  FARMER      = "Farmer";
+    private static final String FARMER = "Farmer";
 
     /**
      * The maximum building level of the hut.
      */
-    private static final    int     MAX_BUILDING_LEVEL = 3;
+    private static final int MAX_BUILDING_LEVEL = 3;
 
     /**
      * NBTTag to store the fields.
@@ -67,6 +67,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Public constructor which instantiates the building.
+     *
      * @param c the colony the building is in.
      * @param l the position it has been placed (it's id).
      */
@@ -77,6 +78,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Returns list of fields of the farmer.
+     *
      * @return a list of field objects.
      */
     public List<Field> getFarmerFields()
@@ -86,6 +88,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Checks if the farmer has any fields.
+     *
      * @return true if he has none.
      */
     public boolean hasNoFields()
@@ -95,6 +98,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Assigns a field list to the field list.
+     *
      * @param field the field to add.
      */
     public void addFarmerFields(Field field)
@@ -104,6 +108,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Getter of the current field.
+     *
      * @return a field object.
      */
     public Field getCurrentField()
@@ -113,6 +118,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Sets the field the farmer is currently working on.
+     *
      * @param currentField the field to work on.
      */
     public void setCurrentField(final Field currentField)
@@ -122,14 +128,15 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Retrieves a random field to work on for the farmer.
+     *
      * @return a field to work on.
      */
     public Field getFieldToWorkOn()
     {
         Collections.shuffle(farmerFields);
-        for(final Field field: farmerFields)
+        for (final Field field : farmerFields)
         {
-            if(field.needsWork())
+            if (field.needsWork())
             {
                 currentField = field;
                 return field;
@@ -156,62 +163,33 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return FARMER;
     }
 
-    /**
-     * Synchronize field list with colony.
-     * @param world the world the building is in.
-     */
-    public void syncWithColony(World world)
+    @Override
+    public AbstractJob createJob(CitizenData citizen)
     {
-        if(!farmerFields.isEmpty())
+        if (!farmerFields.isEmpty())
         {
-            final ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
-
-            for(final Field field: tempFields)
+            for (final Field field : farmerFields)
             {
-                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
-                if(scarecrow == null)
+                final Field colonyField = getColony().getField(field.getID());
+                if (colonyField != null)
                 {
-                    farmerFields.remove(field);
-                    if (currentField != null && currentField.getID() == field.getID())
-                    {
-                        currentField = null;
-                    }
+                    colonyField.setOwner(citizen.getName());
                 }
-                else
-                {
-                    scarecrow.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
-                    getColony().getWorld().markBlockForUpdate(scarecrow.getPos());
-                    field.setInventoryField(scarecrow.getInventoryField());
-                    if(currentField != null && currentField.getID() == field.getID())
-                    {
-                        currentField.setInventoryField(scarecrow.getInventoryField());
-                    }
-                }
+                field.setOwner(citizen.getName());
             }
         }
-    }
-
-    /**
-     * Resets the fields to need work again.
-     */
-    public void resetFields()
-    {
-        for(final Field field: farmerFields)
-        {
-            field.setNeedsWork(true);
-            field.calculateSize(getColony().getWorld(), field.getLocation().down());
-        }
+        return new JobFarmer(citizen);
     }
 
     @Override
     public void onDestroyed()
     {
         super.onDestroyed();
-        for(final Field field: farmerFields)
+        for (final Field field : farmerFields)
         {
             final Field tempField = getColony().getField(field.getID());
 
-            if(tempField != null)
+            if (tempField != null)
             {
                 tempField.setTaken(false);
                 tempField.setOwner("");
@@ -220,33 +198,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
             }
         }
-    }
-
-    /**
-     * Getter for the assign manually.
-     * @return true if he should.
-     */
-    public boolean assignManually()
-    {
-        return assignManually;
-    }
-
-    @Override
-    public AbstractJob createJob(CitizenData citizen)
-    {
-        if(!farmerFields.isEmpty())
-        {
-            for(final Field field: farmerFields)
-            {
-                final Field colonyField = getColony().getField(field.getID());
-                if(colonyField != null)
-                {
-                    colonyField.setOwner(citizen.getName());
-                }
-                field.setOwner(citizen.getName());
-            }
-        }
-        return new JobFarmer(citizen);
     }
 
     //we have to update our field from the colony!
@@ -295,11 +246,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         int size = 0;
 
-        for(Field field: getColony().getFields().values())
+        for (Field field : getColony().getFields().values())
         {
-            if(field.isTaken())
+            if (field.isTaken())
             {
-                if(getWorker() == null || field.getOwner().equals(getWorker().getName()))
+                if (getWorker() == null || field.getOwner().equals(getWorker().getName()))
                 {
                     size++;
                 }
@@ -312,11 +263,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         buf.writeInt(size);
 
-        for(final Field field: getColony().getFields().values())
+        for (final Field field : getColony().getFields().values())
         {
-            if(field.isTaken())
+            if (field.isTaken())
             {
-                if(getWorker() == null || field.getOwner().equals(getWorker().getName()))
+                if (getWorker() == null || field.getOwner().equals(getWorker().getName()))
                 {
                     final FieldView fieldView = new FieldView(field);
                     fieldView.serializeViewNetworkData(buf);
@@ -329,7 +280,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             }
         }
 
-        if(getWorker() == null)
+        if (getWorker() == null)
         {
             ByteBufUtils.writeUTF8String(buf, "");
         }
@@ -340,7 +291,66 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     /**
+     * Synchronize field list with colony.
+     *
+     * @param world the world the building is in.
+     */
+    public void syncWithColony(World world)
+    {
+        if (!farmerFields.isEmpty())
+        {
+            final ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
+
+            for (final Field field : tempFields)
+            {
+                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
+                if (scarecrow == null)
+                {
+                    farmerFields.remove(field);
+                    if (currentField != null && currentField.getID() == field.getID())
+                    {
+                        currentField = null;
+                    }
+                }
+                else
+                {
+                    scarecrow.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
+                    getColony().getWorld().markBlockForUpdate(scarecrow.getPos());
+                    field.setInventoryField(scarecrow.getInventoryField());
+                    if (currentField != null && currentField.getID() == field.getID())
+                    {
+                        currentField.setInventoryField(scarecrow.getInventoryField());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Resets the fields to need work again.
+     */
+    public void resetFields()
+    {
+        for (final Field field : farmerFields)
+        {
+            field.setNeedsWork(true);
+            field.calculateSize(getColony().getWorld(), field.getLocation().down());
+        }
+    }
+
+    /**
+     * Getter for the assign manually.
+     *
+     * @return true if he should.
+     */
+    public boolean assignManually()
+    {
+        return assignManually;
+    }
+
+    /**
      * Method called to free a field.
+     *
      * @param position id of the field.
      */
     public void freeField(BlockPos position)
@@ -348,7 +358,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         //Get the field with matching id, if none found return null.
         final Field tempField = farmerFields.stream().filter(field -> field.getID().equals(position)).findFirst().orElse(null);
 
-        if(tempField != null)
+        if (tempField != null)
         {
             farmerFields.remove(tempField);
             Field field = getColony().getField(position);
@@ -362,6 +372,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Method called to assign a field to the farmer.
+     *
      * @param position id of the field.
      */
     public void assignField(BlockPos position)
@@ -374,6 +385,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     /**
      * Switches the assignManually of the farmer.
+     *
      * @param assignManually true if assignment should be manual.
      */
     public void setAssignManually(final boolean assignManually)
@@ -429,12 +441,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
             super.deserialize(buf);
             assignFieldManually = buf.readBoolean();
             final int size = buf.readInt();
-            for(int i = 1; i <= size; i++)
+            for (int i = 1; i <= size; i++)
             {
                 final FieldView fieldView = new FieldView();
                 fieldView.deserialize(buf);
                 fields.add(fieldView);
-                if(fieldView.isTaken())
+                if (fieldView.isTaken())
                 {
                     amountOfFields++;
                 }
@@ -444,6 +456,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         /**
          * Should the farmer be assigned manually to the fields?
+         *
          * @return true if yes.
          */
         public boolean assignFieldManually()
@@ -453,6 +466,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         /**
          * Getter of the fields list.
+         *
          * @return an unmodifiable List.
          */
         public List<FieldView> getFields()
@@ -462,6 +476,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         /**
          * Getter of the worker name.
+         *
          * @return the name of the worker.
          */
         public String getWorkerName()
@@ -471,6 +486,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         /**
          * Getter for amount of fields.
+         *
          * @return the amount of fields.
          */
         public int getAmountOfFields()
@@ -480,6 +496,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         /**
          * Sets the assignedFieldManually in the view.
+         *
          * @param assignFieldManually variable to set.
          */
         public void setAssignFieldManually(final boolean assignFieldManually)
@@ -493,7 +510,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             MineColonies.getNetwork().sendToServer(new AssignFieldMessage(this, addNewField, id));
             fields.get(row).setTaken(addNewField);
 
-            if(addNewField)
+            if (addNewField)
             {
                 fields.get(row).setOwner(workerName);
                 amountOfFields++;
@@ -503,7 +520,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 fields.get(row).setOwner("");
                 amountOfFields--;
             }
-
         }
     }
 }

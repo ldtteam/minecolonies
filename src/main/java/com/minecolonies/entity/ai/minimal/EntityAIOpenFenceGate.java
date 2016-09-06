@@ -80,6 +80,16 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     }
 
     /**
+     * Updates the task.
+     */
+    @Override
+    public void updateTask()
+    {
+        --this.closeDoorTemporisation;
+        super.updateTask();
+    }
+
+    /**
      * Reset the action
      */
     @Override
@@ -89,16 +99,6 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
         {
             toggleDoor(false);
         }
-    }
-
-    /**
-     * Updates the task.
-     */
-    @Override
-    public void updateTask()
-    {
-        --this.closeDoorTemporisation;
-        super.updateTask();
     }
 }
 

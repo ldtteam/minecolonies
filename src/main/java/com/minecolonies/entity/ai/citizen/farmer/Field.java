@@ -189,10 +189,10 @@ public class Field extends Container
     /**
      * Creates an instance of our field container, this may be serve to open the GUI.
      *
-     * @param scarecrowTileEntity       the tileEntity of the field containing the inventory.
-     * @param playerInventory the player inventory.
-     * @param world           the world.
-     * @param location        the position of the field.
+     * @param scarecrowTileEntity the tileEntity of the field containing the inventory.
+     * @param playerInventory     the player inventory.
+     * @param world               the world.
+     * @param location            the position of the field.
      */
     public Field(ScarecrowTileEntity scarecrowTileEntity, InventoryPlayer playerInventory, World world, BlockPos location)
     {
@@ -211,10 +211,10 @@ public class Field extends Container
             for (int j = 0; j < PLAYER_INVENTORY_COLUMNS; j++)
             {
                 addSlotToContainer(new Slot(
-                        playerInventory,
-                        j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
-                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH
+                                             playerInventory,
+                                             j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
+                                             PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                                             PLAYER_INVENTORY_INITIAL_Y_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -222,18 +222,12 @@ public class Field extends Container
         for (i = 0; i < PLAYER_INVENTORY_COLUMNS; i++)
         {
             addSlotToContainer(new Slot(
-                    playerInventory, i,
-                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                    PLAYER_INVENTORY_HOTBAR_OFFSET
+                                         playerInventory, i,
+                                         PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                                         PLAYER_INVENTORY_HOTBAR_OFFSET
             ));
         }
         calculateSize(world, location.down());
-    }
-
-    @Override
-    protected final Slot addSlotToContainer(final Slot slotToAdd)
-    {
-        return super.addSlotToContainer(slotToAdd);
     }
 
     /**
@@ -281,6 +275,12 @@ public class Field extends Container
     }
 
     @Override
+    protected final Slot addSlotToContainer(final Slot slotToAdd)
+    {
+        return super.addSlotToContainer(slotToAdd);
+    }
+
+    @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex)
     {
         if (slotIndex == 0)
@@ -323,7 +323,7 @@ public class Field extends Container
 
     /**
      * Calculates recursively the length of the field until a certain point.
-     *
+     * <p>
      * This mutates the field!
      *
      * @param position the start position.
@@ -544,12 +544,23 @@ public class Field extends Container
     }
 
     /**
+     * Getter of the owner of the field.
+     *
+     * @return the string description of the citizen.
+     */
+    public String getOwner()
+    {
+        return owner;
+    }
+
+    /**
      * Sets the owner of the field.
+     *
      * @param owner the name of the citizen.
      */
     public void setOwner(final String owner)
     {
-        if(owner.isEmpty())
+        if (owner.isEmpty())
         {
             this.inventory.setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         }
@@ -561,16 +572,8 @@ public class Field extends Container
     }
 
     /**
-     * Getter of the owner of the field.
-     * @return the string description of the citizen.
-     */
-    public String getOwner()
-    {
-        return owner;
-    }
-
-    /**
      * Setter for a custom description of the inventory.
+     *
      * @param customName the name to set.
      */
     public void setCustomName(final String customName)

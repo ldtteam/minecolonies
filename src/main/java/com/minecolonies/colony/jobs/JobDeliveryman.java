@@ -20,6 +20,16 @@ public class JobDeliveryman extends AbstractJob
     }
 
     @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        if (compound.hasKey(TAG_DESTINATION))
+        {
+            destination = BlockPosUtil.readFromNBT(compound, TAG_DESTINATION);
+        }
+    }
+
+    @Override
     public String getName()
     {
         return "com.minecolonies.job.Deliveryman";
@@ -35,26 +45,10 @@ public class JobDeliveryman extends AbstractJob
     public void writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if(hasDestination())
+        if (hasDestination())
         {
             BlockPosUtil.writeToNBT(compound, TAG_DESTINATION, destination);
         }
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        if(compound.hasKey(TAG_DESTINATION))
-        {
-            destination = BlockPosUtil.readFromNBT(compound, TAG_DESTINATION);
-        }
-    }
-
-    public boolean isNeeded()
-    {
-        Colony colony = getCitizen().getColony();
-        return colony != null && !colony.getDeliverymanRequired().isEmpty();
     }
 
     /**
@@ -76,6 +70,12 @@ public class JobDeliveryman extends AbstractJob
     public boolean hasDestination()
     {
         return destination != null;
+    }
+
+    public boolean isNeeded()
+    {
+        Colony colony = getCitizen().getColony();
+        return colony != null && !colony.getDeliverymanRequired().isEmpty();
     }
 
     /**

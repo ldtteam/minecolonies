@@ -47,10 +47,10 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
     /**
      * Creates object for the player to hire or fire a citizen.
      *
-     * @param building  view of the building to read data from
+     * @param building        view of the building to read data from
      * @param workOrderId     the workOrderId.
      * @param removeWorkOrder remove the workOrder?
-     * @param priority the new priority.
+     * @param priority        the new priority.
      */
     public WorkOrderChangeMessage(AbstractBuilding.View building, int workOrderId, boolean removeWorkOrder, int priority)
     {
@@ -58,20 +58,6 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
         this.workOrderId = workOrderId;
         this.removeWorkOrder = removeWorkOrder;
         this.priority = priority;
-    }
-
-    /**
-     * Transformation to a byteStream.
-     *
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        buf.writeInt(workOrderId);
-        buf.writeInt(priority);
-        buf.writeBoolean(removeWorkOrder);
     }
 
     /**
@@ -89,6 +75,20 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
     }
 
     /**
+     * Transformation to a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        buf.writeInt(workOrderId);
+        buf.writeInt(priority);
+        buf.writeBoolean(removeWorkOrder);
+    }
+
+    /**
      * Called when a message has been received.
      *
      * @param message the message.
@@ -102,7 +102,7 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
         if (colony != null && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
         {
             //Verify player has permission to do edit permissions
-            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
             {
                 return null;
             }

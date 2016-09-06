@@ -18,22 +18,22 @@ import java.util.Objects;
  */
 public final class Utils
 {
-    public static final String PICKAXE = "pickaxe";
-    public static final String SHOVEL  = "shovel";
-    public static final String AXE     = "axe";
-    public static final String HOE     = "hoe";
+    public static final  String PICKAXE            = "pickaxe";
+    public static final  String SHOVEL             = "shovel";
+    public static final  String AXE                = "axe";
+    public static final  String HOE                = "hoe";
     /**
      * Minecraft id for sound events
      */
-    private static final int SOUND_EVENT_ID     = 2001;
+    private static final int    SOUND_EVENT_ID     = 2001;
     /**
      * How much we have to bitshift to get metadata in
      */
-    private static final int METADATA_BITSHIFT  = 12;
+    private static final int    METADATA_BITSHIFT  = 12;
     /**
      * The compound id for fortune enchantment
      */
-    private static final int FORTUNE_ENCHANT_ID = 35;
+    private static final int    FORTUNE_ENCHANT_ID = 35;
 
     /**
      * Private constructor to hide the implicit public one
@@ -58,7 +58,7 @@ public final class Utils
     public static BlockPos scanForBlockNearPoint(@NotNull World world, @NotNull BlockPos point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
     {
         @Nullable BlockPos closestCoords = null;
-        double           minDistance   = Double.MAX_VALUE;
+        double minDistance = Double.MAX_VALUE;
 
         for (int i = point.getX() - radiusX; i <= point.getX() + radiusX; i++)
         {
@@ -170,9 +170,9 @@ public final class Utils
             yHolder++;
         }
         while (!world.getBlockState(new BlockPos(x, yHolder, z)).getBlock().isOpaqueCube() ||
-               arrayContains(
-                       new Block[]{Blocks.air, Blocks.leaves, Blocks.leaves2}
-                       , world.getBlockState(new BlockPos(x, yHolder, z)).getBlock()))
+                 arrayContains(
+                   new Block[] {Blocks.air, Blocks.leaves, Blocks.leaves2}
+                   , world.getBlockState(new BlockPos(x, yHolder, z)).getBlock()))
         {
             yHolder--;
         }
@@ -270,7 +270,7 @@ public final class Utils
      */
     public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata)
     {
-        world.playAuxSFX(SOUND_EVENT_ID, pos , Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
+        world.playAuxSFX(SOUND_EVENT_ID, pos, Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
     }
 
     /**
@@ -307,7 +307,6 @@ public final class Utils
         {
             //Code to not overuse on high level pickaxes
             return level >= 0 && level <= 1;
-
         }
         return level >= minlevel;
     }
@@ -346,17 +345,6 @@ public final class Utils
     }
 
     /**
-     * Checks if this ItemStack can be used as an Axe.
-     *
-     * @param itemStack Item to check
-     * @return True if item is axe, otherwise false
-     */
-    public static boolean isAxe(@Nullable ItemStack itemStack)
-    {
-        return isTool(itemStack, AXE);
-    }
-
-    /**
      * Checks if this ItemStack can be used as a Tool of type.
      *
      * @param itemStack Item to check
@@ -365,7 +353,7 @@ public final class Utils
      */
     public static boolean isTool(@Nullable ItemStack itemStack, String toolType)
     {
-        return getMiningLevel(itemStack, toolType) >= 0 || (itemStack != null && itemStack.getItem() instanceof ItemHoe && "hoe".equals(toolType)) ;
+        return getMiningLevel(itemStack, toolType) >= 0 || (itemStack != null && itemStack.getItem() instanceof ItemHoe && "hoe".equals(toolType));
     }
 
     /**
@@ -387,6 +375,17 @@ public final class Utils
             return -1;
         }
         return stack.getItem().getHarvestLevel(stack, tool);
+    }
+
+    /**
+     * Checks if this ItemStack can be used as an Axe.
+     *
+     * @param itemStack Item to check
+     * @return True if item is axe, otherwise false
+     */
+    public static boolean isAxe(@Nullable ItemStack itemStack)
+    {
+        return isTool(itemStack, AXE);
     }
 
     /**

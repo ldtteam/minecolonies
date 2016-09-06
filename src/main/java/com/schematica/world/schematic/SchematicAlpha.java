@@ -207,7 +207,7 @@ class SchematicAlpha extends SchematicFormat
                     final IBlockState blockState = schematic.getBlockState(tePos);
                     final Block block = blockState.getBlock();
                     Reference.logger.error("Block {}[{}] with TileEntity {} failed to save! Replacing with bedrock...",
-                            block, block != null ? BLOCK_REGISTRY.getNameForObject(block) : "?", tileEntity.getClass().getName(), e);
+                      block, block != null ? BLOCK_REGISTRY.getNameForObject(block) : "?", tileEntity.getClass().getName(), e);
                 }
                 localBlocks[index] = (byte) BLOCK_REGISTRY.getId(Blocks.bedrock);
                 localMetadata[index] = 0;
@@ -265,6 +265,5 @@ class SchematicAlpha extends SchematicFormat
         tagCompound.setShort(OFFSET_X, (short) schematic.getOffset().getX());
         tagCompound.setShort(OFFSET_Y, (short) schematic.getOffset().getY());
         tagCompound.setShort(OFFSET_Z, (short) schematic.getOffset().getZ());
-
     }
 }

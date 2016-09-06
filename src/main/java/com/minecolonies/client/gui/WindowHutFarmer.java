@@ -14,7 +14,7 @@ import com.minecolonies.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,7 +36,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Tag of the pages view.
      */
-    private static final String VIEW_PAGES       = "pages";
+    private static final String VIEW_PAGES = "pages";
 
     /**
      * Resource suffix of the GUI.
@@ -46,32 +46,32 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Id of the the fields page inside the GUI.
      */
-    private static final String PAGE_FIELDS                = "pageFields";
+    private static final String PAGE_FIELDS = "pageFields";
 
     /**
      * Id of the the fields list inside the GUI.
      */
-    private static final String LIST_FIELDS                = "fields";
+    private static final String LIST_FIELDS = "fields";
 
     /**
      * Id of the the worker label inside the GUI.
      */
-    private static final String TAG_WORKER                 = "worker";
+    private static final String TAG_WORKER = "worker";
 
     /**
      * Id of the the distance label inside the GUI.
      */
-    private static final String TAG_DISTANCE               = "dist";
+    private static final String TAG_DISTANCE = "dist";
 
     /**
      * Id of the the direction label inside the GUI.
      */
-    private static final String TAG_DIRECTION              = "dir";
+    private static final String TAG_DIRECTION = "dir";
 
     /**
      * Id of the the assign button inside the GUI.
      */
-    private static final String TAG_BUTTON_ASSIGN       = "assignFarm";
+    private static final String TAG_BUTTON_ASSIGN = "assignFarm";
 
     /**
      * Id of the the assignmentMode button inside the GUI.
@@ -91,7 +91,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Id of the icon inside the GUI.
      */
-    private static final String TAG_ICON         = "icon";
+    private static final String TAG_ICON = "icon";
 
     /**
      * Button leading to the previous page.
@@ -111,7 +111,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * ScrollList with the fields.
      */
-    private ScrollingList   fieldList;
+    private ScrollingList fieldList;
 
     /**
      * Constructor for the window of the farmer
@@ -129,6 +129,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
     /**
      * Fired when assign has been clicked in the field list.
+     *
      * @param button clicked button.
      */
     private void assignClicked(Button button)
@@ -153,12 +154,21 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     }
 
     /**
+     * Retrieve levels from the building to display in GUI
+     */
+    private void pullLevelsFromHut()
+    {
+        fields = building.getFields();
+    }
+
+    /**
      * Fired when the assignment mode has been toggled.
+     *
      * @param button clicked button.
      */
     private void assignmentModeClicked(Button button)
     {
-        if(button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
+        if (button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
         {
             button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
             building.setAssignFieldManually(true);
@@ -177,20 +187,12 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         return "tile.minecolonies.blockHutFarmer.name";
     }
 
-    /**
-     * Retrieve levels from the building to display in GUI
-     */
-    private void pullLevelsFromHut()
-    {
-        fields = building.getFields();
-    }
-
     @Override
     public void onOpened()
     {
         super.onOpened();
 
-        if(building.assignFieldManually())
+        if (building.assignFieldManually())
         {
             findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
         }
@@ -216,16 +218,16 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             public void updateElement(int index, Pane rowPane)
             {
                 final FieldView field = fields.get(index);
-                final String distance = Integer.toString((int)Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
+                final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
                 final String direction = calcDirection(building.getLocation(), field.getId());
                 final String owner = field.getOwner().isEmpty() ? ("<" + LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
 
                 rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
-                rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance  + "m");
+                rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance + "m");
 
                 rowPane.findPaneOfTypeByID(TAG_DIRECTION, Label.class).setLabelText(direction);
 
-                if(building.assignFieldManually())
+                if (building.assignFieldManually())
                 {
                     rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).enable();
                 }
@@ -241,7 +243,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 else
                 {
                     rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).setLabel(APPROVE);
-                    if(building.getBuildingLevel() <= building.getAmountOfFields())
+                    if (building.getBuildingLevel() <= building.getAmountOfFields())
                     {
                         rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).disable();
                     }
@@ -251,9 +253,9 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                     }
                 }
 
-                if(field.getItem() != null)
+                if (field.getItem() != null)
                 {
-                    rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(new ItemStack(field.getItem(),1));
+                    rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(new ItemStack(field.getItem(), 1));
                 }
             }
         });
@@ -261,28 +263,29 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
     /**
      * Calculates the direction the field is from the building.
+     *
      * @param building the building
-     * @param field the field.
+     * @param field    the field.
      * @return a string describing the direction.
      */
     private String calcDirection(BlockPos building, BlockPos field)
     {
         String dist = "";
 
-        if(field.getZ() > building.getZ()+1)
+        if (field.getZ() > building.getZ() + 1)
         {
             dist = LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.South");
         }
-        else if(field.getZ() < building.getZ()-1)
+        else if (field.getZ() < building.getZ() - 1)
         {
             dist = LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.North");
         }
 
-        if(field.getX() > building.getX()+1)
+        if (field.getX() > building.getX() + 1)
         {
             dist += LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.East");
         }
-        else if(field.getX() < building.getX()-1)
+        else if (field.getX() < building.getX() - 1)
         {
             dist += LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.West");
         }
@@ -304,8 +307,8 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Action performed when previous button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void prevClicked(Button ignored)
     {
@@ -317,8 +320,8 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Action performed when next button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void nextClicked(Button ignored)
     {

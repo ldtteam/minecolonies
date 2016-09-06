@@ -24,16 +24,13 @@ import java.util.concurrent.*;
  */
 public final class Pathfinding
 {
-    private static ThreadPoolExecutor executor;
     private static final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
-
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
-
+    private static ThreadPoolExecutor executor;
     static
     {
         executor = new ThreadPoolExecutor(1, Configurations.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);
     }
-
     private Pathfinding()
     {
         //Hides default constructor.
@@ -48,6 +45,74 @@ public final class Pathfinding
     public static Future<PathEntity> enqueue(AbstractPathJob job)
     {
         return executor.submit(job);
+    }
+
+    /**
+     * Render debugging information for the pathfinding system.
+     *
+     * @param frame entity movement weight.
+     */
+    @SideOnly(Side.CLIENT)
+    public static void debugDraw(double frame)
+    {
+        if (AbstractPathJob.lastDebugNodesNotVisited == null)
+        {
+            return;
+        }
+
+        Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+        double dx = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
+        double dy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
+        double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
+
+        GL11.glPushMatrix();
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+        GL11.glTranslated(-dx, -dy, -dz);
+
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glEnable(GL11.GL_CULL_FACE);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+
+        Set<Node> debugNodesNotVisited;
+        Set<Node> debugNodesVisited;
+        Set<Node> debugNodesPath;
+
+        synchronized (AbstractPathJob.debugNodeMonitor)
+        {
+            debugNodesNotVisited = AbstractPathJob.lastDebugNodesNotVisited;
+            debugNodesVisited = AbstractPathJob.lastDebugNodesVisited;
+            debugNodesPath = AbstractPathJob.lastDebugNodesPath;
+        }
+
+        try
+        {
+            for (Node n : debugNodesNotVisited)
+            {
+                debugDrawNode(n, (byte) 255, (byte) 0, (byte) 0);
+            }
+
+            for (Node n : debugNodesVisited)
+            {
+                debugDrawNode(n, (byte) 0, (byte) 0, (byte) 255);
+            }
+
+            if (debugNodesPath != null)
+            {
+                for (Node n : debugNodesPath)
+                {
+                    debugDrawNode(n, (byte) 0, (byte) 255, (byte) 0);
+                }
+            }
+        }
+        catch (ConcurrentModificationException exc)
+        {
+            Log.logger.catching(exc);
+        }
+
+        GL11.glPopAttrib();
+        GL11.glPopMatrix();
     }
 
     @SideOnly(Side.CLIENT)
@@ -65,7 +130,7 @@ public final class Pathfinding
         double dx = n.pos.getX() - entity.posX;
         double dy = n.pos.getY() - entity.posY;
         double dz = n.pos.getZ() - entity.posZ;
-        if (Math.sqrt(dx*dx + dy*dy + dz*dz) <= 5D)
+        if (Math.sqrt(dx * dx + dy * dy + dz * dz) <= 5D)
         {
             renderDebugText(n, f1);
         }
@@ -150,7 +215,7 @@ public final class Pathfinding
         GL11.glTranslatef(0.0F, (float) (0.25D / f1), 0.0F);
         GL11.glDepthMask(false);
 
-        Tessellator tessellator   = Tessellator.getInstance();
+        Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
 
@@ -173,73 +238,5 @@ public final class Pathfinding
         fontrenderer.drawString(s2, -fontrenderer.getStringWidth(s2) / 2, 0, 553648127);
         GL11.glPopMatrix();
         GL11.glPopAttrib();
-    }
-
-    /**
-     * Render debugging information for the pathfinding system.
-     *
-     * @param frame entity movement weight.
-     */
-    @SideOnly(Side.CLIENT)
-    public static void debugDraw(double frame)
-    {
-        if (AbstractPathJob.lastDebugNodesNotVisited == null)
-        {
-            return;
-        }
-
-        Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
-        double dx = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
-        double dy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
-        double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
-
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-        GL11.glTranslated(-dx, -dy, -dz);
-
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-
-        Set<Node> debugNodesNotVisited;
-        Set<Node> debugNodesVisited;
-        Set<Node> debugNodesPath;
-
-        synchronized (AbstractPathJob.debugNodeMonitor)
-        {
-            debugNodesNotVisited = AbstractPathJob.lastDebugNodesNotVisited;
-            debugNodesVisited = AbstractPathJob.lastDebugNodesVisited;
-            debugNodesPath = AbstractPathJob.lastDebugNodesPath;
-        }
-
-        try
-        {
-            for (Node n : debugNodesNotVisited)
-            {
-                debugDrawNode(n, (byte) 255, (byte) 0, (byte) 0);
-            }
-
-            for (Node n : debugNodesVisited)
-            {
-                debugDrawNode(n, (byte) 0, (byte) 0, (byte) 255);
-            }
-
-            if (debugNodesPath != null)
-            {
-                for (Node n : debugNodesPath)
-                {
-                    debugDrawNode(n, (byte) 0, (byte) 255, (byte) 0);
-                }
-            }
-        }
-        catch (ConcurrentModificationException exc)
-        {
-            Log.logger.catching(exc);
-        }
-
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
     }
 }

@@ -45,19 +45,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      */
     public abstract AbstractJob createJob(CitizenData citizen);
 
-    @Override
-    public void onDestroyed()
-    {
-        if (hasWorker())
-        {
-            // EntityCitizen will detect the workplace is gone and fix up it's
-            // Entity properly
-            removeCitizen(worker);
-        }
-
-        super.onDestroyed();
-    }
-
     /**
      * Returns the worker of the current building.
      *
@@ -69,13 +56,32 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * Returns whether or not the building has a worker.
+     * Set the worker of the current building.
      *
-     * @return true if building has worker, otherwise false.
+     * @param citizen {@link CitizenData} of the worker
      */
-    public boolean hasWorker()
+    public void setWorker(CitizenData citizen)
     {
-        return worker != null;
+        if (worker == citizen)
+        {
+            return;
+        }
+
+        // If we have a worker, it no longer works here
+        if (worker != null)
+        {
+            worker.setWorkBuilding(null);
+        }
+
+        worker = citizen;
+
+        // If we set a worker, inform it of such
+        if (worker != null)
+        {
+            worker.setWorkBuilding(this);
+        }
+
+        markDirty();
     }
 
     /**
@@ -120,42 +126,27 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
     }
 
-    /**
-     * Set the worker of the current building.
-     *
-     * @param citizen {@link CitizenData} of the worker
-     */
-    public void setWorker(CitizenData citizen)
+    @Override
+    public void onDestroyed()
     {
-        if (worker == citizen)
+        if (hasWorker())
         {
-            return;
+            // EntityCitizen will detect the workplace is gone and fix up it's
+            // Entity properly
+            removeCitizen(worker);
         }
 
-        // If we have a worker, it no longer works here
-        if (worker != null)
-        {
-            worker.setWorkBuilding(null);
-        }
-
-        worker = citizen;
-
-        // If we set a worker, inform it of such
-        if (worker != null)
-        {
-            worker.setWorkBuilding(this);
-        }
-
-        markDirty();
+        super.onDestroyed();
     }
 
-    @Override
-    public void removeCitizen(CitizenData citizen)
+    /**
+     * Returns whether or not the building has a worker.
+     *
+     * @return true if building has worker, otherwise false.
+     */
+    public boolean hasWorker()
     {
-        if (isWorker(citizen))
-        {
-            setWorker(null);
-        }
+        return worker != null;
     }
 
     /**
@@ -167,6 +158,15 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public boolean isWorker(CitizenData citizen)
     {
         return citizen == worker;
+    }
+
+    @Override
+    public void removeCitizen(CitizenData citizen)
+    {
+        if (isWorker(citizen))
+        {
+            setWorker(null);
+        }
     }
 
     /**
@@ -185,15 +185,22 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         // If we have no active worker, grab one from the Colony
         // TODO Maybe the Colony should assign jobs out, instead?
         if (!hasWorker() && (getBuildingLevel() > 0 || this instanceof BuildingBuilder)
-                && !this.getColony().isManualHiring())
+              && !this.getColony().isManualHiring())
         {
             final CitizenData joblessCitizen = getColony().getJoblessCitizen();
             if (joblessCitizen != null)
             {
                 setWorker(joblessCitizen);
             }
-
         }
+    }
+
+    @Override
+    public void serializeToView(ByteBuf buf)
+    {
+        super.serializeToView(buf);
+
+        buf.writeInt(worker == null ? 0 : worker.getId());
     }
 
     /**
@@ -242,13 +249,4 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             workerId = buf.readInt();
         }
     }
-
-    @Override
-    public void serializeToView(ByteBuf buf)
-    {
-        super.serializeToView(buf);
-
-        buf.writeInt(worker == null ? 0 : worker.getId());
-    }
-
 }

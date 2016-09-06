@@ -90,7 +90,7 @@ public class EntityAIGateInteract extends EntityAIBase
     private boolean checkPathEntity()
     {
         PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
-        PathEntity         pathentity         = pathnavigateground.getPath();
+        PathEntity pathentity = pathnavigateground.getPath();
         return pathentity != null && !pathentity.isFinished() && pathnavigateground.getEnterDoors() && checkFenceGate(pathentity);
     }
 
@@ -172,7 +172,7 @@ public class EntityAIGateInteract extends EntityAIBase
     {
         double entityDistX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.posX;
         double entityDistZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.posZ;
-        double totalDist   = this.entityPositionX * entityDistX + this.entityPositionZ * entityDistZ;
+        double totalDist = this.entityPositionX * entityDistX + this.entityPositionZ * entityDistZ;
         if (totalDist < 0.0D)
         {
             this.hasStoppedFenceInteraction = true;

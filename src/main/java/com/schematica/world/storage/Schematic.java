@@ -19,19 +19,16 @@ import java.util.List;
 
 public class Schematic implements ISchematic
 {
-    private static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
+    private static final ItemStack                              DEFAULT_ICON   = new ItemStack(Blocks.grass);
     private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
-
-    private ItemStack icon;
     private final short[][][] blocks;
-    private final byte[][][] metadata;
+    private final byte[][][]  metadata;
     private final List<TileEntity> tileEntities = new ArrayList<>();
-    private final List<Entity> entities = new ArrayList<>();
+    private final List<Entity>     entities     = new ArrayList<>();
     private final int width;
     private final int height;
     private final int length;
-
-
+    private       ItemStack   icon;
     private BlockPos offset;
 
     public Schematic(final ItemStack icon, final int width, final int height, final int length)
@@ -59,11 +56,6 @@ public class Schematic implements ISchematic
         offset = pos;
     }
 
-    private boolean hasOffset()
-    {
-        return !BlockPosUtil.isEqual(offset, 0, 0, 0);
-    }
-
     public String getType()
     {
         if (hasOffset())
@@ -71,6 +63,11 @@ public class Schematic implements ISchematic
             return "Hut";
         }
         return "Decoration";
+    }
+
+    private boolean hasOffset()
+    {
+        return !BlockPosUtil.isEqual(offset, 0, 0, 0);
     }
 
     //MINECOLONIES END

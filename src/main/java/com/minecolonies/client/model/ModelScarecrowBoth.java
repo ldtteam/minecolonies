@@ -23,12 +23,12 @@ public class ModelScarecrowBoth extends ModelBase
     ModelRenderer RightArm;
     ModelRenderer RightLeg;
     ModelRenderer LeftLeg;
-    
+
     public ModelScarecrowBoth()
     {
         textureWidth = 128;
         textureHeight = 64;
-        
+
         Head = new ModelRenderer(this, 0, 0);
         Head.addBox(-8.2F, -35.6F, -4.2F, 8, 8, 8);
         Head.setRotationPoint(7F, 24F, -1F);
@@ -96,7 +96,14 @@ public class ModelScarecrowBoth extends ModelBase
         LeftLeg.mirror = true;
         setRotation(LeftLeg, 0F, 0F, -0.0872665F);
     }
-    
+
+    private void setRotation(ModelRenderer model, float x, float y, float z)
+    {
+        model.rotateAngleX = x;
+        model.rotateAngleY = y;
+        model.rotateAngleZ = z;
+    }
+
     public void render(float scaleFactor)
     {
         Head.render(scaleFactor);
@@ -110,12 +117,5 @@ public class ModelScarecrowBoth extends ModelBase
         RightArm.render(scaleFactor);
         RightLeg.render(scaleFactor);
         LeftLeg.render(scaleFactor);
-    }
-    
-    private void setRotation(ModelRenderer model, float x, float y, float z)
-    {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
     }
 }

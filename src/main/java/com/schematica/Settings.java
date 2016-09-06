@@ -17,33 +17,18 @@ public final class Settings
      * Single instance of this class.
      */
     public static final Settings instance = new Settings();
-
-    private boolean inHutMode = true;
-
-    private SchematicWorld schematic = null;
-
     private final BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
-
-    private int rotation = 0;
-    private String hutDec = "";
-    private String style = "";
-    private int level = 0;
+    private boolean inHutMode = true;
+    private SchematicWorld schematic = null;
+    private int    rotation = 0;
+    private String hutDec   = "";
+    private String style    = "";
+    private int    level    = 0;
 
     private boolean isPendingReset = false;
 
     private Settings()
     {
-    }
-
-    /**
-     * Reset the schematic rendering.
-     */
-    public void reset()
-    {
-        schematic = null;
-        RenderSchematic.INSTANCE.setWorldAndLoadRenderers(null);
-
-        isPendingReset = false;
     }
 
     /**
@@ -60,6 +45,15 @@ public final class Settings
 
         BlockPosUtil.set(offset, pos.subtract(schematic.getSchematic().getOffset()));
         BlockPosUtil.set(schematic.position, offset);
+    }
+
+    /**
+     * @return The schematic we are currently rendering.
+     */
+    @Nullable
+    public Schematic getActiveSchematic()
+    {
+        return this.schematic == null ? null : this.schematic.getSchematic();
     }
 
     /**
@@ -83,12 +77,14 @@ public final class Settings
     }
 
     /**
-     * @return The schematic we are currently rendering.
+     * Reset the schematic rendering.
      */
-    @Nullable
-    public Schematic getActiveSchematic()
+    public void reset()
     {
-        return this.schematic == null ? null : this.schematic.getSchematic();
+        schematic = null;
+        RenderSchematic.INSTANCE.setWorldAndLoadRenderers(null);
+
+        isPendingReset = false;
     }
 
     /**

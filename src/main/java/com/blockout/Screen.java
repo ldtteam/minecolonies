@@ -12,11 +12,10 @@ import org.lwjgl.input.Keyboard;
  */
 public class Screen extends GuiScreen
 {
+    protected static int scale = 0;
     protected Window window;
     protected int x = 0;
     protected int y = 0;
-
-    protected static int scale = 0;
 
     /**
      * Create a GuiScreen from a BlockOut window.
@@ -28,15 +27,15 @@ public class Screen extends GuiScreen
         window = w;
     }
 
+    public static int getScale()
+    {
+        return scale;
+    }
+
     private static void setScale(Minecraft mc)
     {
         //Seems to work without the sides now
         scale = new ScaledResolution(mc).getScaleFactor();
-    }
-
-    public static int getScale()
-    {
-        return scale;
     }
 
     @Override
@@ -56,19 +55,9 @@ public class Screen extends GuiScreen
     }
 
     @Override
-    public void initGui()
+    protected void keyTyped(char ch, int key)
     {
-        x = (width - window.getWidth()) / 2;
-        y = (height - window.getHeight()) / 2;
-
-        Keyboard.enableRepeatEvents(true);
-        window.onOpened();
-    }
-
-    @Override
-    public boolean doesGuiPauseGame()
-    {
-        return window.doesWindowPauseGame();
+        window.onKeyTyped(ch, key);
     }
 
     @Override
@@ -98,9 +87,13 @@ public class Screen extends GuiScreen
     }
 
     @Override
-    protected void keyTyped(char ch, int key)
+    public void initGui()
     {
-        window.onKeyTyped(ch, key);
+        x = (width - window.getWidth()) / 2;
+        y = (height - window.getHeight()) / 2;
+
+        Keyboard.enableRepeatEvents(true);
+        window.onOpened();
     }
 
     @Override
@@ -120,5 +113,11 @@ public class Screen extends GuiScreen
         window.onClosed();
         Window.clearFocus();
         Keyboard.enableRepeatEvents(false);
+    }
+
+    @Override
+    public boolean doesGuiPauseGame()
+    {
+        return window.doesWindowPauseGame();
     }
 }

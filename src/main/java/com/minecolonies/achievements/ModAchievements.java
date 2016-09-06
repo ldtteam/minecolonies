@@ -38,68 +38,83 @@ public final class ModAchievements
      * Use the building tool.
      */
     public static final Achievement achievementWandOfbuilding = new MineColoniesAchievement("wandofbuilding", "wandofbuilding", 0, -2, ModItems.buildTool, null)
-            .registerStat();
+                                                                  .registerStat();
 
     /**
      * Place a townhall.
      */
     public static final Achievement achievementBuildingTownhall = new MineColoniesAchievement("townhall", "townhall", -2, 0, ModBlocks.blockHutTownHall, achievementGetSupply)
-            .registerStat();
+                                                                    .registerStat();
 
     /**
      * Upgrade a builder to lv 1.
      */
     public static final Achievement achievementBuildingBuilder   = new MineColoniesAchievement("upgrade.builder.first", "upgrade.builder.first", 0, 1, ModBlocks.blockHutBuilder,
-            achievementBuildingTownhall).registerStat();
+                                                                                                achievementBuildingTownhall).registerStat();
     /**
      * Max out a builder.
      */
     public static final Achievement achievementUpgradeBuilderMax = new MineColoniesAchievement("upgrade.builder.max", "upgrade.builder.max", 2, 1, ModBlocks.blockHutBuilder,
-            achievementBuildingBuilder).registerStat();
+                                                                                                achievementBuildingBuilder).registerStat();
 
     /**
      * Upgrade a builder to lv 1.
      */
-    public static final Achievement achievementBuildingColonist   = new MineColoniesAchievement("upgrade.colonist.first", "upgrade.colonist.first", 0, 2, ModBlocks
-            .blockHutCitizen, achievementGetSupply).registerStat();
+    public static final Achievement achievementBuildingColonist   = new MineColoniesAchievement("upgrade.colonist.first",
+                                                                                                 "upgrade.colonist.first",
+                                                                                                 0,
+                                                                                                 2,
+                                                                                                 ModBlocks
+                                                                                                   .blockHutCitizen,
+                                                                                                 achievementGetSupply).registerStat();
     /**
      * Max out a builder.
      */
     public static final Achievement achievementUpgradeColonistMax = new MineColoniesAchievement("upgrade.colonist.max", "upgrade.colonist.max", 2, 2, ModBlocks.blockHutCitizen,
-            achievementBuildingColonist).registerStat();
+                                                                                                 achievementBuildingColonist).registerStat();
 
     /**
      * Upgrade a lumberjack to lv 1.
      */
-    public static final Achievement achievementBuildingLumberjack   = new MineColoniesAchievement("upgrade.lumberjack.first", "upgrade.lumberjack.first", 0, 3, ModBlocks
-            .blockHutLumberjack, achievementGetSupply).registerStat();
+    public static final Achievement achievementBuildingLumberjack   = new MineColoniesAchievement("upgrade.lumberjack.first",
+                                                                                                   "upgrade.lumberjack.first",
+                                                                                                   0,
+                                                                                                   3,
+                                                                                                   ModBlocks
+                                                                                                     .blockHutLumberjack,
+                                                                                                   achievementGetSupply).registerStat();
     /**
      * Max out a lumberjack.
      */
-    public static final Achievement achievementUpgradeLumberjackMax = new MineColoniesAchievement("upgrade.lumberjack.max", "upgrade.lumberjack.max", 2, 3, ModBlocks
-            .blockHutLumberjack, achievementBuildingLumberjack).registerStat();
+    public static final Achievement achievementUpgradeLumberjackMax = new MineColoniesAchievement("upgrade.lumberjack.max",
+                                                                                                   "upgrade.lumberjack.max",
+                                                                                                   2,
+                                                                                                   3,
+                                                                                                   ModBlocks
+                                                                                                     .blockHutLumberjack,
+                                                                                                   achievementBuildingLumberjack).registerStat();
 
     /**
      * Upgrade a miner to lv 1.
      */
     public static final Achievement achievementBuildingMiner   = new MineColoniesAchievement("upgrade.miner.first", "upgrade.miner.first", 0, 4, ModBlocks.blockHutMiner,
-            achievementGetSupply).registerStat();
+                                                                                              achievementGetSupply).registerStat();
     /**
      * Max out a miner.
      */
     public static final Achievement achievementUpgradeMinerMax = new MineColoniesAchievement("upgrade.miner.max", "upgrade.miner.max", 2, 4, ModBlocks.blockHutMiner,
-            achievementBuildingMiner).registerStat();
+                                                                                              achievementBuildingMiner).registerStat();
 
     /**
      * Upgrade a fisher to lv 1.
      */
     public static final Achievement achievementBuildingFisher   = new MineColoniesAchievement("upgrade.fisher.first", "upgrade.fisher.first", 0, 5, ModBlocks.blockHutFisherman,
-            achievementGetSupply).registerStat();
+                                                                                               achievementGetSupply).registerStat();
     /**
      * Max out a fisher.
      */
     public static final Achievement achievementUpgradeFisherMax = new MineColoniesAchievement("upgrade.fisher.max", "upgrade.fisher.max", 2, 5, ModBlocks.blockHutFisherman,
-            achievementBuildingFisher).registerStat();
+                                                                                               achievementBuildingFisher).registerStat();
 
     // Sizes
     /**
@@ -110,7 +125,7 @@ public final class ModAchievements
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_TOWN} citizens.
      */
     public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", "size.town", 4, -2, Items.gold_ingot, achievementSizeSettlement)
-            .registerStat();
+                                                                  .registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_CITY} citizens.
      */
@@ -121,10 +136,23 @@ public final class ModAchievements
      * The MineColonies achievement page.
      */
     private static final AchievementPage achievementPageMineColonies = new MineColoniesAchievementPage(
-            Constants.MOD_NAME,
-            achievementGetSupply, achievementWandOfbuilding, achievementBuildingTownhall, achievementBuildingBuilder, achievementBuildingColonist, achievementBuildingLumberjack,
-            achievementBuildingMiner, achievementBuildingFisher, achievementSizeSettlement, achievementSizeTown, achievementSizeCity, achievementUpgradeColonistMax,
-            achievementUpgradeBuilderMax, achievementUpgradeLumberjackMax, achievementUpgradeMinerMax, achievementUpgradeFisherMax
+                                                                                                        Constants.MOD_NAME,
+                                                                                                        achievementGetSupply,
+                                                                                                        achievementWandOfbuilding,
+                                                                                                        achievementBuildingTownhall,
+                                                                                                        achievementBuildingBuilder,
+                                                                                                        achievementBuildingColonist,
+                                                                                                        achievementBuildingLumberjack,
+                                                                                                        achievementBuildingMiner,
+                                                                                                        achievementBuildingFisher,
+                                                                                                        achievementSizeSettlement,
+                                                                                                        achievementSizeTown,
+                                                                                                        achievementSizeCity,
+                                                                                                        achievementUpgradeColonistMax,
+                                                                                                        achievementUpgradeBuilderMax,
+                                                                                                        achievementUpgradeLumberjackMax,
+                                                                                                        achievementUpgradeMinerMax,
+                                                                                                        achievementUpgradeFisherMax
     );
 
     /**
@@ -143,5 +171,4 @@ public final class ModAchievements
     {
         AchievementPage.registerAchievementPage(achievementPageMineColonies);
     }
-
 }

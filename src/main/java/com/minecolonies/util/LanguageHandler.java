@@ -25,6 +25,11 @@ public class LanguageHandler
         sendPlayerMessage(player, format(key, args));
     }
 
+    public static void sendPlayerMessage(EntityPlayer player, String message)
+    {
+        player.addChatComponentMessage(new ChatComponentText(message));
+    }
+
     /**
      * Localize a string and use String.format().
      *
@@ -61,11 +66,6 @@ public class LanguageHandler
         return "".equals(value) ? defaultValue : value;
     }
 
-    public static void sendPlayerMessage(EntityPlayer player, String message)
-    {
-        player.addChatComponentMessage(new ChatComponentText(message));
-    }
-
     /**
      * Send a localized and formatted message to multiple players
      *
@@ -80,7 +80,10 @@ public class LanguageHandler
 
     public static void sendPlayersMessage(List<EntityPlayer> players, String message)
     {
-        if (players == null || players.isEmpty()){ return; }
+        if (players == null || players.isEmpty())
+        {
+            return;
+        }
         for (EntityPlayer player : players)
         {
             sendPlayerMessage(player, message);

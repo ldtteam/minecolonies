@@ -90,7 +90,7 @@ public final class EntityUtils
      */
     public static boolean isWorkerAtSite(EntityCitizen worker, int x, int y, int z, int range)
     {
-    	return worker.getPosition().distanceSq(new Vec3i(x, y, z)) < MathUtils.square(range);
+        return worker.getPosition().distanceSq(new Vec3i(x, y, z)) < MathUtils.square(range);
     }
 
     /**
@@ -183,8 +183,8 @@ public final class EntityUtils
     public static List<Entity> getEntitiesFromID(World world, List<Integer> ids)
     {
         return ids.stream()
-                  .map(world::getEntityByID)
-                  .collect(Collectors.toList());
+                 .map(world::getEntityByID)
+                 .collect(Collectors.toList());
     }
 
     /**
@@ -236,6 +236,6 @@ public final class EntityUtils
     {
         final Material material = world.getBlockState(blockPos).getBlock().getMaterial();
         return material.isSolid()
-               || material.isLiquid();
+                 || material.isLiquid();
     }
 }

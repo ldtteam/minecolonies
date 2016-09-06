@@ -39,7 +39,6 @@ public class JobFisherman extends AbstractJob
      */
     private ArrayList<BlockPos> ponds = new ArrayList<>();
 
-
     /**
      * Initializes the job class
      *
@@ -48,6 +47,29 @@ public class JobFisherman extends AbstractJob
     public JobFisherman(CitizenData entity)
     {
         super(entity);
+    }
+
+    /**
+     * Restore the Job from an NBTTagCompound
+     *
+     * @param compound NBTTagCompound containing saved Job data
+     */
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+
+        if (compound.hasKey(TAG_WATER))
+        {
+            water = BlockPosUtil.readFromNBT(compound, TAG_WATER);
+        }
+
+        ponds = new ArrayList<>();
+        NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < listOfPonds.tagCount(); i++)
+        {
+            ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
+        }
     }
 
     /**
@@ -83,40 +105,17 @@ public class JobFisherman extends AbstractJob
         super.writeToNBT(compound);
 
         NBTTagCompound waterTag = new NBTTagCompound();
-        if(water != null)
+        if (water != null)
         {
             BlockPosUtil.writeToNBT(waterTag, TAG_WATER, water);
         }
 
         NBTTagList lakes = new NBTTagList();
-        for(BlockPos pond : ponds)
+        for (BlockPos pond : ponds)
         {
             BlockPosUtil.writeToNBTTagList(lakes, pond);
         }
         compound.setTag(TAG_PONDS, lakes);
-    }
-
-    /**
-     * Restore the Job from an NBTTagCompound
-     *
-     * @param compound NBTTagCompound containing saved Job data
-     */
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-
-        if(compound.hasKey(TAG_WATER))
-        {
-            water = BlockPosUtil.readFromNBT(compound, TAG_WATER);
-        }
-
-        ponds = new ArrayList<>();
-        NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
-        for(int i = 0; i < listOfPonds.tagCount(); i++)
-        {
-            ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
-        }
     }
 
     /**
@@ -179,6 +178,5 @@ public class JobFisherman extends AbstractJob
     {
         this.ponds.remove(pond);
     }
-
 }
 

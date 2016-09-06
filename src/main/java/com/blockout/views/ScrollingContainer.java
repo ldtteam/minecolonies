@@ -10,11 +10,11 @@ import net.minecraft.client.renderer.GlStateManager;
  */
 public class ScrollingContainer extends View
 {
-    private static final int PERCENT_90 = 90;
+    private static final int PERCENT_90   = 90;
     private static final int PERCENT_FULL = 100;
 
     protected ScrollingView owner;
-    protected int scrollY = 0;
+    protected int scrollY       = 0;
     protected int contentHeight = 0;
 
     ScrollingContainer(ScrollingView owner)
@@ -27,6 +27,57 @@ public class ScrollingContainer extends View
     {
         super.parseChildren(params);
         computeContentHeight();
+    }
+
+    /**
+     * Compute the height in pixels of the container.
+     */
+    public void computeContentHeight()
+    {
+        contentHeight = 0;
+
+        for (Pane child : children)
+        {
+            contentHeight = Math.max(contentHeight, child.getY() + child.getHeight());
+        }
+
+        //  Recompute scroll
+        setScrollY(scrollY);
+    }
+
+    public int getMaxScrollY()
+    {
+        return Math.max(0, contentHeight - getHeight());
+    }
+
+    @Override
+    public void drawSelf(int mx, int my)
+    {
+        scissorsStart();
+
+        //  Translate the scroll
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0, -scrollY, 0);
+        super.drawSelf(mx, my + scrollY);
+        GlStateManager.popMatrix();
+
+        scissorsEnd();
+    }
+
+    @Override
+    public void click(int mx, int my)
+    {
+        //  Offset click by the scroll amounts; we'll adjust it back on clickSelf
+        super.click(mx, my + scrollY);
+    }
+
+    @Override
+    protected boolean childIsVisible(Pane child)
+    {
+        return child.getX() < getWidth() &&
+                 child.getY() < getHeight() + scrollY &&
+                 (child.getX() + child.getWidth()) >= 0 &&
+                 (child.getY() + child.getHeight()) >= scrollY;
     }
 
     public int getScrollY()
@@ -55,30 +106,9 @@ public class ScrollingContainer extends View
         return contentHeight;
     }
 
-    public int getMaxScrollY()
-    {
-        return Math.max(0, contentHeight - getHeight());
-    }
-
     public int getScrollPageSize()
     {
         return getHeight() * PERCENT_90 / PERCENT_FULL;
-    }
-
-    /**
-     * Compute the height in pixels of the container.
-     */
-    public void computeContentHeight()
-    {
-        contentHeight = 0;
-
-        for (Pane child : children)
-        {
-            contentHeight = Math.max(contentHeight, child.getY() + child.getHeight());
-        }
-
-        //  Recompute scroll
-        setScrollY(scrollY);
     }
 
     /**
@@ -89,35 +119,5 @@ public class ScrollingContainer extends View
     public void scrollBy(int deltaY)
     {
         setScrollY(scrollY + deltaY);
-    }
-
-    @Override
-    protected boolean childIsVisible(Pane child)
-    {
-        return child.getX() < getWidth() &&
-                child.getY() < getHeight() + scrollY &&
-                (child.getX() + child.getWidth()) >= 0 &&
-                (child.getY() + child.getHeight()) >= scrollY;
-    }
-
-    @Override
-    public void drawSelf(int mx, int my)
-    {
-        scissorsStart();
-
-        //  Translate the scroll
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0, -scrollY, 0);
-        super.drawSelf(mx, my + scrollY);
-        GlStateManager.popMatrix();
-
-        scissorsEnd();
-    }
-
-    @Override
-    public void click(int mx, int my)
-    {
-        //  Offset click by the scroll amounts; we'll adjust it back on clickSelf
-        super.click(mx, my + scrollY);
     }
 }

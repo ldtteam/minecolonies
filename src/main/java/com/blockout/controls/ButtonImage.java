@@ -12,46 +12,40 @@ import org.lwjgl.opengl.GL11;
  */
 public class ButtonImage extends Button
 {
-    protected ResourceLocation image;
-    protected ResourceLocation imageHighlight;
-    protected ResourceLocation imageDisabled;
-
-    protected int imageOffsetX = 0;
-    protected int imageOffsetY = 0;
-    protected int imageWidth = 0;
-    protected int imageHeight = 0;
-    protected int imageMapWidth = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-    protected int imageMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-
-    protected int highlightOffsetX = 0;
-    protected int highlightOffsetY = 0;
-    protected int highlightWidth = 0;
-    protected int highlightHeight = 0;
-    protected int highlightMapWidth = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-    protected int highlightMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-
-    protected int disabledOffsetX = 0;
-    protected int disabledOffsetY = 0;
-    protected int disabledWidth = 0;
-    protected int disabledHeight = 0;
-    protected int disabledMapWidth = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-    protected int disabledMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-
-    protected double textScale = 1.0;
-    protected Alignment textAlignment = Alignment.Middle;
-    protected int textColor = 0xffffff;
-    protected int textHoverColor = 0xffffff;
-    protected int textDisabledColor = 0xffffff;
-    protected boolean shadow = false;
-    protected int textOffsetX = 0;
-    protected int textOffsetY = 0;
-
     /**
      * Default size is a small square button.
      */
     private static final int DEFAULT_BUTTON_SIZE = 20;
-
     private static final float HALF = 0.5F;
+    protected ResourceLocation image;
+    protected ResourceLocation imageHighlight;
+    protected ResourceLocation imageDisabled;
+    protected int imageOffsetX   = 0;
+    protected int imageOffsetY   = 0;
+    protected int imageWidth     = 0;
+    protected int imageHeight    = 0;
+    protected int imageMapWidth  = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int imageMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int highlightOffsetX   = 0;
+    protected int highlightOffsetY   = 0;
+    protected int highlightWidth     = 0;
+    protected int highlightHeight    = 0;
+    protected int highlightMapWidth  = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int highlightMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int disabledOffsetX   = 0;
+    protected int disabledOffsetY   = 0;
+    protected int disabledWidth     = 0;
+    protected int disabledHeight    = 0;
+    protected int disabledMapWidth  = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int disabledMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected double    textScale         = 1.0;
+    protected Alignment textAlignment     = Alignment.Middle;
+    protected int       textColor         = 0xffffff;
+    protected int       textHoverColor    = 0xffffff;
+    protected int       textDisabledColor = 0xffffff;
+    protected boolean   shadow            = false;
+    protected int       textOffsetX       = 0;
+    protected int       textOffsetY       = 0;
 
     /**
      * Default constructor. Makes a small square button.
@@ -192,6 +186,36 @@ public class ButtonImage extends Button
     }
 
     /**
+     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of image texture.
+     */
+    private void loadImageDimensions()
+    {
+        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(image);
+        imageMapWidth = dimensions.getFirst();
+        imageMapHeight = dimensions.getSecond();
+    }
+
+    /**
+     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of hover image texture.
+     */
+    private void loadImageHighlightDimensions()
+    {
+        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageHighlight);
+        highlightMapWidth = dimensions.getFirst();
+        highlightMapHeight = dimensions.getSecond();
+    }
+
+    /**
+     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of disabled image texture.
+     */
+    private void loadImageDisabledDimensions()
+    {
+        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageDisabled);
+        disabledMapWidth = dimensions.getFirst();
+        disabledMapHeight = dimensions.getSecond();
+    }
+
+    /**
      * Set the default image.
      *
      * @param source String path.
@@ -218,16 +242,6 @@ public class ButtonImage extends Button
     /**
      * Set the default image.
      *
-     * @param loc ResourceLocation for the image.
-     */
-    public void setImage(ResourceLocation loc)
-    {
-        setImage(loc, 0, 0, 0, 0);
-    }
-
-    /**
-     * Set the default image.
-     *
      * @param loc     ResourceLocation for the image.
      * @param offsetX image x offset.
      * @param offsetY image y offset.
@@ -246,13 +260,13 @@ public class ButtonImage extends Button
     }
 
     /**
-     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of image texture.
+     * Set the default image.
+     *
+     * @param loc ResourceLocation for the image.
      */
-    private void loadImageDimensions()
+    public void setImage(ResourceLocation loc)
     {
-        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(image);
-        imageMapWidth = dimensions.getFirst();
-        imageMapHeight = dimensions.getSecond();
+        setImage(loc, 0, 0, 0, 0);
     }
 
     /**
@@ -282,16 +296,6 @@ public class ButtonImage extends Button
     /**
      * Set the hover image.
      *
-     * @param loc ResourceLocation for the image.
-     */
-    public void setImageHighlight(ResourceLocation loc)
-    {
-        setImageHighlight(loc, 0, 0, 0, 0);
-    }
-
-    /**
-     * Set the hover image.
-     *
      * @param loc     ResourceLocation for the image.
      * @param offsetX image x offset.
      * @param offsetY image y offset.
@@ -310,13 +314,13 @@ public class ButtonImage extends Button
     }
 
     /**
-     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of hover image texture.
+     * Set the hover image.
+     *
+     * @param loc ResourceLocation for the image.
      */
-    private void loadImageHighlightDimensions()
+    public void setImageHighlight(ResourceLocation loc)
     {
-        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageHighlight);
-        highlightMapWidth = dimensions.getFirst();
-        highlightMapHeight = dimensions.getSecond();
+        setImageHighlight(loc, 0, 0, 0, 0);
     }
 
     /**
@@ -374,37 +378,11 @@ public class ButtonImage extends Button
     }
 
     /**
-     * Uses {@link Image#getImageDimensions(ResourceLocation)} to determine the dimensions of disabled image texture.
-     */
-    private void loadImageDisabledDimensions()
-    {
-        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageDisabled);
-        disabledMapWidth = dimensions.getFirst();
-        disabledMapHeight = dimensions.getSecond();
-    }
-
-    /**
      * @return The standard textContent color.
      */
     public int getTextColor()
     {
         return textColor;
-    }
-
-    /**
-     * @return The textContent color when you hover the button.
-     */
-    public int getTextHoverColor()
-    {
-        return textHoverColor;
-    }
-
-    /**
-     * @return The textContent color when the button is disabled.
-     */
-    public int getTextDisabledColor()
-    {
-        return textDisabledColor;
     }
 
     /**
@@ -429,6 +407,22 @@ public class ButtonImage extends Button
         textColor = c;
         textDisabledColor = d;
         textHoverColor = h;
+    }
+
+    /**
+     * @return The textContent color when you hover the button.
+     */
+    public int getTextHoverColor()
+    {
+        return textHoverColor;
+    }
+
+    /**
+     * @return The textContent color when the button is disabled.
+     */
+    public int getTextDisabledColor()
+    {
+        return textDisabledColor;
     }
 
     /**
@@ -483,26 +477,6 @@ public class ButtonImage extends Button
     public void setTextScale(float s)
     {
         textScale = s;
-    }
-
-    /**
-     * Text height is calculated by multiplying FONT_HEIGHT and textContent scale.
-     *
-     * @return The textContent height.
-     */
-    public int getTextHeight()
-    {
-        return (int) (mc.fontRendererObj.FONT_HEIGHT * textScale);
-    }
-
-    /**
-     * The textContent width is calculated by multiplying the normal string width by the textContent scale.
-     *
-     * @return The width of the textContent.
-     */
-    public int getStringWidth()
-    {
-        return (int) (mc.fontRendererObj.getStringWidth(label) * textScale);
     }
 
     /**
@@ -576,28 +550,6 @@ public class ButtonImage extends Button
     }
 
     /**
-     * Bind texture, set color, and enable blending.
-     *
-     * @param texture The texture to bind.
-     */
-    private void setupOpenGL(ResourceLocation texture)
-    {
-        this.mc.getTextureManager().bindTexture(texture);
-        if (this.enabled || this.imageDisabled != null)
-        {
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        }
-        else
-        {
-            GlStateManager.color(HALF, HALF, HALF, 1.0F);
-        }
-
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    /**
      * Draw the textContent if there is one.
      *
      * @param mouseOver If the mouse hovering over the button.
@@ -634,5 +586,47 @@ public class ButtonImage extends Button
             mc.fontRendererObj.drawString(label, (float) (getX() + offsetX), (float) (getY() + offsetY), color, shadow);
             GlStateManager.popMatrix();
         }
+    }
+
+    /**
+     * Bind texture, set color, and enable blending.
+     *
+     * @param texture The texture to bind.
+     */
+    private void setupOpenGL(ResourceLocation texture)
+    {
+        this.mc.getTextureManager().bindTexture(texture);
+        if (this.enabled || this.imageDisabled != null)
+        {
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        }
+        else
+        {
+            GlStateManager.color(HALF, HALF, HALF, 1.0F);
+        }
+
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    /**
+     * The textContent width is calculated by multiplying the normal string width by the textContent scale.
+     *
+     * @return The width of the textContent.
+     */
+    public int getStringWidth()
+    {
+        return (int) (mc.fontRendererObj.getStringWidth(label) * textScale);
+    }
+
+    /**
+     * Text height is calculated by multiplying FONT_HEIGHT and textContent scale.
+     *
+     * @return The textContent height.
+     */
+    public int getTextHeight()
+    {
+        return (int) (mc.fontRendererObj.FONT_HEIGHT * textScale);
     }
 }

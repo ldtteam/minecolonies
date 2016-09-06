@@ -24,20 +24,19 @@ public final class BlockUtils
      * Predicated to determine if a block is free to place.
      */
     private static List<BiPredicate<Block, IBlockState>> freeToPlaceBlocks =
-            Arrays.asList(
-                    (block, iBlockState) -> block.equals(Blocks.air),
-                    (block, iBlockState) -> block.getMaterial().isLiquid(),
-                    (block, iBlockState) -> BlockUtils.isWater(block.getDefaultState()),
-                    (block, iBlockState) -> block.equals(Blocks.leaves),
-                    (block, iBlockState) -> block.equals(Blocks.leaves2),
-                    (block, iBlockState) -> block.equals(Blocks.double_plant),
-                    (block, iBlockState) -> block.equals(Blocks.grass),
-                    (block, iBlockState) -> block instanceof BlockDoor
-                                            && iBlockState != null
-                                            && iBlockState.getValue(PropertyBool.create("upper"))
+      Arrays.asList(
+        (block, iBlockState) -> block.equals(Blocks.air),
+        (block, iBlockState) -> block.getMaterial().isLiquid(),
+        (block, iBlockState) -> BlockUtils.isWater(block.getDefaultState()),
+        (block, iBlockState) -> block.equals(Blocks.leaves),
+        (block, iBlockState) -> block.equals(Blocks.leaves2),
+        (block, iBlockState) -> block.equals(Blocks.double_plant),
+        (block, iBlockState) -> block.equals(Blocks.grass),
+        (block, iBlockState) -> block instanceof BlockDoor
+                                  && iBlockState != null
+                                  && iBlockState.getValue(PropertyBool.create("upper"))
 
-                         );
-
+      );
 
     /**
      * Private constructor to hide the public one.
@@ -58,7 +57,7 @@ public final class BlockUtils
     public static boolean shouldNeverBeMessedWith(Block block)
     {
         return block instanceof AbstractBlockHut
-               || Objects.equals(block, Blocks.bedrock);
+                 || Objects.equals(block, Blocks.bedrock);
     }
 
     /**
@@ -108,23 +107,25 @@ public final class BlockUtils
     public static boolean isWater(IBlockState iBlockState)
     {
         return Objects.equals(iBlockState, Blocks.water.getDefaultState())
-               || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
+                 || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
     }
 
     /**
      * Checks if a certain block returns a seed as the item.
+     *
      * @param world the world the block is in.
-     * @param pos the position the block is at.
+     * @param pos   the position the block is at.
      * @return true if is a seed.
      */
     public static boolean isBlockSeed(World world, BlockPos pos)
     {
         return BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())) != null
-            && BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())).getItem() instanceof ItemSeeds;
+                 && BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())).getItem() instanceof ItemSeeds;
     }
 
     /**
      * Mimics pick block.
+     *
      * @param blockState the block and state we are creating an ItemStack for.
      * @return ItemStack fromt the BlockState.
      */
@@ -184,9 +185,9 @@ public final class BlockUtils
             }
             return Items.wheat_seeds;
         }
-        else if(blockState.getBlock() instanceof BlockDaylightDetector)
+        else if (blockState.getBlock() instanceof BlockDaylightDetector)
         {
-             return Item.getItemFromBlock(Blocks.daylight_detector);
+            return Item.getItemFromBlock(Blocks.daylight_detector);
         }
         else if (blockState.getBlock() instanceof BlockDoor)
         {
@@ -200,7 +201,7 @@ public final class BlockUtils
         {
             return Items.flower_pot;
         }
-        else if(blockState.getBlock() instanceof BlockFurnace)
+        else if (blockState.getBlock() instanceof BlockFurnace)
         {
             return Item.getItemFromBlock(Blocks.furnace);
         }
@@ -217,14 +218,14 @@ public final class BlockUtils
         {
             // Not really sure what we want to do here...
             return blockState.getValue(BlockPistonExtension.TYPE) == BlockPistonExtension.EnumPistonType.STICKY
-                    ? Item.getItemFromBlock(Blocks.sticky_piston)
-                    : Item.getItemFromBlock(Blocks.piston);
+                     ? Item.getItemFromBlock(Blocks.sticky_piston)
+                     : Item.getItemFromBlock(Blocks.piston);
         }
         else if (blockState.getBlock() instanceof BlockRedstoneComparator)
         {
             return Items.comparator;
         }
-        else if(blockState.getBlock() instanceof BlockRedstoneLight)
+        else if (blockState.getBlock() instanceof BlockRedstoneLight)
         {
             return Item.getItemFromBlock(Blocks.redstone_lamp);
         }
@@ -232,7 +233,7 @@ public final class BlockUtils
         {
             return Items.repeater;
         }
-        else if(blockState.getBlock() instanceof BlockRedstoneTorch)
+        else if (blockState.getBlock() instanceof BlockRedstoneTorch)
         {
             return Item.getItemFromBlock(Blocks.redstone_torch);
         }
@@ -291,7 +292,7 @@ public final class BlockUtils
             return blockState.getValue(BlockDirt.VARIANT).getMetadata();
         }
         else if (block instanceof BlockDoublePlant
-                && blockState.getValue(BlockDoublePlant.HALF) == BlockDoublePlant.EnumBlockHalf.LOWER)
+                   && blockState.getValue(BlockDoublePlant.HALF) == BlockDoublePlant.EnumBlockHalf.LOWER)
         {
             //If upper part we can't do much here
             return blockState.getValue(BlockDoublePlant.VARIANT).getMeta();

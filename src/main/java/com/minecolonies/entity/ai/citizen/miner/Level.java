@@ -39,7 +39,7 @@ public class Level
      * Create a new level model.
      *
      * @param buildingMiner reference to the miner building.
-     * @param depth the depth of this level.
+     * @param depth         the depth of this level.
      */
     public Level(BuildingMiner buildingMiner, int depth)
     {
@@ -103,10 +103,10 @@ public class Level
         int ladderz = compound.getInteger(TAG_LADDERZ);
 
         level.ladderNode = level.nodes
-                .stream()
-                .filter(node -> node.getX() == ladderx && node.getZ() == ladderz)
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No ladder node found."));
+                             .stream()
+                             .filter(node -> node.getX() == ladderx && node.getZ() == ladderz)
+                             .findFirst()
+                             .orElseThrow(() -> new IllegalStateException("No ladder node found."));
 
         return level;
     }

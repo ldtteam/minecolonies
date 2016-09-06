@@ -34,7 +34,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     /**
      * Random generator.
      */
-    private final Random random          = new Random();
+    private final Random random = new Random();
 
     /**
      * The inventory connected with the scarecrow.
@@ -44,7 +44,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     /**
      * The type of the scarecrow.
      */
-    private ScareCrowType  type;
+    private ScareCrowType type;
 
     /**
      * Name of the scarecrow, string set in the GUI.
@@ -62,6 +62,7 @@ public class ScarecrowTileEntity extends TileEntityChest
 
     /**
      * Getter of the name of the tileEntity.
+     *
      * @return the string.
      */
     public String getDesc()
@@ -71,11 +72,12 @@ public class ScarecrowTileEntity extends TileEntityChest
 
     /**
      * Setter for the name.
+     *
      * @param name string to set.
      */
     public void setName(String name)
     {
-         this.name = name;
+        this.name = name;
     }
 
     ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
@@ -102,7 +104,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         super.onLoad();
         final World world = getWorld();
 
-        if(world != null)
+        if (world != null)
         {
             final Colony colony = ColonyManager.getColony(world, pos);
 
@@ -151,15 +153,6 @@ public class ScarecrowTileEntity extends TileEntityChest
         }
         return this.type;
     }
-    /**
-     * Set the inventory connected with the scarecrow.
-     *
-     * @param inventoryField the field to set it to
-     */
-    public final void setInventoryField(final InventoryField inventoryField)
-    {
-        this.inventoryField = inventoryField;
-    }
 
     /**
      * Get the inventory connected with the scarecrow.
@@ -169,6 +162,16 @@ public class ScarecrowTileEntity extends TileEntityChest
     public InventoryField getInventoryField()
     {
         return inventoryField;
+    }
+
+    /**
+     * Set the inventory connected with the scarecrow.
+     *
+     * @param inventoryField the field to set it to
+     */
+    public final void setInventoryField(final InventoryField inventoryField)
+    {
+        this.inventoryField = inventoryField;
     }
 
     /**

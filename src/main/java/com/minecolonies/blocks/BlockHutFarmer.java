@@ -12,7 +12,7 @@ public class BlockHutFarmer extends AbstractBlockHut
         //No different from Abstract parent
         super();
     }
-    
+
     @Override
     public String getName()
     {

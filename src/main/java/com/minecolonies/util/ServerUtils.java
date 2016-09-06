@@ -82,10 +82,10 @@ public final class ServerUtils
 
     /**
      * Returns a list of players from a list of {@link Permissions.Player}.
-     *
+     * <p>
      * The {@link Permissions.Player} is a wrapper around a {@link UUID} of minecraft players.
      * The List will simply be converted into an {@link EntityPlayer} type.
-     *
+     * <p>
      * Uses {@link ServerUtils#getPlayerFromPermPlayer(Permissions.Player)}.
      *
      * @param players The list of players to convert.
@@ -106,9 +106,9 @@ public final class ServerUtils
 
     /**
      * Retrieves a Player from {@link Permissions.Player}.
-     *
+     * <p>
      * Simply converts our type into the base type.
-     *
+     * <p>
      * Passes this {@link Permissions.Player#getID()} to {@link ServerUtils#getPlayerFromUUID(UUID)}.
      *
      * @param player The {@link Permissions.Player} to convert
@@ -145,5 +145,4 @@ public final class ServerUtils
         }
         return null;
     }
-
 }

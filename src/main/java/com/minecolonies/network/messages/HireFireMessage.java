@@ -48,20 +48,36 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
 
     /**
      * Creates object for the player to hire or fire a citizen.
-     * @param building view of the building to read data from
-     * @param hire hire or fire the citizens
+     *
+     * @param building  view of the building to read data from
+     * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
     public HireFireMessage(AbstractBuilding.View building, boolean hire, int citizenID)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.hire   = hire;
+        this.hire = hire;
         this.citizenID = citizenID;
     }
 
     /**
+     * Transformation from a byteStream to the variables.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void fromBytes(ByteBuf buf)
+    {
+        colonyId = buf.readInt();
+        buildingId = BlockPosUtil.readFromByteBuf(buf);
+        hire = buf.readBoolean();
+        citizenID = buf.readInt();
+    }
+
+    /**
      * Transformation to a byteStream.
+     *
      * @param buf the used byteBuffer.
      */
     @Override
@@ -74,22 +90,10 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
     }
 
     /**
-     * Transformation from a byteStream to the variables.
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    public void fromBytes(ByteBuf buf)
-    {
-        colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
-        hire   = buf.readBoolean();
-        citizenID = buf.readInt();
-    }
-
-    /**
      * Called when a message has been received.
+     *
      * @param message the message.
-     * @param ctx the context.
+     * @param ctx     the context.
      * @return possible response, in this case -&gt; null.
      */
     @Override
@@ -99,12 +103,12 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
         if (colony != null)
         {
             //Verify player has permission to do edit permissions
-            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
             {
                 return null;
             }
-            
-            if(message.hire)
+
+            if (message.hire)
             {
                 CitizenData citizen = colony.getCitizen(message.citizenID);
                 ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);

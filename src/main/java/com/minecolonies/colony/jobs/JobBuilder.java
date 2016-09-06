@@ -33,6 +33,24 @@ public class JobBuilder extends AbstractJob
     }
 
     @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        if (compound.hasKey(TAG_WORK_ORDER))
+        {
+            workOrderId = compound.getInteger(TAG_WORK_ORDER);
+
+            if (compound.hasKey(TAG_SCHEMATIC))
+            {
+                final NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
+                schematicName = schematicTag.getString(TAG_NAME);
+                schematicPos = BlockPosUtil.readFromNBT(schematicTag, TAG_POSITION);
+                schematicProgress = BlockPosUtil.readFromNBT(schematicTag, TAG_PROGRESS);
+            }
+        }
+    }
+
+    @Override
     public String getName()
     {
         return "com.minecolonies.job.Builder";
@@ -76,24 +94,6 @@ public class JobBuilder extends AbstractJob
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        if (compound.hasKey(TAG_WORK_ORDER))
-        {
-            workOrderId = compound.getInteger(TAG_WORK_ORDER);
-
-            if (compound.hasKey(TAG_SCHEMATIC))
-            {
-                final NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
-                schematicName = schematicTag.getString(TAG_NAME);
-                schematicPos = BlockPosUtil.readFromNBT(schematicTag, TAG_POSITION);
-                schematicProgress = BlockPosUtil.readFromNBT(schematicTag, TAG_PROGRESS);
-            }
-        }
-    }
-
-    @Override
     public AbstractAISkeleton generateAI()
     {
         return new EntityAIStructureBuilder(this);
@@ -107,34 +107,6 @@ public class JobBuilder extends AbstractJob
     public int getWorkOrderId()
     {
         return workOrderId;
-    }
-
-    /**
-     * Get the Work Order for the Job.
-     * Warning: WorkOrder is not cached
-     *
-     * @return WorkOrderBuild for the Build
-     */
-    public WorkOrderBuild getWorkOrder()
-    {
-        return getColony().getWorkManager().getWorkOrder(workOrderId, WorkOrderBuild.class);
-    }
-
-    /**
-     * Set a Work Order for this Job.
-     *
-     * @param order Work Order to associate with this job, or null
-     */
-    public void setWorkOrder(@Nullable WorkOrderBuild order)
-    {
-        if (order == null)
-        {
-            workOrderId = 0;
-        }
-        else
-        {
-            workOrderId = order.getID();
-        }
     }
 
     /**
@@ -187,7 +159,7 @@ public class JobBuilder extends AbstractJob
         final BlockPos buildingLocation = this.getWorkOrder().getBuildingLocation();
         final AbstractBuilding building = this.getCitizen().getColony().getBuilding(buildingLocation);
 
-        if(building != null)
+        if (building != null)
         {
             this.getCitizen().getColony().onBuildingUpgradeComplete(building, this.getWorkOrder().getUpgradeLevel());
         }
@@ -197,4 +169,31 @@ public class JobBuilder extends AbstractJob
         setSchematic(null);
     }
 
+    /**
+     * Get the Work Order for the Job.
+     * Warning: WorkOrder is not cached
+     *
+     * @return WorkOrderBuild for the Build
+     */
+    public WorkOrderBuild getWorkOrder()
+    {
+        return getColony().getWorkManager().getWorkOrder(workOrderId, WorkOrderBuild.class);
+    }
+
+    /**
+     * Set a Work Order for this Job.
+     *
+     * @param order Work Order to associate with this job, or null
+     */
+    public void setWorkOrder(@Nullable WorkOrderBuild order)
+    {
+        if (order == null)
+        {
+            workOrderId = 0;
+        }
+        else
+        {
+            workOrderId = order.getID();
+        }
+    }
 }

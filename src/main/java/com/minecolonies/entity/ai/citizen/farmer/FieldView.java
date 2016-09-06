@@ -19,17 +19,17 @@ public class FieldView
     /**
      * Has the field been taken yet?
      */
-    private boolean  taken;
+    private boolean taken;
 
     /**
      * Owner of the field.
      */
-    private String   owner;
+    private String owner;
 
     /**
      * Set item of the field - might be null.
      */
-    private Item     item;
+    private Item item;
 
     /**
      * Constructor to instantiate field to fill it from a byteBuffer.
@@ -56,6 +56,7 @@ public class FieldView
 
     /**
      * Getter of the field id.
+     *
      * @return blockPos of the field.
      */
     public BlockPos getId()
@@ -65,6 +66,7 @@ public class FieldView
 
     /**
      * Checks if field has been claimed yet.
+     *
      * @return true if so.
      */
     public boolean isTaken()
@@ -73,16 +75,8 @@ public class FieldView
     }
 
     /**
-     * Checks for the name of the owner.
-     * @return String of the name.
-     */
-    public String getOwner()
-    {
-        return owner;
-    }
-
-    /**
      * Claims or frees the field.
+     *
      * @param taken true if should be claimed.
      */
     public void setTaken(final boolean taken)
@@ -91,7 +85,18 @@ public class FieldView
     }
 
     /**
+     * Checks for the name of the owner.
+     *
+     * @return String of the name.
+     */
+    public String getOwner()
+    {
+        return owner;
+    }
+
+    /**
      * Sets the owner of the field.
+     *
      * @param owner name of the owner.
      */
     public void setOwner(final String owner)
@@ -109,7 +114,7 @@ public class FieldView
         BlockPosUtil.writeToByteBuf(buf, id);
         buf.writeBoolean(taken);
         ByteBufUtils.writeUTF8String(buf, owner);
-        final int itemId = item == null? 0 : Item.getIdFromItem(item);
+        final int itemId = item == null ? 0 : Item.getIdFromItem(item);
         buf.writeInt(itemId);
     }
 
@@ -125,12 +130,13 @@ public class FieldView
         taken = buf.readBoolean();
         owner = ByteBufUtils.readUTF8String(buf);
         final int itemId = buf.readInt();
-        item = itemId == 0? null : Item.getItemById(itemId);
+        item = itemId == 0 ? null : Item.getItemById(itemId);
         return this;
     }
 
     /**
      * Returns the item of the field.
+     *
      * @return an item object.
      */
     public Item getItem()

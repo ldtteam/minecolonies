@@ -15,7 +15,7 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
-        final BlockPos            pos        = new BlockPos(x,y,z);
+        final BlockPos pos = new BlockPos(x, y, z);
         final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
         return new Field(tileEntity, player.inventory, world, pos);
     }
@@ -23,7 +23,7 @@ public class GuiHandler implements IGuiHandler
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
     {
-        final BlockPos            pos        = new BlockPos(x,y,z);
+        final BlockPos pos = new BlockPos(x, y, z);
         final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
         return new GuiField(player.inventory, tileEntity, world, pos);
     }

@@ -24,11 +24,11 @@ public final class PermissionUtils
 
     /**
      * Creates a list of players that have the given rank or higher.
-     *
+     * <p>
      * This is using the enums ordinal method for comparison.
      *
      * @param colony The colony to get the players
-     * @param rank The rank to check
+     * @param rank   The rank to check
      * @return The list with online players that has the rank or higher
      */
     @NotNull
@@ -49,5 +49,4 @@ public final class PermissionUtils
 
         return playersWithAtLeastRank;
     }
-
 }

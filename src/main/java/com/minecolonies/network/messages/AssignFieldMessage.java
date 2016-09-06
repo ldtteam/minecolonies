@@ -34,9 +34,10 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
 
     /**
      * Creates the message to assign a field.
+     *
      * @param building the farmer to assign to or release from.
-     * @param assign assign if true, free if false.
-     * @param field the field to assign or release.
+     * @param assign   assign if true, free if false.
+     * @param field    the field to assign or release.
      */
     public AssignFieldMessage(BuildingFarmer.View building, boolean assign, BlockPos field)
     {
@@ -44,15 +45,6 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
         this.buildingId = building.getID();
         this.assign = assign;
         this.field = field;
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-        buf.writeBoolean(assign);
-        BlockPosUtil.writeToByteBuf(buf, field);
     }
 
     @Override
@@ -65,13 +57,22 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
     }
 
     @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBoolean(assign);
+        BlockPosUtil.writeToByteBuf(buf, field);
+    }
+
+    @Override
     public IMessage onMessage(AssignFieldMessage message, MessageContext ctx)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
             //Verify player has permission to do edit permissions
-            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
             {
                 return null;
             }
@@ -79,7 +80,7 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
             final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
             if (building != null)
             {
-                if(message.assign)
+                if (message.assign)
                 {
                     building.assignField(message.field);
                 }

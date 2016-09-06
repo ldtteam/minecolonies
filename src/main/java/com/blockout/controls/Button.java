@@ -12,24 +12,8 @@ import net.minecraft.util.ResourceLocation;
 public class Button extends Pane
 {
     private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
-
-    /**
-     * Used for windows that have buttons and want to respond to clicks.
-     */
-    @FunctionalInterface
-    public interface Handler
-    {
-        /**
-         * Called when a button is clicked.
-         *
-         * @param button the button that was clicked.
-         */
-        void onButtonClicked(Button button);
-    }
-
     protected Handler handler;
-    protected String label;
-
+    protected String  label;
     /**
      * Default constructor.
      */
@@ -109,5 +93,19 @@ public class Button extends Pane
         {
             delegatedHandler.onButtonClicked(this);
         }
+    }
+
+    /**
+     * Used for windows that have buttons and want to respond to clicks.
+     */
+    @FunctionalInterface
+    public interface Handler
+    {
+        /**
+         * Called when a button is clicked.
+         *
+         * @param button the button that was clicked.
+         */
+        void onButtonClicked(Button button);
     }
 }

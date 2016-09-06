@@ -46,6 +46,24 @@ public class BuildingFisherman extends AbstractBuildingWorker
     }
 
     /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingFisher);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
+        }
+    }
+
+    /**
      * Getter of the max building level.
      *
      * @return the integer.
@@ -80,24 +98,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
     }
 
     /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        if (newLevel == 1)
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingFisher);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
-        }
-    }
-
-    /**
      * Provides a view of the fisherman building class.
      */
     public static class View extends AbstractBuildingWorker.View
@@ -123,6 +123,5 @@ public class BuildingFisherman extends AbstractBuildingWorker
         {
             return new WindowHutFisherman(this);
         }
-
     }
 }

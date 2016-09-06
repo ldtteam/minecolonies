@@ -30,5 +30,4 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
     {
         return "com.minecolonies.gui.workerHuts.homeHut";
     }
-
 }

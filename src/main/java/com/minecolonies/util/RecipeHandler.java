@@ -42,10 +42,10 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutFisherman, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.fishing_rod);
         GameRegistry.addRecipe(new ItemStack(ModItems.scanTool, 1), "  I", " S ", "S  ", 'I', Items.iron_ingot, 'S', Items.stick);
         GameRegistry.addRecipe(new ItemStack(ModItems.buildTool, 1), "  C", " S ", "S  ", 'C', Blocks.cobblestone, 'S', Items.stick);
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockSubstitution,16), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', ModItems.scanTool);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockSubstitution, 16), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', ModItems.scanTool);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutFarmer, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.wooden_hoe);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutFarmer, 2), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.stone_hoe);
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutField, 1), " Y ", "X#X", " X ", 'X', Items.stick, '#', Items.leather_chestplate, 'Y' , Blocks.hay_block);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutField, 1), " Y ", "X#X", " X ", 'X', Items.stick, '#', Items.leather_chestplate, 'Y', Blocks.hay_block);
         GameRegistry.addRecipe(new ItemStack(Blocks.web, 1), "XXX", "XXX", "XXX", 'X', Items.string);
 
         if (enableInDevelopmentFeatures)

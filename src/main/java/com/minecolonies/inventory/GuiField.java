@@ -59,6 +59,7 @@ public class GuiField extends GuiContainer
 
     /**
      * Method called to draw the foreground of the GUI.
+     *
      * @param layer1 the first layer.
      * @param layer2 the second layer.
      */

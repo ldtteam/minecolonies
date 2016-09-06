@@ -16,11 +16,11 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
     /**
      * The Colony ID;
      */
-    private int              colonyId;
+    private int     colonyId;
     /**
      * Toggle the job allocation to true or false.
      */
-    private boolean          toggle;
+    private boolean toggle;
 
     /**
      * Empty public constructor.
@@ -39,11 +39,24 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
     public ToggleJobMessage(ColonyView colony, boolean toggle)
     {
         this.colonyId = colony.getID();
-        this.toggle   = toggle;
+        this.toggle = toggle;
+    }
+
+    /**
+     * Transformation from a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void fromBytes(ByteBuf buf)
+    {
+        colonyId = buf.readInt();
+        toggle = buf.readBoolean();
     }
 
     /**
      * Transformation to a byteStream.
+     *
      * @param buf the used byteBuffer.
      */
     @Override
@@ -54,20 +67,10 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
     }
 
     /**
-     * Transformation from a byteStream.
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    public void fromBytes(ByteBuf buf)
-    {
-        colonyId = buf.readInt();
-        toggle   = buf.readBoolean();
-    }
-
-    /**
      * Called when a message has been received.
+     *
      * @param message the message.
-     * @param ctx the context.
+     * @param ctx     the context.
      * @return possible response, in this case -&gt; null.
      */
     @Override

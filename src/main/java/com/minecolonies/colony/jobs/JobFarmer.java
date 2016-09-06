@@ -12,6 +12,7 @@ public class JobFarmer extends AbstractJob
 {
     /**
      * Public constructor of the farmer job.
+     *
      * @param entity the entity to assign to the job.
      */
     public JobFarmer(CitizenData entity)

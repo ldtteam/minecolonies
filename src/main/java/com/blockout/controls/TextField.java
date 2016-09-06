@@ -15,33 +15,23 @@ import org.lwjgl.opengl.GL11;
 
 public class TextField extends Pane
 {
-    public interface Filter
-    {
-        String filter(String s);
-
-        boolean isAllowedCharacter(char c);
-    }
-
     /**
      * Texture resource location
      */
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
-
     //  Attributes
-    protected int maxTextLength = 32;
-    protected int textColor = 0xE0E0E0;
-    protected int textColorDisabled = 0x707070;
-    protected boolean shadow = true;
-    protected String tabNextPaneID = null;
-
+    protected int     maxTextLength     = 32;
+    protected int     textColor         = 0xE0E0E0;
+    protected int     textColorDisabled = 0x707070;
+    protected boolean shadow            = true;
+    protected String  tabNextPaneID     = null;
     //  Runtime
     protected String text = "";
     protected Filter filter;
-    protected int cursorPosition = 0;
-    protected int scrollOffset = 0;
-    protected int selectionEnd = 0;
+    protected int cursorPosition     = 0;
+    protected int scrollOffset       = 0;
+    protected int selectionEnd       = 0;
     protected int cursorBlinkCounter = 0;
-
     public TextField()
     {
         //Required
@@ -79,6 +69,11 @@ public class TextField extends Pane
         setCursorPosition(text.length());
     }
 
+    public int getInternalWidth()
+    {
+        return getWidth();
+    }
+
     public int getMaxTextLength()
     {
         return maxTextLength;
@@ -94,14 +89,14 @@ public class TextField extends Pane
         return textColor;
     }
 
-    public int getTextColorDisabled()
-    {
-        return textColorDisabled;
-    }
-
     public void setTextColor(int c)
     {
         textColor = c;
+    }
+
+    public int getTextColorDisabled()
+    {
+        return textColorDisabled;
     }
 
     public void setTextColorDisabled(int c)
@@ -180,18 +175,115 @@ public class TextField extends Pane
         return text.substring(start, end);
     }
 
-    public int getInternalWidth()
+    private boolean handleKey(char c, int key)
     {
-        return getWidth();
+        switch (key)
+        {
+            case Keyboard.KEY_BACK:
+            case Keyboard.KEY_DELETE:
+                return handleDelete(key);
+
+            case Keyboard.KEY_HOME:
+            case Keyboard.KEY_END:
+                return handleHomeEnd(key);
+
+            case Keyboard.KEY_LEFT:
+            case Keyboard.KEY_RIGHT:
+                return handleArrowKeys(key);
+
+            case Keyboard.KEY_TAB:
+                return handleTab();
+
+            default:
+                return handleChar(c);
+        }
+    }
+
+    private boolean handleChar(char c)
+    {
+        if (filter.isAllowedCharacter(c))
+        {
+            writeText(Character.toString(c));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean handleTab()
+    {
+        if (tabNextPaneID != null)
+        {
+            Pane next = getWindow().findPaneByID(tabNextPaneID);
+            if (next != null)
+            {
+                next.setFocus();
+            }
+        }
+        return true;
+    }
+
+    private boolean handleArrowKeys(int key)
+    {
+        int direction = (key == Keyboard.KEY_LEFT) ? -1 : 1;
+
+        if (GuiScreen.isShiftKeyDown())
+        {
+            if (GuiScreen.isCtrlKeyDown())
+            {
+                setSelectionEnd(getNthWordFromPos(direction, getSelectionEnd()));
+            }
+            else
+            {
+                setSelectionEnd(getSelectionEnd() + direction);
+            }
+        }
+        else if (GuiScreen.isCtrlKeyDown())
+        {
+            setCursorPosition(getNthWordFromCursor(direction));
+        }
+        else
+        {
+            moveCursorBy(direction);
+        }
+        return true;
+    }
+
+    private boolean handleHomeEnd(int key)
+    {
+        int position = (key == Keyboard.KEY_HOME) ? 0 : text.length();
+
+        if (GuiScreen.isShiftKeyDown())
+        {
+            setSelectionEnd(position);
+        }
+        else
+        {
+            setCursorPosition(position);
+        }
+        return true;
+    }
+
+    private boolean handleDelete(int key)
+    {
+        int direction = (key == Keyboard.KEY_BACK) ? -1 : 1;
+
+        if (GuiScreen.isCtrlKeyDown())
+        {
+            deleteWords(direction);
+        }
+        else
+        {
+            deleteFromCursor(direction);
+        }
+
+        return true;
     }
 
     @Override
-    public void putInside(View view)
+    public void onFocus()
     {
-        super.putInside(view);
-
-        //  Recompute scroll offset
-        setSelectionEnd(selectionEnd);
+        setCursorPosition(text.length());
+        cursorBlinkCounter = 0;
     }
 
     @Override
@@ -301,6 +393,15 @@ public class TextField extends Pane
     }
 
     @Override
+    public void putInside(View view)
+    {
+        super.putInside(view);
+
+        //  Recompute scroll offset
+        setSelectionEnd(selectionEnd);
+    }
+
+    @Override
     public void handleClick(int mx, int my)
     {
         if (mx < 0)
@@ -347,121 +448,10 @@ public class TextField extends Pane
         }
     }
 
-    private boolean handleKey(char c, int key)
-    {
-        switch (key)
-        {
-            case Keyboard.KEY_BACK:
-            case Keyboard.KEY_DELETE:
-                return handleDelete(key);
-
-            case Keyboard.KEY_HOME:
-            case Keyboard.KEY_END:
-                return handleHomeEnd(key);
-
-            case Keyboard.KEY_LEFT:
-            case Keyboard.KEY_RIGHT:
-                return handleArrowKeys(key);
-
-            case Keyboard.KEY_TAB:
-                return handleTab();
-
-            default:
-                return handleChar(c);
-        }
-    }
-
-    private boolean handleChar(char c)
-    {
-        if (filter.isAllowedCharacter(c))
-        {
-            writeText(Character.toString(c));
-            return true;
-        }
-        return false;
-    }
-
-    private boolean handleTab()
-    {
-        if (tabNextPaneID != null)
-        {
-            Pane next = getWindow().findPaneByID(tabNextPaneID);
-            if (next != null)
-            {
-                next.setFocus();
-            }
-        }
-        return true;
-    }
-
-    private boolean handleArrowKeys(int key)
-    {
-        int direction = (key == Keyboard.KEY_LEFT) ? -1 : 1;
-
-        if (GuiScreen.isShiftKeyDown())
-        {
-            if (GuiScreen.isCtrlKeyDown())
-            {
-                setSelectionEnd(getNthWordFromPos(direction, getSelectionEnd()));
-            }
-            else
-            {
-                setSelectionEnd(getSelectionEnd() + direction);
-            }
-        }
-        else if (GuiScreen.isCtrlKeyDown())
-        {
-            setCursorPosition(getNthWordFromCursor(direction));
-        }
-        else
-        {
-            moveCursorBy(direction);
-        }
-        return true;
-    }
-
-    private boolean handleHomeEnd(int key)
-    {
-        int position = (key == Keyboard.KEY_HOME) ? 0 : text.length();
-
-        if (GuiScreen.isShiftKeyDown())
-        {
-            setSelectionEnd(position);
-        }
-        else
-        {
-            setCursorPosition(position);
-        }
-        return true;
-    }
-
-    private boolean handleDelete(int key)
-    {
-        int direction = (key == Keyboard.KEY_BACK) ? -1 : 1;
-
-        if (GuiScreen.isCtrlKeyDown())
-        {
-            deleteWords(direction);
-        }
-        else
-        {
-            deleteFromCursor(direction);
-        }
-
-        return true;
-    }
-
     @Override
     public void onUpdate()
     {
         cursorBlinkCounter++;
-    }
-
-    @Override
-    public void onFocus()
-    {
-        setCursorPosition(text.length());
-        cursorBlinkCounter = 0;
     }
 
     public void writeText(String str)
@@ -593,5 +583,12 @@ public class TextField extends Pane
     public int getNthWordFromCursor(int count)
     {
         return getNthWordFromPos(count, cursorPosition);
+    }
+
+    public interface Filter
+    {
+        String filter(String s);
+
+        boolean isAllowedCharacter(char c);
     }
 }

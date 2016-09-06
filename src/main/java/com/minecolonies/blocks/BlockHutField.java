@@ -34,20 +34,17 @@ import static net.minecraft.util.EnumFacing.*;
 public class BlockHutField extends BlockContainer
 {
     /**
+     * The position it faces.
+     */
+    public static final PropertyDirection FACING = PropertyDirection.create("FACING", Plane.HORIZONTAL);
+    /**
      * Hardness of the block.
      */
     private static final float HARDNESS = 10F;
-
     /**
      * Resistance of the block.
      */
     private static final float RESISTANCE = 10F;
-
-    /**
-     * The position it faces.
-     */
-    public static final PropertyDirection FACING = PropertyDirection.create("FACING", Plane.HORIZONTAL);
-
     /**
      * Start of the collision box at y.
      */

@@ -22,15 +22,15 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCitizenMessage, IMessage>
 {
-    private int              colonyId;
-    private BlockPos         buildingId;
+    private int      colonyId;
+    private BlockPos buildingId;
 
-    public RecallCitizenMessage(){}
+    public RecallCitizenMessage() {}
 
     /**
      * Object creation for the recall
      *
-     * @param building      View of the building the citizen is working in
+     * @param building View of the building the citizen is working in
      */
     public RecallCitizenMessage(AbstractBuildingWorker.View building)
     {
@@ -39,17 +39,17 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-    }
-
-    @Override
     public void fromBytes(ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
+    }
+
+    @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
     }
 
     @Override
@@ -63,12 +63,13 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
             {
                 BlockPos loc = building.getLocation();
                 EntityCitizen citizen = building.getWorkerEntity();
-                if(citizen != null)
+                if (citizen != null)
                 {
                     World world = colony.getWorld();
-                    BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer, Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower);
+                    BlockPos spawnPoint =
+                      Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer, Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower);
 
-                    citizen.setLocationAndAngles(spawnPoint.getX()+0.5, spawnPoint.getY(), spawnPoint.getZ()+0.5, citizen.rotationYaw, citizen.rotationPitch);
+                    citizen.setLocationAndAngles(spawnPoint.getX() + 0.5, spawnPoint.getY(), spawnPoint.getZ() + 0.5, citizen.rotationYaw, citizen.rotationPitch);
                 }
             }
         }

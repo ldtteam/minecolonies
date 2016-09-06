@@ -50,6 +50,24 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
+        }
+    }
+
+    /**
      * Getter of the max building level.
      *
      * @return the integer.
@@ -81,24 +99,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public AbstractJob createJob(CitizenData citizen)
     {
         return new JobLumberjack(citizen);
-    }
-
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        if (newLevel == 1)
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
-        }
     }
 
     /**

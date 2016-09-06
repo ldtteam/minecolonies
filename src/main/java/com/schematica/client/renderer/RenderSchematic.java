@@ -53,47 +53,47 @@ public final class RenderSchematic extends RenderGlobal
     public static final RenderSchematic INSTANCE = new RenderSchematic(Minecraft.getMinecraft());
 
     private static final int RENDER_DISTANCE = 32;
-    private static final int CHUNKS_XZ = (RENDER_DISTANCE + 1) * 2;
-    private static final int CHUNKS_Y = 16;
-    private static final int CHUNKS = CHUNKS_XZ * CHUNKS_XZ * CHUNKS_Y;
-    private static final int PASS = 2;
+    private static final int CHUNKS_XZ       = (RENDER_DISTANCE + 1) * 2;
+    private static final int CHUNKS_Y        = 16;
+    private static final int CHUNKS          = CHUNKS_XZ * CHUNKS_XZ * CHUNKS_Y;
+    private static final int PASS            = 2;
 
-    private static final ShaderProgram SHADER_ALPHA = new ShaderProgram("minecolonies", null, "shaders/alpha.frag");
-    private static final double DOUBLE_EPSILON = 0.00000001D;
-    private static Vec3 playerPositionOffset = new Vec3(0, 0, 0);
-    private final Minecraft mc;
-    private final Profiler profiler;
-    private final RenderManager renderManager;
-    private SchematicWorld world;
-    private Set<RenderChunk> chunksToUpdate = Sets.newLinkedHashSet();
-    private final Set<RenderOverlay> overlaysToUpdate = Sets.newLinkedHashSet();
-    private List<ContainerLocalRenderInformation> renderInfos = Lists.newArrayListWithCapacity(CHUNKS);
-    private ViewFrustumOverlay viewFrustum;
-    private double frustumUpdatePosX = Double.MIN_VALUE;
-    private double frustumUpdatePosY = Double.MIN_VALUE;
-    private double frustumUpdatePosZ = Double.MIN_VALUE;
-    private int frustumUpdatePosChunkX = Integer.MIN_VALUE;
-    private int frustumUpdatePosChunkY = Integer.MIN_VALUE;
-    private int frustumUpdatePosChunkZ = Integer.MIN_VALUE;
-    private double lastViewEntityX = Double.MIN_VALUE;
-    private double lastViewEntityY = Double.MIN_VALUE;
-    private double lastViewEntityZ = Double.MIN_VALUE;
-    private double lastViewEntityPitch = Double.MIN_VALUE;
-    private double lastViewEntityYaw = Double.MIN_VALUE;
-    private final ChunkRenderDispatcher renderDispatcher = new ChunkRenderDispatcher();
+    private static final ShaderProgram SHADER_ALPHA         = new ShaderProgram("minecolonies", null, "shaders/alpha.frag");
+    private static final double        DOUBLE_EPSILON       = 0.00000001D;
+    private static       Vec3          playerPositionOffset = new Vec3(0, 0, 0);
+    private final Minecraft      mc;
+    private final Profiler       profiler;
+    private final RenderManager  renderManager;
+    private final Set<RenderOverlay>                    overlaysToUpdate = Sets.newLinkedHashSet();
+    private final ChunkRenderDispatcher   renderDispatcher        = new ChunkRenderDispatcher();
     private final OverlayRenderDispatcher renderDispatcherOverlay = new OverlayRenderDispatcher();
+    private final BlockPos.MutableBlockPos tmp                      = new BlockPos.MutableBlockPos();
+    private       SchematicWorld world;
+    private       Set<RenderChunk>                      chunksToUpdate   = Sets.newLinkedHashSet();
+    private       List<ContainerLocalRenderInformation> renderInfos      = Lists.newArrayListWithCapacity(CHUNKS);
+    private ViewFrustumOverlay viewFrustum;
+    private       double                  frustumUpdatePosX       = Double.MIN_VALUE;
+    private       double                  frustumUpdatePosY       = Double.MIN_VALUE;
+    private       double                  frustumUpdatePosZ       = Double.MIN_VALUE;
+    private       int                     frustumUpdatePosChunkX  = Integer.MIN_VALUE;
+    private       int                     frustumUpdatePosChunkY  = Integer.MIN_VALUE;
+    private       int                     frustumUpdatePosChunkZ  = Integer.MIN_VALUE;
+    private       double                  lastViewEntityX         = Double.MIN_VALUE;
+    private       double                  lastViewEntityY         = Double.MIN_VALUE;
+    private       double                  lastViewEntityZ         = Double.MIN_VALUE;
+    private       double                  lastViewEntityPitch     = Double.MIN_VALUE;
+    private       double                  lastViewEntityYaw       = Double.MIN_VALUE;
     private AbstractSchematicChunkRenderContainer renderContainer;
     private int renderDistanceChunks = -1;
     private int countEntitiesTotal;
     private int countEntitiesRendered;
     private boolean vboEnabled = false;
     private ISchematicRenderChunkFactory renderChunkFactory;
-    private double prevRenderSortX;
-    private double prevRenderSortY;
-    private double prevRenderSortZ;
-    private boolean displayListEntitiesDirty = true;
-    private int frameCount = 0;
-    private final BlockPos.MutableBlockPos tmp = new BlockPos.MutableBlockPos();
+    private double                       prevRenderSortX;
+    private double                       prevRenderSortY;
+    private double                       prevRenderSortZ;
+    private       boolean                  displayListEntitiesDirty = true;
+    private       int                      frameCount               = 0;
 
     private RenderSchematic(final Minecraft minecraft)
     {
@@ -214,178 +214,6 @@ public final class RenderSchematic extends RenderGlobal
         }
     }
 
-    /**
-     * Render the schematic and colored overlay.
-     *
-     * @param event Forge event.
-     */
-    @SubscribeEvent
-    public void onRenderWorldLast(final RenderWorldLastEvent event)
-    {
-        final EntityPlayerSP player = this.mc.thePlayer;
-        if (player != null)
-        {
-            this.profiler.startSection("schematica");
-            final boolean isRenderingSchematic = Settings.instance.getActiveSchematic() != null && Settings.instance.getSchematicWorld().isRendering;
-
-            this.profiler.startSection("schematic");
-            if (isRenderingSchematic)
-            {
-                GlStateManager.pushMatrix();
-                renderSchematic(Settings.instance.getSchematicWorld(), event.partialTicks);
-                GlStateManager.popMatrix();
-
-                GlStateManager.pushMatrix();
-                renderOverlay(Settings.instance.getSchematicWorld());
-                GlStateManager.popMatrix();
-            }
-
-            this.profiler.endSection();
-            this.profiler.endSection();
-        }
-    }
-
-    private synchronized void renderSchematic(final SchematicWorld schematic, final float partialTicks)
-    {
-        if (this.world != schematic)
-        {
-            this.world = schematic;
-
-            loadRenderers();
-        }
-        playerPositionOffset = this.mc.thePlayer.getPositionVector().subtract(this.world.position.getX(), this.world.position.getY(), this.world.position.getZ());
-
-        if (OpenGlHelper.shadersSupported && ConfigurationHandler.enableAlpha)
-        {
-            GL20.glUseProgram(SHADER_ALPHA.getProgram());
-            GL20.glUniform1f(GL20.glGetUniformLocation(SHADER_ALPHA.getProgram(), "alpha_multiplier"), ConfigurationHandler.alpha);
-        }
-
-        final int fps = Math.max(Minecraft.getDebugFPS(), 30);
-        renderWorld(partialTicks, System.nanoTime() + 1000000000 / fps);
-
-        if (OpenGlHelper.shadersSupported && ConfigurationHandler.enableAlpha)
-        {
-            GL20.glUseProgram(0);
-        }
-    }
-
-    private void renderOverlay(final SchematicWorld schematic)
-    {
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-
-        final GeometryTessellator tessellator = GeometryTessellator.getInstance();
-        tessellator.setTranslation(-this.mc.thePlayer.posX, -this.mc.thePlayer.posY, -this.mc.thePlayer.posZ);
-        tessellator.setDelta(ConfigurationHandler.blockDelta);
-
-        tessellator.beginLines();
-        this.tmp.set(schematic.position.getX() + schematic.getWidth() - 1,
-                schematic.position.getY() + schematic.getHeight() - 1,
-                schematic.position.getZ() + schematic.getLength() - 1);
-        tessellator.drawCuboid(schematic.position, this.tmp, GeometryMasks.Line.ALL, 0x7FBF00BF);
-        tessellator.draw();
-
-        GlStateManager.depthMask(false);
-        this.renderContainer.renderOverlay();
-        GlStateManager.depthMask(true);
-
-        GL11.glDisable(GL11.GL_LINE_SMOOTH);
-        GlStateManager.disableBlend();
-        GlStateManager.enableTexture2D();
-    }
-
-    private void renderWorld(final float partialTicks, final long finishTimeNano)
-    {
-        GlStateManager.enableCull();
-        this.profiler.endStartSection("culling");
-        final Frustum frustum = new Frustum();
-        final Entity entity = this.mc.getRenderViewEntity();
-
-        final double x = playerPositionOffset.xCoord;
-        final double y = playerPositionOffset.yCoord;
-        final double z = playerPositionOffset.zCoord;
-        frustum.setPosition(x, y, z);
-
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
-
-        this.profiler.endStartSection("prepareterrain");
-        this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-        RenderHelper.disableStandardItemLighting();
-
-        this.profiler.endStartSection("terrain_setup");
-        setupTerrain(entity, partialTicks, frustum, this.frameCount, isInsideWorld(x, y, z));
-        this.frameCount++;
-
-        this.profiler.endStartSection("updatechunks");
-        updateChunks(finishTimeNano / 2);
-
-        this.profiler.endStartSection("terrain");
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        renderBlockLayer(EnumWorldBlockLayer.SOLID, partialTicks, PASS, entity);
-        renderBlockLayer(EnumWorldBlockLayer.CUTOUT_MIPPED, partialTicks, PASS, entity);
-        this.mc.getTextureManager().getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
-        renderBlockLayer(EnumWorldBlockLayer.CUTOUT, partialTicks, PASS, entity);
-        this.mc.getTextureManager().getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
-        GlStateManager.disableBlend();
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.popMatrix();
-
-        GlStateManager.pushMatrix();
-        this.profiler.endStartSection("entities");
-        RenderHelper.enableStandardItemLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        renderEntities(entity, frustum, partialTicks);
-        GlStateManager.disableBlend();
-        RenderHelper.disableStandardItemLighting();
-        disableLightmap();
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.popMatrix();
-
-        GlStateManager.enableCull();
-        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-        this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
-
-        GlStateManager.depthMask(false);
-        GlStateManager.pushMatrix();
-        this.profiler.endStartSection("translucent");
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        renderBlockLayer(EnumWorldBlockLayer.TRANSLUCENT, partialTicks, PASS, entity);
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
-        GlStateManager.depthMask(true);
-
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.enableCull();
-    }
-
-    private boolean isInsideWorld(final double x, final double y, final double z)
-    {
-        return x >= -1 && y >= -1 && z >= -1 && x <= this.world.getWidth() && y <= this.world.getHeight() && z <= this.world.getLength();
-    }
-
-    private static void disableLightmap()
-    {
-        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.disableTexture2D();
-        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-    }
-
-    public void refresh()
-    {
-        loadRenderers();
-    }
-
     @Override
     public void loadRenderers()
     {
@@ -486,13 +314,6 @@ public final class RenderSchematic extends RenderGlobal
         this.profiler.endSection();
     }
 
-    private static void setStaticPlayerPos(double x, double y, double z)
-    {
-        TileEntityRendererDispatcher.staticPlayerX = x;
-        TileEntityRendererDispatcher.staticPlayerY = y;
-        TileEntityRendererDispatcher.staticPlayerZ = z;
-    }
-
     @Override
     public String getDebugInfoRenders()
     {
@@ -540,7 +361,7 @@ public final class RenderSchematic extends RenderGlobal
         final int chunkCoordZ = MathHelper.floor_double(posZ) >> 4;
 
         if (this.frustumUpdatePosChunkX != chunkCoordX || this.frustumUpdatePosChunkY != chunkCoordY ||
-                this.frustumUpdatePosChunkZ != chunkCoordZ || deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ > 16.0)
+              this.frustumUpdatePosChunkZ != chunkCoordZ || deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ > 16.0)
         {
             this.frustumUpdatePosX = posX;
             this.frustumUpdatePosY = posY;
@@ -644,11 +465,12 @@ public final class RenderSchematic extends RenderGlobal
                     final RenderOverlay neighborRenderOverlay = getNeighborRenderOverlay(posEye, posChunk, side);
 
                     if ((!renderChunksMany || !renderInfo.setFacing.contains(side.getOpposite())) && (!renderChunksMany || facing == null ||
-                            renderChunk.getCompiledChunk().isVisible(facing.getOpposite(), side)) && neighborRenderChunk != null &&
-                            neighborRenderChunk.setFrameIndex(frameCount) && camera.isBoundingBoxInFrustum(neighborRenderChunk.boundingBox))
+                                                                                                        renderChunk.getCompiledChunk().isVisible(facing.getOpposite(), side))
+                          && neighborRenderChunk != null &&
+                          neighborRenderChunk.setFrameIndex(frameCount) && camera.isBoundingBoxInFrustum(neighborRenderChunk.boundingBox))
                     {
                         final ContainerLocalRenderInformation renderInfoNext =
-                                new ContainerLocalRenderInformation(neighborRenderChunk, neighborRenderOverlay, side, renderInfo.counter + 1);
+                          new ContainerLocalRenderInformation(neighborRenderChunk, neighborRenderOverlay, side, renderInfo.counter + 1);
 
                         renderInfoNext.setFacing.addAll(renderInfo.setFacing);
                         renderInfoNext.setFacing.add(side);
@@ -687,97 +509,6 @@ public final class RenderSchematic extends RenderGlobal
         this.chunksToUpdate.addAll(set);
         this.overlaysToUpdate.addAll(set1);
         this.profiler.endSection();
-    }
-
-    private boolean isDisplayListDirty(Entity viewEntity, double posX, double posY, double posZ)
-    {
-        return this.displayListEntitiesDirty ||
-                !this.chunksToUpdate.isEmpty() ||
-                didEntityMove(posX, posY, posZ) ||
-                didEntityRotate(viewEntity);
-    }
-
-    private boolean didEntityRotate(Entity viewEntity)
-    {
-        return doubleEquals(viewEntity.rotationPitch, this.lastViewEntityPitch) ||
-                doubleEquals(viewEntity.rotationYaw, this.lastViewEntityYaw);
-    }
-
-    private boolean didEntityMove(double posX, double posY, double posZ)
-    {
-        return doubleEquals(posX, this.lastViewEntityX) ||
-                doubleEquals(posY, this.lastViewEntityY) ||
-                doubleEquals(posZ, this.lastViewEntityZ);
-    }
-
-    private static boolean doubleEquals(double d1, double d2)
-    {
-        // Calculate the difference.
-        double diff = Math.abs(d1 - d2);
-        double nd1 = Math.abs(d1);
-        double nd2 = Math.abs(d2);
-        // Find the largest
-        double largest = (nd2 > nd1) ? nd2 : nd1;
-
-        return diff <= largest * DOUBLE_EPSILON;
-    }
-
-    private Set<EnumFacing> getVisibleSides(final BlockPos pos)
-    {
-        final VisGraph visgraph = new VisGraph();
-        final BlockPos posChunk = new BlockPos(pos.getX() & ~0xF, pos.getY() & ~0xF, pos.getZ() & ~0xF);
-
-        for (final BlockPos.MutableBlockPos mutableBlockPos : BlockPos.getAllInBoxMutable(posChunk, posChunk.add(15, 15, 15)))
-        {
-            if (this.world.getBlockState(mutableBlockPos).getBlock().isOpaqueCube())
-            {
-                visgraph.func_178606_a(mutableBlockPos);
-            }
-        }
-
-        return visgraph.func_178609_b(pos);
-    }
-
-    private RenderChunk getNeighborRenderChunk(final BlockPos posEye, final BlockPos posChunk, final EnumFacing side)
-    {
-        final BlockPos offset = posChunk.offset(side, 16);
-        if (MathHelper.abs_int(posEye.getX() - offset.getX()) > this.renderDistanceChunks * 16)
-        {
-            return null;
-        }
-
-        if (offset.getY() < 0 || offset.getY() >= 256)
-        {
-            return null;
-        }
-
-        if (MathHelper.abs_int(posEye.getZ() - offset.getZ()) > this.renderDistanceChunks * 16)
-        {
-            return null;
-        }
-
-        return this.viewFrustum.getRenderChunk(offset);
-    }
-
-    private RenderOverlay getNeighborRenderOverlay(final BlockPos posEye, final BlockPos posChunk, final EnumFacing side)
-    {
-        final BlockPos offset = posChunk.offset(side, 16);
-        if (MathHelper.abs_int(posEye.getX() - offset.getX()) > this.renderDistanceChunks * 16)
-        {
-            return null;
-        }
-
-        if (offset.getY() < 0 || offset.getY() >= 256)
-        {
-            return null;
-        }
-
-        if (MathHelper.abs_int(posEye.getZ() - offset.getZ()) > this.renderDistanceChunks * 16)
-        {
-            return null;
-        }
-
-        return this.viewFrustum.getRenderOverlay(offset);
     }
 
     @Override
@@ -848,15 +579,6 @@ public final class RenderSchematic extends RenderGlobal
         this.profiler.endSection();
 
         return count;
-    }
-
-    private void renderBlockLayer(final EnumWorldBlockLayer layer)
-    {
-        this.mc.entityRenderer.enableLightmap();
-
-        this.renderContainer.renderChunkLayer(layer);
-
-        this.mc.entityRenderer.disableLightmap();
     }
 
     @Override
@@ -959,17 +681,6 @@ public final class RenderSchematic extends RenderGlobal
         markBlocksForUpdate(x1 - 1, y1 - 1, z1 - 1, x2 + 1, y2 + 1, z2 + 1);
     }
 
-    private void markBlocksForUpdate(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
-    {
-        if (this.world == null)
-        {
-            return;
-        }
-
-        final BlockPos.MutableBlockPos position = this.world.position;
-        this.viewFrustum.markBlocksForUpdate(x1 - position.getX(), y1 - position.getY(), z1 - position.getZ(), x2 - position.getX(), y2 - position.getY(), z2 - position.getZ());
-    }
-
     @Override
     public void playRecord(final String name, final BlockPos pos)
     {
@@ -989,8 +700,9 @@ public final class RenderSchematic extends RenderGlobal
     }
 
     @Override
-    public void spawnParticle(final int p_180442_1_, final boolean p_180442_2_, final double p_180442_3_, final double p_180442_5_, final double p_180442_7_,
-                              final double p_180442_9_, final double p_180442_11_, final double p_180442_13_, final int... p_180442_15_)
+    public void spawnParticle(
+                               final int p_180442_1_, final boolean p_180442_2_, final double p_180442_3_, final double p_180442_5_, final double p_180442_7_,
+                               final double p_180442_9_, final double p_180442_11_, final double p_180442_13_, final int... p_180442_15_)
     {
         // Not needed
     }
@@ -1037,14 +749,304 @@ public final class RenderSchematic extends RenderGlobal
         this.displayListEntitiesDirty = true;
     }
 
+    private void markBlocksForUpdate(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
+    {
+        if (this.world == null)
+        {
+            return;
+        }
+
+        final BlockPos.MutableBlockPos position = this.world.position;
+        this.viewFrustum.markBlocksForUpdate(x1 - position.getX(), y1 - position.getY(), z1 - position.getZ(), x2 - position.getX(), y2 - position.getY(), z2 - position.getZ());
+    }
+
+    /**
+     * Render the schematic and colored overlay.
+     *
+     * @param event Forge event.
+     */
+    @SubscribeEvent
+    public void onRenderWorldLast(final RenderWorldLastEvent event)
+    {
+        final EntityPlayerSP player = this.mc.thePlayer;
+        if (player != null)
+        {
+            this.profiler.startSection("schematica");
+            final boolean isRenderingSchematic = Settings.instance.getActiveSchematic() != null && Settings.instance.getSchematicWorld().isRendering;
+
+            this.profiler.startSection("schematic");
+            if (isRenderingSchematic)
+            {
+                GlStateManager.pushMatrix();
+                renderSchematic(Settings.instance.getSchematicWorld(), event.partialTicks);
+                GlStateManager.popMatrix();
+
+                GlStateManager.pushMatrix();
+                renderOverlay(Settings.instance.getSchematicWorld());
+                GlStateManager.popMatrix();
+            }
+
+            this.profiler.endSection();
+            this.profiler.endSection();
+        }
+    }
+
+    private synchronized void renderSchematic(final SchematicWorld schematic, final float partialTicks)
+    {
+        if (this.world != schematic)
+        {
+            this.world = schematic;
+
+            loadRenderers();
+        }
+        playerPositionOffset = this.mc.thePlayer.getPositionVector().subtract(this.world.position.getX(), this.world.position.getY(), this.world.position.getZ());
+
+        if (OpenGlHelper.shadersSupported && ConfigurationHandler.enableAlpha)
+        {
+            GL20.glUseProgram(SHADER_ALPHA.getProgram());
+            GL20.glUniform1f(GL20.glGetUniformLocation(SHADER_ALPHA.getProgram(), "alpha_multiplier"), ConfigurationHandler.alpha);
+        }
+
+        final int fps = Math.max(Minecraft.getDebugFPS(), 30);
+        renderWorld(partialTicks, System.nanoTime() + 1000000000 / fps);
+
+        if (OpenGlHelper.shadersSupported && ConfigurationHandler.enableAlpha)
+        {
+            GL20.glUseProgram(0);
+        }
+    }
+
+    private void renderOverlay(final SchematicWorld schematic)
+    {
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+
+        final GeometryTessellator tessellator = GeometryTessellator.getInstance();
+        tessellator.setTranslation(-this.mc.thePlayer.posX, -this.mc.thePlayer.posY, -this.mc.thePlayer.posZ);
+        tessellator.setDelta(ConfigurationHandler.blockDelta);
+
+        tessellator.beginLines();
+        this.tmp.set(schematic.position.getX() + schematic.getWidth() - 1,
+          schematic.position.getY() + schematic.getHeight() - 1,
+          schematic.position.getZ() + schematic.getLength() - 1);
+        tessellator.drawCuboid(schematic.position, this.tmp, GeometryMasks.Line.ALL, 0x7FBF00BF);
+        tessellator.draw();
+
+        GlStateManager.depthMask(false);
+        this.renderContainer.renderOverlay();
+        GlStateManager.depthMask(true);
+
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        GlStateManager.disableBlend();
+        GlStateManager.enableTexture2D();
+    }
+
+    private void renderWorld(final float partialTicks, final long finishTimeNano)
+    {
+        GlStateManager.enableCull();
+        this.profiler.endStartSection("culling");
+        final Frustum frustum = new Frustum();
+        final Entity entity = this.mc.getRenderViewEntity();
+
+        final double x = playerPositionOffset.xCoord;
+        final double y = playerPositionOffset.yCoord;
+        final double z = playerPositionOffset.zCoord;
+        frustum.setPosition(x, y, z);
+
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+
+        this.profiler.endStartSection("prepareterrain");
+        this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+        RenderHelper.disableStandardItemLighting();
+
+        this.profiler.endStartSection("terrain_setup");
+        setupTerrain(entity, partialTicks, frustum, this.frameCount, isInsideWorld(x, y, z));
+        this.frameCount++;
+
+        this.profiler.endStartSection("updatechunks");
+        updateChunks(finishTimeNano / 2);
+
+        this.profiler.endStartSection("terrain");
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        renderBlockLayer(EnumWorldBlockLayer.SOLID, partialTicks, PASS, entity);
+        renderBlockLayer(EnumWorldBlockLayer.CUTOUT_MIPPED, partialTicks, PASS, entity);
+        this.mc.getTextureManager().getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
+        renderBlockLayer(EnumWorldBlockLayer.CUTOUT, partialTicks, PASS, entity);
+        this.mc.getTextureManager().getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
+        GlStateManager.disableBlend();
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManager.popMatrix();
+
+        GlStateManager.pushMatrix();
+        this.profiler.endStartSection("entities");
+        RenderHelper.enableStandardItemLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        renderEntities(entity, frustum, partialTicks);
+        GlStateManager.disableBlend();
+        RenderHelper.disableStandardItemLighting();
+        disableLightmap();
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+        GlStateManager.popMatrix();
+
+        GlStateManager.enableCull();
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+        this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+
+        GlStateManager.depthMask(false);
+        GlStateManager.pushMatrix();
+        this.profiler.endStartSection("translucent");
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        renderBlockLayer(EnumWorldBlockLayer.TRANSLUCENT, partialTicks, PASS, entity);
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
+        GlStateManager.depthMask(true);
+
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.enableCull();
+    }
+
+    private boolean isInsideWorld(final double x, final double y, final double z)
+    {
+        return x >= -1 && y >= -1 && z >= -1 && x <= this.world.getWidth() && y <= this.world.getHeight() && z <= this.world.getLength();
+    }
+
+    private static void disableLightmap()
+    {
+        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GlStateManager.disableTexture2D();
+        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+    }
+
+    private boolean isDisplayListDirty(Entity viewEntity, double posX, double posY, double posZ)
+    {
+        return this.displayListEntitiesDirty ||
+                 !this.chunksToUpdate.isEmpty() ||
+                 didEntityMove(posX, posY, posZ) ||
+                 didEntityRotate(viewEntity);
+    }
+
+    private Set<EnumFacing> getVisibleSides(final BlockPos pos)
+    {
+        final VisGraph visgraph = new VisGraph();
+        final BlockPos posChunk = new BlockPos(pos.getX() & ~0xF, pos.getY() & ~0xF, pos.getZ() & ~0xF);
+
+        for (final BlockPos.MutableBlockPos mutableBlockPos : BlockPos.getAllInBoxMutable(posChunk, posChunk.add(15, 15, 15)))
+        {
+            if (this.world.getBlockState(mutableBlockPos).getBlock().isOpaqueCube())
+            {
+                visgraph.func_178606_a(mutableBlockPos);
+            }
+        }
+
+        return visgraph.func_178609_b(pos);
+    }
+
+    private RenderChunk getNeighborRenderChunk(final BlockPos posEye, final BlockPos posChunk, final EnumFacing side)
+    {
+        final BlockPos offset = posChunk.offset(side, 16);
+        if (MathHelper.abs_int(posEye.getX() - offset.getX()) > this.renderDistanceChunks * 16)
+        {
+            return null;
+        }
+
+        if (offset.getY() < 0 || offset.getY() >= 256)
+        {
+            return null;
+        }
+
+        if (MathHelper.abs_int(posEye.getZ() - offset.getZ()) > this.renderDistanceChunks * 16)
+        {
+            return null;
+        }
+
+        return this.viewFrustum.getRenderChunk(offset);
+    }
+
+    private RenderOverlay getNeighborRenderOverlay(final BlockPos posEye, final BlockPos posChunk, final EnumFacing side)
+    {
+        final BlockPos offset = posChunk.offset(side, 16);
+        if (MathHelper.abs_int(posEye.getX() - offset.getX()) > this.renderDistanceChunks * 16)
+        {
+            return null;
+        }
+
+        if (offset.getY() < 0 || offset.getY() >= 256)
+        {
+            return null;
+        }
+
+        if (MathHelper.abs_int(posEye.getZ() - offset.getZ()) > this.renderDistanceChunks * 16)
+        {
+            return null;
+        }
+
+        return this.viewFrustum.getRenderOverlay(offset);
+    }
+
+    private void renderBlockLayer(final EnumWorldBlockLayer layer)
+    {
+        this.mc.entityRenderer.enableLightmap();
+
+        this.renderContainer.renderChunkLayer(layer);
+
+        this.mc.entityRenderer.disableLightmap();
+    }
+
+    private static void setStaticPlayerPos(double x, double y, double z)
+    {
+        TileEntityRendererDispatcher.staticPlayerX = x;
+        TileEntityRendererDispatcher.staticPlayerY = y;
+        TileEntityRendererDispatcher.staticPlayerZ = z;
+    }
+
+    private boolean didEntityMove(double posX, double posY, double posZ)
+    {
+        return doubleEquals(posX, this.lastViewEntityX) ||
+                 doubleEquals(posY, this.lastViewEntityY) ||
+                 doubleEquals(posZ, this.lastViewEntityZ);
+    }
+
+    private boolean didEntityRotate(Entity viewEntity)
+    {
+        return doubleEquals(viewEntity.rotationPitch, this.lastViewEntityPitch) ||
+                 doubleEquals(viewEntity.rotationYaw, this.lastViewEntityYaw);
+    }
+
+    private static boolean doubleEquals(double d1, double d2)
+    {
+        // Calculate the difference.
+        double diff = Math.abs(d1 - d2);
+        double nd1 = Math.abs(d1);
+        double nd2 = Math.abs(d2);
+        // Find the largest
+        double largest = (nd2 > nd1) ? nd2 : nd1;
+
+        return diff <= largest * DOUBLE_EPSILON;
+    }
+
+    public void refresh()
+    {
+        loadRenderers();
+    }
+
     @SideOnly(Side.CLIENT)
     private class ContainerLocalRenderInformation
     {
-        private final RenderChunk renderChunk;
-        private final RenderOverlay renderOverlay;
-        private final EnumFacing facing;
+        private final RenderChunk     renderChunk;
+        private final RenderOverlay   renderOverlay;
+        private final EnumFacing      facing;
         private final Set<EnumFacing> setFacing;
-        private final int counter;
+        private final int             counter;
 
         ContainerLocalRenderInformation(final RenderChunk renderChunk, final RenderOverlay renderOverlay, final EnumFacing facing, final int counter)
         {

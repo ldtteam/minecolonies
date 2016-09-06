@@ -14,8 +14,8 @@ import net.minecraft.util.BlockPos;
 public class BuildingBaker extends AbstractBuildingWorker
 {
 
-    private static final String BAKER           = "Baker";
-    private static final String BAKER_HUT_NAME  = "bakerHut";
+    private static final String BAKER          = "Baker";
+    private static final String BAKER_HUT_NAME = "bakerHut";
 
     private static final int BAKER_HUT_MAX_LEVEL = 3;
 

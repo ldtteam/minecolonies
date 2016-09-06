@@ -15,15 +15,15 @@ public class ButtonVanilla extends Button
      */
     private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
 
-    private static final int DEFAULT_BUTTON_WIDTH = 200;
+    private static final int DEFAULT_BUTTON_WIDTH  = 200;
     private static final int DEFAULT_BUTTON_HEIGHT = 20;
 
-    private static final int ENABLED_COLOR = 14737632;
-    private static final int HOVER_COLOR = 16777120;
+    private static final int ENABLED_COLOR  = 14737632;
+    private static final int HOVER_COLOR    = 16777120;
     private static final int DISABLED_COLOR = 10526880;
 
-    private static final int ENABLED_TEXTURE_V = 66;
-    private static final int HOVER_TEXTURE_V = 86;
+    private static final int ENABLED_TEXTURE_V  = 66;
+    private static final int HOVER_TEXTURE_V    = 86;
     private static final int DISABLED_TEXTURE_V = 46;
 
     /**

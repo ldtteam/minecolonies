@@ -22,36 +22,22 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  */
 public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInventoryMessage, IMessage>
 {
-    /**
-     * Type of inventory.
-     */
-    private enum InventoryType
-    {
-        INVENTORY_CITIZEN,
-        INVENTORY_CHEST,
-        INVENTORY_FIELD
-    }
-
     /***
      * The inventory name.
      */
     private String name;
-
     /**
      * The inventory type.
      */
     private InventoryType inventoryType;
-
     /**
      * The entities id.
      */
     private int entityID;
-
     /**
      * The position of the inventory block/entity.
      */
     private BlockPos tePos;
-
     /**
      * The colony id the field or building etc is in.
      */
@@ -70,7 +56,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     /**
      * Creates an open inventory message for a citizen.
      *
-     * @param citizen       {@link CitizenDataView}
+     * @param citizen {@link CitizenDataView}
      */
     public OpenInventoryMessage(CitizenDataView citizen)
     {
@@ -82,7 +68,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     /**
      * Creates an open inventory message for a building
      *
-     * @param building       {@link AbstractBuilding.View}
+     * @param building {@link AbstractBuilding.View}
      */
     public OpenInventoryMessage(AbstractBuilding.View building)
     {
@@ -94,8 +80,8 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     /**
      * Creates an open inventory message for a field
      *
-     * @param field       {@link AbstractBuilding.View}
-     * @param colonyId    the colony associated with the inventory.
+     * @param field    {@link AbstractBuilding.View}
+     * @param colonyId the colony associated with the inventory.
      */
     public OpenInventoryMessage(BlockPos field, int colonyId)
     {
@@ -105,6 +91,24 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
         this.colonyId = colonyId;
     }
 
+    @Override
+    public void fromBytes(ByteBuf buf)
+    {
+        inventoryType = InventoryType.values()[buf.readInt()];
+        name = ByteBufUtils.readUTF8String(buf);
+        switch (inventoryType)
+        {
+            case INVENTORY_CITIZEN:
+                entityID = buf.readInt();
+                break;
+            case INVENTORY_CHEST:
+                tePos = BlockPosUtil.readFromByteBuf(buf);
+                break;
+            case INVENTORY_FIELD:
+                colonyId = buf.readInt();
+                tePos = BlockPosUtil.readFromByteBuf(buf);
+        }
+    }
 
     @Override
     public void toBytes(ByteBuf buf)
@@ -127,35 +131,15 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     }
 
     @Override
-    public void fromBytes(ByteBuf buf)
-    {
-        inventoryType = InventoryType.values()[buf.readInt()];
-        name = ByteBufUtils.readUTF8String(buf);
-        switch(inventoryType)
-        {
-            case INVENTORY_CITIZEN:
-                entityID = buf.readInt();
-                break;
-            case INVENTORY_CHEST:
-                tePos = BlockPosUtil.readFromByteBuf(buf);
-                break;
-            case INVENTORY_FIELD:
-                colonyId = buf.readInt();
-                tePos = BlockPosUtil.readFromByteBuf(buf);
-        }
-    }
-
-
-    @Override
     public IMessage onMessage(OpenInventoryMessage message, MessageContext ctx)
     {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
 
-        switch(message.inventoryType)
+        switch (message.inventoryType)
         {
             case INVENTORY_CITIZEN:
                 final InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
-                if(!StringUtils.isNullOrEmpty(message.name))
+                if (!StringUtils.isNullOrEmpty(message.name))
                 {
                     citizenInventory.setCustomName(message.name);
                 }
@@ -163,7 +147,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 break;
             case INVENTORY_CHEST:
                 final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
-                if(!StringUtils.isNullOrEmpty(message.name))
+                if (!StringUtils.isNullOrEmpty(message.name))
                 {
                     chest.setCustomName(message.name);
                 }
@@ -171,7 +155,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 break;
             case INVENTORY_FIELD:
                 final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
-                if(!StringUtils.isNullOrEmpty(message.name))
+                if (!StringUtils.isNullOrEmpty(message.name))
                 {
                     inventoryField.setCustomName(message.name);
                 }
@@ -180,5 +164,15 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
         }
 
         return null;
+    }
+
+    /**
+     * Type of inventory.
+     */
+    private enum InventoryType
+    {
+        INVENTORY_CITIZEN,
+        INVENTORY_CHEST,
+        INVENTORY_FIELD
     }
 }

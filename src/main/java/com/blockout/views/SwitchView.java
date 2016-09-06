@@ -41,6 +41,80 @@ public class SwitchView extends View
         }
     }
 
+    public void setView(String name)
+    {
+        //  Immediate children only
+        for (Pane child : children)
+        {
+            if (child.getID().equals(name))
+            {
+                setCurrentView(child);
+                return;
+            }
+        }
+    }
+
+    @Override
+    public Pane findPaneForClick(int mx, int my)
+    {
+        if (currentView != null && currentView.canHandleClick(mx, my))
+        {
+            return currentView;
+        }
+
+        return null;
+    }
+
+    @Override
+    protected boolean childIsVisible(Pane child)
+    {
+        return child == currentView && super.childIsVisible(child);
+    }
+
+    @Override
+    public void addChild(Pane child)
+    {
+        super.addChild(child);
+        if (children.size() == 1)
+        {
+            currentView = child;
+            child.setVisible(true);
+        }
+        else
+        {
+            child.setVisible(false);
+        }
+    }
+
+    @Override
+    public void adjustChild(Pane child)
+    {
+        if (child.getWidth() == 0 || child.getHeight() == 0)
+        {
+            child.setSize(width - child.getX(), height - child.getY());
+        }
+
+        super.adjustChild(child);
+    }
+
+    @Override
+    public void removeChild(Pane child)
+    {
+        super.removeChild(child);
+        if (child == currentView)
+        {
+            if (children.isEmpty())
+            {
+                currentView = null;
+            }
+            else
+            {
+                currentView = children.get(0);
+                currentView.setVisible(true);
+            }
+        }
+    }
+
     public Pane getCurrentView()
     {
         return currentView;
@@ -54,19 +128,6 @@ public class SwitchView extends View
         }
         currentView = pane;
         currentView.setVisible(true);
-    }
-
-    public void setView(String name)
-    {
-        //  Immediate children only
-        for (Pane child : children)
-        {
-            if (child.getID().equals(name))
-            {
-                setCurrentView(child);
-                return;
-            }
-        }
     }
 
     /**
@@ -105,66 +166,5 @@ public class SwitchView extends View
         }
 
         setCurrentView(children.get(index));
-    }
-
-    @Override
-    public void adjustChild(Pane child)
-    {
-        if (child.getWidth() == 0 || child.getHeight() == 0)
-        {
-            child.setSize(width - child.getX(), height - child.getY());
-        }
-
-        super.adjustChild(child);
-    }
-
-    @Override
-    public void addChild(Pane child)
-    {
-        super.addChild(child);
-        if (children.size() == 1)
-        {
-            currentView = child;
-            child.setVisible(true);
-        }
-        else
-        {
-            child.setVisible(false);
-        }
-    }
-
-    @Override
-    public void removeChild(Pane child)
-    {
-        super.removeChild(child);
-        if (child == currentView)
-        {
-            if (children.isEmpty())
-            {
-                currentView = null;
-            }
-            else
-            {
-                currentView = children.get(0);
-                currentView.setVisible(true);
-            }
-        }
-    }
-
-    @Override
-    protected boolean childIsVisible(Pane child)
-    {
-        return child == currentView && super.childIsVisible(child);
-    }
-
-    @Override
-    public Pane findPaneForClick(int mx, int my)
-    {
-        if (currentView != null && currentView.canHandleClick(mx, my))
-        {
-            return currentView;
-        }
-
-        return null;
     }
 }

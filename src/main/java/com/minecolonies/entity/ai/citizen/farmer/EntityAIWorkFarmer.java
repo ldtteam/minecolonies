@@ -70,12 +70,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, () -> START_WORKING),
-                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-                new AITarget(PREPARING, this::prepareForFarming),
-                new AITarget(FARMER_HOE, this::hoe),
-                new AITarget(FARMER_PLANT, this::plant),
-                new AITarget(FARMER_HARVEST, this::harvest)
+          new AITarget(IDLE, () -> START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepareForFarming),
+          new AITarget(FARMER_HOE, this::hoe),
+          new AITarget(FARMER_PLANT, this::plant),
+          new AITarget(FARMER_HARVEST, this::harvest)
         );
         worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
@@ -270,10 +270,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private boolean shouldHoe(BlockPos position, Field field)
     {
         return !field.isNoPartOfField(world, position)
-                && !BlockUtils.isBlockSeed(world, position.up())
-                && !(world.getBlockState(position).getBlock() instanceof BlockHutField)
-                && (world.getBlockState(position).getBlock() == Blocks.dirt || world.getBlockState(position).getBlock() == Blocks.grass);
-
+                 && !BlockUtils.isBlockSeed(world, position.up())
+                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField)
+                 && (world.getBlockState(position).getBlock() == Blocks.dirt || world.getBlockState(position).getBlock() == Blocks.grass);
     }
 
     /**
@@ -305,14 +304,24 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
             else if (workingOffset.getX() <= -field.getLengthMinusX())
             {
-                workingOffset = new BlockPos(field.getLengthPlusX(), 0, workingOffset.getZ() -1);
+                workingOffset = new BlockPos(field.getLengthPlusX(), 0, workingOffset.getZ() - 1);
             }
             else
             {
-                workingOffset = new BlockPos(workingOffset.getX() -1, 0, workingOffset.getZ());
+                workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
             }
         }
         return true;
+    }
+
+    /**
+     * Resets the basic variables of the class.
+     */
+    private void resetVariables()
+    {
+        requestSeeds = true;
+        shouldDumpInventory = true;
+        shouldTryToGetSeed = true;
     }
 
     /**
@@ -386,7 +395,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
 
         return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof BlockCrops)
-                && !(world.getBlockState(position).getBlock() instanceof BlockHutField) && world.getBlockState(position).getBlock() == Blocks.farmland;
+                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField) && world.getBlockState(position).getBlock() == Blocks.farmland;
     }
 
     /**
@@ -433,16 +442,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             buildingFarmer.getCurrentField().setFieldStage(PLANTED);
         }
         return AIState.IDLE;
-    }
-
-    /**
-     * Resets the basic variables of the class.
-     */
-    private void resetVariables()
-    {
-        requestSeeds = true;
-        shouldDumpInventory = true;
-        shouldTryToGetSeed = true;
     }
 
     /**

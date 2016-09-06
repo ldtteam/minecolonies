@@ -34,12 +34,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
 
-    protected int workingRange;
-
     private static final float HARDNESS   = 10F;
     private static final float RESISTANCE = Float.POSITIVE_INFINITY;
-
     private static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
+    protected int workingRange;
 
     /**
      * Constructor for a block using the minecolonies mod.
@@ -72,42 +70,41 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      */
     public abstract String getName();
 
-    /**
-     * Event-Handler for placement of this block.
-     * <p>
-     * Override for custom logic.
-     *
-     * @param worldIn the word we are in
-     * @param pos     the position where the block was placed
-     * @param state   the state the placed block is in
-     * @param placer  the player placing the block
-     * @param stack   the itemstack from where the block was placed
-     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
-     */
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    public TileEntity createNewTileEntity(World world, int meta)
     {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        
-        /*
-        Only work on server side
-        */
-        if (worldIn.isRemote)
-        {
-            return;
-        }
+        //Creates a tile entity for our building
+        return new TileEntityColonyBuilding();
+    }
 
-        final TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
+    @Override
+    public IBlockState getStateFromMeta(int meta)
+    {
+        EnumFacing facing = EnumFacing.getFront(meta);
+        if (facing.getAxis() == EnumFacing.Axis.Y)
         {
-            final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-            final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
-
-            if (colony != null)
-            {
-                colony.addNewBuilding(hut);
-            }
+            facing = EnumFacing.NORTH;
         }
+        return this.getDefaultState().withProperty(FACING, facing);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state)
+    {
+        return ((EnumFacing) state.getValue(FACING)).getIndex();
+    }
+
+
+    // =======================================================================
+    // ======================= Rendering & IBlockState =======================
+    // =======================================================================
+
+    // render as a solid block, we don't want transparency here
+    @Override
+    @SideOnly(Side.CLIENT)
+    public EnumWorldBlockLayer getBlockLayer()
+    {
+        return EnumWorldBlockLayer.SOLID;
     }
 
     @Override
@@ -129,47 +126,48 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta)
-    {
-        //Creates a tile entity for our building
-        return new TileEntityColonyBuilding();
-    }
-
-
-    // =======================================================================
-    // ======================= Rendering & IBlockState =======================
-    // =======================================================================
-
-    @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
     {
         final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
-    // render as a solid block, we don't want transparency here
+    /**
+     * Event-Handler for placement of this block.
+     * <p>
+     * Override for custom logic.
+     *
+     * @param worldIn the word we are in
+     * @param pos     the position where the block was placed
+     * @param state   the state the placed block is in
+     * @param placer  the player placing the block
+     * @param stack   the itemstack from where the block was placed
+     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
+     */
     @Override
-    @SideOnly (Side.CLIENT)
-    public EnumWorldBlockLayer getBlockLayer()
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
-        return EnumWorldBlockLayer.SOLID;
-    }
+        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
-    @Override
-    public IBlockState getStateFromMeta(int meta)
-    {
-        EnumFacing facing = EnumFacing.getFront(meta);
-        if (facing.getAxis() == EnumFacing.Axis.Y)
+        /*
+        Only work on server side
+        */
+        if (worldIn.isRemote)
         {
-            facing = EnumFacing.NORTH;
+            return;
         }
-        return this.getDefaultState().withProperty(FACING, facing);
-    }
 
-    @Override
-    public int getMetaFromState(IBlockState state)
-    {
-        return ((EnumFacing) state.getValue(FACING)).getIndex();
+        final TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
+        {
+            final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
+            final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
+
+            if (colony != null)
+            {
+                colony.addNewBuilding(hut);
+            }
+        }
     }
 
     @Override

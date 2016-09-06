@@ -34,7 +34,7 @@ public class AssignmentModeMessage implements IMessage, IMessageHandler<Assignme
     /**
      * Creates object for the assignmentMode message.
      *
-     * @param building View of the building to read data from.
+     * @param building       View of the building to read data from.
      * @param assignmentMode assignmentMode of the particular farmer.
      */
     public AssignmentModeMessage(BuildingFarmer.View building, boolean assignmentMode)
@@ -42,14 +42,6 @@ public class AssignmentModeMessage implements IMessage, IMessageHandler<Assignme
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.assignmentMode = assignmentMode;
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        BlockPosUtil.writeToByteBuf(buf, buildingId);
-        buf.writeBoolean(assignmentMode);
     }
 
     @Override
@@ -61,13 +53,21 @@ public class AssignmentModeMessage implements IMessage, IMessageHandler<Assignme
     }
 
     @Override
+    public void toBytes(ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeBoolean(assignmentMode);
+    }
+
+    @Override
     public IMessage onMessage(AssignmentModeMessage message, MessageContext ctx)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
             //Verify player has permission to do edit permissions
-            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
             {
                 return null;
             }

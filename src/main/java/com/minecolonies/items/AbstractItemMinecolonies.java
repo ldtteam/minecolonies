@@ -20,7 +20,7 @@ public abstract class AbstractItemMinecolonies extends Item
     public AbstractItemMinecolonies(String name)
     {
         this.name = name;
-        
+
         super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + this.name);
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setRegistryName(this.name);
@@ -30,7 +30,7 @@ public abstract class AbstractItemMinecolonies extends Item
     /**
      * Returns the name of the item
      *
-     * @return      Name of the item
+     * @return Name of the item
      */
     public final String getName()
     {

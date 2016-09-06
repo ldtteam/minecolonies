@@ -57,6 +57,24 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingBuilder);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
+        }
+    }
+
+    /**
      * Getter of the job description.
      *
      * @return the description of the builder job.
@@ -77,24 +95,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public AbstractJob createJob(CitizenData citizen)
     {
         return new JobBuilder(citizen);
-    }
-
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        if (newLevel == 1)
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingBuilder);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
-        }
     }
 
     /**

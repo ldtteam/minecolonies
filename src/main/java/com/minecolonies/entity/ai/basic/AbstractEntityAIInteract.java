@@ -85,8 +85,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
               || curBlock.equals(Blocks.air)
               || BlockUtils.shouldNeverBeMessedWith(curBlock))
         {
-            if(curBlock != null
-                 && curBlock.getMaterial().isLiquid()){
+            if (curBlock != null
+                  && curBlock.getMaterial().isLiquid())
+            {
                 world.setBlockToAir(blockToMine);
             }
             //no need to mine block...

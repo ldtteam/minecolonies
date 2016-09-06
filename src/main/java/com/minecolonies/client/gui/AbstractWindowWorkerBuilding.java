@@ -19,12 +19,12 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     /**
      * Id of the hire/fire button in the GUI.
      */
-    private static final String BUTTON_HIRE        = "hire";
+    private static final String BUTTON_HIRE = "hire";
 
     /**
      * Id of the recall button in the GUI.
      */
-    private static final String BUTTON_RECALL      = "recall";
+    private static final String BUTTON_RECALL = "recall";
 
     /**
      * Id of the type label in the GUI.
@@ -34,12 +34,12 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     /**
      * Id of the name label in the GUI.
      */
-    private static final String LABEL_WORKERNAME   = "workerName";
+    private static final String LABEL_WORKERNAME = "workerName";
 
     /**
      * Id of the level label in the GUI.
      */
-    private static final String LABEL_WORKERLEVEL  = "workerLevel";
+    private static final String LABEL_WORKERLEVEL = "workerLevel";
 
     /**
      * Constructor for the window of the worker building
@@ -64,7 +64,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      */
     private void hireClicked(Button button)
     {
-        if(building.getColony().isManualHiring())
+        if (building.getColony().isManualHiring())
         {
             if (building.getWorkerId() == 0)
             {
@@ -77,7 +77,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
                 button.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.hire"));
                 findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText("");
                 findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
-                        .setLabelText(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", ""));
+                  .setLabelText(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", ""));
                 building.setWorkerId(0);
             }
         }
@@ -86,8 +86,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     /**
      * Action when a recall button is clicked.
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void recallClicked(Button ignored)
     {
@@ -101,7 +101,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     public void onOpened()
     {
         super.onOpened();
-        String workerName  = "";
+        String workerName = "";
         String workerLevel = "";
 
         if (building.getWorkerId() != 0)
@@ -121,7 +121,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
         findPaneOfTypeByID(LABEL_WORKERNAME, Label.class).setLabelText(workerName);
         findPaneOfTypeByID(LABEL_WORKERLEVEL, Label.class)
-                .setLabelText(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", workerLevel));
+          .setLabelText(LanguageHandler.format("com.minecolonies.gui.workerHuts.workerLevel", workerLevel));
 
         findPaneOfTypeByID(LABEL_BUILDINGTYPE, Label.class).setLabelText("xxxxxxxx");
     }
