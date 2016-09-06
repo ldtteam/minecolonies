@@ -48,6 +48,7 @@ public class Colony implements IColony
     private boolean             isCitizensDirty  = false;
     private boolean             isBuildingsDirty = false;
     private boolean             manualHiring     = false;
+    private boolean             isFieldsDirty    = false;
 
     //  General Attributes
     private final int      dimensionId;
@@ -454,15 +455,7 @@ public class Colony implements IColony
      */
     private void markFieldsDirty()
     {
-        ColonyManager.markDirty();
-
-        for (AbstractBuilding building : buildings.values())
-        {
-            if (building instanceof BuildingFarmer)
-            {
-                subscribers.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
-            }
-        }
+        isFieldsDirty = true;
     }
 
     /**
@@ -532,8 +525,12 @@ public class Colony implements IColony
 
             //Buildings
             sendBuildingPackets(oldSubscribers, hasNewSubscribers);
+
+            //Fields
+            sendFieldPackets(oldSubscribers, hasNewSubscribers);
         }
 
+        isFieldsDirty = false;
         isDirty = false;
         isCitizensDirty = false;
         isBuildingsDirty = false;
@@ -541,6 +538,26 @@ public class Colony implements IColony
 
         buildings.values().forEach(AbstractBuilding::clearDirty);
         citizens.values().forEach(CitizenData::clearDirty);
+    }
+
+    /**
+     * Sends packages to update the fields.
+     *
+     * @param oldSubscribers    the existing subscribers.
+     * @param hasNewSubscribers the new subscribers.
+     */
+    private void sendFieldPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
+    {
+        if (isBuildingsDirty || hasNewSubscribers)
+        {
+            for (AbstractBuilding building : buildings.values())
+            {
+                if (building instanceof BuildingFarmer)
+                {
+                    subscribers.forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewBuildingViewMessage(building), player));
+                }
+            }
+        }
     }
 
     /**
@@ -1193,6 +1210,7 @@ public class Colony implements IColony
      */
     public void removeField(final BlockPos pos)
     {
+        this.markFieldsDirty();
         fields.remove(pos);
     }
 }
