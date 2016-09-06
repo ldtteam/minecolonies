@@ -176,9 +176,10 @@ public class Colony implements IColony
         {
             final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
             final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
-            // todo: retrieve this
             final StatBase statBase = StatList.getOneShotStat(achievementKey);
+            System.out.println("Checking stat: "+achievementKey+":"+statBase.statId);
             if (statBase instanceof Achievement) {
+                System.out.println("Found an achievement");
                 colonyAchievements.add((Achievement) statBase);
             }
         }
@@ -232,7 +233,6 @@ public class Colony implements IColony
         final NBTTagList achievementsTagList = new NBTTagList();
         for (final Achievement achievement : this.colonyAchievements)
         {
-            // TODO: Validate this
             String achievementKey = achievement.statId;
             NBTTagCompound achievementCompound = new NBTTagCompound();
             achievementCompound.setString(TAG_ACHIEVEMENT, achievementKey);
@@ -771,10 +771,6 @@ public class Colony implements IColony
             this.triggerAchievement(ModAchievements.achievementSizeCity);
         }
         
-        if (size >= ModAchievements.ACHIEVEMENT_SIZE_METROPOLIS)
-        {
-            this.triggerAchievement(ModAchievements.achievementSizeMetropolis);
-        }
     }
 
     /**
