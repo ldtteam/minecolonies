@@ -15,6 +15,13 @@ public final class AchievementUtils
 {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private AchievementUtils()
+    {
+    }
+
+    /**
      * This method will sync all acquired achievements by this colony to all members with at least rank {@link Permissions.Rank#OFFICER}
      *
      * @param colony The colony to sync
@@ -37,13 +44,6 @@ public final class AchievementUtils
                 player.triggerAchievement(achievement);
             }
         }
-    }
-
-    /**
-     * Private constructor to hide the implicit public one.
-     */
-    private AchievementUtils()
-    {
     }
 
 }

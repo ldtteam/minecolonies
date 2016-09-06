@@ -16,6 +16,13 @@ public final class PermissionUtils
 {
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private PermissionUtils()
+    {
+    }
+
+    /**
      * Creates a list of players that have the given rank or higher.
      *
      * This is using the enums ordinal method for comparison.
@@ -41,13 +48,6 @@ public final class PermissionUtils
         }
 
         return playersWithAtLeastRank;
-    }
-
-    /**
-     * Private constructor to hide the implicit public one.
-     */
-    private PermissionUtils()
-    {
     }
 
 }
