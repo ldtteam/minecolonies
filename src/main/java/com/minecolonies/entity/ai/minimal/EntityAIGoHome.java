@@ -1,5 +1,6 @@
 package com.minecolonies.entity.ai.minimal;
 
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -44,6 +45,8 @@ public class EntityAIGoHome extends EntityAIBase
             Temp fix for pathfinding in the night.
             Citizens can't find a path home.
              */
+            final BlockPos workBuilding = citizen.getWorkBuilding().getLocation();
+            citizen.isWorkerAtSiteWithMove(workBuilding, 2);
             return;
         }
 
