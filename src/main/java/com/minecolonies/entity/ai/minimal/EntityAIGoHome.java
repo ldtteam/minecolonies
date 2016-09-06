@@ -39,6 +39,14 @@ public class EntityAIGoHome extends EntityAIBase
             return;
         }
 
+        if(citizen.getWorkBuilding() != null){
+            /*
+            Temp fix for pathfinding in the night.
+            Citizens can't find a path home.
+             */
+            return;
+        }
+
         citizen.getNavigator().tryMoveToXYZ((double) pos.getX() + 0.5D, (double) pos.getY(), (double) pos.getZ() + 0.5D, 1.0D);
     }
 
