@@ -32,7 +32,8 @@ public abstract class AbstractItemMinecolonies extends Item
      *
      * @return      Name of the item
      */
-    public final String getName() {
+    public final String getName()
+    {
         return name;
     }
 }

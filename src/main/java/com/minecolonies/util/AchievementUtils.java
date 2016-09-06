@@ -5,6 +5,7 @@ import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.stats.Achievement;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -32,7 +33,7 @@ public final class AchievementUtils
 
         @NotNull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players);
 
-        for (@NotNull final EntityPlayer player : lPlayer)
+        for (@Nullable final EntityPlayer player : lPlayer)
         {
             for (final Achievement achievement : colony.getAchievements())
             {
