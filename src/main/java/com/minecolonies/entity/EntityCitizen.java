@@ -966,6 +966,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
+     * We override this method and execute no code to avoid citizens travelling to the nether.
+     * @param dimension dimension to travel to.
+     */
+    @Override
+    public void travelToDimension(final int dimension)
+    {
+        //do nothing for now. We may add some funny easter eggs here later (Phrases like: "Nah I won't go there - too hot!").
+    }
+
+    /**
      * Drop the equipment for this entity.
      */
     @Override
