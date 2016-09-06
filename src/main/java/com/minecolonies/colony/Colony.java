@@ -23,13 +23,16 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.stats.Achievement;
+import net.minecraft.stats.StatBase;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -69,6 +72,8 @@ public class Colony implements IColony
     private int                       topCitizenId = 0;
     private int                       maxCitizens  = Configurations.maxCitizens;
 
+    private final List<Achievement> colonyAchievements;
+
     //  Settings
     private static final int CITIZEN_CLEANUP_TICK_INCREMENT = 5 * 20;
 
@@ -77,15 +82,18 @@ public class Colony implements IColony
 
     private final MaterialSystem materialSystem = new MaterialSystem();
 
-    private static final String TAG_ID            = "id";
-    private static final String TAG_NAME          = "name";
-    private static final String TAG_DIMENSION     = "dimension";
-    private static final String TAG_CENTER        = "center";
-    private static final String TAG_MAX_CITIZENS  = "maxCitizens";
-    private static final String TAG_BUILDINGS     = "buildings";
-    private static final String TAG_CITIZENS      = "citizens";
-    private static final String TAG_WORK          = "work";
-    private static final String TAG_MANUAL_HIRING = "manualHiring";
+    private static final String TAG_ID               = "id";
+    private static final String TAG_NAME             = "name";
+    private static final String TAG_DIMENSION        = "dimension";
+    private static final String TAG_CENTER           = "center";
+    private static final String TAG_MAX_CITIZENS     = "maxCitizens";
+    private static final String TAG_BUILDINGS        = "buildings";
+    private static final String TAG_CITIZENS         = "citizens";
+    private static final String TAG_ACHIEVEMENT      = "achievement";
+    private static final String TAG_ACHIEVEMENT_LIST = "achievementlist";
+    private static final String TAG_WORK             = "work";
+    private static final String TAG_MANUAL_HIRING    = "manualHiring";
+
     private static final String TAG_FIELDS        = "fields";
     /**
      * Constructor for a newly created Colony.
@@ -111,6 +119,8 @@ public class Colony implements IColony
     {
         this.id = id;
         this.dimensionId = dim;
+
+        this.colonyAchievements = new ArrayList<>();
     }
 
     /**
@@ -178,6 +188,19 @@ public class Colony implements IColony
             }
         }
 
+        // Restore colony achievements
+        final NBTTagList achievementTagList = compound.getTagList(TAG_ACHIEVEMENT_LIST, NBT.TAG_COMPOUND);
+        for (int i = 0; i < achievementTagList.tagCount(); ++i)
+        {
+            final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
+            final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
+            final StatBase statBase = StatList.getOneShotStat(achievementKey);
+            if (statBase instanceof Achievement)
+            {
+                colonyAchievements.add((Achievement) statBase);
+            }
+        }
+
         //  Workload
         workManager.readFromNBT(compound.getCompoundTag(TAG_WORK));
     }
@@ -232,6 +255,16 @@ public class Colony implements IColony
             citizenTagList.appendTag(citizenCompound);
         }
         compound.setTag(TAG_CITIZENS, citizenTagList);
+
+        //  Achievements
+        final NBTTagList achievementsTagList = new NBTTagList();
+        for (final Achievement achievement : this.colonyAchievements)
+        {
+            final NBTTagCompound achievementCompound = new NBTTagCompound();
+            achievementCompound.setString(TAG_ACHIEVEMENT, achievement.statId);
+            achievementsTagList.appendTag(achievementCompound);
+        }
+        compound.setTag(TAG_ACHIEVEMENT_LIST, achievementsTagList);
 
         //  Workload
         final NBTTagCompound workManagerCompound = new NBTTagCompound();
@@ -800,26 +833,22 @@ public class Colony implements IColony
     {
         // the colonies size
         final int size = this.citizens.size();
-        
-        final ArrayList<Consumer<EntityPlayer>> consumers = new ArrayList<>();
+
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
-            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeSettlement));
+            this.triggerAchievement(ModAchievements.achievementSizeSettlement);
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_TOWN)
         {
-            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeTown));
+            this.triggerAchievement(ModAchievements.achievementSizeTown);
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
         {
-            consumers.add(player -> player.triggerAchievement(ModAchievements.achievementSizeCity));
+            this.triggerAchievement(ModAchievements.achievementSizeCity);
         }
-        this.getPermissions().getPlayers().values().stream()
-                .map(Permissions.Player::getID)
-                .map(ServerUtils::getPlayerFromUUID)
-                .forEach(player -> consumers.forEach(consumer -> consumer.accept(player)));
+        
     }
 
     /**
@@ -1208,7 +1237,33 @@ public class Colony implements IColony
     }
 
     /**
+     * Triggers an achievement on this colony.
+     *
+     * Will automatically sync to all players.
+     *
+     * @param achievement The achievement to trigger
+     */
+    public void triggerAchievement(@NotNull final Achievement achievement)
+    {
+        if (this.colonyAchievements.contains(achievement))
+        {
+            return;
+        }
+
+        this.colonyAchievements.add(achievement);
+
+        AchievementUtils.syncAchievements(this);
+    }
+
+    @NotNull
+    public List<Achievement> getAchievements()
+    {
+        return Collections.unmodifiableList(this.colonyAchievements);
+    }
+
+    /**
      * Removes a field from the farmerFields list.
+     *
      * @param pos the position-id.
      */
     public void removeField(final BlockPos pos)

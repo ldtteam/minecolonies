@@ -1,11 +1,9 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.configuration.Configurations;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -45,10 +43,5 @@ public class BlockHutTownHall extends AbstractBlockHut
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-        if(placer instanceof EntityPlayer)
-        {
-            final EntityPlayer player = (EntityPlayer) placer;
-            player.triggerAchievement(ModAchievements.achievementBuildingTownhall);
-        }
     }
 }

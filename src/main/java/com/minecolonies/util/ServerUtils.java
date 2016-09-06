@@ -1,5 +1,6 @@
 package com.minecolonies.util;
 
+import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -59,13 +60,13 @@ public final class ServerUtils
     @NotNull
     public static List<EntityPlayer> getPlayersFromUUID(@NotNull World world, @NotNull Collection<UUID> ids)
     {
-        final List<EntityPlayer> players = new ArrayList<>();
+        @NotNull final List<EntityPlayer> players = new ArrayList<>();
 
         for (final Object o : world.playerEntities)
         {
             if (o instanceof EntityPlayer)
             {
-                final EntityPlayer player = (EntityPlayer) o;
+                @NotNull final EntityPlayer player = (EntityPlayer) o;
                 if (ids.contains(player.getGameProfile().getId()))
                 {
                     players.add(player);
@@ -77,6 +78,46 @@ public final class ServerUtils
             }
         }
         return players;
+    }
+
+    /**
+     * Returns a list of players from a list of {@link Permissions.Player}.
+     *
+     * The {@link Permissions.Player} is a wrapper around a {@link UUID} of minecraft players.
+     * The List will simply be converted into an {@link EntityPlayer} type.
+     *
+     * Uses {@link ServerUtils#getPlayerFromPermPlayer(Permissions.Player)}.
+     *
+     * @param players The list of players to convert.
+     * @return A list of {@link EntityPlayer}s
+     */
+    @NotNull
+    public static List<EntityPlayer> getPlayersFromPermPlayer(@NotNull List<Permissions.Player> players)
+    {
+        @NotNull final List<EntityPlayer> playerList = new ArrayList<>();
+
+        for (@NotNull final Permissions.Player player : players)
+        {
+            playerList.add(ServerUtils.getPlayerFromPermPlayer(player));
+        }
+
+        return playerList;
+    }
+
+    /**
+     * Retrieves a Player from {@link Permissions.Player}.
+     *
+     * Simply converts our type into the base type.
+     *
+     * Passes this {@link Permissions.Player#getID()} to {@link ServerUtils#getPlayerFromUUID(UUID)}.
+     *
+     * @param player The {@link Permissions.Player} to convert
+     * @return The {@link EntityPlayer} reference.
+     */
+    @Nullable
+    public static EntityPlayer getPlayerFromPermPlayer(@NotNull Permissions.Player player)
+    {
+        return ServerUtils.getPlayerFromUUID(player.getID());
     }
 
     /**
@@ -95,7 +136,7 @@ public final class ServerUtils
             return null;
         }
         final List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-        for (final EntityPlayerMP player : allPlayers)
+        for (@NotNull final EntityPlayerMP player : allPlayers)
         {
             if (player.getUniqueID().equals(uuid))
             {

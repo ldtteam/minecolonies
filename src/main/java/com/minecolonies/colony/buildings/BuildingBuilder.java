@@ -7,8 +7,6 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobBuilder;
-import com.minecolonies.util.ServerUtils;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 
 /**
@@ -89,15 +87,13 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         super.onUpgradeComplete(newLevel);
 
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
-
         if (newLevel == 1)
         {
-            owner.triggerAchievement(ModAchievements.achievementBuildingBuilder);
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingBuilder);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
         }
     }
 

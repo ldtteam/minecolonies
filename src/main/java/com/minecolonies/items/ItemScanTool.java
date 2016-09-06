@@ -14,14 +14,8 @@ public class ItemScanTool extends AbstractItemMinecolonies
 {
     public ItemScanTool()
     {
-        super();
+        super("scepterSteel");
         setMaxStackSize(1);
-    }
-
-    @Override
-    public String getName()
-    {
-        return "scepterSteel";
     }
 
     @Override

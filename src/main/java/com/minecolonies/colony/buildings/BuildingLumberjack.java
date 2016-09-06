@@ -7,8 +7,6 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobLumberjack;
-import com.minecolonies.util.ServerUtils;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 
 /**
@@ -93,15 +91,13 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     {
         super.onUpgradeComplete(newLevel);
 
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
-
         if (newLevel == 1)
         {
-            owner.triggerAchievement(ModAchievements.achievementBuildingLumberjack);
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
         }
     }
 

@@ -9,10 +9,8 @@ import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.citizen.miner.Level;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.ServerUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -557,15 +555,13 @@ public class BuildingMiner extends AbstractBuildingWorker
     {
         super.onUpgradeComplete(newLevel);
 
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
-
         if (newLevel == 1)
         {
-            owner.triggerAchievement(ModAchievements.achievementBuildingMiner);
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingMiner);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
         }
     }
 

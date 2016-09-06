@@ -30,14 +30,8 @@ public class ItemCaliper extends AbstractItemMinecolonies
      */
     public ItemCaliper()
     {
-        super();
+        super("caliper");
         maxStackSize = 1;
-    }
-
-    @Override
-    public String getName()
-    {
-        return "caliper";
     }
 
     @Override

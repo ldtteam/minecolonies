@@ -1,5 +1,6 @@
 package com.minecolonies.colony;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -70,6 +71,8 @@ public final class ColonyManager
         String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
+
+        colony.triggerAchievement(ModAchievements.achievementBuildingTownhall);
 
         markDirty();
 

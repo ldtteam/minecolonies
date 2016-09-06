@@ -12,14 +12,8 @@ public class ItemBuildTool extends AbstractItemMinecolonies
 {
     public ItemBuildTool()
     {
-        super();
+        super("scepterGold");
         setMaxStackSize(1);
-    }
-
-    @Override
-    public String getName()
-    {
-        return "scepterGold";
     }
 
     @Override

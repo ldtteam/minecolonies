@@ -48,18 +48,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     public ItemSupplyChestDeployer()
     {
-        super();
+        super("supplyChestDeployer");
         setMaxStackSize(1);
-    }
-
-    /**
-     * Getter of the name.
-     * @return the name of the item/block.
-     */
-    @Override
-    public String getName()
-    {
-        return "supplyChestDeployer";
     }
 
     /**
