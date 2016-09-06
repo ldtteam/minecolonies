@@ -15,20 +15,13 @@ public final class AchievementUtils
 {
 
     /**
-     * Private constructor to hide the implicit public one.
-     */
-    private AchievementUtils()
-    {
-    }
-
-    /**
      * This method will sync all acquired achievements by this colony to all members with at least rank {@link Permissions.Rank#OFFICER}
      *
      * @param colony The colony to sync
      */
     public static void syncAchievements(@NotNull final Colony colony)
     {
-        final List<Permissions.Player> players = PermissionUtils.getPlayersWithAtleastRank(colony, Permissions.Rank.OFFICER);
+        final List<Permissions.Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Permissions.Rank.OFFICER);
 
         @NotNull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players);
 
@@ -45,4 +38,12 @@ public final class AchievementUtils
             }
         }
     }
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private AchievementUtils()
+    {
+    }
+
 }

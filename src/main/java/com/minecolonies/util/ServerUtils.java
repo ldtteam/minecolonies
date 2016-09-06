@@ -24,13 +24,6 @@ public final class ServerUtils
 {
 
     /**
-     * Private constructor to hide the implicit public one.
-     */
-    private ServerUtils()
-    {
-    }
-
-    /**
      * Returns the online EntityPlayer with the given UUID.
      *
      * @param world world the player is in
@@ -96,7 +89,7 @@ public final class ServerUtils
     {
         @NotNull final List<EntityPlayer> playerList = new ArrayList<>();
 
-        for (@NotNull Permissions.Player player : players)
+        for (@NotNull final Permissions.Player player : players)
         {
             playerList.add(ServerUtils.getPlayerFromPermPlayer(player));
         }
@@ -145,4 +138,12 @@ public final class ServerUtils
         }
         return null;
     }
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private ServerUtils()
+    {
+    }
+
 }

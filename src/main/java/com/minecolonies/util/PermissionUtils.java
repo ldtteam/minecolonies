@@ -10,26 +10,27 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * todo: explain this class.
+ * Some utility methods all around permissions.
  */
 public final class PermissionUtils
 {
 
     /**
-     * Private constructor to hide the implicit public one.
+     * Creates a list of players that have the given rank or higher.
+     *
+     * This is using the enums ordinal method for comparison.
+     *
+     * @param colony The colony to get the players
+     * @param rank The rank to check
+     * @return The list with online players that has the rank or higher
      */
-    private PermissionUtils()
-    {
-    }
-
-    // todo: document!
     @NotNull
-    public static List<Permissions.Player> getPlayersWithAtleastRank(@NotNull Colony colony, @NotNull Permissions.Rank rank)
+    public static List<Permissions.Player> getPlayersWithAtLeastRank(@NotNull Colony colony, @NotNull Permissions.Rank rank)
     {
-        @NotNull List<Permissions.Player> playersWithAtLeastRank = new ArrayList<Permissions.Player>();
+        @NotNull final List<Permissions.Player> playersWithAtLeastRank = new ArrayList<>();
 
-        final Permissions permissions = colony.getPermissions();
-        final Map<UUID, Permissions.Player> players = permissions.getPlayers();
+        @NotNull final Permissions permissions = colony.getPermissions();
+        @NotNull final Map<UUID, Permissions.Player> players = permissions.getPlayers();
 
         for (@NotNull final Permissions.Player player : players.values())
         {
@@ -41,4 +42,12 @@ public final class PermissionUtils
 
         return playersWithAtLeastRank;
     }
+
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private PermissionUtils()
+    {
+    }
+
 }

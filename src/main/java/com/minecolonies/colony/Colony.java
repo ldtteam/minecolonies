@@ -113,7 +113,7 @@ public class Colony implements IColony
         this.id = id;
         this.dimensionId = dim;
 
-        this.colonyAchievements = new ArrayList<Achievement>();
+        this.colonyAchievements = new ArrayList<>();
     }
 
     /**
