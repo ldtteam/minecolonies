@@ -23,31 +23,7 @@ public class BlockHutFarmer extends AbstractBlockHut
         //No different from Abstract parent
         super();
     }
-
-    @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
-    {
-        /*
-        Only work on server side
-        */
-        if(worldIn.isRemote)
-        {
-            return;
-        }
-
-        final TileEntity tileEntity = worldIn.getTileEntity(pos);
-        if(placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
-        {
-            final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-            final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
-
-            if (colony != null)
-            {
-                colony.addNewBuilding(hut);
-            }
-        }
-    }
-
+    
     @Override
     public String getName()
     {
