@@ -177,7 +177,8 @@ public class Colony implements IColony
             final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
             final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
             final StatBase statBase = StatList.getOneShotStat(achievementKey);
-            if (statBase instanceof Achievement) {
+            if (statBase instanceof Achievement)
+            {
                 colonyAchievements.add((Achievement) statBase);
             }
         }
