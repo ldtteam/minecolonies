@@ -75,6 +75,23 @@ com.minecolonies.gui.hiring.off=Automatic
 com.minecolonies.gui.workerHuts.settings=Settings
 achievement.size.town=Town
 tile.minecolonies.blockHutTownHall.name=Town Hall
+tile.minecolonies.blockSubstitution.name=SchematicPlaceholder.
+
+
+tile.minecolonies.blockHutField.name=Field
+com.minecolonies.gui.workerHuts.Farmer=Farmer
+
+
+tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
+tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
+
+com.minecolonies.job.Builder=Builder
+com.minecolonies.job.Deliveryman=Deliveryman
+com.minecolonies.job.Farmer=Farmer
+com.minecolonies.job.Lumberjack=Lumberjack
+com.minecolonies.job.Miner=Miner
+com.minecolonies.job.Fisherman=Fisherman
+
 com.minecolonies.gui.workerHuts.fire=Fire Worker
 achievement.upgrade.builder.max.desc=What a powerful man
 tile.blockHutTownHall.messageMaxSize=Colony has reached max size
@@ -144,3 +161,19 @@ item.caliper.message.same=That's the same block.
 entity.worker.inventoryFullChestFull=Please make space in my building chest. I am not able to dump my inventory.
 com.minecolonies.gui.townHall.currentSpecialization=Current Specialization:
 tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
+
+com.minecolonies.gui.workerHuts.workOrderAdded=Construction added to build queue.
+com.minecolonies.gui.workerHuts.workOrder=Work Orders
+
+com.minecolonies.gui.inventory.scarecrow= Scarecrow
+entity.farmer.noSeedSet= Please define a seed to grow in the scarecrow.
+entity.farmer.NeedSeed= I need %s to plant.
+entity.farmer.noFreeFields= Place more fields to get me working.
+com.minecolonies.gui.workerHuts.farmerHut.AssignmentMode=Assign fields to farmer:
+com.minecolonies.gui.workerHuts.farmerHut.North=North
+com.minecolonies.gui.workerHuts.farmerHut.South=South
+com.minecolonies.gui.workerHuts.farmerHut.East=East
+com.minecolonies.gui.workerHuts.farmerHut.West=West
+com.minecolonies.gui.workerHuts.farmerHut.unused=unused
+com.minecolonies.gui.scarecrow.user=Field used by: %s
+com.minecolonies.gui.scarecrow.user.noone=no-one

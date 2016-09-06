@@ -311,7 +311,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState waitForNeededItems()
     {
-
         delay = DELAY_RECHECK;
         return lookForNeededItems();
     }
@@ -379,7 +378,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param is the type of item requested (amount is ignored)
      * @return true if a stack of that type was found
      */
-    private boolean isInHut(@Nullable final ItemStack is)
+    public boolean isInHut(@Nullable final ItemStack is)
     {
         @Nullable final AbstractBuildingWorker buildingMiner = getOwnBuilding();
         return buildingMiner != null &&
@@ -576,7 +575,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return true if we have a hoe
      */
-    private boolean checkForHoe()
+    protected boolean checkForHoe()
     {
         needsHoe = checkForTool(Utils.HOE);
         return needsHoe;

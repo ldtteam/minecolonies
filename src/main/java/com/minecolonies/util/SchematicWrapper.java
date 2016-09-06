@@ -492,14 +492,12 @@ public final class SchematicWrapper
 
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
-        if(schematicBlock instanceof BlockDoor || schematicBlock == Blocks.flower_pot)
+        if(schematicBlock instanceof BlockDoor || schematicBlock == Blocks.flower_pot
+           || (schematicBlock instanceof  BlockStairs && BlockStairs.isSameStair(world, worldPos, schematicBlockState)))
         {
             return schematicBlock == worldBlockState.getBlock();
         }
-        else if(schematicBlock instanceof  BlockStairs && BlockStairs.isSameStair(world, worldPos, schematicBlockState))
-        {
-            return true;
-        }
+
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
         return worldPos.getY() <= 0
                 || schematicBlockState == worldBlockState;

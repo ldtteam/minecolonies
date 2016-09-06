@@ -4,6 +4,7 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.*;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.configuration.Configurations;
@@ -1231,11 +1232,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
         hitBlockWithToolInHand(blockPos, true);
     }
 
+    /**
+     * Sends a localized message from the citizen containing a language string with a key and arguments.
+     * @param key the key to retrieve the string.
+     * @param args additional arguments.
+     */
     public void sendLocalizedChat(String key, Object... args)
     {
         sendChat(LanguageHandler.format(key, args));
     }
 
+    /**
+     * Sends a chat string close to the citizen.
+     * @param msg the message string.
+     */
     private void sendChat(String msg)
     {
         if (msg == null || msg.length() == 0 || statusMessages.containsKey(msg))
@@ -1310,6 +1320,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return citizenData.getLevel();
     }
 
+    /**
+     * Called when the citizen wakes up.
+     */
+    public void onWakeUp()
+    {
+        if(this.getWorkBuilding() instanceof BuildingFarmer)
+        {
+            ((BuildingFarmer) this.getWorkBuilding()).resetFields();
+        }
+    }
+
+    /**
+     * Enum describing the citizens activity.
+     */
     public enum DesiredActivity
     {
         SLEEP,

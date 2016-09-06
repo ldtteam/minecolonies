@@ -5,6 +5,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
@@ -97,6 +98,12 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
+            //Verify player has permission to do edit permissions
+            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            {
+                return null;
+            }
+            
             if(message.hire)
             {
                 CitizenData citizen = colony.getCitizen(message.citizenID);

@@ -93,6 +93,20 @@ public class InventoryCitizen implements IInventory
         }
     }
 
+    /**
+     * Creates the inventory of the citizen.
+     *
+     * @param title         Title of the inventory.
+     * @param localeEnabled Boolean whether the inventory has a custom name.
+     */
+    public InventoryCitizen(String title, boolean localeEnabled)
+    {
+        if(localeEnabled)
+        {
+            customName = title;
+        }
+    }
+
     private int getInventorySlotContainItem(Item itemIn)
     {
         for (int i = 0; i < this.stacks.length; ++i)
@@ -191,7 +205,10 @@ public class InventoryCitizen implements IInventory
                 this.markDirty();
                 if(index == heldItem)
                 {
-                    citizen.removeHeldItem();
+                    if(citizen != null)
+                    {
+                        citizen.removeHeldItem();
+                    }
                     heldItem = 0;
                 }
                 return itemstack1;
@@ -246,7 +263,10 @@ public class InventoryCitizen implements IInventory
     {
         if(index == heldItem && stack == null)
         {
-            citizen.removeHeldItem();
+            if(citizen != null)
+            {
+                citizen.removeHeldItem();
+            }
             heldItem = 0;
         }
 
@@ -331,6 +351,7 @@ public class InventoryCitizen implements IInventory
         }
         return false;
     }
+
     /**
      * Do not give this method the name canInteractWith because it clashes with Container
      * @param player the player acessing the inventory.
@@ -441,7 +462,6 @@ public class InventoryCitizen implements IInventory
      */
     public ItemStack getHeldItem()
     {
-        //TODO when tool breaks material handling isn't updated
         return getStackInSlot(heldItem);
     }
 

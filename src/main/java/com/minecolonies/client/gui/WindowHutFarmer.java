@@ -1,42 +1,117 @@
 package com.minecolonies.client.gui;
 
+import com.blockout.Pane;
 import com.blockout.controls.Button;
-import com.blockout.controls.ButtonVanilla;
+import com.blockout.controls.ItemIcon;
+import com.blockout.controls.Label;
+import com.blockout.views.ScrollingList;
 import com.blockout.views.SwitchView;
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.BuildingFarmer;
+import com.minecolonies.entity.ai.citizen.farmer.FieldView;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.network.messages.FarmerCropTypeMessage;
-import com.minecolonies.util.Log;
+import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.LanguageHandler;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
-import java.util.Random;
+import java.util.*;
+import java.util.List;
 
 /**
  * Window for the farmer hut
  */
 public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer.View>
 {
-    private static final String BUTTON_WHEAT     = "wheat";
-    private static final String BUTTON_POTATO    = "potato";
-    private static final String BUTTON_CARROT    = "carrot";
-    private static final String BUTTON_MELON     = "melon";
-    private static final String BUTTON_PUMPKIN   = "pumpkin";
-    private static final String WHEAT            = "wheat";
-    private static final String POTATO           = "potato";
-    private static final String CARROT           = "carrot";
-    private static final String MELON            = "melon";
-    private static final String PUMPKIN          = "pumpkin";
-    private static final String BUTTON_PREV_PAGE = "prevPage";
-    private static final String BUTTON_NEXT_PAGE = "nextPage";
-    private static final String VIEW_PAGES       = "pages";
-    private static final int    MAX_AMOUNT       = 100;
 
+    /**
+     * Button leading the player to the next page.
+     */
+    private static final String BUTTON_PREV_PAGE = "prevPage";
+
+    /**
+     * Button leading the player to the previous page.
+     */
+    private static final String BUTTON_NEXT_PAGE = "nextPage";
+
+    /**
+     * Tag of the pages view.
+     */
+    private static final String VIEW_PAGES       = "pages";
+
+    /**
+     * Resource suffix of the GUI.
+     */
     private static final String HUT_FARMER_RESOURCE_SUFFIX = ":gui/windowHutFarmer.xml";
 
+    /**
+     * Id of the the fields page inside the GUI.
+     */
+    private static final String PAGE_FIELDS                = "pageFields";
+
+    /**
+     * Id of the the fields list inside the GUI.
+     */
+    private static final String LIST_FIELDS                = "fields";
+
+    /**
+     * Id of the the worker label inside the GUI.
+     */
+    private static final String TAG_WORKER                 = "worker";
+
+    /**
+     * Id of the the distance label inside the GUI.
+     */
+    private static final String TAG_DISTANCE               = "dist";
+
+    /**
+     * Id of the the direction label inside the GUI.
+     */
+    private static final String TAG_DIRECTION              = "dir";
+
+    /**
+     * Id of the the assign button inside the GUI.
+     */
+    private static final String TAG_BUTTON_ASSIGN       = "assignFarm";
+
+    /**
+     * Id of the the assignmentMode button inside the GUI.
+     */
+    private static final String TAG_BUTTON_ASSIGNMENT_MODE = "assignmentMode";
+
+    /**
+     * String which displays the release of a field.
+     */
+    private static final String RED_X = "§n§4X";
+
+    /**
+     * String which displays adding a field.
+     */
+    private static final String APPROVE = "✓";
+
+    /**
+     * Id of the icon inside the GUI.
+     */
+    private static final String TAG_ICON         = "icon";
+
+    /**
+     * Button leading to the previous page.
+     */
     private Button buttonPrevPage;
+
+    /**
+     * Button leading to the next page.
+     */
     private Button buttonNextPage;
 
-    private Random random = new Random();
+    /**
+     * List of fields the building seeds.
+     */
+    private List<FieldView> fields = new ArrayList<>();
+
+    /**
+     * ScrollList with the fields.
+     */
+    private ScrollingList   fieldList;
 
     /**
      * Constructor for the window of the farmer
@@ -46,159 +121,68 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     public WindowHutFarmer(BuildingFarmer.View building)
     {
         super(building, Constants.MOD_ID + HUT_FARMER_RESOURCE_SUFFIX);
-        registerButton(BUTTON_WHEAT, this::wheatClicked);
-        registerButton(BUTTON_POTATO, this::potatoClicked);
-        registerButton(BUTTON_MELON, this::melonClicked);
-        registerButton(BUTTON_PUMPKIN, this::pumpkinClicked);
-        registerButton(BUTTON_CARROT, this::carrotClicked);
         registerButton(BUTTON_PREV_PAGE, this::prevClicked);
         registerButton(BUTTON_NEXT_PAGE, this::nextClicked);
+        registerButton(TAG_BUTTON_ASSIGNMENT_MODE, this::assignmentModeClicked);
+        registerButton(TAG_BUTTON_ASSIGN, this::assignClicked);
     }
 
     /**
-     * Remove one of the materials, described by s
-     * Possible inputs are:
-     * - potato
-     * - wheat
-     * - carrot
-     * - melon
-     * - pumpkin
-     *
-     * @param s String presentation of the material to remove
+     * Fired when assign has been clicked in the field list.
+     * @param button clicked button.
      */
-    private void removeOthers(String s)
+    private void assignClicked(Button button)
     {
-        while (sum() > MAX_AMOUNT)
-        {
-            final int numberOfProducts = 5;
-            int rand = random.nextInt() * numberOfProducts;
+        final int row = fieldList.getListElementIndexByPane(button);
+        final FieldView field = fields.get(row);
 
-            if (building.potato != 0 && !s.equals(POTATO) && rand == 0)
-            {
-                building.potato--;
-            }
-            else if (building.wheat != 0 && !s.equals(WHEAT) && rand == 1)
-            {
-                building.wheat--;
-            }
-            else if (building.carrot != 0 && !s.equals(CARROT) && rand == 2)
-            {
-                building.carrot--;
-            }
-            else if (building.melon != 0 && !s.equals(MELON) && rand == 3)
-            {
-                building.melon--;
-            }
-            else if (building.pumpkin != 0 && !s.equals(PUMPKIN) && rand == 4)
-            {
-                building.pumpkin--;
-            }
+
+        if (button.getLabel().equals(RED_X))
+        {
+            button.setLabel(APPROVE);
+            building.changeFields(field.getId(), false, row);
+        }
+        else
+        {
+            button.setLabel(RED_X);
+            building.changeFields(field.getId(), true, row);
         }
 
-        if (sum() < MAX_AMOUNT)
-        {
-            building.wheat = building.wheat + MAX_AMOUNT - sum();
-        }
-
-        MineColonies.getNetwork().sendToServer(new FarmerCropTypeMessage(building));
+        pullLevelsFromHut();
+        window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
     }
 
     /**
-     * Returns the sum of all materials at the hut
-     *
-     * @return The sum of wheat, carrots, melons, potatoes and pumpkins.
+     * Fired when the assignment mode has been toggled.
+     * @param button clicked button.
      */
-    private int sum()
+    private void assignmentModeClicked(Button button)
     {
-        return building.wheat + building.carrot + building.melon + building.potato + building.pumpkin;
-    }
-
-    /**
-     * Action performed when wheat button is clicked
-     *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
-     */
-    private void wheatClicked(Button ignored)
-    {
-        if (building.wheat >= MAX_AMOUNT)
+        if(button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
         {
-            return;
+            button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
+            building.setAssignFieldManually(true);
         }
-        building.wheat++;
-        removeOthers(WHEAT);
-    }
-
-    /**
-     * Action performed when potato button is clicked
-     *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
-     */
-    private void potatoClicked(Button ignored)
-    {
-        if (building.potato >= MAX_AMOUNT)
+        else
         {
-            return;
+            button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.off"));
+            building.setAssignFieldManually(false);
         }
-        building.potato++;
-        removeOthers(POTATO);
-    }
-
-    /**
-     * Action performed when melon button is clicked
-     *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
-     */
-    private void melonClicked(Button ignored)
-    {
-        if (building.melon >= MAX_AMOUNT)
-        {
-            return;
-        }
-        building.melon++;
-        removeOthers(MELON);
-    }
-
-
-    /**
-     * Action performed when pumpkin button is clicked
-     *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
-     */
-    private void pumpkinClicked(Button ignored)
-    {
-        if (building.pumpkin >= MAX_AMOUNT)
-        {
-            return;
-        }
-        building.pumpkin++;
-        removeOthers(PUMPKIN);
-    }
-
-
-    /**
-     * Action performed when carrot button is clicked
-     *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
-     */
-    private void carrotClicked(Button ignored)
-    {
-        if (building.carrot >= MAX_AMOUNT)
-        {
-            return;
-        }
-        building.carrot++;
-        removeOthers(CARROT);
+        window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
     }
 
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.gui.workerHuts.farmer";
+        return "tile.minecolonies.blockHutFarmer.name";
+    }
+
+    /**
+     * Retrieve levels from the building to display in GUI
+     */
+    private void pullLevelsFromHut()
+    {
+        fields = building.getFields();
     }
 
     @Override
@@ -206,32 +190,116 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     {
         super.onOpened();
 
-        updateButtonLabels();
+        if(building.assignFieldManually())
+        {
+            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
+        }
+        else
+        {
+            findPaneOfTypeByID(TAG_BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.off"));
+        }
+
         findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class).setEnabled(false);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREV_PAGE, Button.class);
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXT_PAGE, Button.class);
+
+        fieldList = findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class);
+        fieldList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return fields.size();
+            }
+
+            @Override
+            public void updateElement(int index, Pane rowPane)
+            {
+                final FieldView field = fields.get(index);
+                final String distance = Integer.toString((int)Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
+                final String direction = calcDirection(building.getLocation(), field.getId());
+                final String owner = field.getOwner().isEmpty() ? ("<" + LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
+
+                rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
+                rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance  + "m");
+
+                rowPane.findPaneOfTypeByID(TAG_DIRECTION, Label.class).setLabelText(direction);
+
+                if(building.assignFieldManually())
+                {
+                    rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).enable();
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).disable();
+                }
+
+                if (field.isTaken())
+                {
+                    rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).setLabel(RED_X);
+                }
+                else
+                {
+                    rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).setLabel(APPROVE);
+                    if(building.getBuildingLevel() <= building.getAmountOfFields())
+                    {
+                        rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).disable();
+                    }
+                    else
+                    {
+                        rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).enable();
+                    }
+                }
+
+                if(field.getItem() != null)
+                {
+                    rowPane.findPaneOfTypeByID(TAG_ICON, ItemIcon.class).setItem(new ItemStack(field.getItem(),1));
+                }
+            }
+        });
     }
 
     /**
-     * Updates the labels on the buttons
+     * Calculates the direction the field is from the building.
+     * @param building the building
+     * @param field the field.
+     * @return a string describing the direction.
      */
-    private void updateButtonLabels()
+    private String calcDirection(BlockPos building, BlockPos field)
     {
-        try
-        {
-            findPaneOfTypeByID(BUTTON_WHEAT, ButtonVanilla.class).setLabel(Integer.toString(building.wheat));
-            findPaneOfTypeByID(BUTTON_POTATO, ButtonVanilla.class).setLabel(Integer.toString(building.potato));
-            findPaneOfTypeByID(BUTTON_CARROT, ButtonVanilla.class).setLabel(Integer.toString(building.carrot));
-            findPaneOfTypeByID(BUTTON_MELON, ButtonVanilla.class).setLabel(Integer.toString(building.melon));
-            findPaneOfTypeByID(BUTTON_PUMPKIN, ButtonVanilla.class).setLabel(Integer.toString(building.pumpkin));
+        String dist = "";
 
-        }
-        catch (RuntimeException exc)
+        if(field.getZ() > building.getZ()+1)
         {
-            Log.logger.error("findPane error, report to mod authors", exc);
+            dist = LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.South");
         }
+        else if(field.getZ() < building.getZ()-1)
+        {
+            dist = LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.North");
+        }
+
+        if(field.getX() > building.getX()+1)
+        {
+            dist += LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.East");
+        }
+        else if(field.getX() < building.getX()-1)
+        {
+            dist += LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.West");
+        }
+
+        return dist;
     }
 
+    @Override
+    public void onUpdate()
+    {
+        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+        if (currentPage.equals(PAGE_FIELDS))
+        {
+            pullLevelsFromHut();
+            window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
+        }
+    }
 
     /**
      * Action performed when previous button is clicked
@@ -246,7 +314,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         buttonNextPage.setEnabled(true);
     }
 
-
     /**
      * Action performed when next button is clicked
      *
@@ -258,13 +325,6 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
         buttonPrevPage.setEnabled(true);
         buttonNextPage.setEnabled(false);
-    }
-
-    @Override
-    public void onButtonClicked(Button button)
-    {
-        super.onButtonClicked(button);
-        updateButtonLabels();
     }
 }
 

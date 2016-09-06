@@ -121,12 +121,13 @@ public class MineColonies
         getNetwork().registerMessage(OpenInventoryMessage.class,             OpenInventoryMessage.class,             21, Side.SERVER);
         getNetwork().registerMessage(TownHallRenameMessage.class,            TownHallRenameMessage.class,            22, Side.SERVER);
         getNetwork().registerMessage(MinerSetLevelMessage.class,             MinerSetLevelMessage.class,             23, Side.SERVER);
-        getNetwork().registerMessage(FarmerCropTypeMessage.class,            FarmerCropTypeMessage.class,            24, Side.SERVER);
         getNetwork().registerMessage(RecallCitizenMessage.class,             RecallCitizenMessage.class,             25, Side.SERVER);
         getNetwork().registerMessage(BuildToolPlaceMessage.class,            BuildToolPlaceMessage.class,            26, Side.SERVER);
         getNetwork().registerMessage(ToggleJobMessage.class,                 ToggleJobMessage.class,                 27, Side.SERVER);
         getNetwork().registerMessage(HireFireMessage.class,                  HireFireMessage.class,                  28, Side.SERVER);
         getNetwork().registerMessage(WorkOrderChangeMessage.class,           WorkOrderChangeMessage.class,           29, Side.SERVER);
+        getNetwork().registerMessage(AssignFieldMessage.class,               AssignFieldMessage.class,               30, Side.SERVER);
+        getNetwork().registerMessage(AssignmentModeMessage.class,            AssignmentModeMessage.class,            31, Side.SERVER);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class,          BlockParticleEffectMessage.class,           50, Side.CLIENT);

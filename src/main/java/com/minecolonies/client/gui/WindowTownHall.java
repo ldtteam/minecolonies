@@ -404,8 +404,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     workers++;
 
             }
-            workers += deliverymen + builders;
         }
+
+        workers += deliverymen + builders;
 
         String numberOfCitizens    = LanguageHandler.format("com.minecolonies.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
         String numberOfUnemployed  = LanguageHandler.format("com.minecolonies.gui.townHall.population.unemployed", citizensSize - workers);
