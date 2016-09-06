@@ -527,7 +527,10 @@ public class Colony implements IColony
             sendBuildingPackets(oldSubscribers, hasNewSubscribers);
 
             //Fields
-            sendFieldPackets(oldSubscribers, hasNewSubscribers);
+            if(!isBuildingsDirty)
+            {
+                sendFieldPackets(oldSubscribers, hasNewSubscribers);
+            }
         }
 
         isFieldsDirty = false;
@@ -548,7 +551,7 @@ public class Colony implements IColony
      */
     private void sendFieldPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
-        if (isFieldsDirty || hasNewSubscribers)
+        if (isFieldsDirty && !isBuildingsDirty || hasNewSubscribers)
         {
             for (AbstractBuilding building : buildings.values())
             {
