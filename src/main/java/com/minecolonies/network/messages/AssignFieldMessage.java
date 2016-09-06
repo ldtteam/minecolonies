@@ -71,7 +71,7 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
         if (colony != null)
         {
             //Verify player has permission to do edit permissions
-            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.SEND_MESSAGES))
+            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
             {
                 return null;
             }
