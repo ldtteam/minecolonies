@@ -548,7 +548,7 @@ public class Colony implements IColony
      */
     private void sendFieldPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
-        if (isBuildingsDirty || hasNewSubscribers)
+        if (isFieldsDirty || hasNewSubscribers)
         {
             for (AbstractBuilding building : buildings.values())
             {
