@@ -1093,7 +1093,13 @@ public class Colony implements IColony
         return ServerUtils.getPlayersFromUUID(this.world, this.getPermissions().getMessagePlayers());
     }
 
-    // todo: document!
+    /**
+     * Triggers an achievement on this colony.
+     *
+     * Will automatically sync to all players.
+     *
+     * @param achievement The achievement to trigger
+     */
     public void triggerAchievement(@NotNull Achievement achievement)
     {
         if (this.colonyAchievements.contains(achievement))
