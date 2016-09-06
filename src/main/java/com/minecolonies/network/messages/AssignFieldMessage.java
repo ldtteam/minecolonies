@@ -3,6 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.BuildingFarmer;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
@@ -69,6 +70,12 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
+            //Verify player has permission to do edit permissions
+            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.SEND_MESSAGES))
+            {
+                return null;
+            }
+
             final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
             if (building != null)
             {
