@@ -13,7 +13,6 @@ import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.ExperienceUtils;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.util.MathHelper;
 
 /**
  * Window for the citizen

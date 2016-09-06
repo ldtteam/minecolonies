@@ -105,6 +105,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private static final double BLOCK_BREAK_PARTICLE_RANGE = 16.0D;
 
+    /**
+     * Divide experience by a factor to ensure more levels fit in an int.
+     */
+    private static final int    EXP_DIVIDER                = 10;
 
     private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
     private String                   renderMetadata;
@@ -113,16 +117,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     protected   Status           status = Status.IDLE;
     private     InventoryCitizen inventory;
 
-    private int         colonyId;
-    private int         citizenId = 0;
-    private int         level;
-    private int         textureId;
+    private int colonyId;
+    private int citizenId = 0;
+    private int level;
+    private int textureId;
 
     /**
      * Skill modifier defines how fast a citizen levels in a certain skill
      */
-    private int         skillModifier = 0;
-    private boolean     female;
+    private double skillModifier = 0;
+    private boolean female;
 
     private Colony      colony;
     private CitizenData citizenData;
@@ -415,7 +419,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
 
-        double localXp = xp * skillModifier;
+        double localXp = xp * skillModifier / EXP_DIVIDER;
         if (localXp > maxValue)
         {
             localXp = maxValue;
