@@ -4,8 +4,8 @@ import com.blockout.views.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Wraps MineCrafts GuiScreen for BlockOut's Window
@@ -49,10 +49,10 @@ public class Screen extends GuiScreen
 
         setScale(mc);
 
-        GL11.glPushMatrix();
-        GL11.glTranslatef(x, y, 0);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, 0);
         window.draw(mx - x, my - y);
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 
     @Override
