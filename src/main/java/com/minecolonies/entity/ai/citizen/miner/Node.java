@@ -1,6 +1,7 @@
 package com.minecolonies.entity.ai.citizen.miner;
 
 import net.minecraft.nbt.NBTTagCompound;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Miner Node Data Structure.
@@ -59,7 +60,8 @@ public class Node
      * @param compound Compound to read from
      * @return Node created from compound
      */
-    public static Node createFromNBT(NBTTagCompound compound)
+    @NotNull
+    public static Node createFromNBT(@NotNull NBTTagCompound compound)
     {
         int x = compound.getInteger(TAG_X);
         int z = compound.getInteger(TAG_Z);
@@ -73,7 +75,7 @@ public class Node
         NodeStatus directionPosZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_Z));
         NodeStatus directionNegZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_Z));
 
-        Node node = new Node(x, z);
+        @NotNull Node node = new Node(x, z);
         node.setStyle(style);
         node.setStatus(status);
         node.setDirectionPosX(directionPosX);
@@ -169,7 +171,7 @@ public class Node
      *
      * @param compound Compound to write to
      */
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         compound.setInteger(TAG_X, x);
         compound.setInteger(TAG_Z, z);
@@ -224,10 +226,11 @@ public class Node
         this.status = status;
     }
 
+    @NotNull
     @Override
     public String toString()
     {
-        final StringBuilder sb = new StringBuilder("Node{");
+        @NotNull final StringBuilder sb = new StringBuilder("Node{");
         sb.append("x=").append(x);
         sb.append(", z=").append(z);
         sb.append(", style=").append(style);

@@ -5,6 +5,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +29,9 @@ public class Level
      * The depth of the level stored as the y coordinate
      */
     private int depth;
+    @NotNull
     private List<Node> nodes      = new ArrayList<>();
+    @Nullable
     private Node       ladderNode = null;
 
     //TODO document class
@@ -41,7 +45,7 @@ public class Level
      * @param buildingMiner reference to the miner building.
      * @param depth         the depth of this level.
      */
-    public Level(BuildingMiner buildingMiner, int depth)
+    public Level(@NotNull BuildingMiner buildingMiner, int depth)
     {
         this.depth = depth;
         //TODO: Store in HashMap for faster access
@@ -51,10 +55,10 @@ public class Level
         int cobbleZ = buildingMiner.getCobbleLocation().getZ();
 
         //check for orientation
-        BlockPos cobbleCenter = new BlockPos(cobbleX - (buildingMiner.getVectorX() * 3), depth, cobbleZ - (buildingMiner.getVectorZ() * 3));
-        BlockPos ladderCenter = new BlockPos(cobbleX + (buildingMiner.getVectorX() * 4), depth, cobbleZ + (buildingMiner.getVectorZ() * 4));
+        @NotNull BlockPos cobbleCenter = new BlockPos(cobbleX - (buildingMiner.getVectorX() * 3), depth, cobbleZ - (buildingMiner.getVectorZ() * 3));
+        @NotNull BlockPos ladderCenter = new BlockPos(cobbleX + (buildingMiner.getVectorX() * 4), depth, cobbleZ + (buildingMiner.getVectorZ() * 4));
         //TODO: let them know they are ladder and cobble (they are handled different)
-        Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ());
+        @NotNull Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ());
         cobbleNode.setStyle(Node.NodeType.LADDER_BACK);
         ladderNode = new Node(ladderCenter.getX(), ladderCenter.getZ());
         ladderNode.setStyle(Node.NodeType.SHAFT);
@@ -87,16 +91,17 @@ public class Level
         nodes.add(ladderNode);
     }
 
-    public static Level createFromNBT(NBTTagCompound compound)
+    @NotNull
+    public static Level createFromNBT(@NotNull NBTTagCompound compound)
     {
-        Level level = new Level();
+        @NotNull Level level = new Level();
 
         level.depth = compound.getInteger(TAG_DEPTH);
 
         NBTTagList nodeTagList = compound.getTagList(TAG_NODES, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < nodeTagList.tagCount(); i++)
         {
-            Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
+            @NotNull Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
             level.nodes.add(node);
         }
         int ladderx = compound.getInteger(TAG_LADDERX);
@@ -111,10 +116,11 @@ public class Level
         return level;
     }
 
+    @NotNull
     @Override
     public String toString()
     {
-        final StringBuilder sb = new StringBuilder("Level{");
+        @NotNull final StringBuilder sb = new StringBuilder("Level{");
         sb.append("depth=").append(depth);
         sb.append(", nodes=").append(nodes);
         sb.append(", ladderNode=").append(ladderNode);
@@ -122,14 +128,14 @@ public class Level
         return sb.toString();
     }
 
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         compound.setInteger(TAG_DEPTH, depth);
 
-        NBTTagList nodeTagList = new NBTTagList();
-        for (Node node : nodes)
+        @NotNull NBTTagList nodeTagList = new NBTTagList();
+        for (@NotNull Node node : nodes)
         {
-            NBTTagCompound nodeCompound = new NBTTagCompound();
+            @NotNull NBTTagCompound nodeCompound = new NBTTagCompound();
             node.writeToNBT(nodeCompound);
             nodeTagList.appendTag(nodeCompound);
         }
@@ -139,6 +145,7 @@ public class Level
         compound.setInteger(TAG_LADDERZ, ladderNode.getZ());
     }
 
+    @NotNull
     public List<Node> getNodes()
     {
         return Collections.unmodifiableList(nodes);
@@ -154,6 +161,7 @@ public class Level
         return depth;
     }
 
+    @Nullable
     public Node getLadderNode()
     {
         return ladderNode;

@@ -8,6 +8,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobBuilder;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The builders building.
@@ -39,6 +40,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      *
      * @return the schematic name.
      */
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -79,6 +81,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      *
      * @return the description of the builder job.
      */
+    @NotNull
     @Override
     public String getJobName()
     {
@@ -91,6 +94,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
+    @NotNull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -118,6 +122,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
          *
          * @return the window of the builder building.
          */
+        @NotNull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutBuilder(this);

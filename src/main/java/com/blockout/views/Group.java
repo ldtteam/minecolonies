@@ -3,6 +3,7 @@ package com.blockout.views;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * A Group is a View which enforces the position of children to be
@@ -27,14 +28,14 @@ public class Group extends View
      *
      * @param params Params for the Pane
      */
-    public Group(PaneParams params)
+    public Group(@NotNull PaneParams params)
     {
         super(params);
         spacing = params.getIntegerAttribute("spacing", spacing);
     }
 
     @Override
-    public void adjustChild(Pane child)
+    public void adjustChild(@NotNull Pane child)
     {
         int childX = child.getX();
         int childY = spacing;
@@ -55,7 +56,7 @@ public class Group extends View
             childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
 
-        for (Pane c : children)
+        for (@NotNull Pane c : children)
         {
             if (c == child)
             {
@@ -69,14 +70,14 @@ public class Group extends View
     }
 
     @Override
-    public void removeChild(Pane child)
+    public void removeChild(@NotNull Pane child)
     {
         super.removeChild(child);
 
         int formerChildY = child.getY();
         int formerChildHeight = child.getHeight();
 
-        for (Pane c : children)
+        for (@NotNull Pane c : children)
         {
             if (c.getY() > formerChildY)
             {

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Determines how the fish hook is rendered.
@@ -45,7 +46,7 @@ public class RenderFishHook extends Render<EntityFishHook>
      * @param entityYaw the angle thrown
      */
     @Override
-    public void doRender(EntityFishHook entity, double x, double y, double z, float entityYaw, float partialTicks)
+    public void doRender(@NotNull EntityFishHook entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x, (float) y, (float) z);
@@ -72,7 +73,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         //Check if he is a fisherman -> Through his texture
         if (citizen == null)
         {
-            for (Object citizenX : entity.worldObj.getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
+            for (@NotNull Object citizenX : entity.worldObj.getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
             {
                 if (((EntityCitizen) citizenX).getModelID().textureBase.contains("Fisherman"))
                 {
@@ -86,7 +87,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         {
             final double orientation = citizen.getSwingProgress(partialTicks);
             final double finalOrientation = Math.sin(Math.sqrt(orientation) * Math.PI);
-            final Vec3 vec3 = new Vec3(-0.36D, 0.03D, 0.35D);
+            @NotNull final Vec3 vec3 = new Vec3(-0.36D, 0.03D, 0.35D);
 
             vec3.rotatePitch((float) (-((double) citizen.prevRotationPitch + ((double) citizen.rotationPitch - (double) citizen.prevRotationPitch) * partialTicks)
                                         * Math.PI / Literals.HALF_CIRCKLE));
@@ -135,6 +136,7 @@ public class RenderFishHook extends Render<EntityFishHook>
      * @param entity the entity to get the texture from
      * @return a resource location for the texture
      */
+    @NotNull
     @Override
     protected ResourceLocation getEntityTexture(EntityFishHook entity)
     {
@@ -146,6 +148,7 @@ public class RenderFishHook extends Render<EntityFishHook>
      *
      * @return the address of the resource
      */
+    @NotNull
     private static ResourceLocation getTexture()
     {
         return texture;

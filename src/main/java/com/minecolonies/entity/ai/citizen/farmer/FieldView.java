@@ -5,6 +5,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Client side representation of a field.
@@ -29,6 +31,7 @@ public class FieldView
     /**
      * Set item of the field - might be null.
      */
+    @Nullable
     private Item item;
 
     /**
@@ -46,7 +49,7 @@ public class FieldView
      *
      * @param field the field.
      */
-    public FieldView(Field field)
+    public FieldView(@NotNull Field field)
     {
         this.id = field.getID();
         this.taken = field.isTaken();
@@ -109,7 +112,7 @@ public class FieldView
      *
      * @param buf Buffer to write to.
      */
-    public void serializeViewNetworkData(ByteBuf buf)
+    public void serializeViewNetworkData(@NotNull ByteBuf buf)
     {
         BlockPosUtil.writeToByteBuf(buf, id);
         buf.writeBoolean(taken);
@@ -124,7 +127,8 @@ public class FieldView
      * @param buf Byte buffer to deserialize.
      * @return FieldView return an instance of the fieldView.
      */
-    public FieldView deserialize(ByteBuf buf)
+    @NotNull
+    public FieldView deserialize(@NotNull ByteBuf buf)
     {
         id = BlockPosUtil.readFromByteBuf(buf);
         taken = buf.readBoolean();
@@ -139,6 +143,7 @@ public class FieldView
      *
      * @return an item object.
      */
+    @Nullable
     public Item getItem()
     {
         return item;

@@ -1,15 +1,19 @@
 package com.minecolonies.entity.pathfinding;
 
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Node implements Comparable<Node>
 {
-    public final BlockPos pos;
-    private final int hash;
-    public       Node     parent;
-    public int counterAdded;
-    public int counterVisited;
-    public int steps;
+    @NotNull
+    public final  BlockPos pos;
+    private final int      hash;
+    @Nullable
+    public        Node     parent;
+    public        int      counterAdded;
+    public        int      counterVisited;
+    public        int      steps;
 
     // A* g value
     public double cost;
@@ -30,7 +34,7 @@ public class Node implements Comparable<Node>
      * @param pos       coordinates of node
      * @param heuristic heuristic estimate
      */
-    public Node(BlockPos pos, double heuristic)
+    public Node(@NotNull BlockPos pos, double heuristic)
     {
         this(null, pos, 0, heuristic, heuristic);
     }
@@ -44,7 +48,7 @@ public class Node implements Comparable<Node>
      * @param heuristic heuristic estimate
      * @param score     node total score
      */
-    public Node(Node parent, BlockPos pos, double cost, double heuristic, double score)
+    public Node(@Nullable Node parent, @NotNull BlockPos pos, double cost, double heuristic, double score)
     {
         this.parent = parent;
         this.pos = pos;
@@ -90,11 +94,11 @@ public class Node implements Comparable<Node>
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(@Nullable Object o)
     {
         if (o != null && o.getClass() == this.getClass())
         {
-            Node other = (Node) o;
+            @Nullable Node other = (Node) o;
             return pos.getX() == other.pos.getX() &&
                      pos.getY() == other.pos.getY() &&
                      pos.getZ() == other.pos.getZ();

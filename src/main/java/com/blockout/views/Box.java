@@ -3,6 +3,7 @@ package com.blockout.views;
 import com.blockout.PaneParams;
 import com.blockout.Render;
 import com.blockout.View;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Simple box element.
@@ -25,7 +26,7 @@ public class Box extends View
      *
      * @param params xml parameters.
      */
-    public Box(PaneParams params)
+    public Box(@NotNull PaneParams params)
     {
         super(params);
         lineWidth = params.getFloatAttribute("linewidth", lineWidth);

@@ -11,6 +11,8 @@ import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -45,28 +47,31 @@ public class CitizenData
     /**
      * The unique citizen id.
      */
-    private final int id;
-    private String                 name;
-    private boolean                female;
-    private int                    textureId;
-    private Colony                 colony;
-    private BuildingHome           homeBuilding;
-    private AbstractBuildingWorker workBuilding;
-    private AbstractJob            job;
-    private boolean dirty;
+    private final int                    id;
+    private       String                 name;
+    private       boolean                female;
+    private       int                    textureId;
+    private       Colony                 colony;
+    @Nullable
+    private       BuildingHome           homeBuilding;
+    @Nullable
+    private       AbstractBuildingWorker workBuilding;
+    private       AbstractJob            job;
+    private       boolean                dirty;
     //Citizen
-    private EntityCitizen entity;
+    @Nullable
+    private       EntityCitizen          entity;
     /**
      * Attributes, which influence the workers behaviour.
      * May be added more later
      */
-    private int strength;
-    private int endurance;
-    private int charisma;
-    private int intelligence;
-    private int dexterity;
-    private double health;
-    private double maxHealth;
+    private       int                    strength;
+    private       int                    endurance;
+    private       int                    charisma;
+    private       int                    intelligence;
+    private       int                    dexterity;
+    private       double                 health;
+    private       double                 maxHealth;
     /**
      * The current experience level the citizen is on.
      */
@@ -98,10 +103,11 @@ public class CitizenData
      * @param colony   Colony of the citizen
      * @return CitizenData
      */
-    public static CitizenData createFromNBT(NBTTagCompound compound, Colony colony)
+    @NotNull
+    public static CitizenData createFromNBT(@NotNull NBTTagCompound compound, Colony colony)
     {
         int id = compound.getInteger(TAG_ID);
-        CitizenData citizen = new CitizenData(id, colony);
+        @NotNull CitizenData citizen = new CitizenData(id, colony);
         citizen.readFromNBT(compound);
         return citizen;
     }
@@ -111,7 +117,7 @@ public class CitizenData
      *
      * @param compound NBT-Tag compound
      */
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         name = compound.getString(TAG_NAME);
         female = compound.getBoolean(TAG_FEMALE);
@@ -142,6 +148,7 @@ public class CitizenData
      *
      * @return {@link EntityCitizen} of the citizen data
      */
+    @Nullable
     public EntityCitizen getCitizenEntity()
     {
         return entity;
@@ -165,9 +172,10 @@ public class CitizenData
      * @param buf The network data
      * @return View object of the citizen
      */
+    @Nullable
     public static CitizenDataView createCitizenDataView(int id, ByteBuf buf)
     {
-        CitizenDataView citizenDataView = new CitizenDataView(id);
+        @Nullable CitizenDataView citizenDataView = new CitizenDataView(id);
 
         try
         {
@@ -188,7 +196,7 @@ public class CitizenData
      *
      * @param entity Entity to initialize from
      */
-    public void initializeFromEntity(EntityCitizen entity)
+    public void initializeFromEntity(@NotNull EntityCitizen entity)
     {
         Random rand = entity.getRNG();
 
@@ -203,7 +211,7 @@ public class CitizenData
         maxHealth = entity.getMaxHealth();
         experience = 0;
         level = 0;
-        Random random = new Random();
+        @NotNull Random random = new Random();
 
         //Initialize the citizen skills and make sure they are never 0
         intelligence = random.nextInt(LEVEL_CAP - 1) + 1;
@@ -221,7 +229,7 @@ public class CitizenData
      * @param rand Random object
      * @return Name of the citizen
      */
-    private String generateName(Random rand)
+    private String generateName(@NotNull Random rand)
     {
         String firstName;
         if (!female)
@@ -251,7 +259,7 @@ public class CitizenData
      * @param array Array to select from
      * @return Random element from array
      */
-    private static String getRandomElement(Random rand, String[] array)
+    private static String getRandomElement(@NotNull Random rand, @NotNull String[] array)
     {
         return array[rand.nextInt(array.length)];
     }
@@ -262,7 +270,7 @@ public class CitizenData
      * @param rand Random object
      * @return Random capital letter
      */
-    private static char getRandomLetter(Random rand)
+    private static char getRandomLetter(@NotNull Random rand)
     {
         return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
     }
@@ -377,6 +385,7 @@ public class CitizenData
      *
      * @return home building
      */
+    @Nullable
     public BuildingHome getHomeBuilding()
     {
         return homeBuilding;
@@ -387,7 +396,7 @@ public class CitizenData
      *
      * @param building home building
      */
-    public void setHomeBuilding(BuildingHome building)
+    public void setHomeBuilding(@Nullable BuildingHome building)
     {
         if (homeBuilding != null && building != null && homeBuilding != building)
         {
@@ -405,6 +414,7 @@ public class CitizenData
      *
      * @return home building of a citizen
      */
+    @Nullable
     public AbstractBuildingWorker getWorkBuilding()
     {
         return workBuilding;
@@ -415,7 +425,7 @@ public class CitizenData
      *
      * @param building work building
      */
-    public void setWorkBuilding(AbstractBuildingWorker building)
+    public void setWorkBuilding(@Nullable AbstractBuildingWorker building)
     {
         if (workBuilding != null && building != null && workBuilding != building)
         {
@@ -473,7 +483,7 @@ public class CitizenData
     {
         this.job = job;
 
-        EntityCitizen localEntity = getCitizenEntity();
+        @Nullable EntityCitizen localEntity = getCitizenEntity();
         if (localEntity != null)
         {
             localEntity.onJobChanged(job);
@@ -489,7 +499,8 @@ public class CitizenData
      * @param <J>  The job type returned
      * @return the job this citizen has
      */
-    public <J extends AbstractJob> J getJob(Class<J> type)
+    @Nullable
+    public <J extends AbstractJob> J getJob(@NotNull Class<J> type)
     {
         try
         {
@@ -506,7 +517,7 @@ public class CitizenData
      *
      * @param compound NBT-Tag compound
      */
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         compound.setInteger(TAG_ID, id);
         compound.setString(TAG_NAME, name);
@@ -520,7 +531,7 @@ public class CitizenData
         compound.setDouble(TAG_MAX_HEALTH, maxHealth);
 
 
-        NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
+        @NotNull NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, endurance);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, charisma);
@@ -530,7 +541,7 @@ public class CitizenData
 
         if (job != null)
         {
-            NBTTagCompound jobCompound = new NBTTagCompound();
+            @NotNull NBTTagCompound jobCompound = new NBTTagCompound();
             job.writeToNBT(jobCompound);
             compound.setTag("job", jobCompound);
         }
@@ -541,7 +552,7 @@ public class CitizenData
      *
      * @param buf Buffer to write to
      */
-    public void serializeViewNetworkData(ByteBuf buf)
+    public void serializeViewNetworkData(@NotNull ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeBoolean(female);

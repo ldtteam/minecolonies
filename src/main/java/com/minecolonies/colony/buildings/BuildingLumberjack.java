@@ -8,6 +8,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The lumberjacks building.
@@ -43,6 +44,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      *
      * @return the schematic name.
      */
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -83,6 +85,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      *
      * @return the description of the lumberjacks job.
      */
+    @NotNull
     @Override
     public String getJobName()
     {
@@ -95,6 +98,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
+    @NotNull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -122,6 +126,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
          *
          * @return the window of the lumberjack building.
          */
+        @NotNull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, LUMBERJACK_HUT_NAME);

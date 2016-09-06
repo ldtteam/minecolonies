@@ -23,6 +23,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Abstract class for all minecolonies blocks.
@@ -70,6 +72,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      */
     public abstract String getName();
 
+    @NotNull
     @Override
     public TileEntity createNewTileEntity(World world, int meta)
     {
@@ -89,7 +92,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     @Override
-    public int getMetaFromState(IBlockState state)
+    public int getMetaFromState(@NotNull IBlockState state)
     {
         return ((EnumFacing) state.getValue(FACING)).getIndex();
     }
@@ -100,6 +103,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     // =======================================================================
 
     // render as a solid block, we don't want transparency here
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer()
@@ -108,14 +112,14 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(@NotNull World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         /*
         If the world is client, open the gui of the building
          */
         if (worldIn.isRemote)
         {
-            final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
+            @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
 
             if (building != null)
             {
@@ -126,9 +130,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nullable EntityLivingBase placer)
     {
-        final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+        @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
@@ -145,7 +149,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
      */
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    public void onBlockPlacedBy(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
@@ -160,8 +164,8 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
-            final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-            final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
+            @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
+            @Nullable final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
 
             if (colony != null)
             {
@@ -170,6 +174,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
     }
 
+    @NotNull
     @Override
     protected BlockState createBlockState()
     {

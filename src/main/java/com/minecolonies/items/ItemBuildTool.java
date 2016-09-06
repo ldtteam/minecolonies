@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemBuildTool extends AbstractItemMinecolonies
 {
@@ -17,7 +18,7 @@ public class ItemBuildTool extends AbstractItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onItemUse(ItemStack stack, @NotNull EntityPlayer playerIn, @NotNull World worldIn, @NotNull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (!worldIn.isRemote)
         {
@@ -30,7 +31,7 @@ public class ItemBuildTool extends AbstractItemMinecolonies
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player)
+    public ItemStack onItemRightClick(ItemStack stack, @NotNull World world, EntityPlayer player)
     {
         if (world.isRemote)
         {

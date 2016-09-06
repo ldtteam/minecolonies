@@ -13,6 +13,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -82,16 +84,17 @@ public class ScarecrowTileEntity extends TileEntityChest
 
     ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
 
+    @NotNull
     @Override
     public Packet getDescriptionPacket()
     {
-        final NBTTagCompound tag = new NBTTagCompound();
+        @NotNull final NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
         return new S35PacketUpdateTileEntity(this.getPos(), 0, tag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
+    public void onDataPacket(NetworkManager net, @NotNull S35PacketUpdateTileEntity pkt)
     {
         readFromNBT(pkt.getNbtCompound());
     }
@@ -106,11 +109,11 @@ public class ScarecrowTileEntity extends TileEntityChest
 
         if (world != null)
         {
-            final Colony colony = ColonyManager.getColony(world, pos);
+            @Nullable final Colony colony = ColonyManager.getColony(world, pos);
 
             if (colony != null && colony.getField(pos) == null)
             {
-                final Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
+                @Nullable final Entity entity = EntityUtils.getEntityFromUUID(world, colony.getPermissions().getOwner());
 
                 if (entity instanceof EntityPlayer)
                 {

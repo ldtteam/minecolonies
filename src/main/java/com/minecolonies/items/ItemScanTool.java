@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemScanTool extends AbstractItemMinecolonies
 {
@@ -19,7 +20,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onItemUse(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull World worldIn, @NotNull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         if (!stack.hasTagCompound())
         {
@@ -38,8 +39,8 @@ public class ItemScanTool extends AbstractItemMinecolonies
         }
         else if (!compound.hasKey("pos2"))
         {
-            BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            BlockPos pos2 = pos;
+            @NotNull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
+            @NotNull BlockPos pos2 = pos;
             if (pos2.distanceSq(pos1) > 0)
             {
                 BlockPosUtil.writeToNBT(compound, "pos2", pos2);
@@ -57,8 +58,8 @@ public class ItemScanTool extends AbstractItemMinecolonies
         }
         else
         {
-            BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
+            @NotNull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
+            @NotNull BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
             if (worldIn.isRemote)
             {
                 String result = SchematicWrapper.saveSchematic(worldIn, pos1, pos2);

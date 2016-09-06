@@ -10,6 +10,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message which handles the assignment of fields to farmers.
@@ -39,7 +41,7 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
      * @param assign   assign if true, free if false.
      * @param field    the field to assign or release.
      */
-    public AssignFieldMessage(BuildingFarmer.View building, boolean assign, BlockPos field)
+    public AssignFieldMessage(@NotNull BuildingFarmer.View building, boolean assign, BlockPos field)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -48,7 +50,7 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
     }
 
     @Override
-    public void fromBytes(ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -57,7 +59,7 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -65,8 +67,9 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
         BlockPosUtil.writeToByteBuf(buf, field);
     }
 
+    @Nullable
     @Override
-    public IMessage onMessage(AssignFieldMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull AssignFieldMessage message, @NotNull MessageContext ctx)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
@@ -77,7 +80,7 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
                 return null;
             }
 
-            final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
+            @Nullable final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
             if (building != null)
             {
                 if (message.assign)

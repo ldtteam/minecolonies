@@ -10,6 +10,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -36,7 +38,9 @@ public abstract class AbstractJob
     private static final int    TASK_PRIORITY       = 3;
 
     //  Job and View Class Mapping
+    @NotNull
     private static Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
+    @NotNull
     private static Map<Class<? extends AbstractJob>, String> classToNameMap = new HashMap<>();
     static
     {
@@ -50,6 +54,7 @@ public abstract class AbstractJob
     }
 
     private final CitizenData citizen;
+    @NotNull
     private List<ItemStack> itemsNeeded = new ArrayList<>();
     private String          nameTag     = "";
 
@@ -69,7 +74,7 @@ public abstract class AbstractJob
      * @param name     name of job class
      * @param jobClass class of job
      */
-    private static void addMapping(String name, Class<? extends AbstractJob> jobClass)
+    private static void addMapping(String name, @NotNull Class<? extends AbstractJob> jobClass)
     {
         if (nameToClassMap.containsKey(name))
         {
@@ -96,10 +101,11 @@ public abstract class AbstractJob
      * @param compound The NBTTagCompound containing the saved Job data
      * @return New Job created from the data, or null
      */
-    public static AbstractJob createFromNBT(CitizenData citizen, NBTTagCompound compound)
+    @Nullable
+    public static AbstractJob createFromNBT(CitizenData citizen, @NotNull NBTTagCompound compound)
     {
-        AbstractJob job = null;
-        Class<? extends AbstractJob> oclass = null;
+        @Nullable AbstractJob job = null;
+        @Nullable Class<? extends AbstractJob> oclass = null;
 
         try
         {
@@ -111,7 +117,7 @@ public abstract class AbstractJob
                 job = (AbstractJob) constructor.newInstance(citizen);
             }
         }
-        catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e)
+        catch (@NotNull NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e)
         {
             Log.logger.trace(e);
         }
@@ -142,7 +148,7 @@ public abstract class AbstractJob
      *
      * @param compound NBTTagCompound containing saved Job data
      */
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         NBTTagList itemsNeededTag = compound.getTagList(TAG_ITEMS_NEEDED, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < itemsNeededTag.tagCount(); i++)
@@ -194,7 +200,7 @@ public abstract class AbstractJob
      *
      * @param compound NBTTagCompound to save the Job to
      */
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         String s = classToNameMap.get(this.getClass());
 
@@ -207,10 +213,10 @@ public abstract class AbstractJob
 
         if (!itemsNeeded.isEmpty())
         {
-            NBTTagList itemsNeededTag = new NBTTagList();
-            for (ItemStack itemstack : itemsNeeded)
+            @NotNull NBTTagList itemsNeededTag = new NBTTagList();
+            for (@NotNull ItemStack itemstack : itemsNeeded)
             {
-                NBTTagCompound itemCompound = new NBTTagCompound();
+                @NotNull NBTTagCompound itemCompound = new NBTTagCompound();
                 itemstack.writeToNBT(itemCompound);
                 itemsNeededTag.appendTag(itemCompound);
             }
@@ -233,6 +239,7 @@ public abstract class AbstractJob
      *
      * @return List of items needed by the Job
      */
+    @NotNull
     public List<ItemStack> getItemsNeeded()
     {
         return Collections.unmodifiableList(itemsNeeded);
@@ -252,9 +259,9 @@ public abstract class AbstractJob
      *
      * @param stack Item+count needed to do the job
      */
-    public void addItemNeeded(ItemStack stack)
+    public void addItemNeeded(@NotNull ItemStack stack)
     {
-        for (ItemStack neededItem : itemsNeeded)
+        for (@NotNull ItemStack neededItem : itemsNeeded)
         {
             if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
             {
@@ -273,10 +280,11 @@ public abstract class AbstractJob
      * @param stack ItemStack (item+count) to remove from the list of needed items.
      * @return modified ItemStack with remaining items (or null).
      */
-    public ItemStack removeItemNeeded(ItemStack stack)
+    @Nullable
+    public ItemStack removeItemNeeded(@NotNull ItemStack stack)
     {
-        ItemStack stackCopy = stack.copy();
-        for (ItemStack neededItem : itemsNeeded)
+        @NotNull ItemStack stackCopy = stack.copy();
+        for (@NotNull ItemStack neededItem : itemsNeeded)
         {
             if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
             {
@@ -301,7 +309,7 @@ public abstract class AbstractJob
      *
      * @param tasks EntityAITasks list to add tasks to
      */
-    public void addTasks(EntityAITasks tasks)
+    public void addTasks(@NotNull EntityAITasks tasks)
     {
         AbstractAISkeleton aiTask = generateAI();
         if (aiTask != null)

@@ -9,6 +9,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetLevelMessage, IMessage>
 {
@@ -24,7 +26,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
      * @param building View of the building to read data from
      * @param level    Level of the miner
      */
-    public MinerSetLevelMessage(BuildingMiner.View building, int level)
+    public MinerSetLevelMessage(@NotNull BuildingMiner.View building, int level)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -32,7 +34,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
     }
 
     @Override
-    public void fromBytes(ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -40,20 +42,21 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeInt(level);
     }
 
+    @Nullable
     @Override
-    public IMessage onMessage(MinerSetLevelMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull MinerSetLevelMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
-            BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
+            @Nullable BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
             if (building != null)
             {
                 if (message.level >= 0 && message.level < building.getNumberOfLevels())

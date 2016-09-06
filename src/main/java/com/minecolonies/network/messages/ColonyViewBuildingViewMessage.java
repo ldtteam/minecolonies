@@ -9,6 +9,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a AbstractBuilding.View to a ColonyView on the client
@@ -26,7 +28,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
      *
      * @param building AbstractBuilding to add or update a view for
      */
-    public ColonyViewBuildingViewMessage(AbstractBuilding building)
+    public ColonyViewBuildingViewMessage(@NotNull AbstractBuilding building)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -35,7 +37,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     }
 
     @Override
-    public void fromBytes(ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -44,15 +46,16 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
         buf.writeBytes(buildingData);
     }
 
+    @Nullable
     @Override
-    public IMessage onMessage(ColonyViewBuildingViewMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull ColonyViewBuildingViewMessage message, MessageContext ctx)
     {
         return ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData);
     }

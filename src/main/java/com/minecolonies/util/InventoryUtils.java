@@ -5,6 +5,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +20,10 @@ public class InventoryUtils
      * @param inventory Inventory to convert
      * @return List of item stacks
      */
-    public static List<ItemStack> getInventoryAsList(IInventory inventory)
+    @NotNull
+    public static List<ItemStack> getInventoryAsList(@NotNull IInventory inventory)
     {
-        ArrayList<ItemStack> filtered = new ArrayList<>();
+        @NotNull ArrayList<ItemStack> filtered = new ArrayList<>();
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
         {
             ItemStack stack = inventory.getStackInSlot(slot);
@@ -39,7 +42,8 @@ public class InventoryUtils
      * @param block     Block to filter
      * @return List of item stacks
      */
-    public static List<ItemStack> filterInventory(IInventory inventory, Block block)
+    @NotNull
+    public static List<ItemStack> filterInventory(@NotNull IInventory inventory, Block block)
     {
         return filterInventory(inventory, getItemFromBlock(block));
     }
@@ -51,9 +55,10 @@ public class InventoryUtils
      * @param targetItem Item to look for
      * @return List of item stacks with the given item in inventory
      */
-    public static List<ItemStack> filterInventory(IInventory inventory, Item targetItem)
+    @NotNull
+    public static List<ItemStack> filterInventory(@NotNull IInventory inventory, @Nullable Item targetItem)
     {
-        ArrayList<ItemStack> filtered = new ArrayList<>();
+        @NotNull ArrayList<ItemStack> filtered = new ArrayList<>();
         if (targetItem == null)
         {
             return filtered;
@@ -88,7 +93,7 @@ public class InventoryUtils
      * @param targetItem Item to check
      * @return True when item in item stack is equal to target item
      */
-    private static boolean compareItems(ItemStack itemStack, Item targetItem)
+    private static boolean compareItems(@Nullable ItemStack itemStack, Item targetItem)
     {
         return itemStack != null && itemStack.getItem() == targetItem;
     }
@@ -100,7 +105,7 @@ public class InventoryUtils
      * @param block     Block to find
      * @return Index of the first occurrence
      */
-    public static int findFirstSlotInInventoryWith(IInventory inventory, Block block)
+    public static int findFirstSlotInInventoryWith(@NotNull IInventory inventory, Block block)
     {
         return findFirstSlotInInventoryWith(inventory, getItemFromBlock(block));
     }
@@ -112,7 +117,7 @@ public class InventoryUtils
      * @param targetItem Item to find
      * @return Index of the first occurrence
      */
-    public static int findFirstSlotInInventoryWith(IInventory inventory, Item targetItem)
+    public static int findFirstSlotInInventoryWith(@NotNull IInventory inventory, Item targetItem)
     {
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
         {
@@ -133,7 +138,7 @@ public class InventoryUtils
      * @param block     block to count
      * @return Amount of occurences
      */
-    public static int getItemCountInInventory(IInventory inventory, Block block)
+    public static int getItemCountInInventory(@NotNull IInventory inventory, Block block)
     {
         return getItemCountInInventory(inventory, getItemFromBlock(block));
     }
@@ -145,10 +150,10 @@ public class InventoryUtils
      * @param targetitem Item to count
      * @return Amount of occurences
      */
-    public static int getItemCountInInventory(IInventory inventory, Item targetitem)
+    public static int getItemCountInInventory(@NotNull IInventory inventory, Item targetitem)
     {
         int count = 0;
-        for (ItemStack is : filterInventory(inventory, targetitem))
+        for (@NotNull ItemStack is : filterInventory(inventory, targetitem))
         {
             count += is.stackSize;
         }
@@ -163,7 +168,7 @@ public class InventoryUtils
      * @param block     Block to count
      * @return True when in inventory, otherwise false
      */
-    public static boolean hasitemInInventory(IInventory inventory, Block block)
+    public static boolean hasitemInInventory(@NotNull IInventory inventory, Block block)
     {
         return hasitemInInventory(inventory, getItemFromBlock(block));
     }
@@ -180,7 +185,7 @@ public class InventoryUtils
      * @param item      Item to count
      * @return True when in inventory, otherwise false
      */
-    public static boolean hasitemInInventory(IInventory inventory, Item item)
+    public static boolean hasitemInInventory(@NotNull IInventory inventory, Item item)
     {
         return getItemCountInInventory(inventory, item) > 0;
     }
@@ -191,7 +196,7 @@ public class InventoryUtils
      * @param inventory the inventory
      * @return true if the inventory is full
      */
-    public static boolean isInventoryFull(IInventory inventory)
+    public static boolean isInventoryFull(@NotNull IInventory inventory)
     {
         return getOpenSlot(inventory) == -1;
     }
@@ -202,7 +207,7 @@ public class InventoryUtils
      * @param inventory the inventory to check.
      * @return slot number or -1 if none found.
      */
-    public static int getOpenSlot(IInventory inventory)
+    public static int getOpenSlot(@NotNull IInventory inventory)
     {
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
         {
@@ -244,12 +249,12 @@ public class InventoryUtils
      * @return True if item is swapped, otherwise false
      */
     public static boolean takeStackInSlot(
-                                           IInventory sendingInv, IInventory receivingInv,
+                                           @Nullable IInventory sendingInv, @Nullable IInventory receivingInv,
                                            int slotID, int amount, boolean takeAll)
     {
         if (receivingInv != null && sendingInv != null && slotID >= 0 && amount >= 0)
         {
-            ItemStack stack = sendingInv.decrStackSize(slotID, amount); // gets itemstack in slot, and decreases stacksize
+            @Nullable ItemStack stack = sendingInv.decrStackSize(slotID, amount); // gets itemstack in slot, and decreases stacksize
             if (stack != null) // stack is null if no itemstack was in slot
             {
                 stack = setStack(receivingInv, stack); // puts stack in receiving inventory
@@ -285,11 +290,12 @@ public class InventoryUtils
      * @param stack     Item stack with items to be transferred
      * @return returns null if successful, or stack of remaining items
      */
-    public static ItemStack setStack(IInventory inventory, ItemStack stack)
+    @Nullable
+    public static ItemStack setStack(@NotNull IInventory inventory, @Nullable ItemStack stack)
     {
         if (stack != null)
         {
-            ItemStack returnStack = stack.copy();
+            @Nullable ItemStack returnStack = stack.copy();
             int slot;
             while ((slot = containsPartialStack(inventory, stack)) != -1 && returnStack != null)
             {
@@ -297,7 +303,7 @@ public class InventoryUtils
                 int spaceLeft = current.getMaxStackSize() - current.stackSize;
                 if (spaceLeft > 0)
                 {
-                    ItemStack toBeAdded = returnStack.splitStack(Math.min(returnStack.stackSize, spaceLeft));
+                    @NotNull ItemStack toBeAdded = returnStack.splitStack(Math.min(returnStack.stackSize, spaceLeft));
                     if (returnStack.stackSize == 0)
                     {
                         returnStack = null;
@@ -331,7 +337,7 @@ public class InventoryUtils
      * @param stack     the stack to check for.
      * @return returns slot number if found, -1 when not found.
      */
-    public static int containsPartialStack(IInventory inventory, ItemStack stack)
+    public static int containsPartialStack(@NotNull IInventory inventory, ItemStack stack)
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
@@ -367,9 +373,10 @@ public class InventoryUtils
      * @param inventory Inventory to return all item stacks from
      * @return Array of item stacks
      */
-    public static ItemStack[] getAllItemStacks(IInventory inventory)
+    @NotNull
+    public static ItemStack[] getAllItemStacks(@NotNull IInventory inventory)
     {
-        ItemStack[] itemStack = new ItemStack[inventory.getSizeInventory()];
+        @NotNull ItemStack[] itemStack = new ItemStack[inventory.getSizeInventory()];
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             itemStack[i] = inventory.getStackInSlot(i);
@@ -384,7 +391,7 @@ public class InventoryUtils
      * @param inventory Inventory to count item stacks of
      * @return Amount of item stacks in inventory
      */
-    public static int getAmountOfStacks(IInventory inventory)
+    public static int getAmountOfStacks(@NotNull IInventory inventory)
     {
         int count = 0;
         for (int i = 0; i < inventory.getSizeInventory(); i++)
@@ -404,7 +411,7 @@ public class InventoryUtils
      *
      * @param inventory Inventory to clear
      */
-    public static void clear(IInventory inventory)
+    public static void clear(@NotNull IInventory inventory)
     {
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
         {
@@ -419,7 +426,7 @@ public class InventoryUtils
      * @param tool      the tool type to look for.
      * @return slot number if found, -1 if not found.
      */
-    public static int getFirstSlotContainingTool(IInventory inventory, String tool)
+    public static int getFirstSlotContainingTool(@NotNull IInventory inventory, @NotNull String tool)
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
@@ -443,7 +450,7 @@ public class InventoryUtils
      * @param itemStack ItemStack to add
      * @return True if successful, otherwise false
      */
-    public static boolean addItemStackToInventory(IInventory inventory, final ItemStack itemStack)
+    public static boolean addItemStackToInventory(@NotNull IInventory inventory, @Nullable final ItemStack itemStack)
     {
         if (itemStack != null && itemStack.stackSize != 0 && itemStack.getItem() != null)
         {
@@ -496,7 +503,7 @@ public class InventoryUtils
      * @param itemStack Item stack to store in inventory
      * @return Leftover items in itemstack
      */
-    private static int storePartialItemStack(IInventory inventory, ItemStack itemStack)
+    private static int storePartialItemStack(@NotNull IInventory inventory, @NotNull ItemStack itemStack)
     {
         Item item = itemStack.getItem();
         int stackSize = itemStack.stackSize;
@@ -583,7 +590,7 @@ public class InventoryUtils
      * @param itemStack Item Stack to look for
      * @return Index of the item stack. If not found, returns -1
      */
-    private static int findSlotForItemStack(IInventory inventory, ItemStack itemStack)
+    private static int findSlotForItemStack(@NotNull IInventory inventory, @NotNull ItemStack itemStack)
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {

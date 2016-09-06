@@ -4,6 +4,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
+import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityCitizenFemaleNoble extends ModelBiped
 {
@@ -142,7 +143,7 @@ public class ModelEntityCitizenFemaleNoble extends ModelBiped
         setRotation(bagHand2, 0.4014257F, 0F, 0F);
     }
 
-    private void setRotation(ModelRenderer model, float x, float y, float z)
+    private void setRotation(@NotNull ModelRenderer model, float x, float y, float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;

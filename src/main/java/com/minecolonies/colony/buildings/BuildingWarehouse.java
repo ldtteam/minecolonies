@@ -9,6 +9,7 @@ import com.minecolonies.colony.jobs.JobDeliveryman;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 public class BuildingWarehouse extends AbstractBuildingWorker
 {
@@ -45,6 +46,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
         super(c, l);
     }
 
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -57,12 +59,14 @@ public class BuildingWarehouse extends AbstractBuildingWorker
         return 4;
     }
 
+    @NotNull
     @Override
     public String getJobName()
     {
         return DELIVERYMAN;
     }
 
+    @NotNull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -70,7 +74,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -98,20 +102,20 @@ public class BuildingWarehouse extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
-        NBTTagCompound deliveryCompound = new NBTTagCompound();
+        @NotNull NBTTagCompound deliveryCompound = new NBTTagCompound();
 
         //  Blacksmith
-        NBTTagCompound blacksmithCompound = new NBTTagCompound();
+        @NotNull NBTTagCompound blacksmithCompound = new NBTTagCompound();
         blacksmithCompound.setBoolean(TAG_GOLD, blacksmithGold);
         blacksmithCompound.setBoolean(TAG_DIAMOND, blacksmithDiamond);
         deliveryCompound.setTag(TAG_BLACKSMITH, blacksmithCompound);
 
         //  Stonemason
-        NBTTagCompound stonemasonCompound = new NBTTagCompound();
+        @NotNull NBTTagCompound stonemasonCompound = new NBTTagCompound();
         stonemasonCompound.setBoolean(TAG_STONE, stonemasonStone);
         stonemasonCompound.setBoolean(TAG_SAND, stonemasonSand);
         stonemasonCompound.setBoolean(TAG_NETHERRACK, stonemasonNetherrack);
@@ -119,7 +123,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
         deliveryCompound.setTag(TAG_STONEMASON, stonemasonCompound);
 
         //  Guard
-        NBTTagCompound guardCompound = new NBTTagCompound();
+        @NotNull NBTTagCompound guardCompound = new NBTTagCompound();
         guardCompound.setBoolean(TAG_ARMOR, guardArmor);
         guardCompound.setBoolean(TAG_WEAPON, guardWeapon);
         deliveryCompound.setTag(TAG_GUARD, guardCompound);
@@ -131,7 +135,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
     }
 
     @Override
-    public void serializeToView(ByteBuf buf)
+    public void serializeToView(@NotNull ByteBuf buf)
     {
         super.serializeToView(buf);
 
@@ -173,13 +177,14 @@ public class BuildingWarehouse extends AbstractBuildingWorker
             super(c, l);
         }
 
+        @NotNull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWarehouse(this);
         }
 
         @Override
-        public void deserialize(ByteBuf buf)
+        public void deserialize(@NotNull ByteBuf buf)
         {
             super.deserialize(buf);
 

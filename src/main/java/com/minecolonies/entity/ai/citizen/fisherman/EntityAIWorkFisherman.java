@@ -14,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
@@ -136,11 +137,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * The PathResult when the fisherman searches water.
      */
+    @Nullable
     private PathJobFindWater.WaterPathResult pathResult;
 
     /**
      * The Previous PathResult when the fisherman already found water.
      */
+    @Nullable
     private PathJobFindWater.WaterPathResult lastPathResult;
 
     /**
@@ -152,8 +155,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * Connects the citizen with the fishingHook.
      */
+    @Nullable
     private EntityFishHook entityFishHook;
 
+    @NotNull
     private Random random = new Random();
 
     /**
@@ -162,7 +167,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @param job a fisherman job to use.
      */
-    public EntityAIWorkFisherman(JobFisherman job)
+    public EntityAIWorkFisherman(@NotNull JobFisherman job)
     {
         super(job);
         super.registerTargets(
@@ -299,7 +304,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * @param stack the stack to decide on
      * @return if the stack matches
      */
-    private static boolean isStackRod(ItemStack stack)
+    private static boolean isStackRod(@Nullable ItemStack stack)
     {
         return stack != null && stack.getItem().equals(Items.fishing_rod);
     }
@@ -337,6 +342,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @return the next AIState the fisherman should switch to, after executing this method
      */
+    @NotNull
     private AIState tryDifferentAngles()
     {
         if (job.getWater() == null)
@@ -441,10 +447,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @return the next AIState the fisherman should switch to, after executing this method
      */
+    @Nullable
     private AIState doFishing()
     {
         worker.gatherXp();
-        AIState notReadyState = isReadyToFish();
+        @Nullable AIState notReadyState = isReadyToFish();
         if (notReadyState != null)
         {
             return notReadyState;
@@ -634,6 +641,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @return citizen object
      */
+    @Nullable
     public EntityCitizen getCitizen()
     {
         return worker;

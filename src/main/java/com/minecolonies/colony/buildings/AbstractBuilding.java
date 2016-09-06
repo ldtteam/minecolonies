@@ -18,6 +18,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -29,17 +31,21 @@ import java.util.Map;
  */
 public abstract class AbstractBuilding
 {
-    private static final String TAG_BUILDING_TYPE  = "type";
+    private static final String                  TAG_BUILDING_TYPE            = "type";
     // Location is unique (within a Colony) and so can double as the Id
-    private static final String TAG_LOCATION       = "location";
-    private static final String TAG_BUILDING_LEVEL = "level";
-    private static final String TAG_ROTATION       = "rotation";
-    private static final String TAG_STYLE          = "style";
+    private static final String                  TAG_LOCATION                 = "location";
+    private static final String                  TAG_BUILDING_LEVEL           = "level";
+    private static final String                  TAG_ROTATION                 = "rotation";
+    private static final String                  TAG_STYLE                    = "style";
     // AbstractBuilding and View Class Mapping
-    private static Map<String, Class<?>>   nameToClassMap               = new HashMap<>();
-    private static Map<Class<?>, String>   classToNameMap               = new HashMap<>();
-    private static Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<>();
-    private static Map<Integer, Class<?>>  classNameHashToClassMap      = new HashMap<>();
+    @NotNull
+    private static       Map<String, Class<?>>   nameToClassMap               = new HashMap<>();
+    @NotNull
+    private static       Map<Class<?>, String>   classToNameMap               = new HashMap<>();
+    @NotNull
+    private static       Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<>();
+    @NotNull
+    private static       Map<Integer, Class<?>>  classNameHashToClassMap      = new HashMap<>();
     static
     {
         addMapping("Baker", BuildingBaker.class, BlockHutBaker.class);
@@ -54,10 +60,11 @@ public abstract class AbstractBuilding
         addMapping("Warehouse", BuildingWarehouse.class, BlockHutWarehouse.class);
         addMapping("Fisherman", BuildingFisherman.class, BlockHutFisherman.class);
     }
-    private final BlockPos location;
-    private final Colony   colony;
-    private MaterialStore materialStore;
-    private TileEntityColonyBuilding tileEntity;
+    private final BlockPos                 location;
+    @NotNull
+    private final Colony                   colony;
+    private       MaterialStore            materialStore;
+    private       TileEntityColonyBuilding tileEntity;
     // Attributes
     private int    buildingLevel = 0;
     private int    rotation      = 0;
@@ -70,7 +77,7 @@ public abstract class AbstractBuilding
      * @param colony Colony the building belongs to
      * @param pos    Location of the building (it's Hut Block)
      */
-    protected AbstractBuilding(Colony colony, BlockPos pos)
+    protected AbstractBuilding(@NotNull Colony colony, BlockPos pos)
     {
         location = pos;
         this.colony = colony;
@@ -86,7 +93,7 @@ public abstract class AbstractBuilding
      * @param buildingClass subclass of AbstractBuilding, located in {@link com.minecolonies.colony.buildings}
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.blocks}
      */
-    private static void addMapping(String name, Class<? extends AbstractBuilding> buildingClass, Class<? extends AbstractBlockHut> parentBlock)
+    private static void addMapping(String name, @NotNull Class<? extends AbstractBuilding> buildingClass, @NotNull Class<? extends AbstractBlockHut> parentBlock)
     {
         if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(buildingClass.getName().hashCode()))
         {
@@ -130,10 +137,11 @@ public abstract class AbstractBuilding
      * @param compound The saved data
      * @return {@link AbstractBuilding} created from the compound.
      */
-    public static AbstractBuilding createFromNBT(Colony colony, NBTTagCompound compound)
+    @Nullable
+    public static AbstractBuilding createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
     {
-        AbstractBuilding building = null;
-        Class<?> oclass = null;
+        @Nullable AbstractBuilding building = null;
+        @Nullable Class<?> oclass = null;
 
         try
         {
@@ -141,12 +149,12 @@ public abstract class AbstractBuilding
 
             if (oclass != null)
             {
-                BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+                @NotNull BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
                 Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
                 building = (AbstractBuilding) constructor.newInstance(colony, pos);
             }
         }
-        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
+        catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
             Log.logger.error(exception);
         }
@@ -178,7 +186,7 @@ public abstract class AbstractBuilding
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to read data from
      */
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
 
@@ -203,9 +211,10 @@ public abstract class AbstractBuilding
      * @param parent The Tile Entity the building belongs to.
      * @return {@link AbstractBuilding} instance, without NBTTags applied.
      */
-    public static AbstractBuilding create(Colony colony, TileEntityColonyBuilding parent)
+    @Nullable
+    public static AbstractBuilding create(Colony colony, @NotNull TileEntityColonyBuilding parent)
     {
-        AbstractBuilding building = null;
+        @Nullable AbstractBuilding building = null;
         Class<?> oclass;
 
         try
@@ -223,7 +232,7 @@ public abstract class AbstractBuilding
                 Log.logger.error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
             }
         }
-        catch (NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
+        catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
             Log.logger.error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
@@ -239,10 +248,11 @@ public abstract class AbstractBuilding
      * @param buf    The network data
      * @return {@link AbstractBuilding.View} created from reading the buf
      */
-    public static View createBuildingView(ColonyView colony, BlockPos id, ByteBuf buf)
+    @Nullable
+    public static View createBuildingView(ColonyView colony, BlockPos id, @NotNull ByteBuf buf)
     {
-        View view = null;
-        Class<?> oclass = null;
+        @Nullable View view = null;
+        @Nullable Class<?> oclass = null;
 
         try
         {
@@ -251,7 +261,7 @@ public abstract class AbstractBuilding
 
             if (oclass != null)
             {
-                for (Class<?> c : oclass.getDeclaredClasses())
+                for (@NotNull Class<?> c : oclass.getDeclaredClasses())
                 {
                     if (c.getName().endsWith("$View"))
                     {
@@ -262,7 +272,7 @@ public abstract class AbstractBuilding
                 }
             }
         }
-        catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
+        catch (@NotNull NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
         {
             Log.logger.error(exception);
         }
@@ -302,7 +312,7 @@ public abstract class AbstractBuilding
      * @param block Block you want to know whether it matches this class or not
      * @return True if the block matches this class, otherwise false
      */
-    public boolean isMatchingBlock(Block block)
+    public boolean isMatchingBlock(@NotNull Block block)
     {
         Class<?> c = blockClassToBuildingClassMap.get(block.getClass());
         return getClass().equals(c);
@@ -314,7 +324,7 @@ public abstract class AbstractBuilding
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to
      */
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         String s = classToNameMap.get(this.getClass());
 
@@ -377,6 +387,7 @@ public abstract class AbstractBuilding
      *
      * @return {@link com.minecolonies.colony.Colony} of the current object
      */
+    @NotNull
     public Colony getColony()
     {
         return colony;
@@ -479,7 +490,7 @@ public abstract class AbstractBuilding
      */
     private void requestWorkOrder(int level)
     {
-        for (WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (@NotNull WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -582,7 +593,7 @@ public abstract class AbstractBuilding
      *
      * @param buf ByteBuf to write to
      */
-    public void serializeToView(ByteBuf buf)
+    public void serializeToView(@NotNull ByteBuf buf)
     {
         buf.writeInt(this.getClass().getName().hashCode());
         buf.writeInt(getBuildingLevel());
@@ -640,6 +651,7 @@ public abstract class AbstractBuilding
     public static class View
     {
         private final ColonyView colony;
+        @NotNull
         private final BlockPos   location;
 
         private int buildingLevel    = 0;
@@ -651,7 +663,7 @@ public abstract class AbstractBuilding
          * @param c ColonyView the building is in.
          * @param l The location of the building.
          */
-        protected View(ColonyView c, BlockPos l)
+        protected View(ColonyView c, @NotNull BlockPos l)
         {
             colony = c;
             location = new BlockPos(l);
@@ -662,6 +674,7 @@ public abstract class AbstractBuilding
          *
          * @return A BlockPos because the building ID is its location.
          */
+        @NotNull
         public BlockPos getID()
         {
             // Location doubles as ID
@@ -673,6 +686,7 @@ public abstract class AbstractBuilding
          *
          * @return A BlockPos, where this building is.
          */
+        @NotNull
         public BlockPos getLocation()
         {
             return location;
@@ -723,7 +737,7 @@ public abstract class AbstractBuilding
          */
         public void openGui()
         {
-            com.blockout.views.Window window = getWindow();
+            @Nullable com.blockout.views.Window window = getWindow();
             if (window != null)
             {
                 window.open();
@@ -735,6 +749,7 @@ public abstract class AbstractBuilding
          *
          * @return BlockOut window.
          */
+        @Nullable
         public com.blockout.views.Window getWindow()
         {
             return null;
@@ -745,7 +760,7 @@ public abstract class AbstractBuilding
          *
          * @param buf The buffer to read this view from.
          */
-        public void deserialize(ByteBuf buf)
+        public void deserialize(@NotNull ByteBuf buf)
         {
             buildingLevel = buf.readInt();
             buildingMaxLevel = buf.readInt();

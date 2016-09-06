@@ -9,6 +9,8 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Used for gate interaction for the citizens.
@@ -42,6 +44,7 @@ public class EntityAIGateInteract extends EntityAIBase
     /**
      * The gate block.
      */
+    @Nullable
     protected BlockFenceGate gateBlock;
     /**
      * Check if the interaction with the fenceGate stopped already.
@@ -61,7 +64,7 @@ public class EntityAIGateInteract extends EntityAIBase
      *
      * @param entityIn the registering entity
      */
-    public EntityAIGateInteract(EntityLiving entityIn)
+    public EntityAIGateInteract(@NotNull EntityLiving entityIn)
     {
         this.gatePosition = BlockPos.ORIGIN;
         this.theEntity = entityIn;
@@ -89,7 +92,7 @@ public class EntityAIGateInteract extends EntityAIBase
      */
     private boolean checkPathEntity()
     {
-        PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
+        @NotNull PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
         PathEntity pathentity = pathnavigateground.getPath();
         return pathentity != null && !pathentity.isFinished() && pathnavigateground.getEnterDoors() && checkFenceGate(pathentity);
     }
@@ -100,7 +103,7 @@ public class EntityAIGateInteract extends EntityAIBase
      * @param pathentity the path through the fence.
      * @return true if the gate can be passed
      */
-    private boolean checkFenceGate(PathEntity pathentity)
+    private boolean checkFenceGate(@NotNull PathEntity pathentity)
     {
         int maxLengthToCheck = Math.min(pathentity.getCurrentPathIndex() + LENGTH_TO_CHECK, pathentity.getCurrentPathLength());
         for (int i = 0; i < maxLengthToCheck; ++i)
@@ -131,7 +134,7 @@ public class EntityAIGateInteract extends EntityAIBase
      * @param pos the position to be searched
      * @return fenceBlock or null
      */
-    private BlockFenceGate getBlockFence(BlockPos pos)
+    private BlockFenceGate getBlockFence(@NotNull BlockPos pos)
     {
         Block block = this.theEntity.worldObj.getBlockState(pos).getBlock();
         if (!(block instanceof BlockFenceGate && block.getMaterial() == Material.wood))

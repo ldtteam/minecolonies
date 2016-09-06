@@ -5,6 +5,7 @@ import com.minecolonies.util.Log;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,15 +20,16 @@ import java.util.stream.Stream;
  */
 public final class Schematics
 {
-    private static final String NULL_STYLE            = "schematics";
-    private static final String SCHEMATIC_EXTENSION   = ".schematic";
-    private static final String SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
+    private static final String                    NULL_STYLE            = "schematics";
+    private static final String                    SCHEMATIC_EXTENSION   = ".schematic";
+    private static final String                    SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
     //Hut, Styles
-    private static Map<String, List<String>> hutStyleMap = new HashMap<>();
+    private static       Map<String, List<String>> hutStyleMap           = new HashMap<>();
     //Hut, Levels
-    private static Map<String, Integer> hutLevelsMap = new HashMap<>();
+    @NotNull
+    private static       Map<String, Integer>      hutLevelsMap          = new HashMap<>();
     //Decoration, Style
-    private static Map<String, List<String>> decorationStyleMap = new HashMap<>();
+    private static       Map<String, List<String>> decorationStyleMap    = new HashMap<>();
 
     /**
      * Private constructor so Schematics objects can't be made.
@@ -54,7 +56,7 @@ public final class Schematics
     {
         try
         {
-            URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
+            @NotNull URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
             Path basePath;
 
             if ("jar".equals(uri.getScheme()))
@@ -71,7 +73,7 @@ public final class Schematics
                 loadStyleMaps(basePath);
             }
         }
-        catch (IOException | URISyntaxException e)
+        catch (@NotNull IOException | URISyntaxException e)
         {
             Log.logger.error("Error loading Schematic directory. Things will break!", e);
         }

@@ -17,6 +17,8 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Basic inventory for the citizens.
@@ -26,35 +28,36 @@ public class InventoryCitizen implements IInventory
     /**
      * Number of slots in the inventory.
      */
-    private static final int         INVENTORY_SIZE = 27;
+    private static final int         INVENTORY_SIZE  = 27;
     /**
      * Max size of the stacks.
      */
-    private static final int         MAX_STACK_SIZE = 64;
+    private static final int         MAX_STACK_SIZE  = 64;
     /**
      * NBT tag to store and retrieve the inventory.
      */
-    private static final String  TAG_INVENTORY    = "Inventory";
+    private static final String      TAG_INVENTORY   = "Inventory";
     /**
      * NBT tag to store and retrieve the custom name.
      */
-    private static final String  TAG_CUSTOM_NAME  = "CustomName";
+    private static final String      TAG_CUSTOM_NAME = "CustomName";
     /**
      * NBT tag to store and retrieve the custom name.
      */
-    private static final String  TAG_ITEMS        = "Items";
+    private static final String      TAG_ITEMS       = "Items";
     /**
      * NBT tag to store and retrieve the custom name.
      */
-    private static final String  TAG_SLOT         = "Slot";
+    private static final String      TAG_SLOT        = "Slot";
     /**
      * The returned slot if a slot hasn't been found.
      */
-    private static final int     NO_SLOT          = -1;
+    private static final int         NO_SLOT         = -1;
     /**
      * The inventory content.
      */
-    private              ItemStack[] stacks         = new ItemStack[INVENTORY_SIZE];
+    @NotNull
+    private              ItemStack[] stacks          = new ItemStack[INVENTORY_SIZE];
     /**
      * The inventories custom name. In our case the citizens name.
      */
@@ -206,7 +209,7 @@ public class InventoryCitizen implements IInventory
      * @param itemStackIn the stack to add
      * @return true if succeeded.
      */
-    public boolean addItemStackToInventory(final ItemStack itemStackIn)
+    public boolean addItemStackToInventory(@Nullable final ItemStack itemStackIn)
     {
         if (itemStackIn != null && itemStackIn.stackSize != 0 && itemStackIn.getItem() != null)
         {
@@ -283,7 +286,7 @@ public class InventoryCitizen implements IInventory
      * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
      * left over items.
      */
-    private int storePartialItemStack(ItemStack itemStackIn)
+    private int storePartialItemStack(@NotNull ItemStack itemStackIn)
     {
         int i = itemStackIn.stackSize;
         int j = this.storeItemStack(itemStackIn);
@@ -334,6 +337,7 @@ public class InventoryCitizen implements IInventory
      *
      * @return the name of the inventory.
      */
+    @NotNull
     @Override
     public String getName()
     {
@@ -343,7 +347,7 @@ public class InventoryCitizen implements IInventory
     /**
      * stores an itemstack in the users inventory
      */
-    private int storeItemStack(ItemStack itemStackIn)
+    private int storeItemStack(@NotNull ItemStack itemStackIn)
     {
         for (int i = 0; i < this.stacks.length; ++i)
         {
@@ -391,6 +395,7 @@ public class InventoryCitizen implements IInventory
     }    /**
      * Get the formatted ChatComponent that will be used for the sender's username in chat
      */
+    @NotNull
     @Override
     public IChatComponent getDisplayName()
     {
@@ -408,7 +413,7 @@ public class InventoryCitizen implements IInventory
         return getStackInSlot(index) == null;
     }
 
-    public void createMaterialStore(MaterialSystem system)
+    public void createMaterialStore(@NotNull MaterialSystem system)
     {
         if (materialStore == null)
         {
@@ -421,7 +426,7 @@ public class InventoryCitizen implements IInventory
         return materialStore;
     }
 
-    private void addStackToMaterialStore(ItemStack stack)
+    private void addStackToMaterialStore(@Nullable ItemStack stack)
     {
         if (stack == null)
         {
@@ -434,7 +439,7 @@ public class InventoryCitizen implements IInventory
         }
     }
 
-    private void removeStackFromMaterialStore(ItemStack stack)
+    private void removeStackFromMaterialStore(@Nullable ItemStack stack)
     {
         if (stack == null)
         {
@@ -452,7 +457,7 @@ public class InventoryCitizen implements IInventory
      *
      * @param compound with the give tag.
      */
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
         this.stacks = new ItemStack[this.getSizeInventory()];
@@ -504,6 +509,7 @@ public class InventoryCitizen implements IInventory
      * @param count the amount of items to reduce.
      * @return the resulting stack.
      */
+    @Nullable
     @Override
     public ItemStack decrStackSize(int index, int count)
     {
@@ -526,7 +532,7 @@ public class InventoryCitizen implements IInventory
             }
             else
             {
-                ItemStack itemstack = this.stacks[index].splitStack(count);
+                @NotNull ItemStack itemstack = this.stacks[index].splitStack(count);
 
                 if (this.stacks[index].stackSize == 0)
                 {
@@ -549,6 +555,7 @@ public class InventoryCitizen implements IInventory
      * @param index the slot of the stack.
      * @return the removed itemStack.
      */
+    @Nullable
     @Override
     public ItemStack removeStackFromSlot(int index)
     {
@@ -571,7 +578,7 @@ public class InventoryCitizen implements IInventory
      * @param stack the itemStack to set.
      */
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack)
+    public void setInventorySlotContents(int index, @Nullable ItemStack stack)
     {
         if (index == heldItem && stack == null)
         {
@@ -620,7 +627,7 @@ public class InventoryCitizen implements IInventory
      * @return if the player is allowed to access.
      */
     @Override
-    public boolean isUseableByPlayer(EntityPlayer player)
+    public boolean isUseableByPlayer(@NotNull EntityPlayer player)
     {
         return this.citizen.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
@@ -732,15 +739,15 @@ public class InventoryCitizen implements IInventory
      *
      * @param compound with the given tag.
      */
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
-        NBTTagList nbttaglist = new NBTTagList();
+        @NotNull NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.stacks.length; ++i)
         {
             if (this.stacks[i] != null)
             {
-                NBTTagCompound nbttagcompound = new NBTTagCompound();
+                @NotNull NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte(TAG_SLOT, (byte) i);
                 this.stacks[i].writeToNBT(nbttagcompound);
                 nbttaglist.appendTag(nbttagcompound);

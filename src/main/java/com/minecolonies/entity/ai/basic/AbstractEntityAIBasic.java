@@ -745,7 +745,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                   return false;
               }
 
-              ItemStack returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
+              @Nullable ItemStack returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
               if (returnStack == null)
               {
                   worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);

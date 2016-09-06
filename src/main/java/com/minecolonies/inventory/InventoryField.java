@@ -10,6 +10,8 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The custom chest of the field.
@@ -44,6 +46,7 @@ public class InventoryField implements IInventory
     /**
      * The inventory stack.
      */
+    @NotNull
     private ItemStack[] stackResult = new ItemStack[1];
 
     /**
@@ -87,7 +90,7 @@ public class InventoryField implements IInventory
      *
      * @param compound with the give tag.
      */
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         final NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
         this.stackResult = new ItemStack[this.getSizeInventory()];
@@ -127,6 +130,7 @@ public class InventoryField implements IInventory
         return this.stackResult[0];
     }
 
+    @Nullable
     @Override
     public ItemStack decrStackSize(int index, int count)
     {
@@ -144,7 +148,7 @@ public class InventoryField implements IInventory
         }
         else
         {
-            final ItemStack itemstack = this.stackResult[index].splitStack(count);
+            @NotNull final ItemStack itemstack = this.stackResult[index].splitStack(count);
 
             if (this.stackResult[index].stackSize == 0)
             {
@@ -156,6 +160,7 @@ public class InventoryField implements IInventory
         }
     }
 
+    @Nullable
     @Override
     public ItemStack removeStackFromSlot(final int index)
     {
@@ -176,7 +181,7 @@ public class InventoryField implements IInventory
      * @param stack the itemStack to set.
      */
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack)
+    public void setInventorySlotContents(int index, @Nullable ItemStack stack)
     {
         this.stackResult[index] = stack;
 
@@ -233,7 +238,7 @@ public class InventoryField implements IInventory
     }
 
     @Override
-    public boolean isItemValidForSlot(final int index, final ItemStack itemStack)
+    public boolean isItemValidForSlot(final int index, @Nullable final ItemStack itemStack)
     {
         return index == 0 && itemStack != null && itemStack.getItem() instanceof ItemSeeds;
     }
@@ -289,7 +294,8 @@ public class InventoryField implements IInventory
         {
             this.stackResult[i] = null;
         }
-    }    @Override
+    }    @NotNull
+@Override
     public IChatComponent getDisplayName()
     {
         return this.hasCustomName() ? new ChatComponentText(this.getName()) : new ChatComponentTranslation(this.getName());
@@ -300,15 +306,15 @@ public class InventoryField implements IInventory
      *
      * @param compound with the given tag.
      */
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
-        final NBTTagList nbttaglist = new NBTTagList();
+        @NotNull final NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.stackResult.length; ++i)
         {
             if (this.stackResult[i] != null)
             {
-                final NBTTagCompound nbttagcompound = new NBTTagCompound();
+                @NotNull final NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte(TAG_SLOT, (byte) i);
                 this.stackResult[i].writeToNBT(nbttagcompound);
                 nbttaglist.appendTag(nbttagcompound);
@@ -338,6 +344,7 @@ public class InventoryField implements IInventory
      *
      * @return the name of the inventory.
      */
+    @NotNull
     @Override
     public String getName()
     {

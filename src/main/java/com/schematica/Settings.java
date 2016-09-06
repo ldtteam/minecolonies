@@ -16,14 +16,15 @@ public final class Settings
     /**
      * Single instance of this class.
      */
-    public static final Settings instance = new Settings();
-    private final BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos();
-    private boolean inHutMode = true;
-    private SchematicWorld schematic = null;
-    private int    rotation = 0;
-    private String hutDec   = "";
-    private String style    = "";
-    private int    level    = 0;
+    public static final Settings                 instance  = new Settings();
+    private final       BlockPos.MutableBlockPos offset    = new BlockPos.MutableBlockPos();
+    private             boolean                  inHutMode = true;
+    @Nullable
+    private             SchematicWorld           schematic = null;
+    private             int                      rotation  = 0;
+    private             String                   hutDec    = "";
+    private             String                   style     = "";
+    private             int                      level     = 0;
 
     private boolean isPendingReset = false;
 

@@ -25,6 +25,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.util.EnumFacing.*;
 
@@ -125,7 +127,7 @@ public class BlockHutField extends BlockContainer
     }
 
     @Override
-    public int getMetaFromState(IBlockState state)
+    public int getMetaFromState(@NotNull IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
@@ -148,6 +150,7 @@ public class BlockHutField extends BlockContainer
         return false;
     }
 
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer()
@@ -156,12 +159,12 @@ public class BlockHutField extends BlockContainer
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, @NotNull EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
         {
-            final Colony colony = ColonyManager.getColony(worldIn, pos);
+            @Nullable final Colony colony = ColonyManager.getColony(worldIn, pos);
             if (colony != null)
             {
                 playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
@@ -175,14 +178,14 @@ public class BlockHutField extends BlockContainer
     // ======================= Rendering & IBlockState =======================
     // =======================================================================
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nullable EntityLivingBase placer)
     {
-        final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    public void onBlockPlacedBy(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         //Only work on server side.
         if (worldIn.isRemote)
@@ -192,11 +195,11 @@ public class BlockHutField extends BlockContainer
 
         if (placer instanceof EntityPlayer)
         {
-            final Colony colony = ColonyManager.getColony(worldIn, pos);
+            @Nullable final Colony colony = ColonyManager.getColony(worldIn, pos);
 
             if (colony != null)
             {
-                final InventoryField inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"));
+                @NotNull final InventoryField inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"));
 
                 ((ScarecrowTileEntity) worldIn.getTileEntity(pos)).setInventoryField(inventoryField);
                 colony.addNewField((ScarecrowTileEntity) worldIn.getTileEntity(pos), ((EntityPlayer) placer).inventory, pos, worldIn);
@@ -204,6 +207,7 @@ public class BlockHutField extends BlockContainer
         }
     }
 
+    @NotNull
     @Override
     protected BlockState createBlockState()
     {
@@ -216,6 +220,7 @@ public class BlockHutField extends BlockContainer
         return true;
     }
 
+    @NotNull
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {

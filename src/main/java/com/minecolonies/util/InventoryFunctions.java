@@ -2,6 +2,8 @@ package com.minecolonies.util;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiPredicate;
 import java.util.function.Consumer;
@@ -35,8 +37,8 @@ public class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInInventory(
-                                                 IInventory inventory, Predicate<ItemStack> tester,
-                                                 Consumer<Integer> action)
+                                                 IInventory inventory, @NotNull Predicate<ItemStack> tester,
+                                                 @NotNull Consumer<Integer> action)
     {
         return matchFirstInInventory(inventory, inv -> slot -> stack ->
         {
@@ -57,7 +59,7 @@ public class InventoryFunctions
      * @return true if it found a stack
      */
     private static boolean matchFirstInInventory(
-                                                  IInventory inventory, Function<IInventory, Function<Integer,
+                                                  IInventory inventory, @NotNull Function<IInventory, Function<Integer,
                                                                                                        Predicate<ItemStack>>> tester)
     {
         return matchInInventory(inventory, tester, true);
@@ -73,7 +75,7 @@ public class InventoryFunctions
      * @return true if it found a stack
      */
     private static boolean matchInInventory(
-                                             IInventory inventory, Function<IInventory, Function<Integer,
+                                             @Nullable IInventory inventory, @NotNull Function<IInventory, Function<Integer,
                                                                                                   Predicate<ItemStack>>> tester, boolean stopAfterFirst)
     {
         if (inventory == null)
@@ -106,7 +108,7 @@ public class InventoryFunctions
      * @param tester    the function to use for testing slots
      * @return true if it found a stack
      */
-    public static boolean matchFirstInInventory(IInventory inventory, BiPredicate<Integer, ItemStack> tester)
+    public static boolean matchFirstInInventory(IInventory inventory, @NotNull BiPredicate<Integer, ItemStack> tester)
     {
         return matchFirstInInventory(inventory, inv -> slot -> stack -> tester.test(slot, stack));
     }

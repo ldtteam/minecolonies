@@ -2,6 +2,8 @@ package com.blockout;
 
 import com.blockout.views.Window;
 import net.minecraft.client.renderer.GlStateManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.ListIterator;
  */
 public class View extends Pane
 {
+    @NotNull
     protected List<Pane> children = new ArrayList<>();
     protected int        padding  = 0;
 
@@ -34,6 +37,7 @@ public class View extends Pane
         padding = params.getIntegerAttribute("padding", padding);
     }
 
+    @NotNull
     public List<Pane> getChildren()
     {
         return children;
@@ -74,6 +78,7 @@ public class View extends Pane
         GlStateManager.popMatrix();
     }
 
+    @Nullable
     @Override
     public Pane findPaneByID(String id)
     {
@@ -128,6 +133,7 @@ public class View extends Pane
      * @param my Mouse Y, relative to the top-left of this Pane
      * @return a Pane that will handle a click action
      */
+    @Nullable
     public Pane findPaneForClick(int mx, int my)
     {
         ListIterator<Pane> it = children.listIterator(children.size());

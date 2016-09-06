@@ -3,12 +3,15 @@ package com.blockout.views;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Tabbed view.
  */
 public class SwitchView extends View
 {
+    @Nullable
     private Pane currentView;
 
     /**
@@ -30,7 +33,7 @@ public class SwitchView extends View
     }
 
     @Override
-    public void parseChildren(PaneParams params)
+    public void parseChildren(@NotNull PaneParams params)
     {
         super.parseChildren(params);
 
@@ -44,7 +47,7 @@ public class SwitchView extends View
     public void setView(String name)
     {
         //  Immediate children only
-        for (Pane child : children)
+        for (@NotNull Pane child : children)
         {
             if (child.getID().equals(name))
             {
@@ -54,6 +57,7 @@ public class SwitchView extends View
         }
     }
 
+    @Nullable
     @Override
     public Pane findPaneForClick(int mx, int my)
     {
@@ -72,7 +76,7 @@ public class SwitchView extends View
     }
 
     @Override
-    public void addChild(Pane child)
+    public void addChild(@NotNull Pane child)
     {
         super.addChild(child);
         if (children.size() == 1)
@@ -87,7 +91,7 @@ public class SwitchView extends View
     }
 
     @Override
-    public void adjustChild(Pane child)
+    public void adjustChild(@NotNull Pane child)
     {
         if (child.getWidth() == 0 || child.getHeight() == 0)
         {
@@ -115,6 +119,7 @@ public class SwitchView extends View
         }
     }
 
+    @Nullable
     public Pane getCurrentView()
     {
         return currentView;

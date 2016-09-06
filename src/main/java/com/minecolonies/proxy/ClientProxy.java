@@ -26,6 +26,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ClientProxy extends CommonProxy
 {
@@ -65,19 +67,19 @@ public class ClientProxy extends CommonProxy
     @Override
     public void showCitizenWindow(CitizenDataView citizen)
     {
-        final WindowCitizen window = new WindowCitizen(citizen);
+        @NotNull final WindowCitizen window = new WindowCitizen(citizen);
         window.open();
     }
 
     @Override
-    public void openBuildToolWindow(BlockPos pos)
+    public void openBuildToolWindow(@Nullable BlockPos pos)
     {
         if (pos == null && Settings.instance.getActiveSchematic() == null)
         {
             return;
         }
 
-        final WindowBuildTool window = new WindowBuildTool(pos);
+        @Nullable final WindowBuildTool window = new WindowBuildTool(pos);
         window.open();
     }
 

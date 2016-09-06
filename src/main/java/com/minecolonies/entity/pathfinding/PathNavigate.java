@@ -12,6 +12,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -26,8 +28,11 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     private EntityLiving entity;
     private double       walkSpeed;
 
+    @Nullable
     private BlockPos           destination;
+    @Nullable
     private Future<PathEntity> future;
+    @Nullable
     private PathResult         pathResult;
 
     private boolean shouldAvoidWater = false;
@@ -35,12 +40,13 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     private boolean canBreakDoors    = false;
     private boolean canSwim          = false;
 
-    public PathNavigate(EntityLiving entity, World world)
+    public PathNavigate(@NotNull EntityLiving entity, World world)
     {
         super(entity, world);
         this.entity = entity;
     }
 
+    @Nullable
     @Override
     protected PathFinder getPathFinder()
     {
@@ -77,6 +83,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         walkSpeed = d;
     }
 
+    @Nullable
     @Override
     public PathEntity getPathToPos(BlockPos pos)
     {
@@ -92,11 +99,12 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     }
 
     @Override
-    public boolean tryMoveToEntityLiving(Entity e, double speed)
+    public boolean tryMoveToEntityLiving(@NotNull Entity e, double speed)
     {
         return tryMoveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
 
+    @Nullable
     public PathResult moveToXYZ(double x, double y, double z, double speed)
     {
         int newX = MathHelper.floor_double(x);
@@ -110,8 +118,8 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
             return pathResult;
         }
 
-        BlockPos start = AbstractPathJob.prepareStart(entity);
-        BlockPos dest = new BlockPos(newX, newY, newZ);
+        @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
+        @NotNull BlockPos dest = new BlockPos(newX, newY, newZ);
 
         return setPathJob(
           new PathJobMoveToLocation(entity.worldObj, start, dest, (int) getPathSearchRange()),
@@ -119,13 +127,13 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     }
 
     @Override
-    public boolean setPath(PathEntity path, double speed)
+    public boolean setPath(@NotNull PathEntity path, double speed)
     {
         int pathLength = path.getCurrentPathLength();
         if (pathLength > 0 && !(path.getPathPointFromIndex(0) instanceof PathPointExtended))
         {
             //  Fix vanilla PathPoints to be PathPointExtended
-            PathPointExtended[] newPoints = new PathPointExtended[pathLength];
+            @NotNull PathPointExtended[] newPoints = new PathPointExtended[pathLength];
 
             for (int i = 0; i < pathLength; ++i)
             {
@@ -168,7 +176,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
                     pathResult.setPathReachesDestination(true);
                 }
             }
-            catch (InterruptedException | ExecutionException e)
+            catch (@NotNull InterruptedException | ExecutionException e)
             {
                 Log.logger.catching(e);
             }
@@ -182,7 +190,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         //  Ladder Workaround
         if (!this.noPath())
         {
-            PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
+            @NotNull PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
 
             if (pEx.isOnLadder)
             {
@@ -283,14 +291,16 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         super.clearPathEntity();
     }
 
+    @NotNull
     public PathJobFindTree.TreePathResult moveToTree(int range, double speed)
     {
-        BlockPos start = AbstractPathJob.prepareStart(entity);
+        @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
         return (PathJobFindTree.TreePathResult) setPathJob(
           new PathJobFindTree(entity.worldObj, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range), null, speed);
     }
 
-    private PathResult setPathJob(AbstractPathJob job, BlockPos dest, double speed)
+    @Nullable
+    private PathResult setPathJob(@NotNull AbstractPathJob job, BlockPos dest, double speed)
     {
         clearPathEntity();
 
@@ -302,26 +312,30 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         return pathResult;
     }
 
+    @Nullable
     public PathJobFindWater.WaterPathResult moveToWater(int range, double speed, List<BlockPos> ponds)
     {
-        BlockPos start = AbstractPathJob.prepareStart(entity);
+        @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
         return (PathJobFindWater.WaterPathResult) setPathJob(
           new PathJobFindWater(entity.worldObj, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, ponds), null, speed);
     }
 
-    public PathResult moveToEntityLiving(Entity e, double speed)
+    @Nullable
+    public PathResult moveToEntityLiving(@NotNull Entity e, double speed)
     {
         return moveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
 
-    public PathResult moveAwayFromEntityLiving(Entity e, double distance, double speed)
+    @Nullable
+    public PathResult moveAwayFromEntityLiving(@NotNull Entity e, double distance, double speed)
     {
         return moveAwayFromXYZ(e.getPosition(), distance, speed);
     }
 
+    @Nullable
     public PathResult moveAwayFromXYZ(BlockPos avoid, double range, double speed)
     {
-        BlockPos start = AbstractPathJob.prepareStart(entity);
+        @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
 
         return setPathJob(
           new PathJobMoveAwayFromLocation(entity.worldObj, start, avoid, (int) range, (int) getPathSearchRange()),

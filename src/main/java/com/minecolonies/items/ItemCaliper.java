@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Caliper Item class. Calculates distances, areas, and volumes.
@@ -34,7 +35,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         maxStackSize = 1;
     }
 
-    private static boolean handleZEqual(EntityPlayer playerIn, int a, int a2)
+    private static boolean handleZEqual(@NotNull EntityPlayer playerIn, int a, int a2)
     {
         int distance1 = Math.abs(a) + 1;
         int distance2 = Math.abs(a2) + 1;
@@ -44,7 +45,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onItemUse(ItemStack stack, @NotNull EntityPlayer playerIn, @NotNull World worldIn, @NotNull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         // if client world, do nothing
         if (worldIn.isRemote)
@@ -76,7 +77,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return handlePlayerMessage(playerIn, pos);
     }
 
-    private boolean handlePlayerMessage(EntityPlayer playerIn, BlockPos pos)
+    private boolean handlePlayerMessage(@NotNull EntityPlayer playerIn, @NotNull BlockPos pos)
     {
         if (startPosition.getX() == pos.getX())
         {
@@ -99,7 +100,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return true;
     }
 
-    private boolean handleYEqual(EntityPlayer playerIn, BlockPos pos, int a, int a2)
+    private boolean handleYEqual(@NotNull EntityPlayer playerIn, @NotNull BlockPos pos, int a, int a2)
     {
         if (startPosition.getZ() == pos.getZ())
         {
@@ -110,7 +111,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return handleZEqual(playerIn, a, a2);
     }
 
-    private boolean handleXEqual(EntityPlayer playerIn, BlockPos pos)
+    private boolean handleXEqual(@NotNull EntityPlayer playerIn, @NotNull BlockPos pos)
     {
         if (startPosition.getY() == pos.getY())
         {

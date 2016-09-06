@@ -19,6 +19,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
@@ -69,7 +71,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param buf The buffer begin read from.
      */
     @Override
-    public void fromBytes(ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         hutDec = ByteBufUtils.readUTF8String(buf);
         style = ByteBufUtils.readUTF8String(buf);
@@ -87,7 +89,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, hutDec);
         ByteBufUtils.writeUTF8String(buf, style);
@@ -108,8 +110,9 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param ctx     Contains info about the Client that sent the packet.
      * @return null - Don't send a response packet.
      */
+    @Nullable
     @Override
-    public IMessage onMessage(BuildToolPlaceMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull BuildToolPlaceMessage message, @NotNull MessageContext ctx)
     {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         World world = player.worldObj;
@@ -135,7 +138,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param rotation The number of times the schematic should be rotated.
      * @param buildPos The location the hut is being placed.
      */
-    private static void handleHut(World world, EntityPlayer player, String hut, String style, int rotation, BlockPos buildPos)
+    private static void handleHut(@NotNull World world, @NotNull EntityPlayer player, String hut, String style, int rotation, @NotNull BlockPos buildPos)
     {
         if (Schematics.getStylesForHut(hut) == null)
         {
@@ -153,7 +156,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
             player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));
 
-            AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
+            @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 
             if (building != null)
             {
@@ -177,7 +180,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param rotation   The number of times the decoration is rotated.
      * @param buildPos   The location the decoration will be built.
      */
-    private static void handleDecoration(World world, EntityPlayer player, String decoration, String style, int rotation, BlockPos buildPos)
+    private static void handleDecoration(@NotNull World world, @NotNull EntityPlayer player, String decoration, String style, int rotation, @NotNull BlockPos buildPos)
     {
         if (Schematics.getStylesForDecoration(decoration) == null)
         {
@@ -185,7 +188,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
             return;
         }
 
-        Colony colony = ColonyManager.getColony(world, buildPos);
+        @Nullable Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
         {
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(decoration, style, rotation, buildPos));

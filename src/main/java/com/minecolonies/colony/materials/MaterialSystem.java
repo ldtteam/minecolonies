@@ -2,6 +2,8 @@ package com.minecolonies.colony.materials;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -21,21 +23,25 @@ public class MaterialSystem
     /**
      * This Map contains keeps track of how many extra materials we have in the colony. (Materials that aren't needed)
      */
+    @NotNull
     private Map<Material, Integer> materials = new HashMap<>();
 
     /**
      * Set of MaterialStores inside this MaterialSystem(Colony)
      */
+    @NotNull
     private Set<MaterialStore> stores = new HashSet<>();
 
     /**
      * So that we only have one Material reference per material inside of the system.
      */
+    @NotNull
     private Map<Integer, Material> materialCache = new HashMap<>();
 
     /**
      * @return An unmodifiable version of the materials map
      */
+    @NotNull
     public Map<Material, Integer> getMaterials()
     {
         return Collections.unmodifiableMap(materials);
@@ -44,6 +50,7 @@ public class MaterialSystem
     /**
      * @return An unmodifiable version of the stores set
      */
+    @NotNull
     public Set<MaterialStore> getStores()
     {
         return Collections.unmodifiableSet(stores);
@@ -60,7 +67,7 @@ public class MaterialSystem
         return getMaterialCount(getMaterial(item));
     }
 
-    private int getMaterialCount(Material material)
+    private int getMaterialCount(@NotNull Material material)
     {
         Integer count = materials.get(material);
 
@@ -73,7 +80,8 @@ public class MaterialSystem
         return count;
     }
 
-    Material getMaterial(Item item)
+    @Nullable
+    Material getMaterial(@Nullable Item item)
     {
         if (item == null)
         {
@@ -83,7 +91,7 @@ public class MaterialSystem
         return getMaterial(Item.getIdFromItem(item));
     }
 
-    private void removeItemFromCache(Material material)
+    private void removeItemFromCache(@NotNull Material material)
     {
         materialCache.remove(material.getID());
     }
@@ -116,7 +124,8 @@ public class MaterialSystem
         return getMaterialCount(getMaterial(block));
     }
 
-    Material getMaterial(Block block)
+    @Nullable
+    Material getMaterial(@Nullable Block block)
     {
         if (block == null)
         {
@@ -151,7 +160,7 @@ public class MaterialSystem
      * @param material What material you're removing
      * @param quantity How much you're removing
      */
-    void removeMaterial(Material material, int quantity)
+    void removeMaterial(@NotNull Material material, int quantity)
     {
         Integer count = materials.get(material);
         if (count == null || count < quantity)

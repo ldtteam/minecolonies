@@ -12,6 +12,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -83,7 +85,7 @@ public class Tree
      * @param world The world where the tree is in
      * @param log   the position of the found log.
      */
-    public Tree(World world, BlockPos log)
+    public Tree(@NotNull World world, @NotNull BlockPos log)
     {
         Block block = BlockPosUtil.getBlock(world, log);
         if (block.isWood(world, log))
@@ -103,7 +105,7 @@ public class Tree
      * @param pos   The coordinates
      * @return the base log position
      */
-    private static BlockPos getBaseLog(IBlockAccess world, BlockPos pos)
+    private static BlockPos getBaseLog(@NotNull IBlockAccess world, BlockPos pos)
     {
         BlockPos basePos = pos;
         while (world.getBlockState(basePos.down()).getBlock().isWood(world, basePos))
@@ -119,7 +121,7 @@ public class Tree
      * @param world  The world the tree is in
      * @param topLog The most upper log of the tree
      */
-    private void checkTree(World world, BlockPos topLog)
+    private void checkTree(@NotNull World world, @NotNull BlockPos topLog)
     {
         if (!world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ())).getBlock().getMaterial().isSolid())
         {
@@ -153,7 +155,7 @@ public class Tree
      * @param pos   The coordinates
      * @return the top log position
      */
-    private static BlockPos getTopLog(IBlockAccess world, BlockPos pos)
+    private static BlockPos getTopLog(@NotNull IBlockAccess world, BlockPos pos)
     {
         BlockPos topPos = pos;
         while (world.getBlockState(topPos.up()).getBlock().isWood(world, topPos.down()))
@@ -170,7 +172,7 @@ public class Tree
      * @param pos   The coordinates
      * @return true if the log is part of a tree
      */
-    public static boolean checkTree(IBlockAccess world, BlockPos pos)
+    public static boolean checkTree(@NotNull IBlockAccess world, BlockPos pos)
     {
         //Is the first block a log?
         if (!world.getBlockState(pos).getBlock().isWood(world, pos))
@@ -187,7 +189,7 @@ public class Tree
                  && hasEnoughLeaves(world, pos);
     }
 
-    private static boolean hasEnoughLeaves(IBlockAccess world, BlockPos pos)
+    private static boolean hasEnoughLeaves(@NotNull IBlockAccess world, BlockPos pos)
     {
         //Get top log
         BlockPos topPos = getTopLog(world, pos);
@@ -219,9 +221,10 @@ public class Tree
      * @param compound the compound of the tree
      * @return a new tree object
      */
-    public static Tree readFromNBT(NBTTagCompound compound)
+    @NotNull
+    public static Tree readFromNBT(@NotNull NBTTagCompound compound)
     {
-        Tree tree = new Tree();
+        @NotNull Tree tree = new Tree();
         tree.location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
 
         tree.woodBlocks = new LinkedList<>();
@@ -245,7 +248,7 @@ public class Tree
      *
      * @param world The world where the blocks are in
      */
-    public void findLogs(World world)
+    public void findLogs(@NotNull World world)
     {
         addAndSearch(world, location);
         Collections.sort(woodBlocks, (c1, c2) -> (int) (c1.distanceSq(location) - c2.distanceSq(location)));
@@ -262,9 +265,9 @@ public class Tree
      * @param world  The world where the tree is in
      * @param yLevel The base y.
      */
-    public void fillTreeStumps(World world, int yLevel)
+    public void fillTreeStumps(@NotNull World world, int yLevel)
     {
-        for (BlockPos pos : woodBlocks)
+        for (@NotNull BlockPos pos : woodBlocks)
         {
             if (pos.getY() == yLevel)
             {
@@ -287,7 +290,7 @@ public class Tree
      * @param world The world the log is in
      * @param log   the log to add
      */
-    private void addAndSearch(World world, BlockPos log)
+    private void addAndSearch(@NotNull World world, @NotNull BlockPos log)
     {
         woodBlocks.add(log);
         for (int y = -1; y <= 1; y++)
@@ -341,6 +344,7 @@ public class Tree
      *
      * @return an Arraylist of the positions
      */
+    @NotNull
     public List<BlockPos> getStumpLocations()
     {
         return new ArrayList<>(stumpLocations);
@@ -373,7 +377,7 @@ public class Tree
      * @param other the other tree
      * @return the square distance in double
      */
-    public double squareDistance(Tree other)
+    public double squareDistance(@NotNull Tree other)
     {
         return this.getLocation().distanceSq(other.getLocation());
     }
@@ -406,7 +410,7 @@ public class Tree
      * @return true if equal or false if not
      */
     @Override
-    public boolean equals(Object tree)
+    public boolean equals(@Nullable Object tree)
     {
         return tree != null && tree.getClass() == this.getClass() && ((Tree) tree).getLocation().equals(location);
     }
@@ -416,7 +420,7 @@ public class Tree
      *
      * @param compound the compound of the tree
      */
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         if (!isTree)
         {
@@ -425,15 +429,15 @@ public class Tree
 
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
 
-        NBTTagList logs = new NBTTagList();
-        for (BlockPos log : woodBlocks)
+        @NotNull NBTTagList logs = new NBTTagList();
+        for (@NotNull BlockPos log : woodBlocks)
         {
             BlockPosUtil.writeToNBTTagList(logs, log);
         }
         compound.setTag(TAG_LOGS, logs);
 
-        NBTTagList stumps = new NBTTagList();
-        for (BlockPos stump : stumpLocations)
+        @NotNull NBTTagList stumps = new NBTTagList();
+        for (@NotNull BlockPos stump : stumpLocations)
         {
             BlockPosUtil.writeToNBTTagList(stumps, stump);
         }

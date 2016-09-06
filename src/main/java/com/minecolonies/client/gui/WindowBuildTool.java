@@ -16,6 +16,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,6 +123,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * List of huts or decorations possible to make.
      */
+    @NotNull
     private List<String> hutDec = new ArrayList<>();
 
     /**
@@ -136,6 +139,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Current position the hut/decoration is rendered at.
      */
+    @NotNull
     private BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
 
     /**
@@ -157,11 +161,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param pos coordinate
      */
-    public WindowBuildTool(BlockPos pos)
+    public WindowBuildTool(@NotNull BlockPos pos)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
-        Schematic schematic = Settings.instance.getActiveSchematic();
+        @Nullable Schematic schematic = Settings.instance.getActiveSchematic();
         if (schematic != null)
         {
             BlockPosUtil.set(this.pos, Settings.instance.getOffset().add(schematic.getOffset()));
@@ -189,7 +193,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
     }
 
-    private static boolean inventoryHasHut(InventoryPlayer inventory, String hut)
+    private static boolean inventoryHasHut(@NotNull InventoryPlayer inventory, String hut)
     {
         return inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, DEFAULT_POS));
     }
@@ -318,7 +322,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void hutDecClicked(Button button)
+    private void hutDecClicked(@NotNull Button button)
     {
         if (hutDec.size() == 1)
         {
@@ -358,7 +362,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
         String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
+        @NotNull SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
 
         Settings.instance.setActiveSchematic(schematic.getSchematic());
 
@@ -388,7 +392,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void styleClicked(Button button)
+    private void styleClicked(@NotNull Button button)
     {
         List<String> styles = getStyles();
 

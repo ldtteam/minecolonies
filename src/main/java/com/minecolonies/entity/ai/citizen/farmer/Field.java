@@ -19,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Handles the field class.
@@ -123,6 +124,7 @@ public class Field extends Container
     /**
      * The colony of the field.
      */
+    @Nullable
     private final Colony colony;
 
     /**
@@ -173,6 +175,7 @@ public class Field extends Container
     /**
      * Name of the citizen claiming the field.
      */
+    @NotNull
     private String owner = "";
 
     /**
@@ -194,7 +197,7 @@ public class Field extends Container
      * @param world               the world.
      * @param location            the position of the field.
      */
-    public Field(ScarecrowTileEntity scarecrowTileEntity, InventoryPlayer playerInventory, World world, BlockPos location)
+    public Field(@NotNull ScarecrowTileEntity scarecrowTileEntity, InventoryPlayer playerInventory, @NotNull World world, @NotNull BlockPos location)
     {
         super();
         this.colony = ColonyManager.getColony(world, location);
@@ -237,9 +240,10 @@ public class Field extends Container
      * @param compound The saved data.
      * @return {@link Field} created from the compound.
      */
-    public static Field createFromNBT(Colony colony, NBTTagCompound compound)
+    @NotNull
+    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
     {
-        final Field field = new Field(colony);
+        @NotNull final Field field = new Field(colony);
         field.readFromNBT(compound);
         return field;
     }
@@ -250,7 +254,7 @@ public class Field extends Container
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
      */
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
         taken = compound.getBoolean(TAG_TAKEN);
@@ -280,8 +284,9 @@ public class Field extends Container
         return super.addSlotToContainer(slotToAdd);
     }
 
+    @Nullable
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotIndex)
+    public ItemStack transferStackInSlot(@NotNull EntityPlayer playerIn, int slotIndex)
     {
         if (slotIndex == 0)
         {
@@ -293,7 +298,7 @@ public class Field extends Container
             final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
             if (playerIn.inventory.getStackInSlot(playerIndex) != null)
             {
-                final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
+                @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
                 inventory.setInventorySlotContents(0, stack);
                 if (playerIn.inventory.getStackInSlot(playerIndex).stackSize == 0)
                 {
@@ -306,7 +311,7 @@ public class Field extends Container
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer playerIn)
+    public boolean canInteractWith(@NotNull EntityPlayer playerIn)
     {
         return getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS);
     }
@@ -316,6 +321,7 @@ public class Field extends Container
      *
      * @return {@link com.minecolonies.colony.Colony} of the current object.
      */
+    @Nullable
     public Colony getColony()
     {
         return this.colony;
@@ -329,7 +335,7 @@ public class Field extends Container
      * @param position the start position.
      * @param world    the world the field is in.
      */
-    public final void calculateSize(World world, BlockPos position)
+    public final void calculateSize(@NotNull World world, @NotNull BlockPos position)
     {
         //Calculate in all 4 directions
         this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);
@@ -347,7 +353,7 @@ public class Field extends Container
      * @param world         the world object.
      * @return the distance.
      */
-    private int searchNextBlock(int blocksChecked, BlockPos position, EnumFacing direction, World world)
+    private int searchNextBlock(int blocksChecked, @NotNull BlockPos position, EnumFacing direction, @NotNull World world)
     {
         if (blocksChecked == getMaxRange() || isNoPartOfField(world, position))
         {
@@ -363,7 +369,7 @@ public class Field extends Container
      * @param position the position.
      * @return true if it is.
      */
-    public boolean isNoPartOfField(World world, BlockPos position)
+    public boolean isNoPartOfField(@NotNull World world, @NotNull BlockPos position)
     {
         return world.isAirBlock(position) || world.getBlockState(position.up()).getBlock().getMaterial().isSolid();
     }
@@ -385,7 +391,7 @@ public class Field extends Container
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
      */
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
         compound.setBoolean(TAG_TAKEN, taken);
@@ -463,6 +469,7 @@ public class Field extends Container
      *
      * @return the ItemSeed
      */
+    @Nullable
     public Item getSeed()
     {
         if (inventory.getStackInSlot(0) != null && inventory.getStackInSlot(0).getItem() instanceof IPlantable)
@@ -548,6 +555,7 @@ public class Field extends Container
      *
      * @return the string description of the citizen.
      */
+    @NotNull
     public String getOwner()
     {
         return owner;
@@ -558,7 +566,7 @@ public class Field extends Container
      *
      * @param owner the name of the citizen.
      */
-    public void setOwner(final String owner)
+    public void setOwner(@NotNull final String owner)
     {
         if (owner.isEmpty())
         {

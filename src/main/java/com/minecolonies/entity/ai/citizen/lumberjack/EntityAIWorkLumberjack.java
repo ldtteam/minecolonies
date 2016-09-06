@@ -13,6 +13,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -148,10 +149,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Positions of all items that have to be collected.
      */
+    @Nullable
     private List<BlockPos>                 items;
     /**
      * The active pathfinding job used to walk to trees
      */
+    @Nullable
     private PathJobFindTree.TreePathResult pathResult;
     /**
      * A counter by how much the tree search radius
@@ -164,7 +167,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @param job the lumberjackjob
      */
-    public EntityAIWorkLumberjack(JobLumberjack job)
+    public EntityAIWorkLumberjack(@NotNull JobLumberjack job)
     {
         super(job);
         super.registerTargets(
@@ -347,7 +350,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @param location the block we want to go to
      */
-    private void checkIfStuckOnLeaves(final BlockPos location)
+    private void checkIfStuckOnLeaves(@NotNull final BlockPos location)
     {
         int distance = (int) location.distanceSq(worker.getPosition());
         if (previousDistance != distance)
@@ -386,7 +389,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private void tryGettingUnstuckFromLeaves()
     {
-        BlockPos nextLeaves = findNearLeaves();
+        @Nullable BlockPos nextLeaves = findNearLeaves();
         //If the worker gets too stuck he moves around a bit
         if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
         {
@@ -407,7 +410,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param location the location to plant the sapling at
      * @return true if a sapling was planted
      */
-    private boolean plantSapling(BlockPos location)
+    private boolean plantSapling(@NotNull BlockPos location)
     {
         if (BlockPosUtil.getBlock(world, location) != Blocks.air)
         {
@@ -462,7 +465,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             {
                 for (int z = playerZ - radius; z < playerZ + radius; z++)
                 {
-                    BlockPos pos = new BlockPos(x, y, z);
+                    @NotNull BlockPos pos = new BlockPos(x, y, z);
                     if (world.getBlockState(pos).getBlock().isLeaves(world, pos))
                     {
                         return pos;
@@ -486,7 +489,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         return -1;
     }
 
-    private void placeSaplings(int saplingSlot, ItemStack stack, Block block)
+    private void placeSaplings(int saplingSlot, @NotNull ItemStack stack, @NotNull Block block)
     {
         while (!job.tree.getStumpLocations().isEmpty())
         {
@@ -506,7 +509,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
     }
 
-    private boolean isCorrectSapling(ItemStack stack)
+    private boolean isCorrectSapling(@NotNull ItemStack stack)
     {
         return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
     }
@@ -517,7 +520,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param stack the stack to check
      * @return true if sapling
      */
-    private static boolean isStackSapling(ItemStack stack)
+    private static boolean isStackSapling(@Nullable ItemStack stack)
     {
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockSapling;
     }
@@ -663,7 +666,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param stack the stack to check
      * @return true if an axe
      */
-    private static boolean isStackAxe(ItemStack stack)
+    private static boolean isStackAxe(@Nullable ItemStack stack)
     {
         return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
     }
@@ -691,7 +694,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param stack the stack to check
      * @return true if it is a log type
      */
-    private static boolean isStackLog(ItemStack stack)
+    private static boolean isStackLog(@Nullable ItemStack stack)
     {
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock().isWood(null, new BlockPos(0, 0, 0));
     }

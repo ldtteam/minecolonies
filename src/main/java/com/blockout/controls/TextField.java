@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -18,15 +20,16 @@ public class TextField extends Pane
     /**
      * Texture resource location
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
+    private static final ResourceLocation TEXTURE           = new ResourceLocation("textures/gui/widgets.png");
     //  Attributes
-    protected int     maxTextLength     = 32;
-    protected int     textColor         = 0xE0E0E0;
-    protected int     textColorDisabled = 0x707070;
-    protected boolean shadow            = true;
-    protected String  tabNextPaneID     = null;
+    protected            int              maxTextLength     = 32;
+    protected            int              textColor         = 0xE0E0E0;
+    protected            int              textColorDisabled = 0x707070;
+    protected            boolean          shadow            = true;
+    @Nullable
+    protected            String           tabNextPaneID     = null;
     //  Runtime
-    protected String text = "";
+    protected            String           text              = "";
     protected Filter filter;
     protected int cursorPosition     = 0;
     protected int scrollOffset       = 0;
@@ -37,7 +40,7 @@ public class TextField extends Pane
         //Required
     }
 
-    public TextField(PaneParams params)
+    public TextField(@NotNull PaneParams params)
     {
         super(params);
         maxTextLength = params.getIntegerAttribute("maxlength", maxTextLength);
@@ -63,7 +66,7 @@ public class TextField extends Pane
         return text;
     }
 
-    public void setText(String s)
+    public void setText(@NotNull String s)
     {
         text = s.length() <= maxTextLength ? s : s.substring(0, maxTextLength);
         setCursorPosition(text.length());
@@ -104,6 +107,7 @@ public class TextField extends Pane
         textColorDisabled = c;
     }
 
+    @Nullable
     public String getTabNextPaneID()
     {
         return tabNextPaneID;
@@ -168,6 +172,7 @@ public class TextField extends Pane
         }
     }
 
+    @NotNull
     public String getSelectedText()
     {
         int start = Math.min(cursorPosition, selectionEnd);
@@ -312,7 +317,7 @@ public class TextField extends Pane
         int textX = drawX;
         if (visibleString.length() > 0)
         {
-            String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
+            @NotNull String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
             mc.renderEngine.bindTexture(TEXTURE);
             textX = mc.fontRendererObj.drawString(s1, textX, drawY, color, shadow);
         }
@@ -462,7 +467,7 @@ public class TextField extends Pane
         int insertEnd = Math.max(cursorPosition, selectionEnd);
         int availableChars = (maxTextLength - text.length()) + (insertEnd - insertAt);
 
-        String result = "";
+        @NotNull String result = "";
         if (text.length() > 0 && insertAt > 0)
         {
             result = text.substring(0, insertAt);
@@ -520,7 +525,7 @@ public class TextField extends Pane
             boolean backwards = count < 0;
             int start = backwards ? (this.cursorPosition + count) : this.cursorPosition;
             int end = backwards ? this.cursorPosition : (this.cursorPosition + count);
-            String result = "";
+            @NotNull String result = "";
 
             if (start > 0)
             {

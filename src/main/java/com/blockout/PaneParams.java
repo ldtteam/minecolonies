@@ -3,6 +3,8 @@ package com.blockout;
 import com.minecolonies.util.Log;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.MathHelper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ public class PaneParams
         return parentView != null ? parentView.getInteriorHeight() : 0;
     }
 
+    @Nullable
     public List<PaneParams> getChildren()
     {
         List<PaneParams> list = null;
@@ -70,16 +73,19 @@ public class PaneParams
         return list;
     }
 
+    @NotNull
     public String getText()
     {
         return node.getTextContent().trim();
     }
 
+    @Nullable
     public String getLocalizedText()
     {
         return localize(node.getTextContent().trim());
     }
 
+    @Nullable
     private static String localize(String str)
     {
         if (str == null)
@@ -130,11 +136,13 @@ public class PaneParams
         return node.getAttributes().getNamedItem(name);
     }
 
+    @Nullable
     public String getLocalizedStringAttribute(String name)
     {
         return getLocalizedStringAttribute(name, "");
     }
 
+    @Nullable
     public String getLocalizedStringAttribute(String name, String def)
     {
         return localize(getStringAttribute(name, def));
@@ -250,6 +258,7 @@ public class PaneParams
         return def;
     }
 
+    @Nullable
     public SizePair getSizePairAttribute(String name, SizePair def, SizePair scale)
     {
         String attr = getStringAttribute(name, null);

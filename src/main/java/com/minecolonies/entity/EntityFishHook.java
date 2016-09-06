@@ -16,6 +16,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -179,7 +181,7 @@ public final class EntityFishHook extends Entity
      * @param world   the world the hook lives in
      * @param citizen the citizen throwing the hook
      */
-    public EntityFishHook(World world, EntityCitizen citizen)
+    public EntityFishHook(World world, @NotNull EntityCitizen citizen)
     {
         this(world);
         this.citizen = citizen;
@@ -259,7 +261,7 @@ public final class EntityFishHook extends Entity
     }
 
     @Override
-    public boolean equals(Object o)
+    public boolean equals(@Nullable Object o)
     {
         return !(o == null || getClass() != o.getClass() || !super.equals(o));
     }
@@ -402,7 +404,7 @@ public final class EntityFishHook extends Entity
             double d3 = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * j / numSteps;
             double d4 = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * (j + 1) / numSteps;
 
-            AxisAlignedBB axisAlignedBB1 = new AxisAlignedBB(
+            @NotNull AxisAlignedBB axisAlignedBB1 = new AxisAlignedBB(
                                                               this.getEntityBoundingBox().minX,
                                                               d3,
                                                               this.getEntityBoundingBox().minZ,
@@ -495,7 +497,7 @@ public final class EntityFishHook extends Entity
                 return;
             }
 
-            WorldServer worldServer = (WorldServer) this.worldObj;
+            @NotNull WorldServer worldServer = (WorldServer) this.worldObj;
 
             if (this.countdownFishNear > 0)
             {
@@ -532,7 +534,7 @@ public final class EntityFishHook extends Entity
         }
     }
 
-    private void renderBubble(int fishingProgressStep, WorldServer worldServer)
+    private void renderBubble(int fishingProgressStep, @NotNull WorldServer worldServer)
     {
         this.countdownFishNear -= fishingProgressStep;
 
@@ -563,7 +565,7 @@ public final class EntityFishHook extends Entity
         }
     }
 
-    private void renderFishBiteOrSwim(WorldServer worldServer)
+    private void renderFishBiteOrSwim(@NotNull WorldServer worldServer)
     {
         if (this.countdownFishBites <= 0)
         {
@@ -583,7 +585,7 @@ public final class EntityFishHook extends Entity
      *
      * @param worldServer the server side world
      */
-    private void renderLittleSplash(WorldServer worldServer)
+    private void renderLittleSplash(@NotNull WorldServer worldServer)
     {
         double sinYPosition = (double) MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292D;
         double cosYPosition = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
@@ -609,7 +611,7 @@ public final class EntityFishHook extends Entity
      *
      * @param worldServer the server side world
      */
-    private void showFishBiteAnimation(final WorldServer worldServer)
+    private void showFishBiteAnimation(@NotNull final WorldServer worldServer)
     {
         this.motionY -= 0.20000000298023224D;
         this.playSound("random.splash", ENTITY_SIZE, (float) (1.0D + this.rand.nextGaussian() * 0.4D));
@@ -642,7 +644,7 @@ public final class EntityFishHook extends Entity
      *
      * @param worldServer the server side world
      */
-    private void showFishSwimmingTowardsHookAnimation(WorldServer worldServer)
+    private void showFishSwimmingTowardsHookAnimation(@NotNull WorldServer worldServer)
     {
         this.relativeRotation = this.relativeRotation + this.rand.nextGaussian() * NUM_BOUNDING_BOX_EDGES;
         double bubbleY = this.relativeRotation * 0.017453292;
@@ -670,7 +672,7 @@ public final class EntityFishHook extends Entity
      * @param citizen the fisherman fishing
      * @return the number of damage points to be deducted.
      */
-    public int getDamage(final EntityCitizen citizen)
+    public int getDamage(@NotNull final EntityCitizen citizen)
     {
         if (this.worldObj.isRemote)
         {
@@ -703,12 +705,12 @@ public final class EntityFishHook extends Entity
      *
      * @param citizen the fisherman getting the loot
      */
-    private void spawnLootAndExp(final EntityCitizen citizen)
+    private void spawnLootAndExp(@NotNull final EntityCitizen citizen)
     {
         double citizenPosX = citizen.posX;
         double citizenPosY = citizen.posY;
         double citizenPosZ = citizen.posZ;
-        EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot(citizen));
+        @NotNull EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot(citizen));
         double distanceX = citizenPosX - this.posX;
         double distanceY = citizenPosY - this.posY;
         double distanceZ = citizenPosZ - this.posZ;
@@ -733,7 +735,7 @@ public final class EntityFishHook extends Entity
      * @param citizen the fisherman getting the loot
      * @return an ItemStack randomly from the loot table
      */
-    private ItemStack getFishingLoot(final EntityCitizen citizen)
+    private ItemStack getFishingLoot(@NotNull final EntityCitizen citizen)
     {
         //Reduce random to get more fish drops
         double random = this.worldObj.rand.nextDouble() / INCREASE_RARENESS_MODIFIER;

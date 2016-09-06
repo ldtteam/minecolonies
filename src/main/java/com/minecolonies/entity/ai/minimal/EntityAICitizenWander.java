@@ -6,6 +6,7 @@ import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 public class EntityAICitizenWander extends EntityAIBase
 {
@@ -71,7 +72,7 @@ public class EntityAICitizenWander extends EntityAIBase
      * @param position Current position of the entity
      * @return Ground level at (position.x, position.z)
      */
-    private double getValidHeight(Vec3 position)
+    private double getValidHeight(@NotNull Vec3 position)
     {
         double returnHeight = position.yCoord;
         if (position.yCoord < 0)

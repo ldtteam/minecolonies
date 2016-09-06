@@ -12,6 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -73,7 +74,7 @@ public class Schematic implements ISchematic
     //MINECOLONIES END
 
     @Override
-    public IBlockState getBlockState(final BlockPos pos)
+    public IBlockState getBlockState(@NotNull final BlockPos pos)
     {
         if (isInvalid(pos))
         {
@@ -164,6 +165,7 @@ public class Schematic implements ISchematic
         }
     }
 
+    @NotNull
     @Override
     public List<Entity> getEntities()
     {

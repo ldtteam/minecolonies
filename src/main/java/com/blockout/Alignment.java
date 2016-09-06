@@ -1,5 +1,7 @@
 package com.blockout;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum Alignment
 {
     // RelativePosition determines how the x,y coordinates of an item are relative
@@ -22,7 +24,7 @@ public enum Alignment
     private boolean horizontalCentered;
     private boolean verticalCentered;
 
-    Alignment(String attributes)
+    Alignment(@NotNull String attributes)
     {
         rightAligned = attributes.contains("right");
         bottomAligned = attributes.contains("bottom");

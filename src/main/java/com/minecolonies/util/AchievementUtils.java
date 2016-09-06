@@ -29,7 +29,7 @@ public final class AchievementUtils
      */
     public static void syncAchievements(@NotNull final Colony colony)
     {
-        final List<Permissions.Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Permissions.Rank.OFFICER);
+        @NotNull final List<Permissions.Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Permissions.Rank.OFFICER);
 
         @NotNull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players);
 

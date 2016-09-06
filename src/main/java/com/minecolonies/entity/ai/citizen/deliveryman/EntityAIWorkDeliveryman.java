@@ -2,6 +2,7 @@ package com.minecolonies.entity.ai.citizen.deliveryman;
 
 import com.minecolonies.colony.jobs.JobDeliveryman;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Performs deliveryman work
@@ -16,7 +17,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @param deliveryman the job he has.
      */
-    public EntityAIWorkDeliveryman(JobDeliveryman deliveryman)
+    public EntityAIWorkDeliveryman(@NotNull JobDeliveryman deliveryman)
     {
         super(deliveryman);
     }

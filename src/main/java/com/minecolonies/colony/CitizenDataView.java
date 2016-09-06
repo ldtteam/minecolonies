@@ -4,6 +4,8 @@ import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The CitizenDataView is the client-side representation of a CitizenData.
@@ -39,7 +41,9 @@ public class CitizenDataView
     /**
      * Working and home position.
      */
+    @Nullable
     private BlockPos homeBuilding;
+    @Nullable
     private BlockPos workBuilding;
 
     /**
@@ -127,6 +131,7 @@ public class CitizenDataView
      *
      * @return the home coordinates.
      */
+    @Nullable
     public BlockPos getHomeBuilding()
     {
         return homeBuilding;
@@ -137,6 +142,7 @@ public class CitizenDataView
      *
      * @return the work coordinates.
      */
+    @Nullable
     public BlockPos getWorkBuilding()
     {
         return workBuilding;
@@ -217,7 +223,7 @@ public class CitizenDataView
      *
      * @param buf Byte buffer to deserialize
      */
-    public void deserialize(ByteBuf buf)
+    public void deserialize(@NotNull ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
         female = buf.readBoolean();

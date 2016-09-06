@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -73,7 +74,7 @@ public class Window extends View
      *
      * @param params xml parameters.
      */
-    public void loadParams(PaneParams params)
+    public void loadParams(@NotNull PaneParams params)
     {
         String inherit = params.getStringAttribute("inherit", null);
         if (inherit != null)

@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai.minimal;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Used for automatic gate open/close.
@@ -36,7 +37,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      * @param entityLivingIn the registering entity
      * @param shouldClose    should the entity close the gate?
      */
-    public EntityAIOpenFenceGate(EntityLiving entityLivingIn, boolean shouldClose)
+    public EntityAIOpenFenceGate(@NotNull EntityLiving entityLivingIn, boolean shouldClose)
     {
         super(entityLivingIn);
         this.theEntity = entityLivingIn;

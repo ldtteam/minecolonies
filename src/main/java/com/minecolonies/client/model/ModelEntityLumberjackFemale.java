@@ -2,6 +2,7 @@ package com.minecolonies.client.model;
 
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
+import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityLumberjackFemale extends ModelBiped
 {
@@ -214,7 +215,7 @@ public class ModelEntityLumberjackFemale extends ModelBiped
         bipedHeadwear.isHidden = true;
     }
 
-    private void setRotation(ModelRenderer model, float x, float y, float z)
+    private void setRotation(@NotNull ModelRenderer model, float x, float y, float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;

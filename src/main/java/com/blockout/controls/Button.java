@@ -4,6 +4,7 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Base button class.
@@ -27,7 +28,7 @@ public class Button extends Pane
      *
      * @param params PaneParams from xml file.
      */
-    public Button(PaneParams params)
+    public Button(@NotNull PaneParams params)
     {
         super(params);
         label = params.getLocalizedStringAttribute("label", label);

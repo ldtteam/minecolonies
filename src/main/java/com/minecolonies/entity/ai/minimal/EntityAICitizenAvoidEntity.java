@@ -4,6 +4,7 @@ import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     private EntityCitizen theEntity;
     private double        farSpeed;
     private double        nearSpeed;
+    @Nullable
     private Entity        closestLivingEntity;
     private float         distanceFromEntity;
     private Class         targetEntityClass;
@@ -120,7 +122,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Override
     public void updateTask()
     {
-        Entity newClosest = getClosestToAvoid();
+        @Nullable Entity newClosest = getClosestToAvoid();
         if (newClosest != null && newClosest != closestLivingEntity)
         {
             closestLivingEntity = newClosest;
