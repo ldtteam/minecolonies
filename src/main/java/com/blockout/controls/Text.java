@@ -1,7 +1,7 @@
 package com.blockout.controls;
 
 import com.blockout.PaneParams;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -157,12 +157,12 @@ public class Text extends AbstractTextElement
                 }
             }
 
-            GL11.glPushMatrix();
-            GL11.glTranslatef((float) (getX() + offsetX), (float) (getY() + offsetY), 0);
-            GL11.glScalef((float) scale, (float) scale, (float) scale);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate((float) (getX() + offsetX), (float) (getY() + offsetY), 0);
+            GlStateManager.scale((float) scale, (float) scale, (float) scale);
             mc.renderEngine.bindTexture(TEXTURE);
             mc.fontRendererObj.drawString(s, 0, 0, textColor, shadow);
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
 
             offsetY += getLineHeight() + scaledLinespace;
 

@@ -1,8 +1,8 @@
 package com.blockout.controls;
 
 import com.blockout.PaneParams;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatAllowedCharacters;
-import org.lwjgl.opengl.GL11;
 
 /**
  * Mimics Vanilla text fields.
@@ -80,15 +80,15 @@ public class TextFieldVanilla extends TextField
             drawRect(x - 1, y - 1, x + width + 1, y + height + 1, backgroundOuterColor);
             drawRect(x, y, x + width, y + height, backgroundInnerColor);
 
-            GL11.glPushMatrix();
-            GL11.glTranslatef(4, (float) ((height - 8) / 2.0), 0);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(4, (float) ((height - 8) / 2.0), 0);
         }
 
         super.drawSelf(mx, my);
 
         if (backgroundEnabled)
         {
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
         }
     }
 

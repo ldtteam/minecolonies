@@ -1,7 +1,7 @@
 package com.blockout.controls;
 
 import com.blockout.PaneParams;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
 
 /**
  * BlockOut label pane. Used to render a piece of text.
@@ -98,11 +98,11 @@ public class Label extends AbstractTextElement
             offsetY = (getHeight() - getTextHeight()) / 2;
         }
 
-        GL11.glPushMatrix();
-        GL11.glTranslated((double) (getX() + offsetX), (double) (getY() + offsetY), 0);
-        GL11.glScalef((float) scale, (float) scale, (float) scale);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((double) (getX() + offsetX), (double) (getY() + offsetY), 0);
+        GlStateManager.scale((float) scale, (float) scale, (float) scale);
         mc.renderEngine.bindTexture(TEXTURE);
         mc.fontRendererObj.drawString(labelText, 0, 0, color, shadow);
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 }

@@ -1,5 +1,6 @@
 package com.blockout;
 
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -56,9 +57,9 @@ public final class Render
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
 
         worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GlStateManager.disableTexture2D();
         GL11.glLineWidth(lineWidth);
-        GL11.glColor4f(r, g, b, a);
+        GlStateManager.color(r, g, b, a);
 
         //Since our points do not have any u,v this seems to be the correct code
         worldrenderer.pos(x1, y2, 0.0D).endVertex();
@@ -67,6 +68,6 @@ public final class Render
         worldrenderer.pos(x1, y1, 0.0D).endVertex();
 
         tessellator.draw();
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GlStateManager.enableTexture2D();
     }
 }
