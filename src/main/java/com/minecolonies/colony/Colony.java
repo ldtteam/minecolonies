@@ -177,9 +177,7 @@ public class Colony implements IColony
             final NBTTagCompound achievementCompound = achievementTagList.getCompoundTagAt(i);
             final String achievementKey = achievementCompound.getString(TAG_ACHIEVEMENT);
             final StatBase statBase = StatList.getOneShotStat(achievementKey);
-            System.out.println("Checking stat: "+achievementKey+":"+statBase.statId);
             if (statBase instanceof Achievement) {
-                System.out.println("Found an achievement");
                 colonyAchievements.add((Achievement) statBase);
             }
         }
@@ -233,9 +231,8 @@ public class Colony implements IColony
         final NBTTagList achievementsTagList = new NBTTagList();
         for (final Achievement achievement : this.colonyAchievements)
         {
-            String achievementKey = achievement.statId;
-            NBTTagCompound achievementCompound = new NBTTagCompound();
-            achievementCompound.setString(TAG_ACHIEVEMENT, achievementKey);
+            final NBTTagCompound achievementCompound = new NBTTagCompound();
+            achievementCompound.setString(TAG_ACHIEVEMENT, achievement.statId);
             achievementsTagList.appendTag(achievementCompound);
         }
         compound.setTag(TAG_ACHIEVEMENT_LIST, achievementsTagList);
