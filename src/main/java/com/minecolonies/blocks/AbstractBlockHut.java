@@ -94,7 +94,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     @Override
     public int getMetaFromState(@NotNull IBlockState state)
     {
-        return ((EnumFacing) state.getValue(FACING)).getIndex();
+        return state.getValue(FACING).getIndex();
     }
 
 

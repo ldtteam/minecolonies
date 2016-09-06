@@ -268,11 +268,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
             return true;
         }
 
-        if (newY < 0)
-        {
-            return true;
-        }
-        return false;
+        return newY < 0;
     }
 
     private static boolean nodeClosed(@Nullable Node node)

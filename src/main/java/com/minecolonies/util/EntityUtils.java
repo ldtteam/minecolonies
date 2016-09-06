@@ -137,9 +137,9 @@ public final class EntityUtils
     {
         for (int i = 0; i < world.loadedEntityList.size(); ++i)
         {
-            if (id.equals(((Entity) world.loadedEntityList.get(i)).getUniqueID()))
+            if (id.equals(world.loadedEntityList.get(i).getUniqueID()))
             {
-                return (Entity) world.loadedEntityList.get(i);
+                return world.loadedEntityList.get(i);
             }
         }
         return null;
