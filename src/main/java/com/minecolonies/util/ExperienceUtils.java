@@ -8,7 +8,7 @@ public final class ExperienceUtils
     /**
      * The number to calculate the experienceLevel of the citizen.
      */
-    private static final int EXPERIENCE_MULTIPLIER = 10;
+    private static final double EXPERIENCE_MULTIPLIER = 10D;
 
     /**
      * The number to create a percentage from another number (ex. 100*0.25 = 25).
