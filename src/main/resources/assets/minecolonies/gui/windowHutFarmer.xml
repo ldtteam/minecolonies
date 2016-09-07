@@ -5,29 +5,27 @@
         <view id="pageActions" size="100% 100%">
             <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
         </view>
+
         <view id="pageFields" size="100% 100%" pos="0 1">
 
-            <view size="100% 100%" pos="0 0">
-                <label id="AssignmentModeLabel" label="$(com.minecolonies.gui.workerHuts.farmerHut.AssignmentMode)" pos = "20 30"/>
-                <button id="assignmentMode" size = "60 15" label = "$(com.minecolonies.gui.hiring.off)" pos = "50 40"/>
+            <label id="AssignmentModeLabel" label="$(com.minecolonies.gui.workerHuts.farmerHut.AssignmentMode)" pos = "20 30"/>
+            <button id="assignmentMode" size = "60 15" label = "$(com.minecolonies.gui.hiring.off)" pos = "50 40"/>
 
-                <label size="100% 11" pos="0 0" label="Fields:" color="black" textalign="BottomMiddle"/>
+            <label size="100% 11" pos="0 0" label="Fields:" color="black" textalign="BottomMiddle"/>
 
-                <list id="fields" size="85% 120" pos="5 60" align="TopMiddle">
-                    <view size="100% 30">
-                        <box size="100% 30" linewidth="2">
+            <list id="fields" size="85% 120" pos="5 60" align="TopMiddle">
+                <view size="100% 30">
+                    <box size="100% 30" linewidth="2">
 
-                            <button id="assignFarm" pos = "95 10" size="40 15"/>
-                            <itemicon id="icon" pos = "0 0"/>
-                            <label id="worker" color="black" pos = "20 5"/>
-                            <label id="dist" color="black" pos = "15 15"/>
-                            <label id="dir" color="black" pos = "35 15"/>
+                        <button id="assignFarm" pos = "95 10" size="40 15"/>
+                        <itemicon id="icon" pos = "0 0"/>
+                        <label id="worker" color="black" pos = "20 5"/>
+                        <label id="dist" color="black" pos = "15 15"/>
+                        <label id="dir" color="black" pos = "35 15"/>
 
-                        </box>
-                    </view>
-                </list>
-            </view>
-
+                    </box>
+                </view>
+            </list>
         </view>
     </switch>
 
