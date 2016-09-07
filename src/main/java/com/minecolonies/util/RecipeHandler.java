@@ -48,7 +48,8 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutField, 1), " Y ", "X#X", " X ", 'X', Items.stick, '#', Items.leather_chestplate, 'Y', Blocks.hay_block);
         GameRegistry.addRecipe(new ItemStack(Blocks.web, 1), "XXX", "XXX", "XXX", 'X', Items.string);
 
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockBarrel, 1), "P P", "P P", " S ", 'P', Blocks.planks, 'S', Blocks.wooden_slab);
+        // Disabled for now
+        // GameRegistry.addRecipe(new ItemStack(ModBlocks.blockBarrel, 1), "P P", "P P", " S ", 'P', Blocks.planks, 'S', Blocks.wooden_slab);
         if (enableInDevelopmentFeatures)
         {
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XXX", "X#X", "XXX", 'X', Blocks.planks, '#', Items.wheat);
