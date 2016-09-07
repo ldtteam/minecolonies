@@ -249,6 +249,7 @@ public class EventHandler
             {
                 PlayerProperties.register(player);
             }
+
         }
     }
 

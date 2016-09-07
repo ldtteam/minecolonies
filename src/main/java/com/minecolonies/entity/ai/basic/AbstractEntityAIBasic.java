@@ -281,7 +281,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 //Don't decrease delay as we are just walking...
                 return true;
             }
-            if (delay % 2 == 0)
+            if (delay % 5 == 0)
             {
                 worker.hitBlockWithToolInHand(currentWorkingLocation);
             }

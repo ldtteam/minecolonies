@@ -42,20 +42,20 @@ import java.util.stream.Collectors;
 public class Colony implements IColony
 {
     //  Settings
-    private static final int CITIZEN_CLEANUP_TICK_INCREMENT = 5 * 20;
-    private static final String TAG_ID               = "id";
-    private static final String TAG_NAME             = "name";
-    private static final String TAG_DIMENSION        = "dimension";
-    private static final String TAG_CENTER           = "center";
-    private static final String TAG_MAX_CITIZENS     = "maxCitizens";
-    private static final String TAG_BUILDINGS        = "buildings";
-    private static final String TAG_CITIZENS         = "citizens";
-    private static final String TAG_ACHIEVEMENT      = "achievement";
-    private static final String TAG_ACHIEVEMENT_LIST = "achievementlist";
-    private static final String TAG_WORK             = "work";
-    private static final String TAG_MANUAL_HIRING    = "manualHiring";
+    private static final int    CITIZEN_CLEANUP_TICK_INCREMENT = 5 * 20;
+    private static final String TAG_ID                         = "id";
+    private static final String TAG_NAME                       = "name";
+    private static final String TAG_DIMENSION                  = "dimension";
+    private static final String TAG_CENTER                     = "center";
+    private static final String TAG_MAX_CITIZENS               = "maxCitizens";
+    private static final String TAG_BUILDINGS                  = "buildings";
+    private static final String TAG_CITIZENS                   = "citizens";
+    private static final String TAG_ACHIEVEMENT                = "achievement";
+    private static final String TAG_ACHIEVEMENT_LIST           = "achievementlist";
+    private static final String TAG_WORK                       = "work";
+    private static final String TAG_MANUAL_HIRING              = "manualHiring";
     //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS = "fields";
+    private static final String TAG_FIELDS                     = "fields";
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -78,10 +78,10 @@ public class Colony implements IColony
     private       boolean             manualHiring     = false;
     private       boolean             isFieldsDirty    = false;
     private       String              name             = "ERROR(Wasn't placed by player)";
-    private BlockPos center;
+    private BlockPos         center;
     //  Administration/permissions
     @NotNull
-    private Permissions permissions = new Permissions();
+    private Permissions      permissions;
     @Nullable
     private BuildingTownHall townHall;
     @NotNull
@@ -104,6 +104,7 @@ public class Colony implements IColony
         this(id, w.provider.getDimensionId());
         center = c;
         world = w;
+        this.permissions = new Permissions(this);
     }
 
     /**
@@ -116,7 +117,7 @@ public class Colony implements IColony
     {
         this.id = id;
         this.dimensionId = dim;
-
+        this.permissions = new Permissions(this);
         this.colonyAchievements = new ArrayList<>();
     }
 
