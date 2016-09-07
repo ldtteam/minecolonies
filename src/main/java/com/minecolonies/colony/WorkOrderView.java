@@ -3,6 +3,7 @@ package com.minecolonies.colony;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The WorkOrderView is the client-side representation of a WorkOrders.
@@ -44,6 +45,7 @@ public class WorkOrderView
 
     /**
      * Priority getter.
+     *
      * @return the priority.
      */
     public int getPriority()
@@ -52,7 +54,18 @@ public class WorkOrderView
     }
 
     /**
+     * Setter for the priority.
+     *
+     * @param priority the new priority.
+     */
+    public void setPriority(int priority)
+    {
+        this.priority = priority;
+    }
+
+    /**
      * Value getter.
+     *
      * @return the value String.
      */
     public String getValue()
@@ -62,6 +75,7 @@ public class WorkOrderView
 
     /**
      * Type getter.
+     *
      * @return the type (defined by Enum).
      */
     public AbstractWorkOrder.WorkOrderType getType()
@@ -71,6 +85,7 @@ public class WorkOrderView
 
     /**
      * Id getter.
+     *
      * @return the id.
      */
     public int getId()
@@ -80,6 +95,7 @@ public class WorkOrderView
 
     /**
      * Id setter.
+     *
      * @param id the id to set.
      */
     public void setId(int id)
@@ -89,6 +105,7 @@ public class WorkOrderView
 
     /**
      * ClaimedBy getter.
+     *
      * @return citizen id who claimed the workOrder.
      */
     public int getClaimedBy()
@@ -98,6 +115,7 @@ public class WorkOrderView
 
     /**
      * ClaimedBy setter.
+     *
      * @param claimedBy sets a citizen who claims the workOrder.
      */
     public void setClaimedBy(int claimedBy)
@@ -106,21 +124,12 @@ public class WorkOrderView
     }
 
     /**
-     * Setter for the priority.
-     * @param priority the new priority.
-     */
-    public void setPriority(int priority)
-    {
-        this.priority = priority;
-    }
-
-    /**
      * Deserialize the attributes and variables from transition.
      * Buffer may be not readable because the workOrderView may be null.
      *
      * @param buf Byte buffer to deserialize.
      */
-    public void deserialize(ByteBuf buf)
+    public void deserialize(@NotNull ByteBuf buf)
     {
         id = buf.readInt();
         priority = buf.readInt();

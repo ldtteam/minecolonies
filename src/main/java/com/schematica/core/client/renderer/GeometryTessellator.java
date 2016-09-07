@@ -4,20 +4,24 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 public final class GeometryTessellator extends Tessellator
 {
+    @Nullable
     private static GeometryTessellator instance = null;
 
     private static double deltaS = 0;
-    private double delta = 0;
+    private        double delta  = 0;
 
     private GeometryTessellator()
     {
         super(0x200000);
     }
 
+    @Nullable
     public static synchronized GeometryTessellator getInstance()
     {
         if (instance == null)
@@ -26,6 +30,21 @@ public final class GeometryTessellator extends Tessellator
         }
 
         return instance;
+    }
+
+    public static void setStaticDelta(final double delta)
+    {
+        deltaS = delta;
+    }
+
+    public static void drawCuboid(@NotNull final WorldRenderer worldRenderer, @NotNull final BlockPos pos, final int sides, final int argb)
+    {
+        drawCuboid(worldRenderer, pos, pos, sides, argb);
+    }
+
+    private static void drawCuboid(@NotNull final WorldRenderer worldRenderer, @NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb)
+    {
+        drawCuboid(worldRenderer, begin, end, sides, argb, GeometryTessellator.deltaS);
     }
 
     public void setTranslation(final double x, final double y, final double z)
@@ -38,14 +57,14 @@ public final class GeometryTessellator extends Tessellator
         begin(GL11.GL_QUADS);
     }
 
-    public void beginLines()
-    {
-        begin(GL11.GL_LINES);
-    }
-
     private void begin(final int mode)
     {
         getWorldRenderer().begin(mode, DefaultVertexFormats.POSITION_COLOR);
+    }
+
+    public void beginLines()
+    {
+        begin(GL11.GL_LINES);
     }
 
     public void setDelta(final double delta)
@@ -53,32 +72,17 @@ public final class GeometryTessellator extends Tessellator
         this.delta = delta;
     }
 
-    public static void setStaticDelta(final double delta)
-    {
-        deltaS = delta;
-    }
-
-    public void drawCuboid(final BlockPos pos, final int sides, final int argb)
+    public void drawCuboid(@NotNull final BlockPos pos, final int sides, final int argb)
     {
         drawCuboid(pos, pos, sides, argb);
     }
 
-    public void drawCuboid(final BlockPos begin, final BlockPos end, final int sides, final int argb)
+    public void drawCuboid(@NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb)
     {
         drawCuboid(getWorldRenderer(), begin, end, sides, argb, this.delta);
     }
 
-    public static void drawCuboid(final WorldRenderer worldRenderer, final BlockPos pos, final int sides, final int argb)
-    {
-        drawCuboid(worldRenderer, pos, pos, sides, argb);
-    }
-
-    private static void drawCuboid(final WorldRenderer worldRenderer, final BlockPos begin, final BlockPos end, final int sides, final int argb)
-    {
-        drawCuboid(worldRenderer, begin, end, sides, argb, GeometryTessellator.deltaS);
-    }
-
-    private static void drawCuboid(final WorldRenderer worldRenderer, final BlockPos begin, final BlockPos end, final int sides, final int argb, final double delta)
+    private static void drawCuboid(@NotNull final WorldRenderer worldRenderer, @NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb, final double delta)
     {
         if (worldRenderer.getDrawMode() == -1 || sides == 0)
         {
@@ -107,8 +111,9 @@ public final class GeometryTessellator extends Tessellator
         }
     }
 
-    private static void drawQuads(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
-                                  final double x1, final double y1, final double z1, final int sides, final int argb)
+    private static void drawQuads(
+                                   @NotNull final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
+                                   final double x1, final double y1, final double z1, final int sides, final int argb)
     {
         final int a = (argb >>> 24) & 0xFF;
         final int r = (argb >>> 16) & 0xFF;
@@ -118,8 +123,21 @@ public final class GeometryTessellator extends Tessellator
         drawQuads(worldRenderer, x0, y0, z0, x1, y1, z1, sides, a, r, g, b);
     }
 
-    private static void drawQuads(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
-                                  final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b)
+    private static void drawLines(
+                                   @NotNull final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
+                                   final double x1, final double y1, final double z1, final int sides, final int argb)
+    {
+        final int a = (argb >>> 24) & 0xFF;
+        final int r = (argb >>> 16) & 0xFF;
+        final int g = (argb >>> 8) & 0xFF;
+        final int b = argb & 0xFF;
+
+        drawLines(worldRenderer, x0, y0, z0, x1, y1, z1, sides, a, r, g, b);
+    }
+
+    private static void drawQuads(
+                                   @NotNull final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
+                                   final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b)
     {
         if ((sides & GeometryMasks.Quad.DOWN) != 0)
         {
@@ -170,19 +188,9 @@ public final class GeometryTessellator extends Tessellator
         }
     }
 
-    private static void drawLines(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
-                                  final double x1, final double y1, final double z1, final int sides, final int argb)
-    {
-        final int a = (argb >>> 24) & 0xFF;
-        final int r = (argb >>> 16) & 0xFF;
-        final int g = (argb >>> 8) & 0xFF;
-        final int b = argb & 0xFF;
-
-        drawLines(worldRenderer, x0, y0, z0, x1, y1, z1, sides, a, r, g, b);
-    }
-
-    private static void drawLines(final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
-                                  final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b)
+    private static void drawLines(
+                                   @NotNull final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
+                                   final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b)
     {
         if ((sides & GeometryMasks.Line.DOWN_WEST) != 0)
         {

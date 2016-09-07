@@ -9,23 +9,23 @@ import org.lwjgl.input.Mouse;
 public class Scrollbar extends Pane
 {
     //  Params
-    protected int scrollbarBackground = 0xFF000000;
-    protected int scrollbarColor = 0xFFC0C0C0;
+    protected int scrollbarBackground     = 0xFF000000;
+    protected int scrollbarColor          = 0xFFC0C0C0;
     protected int scrollbarColorHighlight = 0xFF808080;
 
     protected ScrollingContainer container;
-    protected int barClickY = 0;
+    protected int     barClickY  = 0;
     protected boolean barClicked = false;
-
-    public Scrollbar(ScrollingContainer container)
-    {
-        this.container = container;
-    }
 
     public Scrollbar(ScrollingContainer container, PaneParams params)
     {
         this(container);
         //  TODO: Parse Scrollbar-specific Params
+    }
+
+    public Scrollbar(ScrollingContainer container)
+    {
+        this.container = container;
     }
 
     public void dragScroll(int my)
@@ -67,18 +67,18 @@ public class Scrollbar extends Pane
 
         //  Scroll Area Back
         drawGradientRect(scrollBarBackX2, y + getHeight(), scrollBarBackX1, y,
-                scrollbarBackground, scrollbarBackground);
+          scrollbarBackground, scrollbarBackground);
 
         int scrollBarStartY = y + getScrollBarYPos();
         int scrollBarEndY = scrollBarStartY + getBarHeight();
 
         //  Scroll Bar (Bottom/Right Edge line) - Fill whole Scroll area
         drawGradientRect(scrollBarBackX2, scrollBarEndY, scrollBarBackX1, scrollBarStartY,
-                scrollbarColorHighlight, scrollbarColorHighlight);
+          scrollbarColorHighlight, scrollbarColorHighlight);
 
         //  Scroll Bar (Inset color)
         drawGradientRect(scrollBarBackX2 - 1, scrollBarEndY - 1, scrollBarBackX1, scrollBarStartY,
-                scrollbarColor, scrollbarColor);
+          scrollbarColor, scrollbarColor);
     }
 
     @Override

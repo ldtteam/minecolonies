@@ -6,6 +6,7 @@ import com.blockout.views.SwitchView;
 import com.minecolonies.colony.buildings.BuildingWarehouse;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Window for the farmer hut
@@ -39,7 +40,7 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
      *
      * @param building {@link com.minecolonies.colony.buildings.BuildingWarehouse.View}
      */
-    public WindowHutWarehouse(BuildingWarehouse.View building)
+    public WindowHutWarehouse(@NotNull BuildingWarehouse.View building)
     {
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
         super.registerButton(BUTTON_BLACKSMITH_GOLD, b -> building.blacksmithGold = !building.blacksmithGold);
@@ -54,6 +55,7 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
         super.registerButton(BUTTON_BLACKSMITH_GOLD, b -> building.blacksmithGold = !building.blacksmithGold);
     }
 
+    @NotNull
     @Override
     public String getBuildingName()
     {
@@ -88,7 +90,6 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
         findPaneOfTypeByID(BUTTON_GUARD_ARMOR, ButtonVanilla.class).setLabel(getYesOrNo(building.guardArmor));
         findPaneOfTypeByID(BUTTON_GUARD_WEAPON, ButtonVanilla.class).setLabel(getYesOrNo(building.guardWeapon));
         findPaneOfTypeByID(BUTTON_CITIZEN_CHESTS, ButtonVanilla.class).setLabel(getYesOrNo(building.citizenVisit));
-
     }
 
     /**
@@ -103,7 +104,7 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
     }
 
     @Override
-    public void onButtonClicked(Button button)
+    public void onButtonClicked(@NotNull Button button)
     {
         switch (button.getID())
         {

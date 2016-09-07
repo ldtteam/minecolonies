@@ -10,12 +10,11 @@ import net.minecraft.util.ResourceLocation;
  */
 public abstract class AbstractTextElement extends Pane
 {
+    protected static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
     protected double    scale         = 1.0;
     protected Alignment textAlignment = Alignment.MiddleLeft;
     protected int       textColor     = 0xffffff;
     protected boolean   shadow        = false;
-
-    protected static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
 
     public AbstractTextElement()
     {

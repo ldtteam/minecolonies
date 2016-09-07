@@ -11,6 +11,8 @@ import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -20,45 +22,11 @@ import java.util.Random;
 public class CitizenData
 {
     private static final float MAX_HEALTH = 20.0F;
-
-    /**
-     * The unique citizen id.
-     */
-    private final int id;
-
     /**
      * Max level of an attribute a citizen may initially have.
      */
     private static final int LEVEL_CAP = 5;
-
     private static final int LETTERS_IN_THE_ALPHABET = 26;
-
-    private String         name;
-    private boolean        female;
-    private int            textureId;
-    private Colony         colony;
-    private BuildingHome   homeBuilding;
-    private AbstractBuildingWorker workBuilding;
-    private AbstractJob job;
-
-    private boolean dirty;
-
-    //Citizen
-    private EntityCitizen entity;
-
-    /**
-     * Attributes, which influence the workers behaviour.
-     * May be added more later
-     */
-    private int strength;
-    private int endurance;
-    private int charisma;
-    private int intelligence;
-    private int dexterity;
-
-    private double health;
-    private double maxHealth;
-
     /**
      * Tags
      */
@@ -70,14 +38,40 @@ public class CitizenData
     private static final String TAG_EXPERIENCE = "experience";
     private static final String TAG_HEALTH     = "health";
     private static final String TAG_MAX_HEALTH = "maxHealth";
-
     private static final String TAG_SKILLS             = "skills";
     private static final String TAG_SKILL_STRENGTH     = "strength";
     private static final String TAG_SKILL_STAMINA      = "endurance";
     private static final String TAG_SKILL_SPEED        = "charisma";
     private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
     private static final String TAG_SKILL_DEXTERITY    = "dexterity";
-
+    /**
+     * The unique citizen id.
+     */
+    private final int                    id;
+    private       String                 name;
+    private       boolean                female;
+    private       int                    textureId;
+    private       Colony                 colony;
+    @Nullable
+    private       BuildingHome           homeBuilding;
+    @Nullable
+    private       AbstractBuildingWorker workBuilding;
+    private       AbstractJob            job;
+    private       boolean                dirty;
+    //Citizen
+    @Nullable
+    private       EntityCitizen          entity;
+    /**
+     * Attributes, which influence the workers behaviour.
+     * May be added more later
+     */
+    private       int                    strength;
+    private       int                    endurance;
+    private       int                    charisma;
+    private       int                    intelligence;
+    private       int                    dexterity;
+    private       double                 health;
+    private       double                 maxHealth;
     /**
      * The current experience level the citizen is on.
      */
@@ -103,11 +97,106 @@ public class CitizenData
     }
 
     /**
+     * Creates CitizenData from tag compound
+     *
+     * @param compound NBT compound to build from
+     * @param colony   Colony of the citizen
+     * @return CitizenData
+     */
+    @NotNull
+    public static CitizenData createFromNBT(@NotNull NBTTagCompound compound, Colony colony)
+    {
+        int id = compound.getInteger(TAG_ID);
+        @NotNull CitizenData citizen = new CitizenData(id, colony);
+        citizen.readFromNBT(compound);
+        return citizen;
+    }
+
+    /**
+     * Reads data from NBT-tag compound
+     *
+     * @param compound NBT-Tag compound
+     */
+    public void readFromNBT(@NotNull NBTTagCompound compound)
+    {
+        name = compound.getString(TAG_NAME);
+        female = compound.getBoolean(TAG_FEMALE);
+        textureId = compound.getInteger(TAG_TEXTURE);
+
+        //  Attributes
+        level = compound.getInteger(TAG_LEVEL);
+        experience = compound.getInteger(TAG_EXPERIENCE);
+        health = compound.getFloat(TAG_HEALTH);
+        maxHealth = compound.getFloat(TAG_MAX_HEALTH);
+
+
+        NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
+        strength = nbtTagSkillsCompound.getInteger("strength");
+        endurance = nbtTagSkillsCompound.getInteger("endurance");
+        charisma = nbtTagSkillsCompound.getInteger("charisma");
+        intelligence = nbtTagSkillsCompound.getInteger("intelligence");
+        dexterity = nbtTagSkillsCompound.getInteger("dexterity");
+
+        if (compound.hasKey("job"))
+        {
+            setJob(AbstractJob.createFromNBT(this, compound.getCompoundTag("job")));
+        }
+    }
+
+    /**
+     * return the entity instance of the citizen data
+     *
+     * @return {@link EntityCitizen} of the citizen data
+     */
+    @Nullable
+    public EntityCitizen getCitizenEntity()
+    {
+        return entity;
+    }
+
+    /**
+     * Sets the entity of the citizen data
+     *
+     * @param citizen {@link EntityCitizen} instance of the citizen data
+     */
+    public void setCitizenEntity(EntityCitizen citizen)
+    {
+        entity = citizen;
+        markDirty();
+    }
+
+    /**
+     * Create a CitizenData View given it's saved NBTTagCompound
+     *
+     * @param id  The citizen's id
+     * @param buf The network data
+     * @return View object of the citizen
+     */
+    @Nullable
+    public static CitizenDataView createCitizenDataView(int id, ByteBuf buf)
+    {
+        @Nullable CitizenDataView citizenDataView = new CitizenDataView(id);
+
+        try
+        {
+            citizenDataView.deserialize(buf);
+        }
+        catch (RuntimeException ex)
+        {
+            Log.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+              citizenDataView.getID()), ex);
+            citizenDataView = null;
+        }
+
+        return citizenDataView;
+    }
+
+    /**
      * Create a CitizenData given a CitizenEntity
      *
      * @param entity Entity to initialize from
      */
-    public void initializeFromEntity(EntityCitizen entity)
+    public void initializeFromEntity(@NotNull EntityCitizen entity)
     {
         Random rand = entity.getRNG();
 
@@ -122,7 +211,7 @@ public class CitizenData
         maxHealth = entity.getMaxHealth();
         experience = 0;
         level = 0;
-        Random random = new Random();
+        @NotNull Random random = new Random();
 
         //Initialize the citizen skills and make sure they are never 0
         intelligence = random.nextInt(LEVEL_CAP - 1) + 1;
@@ -135,20 +224,56 @@ public class CitizenData
     }
 
     /**
-     * Creates CitizenData from tag compound
+     * Generates a random name from a set of names
      *
-     * @param compound NBT compound to build from
-     * @param colony   Colony of the citizen
-     * @return CitizenData
+     * @param rand Random object
+     * @return Name of the citizen
      */
-    public static CitizenData createFromNBT(NBTTagCompound compound, Colony colony)
+    private String generateName(@NotNull Random rand)
     {
-        int id = compound.getInteger(TAG_ID);
-        CitizenData citizen = new CitizenData(id, colony);
-        citizen.readFromNBT(compound);
-        return citizen;
+        String firstName;
+        if (!female)
+        {
+            firstName = getRandomElement(rand, Configurations.maleFirstNames);
+        }
+        else
+        {
+            firstName = getRandomElement(rand, Configurations.femaleFirstNames);
+        }
+        return String.format("%s %s. %s", firstName, getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));
     }
 
+    /**
+     * Marks the instance dirty
+     */
+    public void markDirty()
+    {
+        dirty = true;
+        colony.markCitizensDirty();
+    }
+
+    /**
+     * Returns a random element in a list
+     *
+     * @param rand  Random object
+     * @param array Array to select from
+     * @return Random element from array
+     */
+    private static String getRandomElement(@NotNull Random rand, @NotNull String[] array)
+    {
+        return array[rand.nextInt(array.length)];
+    }
+
+    /**
+     * Returns a random capital letter from the alphabet
+     *
+     * @param rand Random object
+     * @return Random capital letter
+     */
+    private static char getRandomLetter(@NotNull Random rand)
+    {
+        return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
+    }
 
     /**
      * Returns the id of the citizen.
@@ -201,26 +326,6 @@ public class CitizenData
     }
 
     /**
-     * Returns the level of the citizen.
-     *
-     * @return level of the citizen.
-     */
-    public int getLevel()
-    {
-        return level;
-    }
-
-    /**
-     * Returns the experience of the citizen.
-     *
-     * @return experience of the citizen.
-     */
-    public double getExperience()
-    {
-        return experience;
-    }
-
-    /**
      * Adds experience of the citizen.
      *
      * @param xp the amount of xp to add.
@@ -228,16 +333,6 @@ public class CitizenData
     public void addExperience(double xp)
     {
         this.experience += xp;
-    }
-
-    /**
-     * Sets the level of the citizen.
-     *
-     * @param lvl the new level for the citizen.
-     */
-    public void setLevel(int lvl)
-    {
-        this.level = lvl;
     }
 
     /**
@@ -259,15 +354,6 @@ public class CitizenData
     }
 
     /**
-     * Marks the instance dirty
-     */
-    public void markDirty()
-    {
-        dirty = true;
-        colony.markCitizensDirty();
-    }
-
-    /**
      * Markt the instance not dirty
      */
     public void clearDirty()
@@ -276,10 +362,30 @@ public class CitizenData
     }
 
     /**
+     * When a building is destroyed, inform the citizen so it can do any cleanup of associations that the building's
+     * own AbstractBuilding.onDestroyed did not do.
+     *
+     * @param building building that is destroyed
+     */
+    public void onRemoveBuilding(AbstractBuilding building)
+    {
+        if (getHomeBuilding() == building)
+        {
+            setHomeBuilding(null);
+        }
+
+        if (getWorkBuilding() == building)
+        {
+            setWorkBuilding(null);
+        }
+    }
+
+    /**
      * Returns the home building of the citizen
      *
      * @return home building
      */
+    @Nullable
     public BuildingHome getHomeBuilding()
     {
         return homeBuilding;
@@ -290,13 +396,13 @@ public class CitizenData
      *
      * @param building home building
      */
-    public void setHomeBuilding(BuildingHome building)
+    public void setHomeBuilding(@Nullable BuildingHome building)
     {
-        if(homeBuilding != null && building != null && homeBuilding != building)
+        if (homeBuilding != null && building != null && homeBuilding != building)
         {
             throw new IllegalStateException("CitizenData.setHomeBuilding() - already assigned a home building when setting a new home building");
         }
-        else if(homeBuilding != building)
+        else if (homeBuilding != building)
         {
             homeBuilding = building;
             markDirty();
@@ -308,6 +414,7 @@ public class CitizenData
      *
      * @return home building of a citizen
      */
+    @Nullable
     public AbstractBuildingWorker getWorkBuilding()
     {
         return workBuilding;
@@ -318,27 +425,27 @@ public class CitizenData
      *
      * @param building work building
      */
-    public void setWorkBuilding(AbstractBuildingWorker building)
+    public void setWorkBuilding(@Nullable AbstractBuildingWorker building)
     {
-        if(workBuilding != null && building != null && workBuilding != building)
+        if (workBuilding != null && building != null && workBuilding != building)
         {
             throw new IllegalStateException("CitizenData.setWorkBuilding() - already assigned a work building when setting a new work building");
         }
-        else if(workBuilding != building)
+        else if (workBuilding != building)
         {
             workBuilding = building;
 
-            if(workBuilding != null)
+            if (workBuilding != null)
             {
                 //  We have a place to work, do we have the assigned Job?
-                if(job == null)
+                if (job == null)
                 {
                     //  No job, create one!
                     setJob(workBuilding.createJob(this));
                     colony.getWorkManager().clearWorkForCitizen(this);
                 }
             }
-            else if(job != null)
+            else if (job != null)
             {
                 //  No place of employment, get rid of our job
                 setJob(null);
@@ -347,46 +454,6 @@ public class CitizenData
 
             markDirty();
         }
-    }
-
-    /**
-     * When a building is destroyed, inform the citizen so it can do any cleanup of associations that the building's
-     * own AbstractBuilding.onDestroyed did not do.
-     *
-     * @param building building that is destroyed
-     */
-    public void onRemoveBuilding(AbstractBuilding building)
-    {
-        if(getHomeBuilding() == building)
-        {
-            setHomeBuilding(null);
-        }
-
-        if(getWorkBuilding() == building)
-        {
-            setWorkBuilding(null);
-        }
-    }
-
-    /**
-     * return the entity instance of the citizen data
-     *
-     * @return {@link EntityCitizen} of the citizen data
-     */
-    public EntityCitizen getCitizenEntity()
-    {
-        return entity;
-    }
-
-    /**
-     * Sets the entity of the citizen data
-     *
-     * @param citizen {@link EntityCitizen} instance of the citizen data
-     */
-    public void setCitizenEntity(EntityCitizen citizen)
-    {
-        entity = citizen;
-        markDirty();
     }
 
     /**
@@ -407,26 +474,6 @@ public class CitizenData
         return job;
     }
 
-
-    /**
-     * Returns the job subclass needed. Returns null on type mismatch.
-     *
-     * @param type  the type of job wanted.
-     * @param <J> The job type returned
-     * @return the job this citizen has
-     */
-    public <J extends AbstractJob> J getJob(Class<J> type)
-    {
-        try
-        {
-            return type.cast(job);
-        }
-        catch(ClassCastException ignored)
-        {
-            return null;
-        }
-    }
-
     /**
      * Sets the job of this citizen
      *
@@ -436,8 +483,8 @@ public class CitizenData
     {
         this.job = job;
 
-        EntityCitizen localEntity = getCitizenEntity();
-        if(localEntity != null)
+        @Nullable EntityCitizen localEntity = getCitizenEntity();
+        if (localEntity != null)
         {
             localEntity.onJobChanged(job);
         }
@@ -446,11 +493,31 @@ public class CitizenData
     }
 
     /**
+     * Returns the job subclass needed. Returns null on type mismatch.
+     *
+     * @param type the type of job wanted.
+     * @param <J>  The job type returned
+     * @return the job this citizen has
+     */
+    @Nullable
+    public <J extends AbstractJob> J getJob(@NotNull Class<J> type)
+    {
+        try
+        {
+            return type.cast(job);
+        }
+        catch (ClassCastException ignored)
+        {
+            return null;
+        }
+    }
+
+    /**
      * Writes the citiizen data to an NBT-compound
      *
      * @param compound NBT-Tag compound
      */
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         compound.setInteger(TAG_ID, id);
         compound.setString(TAG_NAME, name);
@@ -464,7 +531,7 @@ public class CitizenData
         compound.setDouble(TAG_MAX_HEALTH, maxHealth);
 
 
-        NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
+        @NotNull NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, endurance);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, charisma);
@@ -472,86 +539,81 @@ public class CitizenData
         nbtTagSkillsCompound.setInteger(TAG_SKILL_DEXTERITY, dexterity);
         compound.setTag(TAG_SKILLS, nbtTagSkillsCompound);
 
-        if(job != null)
+        if (job != null)
         {
-            NBTTagCompound jobCompound = new NBTTagCompound();
+            @NotNull NBTTagCompound jobCompound = new NBTTagCompound();
             job.writeToNBT(jobCompound);
             compound.setTag("job", jobCompound);
         }
     }
 
     /**
-     * Reads data from NBT-tag compound
+     * Writes the citizen data to a byte buf for transition.
      *
-     * @param compound NBT-Tag compound
+     * @param buf Buffer to write to
      */
-    public void readFromNBT(NBTTagCompound compound)
+    public void serializeViewNetworkData(@NotNull ByteBuf buf)
     {
-        name = compound.getString(TAG_NAME);
-        female = compound.getBoolean(TAG_FEMALE);
-        textureId = compound.getInteger(TAG_TEXTURE);
+        ByteBufUtils.writeUTF8String(buf, name);
+        buf.writeBoolean(female);
+
+        buf.writeInt(entity != null ? entity.getEntityId() : -1);
+
+        buf.writeBoolean(homeBuilding != null);
+        if (homeBuilding != null)
+        {
+            BlockPosUtil.writeToByteBuf(buf, homeBuilding.getID());
+        }
+
+        buf.writeBoolean(workBuilding != null);
+        if (workBuilding != null)
+        {
+            BlockPosUtil.writeToByteBuf(buf, workBuilding.getID());
+        }
 
         //  Attributes
-        level = compound.getInteger(TAG_LEVEL);
-        experience = compound.getInteger(TAG_EXPERIENCE);
-        health = compound.getFloat(TAG_HEALTH);
-        maxHealth = compound.getFloat(TAG_MAX_HEALTH);
+        buf.writeInt(getLevel());
+        buf.writeDouble(getExperience());
 
-
-        NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
-        strength = nbtTagSkillsCompound.getInteger("strength");
-        endurance = nbtTagSkillsCompound.getInteger("endurance");
-        charisma = nbtTagSkillsCompound.getInteger("charisma");
-        intelligence = nbtTagSkillsCompound.getInteger("intelligence");
-        dexterity = nbtTagSkillsCompound.getInteger("dexterity");
-
-        if(compound.hasKey("job"))
+        //If entity is null assume the standard values as health
+        if (entity == null)
         {
-            setJob(AbstractJob.createFromNBT(this, compound.getCompoundTag("job")));
-        }
-    }
-
-    /**
-     * Generates a random name from a set of names
-     *
-     * @param rand Random object
-     * @return Name of the citizen
-     */
-    private String generateName(Random rand)
-    {
-        String firstName;
-        if(!female)
-        {
-            firstName = getRandomElement(rand, Configurations.maleFirstNames);
+            buf.writeFloat(MAX_HEALTH);
+            buf.writeFloat(MAX_HEALTH);
         }
         else
         {
-            firstName = getRandomElement(rand, Configurations.femaleFirstNames);
+            buf.writeFloat(entity.getHealth());
+            buf.writeFloat(entity.getMaxHealth());
         }
-        return String.format("%s %s. %s", firstName, getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));
+
+        buf.writeInt(getStrength());
+        buf.writeInt(getEndurance());
+        buf.writeInt(getCharisma());
+        buf.writeInt(getIntelligence());
+        buf.writeInt(getDexterity());
+
+        ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
     }
 
     /**
-     * Returns a random element in a list
+     * Returns the level of the citizen.
      *
-     * @param rand  Random object
-     * @param array Array to select from
-     * @return Random element from array
+     * @return level of the citizen.
      */
-    private static String getRandomElement(Random rand, String[] array)
+    public int getLevel()
     {
-        return array[rand.nextInt(array.length)];
+        return level;
     }
 
     /**
-     * Returns a random capital letter from the alphabet
+     * Returns the experience of the citizen.
      *
-     * @param rand Random object
-     * @return Random capital letter
+     * @return experience of the citizen.
      */
-    private static char getRandomLetter(Random rand)
+    public double getExperience()
     {
-        return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
+        return experience;
     }
 
     /**
@@ -605,76 +667,12 @@ public class CitizenData
     }
 
     /**
-     * Writes the citizen data to a byte buf for transition.
+     * Sets the level of the citizen.
      *
-     * @param buf Buffer to write to
+     * @param lvl the new level for the citizen.
      */
-    public void serializeViewNetworkData(ByteBuf buf)
+    public void setLevel(int lvl)
     {
-        ByteBufUtils.writeUTF8String(buf, name);
-        buf.writeBoolean(female);
-
-        buf.writeInt(entity != null ? entity.getEntityId() : -1);
-
-        buf.writeBoolean(homeBuilding != null);
-        if(homeBuilding != null)
-        {
-            BlockPosUtil.writeToByteBuf(buf, homeBuilding.getID());
-        }
-
-        buf.writeBoolean(workBuilding != null);
-        if(workBuilding != null)
-        {
-            BlockPosUtil.writeToByteBuf(buf, workBuilding.getID());
-        }
-
-        //  Attributes
-        buf.writeInt(getLevel());
-        buf.writeDouble(getExperience());
-
-        //If entity is null assume the standard values as health
-        if(entity == null)
-        {
-            buf.writeFloat(MAX_HEALTH);
-            buf.writeFloat(MAX_HEALTH);
-        }
-        else
-        {
-            buf.writeFloat(entity.getHealth());
-            buf.writeFloat(entity.getMaxHealth());
-        }
-
-        buf.writeInt(getStrength());
-        buf.writeInt(getEndurance());
-        buf.writeInt(getCharisma());
-        buf.writeInt(getIntelligence());
-        buf.writeInt(getDexterity());
-
-        ByteBufUtils.writeUTF8String(buf, (job != null) ? job.getName() : "");
-    }
-
-    /**
-     * Create a CitizenData View given it's saved NBTTagCompound
-     *
-     * @param id  The citizen's id
-     * @param buf The network data
-     * @return View object of the citizen
-     */
-    public static CitizenDataView createCitizenDataView(int id, ByteBuf buf)
-    {
-        CitizenDataView citizenDataView = new CitizenDataView(id);
-
-        try
-        {
-            citizenDataView.deserialize(buf);
-        }
-        catch(RuntimeException ex)
-        {
-            Log.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                    citizenDataView.getID()), ex);
-            citizenDataView = null;
-        }
-
-        return citizenDataView;
+        this.level = lvl;
     }
 }

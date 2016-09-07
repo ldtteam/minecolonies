@@ -7,9 +7,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobLumberjack;
-import com.minecolonies.util.ServerUtils;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The lumberjacks building.
@@ -45,10 +44,29 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      *
      * @return the schematic name.
      */
+    @NotNull
     @Override
     public String getSchematicName()
     {
         return LUMBERJACK;
+    }
+
+    /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
+        }
     }
 
     /**
@@ -67,6 +85,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      *
      * @return the description of the lumberjacks job.
      */
+    @NotNull
     @Override
     public String getJobName()
     {
@@ -79,30 +98,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
+    @NotNull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
         return new JobLumberjack(citizen);
-    }
-
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
-
-        if (newLevel == 1)
-        {
-            owner.triggerAchievement(ModAchievements.achievementBuildingLumberjack);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
-        }
     }
 
     /**
@@ -126,6 +126,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
          *
          * @return the window of the lumberjack building.
          */
+        @NotNull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, LUMBERJACK_HUT_NAME);

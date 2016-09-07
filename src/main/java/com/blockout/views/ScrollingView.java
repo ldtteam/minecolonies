@@ -4,6 +4,7 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
 import com.blockout.controls.Scrollbar;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Basic scrolling view.
@@ -17,7 +18,7 @@ public class ScrollingView extends View
 
     //  Runtime
     protected ScrollingContainer container;
-    protected Scrollbar scrollbar;
+    protected Scrollbar          scrollbar;
 
     /**
      * Required defualt constructor.
@@ -25,17 +26,6 @@ public class ScrollingView extends View
     public ScrollingView()
     {
         super();
-        setup();
-    }
-
-    /**
-     * Load from xml.
-     *
-     * @param params xml parameters.
-     */
-    public ScrollingView(PaneParams params)
-    {
-        super(params);
         setup();
     }
 
@@ -52,9 +42,21 @@ public class ScrollingView extends View
         scrollbar.putInside(this);
     }
 
+    @NotNull
     protected ScrollingContainer createScrollingContainer()
     {
         return new ScrollingContainer(this);
+    }
+
+    /**
+     * Load from xml.
+     *
+     * @param params xml parameters.
+     */
+    public ScrollingView(PaneParams params)
+    {
+        super(params);
+        setup();
     }
 
     public ScrollingContainer getContainer()

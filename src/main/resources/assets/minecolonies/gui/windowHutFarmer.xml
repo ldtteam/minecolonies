@@ -5,30 +5,27 @@
         <view id="pageActions" size="100% 100%">
             <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
         </view>
-        <view id="pageSettings" size="100% 100%" pos="0 1">
 
-            <view size="100% 100" pos="0 0">
-                <label size="100% 11" pos="0 0"
-                       label="Plant" color="black" textalign="BottomMiddle"/>
+        <view id="pageFields" size="100% 100%" pos="0 1">
 
-                <view size="100% 100" pos="0 16">
-                    <itemicon size="20 20" pos="33 2"  item="wheat"/>
-                    <button   size="30 20" pos="52 0"  id="wheat" />
+            <label id="AssignmentModeLabel" label="$(com.minecolonies.gui.workerHuts.farmerHut.AssignmentMode)" pos = "20 30"/>
+            <button id="assignmentMode" size = "60 15" label = "$(com.minecolonies.gui.hiring.off)" pos = "50 40"/>
 
-                    <itemicon size="20 20" pos="90 2"  item="potato"/>
-                    <button   size="30 20" pos="109 0" id="potato" />
+            <label size="100% 11" pos="0 0" label="Fields:" color="black" textalign="BottomMiddle"/>
 
-                    <itemicon size="20 20" pos="33 26"  item="carrot"/>
-                    <button   size="30 20" pos="52 24"  id="carrot" />
+            <list id="fields" size="85% 120" pos="5 60" align="TopMiddle">
+                <view size="100% 30">
+                    <box size="100% 30" linewidth="2">
 
-                    <itemicon size="20 20" pos="90 26"  item="melon"/>
-                    <button   size="30 20" pos="109 24" id="melon" />
+                        <button id="assignFarm" pos = "95 10" size="40 15"/>
+                        <itemicon id="icon" pos = "0 0"/>
+                        <label id="worker" color="black" pos = "20 5"/>
+                        <label id="dist" color="black" pos = "15 15"/>
+                        <label id="dir" color="black" pos = "35 15"/>
 
-                    <itemicon size="20 20" pos="50 50"  item="pumpkin"/>
-                    <button   size="30 20" pos="69 48" id="pumpkin" />
+                    </box>
                 </view>
-            </view>
-
+            </list>
         </view>
     </switch>
 

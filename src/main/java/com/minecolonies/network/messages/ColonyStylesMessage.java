@@ -6,6 +6,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -15,31 +17,31 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     private Map<String, List<String>> hutStyleMap;
     private Map<String, List<String>> decorationStyleMap;
 
-    public ColonyStylesMessage(){}
+    public ColonyStylesMessage() {}
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-        writeStyleMapToByteBuf(buf, Schematics.getHuts(), Schematics::getStylesForHut);
-        writeStyleMapToByteBuf(buf, Schematics.getDecorations(), Schematics::getStylesForDecoration);
-    }
-
-    @Override
-    public void fromBytes(ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         hutStyleMap = readStyleMapFromByteBuf(buf);
         decorationStyleMap = readStyleMapFromByteBuf(buf);
     }
 
-    private static void writeStyleMapToByteBuf(ByteBuf buf, Set<String> objects, Function<String, List<String>> getStyles)
+    @Override
+    public void toBytes(@NotNull ByteBuf buf)
+    {
+        writeStyleMapToByteBuf(buf, Schematics.getHuts(), Schematics::getStylesForHut);
+        writeStyleMapToByteBuf(buf, Schematics.getDecorations(), Schematics::getStylesForDecoration);
+    }
+
+    private static void writeStyleMapToByteBuf(@NotNull ByteBuf buf, @NotNull Set<String> objects, @NotNull Function<String, List<String>> getStyles)
     {
         buf.writeInt(objects.size());
-        for(String object : objects)
+        for (@NotNull String object : objects)
         {
             List<String> styles = getStyles.apply(object);
 
             buf.writeInt(styles.size());
-            for(String style : styles)
+            for (@NotNull String style : styles)
             {
                 ByteBufUtils.writeUTF8String(buf, style);
             }
@@ -48,16 +50,17 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         }
     }
 
-    private static Map<String, List<String>> readStyleMapFromByteBuf(ByteBuf buf)
+    @NotNull
+    private static Map<String, List<String>> readStyleMapFromByteBuf(@NotNull ByteBuf buf)
     {
-        Map<String, List<String>> map = new HashMap<>();
+        @NotNull Map<String, List<String>> map = new HashMap<>();
 
         int count = buf.readInt();
-        for(int i = 0; i < count; i++)
+        for (int i = 0; i < count; i++)
         {
-            List<String> styles = new ArrayList<>();
+            @NotNull List<String> styles = new ArrayList<>();
             int numStyles = buf.readInt();
-            for(int j = 0; j < numStyles; j++)
+            for (int j = 0; j < numStyles; j++)
             {
                 styles.add(ByteBufUtils.readUTF8String(buf));
             }
@@ -69,15 +72,16 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Sets the styles of the huts to the given value in the message
      *
-     * @param message       Message
-     * @param ctx           Context
-     * @return              Null
+     * @param message Message
+     * @param ctx     Context
+     * @return Null
      */
+    @Nullable
     @Override
-    public IMessage onMessage(ColonyStylesMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull ColonyStylesMessage message, MessageContext ctx)
     {
         Schematics.setStyles(message.hutStyleMap, message.decorationStyleMap);
         return null;

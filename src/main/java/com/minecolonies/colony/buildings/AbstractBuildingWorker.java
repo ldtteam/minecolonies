@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -25,7 +26,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @param c the colony
      * @param l the position
      */
-    public AbstractBuildingWorker(Colony c, BlockPos l)
+    public AbstractBuildingWorker(@NotNull Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -35,6 +36,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      *
      * @return the job name.
      */
+    @NotNull
     public abstract String getJobName();
 
     /**
@@ -43,20 +45,8 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @param citizen the citizen to take the job.
      * @return the Job.
      */
+    @NotNull
     public abstract AbstractJob createJob(CitizenData citizen);
-
-    @Override
-    public void onDestroyed()
-    {
-        if (hasWorker())
-        {
-            // EntityCitizen will detect the workplace is gone and fix up it's
-            // Entity properly
-            removeCitizen(worker);
-        }
-
-        super.onDestroyed();
-    }
 
     /**
      * Returns the worker of the current building.
@@ -66,58 +56,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public CitizenData getWorker()
     {
         return worker;
-    }
-
-    /**
-     * Returns whether or not the building has a worker.
-     *
-     * @return true if building has worker, otherwise false.
-     */
-    public boolean hasWorker()
-    {
-        return worker != null;
-    }
-
-    /**
-     * Returns the {@link net.minecraft.entity.Entity} of the worker.
-     *
-     * @return {@link net.minecraft.entity.Entity} of the worker
-     */
-    @Nullable
-    public EntityCitizen getWorkerEntity()
-    {
-        if (worker == null)
-        {
-            return null;
-        }
-        return worker.getCitizenEntity();
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-
-        if (compound.hasKey(TAG_WORKER))
-        {
-            // Bypass setWorker, which marks dirty
-            worker = getColony().getCitizen(compound.getInteger(TAG_WORKER));
-            if (worker != null)
-            {
-                worker.setWorkBuilding(this);
-            }
-        }
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-
-        if (worker != null)
-        {
-            compound.setInteger(TAG_WORKER, worker.getId());
-        }
     }
 
     /**
@@ -149,13 +87,69 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         markDirty();
     }
 
-    @Override
-    public void removeCitizen(CitizenData citizen)
+    /**
+     * Returns the {@link net.minecraft.entity.Entity} of the worker.
+     *
+     * @return {@link net.minecraft.entity.Entity} of the worker
+     */
+    @Nullable
+    public EntityCitizen getWorkerEntity()
     {
-        if (isWorker(citizen))
+        if (worker == null)
         {
-            setWorker(null);
+            return null;
         }
+        return worker.getCitizenEntity();
+    }
+
+    @Override
+    public void readFromNBT(@NotNull NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+
+        if (compound.hasKey(TAG_WORKER))
+        {
+            // Bypass setWorker, which marks dirty
+            worker = getColony().getCitizen(compound.getInteger(TAG_WORKER));
+            if (worker != null)
+            {
+                worker.setWorkBuilding(this);
+            }
+        }
+    }
+
+    @Override
+    public void writeToNBT(@NotNull NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+
+        if (worker != null)
+        {
+            compound.setInteger(TAG_WORKER, worker.getId());
+        }
+    }
+
+    @Override
+    public void onDestroyed()
+    {
+        if (hasWorker())
+        {
+            // EntityCitizen will detect the workplace is gone and fix up it's
+            // Entity properly
+            removeCitizen(worker);
+        }
+
+        super.onDestroyed();
+    }
+
+    /**
+     * Returns whether or not the building has a worker.
+     *
+     * @return true if building has worker, otherwise false.
+     */
+    public boolean hasWorker()
+    {
+        return worker != null;
     }
 
     /**
@@ -169,11 +163,20 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         return citizen == worker;
     }
 
+    @Override
+    public void removeCitizen(CitizenData citizen)
+    {
+        if (isWorker(citizen))
+        {
+            setWorker(null);
+        }
+    }
+
     /**
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
-    public void onWorldTick(TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull TickEvent.WorldTickEvent event)
     {
         super.onWorldTick(event);
 
@@ -185,15 +188,22 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         // If we have no active worker, grab one from the Colony
         // TODO Maybe the Colony should assign jobs out, instead?
         if (!hasWorker() && (getBuildingLevel() > 0 || this instanceof BuildingBuilder)
-                && !this.getColony().isManualHiring())
+              && !this.getColony().isManualHiring())
         {
             final CitizenData joblessCitizen = getColony().getJoblessCitizen();
             if (joblessCitizen != null)
             {
                 setWorker(joblessCitizen);
             }
-
         }
+    }
+
+    @Override
+    public void serializeToView(@NotNull ByteBuf buf)
+    {
+        super.serializeToView(buf);
+
+        buf.writeInt(worker == null ? 0 : worker.getId());
     }
 
     /**
@@ -209,7 +219,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
          * @param c the colony.
          * @param l the location.
          */
-        public View(ColonyView c, BlockPos l)
+        public View(ColonyView c, @NotNull BlockPos l)
         {
             super(c, l);
         }
@@ -235,20 +245,11 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
 
         @Override
-        public void deserialize(ByteBuf buf)
+        public void deserialize(@NotNull ByteBuf buf)
         {
             super.deserialize(buf);
 
             workerId = buf.readInt();
         }
     }
-
-    @Override
-    public void serializeToView(ByteBuf buf)
-    {
-        super.serializeToView(buf);
-
-        buf.writeInt(worker == null ? 0 : worker.getId());
-    }
-
 }

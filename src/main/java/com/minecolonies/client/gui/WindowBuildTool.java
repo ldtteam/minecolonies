@@ -16,6 +16,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,6 +123,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * List of huts or decorations possible to make.
      */
+    @NotNull
     private List<String> hutDec = new ArrayList<>();
 
     /**
@@ -136,6 +139,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Current position the hut/decoration is rendered at.
      */
+    @NotNull
     private BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
 
     /**
@@ -155,14 +159,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * If a schematic is active, recalculates the X Y Z with offset.
      * Otherwise the given parameters are used
      *
-     * @param pos     coordinate
+     * @param pos coordinate
      */
-    public WindowBuildTool(BlockPos pos)
+    public WindowBuildTool(@NotNull BlockPos pos)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
-        Schematic schematic = Settings.instance.getActiveSchematic();
-        if(schematic != null)
+        @Nullable Schematic schematic = Settings.instance.getActiveSchematic();
+        if (schematic != null)
         {
             BlockPosUtil.set(this.pos, Settings.instance.getOffset().add(schematic.getOffset()));
             rotation = Settings.instance.getRotation();
@@ -189,6 +193,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
     }
 
+    private static boolean inventoryHasHut(@NotNull InventoryPlayer inventory, String hut)
+    {
+        return inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, DEFAULT_POS));
+    }
+
     /**
      * Called when the window is opened.
      * Sets up the buttons for either hut mode or decoration mode.
@@ -203,6 +212,23 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         else
         {
             loadDecorationMode();
+        }
+    }
+
+    /**
+     * Called when the window is closed.
+     * If there is a current schematic, its information is stored in {@link Settings}.
+     */
+    @Override
+    public void onClosed()
+    {
+        if (Settings.instance.getActiveSchematic() != null)
+        {
+            Settings.instance.setSchematicInfo(
+              findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel(),
+              findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel(),
+              level,
+              rotation);
         }
     }
 
@@ -223,19 +249,19 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         //Add possible hutDec (has item) to list, if it has a schematic, and player has the block
         hutDec.addAll(Schematics.getHuts().stream()
-                                .filter(hut -> inventoryHasHut(inventory, hut) && Schematics.getStylesForHut(hut) != null)
-                                .collect(Collectors.toList()));
+                        .filter(hut -> inventoryHasHut(inventory, hut) && Schematics.getStylesForHut(hut) != null)
+                        .collect(Collectors.toList()));
 
         setupButtons();
     }
 
     private void setupButtons()
     {
-        if(hutDec.isEmpty())
+        if (hutDec.isEmpty())
         {
             Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
             buttonHutDec.setLabel(LanguageHandler.getString(
-                    Settings.instance.isInHutMode() ? "com.minecolonies.gui.buildtool.nohut" : "com.minecolonies.gui.buildtool.nodecoration"));
+              Settings.instance.isInHutMode() ? "com.minecolonies.gui.buildtool.nohut" : "com.minecolonies.gui.buildtool.nodecoration"));
             buttonHutDec.setEnabled(false);
 
             Settings.instance.setActiveSchematic(null);
@@ -267,97 +293,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
-    private void updateLevelButton()
-    {
-        Button buttonLevel = findPaneOfTypeByID(BUTTON_LEVEL_ID, Button.class);
-        if (Settings.instance.isInHutMode())
-        {
-            buttonLevel.setVisible(true);
-            buttonLevel.setLabel("Level: " + (level + 1));
-        }
-        else
-        {
-            buttonLevel.setVisible(false);
-        }
-    }
-
-    private static boolean inventoryHasHut(InventoryPlayer inventory, String hut)
-    {
-        return inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, DEFAULT_POS));
-    }
-
-    /**
-     * Called when the window is closed.
-     * If there is a current schematic, its information is stored in {@link Settings}.
-     */
-    @Override
-    public void onClosed()
-    {
-        if (Settings.instance.getActiveSchematic() != null)
-        {
-            Settings.instance.setSchematicInfo(
-                    findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel(),
-                    findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel(),
-                    level,
-                    rotation);
-        }
-    }
-
-    private List<String> getStyles()
-    {
-        if (Settings.instance.isInHutMode())
-        {
-            return Schematics.getStylesForHut(hutDec.get(hutDecIndex));
-        }
-        else
-        {
-            return Schematics.getStylesForDecoration(hutDec.get(hutDecIndex));
-        }
-    }
-
-    /**
-     * Changes the current schematic.
-     * Set to button position at that time
-     */
-    private void changeSchematic()
-    {
-        String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
-        String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
-
-        SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
-
-        Settings.instance.setActiveSchematic(schematic.getSchematic());
-
-        Settings.instance.moveTo(this.pos);
-
-        //Catch up on rotations, makes it so going up a level or changing style doesn't reset rotation.
-        if(this.rotation == ROTATE_LEFT)
-        {
-            RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
-        }
-        else
-        {
-            //Runs 0, 1, or 2 times.
-            for(int times = 0; times < rotation; times++)
-            {
-                RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
-            }
-        }
-    }
-
-    /**
-     * Update position of the schematic
-     */
-    private void updatePosition()
-    {
-        Settings.instance.moveTo(pos);
-        RenderSchematic.INSTANCE.refresh();
-    }
-
-    /*
-     * ---------------- Button Handling -----------------
-     */
-
     /**
      * Change placement modes. Hut or Decoration.
      *
@@ -387,7 +322,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void hutDecClicked(Button button)
+    private void hutDecClicked(@NotNull Button button)
     {
         if (hutDec.size() == 1)
         {
@@ -406,12 +341,58 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         changeSchematic();
     }
 
+    private List<String> getStyles()
+    {
+        if (Settings.instance.isInHutMode())
+        {
+            return Schematics.getStylesForHut(hutDec.get(hutDecIndex));
+        }
+        else
+        {
+            return Schematics.getStylesForDecoration(hutDec.get(hutDecIndex));
+        }
+    }
+
+    /**
+     * Changes the current schematic.
+     * Set to button position at that time
+     */
+    private void changeSchematic()
+    {
+        String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
+        String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+
+        @NotNull SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
+
+        Settings.instance.setActiveSchematic(schematic.getSchematic());
+
+        Settings.instance.moveTo(this.pos);
+
+        //Catch up on rotations, makes it so going up a level or changing style doesn't reset rotation.
+        if (this.rotation == ROTATE_LEFT)
+        {
+            RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
+        }
+        else
+        {
+            //Runs 0, 1, or 2 times.
+            for (int times = 0; times < rotation; times++)
+            {
+                RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
+            }
+        }
+    }
+
+    /*
+     * ---------------- Button Handling -----------------
+     */
+
     /**
      * Change to the next style.
      *
      * @param button required parameter.
      */
-    private void styleClicked(Button button)
+    private void styleClicked(@NotNull Button button)
     {
         List<String> styles = getStyles();
 
@@ -444,6 +425,20 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
+    private void updateLevelButton()
+    {
+        Button buttonLevel = findPaneOfTypeByID(BUTTON_LEVEL_ID, Button.class);
+        if (Settings.instance.isInHutMode())
+        {
+            buttonLevel.setVisible(true);
+            buttonLevel.setLabel("Level: " + (level + 1));
+        }
+        else
+        {
+            buttonLevel.setVisible(false);
+        }
+    }
+
     /**
      * Send a packet telling the server to place the current schematic.
      *
@@ -452,7 +447,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private void confirmClicked(Button button)
     {
         MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
-                getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
+                                                                          getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
         Settings.instance.setActiveSchematic(null);
         close();
     }
@@ -477,6 +472,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
         updatePosition();
+    }
+
+    /**
+     * Update position of the schematic
+     */
+    private void updatePosition()
+    {
+        Settings.instance.moveTo(pos);
+        RenderSchematic.INSTANCE.refresh();
     }
 
     /**

@@ -3,6 +3,7 @@ package com.minecolonies.client.model;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityFishermanFemale extends ModelBiped
 {
@@ -252,6 +253,13 @@ public class ModelEntityFishermanFemale extends ModelBiped
         bipedHeadwear.isHidden = true;
     }
 
+    private void setRotation(@NotNull ModelRenderer model, float x, float y, float z)
+    {
+        model.rotateAngleX = x;
+        model.rotateAngleY = y;
+        model.rotateAngleZ = z;
+    }
+
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
         super.render(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor);
@@ -285,12 +293,5 @@ public class ModelEntityFishermanFemale extends ModelBiped
         hairBack8.render(scaleFactor);
         hairBack9.render(scaleFactor);
         hairBack10.render(scaleFactor);
-    }
-
-    private void setRotation(ModelRenderer model, float x, float y, float z)
-    {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
     }
 }

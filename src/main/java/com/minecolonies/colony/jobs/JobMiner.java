@@ -7,6 +7,7 @@ import com.minecolonies.entity.ai.citizen.miner.EntityAIStructureMiner;
 import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -20,8 +21,16 @@ public class JobMiner extends AbstractJob
     }
 
     @Override
-    public String getName(){ return "com.minecolonies.job.Miner"; }
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+    }
 
+    @NotNull
+    @Override
+    public String getName() { return "com.minecolonies.job.Miner"; }
+
+    @NotNull
     @Override
     public RenderBipedCitizen.Model getModel()
     {
@@ -34,17 +43,12 @@ public class JobMiner extends AbstractJob
         super.writeToNBT(compound);
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-    }
-
     /**
      * Generate your AI class to register.
      *
      * @return your personal AI instance.
      */
+    @NotNull
     @Override
     public AbstractAISkeleton generateAI()
     {
@@ -56,14 +60,14 @@ public class JobMiner extends AbstractJob
      *
      * @param stack Stack to check if it is a required item
      */
-    public void addItemNeededIfNotAlready(ItemStack stack)
+    public void addItemNeededIfNotAlready(@NotNull ItemStack stack)
     {
         List<ItemStack> itemsNeeded = super.getItemsNeeded();
 
         //check if stack is already in itemsNeeded
-        for(ItemStack neededItem : itemsNeeded)
+        for (ItemStack neededItem : itemsNeeded)
         {
-            if(stack.isItemEqual(neededItem))
+            if (stack.isItemEqual(neededItem))
             {
                 return;
             }
@@ -71,13 +75,13 @@ public class JobMiner extends AbstractJob
         addItemNeeded(stack);
     }
 
-    public void setSchematic(SchematicWrapper schematic)
-    {
-        this.schematic = schematic;
-    }
-
     public SchematicWrapper getSchematic()
     {
         return schematic;
+    }
+
+    public void setSchematic(SchematicWrapper schematic)
+    {
+        this.schematic = schematic;
     }
 }

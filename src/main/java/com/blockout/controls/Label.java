@@ -1,7 +1,7 @@
 package com.blockout.controls;
 
 import com.blockout.PaneParams;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
 
 /**
  * BlockOut label pane. Used to render a piece of text.
@@ -28,7 +28,7 @@ public class Label extends AbstractTextElement
         labelText = params.getLocalizedStringAttribute("label", labelText);
 
         //  match textColor by default
-        hoverColor    = params.getColorAttribute("hovercolor", textColor);
+        hoverColor = params.getColorAttribute("hovercolor", textColor);
 
         if (width == 0)
         {
@@ -53,6 +53,7 @@ public class Label extends AbstractTextElement
 
     /**
      * Set the default and hover color for the label.
+     *
      * @param c default color.
      * @param h hover color.
      */
@@ -60,16 +61,6 @@ public class Label extends AbstractTextElement
     {
         setColor(c);
         hoverColor = h;
-    }
-
-    public int getTextHeight()
-    {
-        return (int) (mc.fontRendererObj.FONT_HEIGHT * scale);
-    }
-
-    public int getStringWidth()
-    {
-        return (int) (mc.fontRendererObj.getStringWidth(labelText) * scale);
     }
 
     @Override
@@ -98,11 +89,21 @@ public class Label extends AbstractTextElement
             offsetY = (getHeight() - getTextHeight()) / 2;
         }
 
-        GL11.glPushMatrix();
-        GL11.glTranslated((double) (getX() + offsetX), (double) (getY() + offsetY), 0);
-        GL11.glScalef((float) scale, (float) scale, (float) scale);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate((double) (getX() + offsetX), (double) (getY() + offsetY), 0);
+        GlStateManager.scale((float) scale, (float) scale, (float) scale);
         mc.renderEngine.bindTexture(TEXTURE);
         mc.fontRendererObj.drawString(labelText, 0, 0, color, shadow);
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
+    }
+
+    public int getStringWidth()
+    {
+        return (int) (mc.fontRendererObj.getStringWidth(labelText) * scale);
+    }
+
+    public int getTextHeight()
+    {
+        return (int) (mc.fontRendererObj.FONT_HEIGHT * scale);
     }
 }

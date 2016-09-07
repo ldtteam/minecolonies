@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified"
+           elementFormDefault="qualified">
     <xs:element name="window" type="windowType"/>
     <xs:element name="layout" type="layoutType"/>
 
@@ -32,12 +32,12 @@
 
     <xs:complexType name="windowType">
         <xs:group ref="paneContainerGroup" minOccurs="0" maxOccurs="unbounded"/>
-        <xs:attribute name="inherit"  type="xs:string"/>
-        <xs:attribute name="size"     type="sizePair"/>
-        <xs:attribute name="width"    type="xs:string"/>
-        <xs:attribute name="height"   type="xs:string"/>
+        <xs:attribute name="inherit" type="xs:string"/>
+        <xs:attribute name="size" type="sizePair"/>
+        <xs:attribute name="width" type="xs:string"/>
+        <xs:attribute name="height" type="xs:string"/>
         <xs:attribute name="lightbox" type="xs:boolean"/>
-        <xs:attribute name="pause"    type="xs:boolean"/>
+        <xs:attribute name="pause" type="xs:boolean"/>
     </xs:complexType>
 
     <xs:complexType name="layoutType">
@@ -46,20 +46,20 @@
 
     <!-- Pane basic attributes -->
     <xs:complexType name="paneType">
-        <xs:attribute name="id"      type="xs:string"/>
+        <xs:attribute name="id" type="xs:string"/>
 
-        <xs:attribute name="align"   type="align"/>
-        <xs:attribute name="size"    type="sizePair"/>
-        <xs:attribute name="width"   type="xs:string"/>
-        <xs:attribute name="height"  type="xs:string"/>
-        <xs:attribute name="pos"     type="sizePair"/>
-        <xs:attribute name="x"       type="xs:string"/>
-        <xs:attribute name="y"       type="xs:string"/>
+        <xs:attribute name="align" type="align"/>
+        <xs:attribute name="size" type="sizePair"/>
+        <xs:attribute name="width" type="xs:string"/>
+        <xs:attribute name="height" type="xs:string"/>
+        <xs:attribute name="pos" type="sizePair"/>
+        <xs:attribute name="x" type="xs:string"/>
+        <xs:attribute name="y" type="xs:string"/>
 
         <xs:attribute name="visible" type="xs:boolean"/>
         <xs:attribute name="enabled" type="xs:boolean"/>
 
-        <xs:attribute name="style"   type="xs:string"/>
+        <xs:attribute name="style" type="xs:string"/>
     </xs:complexType>
 
     <!-- View basic attributes and contents -->
@@ -75,20 +75,20 @@
     <!-- Master group for all panes that can be used -->
     <xs:group name="paneContainerGroup">
         <xs:choice>
-            <xs:element name="layout"       type="layoutElementType"/>
-            <xs:element name="view"         type="viewType"/>
-            <xs:element name="group"        type="groupType"/>
+            <xs:element name="layout" type="layoutElementType"/>
+            <xs:element name="view" type="viewType"/>
+            <xs:element name="group" type="groupType"/>
             <!-- xs:element name="scrollgroup"  type="scrollGroupType"/ -->
-            <xs:element name="list"         type="listType"/>
-            <xs:element name="button"       type="buttonType"/>
-            <xs:element name="buttonimage"  type="buttonImageType"/>
-            <xs:element name="text"         type="textType"/>
-            <xs:element name="label"        type="labelType"/>
-            <xs:element name="input"        type="inputType"/>
-            <xs:element name="image"        type="imageType"/>
-            <xs:element name="box"          type="boxType"/>
-            <xs:element name="itemicon"     type="itemIconType"/>
-            <xs:element name="switch"       type="switchType"/>
+            <xs:element name="list" type="listType"/>
+            <xs:element name="button" type="buttonType"/>
+            <xs:element name="buttonimage" type="buttonImageType"/>
+            <xs:element name="text" type="textType"/>
+            <xs:element name="label" type="labelType"/>
+            <xs:element name="input" type="inputType"/>
+            <xs:element name="image" type="imageType"/>
+            <xs:element name="box" type="boxType"/>
+            <xs:element name="itemicon" type="itemIconType"/>
+            <xs:element name="switch" type="switchType"/>
         </xs:choice>
     </xs:group>
 
@@ -139,7 +139,7 @@
     <xs:complexType name="buttonType">
         <xs:complexContent>
             <xs:extension base="paneType">
-                <xs:attribute name="label"      type="xs:string"/>
+                <xs:attribute name="label" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -148,12 +148,12 @@
     <xs:complexType name="labelType">
         <xs:complexContent>
             <xs:extension base="paneType">
-                <xs:attribute name="label"      type="xs:string"/>
-                <xs:attribute name="textscale"  type="xs:string"/>
-                <xs:attribute name="textalign"  type="align"/>
-                <xs:attribute name="color"      type="xs:string"/>
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="textscale" type="xs:string"/>
+                <xs:attribute name="textalign" type="align"/>
+                <xs:attribute name="color" type="xs:string"/>
                 <xs:attribute name="hovercolor" type="xs:string"/>
-                <xs:attribute name="shadow"     type="xs:boolean"/>
+                <xs:attribute name="shadow" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -162,11 +162,11 @@
     <xs:complexType name="textType">
         <xs:simpleContent>
             <xs:extension base="paneType">
-                <xs:attribute name="linespace"  type="xs:integer"/>
-                <xs:attribute name="textscale"  type="xs:string"/>
-                <xs:attribute name="textalign"  type="align"/>
-                <xs:attribute name="color"      type="xs:string"/>
-                <xs:attribute name="shadow"     type="xs:boolean"/>
+                <xs:attribute name="linespace" type="xs:integer"/>
+                <xs:attribute name="textscale" type="xs:string"/>
+                <xs:attribute name="textalign" type="align"/>
+                <xs:attribute name="color" type="xs:string"/>
+                <xs:attribute name="shadow" type="xs:boolean"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
@@ -185,24 +185,24 @@
         <xs:complexContent>
             <xs:extension base="paneType">
                 <!-- Image and Highlight -->
-                <xs:attribute name="source"          type="xs:string" use="required"/>
-                <xs:attribute name="imageoffset"     type="fixedSizePair"/>
-                <xs:attribute name="imagesize"       type="fixedSizePair"/>
-                <xs:attribute name="highlight"       type="xs:string"/>
+                <xs:attribute name="source" type="xs:string" use="required"/>
+                <xs:attribute name="imageoffset" type="fixedSizePair"/>
+                <xs:attribute name="imagesize" type="fixedSizePair"/>
+                <xs:attribute name="highlight" type="xs:string"/>
                 <xs:attribute name="highlightoffset" type="fixedSizePair"/>
-                <xs:attribute name="highlightsize"   type="fixedSizePair"/>
-                <xs:attribute name="disabled"        type="xs:string"/>
-                <xs:attribute name="disabledoffset"  type="fixedSizePair"/>
-                <xs:attribute name="disabledsize"    type="fixedSizePair"/>
+                <xs:attribute name="highlightsize" type="fixedSizePair"/>
+                <xs:attribute name="disabled" type="xs:string"/>
+                <xs:attribute name="disabledoffset" type="fixedSizePair"/>
+                <xs:attribute name="disabledsize" type="fixedSizePair"/>
                 <!-- Label (optional) -->
-                <xs:attribute name="label"           type="xs:string"/>
-                <xs:attribute name="textscale"       type="xs:string"/>
-                <xs:attribute name="textalign"       type="align"/>
-                <xs:attribute name="textoffset"      type="fixedSizePair"/>
-                <xs:attribute name="textcolor"       type="xs:string"/>
-                <xs:attribute name="texthovercolor"  type="xs:string"/>
+                <xs:attribute name="label" type="xs:string"/>
+                <xs:attribute name="textscale" type="xs:string"/>
+                <xs:attribute name="textalign" type="align"/>
+                <xs:attribute name="textoffset" type="fixedSizePair"/>
+                <xs:attribute name="textcolor" type="xs:string"/>
+                <xs:attribute name="texthovercolor" type="xs:string"/>
                 <xs:attribute name="textdisabledcolor" type="xs:string"/>
-                <xs:attribute name="shadow"          type="xs:boolean"/>
+                <xs:attribute name="shadow" type="xs:boolean"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -211,9 +211,9 @@
     <xs:complexType name="imageType">
         <xs:complexContent>
             <xs:extension base="paneType">
-                <xs:attribute name="source"      type="xs:string"/>
+                <xs:attribute name="source" type="xs:string"/>
                 <xs:attribute name="imageoffset" type="fixedSizePair"/>
-                <xs:attribute name="imagesize"   type="fixedSizePair"/>
+                <xs:attribute name="imagesize" type="fixedSizePair"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -222,12 +222,12 @@
     <xs:complexType name="inputType">
         <xs:complexContent>
             <xs:extension base="paneType">
-                <xs:attribute name="text"          type="xs:string"/>
-                <xs:attribute name="maxlength"     type="xs:integer"/>
-                <xs:attribute name="color"         type="xs:string"/>
+                <xs:attribute name="text" type="xs:string"/>
+                <xs:attribute name="maxlength" type="xs:integer"/>
+                <xs:attribute name="color" type="xs:string"/>
                 <xs:attribute name="colordisabled" type="xs:string"/>
-                <xs:attribute name="shadow"        type="xs:boolean"/>
-                <xs:attribute name="tab"           type="xs:string"/>
+                <xs:attribute name="shadow" type="xs:boolean"/>
+                <xs:attribute name="tab" type="xs:string"/>
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>

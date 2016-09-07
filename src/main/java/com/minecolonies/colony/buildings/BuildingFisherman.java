@@ -7,9 +7,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFisherman;
-import com.minecolonies.util.ServerUtils;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The fishermans building.
@@ -41,10 +40,29 @@ public class BuildingFisherman extends AbstractBuildingWorker
      *
      * @return the schematic name.
      */
+    @NotNull
     @Override
     public String getSchematicName()
     {
         return FISHERMAN;
+    }
+
+    /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingFisher);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
+        }
     }
 
     /**
@@ -63,6 +81,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      *
      * @return the description of the fisherman job.
      */
+    @NotNull
     @Override
     public String getJobName()
     {
@@ -75,30 +94,11 @@ public class BuildingFisherman extends AbstractBuildingWorker
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
+    @NotNull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
         return new JobFisherman(citizen);
-    }
-
-    /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
-     */
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        final EntityPlayer owner = ServerUtils.getPlayerFromUUID(this.getColony().getPermissions().getOwner());
-
-        if (newLevel == 1)
-        {
-            owner.triggerAchievement(ModAchievements.achievementBuildingFisher);
-        }
-        if (newLevel >= this.getMaxBuildingLevel())
-        {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
-        }
     }
 
     /**
@@ -122,11 +122,11 @@ public class BuildingFisherman extends AbstractBuildingWorker
          *
          * @return the window of the fisherman building.
          */
+        @NotNull
         @Override
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutFisherman(this);
         }
-
     }
 }

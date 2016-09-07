@@ -1,9 +1,8 @@
 package com.minecolonies.client.gui;
 
-import com.blockout.controls.Button;
-import com.blockout.views.SwitchView;
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.lib.Constants;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Window for the fisherman hut
@@ -13,7 +12,7 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
     /**
      * Constructor for the window of the fisherman
      *
-     * @param building      {@link com.minecolonies.colony.buildings.BuildingFisherman.View}
+     * @param building {@link com.minecolonies.colony.buildings.BuildingFisherman.View}
      */
     public WindowHutFisherman(BuildingFisherman.View building)
     {
@@ -23,13 +22,13 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
     /**
      * Returns the name of a building
      *
-     * @return      Name of a building
+     * @return Name of a building
      */
+    @NotNull
     @Override
     public String getBuildingName()
     {
         return "com.minecolonies.gui.workerHuts.fisherman";
     }
-
 }
 
