@@ -573,6 +573,8 @@ public class ButtonImage extends Button
 
         //Draw
         drawModalRectWithCustomSizedTexture(x, y, offsetX, offsetY, w, h, mapWidth, mapHeight);
+
+        GlStateManager.disableBlend();
     }
 
     /**

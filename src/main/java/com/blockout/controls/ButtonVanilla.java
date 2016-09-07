@@ -90,5 +90,7 @@ public class ButtonVanilla extends Button
 
         int textColor = this.enabled ? (isMouseOver ? HOVER_COLOR : ENABLED_COLOR) : DISABLED_COLOR;
         drawCenteredString(this.mc.fontRendererObj, label, x + width / 2, y + (height - this.mc.fontRendererObj.FONT_HEIGHT) / 2, textColor);
+
+        GlStateManager.disableBlend();
     }
 }

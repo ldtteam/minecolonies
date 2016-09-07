@@ -225,29 +225,20 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
                 rowPane.findPaneOfTypeByID(TAG_DIRECTION, Label.class).setLabelText(direction);
 
-                if(building.assignFieldManually())
-                {
-                    rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).enable();
-                }
-                else
-                {
-                    rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).disable();
-                }
+                Button assignButton = rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class);
+
+                assignButton.setEnabled(building.assignFieldManually());
 
                 if (field.isTaken())
                 {
-                    rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).setLabel(RED_X);
+                    assignButton.setLabel(RED_X);
                 }
                 else
                 {
-                    rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).setLabel(APPROVE);
+                    assignButton.setLabel(APPROVE);
                     if(building.getBuildingLevel() <= building.getAmountOfFields())
                     {
-                        rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).disable();
-                    }
-                    else
-                    {
-                        rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class).enable();
+                        assignButton.disable();
                     }
                 }
 
