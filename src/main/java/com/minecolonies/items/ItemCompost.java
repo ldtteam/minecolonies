@@ -21,14 +21,10 @@ public class ItemCompost extends AbstractItemMinecolonies
       */
     public ItemCompost()
     {
-        super();
+        super("compost");
         maxStackSize = 64;
     }
-    @Override
-    public String getName()
-    {
-        return "compost";
-    }
+    
     //whenever player right click a block with this "compost item", call this method
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
