@@ -8,6 +8,7 @@ public final class ModItems
     public static final Item buildTool   = new ItemBuildTool();
     public static final Item scanTool    = new ItemScanTool();
     public static final Item caliper     = new ItemCaliper();
+    public static final Item compost    = new ItemCompost();
 
     /**
      * private constructor to hide the implicit public one.

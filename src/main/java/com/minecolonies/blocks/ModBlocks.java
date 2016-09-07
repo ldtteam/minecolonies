@@ -26,6 +26,10 @@ public final class ModBlocks
     public static final Block blockSubstitution  = new BlockSubstitution();
     public static final Block blockHutField      = new BlockHutField();
 
+
+    // this line added by northstar for testing. feel free to do anything you want with it.
+    public static final Block blockBarrel = new BlockBarrel();
+
     /**
      * private constructor to hide the implicit public one.
      */
