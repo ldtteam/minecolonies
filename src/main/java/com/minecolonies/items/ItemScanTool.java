@@ -9,51 +9,58 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemScanTool extends AbstractItemMinecolonies
 {
     public ItemScanTool()
     {
-        super();
+        super("scepterSteel");
         setMaxStackSize(1);
     }
 
     @Override
-    public String getName()
+    public boolean onItemUse(@NotNull ItemStack stack, @NotNull EntityPlayer player, @NotNull World worldIn, @NotNull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        return "scepterSteel";
-    }
-
-    @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
-    {
-        if(!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+        if (!stack.hasTagCompound())
+        {
+            stack.setTagCompound(new NBTTagCompound());
+        }
         NBTTagCompound compound = stack.getTagCompound();
 
-        if(!compound.hasKey("pos1"))
+        if (!compound.hasKey("pos1"))
         {
             BlockPosUtil.writeToNBT(compound, "pos1", pos);
-            if(worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point");
+            if (worldIn.isRemote)
+            {
+                LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point");
+            }
             return true;
         }
-        else if(!compound.hasKey("pos2"))
+        else if (!compound.hasKey("pos2"))
         {
-            BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            BlockPos pos2 = pos;
-            if(pos2.distanceSq(pos1) > 0)
+            @NotNull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
+            @NotNull BlockPos pos2 = pos;
+            if (pos2.distanceSq(pos1) > 0)
             {
                 BlockPosUtil.writeToNBT(compound, "pos2", pos2);
-                if(worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point2");
+                if (worldIn.isRemote)
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.point2");
+                }
                 return true;
             }
-            if (worldIn.isRemote) LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.samePoint");
+            if (worldIn.isRemote)
+            {
+                LanguageHandler.sendPlayerLocalizedMessage(player, "item.scepterSteel.samePoint");
+            }
             return false;
         }
         else
         {
-            BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
-            if(worldIn.isRemote)
+            @NotNull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
+            @NotNull BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
+            if (worldIn.isRemote)
             {
                 String result = SchematicWrapper.saveSchematic(worldIn, pos1, pos2);
                 LanguageHandler.sendPlayerMessage(player, result);

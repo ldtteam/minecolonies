@@ -1,6 +1,7 @@
 package com.minecolonies.colony.permissions;
 
 import net.minecraft.entity.player.EntityPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -9,9 +10,9 @@ public interface IPermissions
     /**
      * Returns whether the player has the permission for an action.
      *
-     * @param player    {@link EntityPlayer} player
-     * @param action    {@link com.minecolonies.colony.permissions.Permissions.Action} action
-     * @return          true if has permission, otherwise false
+     * @param player {@link EntityPlayer} player
+     * @param action {@link com.minecolonies.colony.permissions.Permissions.Action} action
+     * @return true if has permission, otherwise false
      */
     boolean hasPermission(EntityPlayer player, Permissions.Action action);
 
@@ -26,8 +27,9 @@ public interface IPermissions
     /**
      * Get the rank of a UUID
      *
-     * @param player    UUID to check rank of
-     * @return          Rank of the player
+     * @param player UUID to check rank of
+     * @return Rank of the player
      */
+    @NotNull
     Permissions.Rank getRank(UUID player);
 }

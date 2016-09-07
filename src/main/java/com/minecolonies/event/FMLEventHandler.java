@@ -7,6 +7,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class FMLEventHandler
 {
@@ -14,7 +15,7 @@ public class FMLEventHandler
      * Called when the server ticks
      * Calls {@link ColonyManager#onServerTick(TickEvent.ServerTickEvent)}
      *
-     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
+     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event)
@@ -26,7 +27,7 @@ public class FMLEventHandler
      * Called when the client ticks
      * Calls {@link ColonyManager#onClientTick(TickEvent.ClientTickEvent)}
      *
-     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}
+     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}
      */
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event)
@@ -38,7 +39,7 @@ public class FMLEventHandler
      * Called when the world ticks
      * Calls {@link ColonyManager#onWorldTick(TickEvent.WorldTickEvent)}
      *
-     * @param event     {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
     @SubscribeEvent
     public void onWorldTick(TickEvent.WorldTickEvent event)
@@ -50,14 +51,15 @@ public class FMLEventHandler
      * Called when a player logs in
      * If the joining player is a MP-Player, sends all possible styles in a message
      *
-     * @param event     {@link net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent}
+     * @param event {@link net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent}
      */
     @SubscribeEvent
-    public void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event)
+    public void onPlayerLogin(@NotNull PlayerEvent.PlayerLoggedInEvent event)
     {
-        if(event.player instanceof EntityPlayerMP)
+        if (event.player instanceof EntityPlayerMP)
         {
             MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), (EntityPlayerMP) event.player);
+            ColonyManager.syncAllColoniesAchievements();
         }
     }
 }

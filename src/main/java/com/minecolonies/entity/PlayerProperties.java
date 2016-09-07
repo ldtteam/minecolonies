@@ -7,21 +7,37 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IExtendedEntityProperties;
+import org.jetbrains.annotations.NotNull;
 
 public final class PlayerProperties implements IExtendedEntityProperties
 {
     private boolean hasPlacedSupplyChest = false;
 
-    private PlayerProperties(){}
+    private PlayerProperties() {}
 
     /**
      * Registers player property. Should be checked if already exists, and called in onEntityConstruct event.
      *
      * @param player player to create property for
      */
-    public static void register(EntityPlayer player)
+    public static void register(@NotNull EntityPlayer player)
     {
         player.registerExtendedProperties(Constants.PLAYER_PROPERTY_NAME, new PlayerProperties());
+    }
+
+    /**
+     * Saves NBT data to proxy HashMap.
+     *
+     * @param player to save data for
+     */
+    public static void saveProxyData(@NotNull EntityPlayer player)
+    {
+        @NotNull final PlayerProperties playerData = PlayerProperties.get(player);
+        @NotNull final NBTTagCompound savedData = new NBTTagCompound();
+
+        playerData.saveNBTData(savedData);
+
+        CommonProxy.storeEntityData(getSaveKey(player), savedData);
     }
 
     /**
@@ -36,9 +52,9 @@ public final class PlayerProperties implements IExtendedEntityProperties
     }
 
     @Override
-    public void saveNBTData(NBTTagCompound compound)
+    public void saveNBTData(@NotNull NBTTagCompound compound)
     {
-        final NBTTagCompound properties = new NBTTagCompound();
+        @NotNull final NBTTagCompound properties = new NBTTagCompound();
 
         properties.setBoolean("hasPlacedSupplyChest", hasPlacedSupplyChest);
 
@@ -46,9 +62,9 @@ public final class PlayerProperties implements IExtendedEntityProperties
     }
 
     @Override
-    public void loadNBTData(NBTTagCompound compound)
+    public void loadNBTData(@NotNull NBTTagCompound compound)
     {
-        final NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PLAYER_PROPERTY_NAME);
+        @NotNull final NBTTagCompound properties = (NBTTagCompound) compound.getTag(Constants.PLAYER_PROPERTY_NAME);
 
         this.hasPlacedSupplyChest = properties.getBoolean("hasPlacedSupplyChest");
     }
@@ -65,24 +81,10 @@ public final class PlayerProperties implements IExtendedEntityProperties
      * @param player the player
      * @return String HashMap key
      */
-    private static String getSaveKey(EntityPlayer player)
+    @NotNull
+    private static String getSaveKey(@NotNull EntityPlayer player)
     {
         return player.getGameProfile().getId().toString() + ":" + Constants.PLAYER_PROPERTY_NAME;
-    }
-
-    /**
-     * Saves NBT data to proxy HashMap.
-     *
-     * @param player to save data for
-     */
-    public static void saveProxyData(EntityPlayer player)
-    {
-        final PlayerProperties playerData = PlayerProperties.get(player);
-        final NBTTagCompound savedData = new NBTTagCompound();
-
-        playerData.saveNBTData(savedData);
-
-        CommonProxy.storeEntityData(getSaveKey(player), savedData);
     }
 
     /**
@@ -90,9 +92,9 @@ public final class PlayerProperties implements IExtendedEntityProperties
      *
      * @param player to load data for
      */
-    public static void loadProxyData(EntityPlayer player)
+    public static void loadProxyData(@NotNull EntityPlayer player)
     {
-        final PlayerProperties playerData = PlayerProperties.get(player);
+        @NotNull final PlayerProperties playerData = PlayerProperties.get(player);
         final NBTTagCompound savedData = CommonProxy.getEntityData(getSaveKey(player));
 
         if (savedData != null)

@@ -17,17 +17,17 @@ public class BlockSubstitution extends Block
     /**
      * The hardness this block has.
      */
-    private static final float  BLOCK_HARDNESS = 5F;
+    private static final float BLOCK_HARDNESS = 5F;
 
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME     = "blockSubstitution";
+    private static final String BLOCK_NAME = "blockSubstitution";
 
     /**
      * The resistance this block has.
      */
-    private static final float  RESISTANCE     = 1F;
+    private static final float RESISTANCE = 1F;
 
     /**
      * Constructor for the Substitution block.
@@ -63,6 +63,4 @@ public class BlockSubstitution extends Block
     {
         return true;
     }
-
-
 }

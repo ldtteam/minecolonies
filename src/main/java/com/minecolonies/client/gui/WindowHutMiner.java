@@ -10,6 +10,7 @@ import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.MinerSetLevelMessage;
 import com.minecolonies.util.LanguageHandler;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -58,8 +59,6 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     public void onOpened()
     {
         super.onOpened();
-
-
         findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
 
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
@@ -76,7 +75,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
             }
 
             @Override
-            public void updateElement(int index, Pane rowPane)
+            public void updateElement(int index, @NotNull Pane rowPane)
             {
 
                 if (index == miner.current)
@@ -90,13 +89,12 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
 
                 rowPane.findPaneOfTypeByID("lvl", Label.class).setLabelText(Integer.toString(index));
                 rowPane.findPaneOfTypeByID("nONodes", Label.class).setLabelText(LanguageHandler.getString("com.minecolonies.gui.workerHuts.minerNode") + ": " + levels[index]);
-
             }
         });
     }
 
     @Override
-    public void onButtonClicked(Button button)
+    public void onButtonClicked(@NotNull Button button)
     {
         switch (button.getID())
         {
@@ -127,16 +125,15 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     @Override
     public void onUpdate()
     {
-
         String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_LEVELS))
         {
             pullLevelsFromHut();
             window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
         }
-
     }
 
+    @NotNull
     @Override
     public String getBuildingName()
     {

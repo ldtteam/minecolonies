@@ -14,8 +14,8 @@ import java.io.InputStreamReader;
 
 public class ShaderProgram
 {
-    private static final Minecraft MINECRAFT = Minecraft.getMinecraft();
-    private static final int PROGRAM_INFO_CONST = 1024;
+    private static final Minecraft MINECRAFT          = Minecraft.getMinecraft();
+    private static final int       PROGRAM_INFO_CONST = 1024;
 
     private int program;
 

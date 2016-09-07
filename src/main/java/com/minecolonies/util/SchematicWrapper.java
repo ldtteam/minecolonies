@@ -44,43 +44,34 @@ import java.util.List;
 public final class SchematicWrapper
 {
     /**
+     * The position we use as our uninitialized value.
+     */
+    private static final BlockPos NULL_POS = new BlockPos(-1, -1, -1);
+    private static final int NUMBER_OF_ROTATIONS = 4;
+    private static final int REVERSE_ROTATION = 3;
+    private static final int TWO_FOR_HALVING = 2;
+    private static final ItemStack DEFUALT_ICON = new ItemStack(Blocks.red_mushroom);
+    /**
+     * The SchematicWorld position we are at. Defaulted to NULL_POS.
+     */
+    private final BlockPos.MutableBlockPos progressPos = new BlockPos.MutableBlockPos(-1, -1, -1);
+    /**
      * The minecraft world this schematic is displayed in.
      */
     private World world;
-
     /**
      * The schematic world this schematic comes from.
      */
     private Schematic schematicWorld;
-
     /**
      * The anchor position this schematic will be
      * placed on in the minecraft world.
      */
     private BlockPos position;
-
     /**
      * The name this schematic has.
      */
     private String name;
-
-    /**
-     * The position we use as our uninitialized value.
-     */
-    private static final BlockPos NULL_POS = new BlockPos(-1, -1, -1);
-
-    /**
-     * The SchematicWorld position we are at. Defaulted to NULL_POS.
-     */
-    private final BlockPos.MutableBlockPos progressPos = new BlockPos.MutableBlockPos(-1, -1, -1);
-
-    private static final int NUMBER_OF_ROTATIONS = 4;
-
-    private static final int REVERSE_ROTATION = 3;
-
-    private static final int TWO_FOR_HALVING = 2;
-
-    private static final ItemStack DEFUALT_ICON = new ItemStack(Blocks.red_mushroom);
 
     /**
      * Load a schematic into this world.
@@ -88,7 +79,7 @@ public final class SchematicWrapper
      * @param worldObj the world to load in
      * @param name     the schematics name
      */
-    public SchematicWrapper(World worldObj, String name)
+    public SchematicWrapper(World worldObj, @NotNull String name)
     {
         this(worldObj, getResourceLocation(name), name);
     }
@@ -100,9 +91,21 @@ public final class SchematicWrapper
      * @param res      the resource location of this schematic
      * @param name     the schematics name
      */
-    private SchematicWrapper(World worldObj, ResourceLocation res, String name)
+    private SchematicWrapper(World worldObj, @NotNull ResourceLocation res, String name)
     {
         this(worldObj, SchematicFormat.readFromStream(getStream(res)), name);
+    }
+
+    /**
+     * Generate a resource location from a schematics name.
+     *
+     * @param name the schematics name
+     * @return the resource location pointing towards the schematic
+     */
+    @NotNull
+    private static ResourceLocation getResourceLocation(@NotNull String name)
+    {
+        return new ResourceLocation("minecolonies:schematics/" + name + ".schematic");
     }
 
     /**
@@ -125,11 +128,11 @@ public final class SchematicWrapper
      * @param res the location to pull the stream from
      * @return a stream from this location
      */
-    private static InputStream getStream(ResourceLocation res)
+    private static InputStream getStream(@NotNull ResourceLocation res)
     {
         try
         {
-            if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
             {
                 return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
             }
@@ -138,21 +141,10 @@ public final class SchematicWrapper
                 return SchematicWrapper.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
             }
         }
-        catch(IOException e)
+        catch (IOException e)
         {
             throw new IllegalStateException("Could not load stream!", e);
         }
-    }
-
-    /**
-     * Generate a resource location from a schematics name.
-     *
-     * @param name the schematics name
-     * @return the resource location pointing towards the schematic
-     */
-    private static ResourceLocation getResourceLocation(@NotNull String name)
-    {
-        return new ResourceLocation("minecolonies:schematics/" + name + ".schematic");
     }
 
     /**
@@ -164,99 +156,17 @@ public final class SchematicWrapper
      * @param pos       coordinates
      * @param rotations number of times rotated
      */
-    public static void loadAndPlaceSchematicWithRotation(World worldObj, String name, BlockPos pos, int rotations)
+    public static void loadAndPlaceSchematicWithRotation(World worldObj, @NotNull String name, @NotNull BlockPos pos, int rotations)
     {
         try
         {
-            SchematicWrapper schematic = new SchematicWrapper(worldObj, name);
+            @NotNull SchematicWrapper schematic = new SchematicWrapper(worldObj, name);
             schematic.rotate(rotations);
             schematic.placeSchematic(pos);
         }
-        catch(IllegalStateException e)
+        catch (IllegalStateException e)
         {
             Log.logger.warn("Could not load schematic!", e);
-        }
-    }
-
-    /**
-     * Place a schematic into the world.
-     *
-     * @param pos coordinates
-     */
-    private void placeSchematic(BlockPos pos)
-    {
-        setLocalPosition(pos);
-
-        List<BlockPos> delayedBlocks = new ArrayList<>();
-
-        for(int j = 0; j < schematicWorld.getHeight(); j++)
-        {
-            for(int k = 0; k < schematicWorld.getLength(); k++)
-            {
-                for(int i = 0; i < schematicWorld.getWidth(); i++)
-                {
-                    BlockPos localPos = new BlockPos(i, j, k);
-                    IBlockState localState = this.schematicWorld.getBlockState(localPos);
-                    Block localBlock = localState.getBlock();
-
-                    BlockPos worldPos = pos.add(localPos);
-                    IBlockState worldState = world.getBlockState(worldPos);
-
-                    if(localBlock == ModBlocks.blockSubstitution)
-                    {
-                        continue;
-                    }
-                    else if(localBlock == Blocks.air && !worldState.getBlock().getMaterial().isSolid())
-                    {
-                        world.setBlockToAir(worldPos);
-                    }
-                    else if(localBlock.getMaterial().isSolid())
-                    {
-                        placeBlock(localState, localBlock, worldPos);
-                    }
-                    else
-                    {
-                        delayedBlocks.add(localPos);
-                    }
-
-                    //setTileEntity checks for null and ignores it.
-                    world.setTileEntity(worldPos, schematicWorld.getTileEntity(localPos));
-                }
-            }
-        }
-
-        for(BlockPos coords : delayedBlocks)
-        {
-            IBlockState localState = this.schematicWorld.getBlockState(coords);
-            Block localBlock = localState.getBlock();
-            BlockPos newWorldPos = pos.add(coords);
-
-            placeBlock(localState, localBlock, newWorldPos);
-        }
-    }
-
-    private void placeBlock(IBlockState localState, Block localBlock, BlockPos worldPos)
-    {
-        world.setBlockState(worldPos, localState, 0x03);
-        if(world.getBlockState(worldPos).getBlock() == localBlock)
-        {
-            if(world.getBlockState(worldPos) != localState)
-            {
-                world.setBlockState(worldPos, localState, 0x03);
-            }
-            localBlock.onBlockAdded(world, worldPos, localState);
-        }
-    }
-
-    private void rotate(EnumFacing facing)
-    {
-        try
-        {
-            schematicWorld = RotationHelper.rotate(schematicWorld, facing, true);
-        }
-        catch (RotationHelper.RotationException e)
-        {
-            Log.logger.debug(e);
         }
     }
 
@@ -267,7 +177,7 @@ public final class SchematicWrapper
      */
     public void rotate(int times)
     {
-        if(times % NUMBER_OF_ROTATIONS == REVERSE_ROTATION)
+        if (times % NUMBER_OF_ROTATIONS == REVERSE_ROTATION)
         {
             //reverse rotate
             rotate(EnumFacing.DOWN);
@@ -283,59 +193,116 @@ public final class SchematicWrapper
     }
 
     /**
+     * Place a schematic into the world.
+     *
+     * @param pos coordinates
+     */
+    private void placeSchematic(@NotNull BlockPos pos)
+    {
+        setLocalPosition(pos);
+
+        @NotNull List<BlockPos> delayedBlocks = new ArrayList<>();
+
+        for (int j = 0; j < schematicWorld.getHeight(); j++)
+        {
+            for (int k = 0; k < schematicWorld.getLength(); k++)
+            {
+                for (int i = 0; i < schematicWorld.getWidth(); i++)
+                {
+                    @NotNull BlockPos localPos = new BlockPos(i, j, k);
+                    IBlockState localState = this.schematicWorld.getBlockState(localPos);
+                    Block localBlock = localState.getBlock();
+
+                    BlockPos worldPos = pos.add(localPos);
+                    IBlockState worldState = world.getBlockState(worldPos);
+
+                    if (localBlock == ModBlocks.blockSubstitution)
+                    {
+                        continue;
+                    }
+                    else if (localBlock == Blocks.air && !worldState.getBlock().getMaterial().isSolid())
+                    {
+                        world.setBlockToAir(worldPos);
+                    }
+                    else if (localBlock.getMaterial().isSolid())
+                    {
+                        placeBlock(localState, localBlock, worldPos);
+                    }
+                    else
+                    {
+                        delayedBlocks.add(localPos);
+                    }
+
+                    //setTileEntity checks for null and ignores it.
+                    world.setTileEntity(worldPos, schematicWorld.getTileEntity(localPos));
+                }
+            }
+        }
+
+        for (@NotNull BlockPos coords : delayedBlocks)
+        {
+            IBlockState localState = this.schematicWorld.getBlockState(coords);
+            Block localBlock = localState.getBlock();
+            BlockPos newWorldPos = pos.add(coords);
+
+            placeBlock(localState, localBlock, newWorldPos);
+        }
+    }
+
+    private void rotate(@NotNull EnumFacing facing)
+    {
+        try
+        {
+            schematicWorld = RotationHelper.rotate(schematicWorld, facing, true);
+        }
+        catch (RotationHelper.RotationException e)
+        {
+            Log.logger.debug(e);
+        }
+    }
+
+    private void placeBlock(IBlockState localState, @NotNull Block localBlock, @NotNull BlockPos worldPos)
+    {
+        world.setBlockState(worldPos, localState, 0x03);
+        if (world.getBlockState(worldPos).getBlock() == localBlock)
+        {
+            if (world.getBlockState(worldPos) != localState)
+            {
+                world.setBlockState(worldPos, localState, 0x03);
+            }
+            localBlock.onBlockAdded(world, worldPos, localState);
+        }
+    }
+
+    /**
      * Scan the schematic and save it to the disk.
      *
      * @param world Current world.
-     * @param from First corner.
-     * @param to Second corner.
+     * @param from  First corner.
+     * @param to    Second corner.
      * @return Message to display to the player.
      */
-    public static String saveSchematic(World world, BlockPos from, BlockPos to)
+    public static String saveSchematic(@Nullable World world, @Nullable BlockPos from, @Nullable BlockPos to)
     {
-        if(world == null || from == null || to == null)
+        if (world == null || from == null || to == null)
         {
             throw new IllegalArgumentException("Invalid method call, arguments can't be null. Contact a developer.");
         }
 
-        Schematic schematic = scanSchematic(world, from, to);
+        @NotNull Schematic schematic = scanSchematic(world, from, to);
 
         String fileName = LanguageHandler.format("item.scepterSteel.scanFormat", schematic.getType(), System.currentTimeMillis());
-        File file = new File(getScanDirectory(world), fileName);
+        @NotNull File file = new File(getScanDirectory(world), fileName);
 
-        if(SchematicFormat.writeToFile(file, schematic))
+        if (SchematicFormat.writeToFile(file, schematic))
         {
             return LanguageHandler.format("item.scepterSteel.scanSuccess", fileName);
         }
         return LanguageHandler.format("item.scepterSteel.scanFailure");
     }
 
-    private static File getScanDirectory(World world)
-    {
-        File minecolonies;
-        if(world.isRemote)
-        {
-            minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
-        }
-        else
-        {
-            minecolonies = MinecraftServer.getServer().getFile("minecolonies/");
-        }
-        checkDirectory(minecolonies);
-
-        File scans = new File(minecolonies, "scans/");
-        checkDirectory(scans);
-        return scans;
-    }
-
-    private static void checkDirectory(File directory)
-    {
-        if(!directory.exists() && !directory.mkdirs())
-        {
-            Log.logger.error("Directory doesn't exist and failed to be created: " + directory.toString());
-        }
-    }
-
-    private static Schematic scanSchematic(World world, BlockPos from, BlockPos to)
+    @NotNull
+    private static Schematic scanSchematic(@NotNull World world, @NotNull BlockPos from, @NotNull BlockPos to)
     {
         int minX = Math.min(from.getX(), to.getX());
         int maxX = Math.max(from.getX(), to.getX());
@@ -347,19 +314,19 @@ public final class SchematicWrapper
         short height = (short) (Math.abs(maxY - minY) + 1);
         short length = (short) (Math.abs(maxZ - minZ) + 1);
 
-        BlockPos minPos = new BlockPos(minX, minY, minZ);
+        @NotNull BlockPos minPos = new BlockPos(minX, minY, minZ);
 
-        Schematic schematic = new Schematic(DEFUALT_ICON, width, height, length);
+        @NotNull Schematic schematic = new Schematic(DEFUALT_ICON, width, height, length);
 
-        BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos(0, 0, 0);
+        @NotNull BlockPos.MutableBlockPos offset = new BlockPos.MutableBlockPos(0, 0, 0);
 
-        for(int x = minX; x <= maxX; x++)
+        for (int x = minX; x <= maxX; x++)
         {
-            for(int y = minY; y <= maxY; y++)
+            for (int y = minY; y <= maxY; y++)
             {
-                for(int z = minZ; z <= maxZ; z++)
+                for (int z = minZ; z <= maxZ; z++)
                 {
-                    BlockPos worldPos = new BlockPos(x, y, z);
+                    @NotNull BlockPos worldPos = new BlockPos(x, y, z);
                     BlockPos localPos = worldPos.subtract(minPos);
 
                     IBlockState blockState = world.getBlockState(worldPos);
@@ -389,7 +356,7 @@ public final class SchematicWrapper
         }
         schematic.setOffset(offset);
 
-        AxisAlignedBB region = AxisAlignedBB.fromBounds(minX, minY, minZ, maxX, maxY, maxZ);
+        @NotNull AxisAlignedBB region = AxisAlignedBB.fromBounds(minX, minY, minZ, maxX, maxY, maxZ);
         //schematic::addEntity already does null checking and ignores null values.
         world.getEntitiesWithinAABB(EntityHanging.class, region).forEach(schematic::addEntity);
         world.getEntitiesWithinAABB(EntityMinecart.class, region).forEach(schematic::addEntity);
@@ -397,24 +364,51 @@ public final class SchematicWrapper
         return schematic;
     }
 
+    @NotNull
+    private static File getScanDirectory(@NotNull World world)
+    {
+        File minecolonies;
+        if (world.isRemote)
+        {
+            minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
+        }
+        else
+        {
+            minecolonies = MinecraftServer.getServer().getFile("minecolonies/");
+        }
+        checkDirectory(minecolonies);
+
+        @NotNull File scans = new File(minecolonies, "scans/");
+        checkDirectory(scans);
+        return scans;
+    }
+
     /**
      * Creates a new tileEntity and formats its data for saving. A new tileEntity is needed to prevent changes to the real one.
      *
-     * @param schematic Schematic to add the TileEntity to.
+     * @param schematic  Schematic to add the TileEntity to.
      * @param tileEntity The tile entity.
-     * @param minPos The schematic min pos to subtract of the tile entity.
+     * @param minPos     The schematic min pos to subtract of the tile entity.
      */
-    private static void saveTileEntity(Schematic schematic, TileEntity tileEntity, BlockPos minPos)
+    private static void saveTileEntity(@NotNull Schematic schematic, @Nullable TileEntity tileEntity, @NotNull BlockPos minPos)
     {
         if (tileEntity != null)
         {
             BlockPos newPos = tileEntity.getPos().subtract(minPos);
-            NBTTagCompound tileEntityNBT = new NBTTagCompound();
+            @NotNull NBTTagCompound tileEntityNBT = new NBTTagCompound();
             tileEntity.writeToNBT(tileEntityNBT);
 
             TileEntity newTileEntity = TileEntity.createAndLoadEntity(tileEntityNBT);
             newTileEntity.setPos(newPos);
             schematic.setTileEntity(newPos, newTileEntity);
+        }
+    }
+
+    private static void checkDirectory(@NotNull File directory)
+    {
+        if (!directory.exists() && !directory.mkdirs())
+        {
+            Log.logger.error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
     }
 
@@ -429,13 +423,12 @@ public final class SchematicWrapper
         do
         {
             count++;
-            if(!incrementBlock())
+            if (!incrementBlock())
             {
                 return false;
             }
-
         }
-        while(doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+        while (doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -447,19 +440,19 @@ public final class SchematicWrapper
      */
     public boolean incrementBlock()
     {
-        if(this.progressPos.equals(NULL_POS))
+        if (this.progressPos.equals(NULL_POS))
         {
             this.progressPos.set(-1, 0, 0);
         }
 
         this.progressPos.set(this.progressPos.getX() + 1, this.progressPos.getY(), this.progressPos.getZ());
-        if(this.progressPos.getX() == schematicWorld.getWidth())
+        if (this.progressPos.getX() == schematicWorld.getWidth())
         {
             this.progressPos.set(0, this.progressPos.getY(), this.progressPos.getZ() + 1);
-            if(this.progressPos.getZ() == schematicWorld.getLength())
+            if (this.progressPos.getZ() == schematicWorld.getLength())
             {
                 this.progressPos.set(this.progressPos.getX(), this.progressPos.getY() + 1, 0);
-                if(this.progressPos.getY() == schematicWorld.getHeight())
+                if (this.progressPos.getY() == schematicWorld.getHeight())
                 {
                     reset();
                     return false;
@@ -481,7 +474,7 @@ public final class SchematicWrapper
         Block schematicBlock = schematicBlockState.getBlock();
 
         //All worldBlocks are equal the substitution block
-        if(schematicBlock == ModBlocks.blockSubstitution)
+        if (schematicBlock == ModBlocks.blockSubstitution)
         {
             return true;
         }
@@ -492,17 +485,32 @@ public final class SchematicWrapper
 
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
-        if(schematicBlock instanceof BlockDoor || schematicBlock == Blocks.flower_pot)
+        if (schematicBlock instanceof BlockDoor || schematicBlock == Blocks.flower_pot
+              || (schematicBlock instanceof BlockStairs && BlockStairs.isSameStair(world, worldPos, schematicBlockState)))
         {
             return schematicBlock == worldBlockState.getBlock();
         }
-        else if(schematicBlock instanceof  BlockStairs && BlockStairs.isSameStair(world, worldPos, schematicBlockState))
-        {
-            return true;
-        }
+
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
         return worldPos.getY() <= 0
-                || schematicBlockState == worldBlockState;
+                 || schematicBlockState == worldBlockState;
+    }
+
+    /**
+     * Reset the progressPos.
+     */
+    public void reset()
+    {
+        BlockPosUtil.set(this.progressPos, NULL_POS);
+    }
+
+    /**
+     * @return progressPos as an immutable.
+     */
+    @NotNull
+    public BlockPos getLocalPosition()
+    {
+        return this.progressPos.getImmutable();
     }
 
     /**
@@ -530,6 +538,16 @@ public final class SchematicWrapper
     }
 
     /**
+     * Change the current progressPos. Used when loading progress.
+     *
+     * @param localPosition new progressPos.
+     */
+    public void setLocalPosition(@NotNull BlockPos localPosition)
+    {
+        BlockPosUtil.set(this.progressPos, localPosition);
+    }
+
+    /**
      * Looks for blocks that should be cleared out.
      *
      * @return false if there are no more blocks to clear.
@@ -541,14 +559,13 @@ public final class SchematicWrapper
         {
             count++;
             //decrement because we clear from top to bottom.
-            if(!decrementBlock())
+            if (!decrementBlock())
             {
                 return false;
             }
-
         }
         //Check for air blocks and if blocks below the hut are different from the schematicWorld
-        while((worldBlockAir() ||  doesSchematicBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir() || doesSchematicBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -556,6 +573,37 @@ public final class SchematicWrapper
     private boolean isAirBlock()
     {
         return getBlock() == Blocks.air;
+    }
+
+    /**
+     * Calculate the current block in the schematic
+     *
+     * @return the current block or null if not initialized
+     */
+    @Nullable
+    public Block getBlock()
+    {
+        @Nullable IBlockState state = getBlockState();
+        if (state == null)
+        {
+            return null;
+        }
+        return state.getBlock();
+    }
+
+    /**
+     * Gets the block state for the current local block.
+     *
+     * @return Current local block state.
+     */
+    @Nullable
+    public IBlockState getBlockState()
+    {
+        if (this.progressPos.equals(NULL_POS))
+        {
+            return null;
+        }
+        return this.schematicWorld.getBlockState(this.progressPos);
     }
 
     /**
@@ -569,11 +617,10 @@ public final class SchematicWrapper
         do
         {
             count++;
-            if(!incrementBlock())
+            if (!incrementBlock())
             {
                 return false;
             }
-
         }
         while ((doesSchematicBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
@@ -596,11 +643,10 @@ public final class SchematicWrapper
         do
         {
             count++;
-            if(!incrementBlock())
+            if (!incrementBlock())
             {
                 return false;
             }
-
         }
         while ((doesSchematicBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
@@ -619,19 +665,19 @@ public final class SchematicWrapper
      */
     public boolean decrementBlock()
     {
-        if(this.progressPos.equals(NULL_POS))
+        if (this.progressPos.equals(NULL_POS))
         {
             this.progressPos.set(schematicWorld.getWidth(), schematicWorld.getHeight() - 1, schematicWorld.getLength() - 1);
         }
 
         this.progressPos.set(this.progressPos.getX() - 1, this.progressPos.getY(), this.progressPos.getZ());
-        if(this.progressPos.getX() == -1)
+        if (this.progressPos.getX() == -1)
         {
             this.progressPos.set(schematicWorld.getWidth() - 1, this.progressPos.getY(), this.progressPos.getZ() - 1);
-            if(this.progressPos.getZ() == -1)
+            if (this.progressPos.getZ() == -1)
             {
                 this.progressPos.set(this.progressPos.getX(), this.progressPos.getY() - 1, schematicWorld.getLength() - 1);
-                if(this.progressPos.getY() == -1)
+                if (this.progressPos.getY() == -1)
                 {
                     reset();
                     return false;
@@ -650,27 +696,12 @@ public final class SchematicWrapper
     }
 
     /**
-     * Gets the block state for the current local block.
-     *
-     * @return Current local block state.
-     */
-    @Nullable
-    public IBlockState getBlockState()
-    {
-        if(this.progressPos.equals(NULL_POS))
-        {
-            return null;
-        }
-        return this.schematicWorld.getBlockState(this.progressPos);
-    }
-
-    /**
      * @return The current local tile entity.
      */
     @Nullable
     public TileEntity getTileEntity()
     {
-        if(this.progressPos.equals(NULL_POS))
+        if (this.progressPos.equals(NULL_POS))
         {
             return null;
         }
@@ -680,28 +711,10 @@ public final class SchematicWrapper
     /**
      * @return A list of all the entities in the schematic.
      */
+    @NotNull
     public List<Entity> getEntities()
     {
         return schematicWorld.getEntities();
-    }
-
-    /**
-     * @return progressPos as an immutable.
-     */
-    @NotNull
-    public BlockPos getLocalPosition()
-    {
-        return this.progressPos.getImmutable();
-    }
-
-    /**
-     * Change the current progressPos. Used when loading progress.
-     *
-     * @param localPosition new progressPos.
-     */
-    public void setLocalPosition(BlockPos localPosition)
-    {
-        BlockPosUtil.set(this.progressPos, localPosition);
     }
 
     /**
@@ -732,46 +745,14 @@ public final class SchematicWrapper
     @Nullable
     public Item getItem()
     {
-        Block block = this.getBlock();
-        IBlockState metadata = this.getMetadata();
-        if(block == null || metadata == null)
+        @Nullable Block block = this.getBlock();
+        @Nullable IBlockState blockState = this.getBlockState();
+        if (block == null || blockState == null)
         {
             return null;
         }
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(block), 1, block.damageDropped(metadata));
 
-        //In some cases getItemFromBlock returns null. We then have to get the item the safer way.
-        if(stack.getItem() == null)
-        {
-            stack = new ItemStack(BlockUtils.getItemFromBlock(block));
-        }
-        return stack.getItem();
-    }
-
-    /**
-     * Calculate the current block in the schematic
-     *
-     * @return the current block or null if not initialized
-     */
-    @Nullable
-    public Block getBlock()
-    {
-        IBlockState state = getBlockState();
-        if(state == null)
-        {
-            return null;
-        }
-        return state.getBlock();
-    }
-
-    /**
-     * Calculate the current block's metadata in the schematic
-     *
-     * @return the current block's metadata or null if not initialized
-     */
-    public IBlockState getMetadata()
-    {
-        return getBlockState();
+        return BlockUtils.getItemStackFromBlockState(blockState).getItem();
     }
 
     /**
@@ -804,14 +785,6 @@ public final class SchematicWrapper
     public int getLength()
     {
         return schematicWorld.getLength();
-    }
-
-    /**
-     * Reset the progressPos.
-     */
-    public void reset()
-    {
-        BlockPosUtil.set(this.progressPos, NULL_POS);
     }
 
     /**

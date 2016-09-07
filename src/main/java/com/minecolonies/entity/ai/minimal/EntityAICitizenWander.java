@@ -6,6 +6,7 @@ import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 public class EntityAICitizenWander extends EntityAIBase
 {
@@ -50,34 +51,6 @@ public class EntityAICitizenWander extends EntityAIBase
     }
 
     /**
-     * Returns the right height for the given position (ground block)
-     *
-     * @param position Current position of the entity
-     * @return Ground level at (position.x, position.z)
-     */
-    private double getValidHeight(Vec3 position)
-    {
-        double returnHeight = position.yCoord;
-        if (position.yCoord < 0)
-        {
-            returnHeight = 0;
-        }
-
-        while (returnHeight >= 1 && citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord),
-                                                                             (int) returnHeight - 1,
-                                                                             MathHelper.floor_double(position.zCoord))))
-        {
-            returnHeight -= 1.0D;
-        }
-
-        while (!citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
-        {
-            returnHeight += 1.0D;
-        }
-        return returnHeight;
-    }
-
-    /**
      * Returns whether or not the citizen is too old to wander
      * True when age >= 100;
      *
@@ -91,6 +64,34 @@ public class EntityAICitizenWander extends EntityAIBase
     private boolean checkForRandom()
     {
         return citizen.getRNG().nextInt(120) != 0;
+    }
+
+    /**
+     * Returns the right height for the given position (ground block)
+     *
+     * @param position Current position of the entity
+     * @return Ground level at (position.x, position.z)
+     */
+    private double getValidHeight(@NotNull Vec3 position)
+    {
+        double returnHeight = position.yCoord;
+        if (position.yCoord < 0)
+        {
+            returnHeight = 0;
+        }
+
+        while (returnHeight >= 1 && citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord),
+                                                                              (int) returnHeight - 1,
+                                                                              MathHelper.floor_double(position.zCoord))))
+        {
+            returnHeight -= 1.0D;
+        }
+
+        while (!citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord), (int) returnHeight, MathHelper.floor_double(position.zCoord))))
+        {
+            returnHeight += 1.0D;
+        }
+        return returnHeight;
     }
 
     /**

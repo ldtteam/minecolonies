@@ -7,6 +7,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message class which manages the message to toggle automatic or manual job allocation.
@@ -16,11 +18,11 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
     /**
      * The Colony ID;
      */
-    private int              colonyId;
+    private int     colonyId;
     /**
      * Toggle the job allocation to true or false.
      */
-    private boolean          toggle;
+    private boolean toggle;
 
     /**
      * Empty public constructor.
@@ -36,42 +38,46 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
      * @param colony view of the colony to read data from
      * @param toggle toggle the job to manually or automatically
      */
-    public ToggleJobMessage(ColonyView colony, boolean toggle)
+    public ToggleJobMessage(@NotNull ColonyView colony, boolean toggle)
     {
         this.colonyId = colony.getID();
-        this.toggle   = toggle;
+        this.toggle = toggle;
+    }
+
+    /**
+     * Transformation from a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void fromBytes(@NotNull ByteBuf buf)
+    {
+        colonyId = buf.readInt();
+        toggle = buf.readBoolean();
     }
 
     /**
      * Transformation to a byteStream.
+     *
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytes(ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(toggle);
     }
 
     /**
-     * Transformation from a byteStream.
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    public void fromBytes(ByteBuf buf)
-    {
-        colonyId = buf.readInt();
-        toggle   = buf.readBoolean();
-    }
-
-    /**
      * Called when a message has been received.
+     *
      * @param message the message.
-     * @param ctx the context.
+     * @param ctx     the context.
      * @return possible response, in this case -&gt; null.
      */
+    @Nullable
     @Override
-    public IMessage onMessage(ToggleJobMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull ToggleJobMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)

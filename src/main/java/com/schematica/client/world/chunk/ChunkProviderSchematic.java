@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChunkProviderSchematic implements IChunkProvider
 {
     private final SchematicWorld world;
-    private final Chunk emptyChunk;
+    private final Chunk          emptyChunk;
     private final Map<Long, ChunkSchematic> chunks = new ConcurrentHashMap<>();
 
     public ChunkProviderSchematic(final SchematicWorld world)

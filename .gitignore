@@ -36,3 +36,5 @@ README.txt
 # Old launcher (different case)
 /minecolonies_Client.launch
 /minecolonies_Server.launch
+
+tools/.api_key

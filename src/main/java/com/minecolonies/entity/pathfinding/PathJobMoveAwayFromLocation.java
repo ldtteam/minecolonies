@@ -5,6 +5,8 @@ import com.minecolonies.util.Log;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Job that handles moving away from something.
@@ -13,20 +15,22 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
 {
     private static final double TIE_BREAKER = 1.001D;
 
-    protected final BlockPos         avoid;
+    @NotNull
+    protected final BlockPos avoid;
+    @NotNull
     protected final BlockPos heuristicPoint;
-    protected final int              avoidDistance;
+    protected final int      avoidDistance;
 
     /**
      * Prepares the PathJob for the path finding system.
      *
-     * @param world world the entity is in.
-     * @param start starting location.
-     * @param avoid location to avoid.
+     * @param world         world the entity is in.
+     * @param start         starting location.
+     * @param avoid         location to avoid.
      * @param avoidDistance how far to move away.
-     * @param range max range to search.
+     * @param range         max range to search.
      */
-    public PathJobMoveAwayFromLocation(World world, BlockPos start, BlockPos avoid, int avoidDistance, int range)
+    public PathJobMoveAwayFromLocation(World world, @NotNull BlockPos start, @NotNull BlockPos avoid, int avoidDistance, int range)
     {
         super(world, start, avoid, range);
 
@@ -40,7 +44,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
         dx *= scalar;
         dz *= scalar;
 
-        heuristicPoint = new BlockPos(start.getX() + (int)dx, start.getY(), start.getZ() + (int)dz);
+        heuristicPoint = new BlockPos(start.getX() + (int) dx, start.getY(), start.getZ() + (int) dz);
     }
 
     /**
@@ -48,6 +52,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      *
      * @return PathEntity of a path to the given location, a best-effort, or null
      */
+    @Nullable
     @Override
     protected PathEntity search()
     {
@@ -61,11 +66,12 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
 
     /**
      * For MoveAwayFromLocation we want our heuristic to weight
+     *
      * @param pos Position to compute heuristic from
      * @return heuristic as a double - Manhatten Distance with tie-breaker
      */
     @Override
-    protected double computeHeuristic(BlockPos pos)
+    protected double computeHeuristic(@NotNull BlockPos pos)
     {
         int dx = pos.getX() - heuristicPoint.getX();
         int dy = pos.getY() - heuristicPoint.getY();
@@ -76,13 +82,13 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     }
 
     @Override
-    protected boolean isAtDestination(Node n)
+    protected boolean isAtDestination(@NotNull Node n)
     {
         return getNodeResultScore(n) >= (avoidDistance * avoidDistance);
     }
 
     @Override
-    protected double getNodeResultScore(Node n)
+    protected double getNodeResultScore(@NotNull Node n)
     {
         return avoid.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ());
     }

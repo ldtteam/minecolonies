@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -15,13 +16,24 @@ import org.lwjgl.input.Keyboard;
  */
 public class Window extends View
 {
-    private static final int DEFAULT_WIDTH = 420;
+    private static final int DEFAULT_WIDTH  = 420;
     private static final int DEFAULT_HEIGHT = 240;
 
     protected Screen screen;
 
     protected boolean windowPausesGame = true;
-    protected boolean lightbox = true;
+    protected boolean lightbox         = true;
+
+    /**
+     * Create a window from an xml file.
+     *
+     * @param resource ResourceLocation to get file from.
+     */
+    public Window(ResourceLocation resource)
+    {
+        this();
+        Loader.createFromXMLFile(resource, this);
+    }
 
     /**
      * Make default sized window.
@@ -49,17 +61,6 @@ public class Window extends View
     /**
      * Create a window from an xml file.
      *
-     * @param resource ResourceLocation to get file from.
-     */
-    public Window(ResourceLocation resource)
-    {
-        this();
-        Loader.createFromXMLFile(resource, this);
-    }
-
-    /**
-     * Create a window from an xml file.
-     *
      * @param resource location to get file from.
      */
     public Window(String resource)
@@ -73,7 +74,7 @@ public class Window extends View
      *
      * @param params xml parameters.
      */
-    public void loadParams(PaneParams params)
+    public void loadParams(@NotNull PaneParams params)
     {
         String inherit = params.getStringAttribute("inherit", null);
         if (inherit != null)
@@ -114,18 +115,8 @@ public class Window extends View
     private static void updateDebugging()
     {
         debugging = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
-                Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) &&
-                Keyboard.isKeyDown(Keyboard.KEY_LMENU);
-    }
-
-    /**
-     * Windows wrap a GuiScreen
-     *
-     * @return The current GuiScreen
-     */
-    public GuiScreen getScreen()
-    {
-        return screen;
+                      Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) &&
+                      Keyboard.isKeyDown(Keyboard.KEY_LMENU);
     }
 
     /**
@@ -160,12 +151,13 @@ public class Window extends View
     }
 
     /**
-     * Close the Window
+     * Windows wrap a GuiScreen
+     *
+     * @return The current GuiScreen
      */
-    public void close()
+    public GuiScreen getScreen()
     {
-        this.mc.thePlayer.closeScreen();
-        this.mc.setIngameFocus();
+        return screen;
     }
 
     /**
@@ -218,6 +210,15 @@ public class Window extends View
         {
             close();
         }
+    }
+
+    /**
+     * Close the Window
+     */
+    public void close()
+    {
+        this.mc.thePlayer.closeScreen();
+        this.mc.setIngameFocus();
     }
 
     /**

@@ -1,5 +1,8 @@
 package com.minecolonies.colony.materials;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +18,7 @@ public class Material
     /**
      * Map of where each Material is stored and how much is there.
      */
+    @NotNull
     private Map<MaterialStore, Integer> locations = new HashMap<>();
 
     /**
@@ -25,11 +29,6 @@ public class Material
     Material(Integer id)
     {
         this.id = id;
-    }
-
-    Integer getID()
-    {
-        return id;
     }
 
     /**
@@ -44,14 +43,15 @@ public class Material
     }
 
     @Override
-    public boolean equals(Object material)
+    public boolean equals(@Nullable Object material)
     {
-        return material != null && material.getClass() == this.getClass() && id.equals(((Material)material).id);
+        return material != null && material.getClass() == this.getClass() && id.equals(((Material) material).id);
     }
 
     /**
      * @return An unmodifiable version of locations
      */
+    @NotNull
     public Map<MaterialStore, Integer> getLocationsStored()
     {
         return Collections.unmodifiableMap(locations);
@@ -60,13 +60,13 @@ public class Material
     /**
      * Returns how much material is at a location.
      *
-     * @param store Location we are checking
+     * @param store    Location we are checking
      * @param material Material that we are checking
      * @return How many of material is stored at store
      */
-    public int getMaterialCount(MaterialStore store, Material material)
+    public int getMaterialCount(@NotNull MaterialStore store, Material material)
     {
-        if(locations.containsKey(store))
+        if (locations.containsKey(store))
         {
             return store.getMaterialCount(material);
         }
@@ -77,7 +77,7 @@ public class Material
     void add(MaterialStore store, int quantity)
     {
         Integer count = locations.get(store);
-        if(count == null)
+        if (count == null)
         {
             locations.put(store, quantity);
         }
@@ -90,11 +90,11 @@ public class Material
     void remove(MaterialStore store, int quantity)
     {
         Integer count = locations.get(store);
-        if(count == null || count < quantity)
+        if (count == null || count < quantity)
         {
             throw new QuantityNotFound("MaterialStore (Material)", getID(), count == null ? 0 : count, quantity);
         }
-        else if(count == quantity)
+        else if (count == quantity)
         {
             locations.remove(store);
         }
@@ -102,6 +102,11 @@ public class Material
         {
             locations.put(store, count - quantity);
         }
+    }
+
+    Integer getID()
+    {
+        return id;
     }
 
     void remove(MaterialStore store)

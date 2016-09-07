@@ -33,14 +33,14 @@ class ChunkSchematic extends Chunk
     }
 
     @Override
-    public boolean getAreLevelsEmpty(final int startY, final int endY)
-    {
-        return false;
-    }
-
-    @Override
     public TileEntity getTileEntity(final BlockPos pos, final EnumCreateEntityType createEntityType)
     {
         return this.world.getTileEntity(pos);
+    }
+
+    @Override
+    public boolean getAreLevelsEmpty(final int startY, final int endY)
+    {
+        return false;
     }
 }

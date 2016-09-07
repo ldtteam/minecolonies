@@ -8,6 +8,7 @@ import com.minecolonies.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 public class JobDeliveryman extends AbstractJob
 {
@@ -20,11 +21,23 @@ public class JobDeliveryman extends AbstractJob
     }
 
     @Override
+    public void readFromNBT(@NotNull NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        if (compound.hasKey(TAG_DESTINATION))
+        {
+            destination = BlockPosUtil.readFromNBT(compound, TAG_DESTINATION);
+        }
+    }
+
+    @NotNull
+    @Override
     public String getName()
     {
         return "com.minecolonies.job.Deliveryman";
     }
 
+    @NotNull
     @Override
     public RenderBipedCitizen.Model getModel()
     {
@@ -32,29 +45,13 @@ public class JobDeliveryman extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if(hasDestination())
+        if (hasDestination())
         {
             BlockPosUtil.writeToNBT(compound, TAG_DESTINATION, destination);
         }
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        if(compound.hasKey(TAG_DESTINATION))
-        {
-            destination = BlockPosUtil.readFromNBT(compound, TAG_DESTINATION);
-        }
-    }
-
-    public boolean isNeeded()
-    {
-        Colony colony = getCitizen().getColony();
-        return colony != null && !colony.getDeliverymanRequired().isEmpty();
     }
 
     /**
@@ -62,6 +59,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @return your personal AI instance.
      */
+    @NotNull
     @Override
     public AbstractAISkeleton generateAI()
     {
@@ -76,6 +74,12 @@ public class JobDeliveryman extends AbstractJob
     public boolean hasDestination()
     {
         return destination != null;
+    }
+
+    public boolean isNeeded()
+    {
+        Colony colony = getCitizen().getColony();
+        return colony != null && !colony.getDeliverymanRequired().isEmpty();
     }
 
     /**

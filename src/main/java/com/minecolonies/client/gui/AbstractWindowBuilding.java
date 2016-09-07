@@ -3,8 +3,8 @@ package com.minecolonies.client.gui;
 import com.blockout.controls.Button;
 import com.blockout.controls.Label;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.AbstractBuildingHut;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.network.messages.BuildRequestMessage;
 import com.minecolonies.network.messages.OpenInventoryMessage;
 import com.minecolonies.util.LanguageHandler;
@@ -12,7 +12,7 @@ import com.minecolonies.util.LanguageHandler;
 /**
  * Manage windows associated with Buildings.
  *
- * @param <B>   Class extending {@link AbstractBuildingHut.View}.
+ * @param <B> Class extending {@link AbstractBuildingHut.View}.
  */
 public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View> extends AbstractWindowSkeleton
 {
@@ -29,8 +29,8 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     /**
      * Constructor for the windows that are associated with buildings.
      *
-     * @param building      Class extending {@link AbstractBuildingHut.View}.
-     * @param resource      Resource location string.
+     * @param building Class extending {@link AbstractBuildingHut.View}.
+     * @param resource Resource location string.
      */
     public AbstractWindowBuilding(final B building, final String resource)
     {
@@ -45,8 +45,8 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     /**
      * Action when build button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void buildClicked(Button ignored)
     {
@@ -56,8 +56,8 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     /**
      * Action when repair button is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void repairClicked(Button ignored)
     {
@@ -67,8 +67,8 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     /**
      * Action when a button opening an inventory is clicked
      *
-     * @param ignored   Parameter is ignored, since some actions require a button.
-     *                  This method does not
+     * @param ignored Parameter is ignored, since some actions require a button.
+     *                This method does not
      */
     private void inventoryClicked(Button ignored)
     {

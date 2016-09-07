@@ -1,7 +1,7 @@
 package com.blockout.controls;
 
 import com.blockout.PaneParams;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  */
 public class Text extends AbstractTextElement
 {
-    protected String textContent;
+    protected String       textContent;
     protected List<String> formattedText;
 
     protected int textHeight;
@@ -99,10 +99,10 @@ public class Text extends AbstractTextElement
             else
             {
                 formattedText = Collections.unmodifiableList(
-                        mc.fontRendererObj.listFormattedStringToWidth(textContent, (int) (getWidth() / scale))
-                                .stream()
-                                .filter(s -> s != null)
-                                .collect(Collectors.toList()));
+                  mc.fontRendererObj.listFormattedStringToWidth(textContent, (int) (getWidth() / scale))
+                    .stream()
+                    .filter(s -> s != null)
+                    .collect(Collectors.toList()));
             }
 
             int numLines = formattedText.size();
@@ -157,12 +157,12 @@ public class Text extends AbstractTextElement
                 }
             }
 
-            GL11.glPushMatrix();
-            GL11.glTranslatef((float) (getX() + offsetX), (float) (getY() + offsetY), 0);
-            GL11.glScalef((float) scale, (float) scale, (float) scale);
+            GlStateManager.pushMatrix();
+            GlStateManager.translate((float) (getX() + offsetX), (float) (getY() + offsetY), 0);
+            GlStateManager.scale((float) scale, (float) scale, (float) scale);
             mc.renderEngine.bindTexture(TEXTURE);
             mc.fontRendererObj.drawString(s, 0, 0, textColor, shadow);
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
 
             offsetY += getLineHeight() + scaledLinespace;
 

@@ -4,6 +4,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
+import org.jetbrains.annotations.NotNull;
 
 public class ModelEntityCitizenFemaleCitizen extends ModelBiped
 {
@@ -94,6 +95,13 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         setRotation(dressPart3, 0F, 0F, 0F);
     }
 
+    private void setRotation(@NotNull ModelRenderer model, float x, float y, float z)
+    {
+        model.rotateAngleX = x;
+        model.rotateAngleY = y;
+        model.rotateAngleZ = z;
+    }
+
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
     {
@@ -110,13 +118,6 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         dressPart1.render(scaleFactor);
         dressPart2.render(scaleFactor);
         dressPart3.render(scaleFactor);
-    }
-
-    private void setRotation(ModelRenderer model, float x, float y, float z)
-    {
-        model.rotateAngleX = x;
-        model.rotateAngleY = y;
-        model.rotateAngleZ = z;
     }
 
     @Override
@@ -148,7 +149,7 @@ public class ModelEntityCitizenFemaleCitizen extends ModelBiped
         bipedRightArm.rotateAngleX += MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
         bipedLeftArm.rotateAngleX -= MathHelper.sin(ageInTicks * 0.067F) * 0.05F;
 
-        if(swingProgress > -9990F)
+        if (swingProgress > -9990F)
         {
             float f6 = swingProgress;
             bipedBody.rotateAngleY = MathHelper.sin((float) (MathHelper.sqrt_float(f6) * Math.PI * 2.0F)) * 0.2F;

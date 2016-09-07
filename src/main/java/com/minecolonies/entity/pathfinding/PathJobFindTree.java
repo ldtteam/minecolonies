@@ -4,6 +4,7 @@ import com.minecolonies.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Find and return a path to the nearest tree
@@ -13,11 +14,6 @@ import net.minecraft.world.World;
  */
 public class PathJobFindTree extends AbstractPathJob
 {
-    public static class TreePathResult extends PathResult
-    {
-        public BlockPos treeLocation;
-    }
-
     private BlockPos hutLocation;
 
     /**
@@ -25,16 +21,22 @@ public class PathJobFindTree extends AbstractPathJob
      *
      * @param world the world within which to path
      * @param start the start position from which to path from
-     * @param home   the position of the workers hut
+     * @param home  the position of the workers hut
      * @param range maximum path range
      */
-    public PathJobFindTree(World world, BlockPos start, BlockPos home, int range)
+    public PathJobFindTree(World world, @NotNull BlockPos start, BlockPos home, int range)
     {
         super(world, start, start, range, new TreePathResult());
 
         hutLocation = home;
     }
 
+    public static class TreePathResult extends PathResult
+    {
+        public BlockPos treeLocation;
+    }
+
+    @NotNull
     @Override
     public TreePathResult getResult()
     {
@@ -42,7 +44,7 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(BlockPos pos)
+    protected double computeHeuristic(@NotNull BlockPos pos)
     {
         int dx = pos.getX() - hutLocation.getX();
         int dy = pos.getY() - hutLocation.getY();
@@ -53,12 +55,12 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isAtDestination(Node n)
+    protected boolean isAtDestination(@NotNull Node n)
     {
         return n.parent != null && isNearTree(n);
     }
 
-    private boolean isNearTree(Node n)
+    private boolean isNearTree(@NotNull Node n)
     {
         if (n.pos.getX() != n.parent.pos.getX())
         {
@@ -74,7 +76,7 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isTree(BlockPos pos)
     {
-        if(Tree.checkTree(world, pos))
+        if (Tree.checkTree(world, pos))
         {
             getResult().treeLocation = pos;
             return true;
@@ -90,7 +92,7 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isPassable(Block block, BlockPos pos)
+    protected boolean isPassable(@NotNull Block block, BlockPos pos)
     {
         return super.isPassable(block, pos) || block.isLeaves(world, pos);
     }
