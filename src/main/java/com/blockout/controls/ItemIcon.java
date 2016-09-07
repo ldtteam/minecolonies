@@ -2,6 +2,7 @@ package com.blockout.controls;
 
 import com.blockout.Pane;
 import com.blockout.PaneParams;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -40,6 +41,7 @@ public class ItemIcon extends Pane
     protected void drawSelf(int mx, int my)
     {
         mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
-        mc.getRenderItem().renderItemOverlayIntoGUI(mc.fontRendererObj, itemStack, x, y, "");
+        mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, itemStack, x, y);
+        GlStateManager.disableLighting();
     }
 }
