@@ -88,9 +88,9 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         this.bindTexture(getResourceLocation(te));
 
         GlStateManager.rotate(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET);
-        
+
         //In the case of worldLags tileEntities may sometimes disappear.
-        if(getWorld().getBlockState(te.getPos()) instanceof BlockHutField)
+        if(getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockHutField)
         {
             final EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
             switch (facing)
