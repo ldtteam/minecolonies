@@ -399,7 +399,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             requestSeeds = false;
         }
 
-
         return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof BlockCrops)
                  && !(world.getBlockState(position).getBlock() instanceof BlockHutField) && world.getBlockState(position).getBlock() == Blocks.farmland;
     }
@@ -444,10 +443,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
         else
         {
-            resetVariables();
             buildingFarmer.getCurrentField().setNeedsWork(false);
             buildingFarmer.getCurrentField().setFieldStage(PLANTED);
         }
+
+        resetVariables();
         return AIState.IDLE;
     }
 

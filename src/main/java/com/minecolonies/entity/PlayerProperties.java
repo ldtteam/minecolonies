@@ -46,8 +46,7 @@ public final class PlayerProperties implements IExtendedEntityProperties
      * @param player player to get property for
      * @return PlayerProperties for the player.
      */
-    @NotNull
-    public static PlayerProperties get(@NotNull EntityPlayer player)
+    public static PlayerProperties get(EntityPlayer player)
     {
         return (PlayerProperties) player.getExtendedProperties(Constants.PLAYER_PROPERTY_NAME);
     }
