@@ -4,6 +4,7 @@ import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -16,19 +17,17 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import java.util.Random;
 
-/**
- * Created by Northstar on 8/29/2016.
- */
-
 public class BlockBarrel extends Block
 {
-    public int timer=0;
+    public static final PropertyInteger BARRELSTATE = PropertyInteger.create("BARRELSATE",0,2);
+    public static final PropertyInteger FULLNES = PropertyInteger.create("FULLNES",0,10);
+    private int bs=0;
+    private int fl=0;
 
-    public int BarrelState=0;
-    //barrel's fullnes state
-    private  int fullnes =0;
-    //is compost cooked ?
-    private  boolean isCompostReady =false;
+
+
+    private int timer=0;
+
     /**
      * The hardness this block has.
      */
@@ -48,8 +47,11 @@ public class BlockBarrel extends Block
     public BlockBarrel()
     {
         super(Material.wood);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FULLNES, Integer.valueOf(0)).withProperty(BARRELSTATE,Integer.valueOf(0)));
+
         this.setTickRandomly(true);
         initBlock();
+
     }
 
     /**
@@ -63,6 +65,7 @@ public class BlockBarrel extends Block
         GameRegistry.registerBlock(this, BLOCK_NAME);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
+
     }
 
     /**
@@ -76,63 +79,109 @@ public class BlockBarrel extends Block
         return true;
     }
 
-    //whenever player right click to barrel call this.
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        System.out.println("activated block");
-        if (worldIn.isRemote)
+        System.out.println("block right-clicked");
+
+        ItemStack itemstack = playerIn.inventory.getCurrentItem();
+        UseBarrel(worldIn,playerIn,itemstack,state,pos);
+       return true;
+    }
+
+    public void AddItemToBarrel(World worldIn,EntityPlayer playerIn,ItemStack itemStack,IBlockState state,BlockPos pos)
+    {
+        UseBarrel(worldIn,playerIn,itemStack,state,pos);
+    }
+    public void GetItemFromBarrel(World worldIn,EntityPlayer playerIn,ItemStack itemStack,IBlockState state,BlockPos pos)
+    {
+        bs = ((Integer)state.getValue(BARRELSTATE)).intValue();
+        if(bs==2)
         {
-            return true;
+            UseBarrel(worldIn,playerIn,null,state,pos);
         }
-        else
-        {
+    }
 
-            if(isCompostReady==true&&BarrelState==2)
+    //whenever player right click to barrel call this.
+    public boolean UseBarrel(World worldIn,EntityPlayer playerIn, ItemStack itemstack,IBlockState state,BlockPos pos)
+    {
+        System.out.println("block activated");
+
+        bs = ((Integer)state.getValue(BARRELSTATE)).intValue();
+        fl = ((Integer)state.getValue(FULLNES)).intValue();
+
+        System.out.println("At this moment bs= "+bs+" and fl="+fl);
+
+
+        //if statement 1
+        if(bs==2)
             {
+                System.out.println("because of bs="+bs+" if statement 1 worked");
+
                 playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost,8));
-                isCompostReady = false;
-                BarrelState=0;
+                worldIn.setBlockState(pos,state.withProperty(BARRELSTATE, Integer.valueOf(0)));
+                bs = ((Integer)state.getValue(BARRELSTATE)).intValue();
+                System.out.println("now BARRELSTATE = "+bs);
                 return true;
             }
 
-            //check what current item player has.
-            ItemStack itemstack = playerIn.inventory.getCurrentItem();
+            if (itemstack == null) {return true;}
 
-            if (itemstack == null)
-            {
-                return true;
-            }
             Item item = itemstack.getItem();
 
-            if (item== Items.spider_eye && fullnes<100 && BarrelState==0) { itemstack.stackSize--; fullnes+=10; System.out.println("item consumed, new fullness: " + fullnes); }
-            if (item== Items.fish && fullnes<100 && BarrelState==0) { itemstack.stackSize--; fullnes+=5; System.out.println("item consumed, new fullness: " + fullnes); }
-            if (item== Items.rotten_flesh && fullnes<100 && BarrelState==0) { itemstack.stackSize--; fullnes+=15; System.out.println("item consumed, new fullness: " + fullnes); }
-
-            if (fullnes>=100&&BarrelState==0)
+            if (item==Items.rotten_flesh&&bs==0&&fl<10)
             {
-                BarrelState=1;
-                System.out.println("fullnes reached " +fullnes + "and Barrel State changed to " + BarrelState);
+                System.out.println("item Consumed");
+
+                itemstack.stackSize--;
+                fl+=1;
+                if (fl>10){fl=10;}
+                worldIn.setBlockState(pos,state.withProperty(FULLNES, Integer.valueOf(fl)));
+                System.out.println("now FULLNES = "+fl);
+
+                return  true;
             }
-        }
+
         return true;
     }
 
     @Override
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-        System.out.println("Update method being called");
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    {
+        System.out.println("UpdateTick called");
 
-        if (BarrelState==1)
+        bs = ((Integer)state.getValue(BARRELSTATE)).intValue();
+        fl = ((Integer)state.getValue(FULLNES)).intValue();
+
+        System.out.println("now BARRELSTATE = "+bs+ " and FULLNES = "+fl);
+
+//if statement 2
+        if (fl>=10&&bs==0)
         {
-            timer++;
-            System.out.println("timer start ticking: "+timer);
+            System.out.println("if Statement 2 worked");
+
+            worldIn.setBlockState(pos,state.withProperty(BARRELSTATE, Integer.valueOf(1)));
+            bs = ((Integer)state.getValue(BARRELSTATE)).intValue();
+            System.out.println("New BARRELSTATE = "+bs);
+
+
         }
+
+        if (bs==1) {timer++; System.out.println("timer ticked");}
+
         if (timer>=2)
         {
-            fullnes=0;
-            BarrelState=2;
-            isCompostReady=true;
+            System.out.println("timer reached " +timer);
+
+            fl=0;
+            bs=2;
             timer=0;
-            System.out.println("timer reached to"+timer+" , set fullnes=0, curr. fullness"+fullnes+" and Barrel State=" + BarrelState);
+            worldIn.setBlockState(pos,state.withProperty(BARRELSTATE, Integer.valueOf(bs)));
+            worldIn.setBlockState(pos,state.withProperty(FULLNES, Integer.valueOf(fl)));
+
+            System.out.println("new BARRELSTATE = "+bs+" And FULLNES = " +fl);
+
+
         }
     }
+
 }
