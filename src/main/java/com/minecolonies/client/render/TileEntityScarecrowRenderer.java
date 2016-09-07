@@ -80,9 +80,6 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     @Override
     public void renderTileEntityAt(@NotNull ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage)
     {
-
-
-
         //Store the transformation
         GlStateManager.pushMatrix();
         //Set viewport to tile entity position to render it
@@ -91,8 +88,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         this.bindTexture(getResourceLocation(te));
 
         GlStateManager.rotate(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET);
-
-
+        
         //In the case of worldLags tileEntities may sometimes disappear.
         if(getWorld().getBlockState(te.getPos()) instanceof BlockHutField)
         {
