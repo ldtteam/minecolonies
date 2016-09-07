@@ -4,6 +4,7 @@ import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.util.AchievementUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
@@ -75,6 +76,7 @@ public final class ColonyManager
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
 
+        colony.triggerAchievement(ModAchievements.achievementGetSupply);
         colony.triggerAchievement(ModAchievements.achievementBuildingTownhall);
 
         markDirty();
@@ -82,6 +84,13 @@ public final class ColonyManager
         Log.logger.info(String.format("New Colony %d", colony.getID()));
 
         return colony;
+    }
+
+    /**
+     * Syncs the achievements for all colonies.
+     */
+    public static void syncAllColoniesAchievements(){
+        colonies.values().forEach(AchievementUtils::syncAchievements);
     }
 
     /**
