@@ -80,13 +80,8 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     @Override
     public void renderTileEntityAt(@NotNull ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage)
     {
-        //In the case of worldLags tileEntities may sometimes disappear.
-        if(!(getWorld().getBlockState(te.getPos()) instanceof BlockHutField))
-        {
-            return;
-        }
 
-        final EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
+
 
         //Store the transformation
         GlStateManager.pushMatrix();
@@ -97,19 +92,25 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
 
         GlStateManager.rotate(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET);
 
-        switch (facing)
+
+        //In the case of worldLags tileEntities may sometimes disappear.
+        if(getWorld().getBlockState(te.getPos()) instanceof BlockHutField)
         {
-            case EAST:
-                GlStateManager.rotate((float) (BASIC_ROTATION * ROTATE_EAST), 0, 1, 0);
-                break;
-            case SOUTH:
-                GlStateManager.rotate((float) (BASIC_ROTATION * ROTATE_SOUTH), 0, 1, 0);
-                break;
-            case WEST:
-                GlStateManager.rotate((float) (BASIC_ROTATION * ROTATE_WEST), 0, 1, 0);
-                break;
-            default:
-                //don't rotate at all.
+            final EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
+            switch (facing)
+            {
+                case EAST:
+                    GlStateManager.rotate((float) (BASIC_ROTATION * ROTATE_EAST), 0, 1, 0);
+                    break;
+                case SOUTH:
+                    GlStateManager.rotate((float) (BASIC_ROTATION * ROTATE_SOUTH), 0, 1, 0);
+                    break;
+                case WEST:
+                    GlStateManager.rotate((float) (BASIC_ROTATION * ROTATE_WEST), 0, 1, 0);
+                    break;
+                default:
+                    //don't rotate at all.
+            }
         }
 
         this.model.render((float) SIZERATIO);
