@@ -32,7 +32,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * The percentage of time needed if we are one level higher.
      */
-    private static final double LEVEL_MODIFIER       = 0.95D;
+    private static final double LEVEL_MODIFIER       = 0.85D;
     /**
      * The Multiplier to add to hand mining speed.
      */
