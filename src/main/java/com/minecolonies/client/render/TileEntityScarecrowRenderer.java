@@ -80,6 +80,12 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     @Override
     public void renderTileEntityAt(@NotNull ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage)
     {
+        //In the case of worldLags tileEntities may sometimes disappear.
+        if(!(getWorld().getBlockState(te.getPos()) instanceof BlockHutField))
+        {
+            return;
+        }
+
         final EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
 
         //Store the transformation
