@@ -762,7 +762,10 @@ public class Colony implements IColony
     {
         @Nullable List<AbstractBuilding> removedBuildings = null;
 
-        for (@NotNull AbstractBuilding building : buildings.values())
+        //Need this list, we may enter he while we add a building in the real world.
+        List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
+
+        for (@NotNull AbstractBuilding building : tempBuildings)
         {
             final BlockPos loc = building.getLocation();
             if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
