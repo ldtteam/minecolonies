@@ -31,6 +31,11 @@ public final class ModAchievements
     public static final int ACHIEVEMENT_SIZE_CITY = 20;
 
     /**
+     * Population size to achieve {@link ModAchievements#achievementSizeMetropolis}.
+     */
+    public static final int ACHIEVEMENT_SIZE_METROPOLIS = 50;
+
+    /**
      * Place a supply chest.
      */
     public static final Achievement achievementGetSupply      = new MineColoniesAchievement("supply", "supply", -2, -2, ModItems.supplyChest, null).registerStat();
@@ -131,6 +136,11 @@ public final class ModAchievements
      */
     public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", "size.city", 6, -2, Items.diamond, achievementSizeTown).registerStat();
 
+    /**
+     * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_METROPOLIS} citizens.
+     */
+    public static final Achievement achievementSizeMetropolis = new MineColoniesAchievement("size.metropolis", "size.metropolis", 8, -2, Items.diamond, achievementSizeCity).registerStat();
+
     // Achievement pages#+
     /**
      * The MineColonies achievement page.
@@ -152,7 +162,8 @@ public final class ModAchievements
                                                                                                         achievementUpgradeBuilderMax,
                                                                                                         achievementUpgradeLumberjackMax,
                                                                                                         achievementUpgradeMinerMax,
-                                                                                                        achievementUpgradeFisherMax
+                                                                                                        achievementUpgradeFisherMax,
+                                                                                                        achievementSizeMetropolis
     );
 
     /**
