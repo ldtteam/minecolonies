@@ -141,7 +141,7 @@ public final class ModAchievements
      */
     public static final Achievement achievementSizeMetropolis = new MineColoniesAchievement("size.metropolis", "size.metropolis", 8, -2, Items.diamond, achievementSizeCity).registerStat();
 
-    // Achievement pages#+
+    // Achievement pages
     /**
      * The MineColonies achievement page.
      */
