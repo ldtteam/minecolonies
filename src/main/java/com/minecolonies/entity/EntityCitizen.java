@@ -1,57 +1,24 @@
 package com.minecolonies.entity;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
-import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.CitizenDataView;
-import com.minecolonies.colony.Colony;
-import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.*;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.entity.ai.minimal.EntityAICitizenAvoidEntity;
-import com.minecolonies.entity.ai.minimal.EntityAICitizenWander;
-import com.minecolonies.entity.ai.minimal.EntityAIGoHome;
-import com.minecolonies.entity.ai.minimal.EntityAIOpenFenceGate;
-import com.minecolonies.entity.ai.minimal.EntityAISleep;
+import com.minecolonies.entity.ai.minimal.*;
 import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
-import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.EntityUtils;
-import com.minecolonies.util.ExperienceUtils;
-import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Log;
-
+import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.INpc;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIOpenDoor;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.ai.EntityAIWatchClosest2;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
@@ -63,20 +30,17 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * The Class used to represent the citizen entities.
@@ -91,14 +55,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final int DATA_CITIZEN_ID      = 17;
     private static final int DATA_MODEL           = 18;
     private static final int DATA_RENDER_METADATA = 19;*/
-	
-    private static final DataParameter<Integer> DATA_TEXTURE = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> DATA_LEVEL = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> DATA_IS_FEMALE = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> DATA_COLONY_ID = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
-    private static final DataParameter<Integer> DATA_CITIZEN_ID = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
-    private static final DataParameter<String> DATA_MODEL = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
-    private static final DataParameter<String> DATA_RENDER_METADATA = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
+
+    private static final DataParameter<Integer> DATA_TEXTURE         = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> DATA_LEVEL           = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> DATA_IS_FEMALE       = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> DATA_COLONY_ID       = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
+    private static final DataParameter<Integer> DATA_CITIZEN_ID      = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
+    private static final DataParameter<String>  DATA_MODEL           = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
+    private static final DataParameter<String>  DATA_RENDER_METADATA = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
 
     /**
      * The movement speed for the citizen to run away.
@@ -159,13 +123,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Divide experience by a factor to ensure more levels fit in an int.
      */
     private static final int EXP_DIVIDER = 10;
-    private static Field        navigatorField;
-    protected Status status = Status.IDLE;
-    private RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
+    private static Field navigatorField;
+    protected Status                   status  = Status.IDLE;
+    private   RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
     private String           renderMetadata;
     private ResourceLocation texture;
     private InventoryCitizen inventory;
-    private int colonyId;
+    private int              colonyId;
     private int citizenId = 0;
     private int level;
     private int textureId;
@@ -180,7 +144,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private CitizenData citizenData;
     @NotNull
     private Map<String, Integer> statusMessages = new HashMap<>();
-    private        PathNavigate newNavigator;
+    private PathNavigate newNavigator;
 
     /**
      * Citizen constructor.
@@ -488,7 +452,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             int py = (int) posY;
             int pz = MathHelper.floor_double(posZ);
 
-            this.onGround = worldObj.getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(worldObj.getBlockState(new BlockPos(px, py, pz)), worldObj, new BlockPos(px, py, pz), this);
+            this.onGround =
+              worldObj.getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(worldObj.getBlockState(new BlockPos(px, py, pz)), worldObj, new BlockPos(px, py, pz), this);
         }
 
         super.updateFallState(y, onGroundIn, state, pos);
@@ -675,8 +640,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     private void updateColonyClient()
     {
-    	if(dataManager.isDirty())
-    	{
+        if (dataManager.isDirty())
+        {
             if (colonyId == 0)
             {
                 colonyId = dataManager.get(DATA_COLONY_ID);
@@ -694,7 +659,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             renderMetadata = dataManager.get(DATA_RENDER_METADATA);
             setTexture();
             dataManager.setClean();
-    	}
+        }
         updateArmSwingProgress();
     }
 
@@ -737,23 +702,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Server-specific update for the EntityCitizen
-     */
-    public void updateColonyServer()
-    {
-        if (colonyId == 0)
-        {
-            setDead();
-            return;
-        }
-
-        if (colony == null)
-        {
-            handleNullColony();
-        }
-    }
-
-    /**
      * Checks the citizens health status and heals the citizen if necessary.
      */
     private void checkHeal()
@@ -783,6 +731,33 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         int moddedTextureId = (textureId % model.numTextures) + 1;
         texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
+    }
+
+    public int getOffsetTicks()
+    {
+        return this.ticksExisted + 7 * this.getEntityId();
+    }
+
+    public RenderBipedCitizen.Model getModelID()
+    {
+        return modelId;
+    }
+
+    /**
+     * Server-specific update for the EntityCitizen
+     */
+    public void updateColonyServer()
+    {
+        if (colonyId == 0)
+        {
+            setDead();
+            return;
+        }
+
+        if (colony == null)
+        {
+            handleNullColony();
+        }
     }
 
     private void handleNullColony()
@@ -817,16 +792,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
 
         setColony(c, data);
-    }
-
-    public int getOffsetTicks()
-    {
-        return this.ticksExisted + 7 * this.getEntityId();
-    }
-
-    public RenderBipedCitizen.Model getModelID()
-    {
-        return modelId;
     }
 
     private void handleExistingCitizen(@NotNull CitizenData data, @NotNull EntityCitizen existingCitizen)
@@ -930,7 +895,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //Delete stuff from Inventory Array that isn't really used.
         for (int i = 0; i < getInventoryCitizen().getSizeInventory(); i++)
         {
-        	setItemStackToSlot(EntityEquipmentSlot.values()[i], null);
+            setItemStackToSlot(EntityEquipmentSlot.values()[i], null);
         }
 
         //Drop actual inventory
@@ -958,6 +923,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
     //public ItemStack[] getInventory(){
     //    throw new IllegalStateException("DO NOT USE THIS METHOD, DUDE!");
     //}
+
+    /**
+     * Return this citizens inventory.
+     *
+     * @return the inventory this citizen has.
+     */
+    @NotNull
+    public InventoryCitizen getInventoryCitizen()
+    {
+        return inventory;
+    }
 
     public EntityItem entityDropItem(@NotNull ItemStack itemstack)
     {
@@ -1023,17 +999,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return InventoryUtils.isInventoryFull(getInventoryCitizen());
     }
 
-    /**
-     * Return this citizens inventory.
-     *
-     * @return the inventory this citizen has.
-     */
-    @NotNull
-    public InventoryCitizen getInventoryCitizen()
-    {
-        return inventory;
-    }
-
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
@@ -1058,8 +1023,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     @Override
     @Nullable
-    public Entity changeDimension(int dimensionIn){
-    	return null;
+    public Entity changeDimension(int dimensionIn)
+    {
+        return null;
     }
 
     @NotNull
@@ -1143,7 +1109,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
             int i = itemStack.stackSize;
             if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventoryCitizen(), itemStack))
             {
-            	this.worldObj.playSound((EntityPlayer)null, this.getPosition(), new SoundEvent(new ResourceLocation("random.pop")), SoundCategory.AMBIENT, 0.2F, (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
+                this.worldObj.playSound((EntityPlayer) null,
+                  this.getPosition(),
+                  new SoundEvent(new ResourceLocation("random.pop")),
+                  SoundCategory.AMBIENT,
+                  0.2F,
+                  (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
                 this.onItemPickup(this, i);
 
                 if (itemStack.stackSize <= 0)
@@ -1219,7 +1190,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
                   new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
-            worldObj.playSound((EntityPlayer)null, blockPos, block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
+            worldObj.playSound((EntityPlayer) null,
+              blockPos,
+              block.getSoundType().getBreakSound(),
+              SoundCategory.BLOCKS,
+              block.getSoundType().getVolume(),
+              block.getSoundType().getPitch());
             worldObj.setBlockToAir(blockPos);
 
             damageItemInHand(1);
@@ -1234,7 +1210,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), 1),
                   new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
-            worldObj.playSound((EntityPlayer)null, blockPos, block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
+            worldObj.playSound((EntityPlayer) null,
+              blockPos,
+              block.getSoundType().getBreakSound(),
+              SoundCategory.BLOCKS,
+              block.getSoundType().getVolume(),
+              block.getSoundType().getPitch());
         }
     }
 

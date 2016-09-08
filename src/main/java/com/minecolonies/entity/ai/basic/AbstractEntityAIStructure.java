@@ -1,10 +1,5 @@
 package com.minecolonies.entity.ai.basic;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
-
-import org.jetbrains.annotations.NotNull;
-
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.util.AIState;
@@ -12,10 +7,13 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.ai.util.Structure;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.EntityUtils;
-
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -232,7 +230,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             //We need to deal with materials
             if (Configurations.builderInfiniteResources)
             {
-            	worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
                 world.setBlockToAir(currentBlock.blockPosition);
                 worker.swingArm(worker.getActiveHand());
                 setDelay(UNLIMITED_RESOURCES_TIMEOUT);

@@ -81,7 +81,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     protected final boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
-    	IBlockState curBlockState = world.getBlockState(blockToMine);
+        IBlockState curBlockState = world.getBlockState(blockToMine);
         Block curBlock = curBlockState.getBlock();
         if (curBlock == null
               || curBlock.equals(Blocks.AIR)
@@ -176,9 +176,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
         return (int) ((DELAY_MODIFIER * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
-                      * (double) world.getBlockState(pos).getBlockHardness(world, pos)
-                      / (double) (worker.getHeldItemMainhand().getItem()
-                                        .getStrVsBlock(worker.getHeldItemMainhand(),
-                                                     block.getDefaultState())));
+                        * (double) world.getBlockState(pos).getBlockHardness(world, pos)
+                        / (double) (worker.getHeldItemMainhand().getItem()
+                                      .getStrVsBlock(worker.getHeldItemMainhand(),
+                                        block.getDefaultState())));
     }
 }

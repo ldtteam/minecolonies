@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
@@ -90,9 +90,9 @@ public class RenderFishHook extends Render<EntityFishHook>
             @NotNull final Vec3d Vec3d = new Vec3d(-0.36D, 0.03D, 0.35D);
 
             Vec3d.rotatePitch((float) (-((double) citizen.prevRotationPitch + ((double) citizen.rotationPitch - (double) citizen.prevRotationPitch) * partialTicks)
-                                        * Math.PI / Literals.HALF_CIRCKLE));
+                                         * Math.PI / Literals.HALF_CIRCKLE));
             Vec3d.rotateYaw((float) (-((double) citizen.prevRotationYaw + ((double) citizen.rotationYaw - (double) citizen.prevRotationYaw)
-                                                                           * partialTicks) * Math.PI / Literals.HALF_CIRCKLE));
+                                                                            * partialTicks) * Math.PI / Literals.HALF_CIRCKLE));
             Vec3d.rotateYaw((float) (finalOrientation * 0.5D));
             Vec3d.rotatePitch((float) (-finalOrientation * 0.7D));
 

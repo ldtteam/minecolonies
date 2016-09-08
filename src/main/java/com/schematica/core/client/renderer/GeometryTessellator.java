@@ -47,42 +47,13 @@ public final class GeometryTessellator extends Tessellator
         drawCuboid(VertexBuffer, begin, end, sides, argb, GeometryTessellator.deltaS);
     }
 
-    public void setTranslation(final double x, final double y, final double z)
-    {
-        getBuffer().setTranslation(x, y, z);
-    }
-
-    public void beginQuads()
-    {
-        begin(GL11.GL_QUADS);
-    }
-
-    private void begin(final int mode)
-    {
-        getBuffer().begin(mode, DefaultVertexFormats.POSITION_COLOR);
-    }
-
-    public void beginLines()
-    {
-        begin(GL11.GL_LINES);
-    }
-
-    public void setDelta(final double delta)
-    {
-        this.delta = delta;
-    }
-
-    public void drawCuboid(@NotNull final BlockPos pos, final int sides, final int argb)
-    {
-        drawCuboid(pos, pos, sides, argb);
-    }
-
-    public void drawCuboid(@NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb)
-    {
-        drawCuboid(getBuffer(), begin, end, sides, argb, this.delta);
-    }
-
-    private static void drawCuboid(@NotNull final VertexBuffer VertexBuffer, @NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb, final double delta)
+    private static void drawCuboid(
+                                    @NotNull final VertexBuffer VertexBuffer,
+                                    @NotNull final BlockPos begin,
+                                    @NotNull final BlockPos end,
+                                    final int sides,
+                                    final int argb,
+                                    final double delta)
     {
         if (VertexBuffer.getDrawMode() == -1 || sides == 0)
         {
@@ -263,5 +234,40 @@ public final class GeometryTessellator extends Tessellator
             VertexBuffer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
             VertexBuffer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
         }
+    }
+
+    public void setTranslation(final double x, final double y, final double z)
+    {
+        getBuffer().setTranslation(x, y, z);
+    }
+
+    public void beginQuads()
+    {
+        begin(GL11.GL_QUADS);
+    }
+
+    private void begin(final int mode)
+    {
+        getBuffer().begin(mode, DefaultVertexFormats.POSITION_COLOR);
+    }
+
+    public void beginLines()
+    {
+        begin(GL11.GL_LINES);
+    }
+
+    public void setDelta(final double delta)
+    {
+        this.delta = delta;
+    }
+
+    public void drawCuboid(@NotNull final BlockPos pos, final int sides, final int argb)
+    {
+        drawCuboid(pos, pos, sides, argb);
+    }
+
+    public void drawCuboid(@NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb)
+    {
+        drawCuboid(getBuffer(), begin, end, sides, argb, this.delta);
     }
 }

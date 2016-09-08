@@ -24,6 +24,7 @@ public class PathJobFindWater extends AbstractPathJob
     private BlockPos hutLocation;
     @NotNull
     private ArrayList<BlockPos> ponds = new ArrayList<>();
+
     /**
      * AbstractPathJob constructor
      *

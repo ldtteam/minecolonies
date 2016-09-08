@@ -48,6 +48,17 @@ public class BuildingFisherman extends AbstractBuildingWorker
     }
 
     /**
+     * Getter of the max building level.
+     *
+     * @return the integer.
+     */
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return MAX_BUILDING_LEVEL;
+    }
+
+    /**
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -63,17 +74,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
         {
             this.getColony().addStat(ModAchievements.achievementUpgradeFisherMax);
         }
-    }
-
-    /**
-     * Getter of the max building level.
-     *
-     * @return the integer.
-     */
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
     }
 
     /**

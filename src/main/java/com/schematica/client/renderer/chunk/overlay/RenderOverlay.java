@@ -1,29 +1,27 @@
 package com.schematica.client.renderer.chunk.overlay;
 
-import org.lwjgl.opengl.GL11;
-
 import com.schematica.client.renderer.chunk.CompiledOverlay;
 import com.schematica.client.world.SchematicWorld;
 import com.schematica.core.client.renderer.GeometryMasks;
 import com.schematica.core.client.renderer.GeometryTessellator;
 import com.schematica.handler.ConfigurationHandler;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.renderer.chunk.ChunkCompileTaskGenerator;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.client.renderer.chunk.VisGraph;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
 
 public class RenderOverlay extends RenderChunk
 {
@@ -216,8 +214,8 @@ public class RenderOverlay extends RenderChunk
     @Override
     public void preRenderBlocks(final net.minecraft.client.renderer.VertexBuffer worldRendererIn, final BlockPos pos)
     {
-    	worldRendererIn.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-    	worldRendererIn.setTranslation(-pos.getX(), -pos.getY(), -pos.getZ());
+        worldRendererIn.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        worldRendererIn.setTranslation(-pos.getX(), -pos.getY(), -pos.getZ());
     }
 
     @Override

@@ -1,5 +1,5 @@
-<window inherit="minecolonies:gui/windowBase.xml"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        inherit="minecolonies:gui/windowBase.xml"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
     <view size="100% 200px" pos="0 7">
         <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
@@ -7,5 +7,5 @@
 
     <button id="inventory"
             align="BottomMiddle" size="116 20" pos="0 13"
-            label="$(container.inventory)" />
+            label="$(container.inventory)"/>
 </window>

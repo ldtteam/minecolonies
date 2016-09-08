@@ -26,7 +26,7 @@ import java.util.concurrent.*;
 public final class Pathfinding
 {
     private static final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
-    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
+    private static final ResourceLocation        TEXTURE  = new ResourceLocation("textures/gui/widgets.png");
     private static ThreadPoolExecutor executor;
     static
     {

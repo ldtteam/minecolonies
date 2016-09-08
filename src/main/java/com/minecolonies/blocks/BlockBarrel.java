@@ -1,7 +1,6 @@
 package com.minecolonies.blocks;
 
 import com.minecolonies.creativetab.ModCreativeTabs;
-import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.Log;
 import net.minecraft.block.Block;
@@ -13,8 +12,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -199,6 +198,12 @@ public class BlockBarrel extends Block
         timers.put(pos, timer);
     }
 
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, BARRELSTATE);
+    }
+
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         Log.logger.info("block right-clicked");
@@ -206,11 +211,5 @@ public class BlockBarrel extends Block
         ItemStack itemstack = playerIn.inventory.getCurrentItem();
         UseBarrel(worldIn, playerIn, itemstack, state, pos);
         return true;
-    }
-
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, BARRELSTATE);
     }
 }

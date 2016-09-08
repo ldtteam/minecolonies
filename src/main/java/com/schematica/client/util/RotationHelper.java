@@ -15,8 +15,8 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -95,7 +95,6 @@ public final class RotationHelper
           BlockQuartz.EnumType.LINES_Z
         };
     }
-
     /**
      * Singleton constructor
      */
@@ -281,7 +280,8 @@ public final class RotationHelper
         return blockState;
     }
 
-    private static BlockPos rotatePos(@NotNull final BlockPos pos, @NotNull final EnumFacing axis, @NotNull final Vec3i dimensions, @NotNull final BlockPos.MutableBlockPos rotated) throws RotationException
+    private static BlockPos rotatePos(@NotNull final BlockPos pos, @NotNull final EnumFacing axis, @NotNull final Vec3i dimensions, @NotNull final BlockPos.MutableBlockPos rotated)
+      throws RotationException
     {
         switch (axis)
         {

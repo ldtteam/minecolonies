@@ -1,9 +1,6 @@
 package com.minecolonies.util;
 
-import com.minecolonies.lib.Constants;
-import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Utilities for playing sounds.

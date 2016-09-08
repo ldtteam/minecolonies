@@ -1,10 +1,5 @@
 package com.minecolonies.util;
 
-import java.util.Objects;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -14,6 +9,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 /**
  * General purpose utilities class.
@@ -273,7 +272,7 @@ public final class Utils
      */
     public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata)
     {
-    	world.playSound((EntityPlayer)null, pos, block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
+        world.playSound((EntityPlayer) null, pos, block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
     }
 
     /**

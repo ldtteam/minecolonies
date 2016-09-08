@@ -13,10 +13,10 @@ import org.jetbrains.annotations.Nullable;
  */
 public class PathJobMoveToLocation extends AbstractPathJob
 {
-    private static final float DESTINATION_SLACK_NONE = 0.1F;
+    private static final float  DESTINATION_SLACK_NONE     = 0.1F;
     // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
-    private static final float DESTINATION_SLACK_ADJACENT = 3.1F;
-    private static final double TIE_BREAKER = 1.001D;
+    private static final float  DESTINATION_SLACK_ADJACENT = 3.1F;
+    private static final double TIE_BREAKER                = 1.001D;
     @NotNull
     private final BlockPos destination;
     // 0 = exact match

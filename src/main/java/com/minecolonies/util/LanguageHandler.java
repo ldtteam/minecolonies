@@ -1,13 +1,12 @@
 package com.minecolonies.util;
 
-import java.util.List;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.translation.I18n;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Helper class for localization and sending player messages
@@ -65,7 +64,7 @@ public class LanguageHandler
      */
     public static String getString(String key, String defaultValue)
     {
-    	return I18n.translateToLocal(key);
+        return I18n.translateToLocal(key);
     }
 
     /**

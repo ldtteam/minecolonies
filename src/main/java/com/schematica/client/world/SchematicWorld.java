@@ -10,13 +10,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Biomes;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.EnumDifficulty;
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.GameType;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.WorldType;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.*;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.fml.relauncher.Side;
@@ -26,12 +22,12 @@ import java.util.List;
 
 public class SchematicWorld extends WorldClient
 {
-    private static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, GameType.CREATIVE, false, false, WorldType.FLAT);
-    public final BlockPos.MutableBlockPos position = new BlockPos.MutableBlockPos();
-    public final boolean isRenderingLayer;
-    public final int     renderingLayer;
-    public       boolean isRendering;
-    private Schematic schematic;
+    private static final WorldSettings            WORLD_SETTINGS = new WorldSettings(0, GameType.CREATIVE, false, false, WorldType.FLAT);
+    public final         BlockPos.MutableBlockPos position       = new BlockPos.MutableBlockPos();
+    public final boolean   isRenderingLayer;
+    public final int       renderingLayer;
+    public       boolean   isRendering;
+    private      Schematic schematic;
 
     public SchematicWorld(final Schematic schematic)
     {

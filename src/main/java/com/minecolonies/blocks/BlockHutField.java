@@ -20,12 +20,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -44,20 +44,20 @@ public class BlockHutField extends BlockContainer
     /**
      * The position it faces.
      */
-    public static final PropertyDirection FACING = BlockDirectional.FACING;
+    public static final  PropertyDirection FACING           = BlockDirectional.FACING;
     //public static final PropertyDirection FACING = PropertyDirection.create("FACING", Plane.HORIZONTAL);
     /**
      * Hardness of the block.
      */
-    private static final float HARDNESS = 10F;
+    private static final float             HARDNESS         = 10F;
     /**
      * Resistance of the block.
      */
-    private static final float RESISTANCE = 10F;
+    private static final float             RESISTANCE       = 10F;
     /**
      * Start of the collision box at y.
      */
-    private static final double BOTTOM_COLLISION = 0.0;
+    private static final double            BOTTOM_COLLISION = 0.0;
 
     /**
      * Start of the collision box at x and z.
@@ -105,24 +105,12 @@ public class BlockHutField extends BlockContainer
         GameRegistry.register(this);
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
     }
-    
-    @Deprecated
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
-    {
-        return new AxisAlignedBB((float) START_COLLISION, (float) BOTTOM_COLLISION, (float) START_COLLISION, (float) END_COLLISION, (float) HEIGHT_COLLISION, (float) END_COLLISION);
-    }
 
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state)
     {
         return EnumBlockRenderType.MODEL;
     }
-    
-    /*@Override
-    public int getRenderType()
-    {
-        return -1;
-    }*/
 
     @Override
     public IBlockState getStateFromMeta(int meta)
@@ -144,6 +132,12 @@ public class BlockHutField extends BlockContainer
         }
         return this.getDefaultState().withProperty(FACING, facing);
     }
+    
+    /*@Override
+    public int getRenderType()
+    {
+        return -1;
+    }*/
 
     @Override
     public int getMetaFromState(@NotNull IBlockState state)
@@ -163,6 +157,17 @@ public class BlockHutField extends BlockContainer
         return false;
     }
 
+    @Deprecated
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        return new AxisAlignedBB((float) START_COLLISION,
+                                  (float) BOTTOM_COLLISION,
+                                  (float) START_COLLISION,
+                                  (float) END_COLLISION,
+                                  (float) HEIGHT_COLLISION,
+                                  (float) END_COLLISION);
+    }
+
     @Override
     public boolean isOpaqueCube(IBlockState state)
     {
@@ -178,7 +183,17 @@ public class BlockHutField extends BlockContainer
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(
+                                     World worldIn,
+                                     BlockPos pos,
+                                     IBlockState state,
+                                     EntityPlayer playerIn,
+                                     EnumHand hand,
+                                     @Nullable ItemStack heldItem,
+                                     EnumFacing side,
+                                     float hitX,
+                                     float hitY,
+                                     float hitZ)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)

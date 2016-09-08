@@ -87,18 +87,19 @@ public final class ColonyManager
     }
 
     /**
-     * Syncs the achievements for all colonies.
-     */
-    public static void syncAllColoniesAchievements(){
-        colonies.values().forEach(AchievementUtils::syncAchievements);
-    }
-
-    /**
      * Specify that colonies should be saved.
      */
     public static void markDirty()
     {
         saveNeeded = true;
+    }
+
+    /**
+     * Syncs the achievements for all colonies.
+     */
+    public static void syncAllColoniesAchievements()
+    {
+        colonies.values().forEach(AchievementUtils::syncAchievements);
     }
 
     /**
@@ -529,7 +530,7 @@ public final class ColonyManager
                     c.onWorldLoad(world);
                 }
             }
-            
+
             world.addEventListener(new ColonyManagerWorldAccess());
         }
     }
