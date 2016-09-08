@@ -3,7 +3,6 @@ package com.minecolonies.achievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
-import net.minecraft.init.Items;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
 
@@ -125,21 +124,21 @@ public final class ModAchievements
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_SETTLEMENT} citizens.
      */
-    public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.pioneer", "size.settlement", 2, -2, Items.iron_ingot, null).registerStat();
+    public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.pioneer", "size.settlement", 2, -2, ModItems.itemAchievementProxySettlement, null).registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_TOWN} citizens.
      */
-    public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", "size.town", 4, -2, Items.gold_ingot, achievementSizeSettlement)
+    public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", "size.town", 4, -2, ModItems.itemAchievementProxyTown, achievementSizeSettlement)
                                                                   .registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_CITY} citizens.
      */
-    public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", "size.city", 6, -2, Items.diamond, achievementSizeTown).registerStat();
+    public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", "size.city", 6, -2, ModItems.itemAchievementProxyCity, achievementSizeTown).registerStat();
 
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_METROPOLIS} citizens.
      */
-    public static final Achievement achievementSizeMetropolis = new MineColoniesAchievement("size.metropolis", "size.metropolis", 8, -2, Items.diamond, achievementSizeCity).registerStat();
+    public static final Achievement achievementSizeMetropolis = new MineColoniesAchievement("size.metropolis", "size.metropolis", 8, -2, ModItems.itemAchievementProxyMetropolis, achievementSizeCity).registerStat();
 
     // Achievement pages
     /**
