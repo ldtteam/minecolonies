@@ -8,7 +8,7 @@ import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.network.messages.HireFireMessage;
 import com.minecolonies.network.messages.RecallCitizenMessage;
 import com.minecolonies.util.LanguageHandler;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Abstract class for window for worker building
@@ -63,13 +63,13 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      *
      * @param button the clicked button.
      */
-    private void hireClicked(@NotNull Button button)
+    private void hireClicked(@Nonnull Button button)
     {
         if (building.getColony().isManualHiring())
         {
             if (building.getWorkerId() == 0)
             {
-                @NotNull WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
+                @Nonnull WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
                 window.open();
             }
             else

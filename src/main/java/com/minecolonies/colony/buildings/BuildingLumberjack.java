@@ -7,8 +7,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobLumberjack;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
 
 /**
  * The lumberjacks building.
@@ -44,7 +44,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      *
      * @return the schematic name.
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getSchematicName()
     {
@@ -61,11 +61,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
+            this.getColony().addStat(ModAchievements.achievementBuildingLumberjack);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
+            this.getColony().addStat(ModAchievements.achievementUpgradeLumberjackMax);
         }
     }
 
@@ -85,7 +85,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      *
      * @return the description of the lumberjacks job.
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getJobName()
     {
@@ -98,7 +98,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
-    @NotNull
+    @Nonnull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -126,7 +126,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
          *
          * @return the window of the lumberjack building.
          */
-        @NotNull
+        @Nonnull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, LUMBERJACK_HUT_NAME);

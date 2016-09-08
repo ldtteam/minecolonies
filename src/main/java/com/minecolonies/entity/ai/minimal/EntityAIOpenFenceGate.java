@@ -1,9 +1,11 @@
 package com.minecolonies.entity.ai.minimal;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Used for automatic gate open/close.
@@ -37,7 +39,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      * @param entityLivingIn the registering entity
      * @param shouldClose    should the entity close the gate?
      */
-    public EntityAIOpenFenceGate(@NotNull EntityLiving entityLivingIn, boolean shouldClose)
+    public EntityAIOpenFenceGate(@Nonnull EntityLiving entityLivingIn, boolean shouldClose)
     {
         super(entityLivingIn);
         this.theEntity = entityLivingIn;
@@ -76,7 +78,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
         if (iblockstate.getBlock() == this.gateBlock && (iblockstate.getValue(BlockFenceGate.OPEN)) != open)
         {
             this.theEntity.worldObj.setBlockState(this.gatePosition, iblockstate.withProperty(BlockFenceGate.OPEN, open), 2);
-            this.theEntity.worldObj.playAuxSFXAtEntity(null, open ? OPEN_SOUND : CLOSE_SOUND, this.gatePosition, 0);
+            this.theEntity.worldObj.playEvent((EntityPlayer)null, open ? OPEN_SOUND : CLOSE_SOUND, this.gatePosition, 0);
         }
     }
 

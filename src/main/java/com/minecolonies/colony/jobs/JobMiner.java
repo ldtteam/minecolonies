@@ -7,7 +7,7 @@ import com.minecolonies.entity.ai.citizen.miner.EntityAIStructureMiner;
 import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -26,11 +26,11 @@ public class JobMiner extends AbstractJob
         super.readFromNBT(compound);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getName() { return "com.minecolonies.job.Miner"; }
 
-    @NotNull
+    @Nonnull
     @Override
     public RenderBipedCitizen.Model getModel()
     {
@@ -48,7 +48,7 @@ public class JobMiner extends AbstractJob
      *
      * @return your personal AI instance.
      */
-    @NotNull
+    @Nonnull
     @Override
     public AbstractAISkeleton generateAI()
     {
@@ -60,7 +60,7 @@ public class JobMiner extends AbstractJob
      *
      * @param stack Stack to check if it is a required item
      */
-    public void addItemNeededIfNotAlready(@NotNull ItemStack stack)
+    public void addItemNeededIfNotAlready(@Nonnull ItemStack stack)
     {
         List<ItemStack> itemsNeeded = super.getItemsNeeded();
 

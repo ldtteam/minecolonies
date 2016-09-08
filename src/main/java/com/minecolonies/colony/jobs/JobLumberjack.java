@@ -6,8 +6,8 @@ import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.lumberjack.EntityAIWorkLumberjack;
 import com.minecolonies.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.nbt.NBTTagCompound;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The Lumberjack job class
@@ -37,7 +37,7 @@ public class JobLumberjack extends AbstractJob
      * @param compound NBTTagCompound containing saved Job data
      */
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -52,7 +52,7 @@ public class JobLumberjack extends AbstractJob
      *
      * @return localization textContent String
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getName()
     {
@@ -64,7 +64,7 @@ public class JobLumberjack extends AbstractJob
      *
      * @return Model of the citizen
      */
-    @NotNull
+    @Nonnull
     @Override
     public RenderBipedCitizen.Model getModel()
     {
@@ -77,11 +77,11 @@ public class JobLumberjack extends AbstractJob
      * @param compound NBTTagCompound to save the Job to
      */
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
-        @NotNull NBTTagCompound treeTag = new NBTTagCompound();
+        @Nonnull NBTTagCompound treeTag = new NBTTagCompound();
 
         if (tree != null)
         {
@@ -94,7 +94,7 @@ public class JobLumberjack extends AbstractJob
      *
      * @return your personal AI instance.
      */
-    @NotNull
+    @Nonnull
     @Override
     public AbstractAISkeleton generateAI()
     {

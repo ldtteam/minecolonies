@@ -2,7 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.lib.Constants;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Window for the builder hut
@@ -29,7 +29,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      *
      * @return Name of a building
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getBuildingName()
     {

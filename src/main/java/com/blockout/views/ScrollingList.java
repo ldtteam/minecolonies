@@ -2,7 +2,7 @@ package com.blockout.views;
 
 import com.blockout.Pane;
 import com.blockout.PaneParams;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class ScrollingList extends ScrollingView
         ((ScrollingListContainer) container).refreshElementPanes(dataProvider, listNodeParams);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     protected ScrollingContainer createScrollingContainer()
     {
@@ -57,7 +57,7 @@ public class ScrollingList extends ScrollingView
     }
 
     @Override
-    public void parseChildren(@NotNull PaneParams params)
+    public void parseChildren(@Nonnull PaneParams params)
     {
         List<PaneParams> childNodes = params.getChildren();
         if (childNodes == null)

@@ -2,7 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.lib.Constants;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Window for worker.
@@ -28,7 +28,7 @@ public class WindowHutWorkerPlaceholder<B extends AbstractBuildingWorker.View> e
         this.name = name;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getBuildingName()
     {

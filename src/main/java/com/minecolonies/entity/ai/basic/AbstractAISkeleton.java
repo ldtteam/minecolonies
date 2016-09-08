@@ -7,9 +7,10 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,14 +29,14 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
 {
 
     private static final int MUTEX_MASK = 3;
-    @NotNull
+    @Nonnull
     protected final J                   job;
     @Nullable
     protected final EntityCitizen       worker;
     protected final World               world;
-    @NotNull
+    @Nonnull
     protected final ChatSpamFilter      chatSpamFilter;
-    @NotNull
+    @Nonnull
     private final   ArrayList<AITarget> targetList;
     /**
      * The current state the ai is in.
@@ -48,7 +49,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      *
      * @param job the job class
      */
-    protected AbstractAISkeleton(@NotNull final J job)
+    protected AbstractAISkeleton(@Nonnull final J job)
     {
         this.targetList = new ArrayList<>();
         setMutexBits(MUTEX_MASK);
@@ -154,7 +155,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * @param target the target to check
      * @return true if this target worked and we should stop executing this tick
      */
-    private boolean checkOnTarget(@NotNull AITarget target)
+    private boolean checkOnTarget(@Nonnull AITarget target)
     {
         if (state != target.getState() && target.getState() != null)
         {
@@ -184,7 +185,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * @param target the target.
      * @return true if it worked.
      */
-    private boolean applyTarget(@NotNull AITarget target)
+    private boolean applyTarget(@Nonnull AITarget target)
     {
         AIState newState;
         try

@@ -3,7 +3,7 @@ package com.minecolonies.client.gui;
 import com.blockout.controls.Button;
 import com.blockout.views.Window;
 import com.minecolonies.util.Log;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -13,7 +13,7 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractWindowSkeleton extends Window implements Button.Handler
 {
-    @NotNull
+    @Nonnull
     private final HashMap<String, Consumer<Button>> buttons;
 
     /**
@@ -48,7 +48,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
      * @param button the button that was clicked.
      */
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@Nonnull Button button)
     {
         if (buttons.containsKey(button.getID()))
         {

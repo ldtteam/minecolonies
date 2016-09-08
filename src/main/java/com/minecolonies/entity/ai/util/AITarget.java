@@ -1,7 +1,7 @@
 package com.minecolonies.entity.ai.util;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -19,9 +19,9 @@ public class AITarget
 
     @Nullable
     private final AIState           state;
-    @NotNull
+    @Nonnull
     private final BooleanSupplier   predicate;
-    @NotNull
+    @Nonnull
     private final Supplier<AIState> action;
 
     /**
@@ -29,7 +29,7 @@ public class AITarget
      *
      * @param action the action to apply
      */
-    public AITarget(@NotNull final Supplier<AIState> action)
+    public AITarget(@Nonnull final Supplier<AIState> action)
     {
         this(() -> true, action);
     }
@@ -40,7 +40,7 @@ public class AITarget
      * @param predicate the predicate for execution
      * @param action    the action to apply
      */
-    public AITarget(@NotNull final BooleanSupplier predicate, @NotNull final Supplier<AIState> action)
+    public AITarget(@Nonnull final BooleanSupplier predicate, @Nonnull final Supplier<AIState> action)
     {
         this(null, predicate, action);
     }
@@ -52,7 +52,7 @@ public class AITarget
      * @param predicate the predicate for execution
      * @param action    the action to apply
      */
-    public AITarget(@Nullable final AIState state, @NotNull final BooleanSupplier predicate, @NotNull final Supplier<AIState> action)
+    public AITarget(@Nullable final AIState state, @Nonnull final BooleanSupplier predicate, @Nonnull final Supplier<AIState> action)
     {
         this.state = state;
         this.predicate = predicate;
@@ -65,7 +65,7 @@ public class AITarget
      * @param predicate the predicate for execution
      * @param state     the state to switch to
      */
-    public AITarget(@NotNull final BooleanSupplier predicate, @Nullable final AIState state)
+    public AITarget(@Nonnull final BooleanSupplier predicate, @Nullable final AIState state)
     {
         this(null, predicate, () -> state);
     }
@@ -76,7 +76,7 @@ public class AITarget
      * @param predicateState the state it needs to be | null
      * @param state          the state to switch to
      */
-    public AITarget(@NotNull final AIState predicateState, @Nullable final AIState state)
+    public AITarget(@Nonnull final AIState predicateState, @Nullable final AIState state)
     {
         this(predicateState, () -> state);
     }
@@ -87,7 +87,7 @@ public class AITarget
      * @param state  the state it needs to be | null
      * @param action the action to apply
      */
-    public AITarget(@Nullable final AIState state, @NotNull final Supplier<AIState> action)
+    public AITarget(@Nullable final AIState state, @Nonnull final Supplier<AIState> action)
     {
         this(state, () -> true, action);
     }

@@ -11,8 +11,8 @@ import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Random;
 
@@ -103,11 +103,11 @@ public class CitizenData
      * @param colony   Colony of the citizen
      * @return CitizenData
      */
-    @NotNull
-    public static CitizenData createFromNBT(@NotNull NBTTagCompound compound, Colony colony)
+    @Nonnull
+    public static CitizenData createFromNBT(@Nonnull NBTTagCompound compound, Colony colony)
     {
         int id = compound.getInteger(TAG_ID);
-        @NotNull CitizenData citizen = new CitizenData(id, colony);
+        @Nonnull CitizenData citizen = new CitizenData(id, colony);
         citizen.readFromNBT(compound);
         return citizen;
     }
@@ -117,7 +117,7 @@ public class CitizenData
      *
      * @param compound NBT-Tag compound
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         name = compound.getString(TAG_NAME);
         female = compound.getBoolean(TAG_FEMALE);
@@ -196,7 +196,7 @@ public class CitizenData
      *
      * @param entity Entity to initialize from
      */
-    public void initializeFromEntity(@NotNull EntityCitizen entity)
+    public void initializeFromEntity(@Nonnull EntityCitizen entity)
     {
         Random rand = entity.getRNG();
 
@@ -211,7 +211,7 @@ public class CitizenData
         maxHealth = entity.getMaxHealth();
         experience = 0;
         level = 0;
-        @NotNull Random random = new Random();
+        @Nonnull Random random = new Random();
 
         //Initialize the citizen skills and make sure they are never 0
         intelligence = random.nextInt(LEVEL_CAP - 1) + 1;
@@ -229,7 +229,7 @@ public class CitizenData
      * @param rand Random object
      * @return Name of the citizen
      */
-    private String generateName(@NotNull Random rand)
+    private String generateName(@Nonnull Random rand)
     {
         String firstName;
         if (!female)
@@ -259,7 +259,7 @@ public class CitizenData
      * @param array Array to select from
      * @return Random element from array
      */
-    private static String getRandomElement(@NotNull Random rand, @NotNull String[] array)
+    private static String getRandomElement(@Nonnull Random rand, @Nonnull String[] array)
     {
         return array[rand.nextInt(array.length)];
     }
@@ -270,7 +270,7 @@ public class CitizenData
      * @param rand Random object
      * @return Random capital letter
      */
-    private static char getRandomLetter(@NotNull Random rand)
+    private static char getRandomLetter(@Nonnull Random rand)
     {
         return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
     }
@@ -500,7 +500,7 @@ public class CitizenData
      * @return the job this citizen has
      */
     @Nullable
-    public <J extends AbstractJob> J getJob(@NotNull Class<J> type)
+    public <J extends AbstractJob> J getJob(@Nonnull Class<J> type)
     {
         try
         {
@@ -517,7 +517,7 @@ public class CitizenData
      *
      * @param compound NBT-Tag compound
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
         compound.setInteger(TAG_ID, id);
         compound.setString(TAG_NAME, name);
@@ -531,7 +531,7 @@ public class CitizenData
         compound.setDouble(TAG_MAX_HEALTH, maxHealth);
 
 
-        @NotNull NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
+        @Nonnull NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, endurance);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, charisma);
@@ -541,7 +541,7 @@ public class CitizenData
 
         if (job != null)
         {
-            @NotNull NBTTagCompound jobCompound = new NBTTagCompound();
+            @Nonnull NBTTagCompound jobCompound = new NBTTagCompound();
             job.writeToNBT(jobCompound);
             compound.setTag("job", jobCompound);
         }
@@ -552,7 +552,7 @@ public class CitizenData
      *
      * @param buf Buffer to write to
      */
-    public void serializeViewNetworkData(@NotNull ByteBuf buf)
+    public void serializeViewNetworkData(@Nonnull ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeBoolean(female);

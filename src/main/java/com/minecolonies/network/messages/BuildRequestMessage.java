@@ -5,12 +5,12 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Adds a entry to the builderRequired map
@@ -57,7 +57,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
      * @param building AbstractBuilding of the request
      * @param mode     Mode of the request, 1 is repair, 0 is build
      */
-    public BuildRequestMessage(@NotNull AbstractBuilding.View building, int mode)
+    public BuildRequestMessage(@Nonnull AbstractBuilding.View building, int mode)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -65,7 +65,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@Nonnull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -73,7 +73,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@Nonnull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -82,7 +82,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull BuildRequestMessage message, MessageContext ctx)
+    public IMessage onMessage(@Nonnull BuildRequestMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony == null)

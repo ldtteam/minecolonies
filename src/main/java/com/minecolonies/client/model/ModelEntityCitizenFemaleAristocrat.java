@@ -3,8 +3,8 @@ package com.minecolonies.client.model;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.MathHelper;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.MathHelper;
+import javax.annotation.Nonnull;
 
 public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
 {
@@ -187,7 +187,7 @@ public class ModelEntityCitizenFemaleAristocrat extends ModelBiped
         setRotation(dressPart13, 2.778193F, -0.5512723F, -0.2477502F);
     }
 
-    private void setRotation(@NotNull ModelRenderer model, float x, float y, float z)
+    private void setRotation(@Nonnull ModelRenderer model, float x, float y, float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;

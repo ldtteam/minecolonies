@@ -9,24 +9,30 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static net.minecraft.util.EnumFacing.*;
 
@@ -38,7 +44,8 @@ public class BlockHutField extends BlockContainer
     /**
      * The position it faces.
      */
-    public static final PropertyDirection FACING = PropertyDirection.create("FACING", Plane.HORIZONTAL);
+    public static final PropertyDirection FACING = BlockDirectional.FACING;
+    //public static final PropertyDirection FACING = PropertyDirection.create("FACING", Plane.HORIZONTAL);
     /**
      * Hardness of the block.
      */
@@ -77,7 +84,7 @@ public class BlockHutField extends BlockContainer
      */
     BlockHutField()
     {
-        super(Material.wood);
+        super(Material.WOOD);
         initBlock();
     }
 
@@ -95,15 +102,27 @@ public class BlockHutField extends BlockContainer
         //Hardness of 10 takes a long time to mine to not loose progress.
         setHardness(HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
-        GameRegistry.registerBlock(this);
-        setBlockBounds((float) START_COLLISION, (float) BOTTOM_COLLISION, (float) START_COLLISION, (float) END_COLLISION, (float) HEIGHT_COLLISION, (float) END_COLLISION);
+        GameRegistry.register(this);
+        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
+    }
+    
+    @Deprecated
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        return new AxisAlignedBB((float) START_COLLISION, (float) BOTTOM_COLLISION, (float) START_COLLISION, (float) END_COLLISION, (float) HEIGHT_COLLISION, (float) END_COLLISION);
     }
 
     @Override
+    public EnumBlockRenderType getRenderType(IBlockState state)
+    {
+        return EnumBlockRenderType.MODEL;
+    }
+    
+    /*@Override
     public int getRenderType()
     {
         return -1;
-    }
+    }*/
 
     @Override
     public IBlockState getStateFromMeta(int meta)
@@ -127,13 +146,13 @@ public class BlockHutField extends BlockContainer
     }
 
     @Override
-    public int getMetaFromState(@NotNull IBlockState state)
+    public int getMetaFromState(@Nonnull IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
 
     @Override
-    public boolean isFullCube()
+    public boolean isFullCube(IBlockState state)
     {
         return false;
     }
@@ -145,21 +164,21 @@ public class BlockHutField extends BlockContainer
     }
 
     @Override
-    public boolean isOpaqueCube()
+    public boolean isOpaqueCube(IBlockState state)
     {
-        return false;
+        return true;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     @SideOnly(Side.CLIENT)
-    public EnumWorldBlockLayer getBlockLayer()
+    public BlockRenderLayer getBlockLayer()
     {
-        return EnumWorldBlockLayer.SOLID;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override
-    public boolean onBlockActivated(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, @NotNull EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
@@ -180,12 +199,12 @@ public class BlockHutField extends BlockContainer
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nullable EntityLivingBase placer)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        @Nonnull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
     @Override
-    public void onBlockPlacedBy(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         //Only work on server side.
         if (worldIn.isRemote)
@@ -199,7 +218,7 @@ public class BlockHutField extends BlockContainer
 
             if (colony != null)
             {
-                @NotNull final InventoryField inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"));
+                @Nonnull final InventoryField inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"));
 
                 ((ScarecrowTileEntity) worldIn.getTileEntity(pos)).setInventoryField(inventoryField);
                 colony.addNewField((ScarecrowTileEntity) worldIn.getTileEntity(pos), ((EntityPlayer) placer).inventory, pos, worldIn);
@@ -207,11 +226,11 @@ public class BlockHutField extends BlockContainer
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
-    protected BlockState createBlockState()
+    protected BlockStateContainer createBlockState()
     {
-        return new BlockState(this, FACING);
+        return new BlockStateContainer(this, new IProperty[] {FACING});
     }
 
     @Override
@@ -220,7 +239,7 @@ public class BlockHutField extends BlockContainer
         return true;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {

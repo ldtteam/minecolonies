@@ -2,7 +2,7 @@ package com.blockout;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
@@ -54,18 +54,18 @@ public final class Render
         float b = (float) ((color & COLOR_MASK) / COLOR_DIVISOR);
 
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        VertexBuffer VertexBuffer = tessellator.getBuffer();
 
-        worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
+        VertexBuffer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
         GlStateManager.disableTexture2D();
         GL11.glLineWidth(lineWidth);
         GlStateManager.color(r, g, b, a);
 
         //Since our points do not have any u,v this seems to be the correct code
-        worldrenderer.pos(x1, y2, 0.0D).endVertex();
-        worldrenderer.pos(x2, y2, 0.0D).endVertex();
-        worldrenderer.pos(x2, y1, 0.0D).endVertex();
-        worldrenderer.pos(x1, y1, 0.0D).endVertex();
+        VertexBuffer.pos(x1, y2, 0.0D).endVertex();
+        VertexBuffer.pos(x2, y2, 0.0D).endVertex();
+        VertexBuffer.pos(x2, y1, 0.0D).endVertex();
+        VertexBuffer.pos(x1, y1, 0.0D).endVertex();
 
         tessellator.draw();
         GlStateManager.enableTexture2D();

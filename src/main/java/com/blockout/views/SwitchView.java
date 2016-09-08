@@ -3,8 +3,8 @@ package com.blockout.views;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Tabbed view.
@@ -33,7 +33,7 @@ public class SwitchView extends View
     }
 
     @Override
-    public void parseChildren(@NotNull PaneParams params)
+    public void parseChildren(@Nonnull PaneParams params)
     {
         super.parseChildren(params);
 
@@ -47,7 +47,7 @@ public class SwitchView extends View
     public void setView(String name)
     {
         //  Immediate children only
-        for (@NotNull Pane child : children)
+        for (@Nonnull Pane child : children)
         {
             if (child.getID().equals(name))
             {
@@ -76,7 +76,7 @@ public class SwitchView extends View
     }
 
     @Override
-    public void addChild(@NotNull Pane child)
+    public void addChild(@Nonnull Pane child)
     {
         super.addChild(child);
         if (children.size() == 1)
@@ -91,7 +91,7 @@ public class SwitchView extends View
     }
 
     @Override
-    public void adjustChild(@NotNull Pane child)
+    public void adjustChild(@Nonnull Pane child)
     {
         if (child.getWidth() == 0 || child.getHeight() == 0)
         {

@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Settings TickHandler for schematic rendering.
@@ -37,7 +37,7 @@ public final class TickHandler
      * @param event Forge event.
      */
     @SubscribeEvent
-    public void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
+    public void onClientTick(@Nonnull final TickEvent.ClientTickEvent event)
     {
         if (this.minecraft.isGamePaused() || event.phase != TickEvent.Phase.END)
         {

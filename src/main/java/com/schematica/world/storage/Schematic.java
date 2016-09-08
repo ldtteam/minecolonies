@@ -9,10 +9,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,7 +20,7 @@ import java.util.List;
 
 public class Schematic implements ISchematic
 {
-    private static final ItemStack                              DEFAULT_ICON   = new ItemStack(Blocks.grass);
+    private static final ItemStack                              DEFAULT_ICON   = new ItemStack(Blocks.GRASS);
     private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
     private final short[][][] blocks;
     private final byte[][][]  metadata;
@@ -74,11 +74,11 @@ public class Schematic implements ISchematic
     //MINECOLONIES END
 
     @Override
-    public IBlockState getBlockState(@NotNull final BlockPos pos)
+    public IBlockState getBlockState(@Nonnull final BlockPos pos)
     {
         if (isInvalid(pos))
         {
-            return Blocks.air.getDefaultState();
+            return Blocks.AIR.getDefaultState();
         }
 
         final int x = pos.getX();
@@ -165,7 +165,7 @@ public class Schematic implements ISchematic
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public List<Entity> getEntities()
     {

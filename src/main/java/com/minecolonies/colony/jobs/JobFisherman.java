@@ -7,9 +7,9 @@ import com.minecolonies.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class JobFisherman extends AbstractJob
      * After the fisherman has visited an fixed amount of ponds the fisherman will choose a random pond
      * from this list as the next fishing spot.
      */
-    @NotNull
+    @Nonnull
     private ArrayList<BlockPos> ponds = new ArrayList<>();
 
     /**
@@ -57,7 +57,7 @@ public class JobFisherman extends AbstractJob
      * @param compound NBTTagCompound containing saved Job data
      */
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -79,7 +79,7 @@ public class JobFisherman extends AbstractJob
      *
      * @return localization textContent String
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getName()
     {
@@ -91,7 +91,7 @@ public class JobFisherman extends AbstractJob
      *
      * @return Model of the citizen
      */
-    @NotNull
+    @Nonnull
     @Override
     public RenderBipedCitizen.Model getModel()
     {
@@ -104,18 +104,18 @@ public class JobFisherman extends AbstractJob
      * @param compound NBTTagCompound to save the Job to
      */
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
-        @NotNull NBTTagCompound waterTag = new NBTTagCompound();
+        @Nonnull NBTTagCompound waterTag = new NBTTagCompound();
         if (water != null)
         {
             BlockPosUtil.writeToNBT(waterTag, TAG_WATER, water);
         }
 
-        @NotNull NBTTagList lakes = new NBTTagList();
-        for (@NotNull BlockPos pond : ponds)
+        @Nonnull NBTTagList lakes = new NBTTagList();
+        for (@Nonnull BlockPos pond : ponds)
         {
             BlockPosUtil.writeToNBTTagList(lakes, pond);
         }
@@ -127,7 +127,7 @@ public class JobFisherman extends AbstractJob
      *
      * @return your personal AI instance.
      */
-    @NotNull
+    @Nonnull
     @Override
     public AbstractAISkeleton generateAI()
     {
@@ -159,7 +159,7 @@ public class JobFisherman extends AbstractJob
      *
      * @return a list of coordinates
      */
-    @NotNull
+    @Nonnull
     public List<BlockPos> getPonds()
     {
         return new ArrayList<>(ponds);

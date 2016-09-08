@@ -6,12 +6,12 @@ import com.blockout.View;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -40,7 +40,7 @@ public class TextField extends Pane
         //Required
     }
 
-    public TextField(@NotNull PaneParams params)
+    public TextField(@Nonnull PaneParams params)
     {
         super(params);
         maxTextLength = params.getIntegerAttribute("maxlength", maxTextLength);
@@ -66,7 +66,7 @@ public class TextField extends Pane
         return text;
     }
 
-    public void setText(@NotNull String s)
+    public void setText(@Nonnull String s)
     {
         text = s.length() <= maxTextLength ? s : s.substring(0, maxTextLength);
         setCursorPosition(text.length());
@@ -172,7 +172,7 @@ public class TextField extends Pane
         }
     }
 
-    @NotNull
+    @Nonnull
     public String getSelectedText()
     {
         int start = Math.min(cursorPosition, selectionEnd);
@@ -317,7 +317,7 @@ public class TextField extends Pane
         int textX = drawX;
         if (visibleString.length() > 0)
         {
-            @NotNull String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
+            @Nonnull String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
             mc.renderEngine.bindTexture(TEXTURE);
             textX = mc.fontRendererObj.drawString(s1, textX, drawY, color, shadow);
         }
@@ -380,17 +380,17 @@ public class TextField extends Pane
             GlStateManager.disableTexture2D();
             GlStateManager.enableColorLogic();
             GlStateManager.colorLogicOp(GL11.GL_OR_REVERSE);
-            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+            VertexBuffer VertexBuffer = tessellator.getBuffer();
 
             // There are several to choose from, look at DefaultVertexFormats for more info
             //todo may need to choose a different Format
-            worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            VertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
             //Since our points do not have any u,v this seems to be the correct code
-            worldrenderer.pos((double) selectionStartX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
-            worldrenderer.pos((double) selectionEndX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
-            worldrenderer.pos((double) selectionEndX, (double) drawY - 1, 0.0D).endVertex();
-            worldrenderer.pos((double) selectionStartX, (double) drawY - 1, 0.0D).endVertex();
+            VertexBuffer.pos((double) selectionStartX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            VertexBuffer.pos((double) selectionEndX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            VertexBuffer.pos((double) selectionEndX, (double) drawY - 1, 0.0D).endVertex();
+            VertexBuffer.pos((double) selectionStartX, (double) drawY - 1, 0.0D).endVertex();
             tessellator.draw();
             GlStateManager.disableColorLogic();
             GlStateManager.enableTexture2D();
@@ -467,7 +467,7 @@ public class TextField extends Pane
         int insertEnd = Math.max(cursorPosition, selectionEnd);
         int availableChars = (maxTextLength - text.length()) + (insertEnd - insertAt);
 
-        @NotNull String result = "";
+        @Nonnull String result = "";
         if (text.length() > 0 && insertAt > 0)
         {
             result = text.substring(0, insertAt);
@@ -525,7 +525,7 @@ public class TextField extends Pane
             boolean backwards = count < 0;
             int start = backwards ? (this.cursorPosition + count) : this.cursorPosition;
             int end = backwards ? this.cursorPosition : (this.cursorPosition + count);
-            @NotNull String result = "";
+            @Nonnull String result = "";
 
             if (start > 0)
             {

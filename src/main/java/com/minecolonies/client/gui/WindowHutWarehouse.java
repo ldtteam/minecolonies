@@ -6,7 +6,7 @@ import com.blockout.views.SwitchView;
 import com.minecolonies.colony.buildings.BuildingWarehouse;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.LanguageHandler;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Window for the farmer hut
@@ -40,7 +40,7 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
      *
      * @param building {@link com.minecolonies.colony.buildings.BuildingWarehouse.View}
      */
-    public WindowHutWarehouse(@NotNull BuildingWarehouse.View building)
+    public WindowHutWarehouse(@Nonnull BuildingWarehouse.View building)
     {
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
         super.registerButton(BUTTON_BLACKSMITH_GOLD, b -> building.blacksmithGold = !building.blacksmithGold);
@@ -55,7 +55,7 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
         super.registerButton(BUTTON_BLACKSMITH_GOLD, b -> building.blacksmithGold = !building.blacksmithGold);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getBuildingName()
     {
@@ -104,7 +104,7 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
     }
 
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@Nonnull Button button)
     {
         switch (button.getID())
         {

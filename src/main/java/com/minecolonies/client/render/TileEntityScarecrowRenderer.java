@@ -10,7 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Class to render the scarecrow.
@@ -65,7 +65,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     /**
      * The model of the scarecrow.
      */
-    @NotNull
+    @Nonnull
     private final ModelScarecrowBoth model;
 
     /**
@@ -78,7 +78,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     }
 
     @Override
-    public void renderTileEntityAt(@NotNull ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage)
+    public void renderTileEntityAt(@Nonnull ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage)
     {
         //Store the transformation
         GlStateManager.pushMatrix();
@@ -122,8 +122,8 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
      * @param tileEntity the tileEntity of the scarecrow.
      * @return the location.
      */
-    @NotNull
-    private static ResourceLocation getResourceLocation(@NotNull ScarecrowTileEntity tileEntity)
+    @Nonnull
+    private static ResourceLocation getResourceLocation(@Nonnull ScarecrowTileEntity tileEntity)
     {
         String loc;
 

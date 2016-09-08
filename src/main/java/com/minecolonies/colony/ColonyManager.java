@@ -13,14 +13,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,12 +34,12 @@ public final class ColonyManager
     private static final String                     FILENAME_MINECOLONIES_PATH = "minecolonies";
     private static final String                     FILENAME_MINECOLONIES      = "colonies.dat";
     private static final String                     TAG_COLONIES               = "colonies";
-    @NotNull
+    @Nonnull
     private static       Map<Integer, Colony>       colonies                   = new HashMap<>();
-    @NotNull
+    @Nonnull
     private static       Map<Integer, List<Colony>> coloniesByWorld            = new HashMap<>();
     private static       int                        topColonyId                = 0;
-    @NotNull
+    @Nonnull
     private static       Map<Integer, ColonyView>   colonyViews                = new HashMap<>();
     // Used to trigger loading/unloading colonies
     private static int     numWorldsLoaded;
@@ -58,26 +58,26 @@ public final class ColonyManager
      * @param player the player that creates the colony - owner.
      * @return The created colony
      */
-    @NotNull
-    public static Colony createColony(@NotNull World w, BlockPos pos, @NotNull EntityPlayer player)
+    @Nonnull
+    public static Colony createColony(@Nonnull World w, BlockPos pos, @Nonnull EntityPlayer player)
     {
         ++topColonyId;
-        @NotNull Colony colony = new Colony(topColonyId, w, pos);
+        @Nonnull Colony colony = new Colony(topColonyId, w, pos);
         colonies.put(colony.getID(), colony);
 
-        if (!coloniesByWorld.containsKey(colony.getDimensionId()))
+        if (!coloniesByWorld.containsKey(colony.getDimension()))
         {
-            coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
+            coloniesByWorld.put(colony.getDimension(), new ArrayList<>());
         }
 
-        coloniesByWorld.get(colony.getDimensionId()).add(colony);
+        coloniesByWorld.get(colony.getDimension()).add(colony);
 
         String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
 
-        colony.triggerAchievement(ModAchievements.achievementGetSupply);
-        colony.triggerAchievement(ModAchievements.achievementBuildingTownhall);
+        colony.addStat(ModAchievements.achievementGetSupply);
+        colony.addStat(ModAchievements.achievementBuildingTownhall);
 
         markDirty();
 
@@ -119,7 +119,7 @@ public final class ColonyManager
      * @param pos Block position
      * @return AbstractBuilding at the given location
      */
-    public static AbstractBuilding getBuilding(@NotNull World w, @NotNull BlockPos pos)
+    public static AbstractBuilding getBuilding(@Nonnull World w, @Nonnull BlockPos pos)
     {
         @Nullable Colony colony = getColony(w, pos);
         if (colony != null)
@@ -132,9 +132,9 @@ public final class ColonyManager
         }
 
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius
-        if (coloniesByWorld.containsKey(w.provider.getDimensionId()))
+        if (coloniesByWorld.containsKey(w.provider.getDimension()))
         {
-            for (@NotNull Colony otherColony : coloniesByWorld.get(w.provider.getDimensionId()))
+            for (@Nonnull Colony otherColony : coloniesByWorld.get(w.provider.getDimension()))
             {
                 AbstractBuilding building = otherColony.getBuilding(pos);
                 if (building != null)
@@ -154,15 +154,15 @@ public final class ColonyManager
      * @param pos coordinates
      * @return Colony at the given location
      */
-    public static Colony getColony(@NotNull World w, @NotNull BlockPos pos)
+    public static Colony getColony(@Nonnull World w, @Nonnull BlockPos pos)
     {
-        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
+        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
         if (coloniesInWorld == null)
         {
             return null;
         }
 
-        for (@NotNull Colony c : coloniesInWorld)
+        for (@Nonnull Colony c : coloniesInWorld)
         {
             if (c.isCoordInColony(w, pos))
             {
@@ -182,7 +182,7 @@ public final class ColonyManager
     public static AbstractBuilding.View getBuildingView(BlockPos pos)
     {
         //  On client we will just check all known views
-        for (@NotNull ColonyView colony : colonyViews.values())
+        for (@Nonnull ColonyView colony : colonyViews.values())
         {
             AbstractBuilding.View building = colony.getBuilding(pos);
             if (building != null)
@@ -204,7 +204,7 @@ public final class ColonyManager
      * @return View of colony or colony itself depending on side
      */
     @Nullable
-    public static IColony getIColony(@NotNull World w, @NotNull BlockPos pos)
+    public static IColony getIColony(@Nonnull World w, @Nonnull BlockPos pos)
     {
         return w.isRemote ? getColonyView(w, pos) : getColony(w, pos);
     }
@@ -216,9 +216,9 @@ public final class ColonyManager
      * @param pos coordinates
      * @return returns the view belonging to the colony at x, y, z,
      */
-    private static ColonyView getColonyView(@NotNull World w, @NotNull BlockPos pos)
+    private static ColonyView getColonyView(@Nonnull World w, @Nonnull BlockPos pos)
     {
-        for (@NotNull ColonyView c : colonyViews.values())
+        for (@Nonnull ColonyView c : colonyViews.values())
         {
             if (c.isCoordInColony(w, pos))
             {
@@ -240,7 +240,7 @@ public final class ColonyManager
      * @return View of colony or colony itself depending on side, closest to coordinates
      */
     @Nullable
-    public static IColony getClosestIColony(@NotNull World w, @NotNull BlockPos pos)
+    public static IColony getClosestIColony(@Nonnull World w, @Nonnull BlockPos pos)
     {
         return w.isRemote ? getClosestColonyView(w, pos) : getClosestColony(w, pos);
     }
@@ -253,14 +253,14 @@ public final class ColonyManager
      * @return View of the closest colony
      */
     @Nullable
-    public static ColonyView getClosestColonyView(@NotNull World w, @NotNull BlockPos pos)
+    public static ColonyView getClosestColonyView(@Nonnull World w, @Nonnull BlockPos pos)
     {
         @Nullable ColonyView closestColony = null;
         float closestDist = Float.MAX_VALUE;
 
-        for (@NotNull ColonyView c : colonyViews.values())
+        for (@Nonnull ColonyView c : colonyViews.values())
         {
-            if (c.getDimensionId() == w.provider.getDimensionId())
+            if (c.getDimension() == w.provider.getDimension())
             {
                 float dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
@@ -281,9 +281,9 @@ public final class ColonyManager
      * @param pos coordinates
      * @return Colony closest to coordinates
      */
-    private static Colony getClosestColony(@NotNull World w, @NotNull BlockPos pos)
+    private static Colony getClosestColony(@Nonnull World w, @Nonnull BlockPos pos)
     {
-        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
+        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
         if (coloniesInWorld == null)
         {
             return null;
@@ -292,9 +292,9 @@ public final class ColonyManager
         @Nullable Colony closestColony = null;
         float closestDist = Float.MAX_VALUE;
 
-        for (@NotNull Colony c : coloniesInWorld)
+        for (@Nonnull Colony c : coloniesInWorld)
         {
-            if (c.getDimensionId() == w.provider.getDimensionId())
+            if (c.getDimension() == w.provider.getDimension())
             {
                 float dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
@@ -320,7 +320,7 @@ public final class ColonyManager
      * @return IColony belonging to specific player
      */
     @Nullable
-    public static IColony getIColonyByOwner(@NotNull World w, @NotNull EntityPlayer owner)
+    public static IColony getIColonyByOwner(@Nonnull World w, @Nonnull EntityPlayer owner)
     {
         return getIColonyByOwner(w, w.isRemote ? owner.getUniqueID() : owner.getGameProfile().getId());
     }
@@ -337,7 +337,7 @@ public final class ColonyManager
      * @return IColony belonging to specific player
      */
     @Nullable
-    public static IColony getIColonyByOwner(@NotNull World w, UUID owner)
+    public static IColony getIColonyByOwner(@Nonnull World w, UUID owner)
     {
         return w.isRemote ? getColonyViewByOwner(owner) : getColonyByOwner(owner);
     }
@@ -350,7 +350,7 @@ public final class ColonyManager
      */
     private static IColony getColonyViewByOwner(UUID owner)
     {
-        for (@NotNull ColonyView c : colonyViews.values())
+        for (@Nonnull ColonyView c : colonyViews.values())
         {
             Permissions.Player p = c.getPlayers().get(owner);
             if (p != null && p.getRank().equals(Permissions.Rank.OWNER))
@@ -394,9 +394,9 @@ public final class ColonyManager
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
-    public static void onServerTick(@NotNull TickEvent.ServerTickEvent event)
+    public static void onServerTick(@Nonnull TickEvent.ServerTickEvent event)
     {
-        for (@NotNull Colony c : colonies.values())
+        for (@Nonnull Colony c : colonies.values())
         {
             c.onServerTick(event);
         }
@@ -412,10 +412,10 @@ public final class ColonyManager
      */
     private static void saveColonies()
     {
-        @NotNull NBTTagCompound compound = new NBTTagCompound();
+        @Nonnull NBTTagCompound compound = new NBTTagCompound();
         writeToNBT(compound);
 
-        @NotNull File file = getSaveLocation();
+        @Nonnull File file = getSaveLocation();
         saveNBTToPath(file, compound);
 
         saveNeeded = false;
@@ -426,12 +426,12 @@ public final class ColonyManager
      *
      * @param compound NBT-Tag
      */
-    public static void writeToNBT(@NotNull NBTTagCompound compound)
+    public static void writeToNBT(@Nonnull NBTTagCompound compound)
     {
-        @NotNull NBTTagList colonyTagList = new NBTTagList();
-        for (@NotNull Colony colony : colonies.values())
+        @Nonnull NBTTagList colonyTagList = new NBTTagList();
+        for (@Nonnull Colony colony : colonies.values())
         {
-            @NotNull NBTTagCompound colonyTagCompound = new NBTTagCompound();
+            @Nonnull NBTTagCompound colonyTagCompound = new NBTTagCompound();
             colony.writeToNBT(colonyTagCompound);
             colonyTagList.appendTag(colonyTagCompound);
         }
@@ -443,10 +443,10 @@ public final class ColonyManager
      *
      * @return Save file for minecolonies
      */
-    @NotNull
+    @Nonnull
     private static File getSaveLocation()
     {
-        @NotNull File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        @Nonnull File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
     }
 
@@ -456,7 +456,7 @@ public final class ColonyManager
      * @param file     The destination file to write the data to
      * @param compound The NBTTagCompound to write to the file
      */
-    private static void saveNBTToPath(@Nullable File file, @NotNull NBTTagCompound compound)
+    private static void saveNBTToPath(@Nullable File file, @Nonnull NBTTagCompound compound)
     {
         try
         {
@@ -477,7 +477,7 @@ public final class ColonyManager
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}
      */
-    public static void onClientTick(@NotNull TickEvent.ClientTickEvent event)
+    public static void onClientTick(@Nonnull TickEvent.ClientTickEvent event)
     {
         if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().theWorld == null && !colonyViews.isEmpty())
         {
@@ -493,10 +493,10 @@ public final class ColonyManager
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
     public static void onWorldTick(
-                                    @NotNull TickEvent.WorldTickEvent event)
+                                    @Nonnull TickEvent.WorldTickEvent event)
     {
         colonies.values().stream()
-          .filter(c -> c.getDimensionId() == event.world.provider.getDimensionId())
+          .filter(c -> c.getDimension() == event.world.provider.getDimension())
           .forEach(c -> c.onWorldTick(event));
     }
 
@@ -506,13 +506,13 @@ public final class ColonyManager
      *
      * @param world World
      */
-    public static void onWorldLoad(@NotNull World world)
+    public static void onWorldLoad(@Nonnull World world)
     {
         if (!world.isRemote)
         {
             if (numWorldsLoaded == 0)
             {
-                @NotNull File file = getSaveLocation();
+                @Nonnull File file = getSaveLocation();
                 @Nullable NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)
                 {
@@ -521,16 +521,16 @@ public final class ColonyManager
             }
             ++numWorldsLoaded;
 
-            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimensionId());
+            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimension());
             if (worldColonies != null)
             {
-                for (@NotNull Colony c : worldColonies)
+                for (@Nonnull Colony c : worldColonies)
                 {
                     c.onWorldLoad(world);
                 }
             }
-
-            world.addWorldAccess(new ColonyManagerWorldAccess());
+            
+            world.addEventListener(new ColonyManagerWorldAccess());
         }
     }
 
@@ -562,19 +562,19 @@ public final class ColonyManager
      *
      * @param compound NBT Tag
      */
-    public static void readFromNBT(@NotNull NBTTagCompound compound)
+    public static void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {
-            @NotNull Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i));
+            @Nonnull Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i));
             colonies.put(colony.getID(), colony);
 
-            if (!coloniesByWorld.containsKey(colony.getDimensionId()))
+            if (!coloniesByWorld.containsKey(colony.getDimension()))
             {
-                coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
+                coloniesByWorld.put(colony.getDimension(), new ArrayList<>());
             }
-            coloniesByWorld.get(colony.getDimensionId()).add(colony);
+            coloniesByWorld.get(colony.getDimension()).add(colony);
 
             topColonyId = Math.max(topColonyId, colony.getID());
         }
@@ -587,10 +587,10 @@ public final class ColonyManager
      *
      * @param world World
      */
-    public static void onWorldSave(@NotNull World world)
+    public static void onWorldSave(@Nonnull World world)
     {
         //We save when the first dimension is saved.
-        if (!world.isRemote && world.provider.getDimensionId() == 0)
+        if (!world.isRemote && world.provider.getDimension() == 0)
         {
             saveColonies();
         }
@@ -602,14 +602,14 @@ public final class ColonyManager
      *
      * @param world World
      */
-    public static void onWorldUnload(@NotNull World world)
+    public static void onWorldUnload(@Nonnull World world)
     {
         if (!world.isRemote)
         {
-            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimensionId());
+            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimension());
             if (worldColonies != null)
             {
-                for (@NotNull Colony c : worldColonies)
+                for (@Nonnull Colony c : worldColonies)
                 {
                     c.onWorldUnload(world);
                 }
@@ -633,7 +633,7 @@ public final class ColonyManager
      * @return the response message.
      */
     @Nullable
-    public static IMessage handleColonyViewMessage(int colonyId, @NotNull ByteBuf colonyData, boolean isNewSubscription)
+    public static IMessage handleColonyViewMessage(int colonyId, @Nonnull ByteBuf colonyData, boolean isNewSubscription)
     {
         ColonyView view = getColonyView(colonyId);
         if (view == null)
@@ -664,7 +664,7 @@ public final class ColonyManager
      * @param data     {@link ByteBuf} with colony data
      * @return result of {@link ColonyView#handlePermissionsViewMessage(ByteBuf)} or null
      */
-    public static IMessage handlePermissionsViewMessage(int colonyID, @NotNull ByteBuf data)
+    public static IMessage handlePermissionsViewMessage(int colonyID, @Nonnull ByteBuf data)
     {
         final ColonyView view = getColonyView(colonyID);
         if (view != null)
@@ -747,7 +747,7 @@ public final class ColonyManager
      * @param buf        {@link ByteBuf} with colony data
      * @return result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, ByteBuf)} or null
      */
-    public static IMessage handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @NotNull ByteBuf buf)
+    public static IMessage handleColonyBuildingViewMessage(int colonyId, BlockPos buildingId, @Nonnull ByteBuf buf)
     {
         final ColonyView view = getColonyView(colonyId);
         if (view != null)

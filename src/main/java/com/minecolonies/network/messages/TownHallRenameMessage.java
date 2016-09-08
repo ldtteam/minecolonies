@@ -9,8 +9,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHallRenameMessage, IMessage>
 {
@@ -25,21 +25,21 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
      * @param colony Colony the rename is going to occur in
      * @param name   New name of the town hall
      */
-    public TownHallRenameMessage(@NotNull ColonyView colony, String name)
+    public TownHallRenameMessage(@Nonnull ColonyView colony, String name)
     {
         this.colonyId = colony.getID();
         this.name = name;
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@Nonnull ByteBuf buf)
     {
         colonyId = buf.readInt();
         name = ByteBufUtils.readUTF8String(buf);
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@Nonnull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         ByteBufUtils.writeUTF8String(buf, name);
@@ -47,7 +47,7 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull TownHallRenameMessage message, MessageContext ctx)
+    public IMessage onMessage(@Nonnull TownHallRenameMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
 

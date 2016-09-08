@@ -2,8 +2,8 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class JobPlaceholder extends AbstractJob
 {
@@ -12,7 +12,7 @@ public class JobPlaceholder extends AbstractJob
         super(entity);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getName()
     {

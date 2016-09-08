@@ -1,40 +1,22 @@
-.idea/
-.gradle/
-classes/
-build/
-eclipse/
-logs/
-mods/
-out/
-run/
-*.iml
+# eclipse
+bin
+*.launch
+.settings
+.metadata
+.classpath
+.project
+
+# idea
+out
 *.ipr
 *.iws
-MinecraftForge*.txt
-CREDITS*
-LICENSE-fml*
-*changelog.txt
-README.txt
-/bin/
-*.hprof
-/.gradle/
-/build/
+*.iml
+.idea
 
-# Exclude all Mac DS_Store files
-/**/.DS_Store
+# gradle
+build
+.gradle
 
-# Exclude all Windows stuff
-/**/Thumbs.db
-
-# Eclipse stuff
-/.settings/
-/.project
-/.classpath
-/MineColonies_Client.launch
-/MineColonies_Server.launch
-
-# Old launcher (different case)
-/minecolonies_Client.launch
-/minecolonies_Server.launch
-
-tools/.api_key
+# other
+eclipse
+run

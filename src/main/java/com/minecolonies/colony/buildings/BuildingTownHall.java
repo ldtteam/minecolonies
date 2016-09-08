@@ -3,8 +3,8 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.client.gui.WindowTownHall;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
 
 public class BuildingTownHall extends AbstractBuildingHut
 {
@@ -15,7 +15,7 @@ public class BuildingTownHall extends AbstractBuildingHut
         super(c, l);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getSchematicName()
     {
@@ -35,7 +35,7 @@ public class BuildingTownHall extends AbstractBuildingHut
             super(c, l);
         }
 
-        @NotNull
+        @Nonnull
         public com.blockout.views.Window getWindow()
         {
             return new WindowTownHall(this);

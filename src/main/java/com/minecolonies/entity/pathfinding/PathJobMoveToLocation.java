@@ -2,11 +2,11 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.Log;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.pathfinding.Path;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Job that handles moving to a location.
@@ -17,7 +17,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     // 1^2 + 1^2 + 1^2 + (epsilon of 0.1F)
     private static final float DESTINATION_SLACK_ADJACENT = 3.1F;
     private static final double TIE_BREAKER = 1.001D;
-    @NotNull
+    @Nonnull
     private final BlockPos destination;
     // 0 = exact match
     private float destinationSlack = DESTINATION_SLACK_NONE;
@@ -30,7 +30,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
      * @param end   target location.
      * @param range max search range.
      */
-    public PathJobMoveToLocation(World world, @NotNull BlockPos start, @NotNull BlockPos end, int range)
+    public PathJobMoveToLocation(World world, @Nonnull BlockPos start, @Nonnull BlockPos end, int range)
     {
         super(world, start, end, range);
 
@@ -40,11 +40,11 @@ public class PathJobMoveToLocation extends AbstractPathJob
     /**
      * Perform the search
      *
-     * @return PathEntity of a path to the given location, a best-effort, or null
+     * @return Path of a path to the given location, a best-effort, or null
      */
     @Nullable
     @Override
-    protected PathEntity search()
+    protected Path search()
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
@@ -62,7 +62,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(@NotNull BlockPos pos)
+    protected double computeHeuristic(@Nonnull BlockPos pos)
     {
         int dx = pos.getX() - destination.getX();
         int dy = pos.getY() - destination.getY();
@@ -73,7 +73,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     @Override
-    protected boolean isAtDestination(@NotNull Node n)
+    protected boolean isAtDestination(@Nonnull Node n)
     {
         if (destinationSlack <= DESTINATION_SLACK_NONE)
         {
@@ -86,7 +86,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     @Override
-    protected double getNodeResultScore(@NotNull Node n)
+    protected double getNodeResultScore(@Nonnull Node n)
     {
         //  For Result Score higher is better - return negative distance so closer to 0 = better
         return -destination.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ());

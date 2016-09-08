@@ -10,14 +10,14 @@ import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Message sent to open an inventory.
@@ -60,7 +60,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
      *
      * @param citizen {@link CitizenDataView}
      */
-    public OpenInventoryMessage(@NotNull CitizenDataView citizen)
+    public OpenInventoryMessage(@Nonnull CitizenDataView citizen)
     {
         inventoryType = InventoryType.INVENTORY_CITIZEN;
         name = citizen.getName();
@@ -72,7 +72,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
      *
      * @param building {@link AbstractBuilding.View}
      */
-    public OpenInventoryMessage(@NotNull AbstractBuilding.View building)
+    public OpenInventoryMessage(@Nonnull AbstractBuilding.View building)
     {
         inventoryType = InventoryType.INVENTORY_CHEST;
         name = "";
@@ -94,7 +94,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@Nonnull ByteBuf buf)
     {
         inventoryType = InventoryType.values()[buf.readInt()];
         name = ByteBufUtils.readUTF8String(buf);
@@ -113,7 +113,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@Nonnull ByteBuf buf)
     {
         buf.writeInt(inventoryType.ordinal());
         ByteBufUtils.writeUTF8String(buf, name);
@@ -134,14 +134,14 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull OpenInventoryMessage message, @NotNull MessageContext ctx)
+    public IMessage onMessage(@Nonnull OpenInventoryMessage message, @Nonnull MessageContext ctx)
     {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
 
         switch (message.inventoryType)
         {
             case INVENTORY_CITIZEN:
-                @NotNull final InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
+                @Nonnull final InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
                 if (!StringUtils.isNullOrEmpty(message.name))
                 {
                     citizenInventory.setCustomName(message.name);
@@ -149,7 +149,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 player.displayGUIChest(citizenInventory);
                 break;
             case INVENTORY_CHEST:
-                @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
+                @Nonnull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
                 if (!StringUtils.isNullOrEmpty(message.name))
                 {
                     chest.setCustomName(message.name);
@@ -157,7 +157,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
                 player.displayGUIChest(chest);
                 break;
             case INVENTORY_FIELD:
-                @NotNull final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
+                @Nonnull final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
                 if (!StringUtils.isNullOrEmpty(message.name))
                 {
                     inventoryField.setCustomName(message.name);

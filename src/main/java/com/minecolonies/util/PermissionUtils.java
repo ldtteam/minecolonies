@@ -2,7 +2,7 @@ package com.minecolonies.util;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.permissions.Permissions;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +31,15 @@ public final class PermissionUtils
      * @param rank   The rank to check
      * @return The list with online players that has the rank or higher
      */
-    @NotNull
-    public static List<Permissions.Player> getPlayersWithAtLeastRank(@NotNull Colony colony, @NotNull Permissions.Rank rank)
+    @Nonnull
+    public static List<Permissions.Player> getPlayersWithAtLeastRank(@Nonnull Colony colony, @Nonnull Permissions.Rank rank)
     {
-        @NotNull final List<Permissions.Player> playersWithAtLeastRank = new ArrayList<>();
+        @Nonnull final List<Permissions.Player> playersWithAtLeastRank = new ArrayList<>();
 
-        @NotNull final Permissions permissions = colony.getPermissions();
-        @NotNull final Map<UUID, Permissions.Player> players = permissions.getPlayers();
+        @Nonnull final Permissions permissions = colony.getPermissions();
+        @Nonnull final Map<UUID, Permissions.Player> players = permissions.getPlayers();
 
-        for (@NotNull final Permissions.Player player : players.values())
+        for (@Nonnull final Permissions.Player player : players.values())
         {
             if (player.getRank().ordinal() <= rank.ordinal())
             {

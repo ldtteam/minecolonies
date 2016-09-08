@@ -1,11 +1,11 @@
 package com.schematica.core.client.renderer;
 
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.lwjgl.opengl.GL11;
 
 public final class GeometryTessellator extends Tessellator
@@ -37,19 +37,19 @@ public final class GeometryTessellator extends Tessellator
         deltaS = delta;
     }
 
-    public static void drawCuboid(@NotNull final WorldRenderer worldRenderer, @NotNull final BlockPos pos, final int sides, final int argb)
+    public static void drawCuboid(@Nonnull final VertexBuffer VertexBuffer, @Nonnull final BlockPos pos, final int sides, final int argb)
     {
-        drawCuboid(worldRenderer, pos, pos, sides, argb);
+        drawCuboid(VertexBuffer, pos, pos, sides, argb);
     }
 
-    private static void drawCuboid(@NotNull final WorldRenderer worldRenderer, @NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb)
+    private static void drawCuboid(@Nonnull final VertexBuffer VertexBuffer, @Nonnull final BlockPos begin, @Nonnull final BlockPos end, final int sides, final int argb)
     {
-        drawCuboid(worldRenderer, begin, end, sides, argb, GeometryTessellator.deltaS);
+        drawCuboid(VertexBuffer, begin, end, sides, argb, GeometryTessellator.deltaS);
     }
 
     public void setTranslation(final double x, final double y, final double z)
     {
-        getWorldRenderer().setTranslation(x, y, z);
+        getBuffer().setTranslation(x, y, z);
     }
 
     public void beginQuads()
@@ -59,7 +59,7 @@ public final class GeometryTessellator extends Tessellator
 
     private void begin(final int mode)
     {
-        getWorldRenderer().begin(mode, DefaultVertexFormats.POSITION_COLOR);
+        getBuffer().begin(mode, DefaultVertexFormats.POSITION_COLOR);
     }
 
     public void beginLines()
@@ -72,19 +72,19 @@ public final class GeometryTessellator extends Tessellator
         this.delta = delta;
     }
 
-    public void drawCuboid(@NotNull final BlockPos pos, final int sides, final int argb)
+    public void drawCuboid(@Nonnull final BlockPos pos, final int sides, final int argb)
     {
         drawCuboid(pos, pos, sides, argb);
     }
 
-    public void drawCuboid(@NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb)
+    public void drawCuboid(@Nonnull final BlockPos begin, @Nonnull final BlockPos end, final int sides, final int argb)
     {
-        drawCuboid(getWorldRenderer(), begin, end, sides, argb, this.delta);
+        drawCuboid(getBuffer(), begin, end, sides, argb, this.delta);
     }
 
-    private static void drawCuboid(@NotNull final WorldRenderer worldRenderer, @NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb, final double delta)
+    private static void drawCuboid(@Nonnull final VertexBuffer VertexBuffer, @Nonnull final BlockPos begin, @Nonnull final BlockPos end, final int sides, final int argb, final double delta)
     {
-        if (worldRenderer.getDrawMode() == -1 || sides == 0)
+        if (VertexBuffer.getDrawMode() == -1 || sides == 0)
         {
             return;
         }
@@ -96,14 +96,14 @@ public final class GeometryTessellator extends Tessellator
         final double y1 = end.getY() + 1 + delta;
         final double z1 = end.getZ() + 1 + delta;
 
-        switch (worldRenderer.getDrawMode())
+        switch (VertexBuffer.getDrawMode())
         {
             case GL11.GL_QUADS:
-                drawQuads(worldRenderer, x0, y0, z0, x1, y1, z1, sides, argb);
+                drawQuads(VertexBuffer, x0, y0, z0, x1, y1, z1, sides, argb);
                 break;
 
             case GL11.GL_LINES:
-                drawLines(worldRenderer, x0, y0, z0, x1, y1, z1, sides, argb);
+                drawLines(VertexBuffer, x0, y0, z0, x1, y1, z1, sides, argb);
                 break;
 
             default:
@@ -112,7 +112,7 @@ public final class GeometryTessellator extends Tessellator
     }
 
     private static void drawQuads(
-                                   @NotNull final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
+                                   @Nonnull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
                                    final double x1, final double y1, final double z1, final int sides, final int argb)
     {
         final int a = (argb >>> 24) & 0xFF;
@@ -120,11 +120,11 @@ public final class GeometryTessellator extends Tessellator
         final int g = (argb >>> 8) & 0xFF;
         final int b = argb & 0xFF;
 
-        drawQuads(worldRenderer, x0, y0, z0, x1, y1, z1, sides, a, r, g, b);
+        drawQuads(VertexBuffer, x0, y0, z0, x1, y1, z1, sides, a, r, g, b);
     }
 
     private static void drawLines(
-                                   @NotNull final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
+                                   @Nonnull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
                                    final double x1, final double y1, final double z1, final int sides, final int argb)
     {
         final int a = (argb >>> 24) & 0xFF;
@@ -132,136 +132,136 @@ public final class GeometryTessellator extends Tessellator
         final int g = (argb >>> 8) & 0xFF;
         final int b = argb & 0xFF;
 
-        drawLines(worldRenderer, x0, y0, z0, x1, y1, z1, sides, a, r, g, b);
+        drawLines(VertexBuffer, x0, y0, z0, x1, y1, z1, sides, a, r, g, b);
     }
 
     private static void drawQuads(
-                                   @NotNull final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
+                                   @Nonnull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
                                    final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b)
     {
         if ((sides & GeometryMasks.Quad.DOWN) != 0)
         {
-            worldRenderer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Quad.UP) != 0)
         {
-            worldRenderer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Quad.NORTH) != 0)
         {
-            worldRenderer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Quad.SOUTH) != 0)
         {
-            worldRenderer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Quad.WEST) != 0)
         {
-            worldRenderer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Quad.EAST) != 0)
         {
-            worldRenderer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
         }
     }
 
     private static void drawLines(
-                                   @NotNull final WorldRenderer worldRenderer, final double x0, final double y0, final double z0,
+                                   @Nonnull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
                                    final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b)
     {
         if ((sides & GeometryMasks.Line.DOWN_WEST) != 0)
         {
-            worldRenderer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.UP_WEST) != 0)
         {
-            worldRenderer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.DOWN_EAST) != 0)
         {
-            worldRenderer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.UP_EAST) != 0)
         {
-            worldRenderer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.DOWN_NORTH) != 0)
         {
-            worldRenderer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.UP_NORTH) != 0)
         {
-            worldRenderer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.DOWN_SOUTH) != 0)
         {
-            worldRenderer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.UP_SOUTH) != 0)
         {
-            worldRenderer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.NORTH_WEST) != 0)
         {
-            worldRenderer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z0).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.NORTH_EAST) != 0)
         {
-            worldRenderer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z0).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z0).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.SOUTH_WEST) != 0)
         {
-            worldRenderer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x0, y1, z1).color(r, g, b, a).endVertex();
         }
 
         if ((sides & GeometryMasks.Line.SOUTH_EAST) != 0)
         {
-            worldRenderer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
-            worldRenderer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y0, z1).color(r, g, b, a).endVertex();
+            VertexBuffer.pos(x1, y1, z1).color(r, g, b, a).endVertex();
         }
     }
 }

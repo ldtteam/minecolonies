@@ -9,10 +9,10 @@ import com.minecolonies.util.ServerUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,7 +22,7 @@ public class BuildingHome extends AbstractBuildingHut
 {
     private static final String            TAG_RESIDENTS = "residents";
     private static final String            CITIZEN       = "Citizen";
-    @NotNull
+    @Nonnull
     private              List<CitizenData> residents     = new ArrayList<>();
 
     public BuildingHome(Colony c, BlockPos l)
@@ -30,7 +30,7 @@ public class BuildingHome extends AbstractBuildingHut
         super(c, l);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getSchematicName()
     {
@@ -44,7 +44,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -64,13 +64,13 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
         if (!residents.isEmpty())
         {
-            @NotNull int[] residentIds = new int[residents.size()];
+            @Nonnull int[] residentIds = new int[residents.size()];
             for (int i = 0; i < residents.size(); ++i)
             {
                 residentIds[i] = residents.get(i).getId();
@@ -95,7 +95,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void removeCitizen(@NotNull CitizenData citizen)
+    public void removeCitizen(@Nonnull CitizenData citizen)
     {
         if (residents.contains(citizen))
         {
@@ -105,7 +105,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void onWorldTick(@NotNull TickEvent.WorldTickEvent event)
+    public void onWorldTick(@Nonnull TickEvent.WorldTickEvent event)
     {
         if (event.phase != TickEvent.Phase.END)
         {
@@ -131,7 +131,7 @@ public class BuildingHome extends AbstractBuildingHut
      */
     public void addHomelessCitizens()
     {
-        for (@NotNull CitizenData citizen : getColony().getCitizens().values())
+        for (@Nonnull CitizenData citizen : getColony().getCitizens().values())
         {
             if (citizen.getHomeBuilding() == null)
             {
@@ -150,7 +150,7 @@ public class BuildingHome extends AbstractBuildingHut
      *
      * @param citizen Citizen to add
      */
-    private void addResident(@NotNull CitizenData citizen)
+    private void addResident(@Nonnull CitizenData citizen)
     {
         residents.add(citizen);
         citizen.setHomeBuilding(this);
@@ -167,21 +167,21 @@ public class BuildingHome extends AbstractBuildingHut
 
         if (newLevel == 1)
         {
-            owner.triggerAchievement(ModAchievements.achievementBuildingColonist);
+            owner.addStat(ModAchievements.achievementBuildingColonist);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
+            owner.addStat(ModAchievements.achievementUpgradeColonistMax);
         }
     }
 
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@Nonnull ByteBuf buf)
     {
         super.serializeToView(buf);
 
         buf.writeInt(residents.size());
-        for (@NotNull CitizenData citizen : residents)
+        for (@Nonnull CitizenData citizen : residents)
         {
             buf.writeInt(citizen.getId());
         }
@@ -200,7 +200,7 @@ public class BuildingHome extends AbstractBuildingHut
 
     public static class View extends AbstractBuildingHut.View
     {
-        @NotNull
+        @Nonnull
         private List<Integer> residents = new ArrayList<>();
 
         public View(ColonyView c, BlockPos l)
@@ -208,20 +208,20 @@ public class BuildingHome extends AbstractBuildingHut
             super(c, l);
         }
 
-        @NotNull
+        @Nonnull
         public List<Integer> getResidents()
         {
             return Collections.unmodifiableList(residents);
         }
 
-        @NotNull
+        @Nonnull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHomeBuilding(this);
         }
 
         @Override
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@Nonnull ByteBuf buf)
         {
             super.deserialize(buf);
 

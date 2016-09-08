@@ -3,7 +3,7 @@ package com.minecolonies.colony;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * The WorkOrderView is the client-side representation of a WorkOrders.
@@ -129,7 +129,7 @@ public class WorkOrderView
      *
      * @param buf Byte buffer to deserialize.
      */
-    public void deserialize(@NotNull ByteBuf buf)
+    public void deserialize(@Nonnull ByteBuf buf)
     {
         id = buf.readInt();
         priority = buf.readInt();

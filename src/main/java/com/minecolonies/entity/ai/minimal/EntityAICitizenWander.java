@@ -3,10 +3,10 @@ package com.minecolonies.entity.ai.minimal;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
+import javax.annotation.Nonnull;
 
 public class EntityAICitizenWander extends EntityAIBase
 {
@@ -35,17 +35,17 @@ public class EntityAICitizenWander extends EntityAIBase
         {
             return false;
         }
-        Vec3 vec3 = RandomPositionGenerator.findRandomTarget(citizen, 10, 7);
-        if (vec3 == null)
+        Vec3d Vec3d = RandomPositionGenerator.findRandomTarget(citizen, 10, 7);
+        if (Vec3d == null)
         {
             return false;
         }
 
-        vec3 = new Vec3(vec3.xCoord, getValidHeight(vec3), vec3.zCoord);
+        Vec3d = new Vec3d(Vec3d.xCoord, getValidHeight(Vec3d), Vec3d.zCoord);
 
-        this.xPosition = vec3.xCoord;
-        this.yPosition = vec3.yCoord;
-        this.zPosition = vec3.zCoord;
+        this.xPosition = Vec3d.xCoord;
+        this.yPosition = Vec3d.yCoord;
+        this.zPosition = Vec3d.zCoord;
 
         return true;
     }
@@ -72,7 +72,7 @@ public class EntityAICitizenWander extends EntityAIBase
      * @param position Current position of the entity
      * @return Ground level at (position.x, position.z)
      */
-    private double getValidHeight(@NotNull Vec3 position)
+    private double getValidHeight(@Nonnull Vec3d position)
     {
         double returnHeight = position.yCoord;
         if (position.yCoord < 0)

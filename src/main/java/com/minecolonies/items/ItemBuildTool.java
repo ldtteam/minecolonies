@@ -4,10 +4,13 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.achievements.ModAchievements;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class ItemBuildTool extends AbstractItemMinecolonies
 {
@@ -18,26 +21,26 @@ public class ItemBuildTool extends AbstractItemMinecolonies
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, @NotNull EntityPlayer playerIn, @NotNull World worldIn, @NotNull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
         if (!worldIn.isRemote)
         {
-            return false;
+            return EnumActionResult.FAIL;
         }
 
-        playerIn.triggerAchievement(ModAchievements.achievementWandOfbuilding);
-        MineColonies.proxy.openBuildToolWindow(pos.offset(side));
-        return false;
+        playerIn.addStat(ModAchievements.achievementWandOfbuilding);
+        MineColonies.proxy.openBuildToolWindow(pos.offset(facing));
+        return EnumActionResult.FAIL;
     }
 
     @Override
-    public ItemStack onItemRightClick(ItemStack stack, @NotNull World world, EntityPlayer player)
+    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
     {
-        if (world.isRemote)
+        if (worldIn.isRemote)
         {
             MineColonies.proxy.openBuildToolWindow(null);
         }
 
-        return stack;
+        return new ActionResult(EnumActionResult.PASS, itemStackIn);
     }
 }

@@ -1,5 +1,12 @@
 package com.minecolonies.client.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.blockout.controls.Button;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
@@ -12,16 +19,12 @@ import com.schematica.Settings;
 import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.client.util.RotationHelper;
 import com.schematica.world.storage.Schematic;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * BuildTool window.
@@ -123,7 +126,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * List of huts or decorations possible to make.
      */
-    @NotNull
+    @Nonnull
     private List<String> hutDec = new ArrayList<>();
 
     /**
@@ -139,7 +142,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Current position the hut/decoration is rendered at.
      */
-    @NotNull
+    @Nonnull
     private BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
 
     /**
@@ -161,7 +164,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param pos coordinate
      */
-    public WindowBuildTool(@NotNull BlockPos pos)
+    public WindowBuildTool(@Nonnull BlockPos pos)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
@@ -193,9 +196,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
     }
 
-    private static boolean inventoryHasHut(@NotNull InventoryPlayer inventory, String hut)
+    private static boolean inventoryHasHut(@Nonnull InventoryPlayer inventory, String hut)
     {
-        return inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, DEFAULT_POS));
+        return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
     }
 
     /**
@@ -322,7 +325,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void hutDecClicked(@NotNull Button button)
+    private void hutDecClicked(@Nonnull Button button)
     {
         if (hutDec.size() == 1)
         {
@@ -362,7 +365,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
         String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-        @NotNull SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
+        @Nonnull SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
 
         Settings.instance.setActiveSchematic(schematic.getSchematic());
 
@@ -392,7 +395,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void styleClicked(@NotNull Button button)
+    private void styleClicked(@Nonnull Button button)
     {
         List<String> styles = getStyles();
 

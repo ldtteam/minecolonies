@@ -8,13 +8,13 @@ import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Recalls the citizen to the hut
@@ -34,21 +34,21 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
      *
      * @param building View of the building the citizen is working in
      */
-    public RecallCitizenMessage(@NotNull AbstractBuildingWorker.View building)
+    public RecallCitizenMessage(@Nonnull AbstractBuildingWorker.View building)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@Nonnull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@Nonnull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -56,7 +56,7 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull RecallCitizenMessage message, MessageContext ctx)
+    public IMessage onMessage(@Nonnull RecallCitizenMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
@@ -70,7 +70,7 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
                 {
                     @Nullable World world = colony.getWorld();
                     @Nullable BlockPos spawnPoint =
-                      Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer, Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower);
+                      Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER);
 
                     citizen.setLocationAndAngles(spawnPoint.getX() + 0.5, spawnPoint.getY(), spawnPoint.getZ() + 0.5, citizen.rotationYaw, citizen.rotationPitch);
                 }

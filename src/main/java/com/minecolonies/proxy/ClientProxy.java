@@ -20,14 +20,14 @@ import com.schematica.handler.client.TickHandler;
 import com.schematica.handler.client.WorldHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ClientProxy extends CommonProxy
 {
@@ -67,7 +67,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public void showCitizenWindow(CitizenDataView citizen)
     {
-        @NotNull final WindowCitizen window = new WindowCitizen(citizen);
+        @Nonnull final WindowCitizen window = new WindowCitizen(citizen);
         window.open();
     }
 

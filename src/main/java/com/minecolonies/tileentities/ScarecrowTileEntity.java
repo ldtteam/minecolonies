@@ -10,11 +10,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Random;
 
@@ -84,17 +84,17 @@ public class ScarecrowTileEntity extends TileEntityChest
 
     ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
 
-    @NotNull
+    @Nonnull
     @Override
-    public Packet getDescriptionPacket()
+    public SPacketUpdateTileEntity getUpdatePacket()
     {
-        @NotNull final NBTTagCompound tag = new NBTTagCompound();
+        @Nonnull final NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
-        return new S35PacketUpdateTileEntity(this.getPos(), 0, tag);
+        return new SPacketUpdateTileEntity(this.getPos(), 0, tag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, @NotNull S35PacketUpdateTileEntity pkt)
+    public void onDataPacket(NetworkManager net, @Nonnull SPacketUpdateTileEntity pkt)
     {
         readFromNBT(pkt.getNbtCompound());
     }
@@ -134,13 +134,14 @@ public class ScarecrowTileEntity extends TileEntityChest
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
         compound.setInteger(TAG_TYPE, this.getType().ordinal());
         getInventoryField().writeToNBT(compound);
         compound.setString(TAG_NAME, name);
+        return compound;
     }
 
     /**

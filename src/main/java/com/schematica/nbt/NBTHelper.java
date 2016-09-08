@@ -3,6 +3,7 @@ package com.schematica.nbt;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public class NBTHelper
 {
@@ -13,9 +14,9 @@ public class NBTHelper
         return tileEntityCompound;
     }
 
-    public static TileEntity readTileEntityFromCompound(final NBTTagCompound tileEntityCompound)
+    public static TileEntity readTileEntityFromCompound(final World world, final NBTTagCompound tileEntityCompound)
     {
-        return TileEntity.createAndLoadEntity(tileEntityCompound);
+        return TileEntity.func_190200_a(world, tileEntityCompound);
     }
 
     public static NBTTagCompound writeEntityToCompound(final Entity entity)

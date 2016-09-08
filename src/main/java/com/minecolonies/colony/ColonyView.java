@@ -11,12 +11,12 @@ import com.minecolonies.network.messages.TownHallRenameMessage;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.MathUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.*;
 
@@ -36,15 +36,15 @@ public final class ColonyView implements IColony
      */
     private boolean          manualHiring = false;
     //  Administration/permissions
-    @NotNull
+    @Nonnull
     private Permissions.View permissions  = new Permissions.View();
     //  Buildings
     @Nullable
     private BuildingTownHall.View townHall;
-    @NotNull
+    @Nonnull
     private Map<BlockPos, AbstractBuilding.View> buildings   = new HashMap<>();
     //  Citizenry
-    @NotNull
+    @Nonnull
     private Map<Integer, CitizenDataView>        citizens    = new HashMap<>();
     private int                                  maxCitizens = 0;
 
@@ -64,7 +64,7 @@ public final class ColonyView implements IColony
      * @param id Id of the colony view.
      * @return the new colony view.
      */
-    @NotNull
+    @Nonnull
     public static ColonyView createFromNetwork(int id)
     {
         return new ColonyView(id);
@@ -77,11 +77,11 @@ public final class ColonyView implements IColony
      * @param buf               {@link ByteBuf} to write data in.
      * @param isNewSubScription true if this is a new subscription.
      */
-    public static void serializeNetworkData(@NotNull Colony colony, @NotNull ByteBuf buf, boolean isNewSubScription)
+    public static void serializeNetworkData(@Nonnull Colony colony, @Nonnull ByteBuf buf, boolean isNewSubScription)
     {
         //  General Attributes
         ByteBufUtils.writeUTF8String(buf, colony.getName());
-        buf.writeInt(colony.getDimensionId());
+        buf.writeInt(colony.getDimension());
         BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
@@ -104,7 +104,7 @@ public final class ColonyView implements IColony
      *
      * @return dimension ID of the view.
      */
-    public int getDimensionId()
+    public int getDimension()
     {
         return dimensionId;
     }
@@ -170,7 +170,7 @@ public final class ColonyView implements IColony
      *
      * @return Map of UUID's and {@link com.minecolonies.colony.permissions.Permissions.Player}
      */
-    @NotNull
+    @Nonnull
     public Map<UUID, Permissions.Player> getPlayers()
     {
         return permissions.getPlayers();
@@ -182,7 +182,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to get the permission.
      * @param action Permission to get.
      */
-    public void setPermission(Permissions.Rank rank, @NotNull Permissions.Action action)
+    public void setPermission(Permissions.Rank rank, @Nonnull Permissions.Action action)
     {
         if (permissions.setPermission(rank, action))
         {
@@ -196,7 +196,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.
      */
-    public void removePermission(Permissions.Rank rank, @NotNull Permissions.Action action)
+    public void removePermission(Permissions.Rank rank, @Nonnull Permissions.Action action)
     {
         if (permissions.removePermission(rank, action))
         {
@@ -210,7 +210,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to toggle permission of.
      * @param action Action to toggle permission of.
      */
-    public void togglePermission(Permissions.Rank rank, @NotNull Permissions.Action action)
+    public void togglePermission(Permissions.Rank rank, @Nonnull Permissions.Action action)
     {
         permissions.togglePermission(rank, action);
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
@@ -264,7 +264,7 @@ public final class ColonyView implements IColony
      * @param isNewSubscription Whether this is a new subscription of not
      * @return null == no response
      */
-    public IMessage handleColonyViewMessage(@NotNull ByteBuf buf, boolean isNewSubscription)
+    public IMessage handleColonyViewMessage(@Nonnull ByteBuf buf, boolean isNewSubscription)
     {
         //  General Attributes
         name = ByteBufUtils.readUTF8String(buf);
@@ -290,7 +290,7 @@ public final class ColonyView implements IColony
      * @param buf buffer containing permissions.
      * @return null == no response
      */
-    public IMessage handlePermissionsViewMessage(@NotNull ByteBuf buf)
+    public IMessage handlePermissionsViewMessage(@Nonnull ByteBuf buf)
     {
         permissions.deserialize(buf);
         return null;
@@ -379,7 +379,7 @@ public final class ColonyView implements IColony
      * @param buf        buffer containing ColonyBuilding information.
      * @return null == no response
      */
-    public IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull ByteBuf buf)
+    public IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @Nonnull ByteBuf buf)
     {
         @Nullable final AbstractBuilding.View building = AbstractBuilding.createBuildingView(this, buildingId, buf);
         if (building != null)
@@ -432,7 +432,7 @@ public final class ColonyView implements IColony
         MineColonies.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public Permissions.View getPermissions()
     {
@@ -440,15 +440,15 @@ public final class ColonyView implements IColony
     }
 
     @Override
-    public boolean isCoordInColony(@NotNull World w, @NotNull BlockPos pos)
+    public boolean isCoordInColony(@Nonnull World w, @Nonnull BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.provider.getDimensionId() == dimensionId &&
+        return w.provider.getDimension() == dimensionId &&
                  BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
     }
 
     @Override
-    public float getDistanceSquared(@NotNull BlockPos pos)
+    public float getDistanceSquared(@Nonnull BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ()));

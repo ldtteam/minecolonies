@@ -1,12 +1,13 @@
 package com.minecolonies.util;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.translation.I18n;
 
 /**
  * Helper class for localization and sending player messages
@@ -22,14 +23,14 @@ public class LanguageHandler
      * @param key    unlocalized key
      * @param args   Objects for String.format()
      */
-    public static void sendPlayerLocalizedMessage(@NotNull EntityPlayer player, String key, Object... args)
+    public static void sendPlayerLocalizedMessage(@Nonnull EntityPlayer player, String key, Object... args)
     {
         sendPlayerMessage(player, format(key, args));
     }
 
-    public static void sendPlayerMessage(@NotNull EntityPlayer player, String message)
+    public static void sendPlayerMessage(@Nonnull EntityPlayer player, String message)
     {
-        player.addChatComponentMessage(new ChatComponentText(message));
+        player.addChatComponentMessage(new TextComponentString(message));
     }
 
     /**
@@ -64,8 +65,7 @@ public class LanguageHandler
      */
     public static String getString(String key, String defaultValue)
     {
-        String value = LanguageRegistry.instance().getStringLocalization(key);
-        return "".equals(value) ? defaultValue : value;
+    	return I18n.translateToLocal(key);
     }
 
     /**
@@ -86,7 +86,7 @@ public class LanguageHandler
         {
             return;
         }
-        for (@NotNull EntityPlayer player : players)
+        for (@Nonnull EntityPlayer player : players)
         {
             sendPlayerMessage(player, message);
         }

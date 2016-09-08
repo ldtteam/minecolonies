@@ -4,7 +4,7 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.farmer.EntityAIWorkFarmer;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Job class of the farmer, handles his fields.
@@ -21,14 +21,14 @@ public class JobFarmer extends AbstractJob
         super(entity);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getName()
     {
         return "com.minecolonies.job.Farmer";
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public RenderBipedCitizen.Model getModel()
     {
@@ -38,7 +38,7 @@ public class JobFarmer extends AbstractJob
     /**
      * Override to add Job-specific AI tasks to the given EntityAITask list
      */
-    @NotNull
+    @Nonnull
     @Override
     public AbstractAISkeleton generateAI()
     {

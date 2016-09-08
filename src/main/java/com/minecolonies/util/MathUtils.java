@@ -1,7 +1,7 @@
 package com.minecolonies.util;
 
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
 
 /**
  * Useful math stuff to use statically.
@@ -46,7 +46,7 @@ public final class MathUtils
      * @param target   the end position.
      * @return the distance.
      */
-    public static double twoDimDistance(@NotNull BlockPos position, @NotNull BlockPos target)
+    public static double twoDimDistance(@Nonnull BlockPos position, @Nonnull BlockPos target)
     {
         final int x1 = position.getX();
         final int x2 = target.getX();

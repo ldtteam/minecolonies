@@ -5,7 +5,7 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.junit.Assert;
 import org.junit.Before;

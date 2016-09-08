@@ -6,8 +6,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobPlaceholder;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
 
 public class BuildingBlacksmith extends AbstractBuildingWorker
 {
@@ -19,7 +19,7 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
         super(c, l);
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getSchematicName()
     {
@@ -32,14 +32,14 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
         return 3;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getJobName()
     {
         return BLACKSMITH;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -53,7 +53,7 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
             super(c, l);
         }
 
-        @NotNull
+        @Nonnull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, BLACKSMITH_HUT_NAME);

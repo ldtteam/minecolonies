@@ -4,13 +4,13 @@ import com.schematica.reference.Names;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 final class SchematicUtil
 {
-    private static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
+    private static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.GRASS);
 
-    @NotNull
+    @Nonnull
     public static ItemStack getIconFromNBT(final NBTTagCompound tagCompound)
     {
         ItemStack icon = DEFAULT_ICON.copy();

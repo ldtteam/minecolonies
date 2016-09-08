@@ -1,16 +1,19 @@
 package com.minecolonies.util;
 
+import java.util.Objects;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 
 /**
  * General purpose utilities class.
@@ -55,7 +58,7 @@ public final class Utils
      * @return the coordinates of the found block
      */
     @Nullable
-    public static BlockPos scanForBlockNearPoint(@NotNull World world, @NotNull BlockPos point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
+    public static BlockPos scanForBlockNearPoint(@Nonnull World world, @Nonnull BlockPos point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
     {
         @Nullable BlockPos closestCoords = null;
         double minDistance = Double.MAX_VALUE;
@@ -68,7 +71,7 @@ public final class Utils
                 {
                     if (checkHeight(world, i, j, k, height, blocks))
                     {
-                        @NotNull BlockPos tempCoords = new BlockPos(i, j, k);
+                        @Nonnull BlockPos tempCoords = new BlockPos(i, j, k);
 
                         double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
                         if (closestCoords == null || distance < minDistance)
@@ -94,7 +97,7 @@ public final class Utils
      * @param blocks the block types required
      * @return true if all blocks are of that type
      */
-    private static boolean checkHeight(@NotNull World world, int x, int y, int z, int height, @NotNull Block... blocks)
+    private static boolean checkHeight(@Nonnull World world, int x, int y, int z, int height, @Nonnull Block... blocks)
     {
         for (int dy = 0; dy < height; dy++)
         {
@@ -113,7 +116,7 @@ public final class Utils
      * @param key   Object to look for
      * @return True if found, otherwise false
      */
-    private static boolean arrayContains(@NotNull Object[] array, Object key)
+    private static boolean arrayContains(@Nonnull Object[] array, Object key)
     {
         for (Object o : array)
         {
@@ -136,7 +139,7 @@ public final class Utils
      * @param range the range to check around the point
      * @return true if he found the block
      */
-    public static boolean isBlockInRange(@NotNull World world, Block block, int posX, int posY, int posZ, int range)
+    public static boolean isBlockInRange(@Nonnull World world, Block block, int posX, int posY, int posZ, int range)
     {
         for (int x = posX - range; x < posX + range; x++)
         {
@@ -162,16 +165,16 @@ public final class Utils
      * @param z     z coordinate
      * @return yCoordinate
      */
-    public static int findTopGround(@NotNull World world, int x, int z)
+    public static int findTopGround(@Nonnull World world, int x, int z)
     {
         int yHolder = 1;
         while (!world.canBlockSeeSky(new BlockPos(x, yHolder, z)))
         {
             yHolder++;
         }
-        while (!world.getBlockState(new BlockPos(x, yHolder, z)).getBlock().isOpaqueCube() ||
+        while (!world.getBlockState(new BlockPos(x, yHolder, z)).isOpaqueCube() ||
                  arrayContains(
-                   new Block[] {Blocks.air, Blocks.leaves, Blocks.leaves2}
+                   new Block[] {Blocks.AIR, Blocks.LEAVES, Blocks.LEAVES2}
                    , world.getBlockState(new BlockPos(x, yHolder, z)).getBlock()))
         {
             yHolder--;
@@ -268,9 +271,9 @@ public final class Utils
      * @param block    Block that makes the sound
      * @param metadata Metadata of the block that makes sound
      */
-    public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata)
+    public static void blockBreakSoundAndEffect(@Nonnull World world, BlockPos pos, Block block, int metadata)
     {
-        world.playAuxSFX(SOUND_EVENT_ID, pos, Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
+    	world.playSound((EntityPlayer)null, pos, block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
     }
 
     /**

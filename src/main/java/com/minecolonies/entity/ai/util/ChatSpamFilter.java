@@ -1,7 +1,7 @@
 package com.minecolonies.entity.ai.util;
 
 import com.minecolonies.entity.EntityCitizen;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -41,7 +41,7 @@ public class ChatSpamFilter
     /**
      * The current chat message to compare incoming messages to.
      */
-    @NotNull
+    @Nonnull
     private String speechDelayString = "";
 
     /**
@@ -64,7 +64,7 @@ public class ChatSpamFilter
      *
      * @param chat the Item Name
      */
-    public void requestWithoutSpam(@NotNull String chat)
+    public void requestWithoutSpam(@Nonnull String chat)
     {
         talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
     }
@@ -79,7 +79,7 @@ public class ChatSpamFilter
      */
     public void talkWithoutSpam(String key, String... chat)
     {
-        @NotNull String curstring = key + Arrays.toString(chat);
+        @Nonnull String curstring = key + Arrays.toString(chat);
         if (Objects.equals(speechDelayString, curstring))
         {
             if (speechDelay > worker.getOffsetTicks())

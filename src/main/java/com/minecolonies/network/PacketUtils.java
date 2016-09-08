@@ -1,7 +1,7 @@
 package com.minecolonies.network;
 
 import io.netty.buffer.ByteBuf;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ public class PacketUtils
      * @param buf  Buf to write in
      * @param uuid UUID to write
      */
-    public static void writeUUID(@NotNull ByteBuf buf, @NotNull UUID uuid)
+    public static void writeUUID(@Nonnull ByteBuf buf, @Nonnull UUID uuid)
     {
         buf.writeLong(uuid.getLeastSignificantBits());
         buf.writeLong(uuid.getMostSignificantBits());
@@ -25,8 +25,8 @@ public class PacketUtils
      * @param buf Buf to read from
      * @return The read UUID
      */
-    @NotNull
-    public static UUID readUUID(@NotNull ByteBuf buf)
+    @Nonnull
+    public static UUID readUUID(@Nonnull ByteBuf buf)
     {
         long lsb = buf.readLong();
         long msb = buf.readLong();

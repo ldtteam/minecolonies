@@ -7,8 +7,8 @@ import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
 
 /**
  * Represents one building order to complete.
@@ -45,7 +45,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @param building the building to build.
      * @param level    the level it should have.
      */
-    public WorkOrderBuild(@NotNull AbstractBuilding building, int level)
+    public WorkOrderBuild(@Nonnull AbstractBuilding building, int level)
     {
         super();
         this.buildingLocation = building.getID();
@@ -66,7 +66,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         return upgradeName;
     }
 
-    @NotNull
+    @Nonnull
     @Override
     protected WorkOrderType getType()
     {
@@ -85,7 +85,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @param compound NBT tag compound.
      */
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
@@ -105,7 +105,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @param compound NBT Tag compound.
      */
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
@@ -126,7 +126,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @return True if the building for this work order still exists.
      */
     @Override
-    public boolean isValid(@NotNull Colony colony)
+    public boolean isValid(@Nonnull Colony colony)
     {
         return colony.getBuilding(buildingLocation) != null;
     }
@@ -140,12 +140,12 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @param colony The colony that owns the Work Order.
      */
     @Override
-    public void attemptToFulfill(@NotNull Colony colony)
+    public void attemptToFulfill(@Nonnull Colony colony)
     {
         boolean sendMessage = true;
         boolean hasBuilder = false;
 
-        for (@NotNull CitizenData citizen : colony.getCitizens().values())
+        for (@Nonnull CitizenData citizen : colony.getCitizens().values())
         {
             JobBuilder job = citizen.getJob(JobBuilder.class);
 
@@ -190,14 +190,14 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @param builderLevel the builder level.
      * @return true if he is able to.
      */
-    private boolean canBuildHut(int builderLevel, @NotNull CitizenData citizen, @NotNull Colony colony)
+    private boolean canBuildHut(int builderLevel, @Nonnull CitizenData citizen, @Nonnull Colony colony)
     {
         return builderLevel >= upgradeLevel || builderLevel == 2
                  || citizen.getWorkBuilding().getID().equals(buildingLocation)
                  || isLocationTownhall(colony, buildingLocation);
     }
 
-    private void sendBuilderMessage(@NotNull Colony colony, boolean hasBuilder, boolean sendMessage)
+    private void sendBuilderMessage(@Nonnull Colony colony, boolean hasBuilder, boolean sendMessage)
     {
         if (hasSentMessageForThisWorkOrder)
         {
@@ -219,7 +219,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         }
     }
 
-    private boolean isLocationTownhall(@NotNull Colony colony, BlockPos buildingLocation)
+    private boolean isLocationTownhall(@Nonnull Colony colony, BlockPos buildingLocation)
     {
         return colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation);
     }

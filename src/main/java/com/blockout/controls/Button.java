@@ -1,10 +1,13 @@
 package com.blockout.controls;
 
+import javax.annotation.Nonnull;
+
 import com.blockout.Pane;
 import com.blockout.PaneParams;
+
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.SoundEvent;
 
 /**
  * Base button class.
@@ -28,7 +31,7 @@ public class Button extends Pane
      *
      * @param params PaneParams from xml file.
      */
-    public Button(@NotNull PaneParams params)
+    public Button(@Nonnull PaneParams params)
     {
         super(params);
         label = params.getLocalizedStringAttribute("label", label);
@@ -73,7 +76,7 @@ public class Button extends Pane
     @Override
     public void handleClick(int mx, int my)
     {
-        mc.getSoundHandler().playSound(PositionedSoundRecord.create(soundClick, 1.0F));
+        mc.getSoundHandler().playSound(PositionedSoundRecord.getMusicRecord((new SoundEvent(soundClick))));
 
         Handler delegatedHandler = handler;
 

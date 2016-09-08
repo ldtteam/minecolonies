@@ -7,13 +7,13 @@ import com.minecolonies.util.Log;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -49,7 +49,7 @@ public class BlockBarrel extends Block
 
     public BlockBarrel()
     {
-        super(Material.wood);
+        super(Material.WOOD);
         this.setDefaultState(this.blockState.getBaseState().withProperty(BARRELSTATE, BARRELSTATE_FILLING));
 
         this.setTickRandomly(true);
@@ -103,7 +103,7 @@ public class BlockBarrel extends Block
 
         Item item = itemstack.getItem();
 
-        if (item == Items.rotten_flesh && barrelState == BARRELSTATE_FILLING)
+        if (item == Items.ROTTEN_FLESH && barrelState == BARRELSTATE_FILLING)
         {
             Log.logger.info("item Consumed");
 
@@ -151,7 +151,7 @@ public class BlockBarrel extends Block
      * @return true
      */
     @Override
-    public boolean isOpaqueCube()
+    public boolean isOpaqueCube(IBlockState state)
     {
         return true;
     }
@@ -209,8 +209,8 @@ public class BlockBarrel extends Block
     }
 
     @Override
-    protected BlockState createBlockState()
+    protected BlockStateContainer createBlockState()
     {
-        return new BlockState(this, BARRELSTATE);
+        return new BlockStateContainer(this, BARRELSTATE);
     }
 }

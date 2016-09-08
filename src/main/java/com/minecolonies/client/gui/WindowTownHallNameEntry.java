@@ -5,7 +5,7 @@ import com.blockout.controls.TextField;
 import com.blockout.views.Window;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.lib.Constants;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Window for a town hall name entry
@@ -37,7 +37,7 @@ public class WindowTownHallNameEntry extends Window implements Button.Handler
     }
 
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@Nonnull Button button)
     {
         if (button.getID().equals(BUTTON_DONE))
         {

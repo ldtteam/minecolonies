@@ -14,10 +14,10 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,11 +98,11 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Defines the material used for the floor of the shaft.
      */
-    private Block floorBlock = Blocks.planks;
+    private Block floorBlock = Blocks.PLANKS;
     /**
      * Defines the material used for the fence of the shaft.
      */
-    private Block fenceBlock = Blocks.oak_fence;
+    private Block fenceBlock = Blocks.OAK_FENCE;
     /**
      * Here we can detect multiples of 5
      */
@@ -146,7 +146,7 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Stores the levels of the miners mine. This could be a map<depth,level>
      */
-    @NotNull
+    @Nonnull
     private List<Level> levels      = new ArrayList<>();
 
     /**
@@ -165,7 +165,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @return the schematic name.
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getSchematicName()
     {
@@ -193,11 +193,11 @@ public class BuildingMiner extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingMiner);
+            this.getColony().addStat(ModAchievements.achievementBuildingMiner);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
+            this.getColony().addStat(ModAchievements.achievementUpgradeMinerMax);
         }
     }
 
@@ -206,7 +206,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @return the description of the miners job.
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getJobName()
     {
@@ -219,7 +219,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
-    @NotNull
+    @Nonnull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -232,7 +232,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param compound the compound key.
      */
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -277,12 +277,12 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param compound the compound key.
      */
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
-        compound.setString(TAG_FLOOR_BLOCK, Block.blockRegistry.getNameForObject(floorBlock).toString());
-        compound.setString(TAG_FENCE_BLOCK, Block.blockRegistry.getNameForObject(fenceBlock).toString());
+        compound.setString(TAG_FLOOR_BLOCK, Block.REGISTRY.getNameForObject(floorBlock).toString());
+        compound.setString(TAG_FENCE_BLOCK, Block.REGISTRY.getNameForObject(fenceBlock).toString());
         compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.setBoolean(TAG_CLEARED, clearedShaft);
         compound.setInteger(TAG_VECTORX, vectorX);
@@ -303,10 +303,10 @@ public class BuildingMiner extends AbstractBuildingWorker
             BlockPosUtil.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
         }
 
-        @NotNull NBTTagList levelTagList = new NBTTagList();
-        for (@NotNull Level level : levels)
+        @Nonnull NBTTagList levelTagList = new NBTTagList();
+        for (@Nonnull Level level : levels)
         {
-            @NotNull NBTTagCompound levelCompound = new NBTTagCompound();
+            @Nonnull NBTTagCompound levelCompound = new NBTTagCompound();
             level.writeToNBT(levelCompound);
             levelTagList.appendTag(levelCompound);
         }
@@ -319,13 +319,13 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@Nonnull ByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());
 
-        for (@NotNull Level level : levels)
+        for (@Nonnull Level level : levels)
         {
             buf.writeInt(level.getNumberOfNodes());
         }
@@ -586,7 +586,7 @@ public class BuildingMiner extends AbstractBuildingWorker
             super(c, l);
         }
 
-        @NotNull
+        @Nonnull
         @Override
         public com.blockout.views.Window getWindow()
         {
@@ -594,7 +594,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@Nonnull ByteBuf buf)
         {
             super.deserialize(buf);
             current = buf.readInt();

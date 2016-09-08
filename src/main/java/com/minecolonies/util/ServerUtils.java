@@ -1,12 +1,14 @@
 package com.minecolonies.util;
 
 import com.minecolonies.colony.permissions.Permissions;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +40,7 @@ public final class ServerUtils
      * @return the Player
      */
     @Nullable
-    public static EntityPlayer getPlayerFromUUID(@NotNull World world, @NotNull UUID id)
+    public static EntityPlayer getPlayerFromUUID(@Nonnull World world, @Nonnull UUID id)
     {
         for (int i = 0; i < world.playerEntities.size(); ++i)
         {
@@ -57,16 +59,16 @@ public final class ServerUtils
      * @param ids   List of UUIDs
      * @return list of EntityPlayers
      */
-    @NotNull
-    public static List<EntityPlayer> getPlayersFromUUID(@NotNull World world, @NotNull Collection<UUID> ids)
+    @Nonnull
+    public static List<EntityPlayer> getPlayersFromUUID(@Nonnull World world, @Nonnull Collection<UUID> ids)
     {
-        @NotNull final List<EntityPlayer> players = new ArrayList<>();
+        @Nonnull final List<EntityPlayer> players = new ArrayList<>();
 
         for (final Object o : world.playerEntities)
         {
             if (o instanceof EntityPlayer)
             {
-                @NotNull final EntityPlayer player = (EntityPlayer) o;
+                @Nonnull final EntityPlayer player = (EntityPlayer) o;
                 if (ids.contains(player.getGameProfile().getId()))
                 {
                     players.add(player);
@@ -91,12 +93,12 @@ public final class ServerUtils
      * @param players The list of players to convert.
      * @return A list of {@link EntityPlayer}s
      */
-    @NotNull
-    public static List<EntityPlayer> getPlayersFromPermPlayer(@NotNull List<Permissions.Player> players)
+    @Nonnull
+    public static List<EntityPlayer> getPlayersFromPermPlayer(@Nonnull List<Permissions.Player> players)
     {
-        @NotNull final List<EntityPlayer> playerList = new ArrayList<>();
+        @Nonnull final List<EntityPlayer> playerList = new ArrayList<>();
 
-        for (@NotNull final Permissions.Player player : players)
+        for (@Nonnull final Permissions.Player player : players)
         {
             playerList.add(ServerUtils.getPlayerFromPermPlayer(player));
         }
@@ -115,7 +117,7 @@ public final class ServerUtils
      * @return The {@link EntityPlayer} reference.
      */
     @Nullable
-    public static EntityPlayer getPlayerFromPermPlayer(@NotNull Permissions.Player player)
+    public static EntityPlayer getPlayerFromPermPlayer(@Nonnull Permissions.Player player)
     {
         return ServerUtils.getPlayerFromUUID(player.getID());
     }
@@ -135,8 +137,8 @@ public final class ServerUtils
         {
             return null;
         }
-        final List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-        for (@NotNull final EntityPlayerMP player : allPlayers)
+        final List<EntityPlayerMP> allPlayers = Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerList();
+        for (@Nonnull final EntityPlayerMP player : allPlayers)
         {
             if (player.getUniqueID().equals(uuid))
             {

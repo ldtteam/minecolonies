@@ -12,13 +12,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.util.Constants;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Basic inventory for the citizens.
@@ -56,7 +56,7 @@ public class InventoryCitizen implements IInventory
     /**
      * The inventory content.
      */
-    @NotNull
+    @Nonnull
     private              ItemStack[] stacks          = new ItemStack[INVENTORY_SIZE];
     /**
      * The inventories custom name. In our case the citizens name.
@@ -149,7 +149,7 @@ public class InventoryCitizen implements IInventory
      *
      * @return {@link ItemStack} currently being held by citizen
      */
-    public ItemStack getHeldItem()
+    public ItemStack getHeldItemMainhand()
     {
         return getStackInSlot(heldItem);
     }
@@ -254,7 +254,11 @@ public class InventoryCitizen implements IInventory
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
-                crashreportcategory.addCrashSectionCallable("Item name", itemStackIn::getDisplayName);
+                try{
+                	crashreportcategory.addCrashSection("Item name", itemStackIn.getDisplayName());
+                }catch (Throwable throwable){
+                	crashreportcategory.addCrashSectionThrowable("Item name", throwable);
+                }
                 throw new ReportedException(crashreport);
             }
         }
@@ -286,7 +290,7 @@ public class InventoryCitizen implements IInventory
      * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
      * left over items.
      */
-    private int storePartialItemStack(@NotNull ItemStack itemStackIn)
+    private int storePartialItemStack(@Nonnull ItemStack itemStackIn)
     {
         int i = itemStackIn.stackSize;
         int j = this.storeItemStack(itemStackIn);
@@ -337,7 +341,7 @@ public class InventoryCitizen implements IInventory
      *
      * @return the name of the inventory.
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getName()
     {
@@ -347,7 +351,7 @@ public class InventoryCitizen implements IInventory
     /**
      * stores an itemstack in the users inventory
      */
-    private int storeItemStack(@NotNull ItemStack itemStackIn)
+    private int storeItemStack(@Nonnull ItemStack itemStackIn)
     {
         for (int i = 0; i < this.stacks.length; ++i)
         {
@@ -385,7 +389,7 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Gets slot that hold item that is being held by citizen.
-     * {@link #getHeldItem()}.
+     * {@link #getHeldItemMainhand()}.
      *
      * @return Slot index of held item
      */
@@ -393,13 +397,13 @@ public class InventoryCitizen implements IInventory
     {
         return heldItem;
     }    /**
-     * Get the formatted ChatComponent that will be used for the sender's username in chat
+     * Get the formatted TextComponent that will be used for the sender's username in chat
      */
-    @NotNull
+    @Nonnull
     @Override
-    public IChatComponent getDisplayName()
+    public ITextComponent getDisplayName()
     {
-        return this.hasCustomName() ? new ChatComponentText(this.getName()) : new ChatComponentTranslation(this.getName());
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -413,7 +417,7 @@ public class InventoryCitizen implements IInventory
         return getStackInSlot(index) == null;
     }
 
-    public void createMaterialStore(@NotNull MaterialSystem system)
+    public void createMaterialStore(@Nonnull MaterialSystem system)
     {
         if (materialStore == null)
         {
@@ -457,7 +461,7 @@ public class InventoryCitizen implements IInventory
      *
      * @param compound with the give tag.
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
         this.stacks = new ItemStack[this.getSizeInventory()];
@@ -532,7 +536,7 @@ public class InventoryCitizen implements IInventory
             }
             else
             {
-                @NotNull ItemStack itemstack = this.stacks[index].splitStack(count);
+                @Nonnull ItemStack itemstack = this.stacks[index].splitStack(count);
 
                 if (this.stacks[index].stackSize == 0)
                 {
@@ -627,7 +631,7 @@ public class InventoryCitizen implements IInventory
      * @return if the player is allowed to access.
      */
     @Override
-    public boolean isUseableByPlayer(@NotNull EntityPlayer player)
+    public boolean isUseableByPlayer(@Nonnull EntityPlayer player)
     {
         return this.citizen.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
@@ -739,15 +743,15 @@ public class InventoryCitizen implements IInventory
      *
      * @param compound with the given tag.
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
-        @NotNull NBTTagList nbttaglist = new NBTTagList();
+        @Nonnull NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.stacks.length; ++i)
         {
             if (this.stacks[i] != null)
             {
-                @NotNull NBTTagCompound nbttagcompound = new NBTTagCompound();
+                @Nonnull NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte(TAG_SLOT, (byte) i);
                 this.stacks[i].writeToNBT(nbttagcompound);
                 nbttaglist.appendTag(nbttagcompound);

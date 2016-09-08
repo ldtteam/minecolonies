@@ -6,10 +6,10 @@ import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.util.Objects;
 import java.util.function.Function;
@@ -197,7 +197,7 @@ public class Structure
      *
      * @return a Result enum specifying the result
      */
-    @NotNull
+    @Nonnull
     public Result advanceBlock()
     {
         switch (this.stage)
@@ -223,8 +223,8 @@ public class Structure
      * @param checkIfApplies this will be evaluated to check if we should skip a block.
      * @return a Result enum specifying the result
      */
-    @NotNull
-    private Result advanceBlocks(@NotNull Supplier<Boolean> moveOneBlock, @NotNull Function<SchematicBlock, Boolean> checkIfApplies)
+    @Nonnull
+    private Result advanceBlocks(@Nonnull Supplier<Boolean> moveOneBlock, @Nonnull Function<SchematicBlock, Boolean> checkIfApplies)
     {
         for (int i = 0; i < Configurations.maxBlocksCheckedByBuilder; i++)
         {
@@ -245,7 +245,7 @@ public class Structure
      *
      * @return a SchematicBlock having all information for the current block.
      */
-    @NotNull
+    @Nonnull
     public SchematicBlock getCurrentBlock()
     {
         return new SchematicBlock(
@@ -264,7 +264,7 @@ public class Structure
      * @param blocksToTest the blocks to test
      * @return true if they are the same
      */
-    private boolean checkBlocksEqual(@NotNull SchematicBlock blocksToTest)
+    private boolean checkBlocksEqual(@Nonnull SchematicBlock blocksToTest)
     {
         return blocksToTest.block == blocksToTest.worldBlock
                  && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);

@@ -1,27 +1,37 @@
 package com.minecolonies.entity.ai.citizen.lumberjack;
 
-import com.minecolonies.colony.jobs.JobLumberjack;
-import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.entity.ai.util.AIState;
-import com.minecolonies.entity.ai.util.AITarget;
-import com.minecolonies.entity.pathfinding.PathJobFindTree;
-import com.minecolonies.util.BlockPosUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockSapling;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import static com.minecolonies.entity.ai.util.AIState.IDLE;
+import static com.minecolonies.entity.ai.util.AIState.LUMBERJACK_CHOP_TREE;
+import static com.minecolonies.entity.ai.util.AIState.LUMBERJACK_GATHERING;
+import static com.minecolonies.entity.ai.util.AIState.LUMBERJACK_NO_TREES_FOUND;
+import static com.minecolonies.entity.ai.util.AIState.LUMBERJACK_SEARCHING_TREE;
+import static com.minecolonies.entity.ai.util.AIState.PREPARING;
+import static com.minecolonies.entity.ai.util.AIState.START_WORKING;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.minecolonies.entity.ai.util.AIState.*;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import com.minecolonies.colony.jobs.JobLumberjack;
+import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.entity.pathfinding.PathJobFindTree;
+import com.minecolonies.util.BlockPosUtil;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockSapling;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * The lumberjack AI class
@@ -167,7 +177,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @param job the lumberjackjob
      */
-    public EntityAIWorkLumberjack(@NotNull JobLumberjack job)
+    public EntityAIWorkLumberjack(@Nonnull JobLumberjack job)
     {
         super(job);
         super.registerTargets(
@@ -350,7 +360,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @param location the block we want to go to
      */
-    private void checkIfStuckOnLeaves(@NotNull final BlockPos location)
+    private void checkIfStuckOnLeaves(@Nonnull final BlockPos location)
     {
         int distance = (int) location.distanceSq(worker.getPosition());
         if (previousDistance != distance)
@@ -410,9 +420,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param location the location to plant the sapling at
      * @return true if a sapling was planted
      */
-    private boolean plantSapling(@NotNull BlockPos location)
+    private boolean plantSapling(@Nonnull BlockPos location)
     {
-        if (BlockPosUtil.getBlock(world, location) != Blocks.air)
+        if (BlockPosUtil.getBlock(world, location) != Blocks.AIR)
         {
             return false;
         }
@@ -426,14 +436,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             worker.setHeldItem(saplingSlot);
 
             placeSaplings(saplingSlot, stack, block);
-
-            world.playSoundEffect((float) location.getX() + HALF_BLOCK_OFFSET,
-              (float) location.getY() + HALF_BLOCK_OFFSET,
-              (float) location.getZ() + HALF_BLOCK_OFFSET,
-              block.stepSound.getBreakSound(),
-              block.stepSound.getVolume(),
-              block.stepSound.getFrequency());
-            worker.swingItem();
+            
+            world.playSound((EntityPlayer)null, this.worker.getPosition(), block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
+            worker.swingArm(worker.getActiveHand());
         }
 
         if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
@@ -465,8 +470,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             {
                 for (int z = playerZ - radius; z < playerZ + radius; z++)
                 {
-                    @NotNull BlockPos pos = new BlockPos(x, y, z);
-                    if (world.getBlockState(pos).getBlock().isLeaves(world, pos))
+                    @Nonnull BlockPos pos = new BlockPos(x, y, z);
+                    if (world.getBlockState(pos).getBlock().isLeaves(world.getBlockState(pos), world, pos))
                     {
                         return pos;
                     }
@@ -489,7 +494,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         return -1;
     }
 
-    private void placeSaplings(int saplingSlot, @NotNull ItemStack stack, @NotNull Block block)
+    private void placeSaplings(int saplingSlot, @Nonnull ItemStack stack, @Nonnull Block block)
     {
         while (!job.tree.getStumpLocations().isEmpty())
         {
@@ -509,7 +514,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
     }
 
-    private boolean isCorrectSapling(@NotNull ItemStack stack)
+    private boolean isCorrectSapling(@Nonnull ItemStack stack)
     {
         return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
     }

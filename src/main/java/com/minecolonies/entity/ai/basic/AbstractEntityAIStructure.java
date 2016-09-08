@@ -1,5 +1,10 @@
 package com.minecolonies.entity.ai.basic;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
+
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.util.AIState;
@@ -7,12 +12,10 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.ai.util.Structure;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.EntityUtils;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.function.Function;
-import java.util.function.Supplier;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -60,7 +63,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @param job the job class of the ai using this base class
      */
-    protected AbstractEntityAIStructure(@NotNull final J job)
+    protected AbstractEntityAIStructure(@Nonnull final J job)
     {
         super(job);
         this.registerTargets(
@@ -109,12 +112,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param nextState          the next state to change to once done iterating.
      * @return the new state this AI will be in after one pass
      */
-    private Supplier<AIState> generateSchematicIterator(@NotNull Function<Structure.SchematicBlock, Boolean> evaluationFunction, @NotNull AIState nextState)
+    private Supplier<AIState> generateSchematicIterator(@Nonnull Function<Structure.SchematicBlock, Boolean> evaluationFunction, @Nonnull AIState nextState)
     {
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
-        @NotNull Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
-        @NotNull Supplier<Structure.Result> advanceBlock = () -> currentStructure.advanceBlock();
+        @Nonnull Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
+        @Nonnull Supplier<Structure.Result> advanceBlock = () -> currentStructure.advanceBlock();
 
         return () ->
         {
@@ -191,12 +194,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         int length = currentStructure.getLength();
         int width = currentStructure.getWidth();
         int distance = Math.max(width, length) + MIN_ADDITIONAL_RANGE_TO_BUILD + offset;
-        @NotNull EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
+        @Nonnull EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
 
         //then get a solid place with two air spaces above it in any direction.
         for (EnumFacing direction : directions)
         {
-            @NotNull BlockPos positionInDirection = getPositionInDirection(direction, distance);
+            @Nonnull BlockPos positionInDirection = getPositionInDirection(direction, distance);
             if (EntityUtils.checkForFreeSpace(world, positionInDirection))
             {
                 return positionInDirection;
@@ -212,7 +215,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @return the next step once done
      */
-    private boolean clearStep(@NotNull Structure.SchematicBlock currentBlock)
+    private boolean clearStep(@Nonnull Structure.SchematicBlock currentBlock)
     {
 
         //Don't break bedrock etc.
@@ -229,9 +232,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             //We need to deal with materials
             if (Configurations.builderInfiniteResources)
             {
-                worker.setCurrentItemOrArmor(0, null);
+            	worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
                 world.setBlockToAir(currentBlock.blockPosition);
-                worker.swingItem();
+                worker.swingArm(worker.getActiveHand());
                 setDelay(UNLIMITED_RESOURCES_TIMEOUT);
             }
             else
@@ -253,7 +256,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param distance the distance
      * @return a BlockPos position.
      */
-    @NotNull
+    @Nonnull
     private BlockPos getPositionInDirection(EnumFacing facing, int distance)
     {
         return getFloor(currentStructure.getCurrentBlockPosition().offset(facing, distance));
@@ -265,8 +268,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param position input position
      * @return returns BlockPos position with air above
      */
-    @NotNull
-    private BlockPos getFloor(@NotNull BlockPos position)
+    @Nonnull
+    private BlockPos getFloor(@Nonnull BlockPos position)
     {
         //If the position is floating in Air go downwards
         if (!EntityUtils.solidOrLiquid(world, position))
@@ -298,7 +301,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @return the new State to start in.
      */
-    @NotNull
+    @Nonnull
     private AIState startBuilding()
     {
         switch (currentStructure.getStage())

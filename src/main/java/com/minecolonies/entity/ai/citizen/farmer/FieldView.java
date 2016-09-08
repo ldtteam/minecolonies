@@ -3,10 +3,10 @@ package com.minecolonies.entity.ai.citizen.farmer;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Client side representation of a field.
@@ -49,7 +49,7 @@ public class FieldView
      *
      * @param field the field.
      */
-    public FieldView(@NotNull Field field)
+    public FieldView(@Nonnull Field field)
     {
         this.id = field.getID();
         this.taken = field.isTaken();
@@ -112,7 +112,7 @@ public class FieldView
      *
      * @param buf Buffer to write to.
      */
-    public void serializeViewNetworkData(@NotNull ByteBuf buf)
+    public void serializeViewNetworkData(@Nonnull ByteBuf buf)
     {
         BlockPosUtil.writeToByteBuf(buf, id);
         buf.writeBoolean(taken);
@@ -127,8 +127,8 @@ public class FieldView
      * @param buf Byte buffer to deserialize.
      * @return FieldView return an instance of the fieldView.
      */
-    @NotNull
-    public FieldView deserialize(@NotNull ByteBuf buf)
+    @Nonnull
+    public FieldView deserialize(@Nonnull ByteBuf buf)
     {
         id = BlockPosUtil.readFromByteBuf(buf);
         taken = buf.readBoolean();

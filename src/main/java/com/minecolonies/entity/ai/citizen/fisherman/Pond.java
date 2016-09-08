@@ -3,10 +3,10 @@ package com.minecolonies.entity.ai.citizen.fisherman;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Represents a body of water used by the fisherman.
@@ -31,7 +31,7 @@ public final class Pond
      * @param water the coordinates to check
      * @return a Pond object if the pond is valid, else null
      */
-    public static Pond createWater(@NotNull IBlockAccess world, @NotNull BlockPos water)
+    public static Pond createWater(@Nonnull IBlockAccess world, @Nonnull BlockPos water)
     {
         if (checkWater(world, water))
         {
@@ -46,9 +46,9 @@ public final class Pond
      * @param world The world the player is in
      * @param water The coordinate to check
      */
-    private static boolean checkWater(@NotNull IBlockAccess world, @NotNull BlockPos water)
+    private static boolean checkWater(@Nonnull IBlockAccess world, @Nonnull BlockPos water)
     {
-        if (world.getBlockState(water).getBlock() != Blocks.water || !world.isAirBlock(water.up()))
+        if (world.getBlockState(water).getBlock() != Blocks.WATER || !world.isAirBlock(water.up()))
         {
             return false;
         }
@@ -75,12 +75,12 @@ public final class Pond
      * @param vector direction
      * @return true if all blocks are water, else false
      */
-    private static boolean checkWaterPoolInDirectionXThenZ(@NotNull IBlockAccess world, int x, int y, int z, int vector)
+    private static boolean checkWaterPoolInDirectionXThenZ(@Nonnull IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 6 blocks in direction +/- x
         for (int dx = x + WATER_POOL_WIDTH_REQUIREMENT * vector; dx <= x + WATER_POOL_WIDTH_REQUIREMENT * vector; dx++)
         {
-            if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.water)
+            if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.WATER)
             {
                 return false;
             }
@@ -101,12 +101,12 @@ public final class Pond
      * @param vector direction
      * @return true if all blocks are water, else false
      */
-    private static boolean checkWaterPoolInDirectionZThenX(@NotNull IBlockAccess world, int x, int y, int z, int vector)
+    private static boolean checkWaterPoolInDirectionZThenX(@Nonnull IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 6 blocks in direction +/- z
         for (int dz = z + WATER_POOL_WIDTH_REQUIREMENT * vector; dz <= z + WATER_POOL_WIDTH_REQUIREMENT * vector; dz++)
         {
-            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.water)
+            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.WATER)
             {
                 return false;
             }
@@ -126,12 +126,12 @@ public final class Pond
      * @param vector direction
      * @return true if all blocks are water, else false
      */
-    private static boolean checkWaterPoolInDirectionZ(@NotNull IBlockAccess world, int x, int y, int z, int vector)
+    private static boolean checkWaterPoolInDirectionZ(@Nonnull IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 3 blocks in direction +/- z
         for (int dz = z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz <= z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz++)
         {
-            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.water)
+            if (world.getBlockState(new BlockPos(x, y, dz)).getBlock() != Blocks.WATER)
             {
                 return false;
             }
@@ -149,12 +149,12 @@ public final class Pond
      * @param vector direction
      * @return true if all blocks are water, else false
      */
-    private static boolean checkWaterPoolInDirectionX(@NotNull IBlockAccess world, int x, int y, int z, int vector)
+    private static boolean checkWaterPoolInDirectionX(@Nonnull IBlockAccess world, int x, int y, int z, int vector)
     {
         //Check 3 blocks in direction +/- x
         for (int dx = x + WATER_POOL_HEIGHT_REQUIREMENT * vector; dx <= x + WATER_POOL_HEIGHT_REQUIREMENT * vector; dx++)
         {
-            if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.water)
+            if (world.getBlockState(new BlockPos(dx, y, z)).getBlock() != Blocks.WATER)
             {
                 return false;
             }
@@ -168,8 +168,8 @@ public final class Pond
      * @param compound NBT tag compound to read from.
      * @return new Pond instance.
      */
-    @NotNull
-    public static Pond readFromNBT(@NotNull NBTTagCompound compound)
+    @Nonnull
+    public static Pond readFromNBT(@Nonnull NBTTagCompound compound)
     {
         return new Pond(BlockPosUtil.readFromNBT(compound, TAG_LOCATION));
     }
@@ -188,7 +188,7 @@ public final class Pond
             return false;
         }
 
-        @NotNull Pond wobj = (Pond) obj;
+        @Nonnull Pond wobj = (Pond) obj;
         return location.equals(wobj.getLocation());
     }
 
@@ -202,7 +202,7 @@ public final class Pond
      *
      * @param compound nbt tag compound to write to.
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
     }

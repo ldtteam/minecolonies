@@ -12,8 +12,8 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,7 +133,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      *
      * @param button clicked button.
      */
-    private void assignClicked(@NotNull Button button)
+    private void assignClicked(@Nonnull Button button)
     {
         final int row = fieldList.getListElementIndexByPane(button);
         final FieldView field = fields.get(row);
@@ -167,7 +167,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      *
      * @param button clicked button.
      */
-    private void assignmentModeClicked(@NotNull Button button)
+    private void assignmentModeClicked(@Nonnull Button button)
     {
         if (button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
         {
@@ -182,7 +182,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
         window.findPaneOfTypeByID(LIST_FIELDS, ScrollingList.class).refreshElementPanes();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getBuildingName()
     {
@@ -217,12 +217,12 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             }
 
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(int index, @Nonnull Pane rowPane)
             {
                 final FieldView field = fields.get(index);
-                @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
+                @Nonnull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
                 final String direction = calcDirection(building.getLocation(), field.getId());
-                @NotNull final String owner = field.getOwner().isEmpty() ? ("<" + LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
+                @Nonnull final String owner = field.getOwner().isEmpty() ? ("<" + LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
 
                 rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance + "m");
@@ -261,7 +261,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      * @param field    the field.
      * @return a string describing the direction.
      */
-    private String calcDirection(@NotNull BlockPos building, @NotNull BlockPos field)
+    private String calcDirection(@Nonnull BlockPos building, @Nonnull BlockPos field)
     {
         String dist = "";
 

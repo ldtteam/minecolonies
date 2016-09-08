@@ -7,8 +7,8 @@ import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
 
 public class JobDeliveryman extends AbstractJob
 {
@@ -21,7 +21,7 @@ public class JobDeliveryman extends AbstractJob
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_DESTINATION))
@@ -30,14 +30,14 @@ public class JobDeliveryman extends AbstractJob
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getName()
     {
         return "com.minecolonies.job.Deliveryman";
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public RenderBipedCitizen.Model getModel()
     {
@@ -45,7 +45,7 @@ public class JobDeliveryman extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         if (hasDestination())
@@ -59,7 +59,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @return your personal AI instance.
      */
-    @NotNull
+    @Nonnull
     @Override
     public AbstractAISkeleton generateAI()
     {

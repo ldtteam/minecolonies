@@ -5,14 +5,14 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Handles the server telling nearby clients to render a particle effect
@@ -38,7 +38,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
      * @param state Block State
      * @param side  Side of the block causing effect
      */
-    public BlockParticleEffectMessage(BlockPos pos, @NotNull IBlockState state, int side)
+    public BlockParticleEffectMessage(BlockPos pos, @Nonnull IBlockState state, int side)
     {
         this.pos = pos;
         this.block = state.getBlock();
@@ -47,7 +47,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@Nonnull ByteBuf buf)
     {
         pos = BlockPosUtil.readFromByteBuf(buf);
         block = Block.getBlockById(buf.readInt());
@@ -56,7 +56,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@Nonnull ByteBuf buf)
     {
         BlockPosUtil.writeToByteBuf(buf, pos);
         buf.writeInt(Block.getIdFromBlock(block));
@@ -66,7 +66,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull BlockParticleEffectMessage message, MessageContext ctx)
+    public IMessage onMessage(@Nonnull BlockParticleEffectMessage message, MessageContext ctx)
     {
         if (message.side == BREAK_BLOCK)
         {

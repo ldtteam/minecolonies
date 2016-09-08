@@ -10,7 +10,7 @@ import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.MinerSetLevelMessage;
 import com.minecolonies.util.LanguageHandler;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.awt.*;
 
@@ -75,7 +75,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
             }
 
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(int index, @Nonnull Pane rowPane)
             {
 
                 if (index == miner.current)
@@ -94,7 +94,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     }
 
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@Nonnull Button button)
     {
         switch (button.getID())
         {
@@ -133,7 +133,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         }
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getBuildingName()
     {

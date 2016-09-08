@@ -16,7 +16,7 @@ import com.minecolonies.network.messages.PermissionsMessage;
 import com.minecolonies.network.messages.ToggleJobMessage;
 import com.minecolonies.network.messages.WorkOrderChangeMessage;
 import com.minecolonies.util.LanguageHandler;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.*;
 
@@ -234,17 +234,17 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * List of added users.
      */
-    @NotNull
+    @Nonnull
     private List<Permissions.Player> users       = new ArrayList<>();
     /**
      * List of citizens.
      */
-    @NotNull
+    @Nonnull
     private List<CitizenDataView>    citizens    = new ArrayList<>();
     /**
      * Map of the pages.
      */
-    @NotNull
+    @Nonnull
     private Map<String, String>      tabsToPages = new HashMap<>();
 
     /**
@@ -328,9 +328,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      *
      * @param button the clicked button.
      */
-    private void updatePriority(@NotNull Button button)
+    private void updatePriority(@Nonnull Button button)
     {
-        @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(HIDDEN_ID_POSITION);
+        @Nonnull final Label idLabel = (Label) button.getParent().getChildren().get(HIDDEN_ID_POSITION);
         final int id = Integer.parseInt(idLabel.getLabelText());
         final String buttonLabel = button.getID();
 
@@ -362,9 +362,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      *
      * @param button the clicked button.
      */
-    private void deleteWorkOrder(@NotNull Button button)
+    private void deleteWorkOrder(@Nonnull Button button)
     {
-        @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(HIDDEN_ID_POSITION);
+        @Nonnull final Label idLabel = (Label) button.getParent().getChildren().get(HIDDEN_ID_POSITION);
         final int id = Integer.parseInt(idLabel.getLabelText());
         for (int i = 0; i < workOrders.size(); i++)
         {
@@ -415,7 +415,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         int builders = 0;
         int deliverymen = 0;
 
-        for (@NotNull final CitizenDataView citizen : citizens)
+        for (@Nonnull final CitizenDataView citizen : citizens)
         {
             switch (citizen.getJob())
             {
@@ -461,7 +461,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
 
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(int index, @Nonnull Pane rowPane)
             {
                 Permissions.Player player = users.get(index);
                 String rank = player.getRank().name();
@@ -487,7 +487,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
 
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(int index, @Nonnull Pane rowPane)
             {
                 CitizenDataView citizen = citizens.get(index);
 
@@ -515,7 +515,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
 
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(int index, @Nonnull Pane rowPane)
             {
                 final WorkOrderView workOrder = workOrders.get(index);
                 String claimingCitizen = "";
@@ -538,7 +538,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 }
 
                 //Searches citizen of id x
-                for (@NotNull final CitizenDataView citizen : citizens)
+                for (@Nonnull final CitizenDataView citizen : citizens)
                 {
                     if (citizen.getID() == workOrder.getClaimedBy())
                     {
@@ -570,7 +570,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      *
      * @param button the pressed button
      */
-    private void toggleHiring(@NotNull Button button)
+    private void toggleHiring(@Nonnull Button button)
     {
         boolean toggle;
         if (button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
@@ -591,7 +591,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      *
      * @param button Tab button clicked on
      */
-    private void onTabClicked(@NotNull Button button)
+    private void onTabClicked(@Nonnull Button button)
     {
         String page = tabsToPages.get(button.getID());
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(page);
@@ -627,7 +627,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void renameClicked(Button ignored)
     {
-        @NotNull WindowTownHallNameEntry window = new WindowTownHallNameEntry(townHall.getColony());
+        @Nonnull WindowTownHallNameEntry window = new WindowTownHallNameEntry(townHall.getColony());
         window.open();
     }
 
@@ -667,7 +667,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      *
      * @param button Button that holds the  user clicked on
      */
-    private void promoteDemoteClicked(@NotNull Button button)
+    private void promoteDemoteClicked(@Nonnull Button button)
     {
         int row = userList.getListElementIndexByPane(button);
         if (row >= 0 && row < users.size())

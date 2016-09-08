@@ -1,7 +1,7 @@
 package com.minecolonies.colony.permissions;
 
 import net.minecraft.entity.player.EntityPlayer;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.UUID;
 
@@ -30,6 +30,6 @@ public interface IPermissions
      * @param player UUID to check rank of
      * @return Rank of the player
      */
-    @NotNull
+    @Nonnull
     Permissions.Rank getRank(UUID player);
 }

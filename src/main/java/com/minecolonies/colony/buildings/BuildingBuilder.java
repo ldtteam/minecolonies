@@ -7,8 +7,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobBuilder;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
 
 /**
  * The builders building.
@@ -40,7 +40,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      *
      * @return the schematic name.
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getSchematicName()
     {
@@ -68,11 +68,11 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingBuilder);
+            this.getColony().addStat(ModAchievements.achievementBuildingBuilder);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
+            this.getColony().addStat(ModAchievements.achievementUpgradeBuilderMax);
         }
     }
 
@@ -81,7 +81,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      *
      * @return the description of the builder job.
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getJobName()
     {
@@ -94,7 +94,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
-    @NotNull
+    @Nonnull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -122,7 +122,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
          *
          * @return the window of the builder building.
          */
-        @NotNull
+        @Nonnull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutBuilder(this);

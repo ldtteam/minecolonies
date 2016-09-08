@@ -8,8 +8,8 @@ import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Add or Update a ColonyView on the client.
@@ -36,7 +36,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
      * @param colony    colony of the workOrder.
      * @param workOrder workOrder of the colony to update view.
      */
-    public ColonyViewWorkOrderMessage(@NotNull Colony colony, @NotNull AbstractWorkOrder workOrder)
+    public ColonyViewWorkOrderMessage(@Nonnull Colony colony, @Nonnull AbstractWorkOrder workOrder)
     {
         this.colonyId = colony.getID();
         this.workOrderBuffer = Unpooled.buffer();
@@ -45,7 +45,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@Nonnull ByteBuf buf)
     {
         colonyId = buf.readInt();
         workOrderId = buf.readInt();
@@ -53,7 +53,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@Nonnull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(workOrderId);
@@ -62,7 +62,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull ColonyViewWorkOrderMessage message, MessageContext ctx)
+    public IMessage onMessage(@Nonnull ColonyViewWorkOrderMessage message, MessageContext ctx)
     {
         return ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer);
     }

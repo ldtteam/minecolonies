@@ -6,12 +6,12 @@ import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * The custom chest of the field.
@@ -46,7 +46,7 @@ public class InventoryField implements IInventory
     /**
      * The inventory stack.
      */
-    @NotNull
+    @Nonnull
     private ItemStack[] stackResult = new ItemStack[1];
 
     /**
@@ -90,7 +90,7 @@ public class InventoryField implements IInventory
      *
      * @param compound with the give tag.
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         final NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
         this.stackResult = new ItemStack[this.getSizeInventory()];
@@ -148,7 +148,7 @@ public class InventoryField implements IInventory
         }
         else
         {
-            @NotNull final ItemStack itemstack = this.stackResult[index].splitStack(count);
+            @Nonnull final ItemStack itemstack = this.stackResult[index].splitStack(count);
 
             if (this.stackResult[index].stackSize == 0)
             {
@@ -294,11 +294,11 @@ public class InventoryField implements IInventory
         {
             this.stackResult[i] = null;
         }
-    }    @NotNull
+    }    @Nonnull
 @Override
-    public IChatComponent getDisplayName()
+    public ITextComponent getDisplayName()
     {
-        return this.hasCustomName() ? new ChatComponentText(this.getName()) : new ChatComponentTranslation(this.getName());
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -306,15 +306,15 @@ public class InventoryField implements IInventory
      *
      * @param compound with the given tag.
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
-        @NotNull final NBTTagList nbttaglist = new NBTTagList();
+        @Nonnull final NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.stackResult.length; ++i)
         {
             if (this.stackResult[i] != null)
             {
-                @NotNull final NBTTagCompound nbttagcompound = new NBTTagCompound();
+                @Nonnull final NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte(TAG_SLOT, (byte) i);
                 this.stackResult[i].writeToNBT(nbttagcompound);
                 nbttaglist.appendTag(nbttagcompound);
@@ -344,7 +344,7 @@ public class InventoryField implements IInventory
      *
      * @return the name of the inventory.
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getName()
     {

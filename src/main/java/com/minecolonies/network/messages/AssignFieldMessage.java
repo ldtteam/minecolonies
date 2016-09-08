@@ -6,12 +6,12 @@ import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Message which handles the assignment of fields to farmers.
@@ -41,7 +41,7 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
      * @param assign   assign if true, free if false.
      * @param field    the field to assign or release.
      */
-    public AssignFieldMessage(@NotNull BuildingFarmer.View building, boolean assign, BlockPos field)
+    public AssignFieldMessage(@Nonnull BuildingFarmer.View building, boolean assign, BlockPos field)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -50,7 +50,7 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@Nonnull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -59,7 +59,7 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@Nonnull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -69,7 +69,7 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull AssignFieldMessage message, @NotNull MessageContext ctx)
+    public IMessage onMessage(@Nonnull AssignFieldMessage message, @Nonnull MessageContext ctx)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)

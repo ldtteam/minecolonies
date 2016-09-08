@@ -1,5 +1,8 @@
 package com.minecolonies.network.messages;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.Schematics;
@@ -9,18 +12,18 @@ import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.Log;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Send build tool data to the server. Verify the data on the server side and then place the building.
@@ -71,7 +74,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param buf The buffer begin read from.
      */
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@Nonnull ByteBuf buf)
     {
         hutDec = ByteBufUtils.readUTF8String(buf);
         style = ByteBufUtils.readUTF8String(buf);
@@ -89,7 +92,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@Nonnull ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, hutDec);
         ByteBufUtils.writeUTF8String(buf, style);
@@ -112,7 +115,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      */
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull BuildToolPlaceMessage message, @NotNull MessageContext ctx)
+    public IMessage onMessage(@Nonnull BuildToolPlaceMessage message, @Nonnull MessageContext ctx)
     {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         World world = player.worldObj;
@@ -138,7 +141,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param rotation The number of times the schematic should be rotated.
      * @param buildPos The location the hut is being placed.
      */
-    private static void handleHut(@NotNull World world, @NotNull EntityPlayer player, String hut, String style, int rotation, @NotNull BlockPos buildPos)
+    private static void handleHut(@Nonnull World world, @Nonnull EntityPlayer player, String hut, String style, int rotation, @Nonnull BlockPos buildPos)
     {
         if (Schematics.getStylesForHut(hut) == null)
         {
@@ -148,13 +151,13 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
 
-        if (player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
+        if (player.inventory.hasItemStack(new ItemStack(block)) && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
             world.setBlockState(buildPos, block.getDefaultState());
             block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);
 
-            player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));
+            player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
 
             @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 
@@ -180,7 +183,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param rotation   The number of times the decoration is rotated.
      * @param buildPos   The location the decoration will be built.
      */
-    private static void handleDecoration(@NotNull World world, @NotNull EntityPlayer player, String decoration, String style, int rotation, @NotNull BlockPos buildPos)
+    private static void handleDecoration(@Nonnull World world, @Nonnull EntityPlayer player, String decoration, String style, int rotation, @Nonnull BlockPos buildPos)
     {
         if (Schematics.getStylesForDecoration(decoration) == null)
         {

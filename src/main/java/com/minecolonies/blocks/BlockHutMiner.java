@@ -1,6 +1,6 @@
 package com.minecolonies.blocks;
 
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Hut for the miner.
@@ -15,7 +15,7 @@ public class BlockHutMiner extends AbstractBlockHut
         super();
     }
 
-    @NotNull
+    @Nonnull
     @Override
     public String getName()
     {

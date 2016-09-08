@@ -16,10 +16,10 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -38,13 +38,13 @@ public abstract class AbstractBuilding
     private static final String                  TAG_ROTATION                 = "rotation";
     private static final String                  TAG_STYLE                    = "style";
     // AbstractBuilding and View Class Mapping
-    @NotNull
+    @Nonnull
     private static       Map<String, Class<?>>   nameToClassMap               = new HashMap<>();
-    @NotNull
+    @Nonnull
     private static       Map<Class<?>, String>   classToNameMap               = new HashMap<>();
-    @NotNull
+    @Nonnull
     private static       Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<>();
-    @NotNull
+    @Nonnull
     private static       Map<Integer, Class<?>>  classNameHashToClassMap      = new HashMap<>();
     static
     {
@@ -61,7 +61,7 @@ public abstract class AbstractBuilding
         addMapping("Fisherman", BuildingFisherman.class, BlockHutFisherman.class);
     }
     private final BlockPos                 location;
-    @NotNull
+    @Nonnull
     private final Colony                   colony;
     private       MaterialStore            materialStore;
     private       TileEntityColonyBuilding tileEntity;
@@ -77,7 +77,7 @@ public abstract class AbstractBuilding
      * @param colony Colony the building belongs to
      * @param pos    Location of the building (it's Hut Block)
      */
-    protected AbstractBuilding(@NotNull Colony colony, BlockPos pos)
+    protected AbstractBuilding(@Nonnull Colony colony, BlockPos pos)
     {
         location = pos;
         this.colony = colony;
@@ -93,7 +93,7 @@ public abstract class AbstractBuilding
      * @param buildingClass subclass of AbstractBuilding, located in {@link com.minecolonies.colony.buildings}
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.blocks}
      */
-    private static void addMapping(String name, @NotNull Class<? extends AbstractBuilding> buildingClass, @NotNull Class<? extends AbstractBlockHut> parentBlock)
+    private static void addMapping(String name, @Nonnull Class<? extends AbstractBuilding> buildingClass, @Nonnull Class<? extends AbstractBlockHut> parentBlock)
     {
         if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(buildingClass.getName().hashCode()))
         {
@@ -138,7 +138,7 @@ public abstract class AbstractBuilding
      * @return {@link AbstractBuilding} created from the compound.
      */
     @Nullable
-    public static AbstractBuilding createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
+    public static AbstractBuilding createFromNBT(Colony colony, @Nonnull NBTTagCompound compound)
     {
         @Nullable AbstractBuilding building = null;
         @Nullable Class<?> oclass = null;
@@ -149,12 +149,12 @@ public abstract class AbstractBuilding
 
             if (oclass != null)
             {
-                @NotNull BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+                @Nonnull BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
                 Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
                 building = (AbstractBuilding) constructor.newInstance(colony, pos);
             }
         }
-        catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
+        catch (@Nonnull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
             Log.logger.error(exception);
         }
@@ -186,7 +186,7 @@ public abstract class AbstractBuilding
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to read data from
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@Nonnull NBTTagCompound compound)
     {
         buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
 
@@ -212,7 +212,7 @@ public abstract class AbstractBuilding
      * @return {@link AbstractBuilding} instance, without NBTTags applied.
      */
     @Nullable
-    public static AbstractBuilding create(Colony colony, @NotNull TileEntityColonyBuilding parent)
+    public static AbstractBuilding create(Colony colony, @Nonnull TileEntityColonyBuilding parent)
     {
         @Nullable AbstractBuilding building = null;
         Class<?> oclass;
@@ -232,7 +232,7 @@ public abstract class AbstractBuilding
                 Log.logger.error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
             }
         }
-        catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
+        catch (@Nonnull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
             Log.logger.error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
@@ -249,7 +249,7 @@ public abstract class AbstractBuilding
      * @return {@link AbstractBuilding.View} created from reading the buf
      */
     @Nullable
-    public static View createBuildingView(ColonyView colony, BlockPos id, @NotNull ByteBuf buf)
+    public static View createBuildingView(ColonyView colony, BlockPos id, @Nonnull ByteBuf buf)
     {
         @Nullable View view = null;
         @Nullable Class<?> oclass = null;
@@ -261,7 +261,7 @@ public abstract class AbstractBuilding
 
             if (oclass != null)
             {
-                for (@NotNull Class<?> c : oclass.getDeclaredClasses())
+                for (@Nonnull Class<?> c : oclass.getDeclaredClasses())
                 {
                     if (c.getName().endsWith("$View"))
                     {
@@ -272,7 +272,7 @@ public abstract class AbstractBuilding
                 }
             }
         }
-        catch (@NotNull NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
+        catch (@Nonnull NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
         {
             Log.logger.error(exception);
         }
@@ -312,7 +312,7 @@ public abstract class AbstractBuilding
      * @param block Block you want to know whether it matches this class or not
      * @return True if the block matches this class, otherwise false
      */
-    public boolean isMatchingBlock(@NotNull Block block)
+    public boolean isMatchingBlock(@Nonnull Block block)
     {
         Class<?> c = blockClassToBuildingClassMap.get(block.getClass());
         return getClass().equals(c);
@@ -324,7 +324,7 @@ public abstract class AbstractBuilding
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@Nonnull NBTTagCompound compound)
     {
         String s = classToNameMap.get(this.getClass());
 
@@ -387,7 +387,7 @@ public abstract class AbstractBuilding
      *
      * @return {@link com.minecolonies.colony.Colony} of the current object
      */
-    @NotNull
+    @Nonnull
     public Colony getColony()
     {
         return colony;
@@ -490,7 +490,7 @@ public abstract class AbstractBuilding
      */
     private void requestWorkOrder(int level)
     {
-        for (@NotNull WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (@Nonnull WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -593,7 +593,7 @@ public abstract class AbstractBuilding
      *
      * @param buf ByteBuf to write to
      */
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@Nonnull ByteBuf buf)
     {
         buf.writeInt(this.getClass().getName().hashCode());
         buf.writeInt(getBuildingLevel());
@@ -651,7 +651,7 @@ public abstract class AbstractBuilding
     public static class View
     {
         private final ColonyView colony;
-        @NotNull
+        @Nonnull
         private final BlockPos   location;
 
         private int buildingLevel    = 0;
@@ -663,7 +663,7 @@ public abstract class AbstractBuilding
          * @param c ColonyView the building is in.
          * @param l The location of the building.
          */
-        protected View(ColonyView c, @NotNull BlockPos l)
+        protected View(ColonyView c, @Nonnull BlockPos l)
         {
             colony = c;
             location = new BlockPos(l);
@@ -674,7 +674,7 @@ public abstract class AbstractBuilding
          *
          * @return A BlockPos because the building ID is its location.
          */
-        @NotNull
+        @Nonnull
         public BlockPos getID()
         {
             // Location doubles as ID
@@ -686,7 +686,7 @@ public abstract class AbstractBuilding
          *
          * @return A BlockPos, where this building is.
          */
-        @NotNull
+        @Nonnull
         public BlockPos getLocation()
         {
             return location;
@@ -760,7 +760,7 @@ public abstract class AbstractBuilding
          *
          * @param buf The buffer to read this view from.
          */
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@Nonnull ByteBuf buf)
         {
             buildingLevel = buf.readInt();
             buildingMaxLevel = buf.readInt();

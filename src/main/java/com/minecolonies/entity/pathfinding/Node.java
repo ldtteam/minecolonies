@@ -1,12 +1,12 @@
 package com.minecolonies.entity.pathfinding;
 
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Node implements Comparable<Node>
 {
-    @NotNull
+    @Nonnull
     public final  BlockPos pos;
     private final int      hash;
     @Nullable
@@ -34,7 +34,7 @@ public class Node implements Comparable<Node>
      * @param pos       coordinates of node
      * @param heuristic heuristic estimate
      */
-    public Node(@NotNull BlockPos pos, double heuristic)
+    public Node(@Nonnull BlockPos pos, double heuristic)
     {
         this(null, pos, 0, heuristic, heuristic);
     }
@@ -48,7 +48,7 @@ public class Node implements Comparable<Node>
      * @param heuristic heuristic estimate
      * @param score     node total score
      */
-    public Node(@Nullable Node parent, @NotNull BlockPos pos, double cost, double heuristic, double score)
+    public Node(@Nullable Node parent, @Nonnull BlockPos pos, double cost, double heuristic, double score)
     {
         this.parent = parent;
         this.pos = pos;

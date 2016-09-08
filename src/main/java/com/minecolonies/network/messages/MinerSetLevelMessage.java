@@ -5,12 +5,12 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetLevelMessage, IMessage>
 {
@@ -26,7 +26,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
      * @param building View of the building to read data from
      * @param level    Level of the miner
      */
-    public MinerSetLevelMessage(@NotNull BuildingMiner.View building, int level)
+    public MinerSetLevelMessage(@Nonnull BuildingMiner.View building, int level)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -34,7 +34,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@Nonnull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -42,7 +42,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@Nonnull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -51,7 +51,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull MinerSetLevelMessage message, MessageContext ctx)
+    public IMessage onMessage(@Nonnull MinerSetLevelMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)

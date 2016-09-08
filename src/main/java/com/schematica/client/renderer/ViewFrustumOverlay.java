@@ -4,8 +4,8 @@ import com.schematica.client.renderer.chunk.overlay.ISchematicRenderChunkFactory
 import com.schematica.client.renderer.chunk.overlay.RenderOverlay;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.ViewFrustum;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -77,7 +77,7 @@ class ViewFrustumOverlay extends ViewFrustum
 
                     if (!blockpos.equals(renderOverlay.getPosition()))
                     {
-                        renderOverlay.setPosition(blockpos);
+                        renderOverlay.setOrigin(blockpos.getX(), blockpos.getY(), blockpos.getZ());
                     }
                 }
             }
@@ -98,9 +98,9 @@ class ViewFrustumOverlay extends ViewFrustum
     }
 
     @Override
-    public void markBlocksForUpdate(final int fromX, final int fromY, final int fromZ, final int toX, final int toY, final int toZ)
+    public void markBlocksForUpdate(final int fromX, final int fromY, final int fromZ, final int toX, final int toY, final int toZ, final boolean needsUpdate)
     {
-        super.markBlocksForUpdate(fromX, fromY, fromZ, toX, toY, toZ);
+    	super.markBlocksForUpdate(fromX, fromY, fromZ, toX, toY, toZ, needsUpdate);
 
         final int x0 = MathHelper.bucketInt(fromX, 16);
         final int y0 = MathHelper.bucketInt(fromY, 16);

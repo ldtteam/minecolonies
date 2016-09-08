@@ -7,8 +7,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFisherman;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.util.math.BlockPos;
+import javax.annotation.Nonnull;
 
 /**
  * The fishermans building.
@@ -40,7 +40,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      *
      * @return the schematic name.
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getSchematicName()
     {
@@ -57,11 +57,11 @@ public class BuildingFisherman extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementBuildingFisher);
+            this.getColony().addStat(ModAchievements.achievementBuildingFisher);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
+            this.getColony().addStat(ModAchievements.achievementUpgradeFisherMax);
         }
     }
 
@@ -81,7 +81,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      *
      * @return the description of the fisherman job.
      */
-    @NotNull
+    @Nonnull
     @Override
     public String getJobName()
     {
@@ -94,7 +94,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
-    @NotNull
+    @Nonnull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -122,7 +122,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
          *
          * @return the window of the fisherman building.
          */
-        @NotNull
+        @Nonnull
         @Override
         public com.blockout.views.Window getWindow()
         {

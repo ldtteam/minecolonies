@@ -8,7 +8,7 @@ package com.minecolonies.client.model;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class ModelScarecrowBoth extends ModelBase
 {
@@ -98,7 +98,7 @@ public class ModelScarecrowBoth extends ModelBase
         setRotation(LeftLeg, 0F, 0F, -0.0872665F);
     }
 
-    private void setRotation(@NotNull ModelRenderer model, float x, float y, float z)
+    private void setRotation(@Nonnull ModelRenderer model, float x, float y, float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;

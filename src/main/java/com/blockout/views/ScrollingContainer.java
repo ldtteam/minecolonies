@@ -4,7 +4,7 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
 import net.minecraft.client.renderer.GlStateManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 /**
  * Basic scrollable pane.
@@ -37,7 +37,7 @@ public class ScrollingContainer extends View
     {
         contentHeight = 0;
 
-        for (@NotNull Pane child : children)
+        for (@Nonnull Pane child : children)
         {
             contentHeight = Math.max(contentHeight, child.getY() + child.getHeight());
         }
@@ -73,7 +73,7 @@ public class ScrollingContainer extends View
     }
 
     @Override
-    protected boolean childIsVisible(@NotNull Pane child)
+    protected boolean childIsVisible(@Nonnull Pane child)
     {
         return child.getX() < getWidth() &&
                  child.getY() < getHeight() + scrollY &&
