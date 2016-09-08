@@ -21,29 +21,29 @@ import java.util.Random;
  */
 public class CitizenData
 {
-    private static final float  MAX_HEALTH              = 20.0F;
+    private static final float MAX_HEALTH = 20.0F;
     /**
      * Max level of an attribute a citizen may initially have.
      */
-    private static final int    LEVEL_CAP               = 5;
-    private static final int    LETTERS_IN_THE_ALPHABET = 26;
+    private static final int LEVEL_CAP = 5;
+    private static final int LETTERS_IN_THE_ALPHABET = 26;
     /**
      * Tags
      */
-    private static final String TAG_ID                  = "id";
-    private static final String TAG_NAME                = "name";
-    private static final String TAG_FEMALE              = "female";
-    private static final String TAG_TEXTURE             = "texture";
-    private static final String TAG_LEVEL               = "level";
-    private static final String TAG_EXPERIENCE          = "experience";
-    private static final String TAG_HEALTH              = "health";
-    private static final String TAG_MAX_HEALTH          = "maxHealth";
-    private static final String TAG_SKILLS              = "skills";
-    private static final String TAG_SKILL_STRENGTH      = "strength";
-    private static final String TAG_SKILL_STAMINA       = "endurance";
-    private static final String TAG_SKILL_SPEED         = "charisma";
-    private static final String TAG_SKILL_INTELLIGENCE  = "intelligence";
-    private static final String TAG_SKILL_DEXTERITY     = "dexterity";
+    private static final String TAG_ID         = "id";
+    private static final String TAG_NAME       = "name";
+    private static final String TAG_FEMALE     = "female";
+    private static final String TAG_TEXTURE    = "texture";
+    private static final String TAG_LEVEL      = "level";
+    private static final String TAG_EXPERIENCE = "experience";
+    private static final String TAG_HEALTH     = "health";
+    private static final String TAG_MAX_HEALTH = "maxHealth";
+    private static final String TAG_SKILLS             = "skills";
+    private static final String TAG_SKILL_STRENGTH     = "strength";
+    private static final String TAG_SKILL_STAMINA      = "endurance";
+    private static final String TAG_SKILL_SPEED        = "charisma";
+    private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
+    private static final String TAG_SKILL_DEXTERITY    = "dexterity";
     /**
      * The unique citizen id.
      */
@@ -166,15 +166,6 @@ public class CitizenData
     }
 
     /**
-     * Marks the instance dirty
-     */
-    public void markDirty()
-    {
-        dirty = true;
-        colony.markCitizensDirty();
-    }
-
-    /**
      * Create a CitizenData View given it's saved NBTTagCompound
      *
      * @param id  The citizen's id
@@ -250,6 +241,15 @@ public class CitizenData
             firstName = getRandomElement(rand, Configurations.femaleFirstNames);
         }
         return String.format("%s %s. %s", firstName, getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));
+    }
+
+    /**
+     * Marks the instance dirty
+     */
+    public void markDirty()
+    {
+        dirty = true;
+        colony.markCitizensDirty();
     }
 
     /**

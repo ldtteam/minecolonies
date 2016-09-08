@@ -33,14 +33,14 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
     }
 
     @Override
-    public boolean isValid(Colony colony)
-    {
-        return true;
-    }
-
-    @Override
     protected String getValue()
     {
         return schematicName;
+    }
+
+    @Override
+    public boolean isValid(Colony colony)
+    {
+        return true;
     }
 }

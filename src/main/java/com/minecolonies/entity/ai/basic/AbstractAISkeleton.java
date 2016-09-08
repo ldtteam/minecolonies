@@ -7,6 +7,7 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

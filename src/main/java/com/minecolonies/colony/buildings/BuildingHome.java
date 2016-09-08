@@ -30,6 +30,19 @@ public class BuildingHome extends AbstractBuildingHut
         super(c, l);
     }
 
+    @NotNull
+    @Override
+    public String getSchematicName()
+    {
+        return CITIZEN;
+    }
+
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return 4;
+    }
+
     @Override
     public void readFromNBT(@NotNull NBTTagCompound compound)
     {
@@ -50,13 +63,6 @@ public class BuildingHome extends AbstractBuildingHut
         }
     }
 
-    @NotNull
-    @Override
-    public String getSchematicName()
-    {
-        return CITIZEN;
-    }
-
     @Override
     public void writeToNBT(@NotNull NBTTagCompound compound)
     {
@@ -71,6 +77,13 @@ public class BuildingHome extends AbstractBuildingHut
             }
             compound.setIntArray(TAG_RESIDENTS, residentIds);
         }
+    }
+
+    @Override
+    public void setBuildingLevel(int level)
+    {
+        super.setBuildingLevel(level);
+        getColony().calculateMaxCitizens();
     }
 
     @Override
@@ -172,19 +185,6 @@ public class BuildingHome extends AbstractBuildingHut
         {
             buf.writeInt(citizen.getId());
         }
-    }
-
-    @Override
-    public void setBuildingLevel(int level)
-    {
-        super.setBuildingLevel(level);
-        getColony().calculateMaxCitizens();
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return 4;
     }
 
     /**

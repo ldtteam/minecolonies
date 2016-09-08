@@ -29,11 +29,11 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     private double       walkSpeed;
 
     @Nullable
-    private BlockPos     destination;
+    private BlockPos           destination;
     @Nullable
     private Future<Path> future;
     @Nullable
-    private PathResult   pathResult;
+    private PathResult         pathResult;
 
     private boolean shouldAvoidWater = false;
     private boolean canEnterDoors    = false;
@@ -65,25 +65,11 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         return this.entity.getPositionVector();
     }
 
-    @Nullable
-    @Override
-    public Path getPathToPos(BlockPos pos)
-    {
-        //Because this directly returns Path we can't do it async.
-        return null;
-    }
-
     @Override
     protected boolean isDirectPathBetweenPoints(final Vec3d Vec3d, final Vec3d Vec3d1, final int i, final int i1, final int i2)
     {
         //we don't use, so it doesn't matter
         return false;
-    }
-
-    @Override
-    public void setBreakDoors(boolean canBreakDoors)
-    {
-        this.canBreakDoors = canBreakDoors;
     }
 
     public double getSpeed()
@@ -95,6 +81,14 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     public void setSpeed(double d)
     {
         walkSpeed = d;
+    }
+
+    @Nullable
+    @Override
+    public Path getPathToPos(BlockPos pos)
+    {
+        //Because this directly returns Path we can't do it async.
+        return null;
     }
 
     @Override
@@ -130,19 +124,6 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         return setPathJob(
           new PathJobMoveToLocation(entity.worldObj, start, dest, (int) getPathSearchRange()),
           dest, speed);
-    }
-
-    @Nullable
-    private PathResult setPathJob(@NotNull AbstractPathJob job, BlockPos dest, double speed)
-    {
-        clearPathEntity();
-
-        this.destination = dest;
-        this.walkSpeed = speed;
-
-        future = Pathfinding.enqueue(job);
-        pathResult = job.getResult();
-        return pathResult;
     }
 
     @Override
@@ -319,6 +300,19 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     }
 
     @Nullable
+    private PathResult setPathJob(@NotNull AbstractPathJob job, BlockPos dest, double speed)
+    {
+    	clearPathEntity();
+
+        this.destination = dest;
+        this.walkSpeed = speed;
+
+        future = Pathfinding.enqueue(job);
+        pathResult = job.getResult();
+        return pathResult;
+    }
+
+    @Nullable
     public PathJobFindWater.WaterPathResult moveToWater(int range, double speed, List<BlockPos> ponds)
     {
         @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
@@ -348,6 +342,11 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
           null, speed);
     }
 
+    public boolean isUnableToReachDestination()
+    {
+        return pathResult != null && pathResult.failedToReachDestination();
+    }
+
     //We don't use any of these, but they need to be overriden.
     /*@Override
     public void setAvoidsWater(boolean avoidsWater)
@@ -361,9 +360,10 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
         return shouldAvoidWater;
     }*/
 
-    public boolean isUnableToReachDestination()
+    @Override
+    public void setBreakDoors(boolean canBreakDoors)
     {
-        return pathResult != null && pathResult.failedToReachDestination();
+        this.canBreakDoors = canBreakDoors;
     }
 
     @Override

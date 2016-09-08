@@ -1,5 +1,18 @@
 package com.schematica.client.renderer;
 
+import java.util.EnumSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.util.vector.Vector3f;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.schematica.Settings;
@@ -17,11 +30,17 @@ import com.schematica.client.world.SchematicWorld;
 import com.schematica.core.client.renderer.GeometryMasks;
 import com.schematica.core.client.renderer.GeometryTessellator;
 import com.schematica.handler.ConfigurationHandler;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.RenderChunk;
@@ -40,19 +59,16 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.util.vector.Vector3f;
-
-import java.util.*;
 
 @SideOnly(Side.CLIENT)
 public final class RenderSchematic extends RenderGlobal
@@ -67,15 +83,15 @@ public final class RenderSchematic extends RenderGlobal
 
     private static final ShaderProgram SHADER_ALPHA         = new ShaderProgram("minecolonies", null, "shaders/alpha.frag");
     private static final double        DOUBLE_EPSILON       = 0.00000001D;
-    private static       Vec3d         playerPositionOffset = new Vec3d(0, 0, 0);
+    private static       Vec3d          playerPositionOffset = new Vec3d(0, 0, 0);
     @NotNull
     private final Minecraft     mc;
     private final Profiler      profiler;
     private final RenderManager renderManager;
-    private final Set<RenderOverlay>       overlaysToUpdate        = Sets.newLinkedHashSet();
-    private final ChunkRenderDispatcher    renderDispatcher        = new ChunkRenderDispatcher();
-    private final OverlayRenderDispatcher  renderDispatcherOverlay = new OverlayRenderDispatcher();
-    private final BlockPos.MutableBlockPos tmp                     = new BlockPos.MutableBlockPos();
+    private final Set<RenderOverlay>                    overlaysToUpdate = Sets.newLinkedHashSet();
+    private final ChunkRenderDispatcher   renderDispatcher        = new ChunkRenderDispatcher();
+    private final OverlayRenderDispatcher renderDispatcherOverlay = new OverlayRenderDispatcher();
+    private final BlockPos.MutableBlockPos tmp                      = new BlockPos.MutableBlockPos();
     @Nullable
     private SchematicWorld world;
     @NotNull
@@ -84,17 +100,17 @@ public final class RenderSchematic extends RenderGlobal
     private List<ContainerLocalRenderInformation> renderInfos    = Lists.newArrayListWithCapacity(CHUNKS);
     @Nullable
     private ViewFrustumOverlay viewFrustum;
-    private double frustumUpdatePosX      = Double.MIN_VALUE;
-    private double frustumUpdatePosY      = Double.MIN_VALUE;
-    private double frustumUpdatePosZ      = Double.MIN_VALUE;
-    private int    frustumUpdatePosChunkX = Integer.MIN_VALUE;
-    private int    frustumUpdatePosChunkY = Integer.MIN_VALUE;
-    private int    frustumUpdatePosChunkZ = Integer.MIN_VALUE;
-    private double lastViewEntityX        = Double.MIN_VALUE;
-    private double lastViewEntityY        = Double.MIN_VALUE;
-    private double lastViewEntityZ        = Double.MIN_VALUE;
-    private double lastViewEntityPitch    = Double.MIN_VALUE;
-    private double lastViewEntityYaw      = Double.MIN_VALUE;
+    private       double                  frustumUpdatePosX       = Double.MIN_VALUE;
+    private       double                  frustumUpdatePosY       = Double.MIN_VALUE;
+    private       double                  frustumUpdatePosZ       = Double.MIN_VALUE;
+    private       int                     frustumUpdatePosChunkX  = Integer.MIN_VALUE;
+    private       int                     frustumUpdatePosChunkY  = Integer.MIN_VALUE;
+    private       int                     frustumUpdatePosChunkZ  = Integer.MIN_VALUE;
+    private       double                  lastViewEntityX         = Double.MIN_VALUE;
+    private       double                  lastViewEntityY         = Double.MIN_VALUE;
+    private       double                  lastViewEntityZ         = Double.MIN_VALUE;
+    private       double                  lastViewEntityPitch     = Double.MIN_VALUE;
+    private       double                  lastViewEntityYaw       = Double.MIN_VALUE;
     private AbstractSchematicChunkRenderContainer renderContainer;
     private int renderDistanceChunks = -1;
     private int countEntitiesTotal;
@@ -104,8 +120,8 @@ public final class RenderSchematic extends RenderGlobal
     private double                       prevRenderSortX;
     private double                       prevRenderSortY;
     private double                       prevRenderSortZ;
-    private boolean displayListEntitiesDirty = true;
-    private int     frameCount               = 0;
+    private       boolean                  displayListEntitiesDirty = true;
+    private       int                      frameCount               = 0;
 
     private RenderSchematic(@NotNull final Minecraft minecraft)
     {
@@ -284,12 +300,7 @@ public final class RenderSchematic extends RenderGlobal
         final int entityPass = 0;
 
         this.profiler.startSection("prepare");
-        TileEntityRendererDispatcher.instance.func_190056_a(this.world,
-          this.mc.getTextureManager(),
-          this.mc.fontRendererObj,
-          renderViewEntity,
-          this.mc.objectMouseOver,
-          partialTicks);
+        TileEntityRendererDispatcher.instance.func_190056_a(this.world, this.mc.getTextureManager(), this.mc.fontRendererObj, renderViewEntity, this.mc.objectMouseOver, partialTicks);
         this.renderManager.cacheActiveRenderInfo(this.world, this.mc.fontRendererObj, renderViewEntity, this.mc.pointedEntity, this.mc.gameSettings, partialTicks);
 
         this.countEntitiesTotal = 0;
@@ -690,7 +701,7 @@ public final class RenderSchematic extends RenderGlobal
     @Override
     public void notifyLightSet(final BlockPos pos)
     {
-        //TODO CHECK
+    	//TODO CHECK
         final int x = pos.getX();
         final int y = pos.getY();
         final int z = pos.getZ();
@@ -773,13 +784,7 @@ public final class RenderSchematic extends RenderGlobal
         }
 
         @NotNull final BlockPos.MutableBlockPos position = this.world.position;
-        this.viewFrustum.markBlocksForUpdate(x1 - position.getX(),
-          y1 - position.getY(),
-          z1 - position.getZ(),
-          x2 - position.getX(),
-          y2 - position.getY(),
-          z2 - position.getZ(),
-          flag);
+        this.viewFrustum.markBlocksForUpdate(x1 - position.getX(), y1 - position.getY(), z1 - position.getZ(), x2 - position.getX(), y2 - position.getY(), z2 - position.getZ(), flag);
     }
 
     /**

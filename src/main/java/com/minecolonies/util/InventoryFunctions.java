@@ -60,7 +60,7 @@ public class InventoryFunctions
      */
     private static boolean matchFirstInInventory(
                                                   IInventory inventory, @NotNull Function<IInventory, Function<Integer,
-                                                                                                                Predicate<ItemStack>>> tester)
+                                                                                                       Predicate<ItemStack>>> tester)
     {
         return matchInInventory(inventory, tester, true);
     }
@@ -76,7 +76,7 @@ public class InventoryFunctions
      */
     private static boolean matchInInventory(
                                              @Nullable IInventory inventory, @NotNull Function<IInventory, Function<Integer,
-                                                                                                                     Predicate<ItemStack>>> tester, boolean stopAfterFirst)
+                                                                                                  Predicate<ItemStack>>> tester, boolean stopAfterFirst)
     {
         if (inventory == null)
         {

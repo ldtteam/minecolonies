@@ -26,11 +26,11 @@ public class Schematic implements ISchematic
     private final byte[][][]  metadata;
     private final List<TileEntity> tileEntities = new ArrayList<>();
     private final List<Entity>     entities     = new ArrayList<>();
-    private final int       width;
-    private final int       height;
-    private final int       length;
-    private       ItemStack icon;
-    private       BlockPos  offset;
+    private final int width;
+    private final int height;
+    private final int length;
+    private       ItemStack   icon;
+    private BlockPos offset;
 
     public Schematic(final ItemStack icon, final int width, final int height, final int length)
     {

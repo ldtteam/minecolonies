@@ -21,47 +21,47 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     /**
      * Offset to the block middle.
      */
-    private static final double BLOCK_MIDDLE    = 0.5;
+    private static final double BLOCK_MIDDLE = 0.5;
     /**
      * Y-Offset in order to have the scarecrow over ground.
      */
-    private static final double YOFFSET         = 1.5;
+    private static final double YOFFSET = 1.5;
     /**
      * Which size the scarecrow should have ingame.
      */
-    private static final double SIZERATIO       = .0625;
+    private static final double SIZERATIO = .0625;
     /**
      * Rotate the model some degrees.
      */
-    private static final int    ROTATION        = 180;
+    private static final int ROTATION = 180;
     /**
      * Rotate it on the following x offset.
      */
-    private static final float  XROTATIONOFFSET = 0.311F;
+    private static final float XROTATIONOFFSET = 0.311F;
     /**
      * Rotate it on the following y offset.
      */
-    private static final float  YROTATIONOFFSET = 0.0F;
+    private static final float YROTATIONOFFSET = 0.0F;
     /**
      * Rotate it on the following z offset.
      */
-    private static final float  ZROTATIONOFFSET = 2.845F;
+    private static final float ZROTATIONOFFSET = 2.845F;
     /**
      * Basic rotation to achieve a certain direction.
      */
-    private static final int    BASIC_ROTATION  = 90;
+    private static final int BASIC_ROTATION = 90;
     /**
      * Rotate by amount to go east.
      */
-    private static final int    ROTATE_EAST     = 1;
+    private static final int ROTATE_EAST = 1;
     /**
      * Rotate by amount to go south.
      */
-    private static final int    ROTATE_SOUTH    = 2;
+    private static final int ROTATE_SOUTH = 2;
     /**
      * Rotate by amount to go west.
      */
-    private static final int    ROTATE_WEST     = 3;
+    private static final int ROTATE_WEST = 3;
     /**
      * The model of the scarecrow.
      */
@@ -90,7 +90,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         GlStateManager.rotate(ROTATION, XROTATIONOFFSET, YROTATIONOFFSET, ZROTATIONOFFSET);
 
         //In the case of worldLags tileEntities may sometimes disappear.
-        if (getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockHutField)
+        if(getWorld().getBlockState(te.getPos()).getBlock() instanceof BlockHutField)
         {
             final EnumFacing facing = getWorld().getBlockState(te.getPos()).getValue(BlockHutField.FACING);
             switch (facing)

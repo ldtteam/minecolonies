@@ -22,8 +22,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,11 +41,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally)
      */
-    private static final double   XP_EACH_BUILDING              = 2.5;
+    private static final double   XP_EACH_BUILDING        = 2.5;
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
-    private static final int      INTELLIGENCE_MULTIPLIER       = 2;
+    private static final int      INTELLIGENCE_MULTIPLIER = 2;
     /**
      * How often should strength factor into the builders skill modifier.
      */
@@ -57,20 +57,20 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * The standard range the builder should reach until his target.
      */
-    private static final int      STANDARD_WORKING_RANGE        = 5;
+    private static final int      STANDARD_WORKING_RANGE  = 5;
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int      MIN_WORKING_RANGE             = 7;
+    private static final int      MIN_WORKING_RANGE       = 7;
     /**
      * After how many actions should the builder dump his inventory.
      */
-    private static final int      ACTIONS_UNTIL_DUMP            = 1024;
+    private static final int      ACTIONS_UNTIL_DUMP      = 1024;
     /**
      * Position where the Builders constructs from.
      */
     @Nullable
-    private              BlockPos workFrom                      = null;
+    private              BlockPos workFrom                = null;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -386,7 +386,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             //We need to deal with materials
             if (Configurations.builderInfiniteResources || worldBlockState.getMaterial().isLiquid())
             {
-                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+            	worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
 
                 if (!world.setBlockToAir(coordinates))
                 {

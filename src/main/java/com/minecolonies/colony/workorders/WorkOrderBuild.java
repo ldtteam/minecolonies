@@ -66,24 +66,17 @@ public class WorkOrderBuild extends AbstractWorkOrder
         return upgradeName;
     }
 
-    /**
-     * Read the WorkOrder data from the NBTTagCompound.
-     *
-     * @param compound NBT Tag compound.
-     */
+    @NotNull
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    protected WorkOrderType getType()
     {
-        super.readFromNBT(compound);
-        buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
-        if (!(this instanceof WorkOrderBuildDecoration))
-        {
-            upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
-            upgradeName = compound.getString(TAG_UPGRADE_NAME);
-        }
-        cleared = compound.getBoolean(TAG_IS_CLEARED);
-        schematicName = compound.getString(TAG_SCHEMATIC_NAME);
-        buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
+        return WorkOrderType.BUILD;
+    }
+
+    @Override
+    protected String getValue()
+    {
+        return upgradeName;
     }
 
     /**
@@ -104,6 +97,26 @@ public class WorkOrderBuild extends AbstractWorkOrder
         compound.setBoolean(TAG_IS_CLEARED, cleared);
         compound.setString(TAG_SCHEMATIC_NAME, schematicName);
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
+    }
+
+    /**
+     * Read the WorkOrder data from the NBTTagCompound.
+     *
+     * @param compound NBT Tag compound.
+     */
+    @Override
+    public void readFromNBT(@NotNull NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
+        if (!(this instanceof WorkOrderBuildDecoration))
+        {
+            upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
+            upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        }
+        cleared = compound.getBoolean(TAG_IS_CLEARED);
+        schematicName = compound.getString(TAG_SCHEMATIC_NAME);
+        buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
     }
 
     /**
@@ -169,19 +182,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
         }
 
         sendBuilderMessage(colony, hasBuilder, sendMessage);
-    }
-
-    @NotNull
-    @Override
-    protected WorkOrderType getType()
-    {
-        return WorkOrderType.BUILD;
-    }
-
-    @Override
-    protected String getValue()
-    {
-        return upgradeName;
     }
 
     /**

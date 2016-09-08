@@ -1,8 +1,8 @@
 package com.minecolonies.entity.pathfinding;
 
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.EnumFacing;
 import org.jetbrains.annotations.NotNull;
 
 public class PathPointExtended extends PathPoint

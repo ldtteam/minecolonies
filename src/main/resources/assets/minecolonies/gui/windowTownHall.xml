@@ -1,5 +1,5 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="171 247" pause="false"
-        lightbox="false"
+<window size="171 247" pause="false" lightbox="false"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
     <group size="100 185" pos="-90 10" spacing="1">
         <buttonimage id="info" size="100% 30"
@@ -60,7 +60,7 @@
             <group spacing="4" size="100% 92" pos="0 29">
                 <button id="build" align="TopMiddle" size="116 20"
                         label="$(com.minecolonies.gui.townHall.build)"
-                />
+                        />
                 <button id="repair" align="TopMiddle" size="116 20"
                         label="$(com.minecolonies.gui.townHall.repair)"/>
                 <button id="recall" align="TopMiddle" size="116 20"
@@ -70,7 +70,7 @@
             </group>
 
             <group size="100% 22" pos="0 129">
-                <label size="100% 11"
+                <label  size="100% 11"
                        label="$(com.minecolonies.gui.townHall.currentSpecialization)" color="black"
                        textalign="Middle"/>
                 <label id="currentSpec" size="100% 11"
@@ -141,7 +141,7 @@
 
                         <label id="work" size="60 12" pos="20 5" textalign="MiddleLeft" color="black"/>
                         <button id="delete" size="15 15" label="§n§4X" pos="115 8"/>
-                        <label id="hiddenId" size="1 1" pos="100 100"/>
+                        <label id="hiddenId" size = "1 1" pos="100 100" />
 
                     </box>
                 </view>

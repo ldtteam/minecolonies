@@ -1,5 +1,12 @@
 package com.minecolonies.client.gui;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.blockout.controls.Button;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
@@ -12,17 +19,12 @@ import com.schematica.Settings;
 import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.client.util.RotationHelper;
 import com.schematica.world.storage.Schematic;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * BuildTool window.

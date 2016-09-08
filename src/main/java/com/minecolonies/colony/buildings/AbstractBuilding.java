@@ -66,12 +66,11 @@ public abstract class AbstractBuilding
     private       MaterialStore            materialStore;
     private       TileEntityColonyBuilding tileEntity;
     // Attributes
-    private int     buildingLevel = 0;
-    private int     rotation      = 0;
-    private String  style         = "classic";
+    private int    buildingLevel = 0;
+    private int    rotation      = 0;
+    private String style         = "classic";
     //  State
-    private boolean dirty         = false;
-
+    private boolean dirty = false;
     /**
      * Constructor for a AbstractBuilding.
      *
@@ -485,13 +484,6 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Children must return their max building level.
-     *
-     * @return Max building level.
-     */
-    public abstract int getMaxBuildingLevel();
-
-    /**
      * Adds work orders to the {@link Colony#workManager}
      *
      * @param level Desired level
@@ -634,6 +626,13 @@ public abstract class AbstractBuilding
         markDirty();
         ColonyManager.markDirty();
     }
+
+    /**
+     * Children must return their max building level.
+     *
+     * @return Max building level.
+     */
+    public abstract int getMaxBuildingLevel();
 
     /**
      * Marks the instance and the building dirty

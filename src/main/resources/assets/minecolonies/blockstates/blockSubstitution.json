@@ -1,7 +1,5 @@
 {
-  "variants": {
-    "normal": {
-      "model": "minecolonies:blockSubstitution"
+    "variants": {
+        "normal": {"model": "minecolonies:blockSubstitution"}
     }
-  }
 }

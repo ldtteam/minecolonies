@@ -1,5 +1,18 @@
 package com.minecolonies.entity.ai.citizen.fisherman;
 
+import static com.minecolonies.entity.ai.util.AIState.FISHERMAN_CHECK_WATER;
+import static com.minecolonies.entity.ai.util.AIState.FISHERMAN_SEARCHING_WATER;
+import static com.minecolonies.entity.ai.util.AIState.FISHERMAN_START_FISHING;
+import static com.minecolonies.entity.ai.util.AIState.FISHERMAN_WALKING_TO_WATER;
+import static com.minecolonies.entity.ai.util.AIState.IDLE;
+import static com.minecolonies.entity.ai.util.AIState.PREPARING;
+import static com.minecolonies.entity.ai.util.AIState.START_WORKING;
+
+import java.util.Random;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.entity.EntityCitizen;
@@ -10,6 +23,7 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -17,12 +31,6 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Random;
-
-import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * Fisherman AI class
@@ -509,12 +517,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         if (!world.isRemote)
         {
             worker.faceBlock(job.getWater());
-            world.playSound((EntityPlayer) null,
-              this.worker.getPosition(),
-              SoundEvents.ENTITY_BOBBER_THROW,
-              SoundCategory.NEUTRAL,
-              0.5F,
-              0.4F / (this.world.rand.nextFloat() * 0.4F + 0.8F));
+            world.playSound((EntityPlayer)null, this.worker.getPosition(), SoundEvents.ENTITY_BOBBER_THROW, SoundCategory.NEUTRAL, 0.5F, 0.4F / (this.world.rand.nextFloat() * 0.4F + 0.8F));
             this.entityFishHook = new EntityFishHook(world, this.getCitizen());
             world.spawnEntityInWorld(this.entityFishHook);
         }

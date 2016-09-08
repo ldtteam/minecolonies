@@ -1,11 +1,15 @@
 package com.minecolonies.blocks;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.ITileEntityProvider;
@@ -27,8 +31,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Abstract class for all minecolonies blocks.
@@ -40,9 +42,9 @@ import org.jetbrains.annotations.Nullable;
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
 
-    public static final  PropertyDirection FACING = BlockDirectional.FACING;
-    private static final float             HARDNESS = 10F;
-    private static final float             RESISTANCE = Float.POSITIVE_INFINITY;
+    private static final float HARDNESS   = 10F;
+    private static final float RESISTANCE = Float.POSITIVE_INFINITY;
+    public static final PropertyDirection FACING = BlockDirectional.FACING;
     //private static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
     protected int workingRange;
 
@@ -118,17 +120,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     @Override
-    public boolean onBlockActivated(
-                                     World worldIn,
-                                     BlockPos pos,
-                                     IBlockState state,
-                                     EntityPlayer playerIn,
-                                     EnumHand hand,
-                                     @Nullable ItemStack heldItem,
-                                     EnumFacing side,
-                                     float hitX,
-                                     float hitY,
-                                     float hitZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         /*
         If the world is client, open the gui of the building

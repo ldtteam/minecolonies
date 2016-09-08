@@ -1,5 +1,5 @@
-<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" size="420 240" pause="true"
-        lightbox="false"
+<window size="420 240" pause="true" lightbox="false"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
 
     <buttonimage id="confirm" source="minecolonies:textures/gui/confirm.png" size="32" pos="90 100"/>

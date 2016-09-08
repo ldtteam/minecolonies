@@ -27,8 +27,8 @@ public final class ColonyView implements IColony
 {
     //  General Attributes
     private final int id;
-    private final Map<Integer, WorkOrderView> workOrders = new HashMap<>();
-    private       String                      name       = "Unknown";
+    private final Map<Integer, WorkOrderView>   workOrders = new HashMap<>();
+    private String name = "Unknown";
     private int      dimensionId;
     private BlockPos center;
     /**

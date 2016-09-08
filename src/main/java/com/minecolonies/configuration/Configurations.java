@@ -2,14 +2,14 @@ package com.minecolonies.configuration;
 
 public class Configurations
 {
-    public static final int     CITIZEN_RESPAWN_INTERVAL_MIN = 10;
-    public static final int     CITIZEN_RESPAWN_INTERVAL_MAX = 600;
-    public static       int     workingRangeTownHall         = 100;
-    public static       int     townHallPadding              = 20;
-    public static       boolean supplyChests                 = true;
-    public static       boolean allowInfiniteSupplyChests    = false;
-    public static       int     citizenRespawnInterval       = 30;
-    public static       boolean builderInfiniteResources     = false;
+    public static final int CITIZEN_RESPAWN_INTERVAL_MIN = 10;
+    public static final int CITIZEN_RESPAWN_INTERVAL_MAX = 600;
+    public static int     workingRangeTownHall      = 100;
+    public static int     townHallPadding           = 20;
+    public static boolean supplyChests              = true;
+    public static boolean allowInfiniteSupplyChests = false;
+    public static int     citizenRespawnInterval    = 30;
+    public static boolean builderInfiniteResources = false;
 
     //TODO change to false when material handling is implemented
     public static boolean deliverymanInfiniteResources = true;

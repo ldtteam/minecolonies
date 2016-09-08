@@ -3,6 +3,7 @@ package com.blockout;
 import com.blockout.views.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.BufferUtils;
@@ -17,8 +18,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  */
 public class Pane extends Gui
 {
-    protected static Pane lastClickedPane;
-    protected static Pane focus;
+    protected static Pane   lastClickedPane;
+    protected static Pane   focus;
     protected static boolean             debugging         = false;
     @NotNull
     private static   Deque<ScissorsInfo> scissorsInfoStack = new ConcurrentLinkedDeque<>();
@@ -33,8 +34,8 @@ public class Pane extends Gui
     protected        boolean             visible           = true;
     protected        boolean             enabled           = true;
     //  Runtime
-    protected Window window;
-    protected View   parent;
+    protected        Window window;
+    protected        View   parent;
 
     /**
      * Default constructor
