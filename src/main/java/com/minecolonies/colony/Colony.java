@@ -868,17 +868,17 @@ public class Colony implements IColony
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_SETTLEMENT)
         {
-            this.addStat(ModAchievements.achievementSizeSettlement);
+            this.triggerAchievement(ModAchievements.achievementSizeSettlement);
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_TOWN)
         {
-            this.addStat(ModAchievements.achievementSizeTown);
+            this.triggerAchievement(ModAchievements.achievementSizeTown);
         }
 
         if (size >= ModAchievements.ACHIEVEMENT_SIZE_CITY)
         {
-            this.addStat(ModAchievements.achievementSizeCity);
+            this.triggerAchievement(ModAchievements.achievementSizeCity);
         }
     }
 
@@ -1262,7 +1262,7 @@ public class Colony implements IColony
      *
      * @param achievement The achievement to trigger
      */
-    public void addStat(@NotNull final Achievement achievement)
+    public void triggerAchievement(@NotNull final Achievement achievement)
     {
         if (this.colonyAchievements.contains(achievement))
         {
