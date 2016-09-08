@@ -8,7 +8,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -45,7 +45,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      *
      * @param job the job to fulfill
      */
-    public AbstractEntityAIInteract(@Nonnull final J job)
+    public AbstractEntityAIInteract(@NotNull final J job)
     {
         super(job);
         super.registerTargets(
@@ -63,7 +63,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param blockToMine the block that should be mined
      * @return true once we're done
      */
-    protected final boolean mineBlock(@Nonnull final BlockPos blockToMine)
+    protected final boolean mineBlock(@NotNull final BlockPos blockToMine)
     {
         return mineBlock(blockToMine, new BlockPos((int) worker.posX, (int) worker.posY, (int) worker.posZ));
     }
@@ -79,7 +79,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param safeStand   the block we want to stand on to do that
      * @return true once we're done
      */
-    protected final boolean mineBlock(@Nonnull final BlockPos blockToMine, @Nonnull final BlockPos safeStand)
+    protected final boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
     	IBlockState curBlockState = world.getBlockState(blockToMine);
         Block curBlock = curBlockState.getBlock();
@@ -130,7 +130,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param blockToMine the block to mine eventually
      * @param safeStand   a safe stand to mine from (AIR Block!)
      */
-    private boolean checkMiningLocation(@Nonnull final BlockPos blockToMine, @Nonnull final BlockPos safeStand)
+    private boolean checkMiningLocation(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
         Block curBlock = world.getBlockState(blockToMine).getBlock();
 
@@ -169,7 +169,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * @param pos   coordinate
      * @return the delay in ticks
      */
-    private int getBlockMiningDelay(@Nonnull final Block block, @Nonnull final BlockPos pos)
+    private int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
         if (worker.getHeldItemMainhand() == null)
         {

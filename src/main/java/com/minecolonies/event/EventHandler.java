@@ -1,7 +1,7 @@
 package com.minecolonies.event;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.BlockHutTownHall;
@@ -36,7 +36,7 @@ public class EventHandler
      * @param event {@link net.minecraftforge.event.getWorld().BlockEvent.BreakEvent}
      */
     @SubscribeEvent
-    public void onBlockBreak(@Nonnull BlockEvent.BreakEvent event)
+    public void onBlockBreak(@NotNull BlockEvent.BreakEvent event)
     {
         World world = event.getWorld();
 
@@ -66,7 +66,7 @@ public class EventHandler
      * @param event {@link PlayerInteractEvent}
      */
     @SubscribeEvent
-    public void onPlayerInteract(@Nonnull PlayerInteractEvent event)
+    public void onPlayerInteract(@NotNull PlayerInteractEvent event)
     {
         if (event instanceof PlayerInteractEvent.RightClickBlock)
         {
@@ -97,13 +97,13 @@ public class EventHandler
         }
     }
 
-    private static boolean playerRightClickInteract(@Nonnull EntityPlayer player, World world, BlockPos pos)
+    private static boolean playerRightClickInteract(@NotNull EntityPlayer player, World world, BlockPos pos)
     {
         return !player.isSneaking() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null ||
                 player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
     }
 
-    private void handleEventCancellation(@Nonnull PlayerInteractEvent event, @Nonnull EntityPlayer player)
+    private void handleEventCancellation(@NotNull PlayerInteractEvent event, @NotNull EntityPlayer player)
     {
         Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
         if (heldBlock instanceof AbstractBlockHut)
@@ -121,7 +121,7 @@ public class EventHandler
      * @param pos    The location of the block
      * @return false to cancel the event
      */
-    public static boolean onBlockHutPlaced(@Nonnull World world, @Nonnull EntityPlayer player, Block block, BlockPos pos)
+    public static boolean onBlockHutPlaced(@NotNull World world, @NotNull EntityPlayer player, Block block, BlockPos pos)
     {
         if (block instanceof BlockHutTownHall)
         {
@@ -133,7 +133,7 @@ public class EventHandler
         }
     }
 
-    static boolean onTownHallPlaced(@Nonnull World world, @Nonnull EntityPlayer player, BlockPos pos)
+    static boolean onTownHallPlaced(@NotNull World world, @NotNull EntityPlayer player, BlockPos pos)
     {
         IColony colony = ColonyManager.getIColonyByOwner(world, player);
         if (colony != null)
@@ -152,7 +152,7 @@ public class EventHandler
         return canPlayerPlaceTownHallHere(world, player, pos, colony);
     }
 
-    private static boolean onBlockHutPlaced(World world, @Nonnull EntityPlayer player, BlockPos pos)
+    private static boolean onBlockHutPlaced(World world, @NotNull EntityPlayer player, BlockPos pos)
     {
         IColony colony = ColonyManager.getIColony(world, pos);
 
@@ -174,7 +174,7 @@ public class EventHandler
         }
     }
 
-    private static boolean canOwnerPlaceTownHallHere(World world, @Nonnull EntityPlayer player, @Nonnull IColony colony, BlockPos pos)
+    private static boolean canOwnerPlaceTownHallHere(World world, @NotNull EntityPlayer player, @NotNull IColony colony, BlockPos pos)
     {
         if (!colony.isCoordInColony(world, pos) || colony.hasTownHall())
         {
@@ -193,7 +193,7 @@ public class EventHandler
         return true;
     }
 
-    private static void createColony(@Nonnull World world, EntityPlayer player, BlockPos pos)
+    private static void createColony(@NotNull World world, EntityPlayer player, BlockPos pos)
     {
         if (!world.isRemote)
         {
@@ -201,7 +201,7 @@ public class EventHandler
         }
     }
 
-    private static boolean canPlayerPlaceTownHallHere(@Nonnull World world, @Nonnull EntityPlayer player, BlockPos pos, @Nonnull IColony closestColony)
+    private static boolean canPlayerPlaceTownHallHere(@NotNull World world, @NotNull EntityPlayer player, BlockPos pos, @NotNull IColony closestColony)
     {
         // Is the player trying to place a town hall in a colony
         if (closestColony.isCoordInColony(world, pos))
@@ -241,11 +241,11 @@ public class EventHandler
      * @param event {@link net.minecraftforge.event.getEntity().getEntity()Event.getEntity()Constructing}
      */
     /*@SubscribeEvent
-    public void onEntityConstructing(@Nonnull EntityEvent.EntityConstructing event)
+    public void onEntityConstructing(@NotNull EntityEvent.EntityConstructing event)
     {
         if (event.getEntity() instanceof EntityPlayer)
         {
-            @Nonnull EntityPlayer player = (EntityPlayer) event.getEntity();
+            @NotNull EntityPlayer player = (EntityPlayer) event.getEntity();
             if (PlayerProperties.get(player) == null)
             {
                 PlayerProperties.register(player);
@@ -261,7 +261,7 @@ public class EventHandler
      * @param event {@link LivingDeathEvent}
      */
     /*@SubscribeEvent
-    public void onLivingDeath(@Nonnull LivingDeathEvent event)
+    public void onLivingDeath(@NotNull LivingDeathEvent event)
     {
         if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof EntityPlayer)
         {
@@ -276,7 +276,7 @@ public class EventHandler
      * @param event {@link EntityJoinWorldEvent}
      */
     /*@SubscribeEvent
-    public void onEntityJoinWorld(@Nonnull EntityJoinWorldEvent event)
+    public void onEntityJoinWorld(@NotNull EntityJoinWorldEvent event)
     {
         if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof EntityPlayer)
         {
@@ -291,7 +291,7 @@ public class EventHandler
      * @param event {@link net.minecraftforge.event.getWorld().getWorld()Event.Load}
      */
     @SubscribeEvent
-    public void onWorldLoad(@Nonnull WorldEvent.Load event)
+    public void onWorldLoad(@NotNull WorldEvent.Load event)
     {
         ColonyManager.onWorldLoad(event.getWorld());
     }
@@ -303,7 +303,7 @@ public class EventHandler
      * @param event {@link net.minecraftforge.event.getWorld().getWorld()Event.Unload}
      */
     @SubscribeEvent
-    public void onWorldUnload(@Nonnull WorldEvent.Unload event)
+    public void onWorldUnload(@NotNull WorldEvent.Unload event)
     {
         ColonyManager.onWorldUnload(event.getWorld());
     }
@@ -315,7 +315,7 @@ public class EventHandler
      * @param event {@link net.minecraftforge.event.getWorld().getWorld()Event.Save}
      */
     @SubscribeEvent
-    public void onWorldSave(@Nonnull WorldEvent.Save event)
+    public void onWorldSave(@NotNull WorldEvent.Save event)
     {
         ColonyManager.onWorldSave(event.getWorld());
     }

@@ -20,8 +20,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -103,7 +103,7 @@ public final class RotationHelper
     {
     }
 
-    public static boolean rotate(@Nullable final SchematicWorld world, @Nonnull final EnumFacing axis, final boolean forced)
+    public static boolean rotate(@Nullable final SchematicWorld world, @NotNull final EnumFacing axis, final boolean forced)
     {
         if (world == null)
         {
@@ -112,7 +112,7 @@ public final class RotationHelper
 
         try
         {
-            @Nonnull final Schematic schematicRotated = rotate(world.getSchematic(), axis, forced);
+            @NotNull final Schematic schematicRotated = rotate(world.getSchematic(), axis, forced);
 
             updatePosition(world, axis);
 
@@ -122,11 +122,11 @@ public final class RotationHelper
 
             return true;
         }
-        catch (@Nonnull final RotationException re)
+        catch (@NotNull final RotationException re)
         {
             Reference.logger.error(re.getMessage(), re);
         }
-        catch (@Nonnull final RuntimeException e)
+        catch (@NotNull final RuntimeException e)
         {
             Reference.logger.fatal("Something went wrong!", e);
         }
@@ -134,22 +134,22 @@ public final class RotationHelper
         return false;
     }
 
-    @Nonnull
-    public static Schematic rotate(@Nonnull final Schematic schematic, @Nonnull final EnumFacing axis, final boolean forced) throws RotationException
+    @NotNull
+    public static Schematic rotate(@NotNull final Schematic schematic, @NotNull final EnumFacing axis, final boolean forced) throws RotationException
     {
-        @Nonnull final Vec3i dimensionsRotated = rotateDimensions(axis, schematic.getWidth(), schematic.getHeight(), schematic.getLength());
-        @Nonnull final Schematic schematicRotated = new Schematic(schematic.getIcon(), dimensionsRotated.getX(), dimensionsRotated.getY(), dimensionsRotated.getZ());
-        @Nonnull final BlockPos.MutableBlockPos tmp = new BlockPos.MutableBlockPos();
+        @NotNull final Vec3i dimensionsRotated = rotateDimensions(axis, schematic.getWidth(), schematic.getHeight(), schematic.getLength());
+        @NotNull final Schematic schematicRotated = new Schematic(schematic.getIcon(), dimensionsRotated.getX(), dimensionsRotated.getY(), dimensionsRotated.getZ());
+        @NotNull final BlockPos.MutableBlockPos tmp = new BlockPos.MutableBlockPos();
 
-        for (@Nonnull final BlockPos pos : BlockPosHelper.getAllInBox(0, 0, 0, schematic.getWidth() - 1, schematic.getHeight() - 1, schematic.getLength() - 1))
+        for (@NotNull final BlockPos pos : BlockPosHelper.getAllInBox(0, 0, 0, schematic.getWidth() - 1, schematic.getHeight() - 1, schematic.getLength() - 1))
         {
             final IBlockState blockState = schematic.getBlockState(pos);
             final IBlockState blockStateRotated = rotateBlock(blockState, axis, forced);
             schematicRotated.setBlockState(rotatePos(pos, axis, dimensionsRotated, tmp), blockStateRotated);
         }
 
-        @Nonnull final List<TileEntity> tileEntities = schematic.getTileEntities();
-        for (@Nonnull final TileEntity tileEntity : tileEntities)
+        @NotNull final List<TileEntity> tileEntities = schematic.getTileEntities();
+        for (@NotNull final TileEntity tileEntity : tileEntities)
         {
             final BlockPos pos = tileEntity.getPos();
             tileEntity.setPos(new BlockPos(rotatePos(pos, axis, dimensionsRotated, tmp)));
@@ -161,7 +161,7 @@ public final class RotationHelper
         return schematicRotated;
     }
 
-    private static void updatePosition(@Nonnull final SchematicWorld world, @Nonnull final EnumFacing axis)
+    private static void updatePosition(@NotNull final SchematicWorld world, @NotNull final EnumFacing axis)
     {
         switch (axis)
         {
@@ -187,8 +187,8 @@ public final class RotationHelper
         }
     }
 
-    @Nonnull
-    private static Vec3i rotateDimensions(@Nonnull final EnumFacing axis, final int width, final int height, final int length) throws RotationException
+    @NotNull
+    private static Vec3i rotateDimensions(@NotNull final EnumFacing axis, final int width, final int height, final int length) throws RotationException
     {
         switch (axis)
         {
@@ -209,7 +209,7 @@ public final class RotationHelper
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static IBlockState rotateBlock(@Nonnull final IBlockState blockState, @Nonnull final EnumFacing axisRotation, final boolean forced) throws RotationException
+    private static IBlockState rotateBlock(@NotNull final IBlockState blockState, @NotNull final EnumFacing axisRotation, final boolean forced) throws RotationException
     {
         @Nullable final IProperty propertyFacing = BlockStateHelper.getProperty(blockState, "facing");
         if (propertyFacing instanceof PropertyDirection)
@@ -228,7 +228,7 @@ public final class RotationHelper
         {
             if (BlockLever.EnumOrientation.class.isAssignableFrom(propertyFacing.getValueClass()))
             {
-                @Nonnull final BlockLever.EnumOrientation orientation = (BlockLever.EnumOrientation) blockState.getValue(propertyFacing);
+                @NotNull final BlockLever.EnumOrientation orientation = (BlockLever.EnumOrientation) blockState.getValue(propertyFacing);
                 final BlockLever.EnumOrientation orientationRotated = getRotatedLeverFacing(axisRotation, orientation);
                 if (propertyFacing.getAllowedValues().contains(orientationRotated))
                 {
@@ -247,14 +247,14 @@ public final class RotationHelper
         {
             if (EnumFacing.Axis.class.isAssignableFrom(propertyAxis.getValueClass()))
             {
-                @Nonnull final EnumFacing.Axis axis = (EnumFacing.Axis) blockState.getValue(propertyAxis);
+                @NotNull final EnumFacing.Axis axis = (EnumFacing.Axis) blockState.getValue(propertyAxis);
                 final EnumFacing.Axis axisRotated = getRotatedAxis(axisRotation, axis);
                 return blockState.withProperty(propertyAxis, axisRotated);
             }
 
             if (BlockLog.EnumAxis.class.isAssignableFrom(propertyAxis.getValueClass()))
             {
-                @Nonnull final BlockLog.EnumAxis axis = (BlockLog.EnumAxis) blockState.getValue(propertyAxis);
+                @NotNull final BlockLog.EnumAxis axis = (BlockLog.EnumAxis) blockState.getValue(propertyAxis);
                 final BlockLog.EnumAxis axisRotated = getRotatedLogAxis(axisRotation, axis);
                 return blockState.withProperty(propertyAxis, axisRotated);
             }
@@ -268,7 +268,7 @@ public final class RotationHelper
         @Nullable final IProperty propertyVariant = BlockStateHelper.getProperty(blockState, "variant");
         if (propertyVariant instanceof PropertyEnum && BlockQuartz.EnumType.class.isAssignableFrom(propertyVariant.getValueClass()))
         {
-            @Nonnull final BlockQuartz.EnumType type = (BlockQuartz.EnumType) blockState.getValue(propertyVariant);
+            @NotNull final BlockQuartz.EnumType type = (BlockQuartz.EnumType) blockState.getValue(propertyVariant);
             final BlockQuartz.EnumType typeRotated = getRotatedQuartzType(axisRotation, type);
             return blockState.withProperty(propertyVariant, typeRotated);
         }
@@ -281,7 +281,7 @@ public final class RotationHelper
         return blockState;
     }
 
-    private static BlockPos rotatePos(@Nonnull final BlockPos pos, @Nonnull final EnumFacing axis, @Nonnull final Vec3i dimensions, @Nonnull final BlockPos.MutableBlockPos rotated) throws RotationException
+    private static BlockPos rotatePos(@NotNull final BlockPos pos, @NotNull final EnumFacing axis, @NotNull final Vec3i dimensions, @NotNull final BlockPos.MutableBlockPos rotated) throws RotationException
     {
         switch (axis)
         {
@@ -307,12 +307,12 @@ public final class RotationHelper
         }
     }
 
-    private static EnumFacing getRotatedFacing(@Nonnull final EnumFacing source, @Nonnull final EnumFacing side)
+    private static EnumFacing getRotatedFacing(@NotNull final EnumFacing source, @NotNull final EnumFacing side)
     {
         return FACINGS[source.ordinal()][side.ordinal()];
     }
 
-    private static BlockLever.EnumOrientation getRotatedLeverFacing(@Nonnull final EnumFacing source, @Nonnull final BlockLever.EnumOrientation side)
+    private static BlockLever.EnumOrientation getRotatedLeverFacing(@NotNull final EnumFacing source, @NotNull final BlockLever.EnumOrientation side)
     {
         final EnumFacing facing;
         if (source.getAxis().isVertical() && side.getFacing().getAxis().isVertical())
@@ -328,24 +328,24 @@ public final class RotationHelper
         return BlockLever.EnumOrientation.forFacings(facingRotated, facing);
     }
 
-    private static EnumFacing.Axis getRotatedAxis(@Nonnull final EnumFacing source, @Nonnull final EnumFacing.Axis axis)
+    private static EnumFacing.Axis getRotatedAxis(@NotNull final EnumFacing source, @NotNull final EnumFacing.Axis axis)
     {
         return AXISES[source.getAxis().ordinal()][axis.ordinal()];
     }
 
-    private static BlockLog.EnumAxis getRotatedLogAxis(@Nonnull final EnumFacing source, @Nonnull final BlockLog.EnumAxis axis)
+    private static BlockLog.EnumAxis getRotatedLogAxis(@NotNull final EnumFacing source, @NotNull final BlockLog.EnumAxis axis)
     {
         return AXISES_LOG[source.getAxis().ordinal()][axis.ordinal()];
     }
 
-    private static BlockQuartz.EnumType getRotatedQuartzType(@Nonnull final EnumFacing source, @Nonnull final BlockQuartz.EnumType type)
+    private static BlockQuartz.EnumType getRotatedQuartzType(@NotNull final EnumFacing source, @NotNull final BlockQuartz.EnumType type)
     {
         return AXISES_QUARTZ[source.getAxis().ordinal()][type.ordinal()];
     }
 
     public static class RotationException extends Exception
     {
-        RotationException(@Nonnull final String message, final Object... args)
+        RotationException(@NotNull final String message, final Object... args)
         {
             super(String.format(message, args));
         }

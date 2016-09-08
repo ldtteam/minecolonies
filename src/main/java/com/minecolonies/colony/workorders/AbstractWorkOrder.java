@@ -7,8 +7,8 @@ import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -24,9 +24,9 @@ public abstract class AbstractWorkOrder
     private static final String                                          TAG_ID         = "id";
     private static final String                                          TAG_CLAIMED_BY = "claimedBy";
     //  Job and View Class Mapping
-    @Nonnull
+    @NotNull
     private static       Map<String, Class<? extends AbstractWorkOrder>> nameToClassMap = new HashMap<>();
-    @Nonnull
+    @NotNull
     private static       Map<Class<? extends AbstractWorkOrder>, String> classToNameMap = new HashMap<>();
     static
     {
@@ -53,7 +53,7 @@ public abstract class AbstractWorkOrder
      * @param name       name of work order
      * @param orderClass class of work order
      */
-    private static void addMapping(String name, @Nonnull Class<? extends AbstractWorkOrder> orderClass)
+    private static void addMapping(String name, @NotNull Class<? extends AbstractWorkOrder> orderClass)
     {
         if (nameToClassMap.containsKey(name))
         {
@@ -80,7 +80,7 @@ public abstract class AbstractWorkOrder
      * @param compound the compound that contains the data for the Work Order
      * @return {@link AbstractWorkOrder} from the NBT
      */
-    public static AbstractWorkOrder createFromNBT(@Nonnull NBTTagCompound compound)
+    public static AbstractWorkOrder createFromNBT(@NotNull NBTTagCompound compound)
     {
         @Nullable AbstractWorkOrder order = null;
         @Nullable Class<? extends AbstractWorkOrder> oclass = null;
@@ -95,7 +95,7 @@ public abstract class AbstractWorkOrder
                 order = (AbstractWorkOrder) constructor.newInstance();
             }
         }
-        catch (@Nonnull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
+        catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
         {
             Log.logger.trace(e);
         }
@@ -124,7 +124,7 @@ public abstract class AbstractWorkOrder
      *
      * @param compound NBT Tag compound
      */
-    public void readFromNBT(@Nonnull NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         id = compound.getInteger(TAG_ID);
         claimedBy = compound.getInteger(TAG_CLAIMED_BY);
@@ -224,7 +224,7 @@ public abstract class AbstractWorkOrder
      * @param citizen The citizen to check
      * @return true if the Work Order is claimed by this Citizen
      */
-    public boolean isClaimedBy(@Nonnull CitizenData citizen)
+    public boolean isClaimedBy(@NotNull CitizenData citizen)
     {
         return citizen.getId() == claimedBy;
     }
@@ -264,7 +264,7 @@ public abstract class AbstractWorkOrder
      *
      * @param compound NBT tag compount
      */
-    public void writeToNBT(@Nonnull NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         final String s = classToNameMap.get(this.getClass());
 
@@ -305,7 +305,7 @@ public abstract class AbstractWorkOrder
      *
      * @param buf Buffer to write to
      */
-    public void serializeViewNetworkData(@Nonnull ByteBuf buf)
+    public void serializeViewNetworkData(@NotNull ByteBuf buf)
     {
         buf.writeInt(id);
         buf.writeInt(priority);
@@ -320,7 +320,7 @@ public abstract class AbstractWorkOrder
      *
      * @return the type.
      */
-    @Nonnull
+    @NotNull
     protected abstract WorkOrderType getType();
 
     /**

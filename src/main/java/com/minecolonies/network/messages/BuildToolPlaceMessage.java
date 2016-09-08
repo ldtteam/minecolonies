@@ -1,7 +1,7 @@
 package com.minecolonies.network.messages;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
@@ -74,7 +74,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param buf The buffer begin read from.
      */
     @Override
-    public void fromBytes(@Nonnull ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         hutDec = ByteBufUtils.readUTF8String(buf);
         style = ByteBufUtils.readUTF8String(buf);
@@ -92,7 +92,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@Nonnull ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, hutDec);
         ByteBufUtils.writeUTF8String(buf, style);
@@ -115,7 +115,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      */
     @Nullable
     @Override
-    public IMessage onMessage(@Nonnull BuildToolPlaceMessage message, @Nonnull MessageContext ctx)
+    public IMessage onMessage(@NotNull BuildToolPlaceMessage message, @NotNull MessageContext ctx)
     {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
         World world = player.worldObj;
@@ -141,7 +141,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param rotation The number of times the schematic should be rotated.
      * @param buildPos The location the hut is being placed.
      */
-    private static void handleHut(@Nonnull World world, @Nonnull EntityPlayer player, String hut, String style, int rotation, @Nonnull BlockPos buildPos)
+    private static void handleHut(@NotNull World world, @NotNull EntityPlayer player, String hut, String style, int rotation, @NotNull BlockPos buildPos)
     {
         if (Schematics.getStylesForHut(hut) == null)
         {
@@ -183,7 +183,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      * @param rotation   The number of times the decoration is rotated.
      * @param buildPos   The location the decoration will be built.
      */
-    private static void handleDecoration(@Nonnull World world, @Nonnull EntityPlayer player, String decoration, String style, int rotation, @Nonnull BlockPos buildPos)
+    private static void handleDecoration(@NotNull World world, @NotNull EntityPlayer player, String decoration, String style, int rotation, @NotNull BlockPos buildPos)
     {
         if (Schematics.getStylesForDecoration(decoration) == null)
         {

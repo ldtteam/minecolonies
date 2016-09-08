@@ -1,7 +1,7 @@
 package com.minecolonies.colony.materials;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ public class Material
     /**
      * Map of where each Material is stored and how much is there.
      */
-    @Nonnull
+    @NotNull
     private Map<MaterialStore, Integer> locations = new HashMap<>();
 
     /**
@@ -51,7 +51,7 @@ public class Material
     /**
      * @return An unmodifiable version of locations
      */
-    @Nonnull
+    @NotNull
     public Map<MaterialStore, Integer> getLocationsStored()
     {
         return Collections.unmodifiableMap(locations);
@@ -64,7 +64,7 @@ public class Material
      * @param material Material that we are checking
      * @return How many of material is stored at store
      */
-    public int getMaterialCount(@Nonnull MaterialStore store, Material material)
+    public int getMaterialCount(@NotNull MaterialStore store, Material material)
     {
         if (locations.containsKey(store))
         {

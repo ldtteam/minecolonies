@@ -9,8 +9,8 @@ import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,7 +68,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * <p>
      * Will be cleared on restart, be aware!
      */
-    @Nonnull
+    @NotNull
     private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
 
     /**
@@ -78,7 +78,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * <p>
      * Will be cleared on restart, be aware!
      */
-    @Nonnull
+    @NotNull
     private List<ItemStack> itemsNeeded = new ArrayList<>();
 
     /**
@@ -121,7 +121,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param job the job class
      */
-    protected AbstractEntityAIBasic(@Nonnull final J job)
+    protected AbstractEntityAIBasic(@NotNull final J job)
     {
         super(job);
         super.registerTargets(
@@ -212,7 +212,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return IDLE if all ready, else stay in INIT
      */
-    @Nonnull
+    @NotNull
     private AIState initSafetyChecks()
     {
         //Something fatally wrong? Wait for re-init...
@@ -308,7 +308,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return NEEDS_ITEM
      */
-    @Nonnull
+    @NotNull
     private AIState waitForNeededItems()
     {
         delay = DELAY_RECHECK;
@@ -319,7 +319,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Utility method to search for items currently needed.
      * Poll this until all items are there.
      */
-    @Nonnull
+    @NotNull
     private AIState lookForNeededItems()
     {
         syncNeededItemsWithInventory();
@@ -396,7 +396,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param chat the Item Name
      */
-    private void requestWithoutSpam(@Nonnull final String chat)
+    private void requestWithoutSpam(@NotNull final String chat)
     {
         chatSpamFilter.requestWithoutSpam(chat);
     }
@@ -407,7 +407,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param stand where to walk to
      * @return true while walking to the block
      */
-    protected final boolean walkToBlock(@Nonnull final BlockPos stand)
+    protected final boolean walkToBlock(@NotNull final BlockPos stand)
     {
         return walkToBlock(stand, DEFAULT_RANGE_FOR_DELAY);
     }
@@ -419,7 +419,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param range how close we need to be
      * @return true while walking to the block
      */
-    protected final boolean walkToBlock(@Nonnull final BlockPos stand, final int range)
+    protected final boolean walkToBlock(@NotNull final BlockPos stand, final int range)
     {
         if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), range))
         {
@@ -466,7 +466,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return NEEDS_SHOVEL
      */
-    @Nonnull
+    @NotNull
     private AIState waitForShovel()
     {
         if (checkForShovel())
@@ -489,7 +489,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return needsShovel;
     }
 
-    private boolean checkForTool(@Nonnull String tool)
+    private boolean checkForTool(@NotNull String tool)
     {
         boolean needsTool = !InventoryFunctions
                                .matchFirstInInventory(
@@ -530,7 +530,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return NEEDS_AXE
      */
-    @Nonnull
+    @NotNull
     private AIState waitForAxe()
     {
         if (checkForAxe())
@@ -558,7 +558,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return NEEDS_HOE
      */
-    @Nonnull
+    @NotNull
     private AIState waitForHoe()
     {
         if (checkForHoe())
@@ -586,7 +586,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return NEEDS_PICKAXE
      */
-    @Nonnull
+    @NotNull
     private AIState waitForPickaxe()
     {
         if (checkForPickaxe(needsPickaxeLevel))
@@ -663,7 +663,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return INVENTORY_FULL | IDLE
      */
-    @Nonnull
+    @NotNull
     private AIState dumpInventory()
     {
         if (dumpOneMoreSlot())
@@ -712,7 +712,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return a list with items nice to have for the worker
      */
-    @Nonnull
+    @NotNull
     protected List<ItemStack> itemsNiceToHave()
     {
         return new ArrayList<>();
@@ -733,7 +733,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param keepIt used to test it that stack should be kept
      * @return true if is has to dump more.
      */
-    private boolean dumpOneMoreSlot(@Nonnull Predicate<ItemStack> keepIt)
+    private boolean dumpOneMoreSlot(@NotNull Predicate<ItemStack> keepIt)
     {
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return walkToBuilding()
@@ -783,7 +783,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             if (countOfItem < stack.stackSize)
             {
                 int itemsLeft = stack.stackSize - countOfItem;
-                @Nonnull ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
+                @NotNull ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
                 itemsCurrentlyNeeded.add(requiredStack);
                 allClear = false;
             }
@@ -802,7 +802,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return A InventoryCitizen matching this ai's citizen.
      */
-    @Nonnull
+    @NotNull
     protected InventoryCitizen getInventory()
     {
         return worker.getInventoryCitizen();
@@ -829,7 +829,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param target the block to mine
      * @return true if we have a tool for the job
      */
-    protected final boolean holdEfficientTool(@Nonnull final Block target)
+    protected final boolean holdEfficientTool(@NotNull final Block target)
     {
         int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
@@ -846,7 +846,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param target the block to mine
      */
-    private void requestTool(@Nonnull final Block target)
+    private void requestTool(@NotNull final Block target)
     {
         String tool = target.getHarvestTool(target.getDefaultState());
         int required = target.getHarvestLevel(target.getDefaultState());
@@ -860,7 +860,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tool     the tool needed
      * @param required the level needed (for pickaxe only)
      */
-    private void updateToolFlag(@Nonnull final String tool, final int required)
+    private void updateToolFlag(@NotNull final String tool, final int required)
     {
         switch (tool)
         {
@@ -888,13 +888,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param target the Block type to mine
      * @return the slot with the best tool
      */
-    private int getMostEfficientTool(@Nonnull final Block target)
+    private int getMostEfficientTool(@NotNull final Block target)
     {
         String tool = target.getHarvestTool(target.getDefaultState());
         int required = target.getHarvestLevel(target.getDefaultState());
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
-        @Nonnull InventoryCitizen inventory = worker.getInventoryCitizen();
+        @NotNull InventoryCitizen inventory = worker.getInventoryCitizen();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             ItemStack item = inventory.getStackInSlot(i);

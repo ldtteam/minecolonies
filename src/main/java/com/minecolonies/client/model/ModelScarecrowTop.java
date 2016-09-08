@@ -3,7 +3,7 @@ package com.minecolonies.client.model;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class ModelScarecrowTop extends ModelBase
 {
@@ -63,7 +63,7 @@ public class ModelScarecrowTop extends ModelBase
         setRotation(RightArm, 0F, 0F, 1.351339F);
     }
 
-    private void setRotation(@Nonnull ModelRenderer model, float x, float y, float z)
+    private void setRotation(@NotNull ModelRenderer model, float x, float y, float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;

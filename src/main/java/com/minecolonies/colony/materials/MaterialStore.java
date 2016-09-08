@@ -5,8 +5,8 @@ import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,17 +29,17 @@ public class MaterialStore
     /**
      * These are Materials we have that we don't need right now. So they could be used for something else.
      */
-    @Nonnull
+    @NotNull
     private              Map<Material, Integer> dontNeed           = new HashMap<>();
     /**
      * These are Materials we have that we currently need. So we don't tell anyone else about them.
      */
-    @Nonnull
+    @NotNull
     private              Map<Material, Integer> haveNeed           = new HashMap<>();
     /**
      * These are Materials that we don't have, but we need. The deliveryman try to keep this list empty.
      */
-    @Nonnull
+    @NotNull
     private              Map<Material, Integer> need               = new HashMap<>();
     private Type           type;
     private MaterialSystem system;
@@ -50,7 +50,7 @@ public class MaterialStore
      * @param type   What kind of inventory, Entity(INVENTORY) or AbstractBuilding(CHEST)
      * @param system The MaterialSystem associated with the colony
      */
-    public MaterialStore(Type type, @Nonnull MaterialSystem system)
+    public MaterialStore(Type type, @NotNull MaterialSystem system)
     {
         this.type = type;
         this.system = system;
@@ -71,7 +71,7 @@ public class MaterialStore
      *
      * @return An unmodifiable version of the need map
      */
-    @Nonnull
+    @NotNull
     public Map<Material, Integer> getNeed()
     {
         return Collections.unmodifiableMap(need);
@@ -82,7 +82,7 @@ public class MaterialStore
      *
      * @return An unmodifiable version of the dontNeed map
      */
-    @Nonnull
+    @NotNull
     public Map<Material, Integer> getHave()
     {
         return Collections.unmodifiableMap(dontNeed);
@@ -251,7 +251,7 @@ public class MaterialStore
         }
     }
 
-    private void removeMaterial(@Nonnull Material material)
+    private void removeMaterial(@NotNull Material material)
     {
         int count = dontNeed.get(material);
 
@@ -260,7 +260,7 @@ public class MaterialStore
         removeMaterialFromExternal(material, count);
     }
 
-    private void removeMaterialFromExternal(@Nonnull Material material, int count)
+    private void removeMaterialFromExternal(@NotNull Material material, int count)
     {
         system.removeMaterial(material, count);
         material.remove(this);
@@ -343,7 +343,7 @@ public class MaterialStore
         }
     }
 
-    private void removeFromNeededMap(@Nonnull Material material, int quantity)
+    private void removeFromNeededMap(@NotNull Material material, int quantity)
     {
         Integer count = need.get(material);
         if (count == null || count < quantity)
@@ -414,13 +414,13 @@ public class MaterialStore
      */
     public void clear()
     {
-        for (@Nonnull Map.Entry<Material, Integer> entry : dontNeed.entrySet())
+        for (@NotNull Map.Entry<Material, Integer> entry : dontNeed.entrySet())
         {
             removeMaterialFromExternal(entry.getKey(), entry.getValue());
         }
     }
 
-    public void readFromNBT(@Nonnull NBTTagCompound nbtTagCompound)
+    public void readFromNBT(@NotNull NBTTagCompound nbtTagCompound)
     {
         NBTTagCompound compound = nbtTagCompound.getCompoundTag(TAG_MATERIAL_STORE);
 
@@ -429,7 +429,7 @@ public class MaterialStore
         {
             NBTTagCompound tag = list.getCompoundTagAt(i);
 
-            @Nonnull Material material = new Material(tag.getInteger(TAG_ID));
+            @NotNull Material material = new Material(tag.getInteger(TAG_ID));
 
             addMaterial(material, tag.getInteger(TAG_QUANTITY));
         }
@@ -442,7 +442,7 @@ public class MaterialStore
         readMapFromNBT(listNeed, need);
     }
 
-    private void readMapFromNBT(@Nonnull NBTTagList list, @Nonnull Map<Material, Integer> map)
+    private void readMapFromNBT(@NotNull NBTTagList list, @NotNull Map<Material, Integer> map)
     {
         for (int i = 0; i < list.tagCount(); i++)
         {
@@ -454,30 +454,30 @@ public class MaterialStore
         }
     }
 
-    public void writeToNBT(@Nonnull NBTTagCompound nbtTagCompound)
+    public void writeToNBT(@NotNull NBTTagCompound nbtTagCompound)
     {
-        @Nonnull NBTTagCompound compound = new NBTTagCompound();
+        @NotNull NBTTagCompound compound = new NBTTagCompound();
 
-        @Nonnull NBTTagList dontNeedList = new NBTTagList();
+        @NotNull NBTTagList dontNeedList = new NBTTagList();
         writeMapToNBT(dontNeedList, dontNeed);
         compound.setTag(TAG_DONT_NEED, dontNeedList);
 
-        @Nonnull NBTTagList haveNeedList = new NBTTagList();
+        @NotNull NBTTagList haveNeedList = new NBTTagList();
         writeMapToNBT(haveNeedList, haveNeed);
         compound.setTag(TAG_HAVE_NEED, haveNeedList);
 
-        @Nonnull NBTTagList needList = new NBTTagList();
+        @NotNull NBTTagList needList = new NBTTagList();
         writeMapToNBT(needList, need);
         compound.setTag(TAG_NEED, needList);
 
         nbtTagCompound.setTag(TAG_MATERIAL_STORE, compound);
     }
 
-    private void writeMapToNBT(@Nonnull NBTTagList compound, @Nonnull Map<Material, Integer> map)
+    private void writeMapToNBT(@NotNull NBTTagList compound, @NotNull Map<Material, Integer> map)
     {
-        for (@Nonnull Map.Entry<Material, Integer> entry : map.entrySet())
+        for (@NotNull Map.Entry<Material, Integer> entry : map.entrySet())
         {
-            @Nonnull NBTTagCompound tag = new NBTTagCompound();
+            @NotNull NBTTagCompound tag = new NBTTagCompound();
 
             tag.setInteger(TAG_ID, entry.getKey().hashCode());//hashCode is item ID
             tag.setInteger(TAG_QUANTITY, entry.getValue());

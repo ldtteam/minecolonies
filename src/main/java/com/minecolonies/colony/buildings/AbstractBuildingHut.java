@@ -3,7 +3,7 @@ package com.minecolonies.colony.buildings;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import net.minecraft.util.math.BlockPos;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Contains basic methods that all Huts will need.
@@ -16,7 +16,7 @@ public abstract class AbstractBuildingHut extends AbstractBuilding
      * @param c The colony that this building belongs too.
      * @param l The location of this building.
      */
-    public AbstractBuildingHut(@Nonnull Colony c, BlockPos l)
+    public AbstractBuildingHut(@NotNull Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -42,7 +42,7 @@ public abstract class AbstractBuildingHut extends AbstractBuilding
          * @param c ColonyView associated with this building.
          * @param l The location of this building.
          */
-        protected View(ColonyView c, @Nonnull BlockPos l)
+        protected View(ColonyView c, @NotNull BlockPos l)
         {
             super(c, l);
         }

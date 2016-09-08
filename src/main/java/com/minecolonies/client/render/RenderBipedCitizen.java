@@ -6,7 +6,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.ResourceLocation;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -47,7 +47,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     }
 
     @Override
-    public void doRender(@Nonnull EntityCitizen citizen, double d, double d1, double d2, float f, float f1)
+    public void doRender(@NotNull EntityCitizen citizen, double d, double d1, double d2, float f, float f1)
     {
         modelBipedMain = citizen.isFemale() ?
                            idToFemaleModelMap.get(citizen.getModelID()) :
@@ -64,7 +64,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(@Nonnull EntityCitizen entity)
+    protected ResourceLocation getEntityTexture(@NotNull EntityCitizen entity)
     {
         return entity.getTexture();
     }

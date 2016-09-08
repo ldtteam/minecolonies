@@ -8,8 +8,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.configuration.Configurations;
@@ -54,9 +54,9 @@ public abstract class AbstractPathJob implements Callable<Path>
     protected static Set<Node>    lastDebugNodesNotVisited;
     @Nullable
     protected static Set<Node>    lastDebugNodesPath;
-    @Nonnull
+    @NotNull
     protected final  BlockPos     start;
-    @Nonnull
+    @NotNull
     protected final  IBlockAccess world;
     protected final  PathResult   result;
     private final    int          maxRange;
@@ -86,7 +86,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param end   the end position to path to
      * @param range maximum path range
      */
-    public AbstractPathJob(World world, @Nonnull BlockPos start, @Nonnull BlockPos end, int range)
+    public AbstractPathJob(World world, @NotNull BlockPos start, @NotNull BlockPos end, int range)
     {
         this(world, start, end, range, new PathResult());
     }
@@ -99,7 +99,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param result path result
      * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int)
      */
-    public AbstractPathJob(World world, @Nonnull BlockPos start, @Nonnull BlockPos end, int range, PathResult result)
+    public AbstractPathJob(World world, @NotNull BlockPos start, @NotNull BlockPos end, int range, PathResult result)
     {
         int minX = Math.min(start.getX(), end.getX());
         int minZ = Math.min(start.getZ(), end.getZ());
@@ -125,7 +125,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
     }
 
-    private static boolean onLadderGoingUp(@Nonnull Node currentNode, @Nonnull BlockPos dPos)
+    private static boolean onLadderGoingUp(@NotNull Node currentNode, @NotNull BlockPos dPos)
     {
         return currentNode.isLadder && (dPos.getY() >= 0 || dPos.getX() != 0 || dPos.getZ() != 0);
     }
@@ -139,9 +139,9 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param entity Entity for the pathfinding operation
      * @return ChunkCoordinates for starting location
      */
-    public static BlockPos prepareStart(@Nonnull EntityLiving entity)
+    public static BlockPos prepareStart(@NotNull EntityLiving entity)
     {
-        @Nonnull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor_double(entity.posX),
+        @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor_double(entity.posX),
                                                                      (int) entity.posY,
                                                                      MathHelper.floor_double(entity.posZ));
         IBlockState bs = entity.worldObj.getBlockState(pos);
@@ -190,7 +190,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param pos   the position.
      * @param p     the path.
      */
-    private static void setLadderFacing(@Nonnull IBlockAccess world, BlockPos pos, @Nonnull PathPointExtended p)
+    private static void setLadderFacing(@NotNull IBlockAccess world, BlockPos pos, @NotNull PathPointExtended p)
     {
         if (world.getBlockState(pos).getBlock() instanceof BlockVine)
         {
@@ -227,7 +227,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param pos        the position.
      * @return true if on a ladder.
      */
-    private static boolean onALadder(@Nonnull Node node, @Nullable Node nextInPath, @Nonnull BlockPos pos)
+    private static boolean onALadder(@NotNull Node node, @Nullable Node nextInPath, @NotNull BlockPos pos)
     {
         return nextInPath != null && node.isLadder &&
                  (nextInPath.pos.getX() == pos.getX() && nextInPath.pos.getZ() == pos.getZ());
@@ -242,7 +242,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param pos BlockPos to generate key from
      * @return key for node in map
      */
-    private static int computeNodeKey(@Nonnull BlockPos pos)
+    private static int computeNodeKey(@NotNull BlockPos pos)
     {
         return ((pos.getX() & 0xFFF) << 20) |
                  ((pos.getY() & 0xFF) << 12) |
@@ -257,7 +257,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param isSwimming true is the current node would require the citizen to swim.
      * @return cost to move from the parent to the new position
      */
-    protected static double computeCost(Node parent, @Nonnull BlockPos dPos, boolean isSwimming)
+    protected static double computeCost(Node parent, @NotNull BlockPos dPos, boolean isSwimming)
     {
         double cost = 1D;
 
@@ -291,7 +291,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return node != null && node.closed;
     }
 
-    private static boolean calculateSwimming(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable Node node)
+    private static boolean calculateSwimming(@NotNull IBlockAccess world, @NotNull BlockPos pos, @Nullable Node node)
     {
         return (node != null) ? node.isSwimming : world.getBlockState(pos.down()).getMaterial().isLiquid();
     }
@@ -381,7 +381,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
         }
 
-        @Nonnull Path path = finalizePath(bestNode);
+        @NotNull Path path = finalizePath(bestNode);
 
         handleDebugDraw();
 
@@ -424,7 +424,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return false;
     }
 
-    private void walkCurrentNode(@Nonnull Node currentNode)
+    private void walkCurrentNode(@NotNull Node currentNode)
     {
         BlockPos dPos = new BlockPos(0, 0, 0);
         if (currentNode.parent != null)
@@ -469,7 +469,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
     }
 
-    private boolean onLadderGoingDown(@Nonnull Node currentNode, @Nonnull BlockPos dPos)
+    private boolean onLadderGoingDown(@NotNull Node currentNode, @NotNull BlockPos dPos)
     {
         return (dPos.getY() <= 0 || dPos.getX() != 0 || dPos.getZ() != 0) && isLadder(currentNode.pos.down());
     }
@@ -487,10 +487,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
     }
 
-    @Nonnull
+    @NotNull
     private Node getAndSetupStartNode()
     {
-        @Nonnull Node startNode = new Node(start,
+        @NotNull Node startNode = new Node(start,
                                    computeHeuristic(start));
 
         if (isLadder(start))
@@ -516,7 +516,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param targetNode the node to path to.
      * @return the path.
      */
-    @Nonnull
+    @NotNull
     private Path finalizePath(Node targetNode)
     {
         //  Compute length of path, since we need to allocate an array.  This is cheaper/faster than building a List
@@ -530,7 +530,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             node = node.parent;
         }
 
-        @Nonnull PathPoint[] points = new PathPoint[pathLength];
+        @NotNull PathPoint[] points = new PathPoint[pathLength];
 
         @Nullable Node nextInPath = null;
         node = targetNode;
@@ -540,7 +540,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
             --pathLength;
 
-            @Nonnull BlockPos pos = node.pos;
+            @NotNull BlockPos pos = node.pos;
 
             if (node.isSwimming)
             {
@@ -548,7 +548,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 pos.add(0, -1, 0);
             }
 
-            @Nonnull PathPointExtended p = new PathPointExtended(pos);
+            @NotNull PathPointExtended p = new PathPointExtended(pos);
 
             //  Climbing on a ladder?
             if (nextInPath != null && onALadder(node, nextInPath, pos))
@@ -582,13 +582,13 @@ public abstract class AbstractPathJob implements Callable<Path>
      *
      * @param points the points to print.
      */
-    private void doDebugPrinting(@Nonnull PathPoint[] points)
+    private void doDebugPrinting(@NotNull PathPoint[] points)
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
             Log.logger.info("Path found:");
 
-            for (@Nonnull PathPoint p : points)
+            for (@NotNull PathPoint p : points)
             {
                 Log.logger.info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
             }
@@ -638,7 +638,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param dPos   Delta from parent, expected in range of [-1..1]
      * @return true if a node was added or updated when attempting to move in the given direction
      */
-    protected final boolean walk(@Nonnull Node parent, @Nonnull BlockPos dPos)
+    protected final boolean walk(@NotNull Node parent, @NotNull BlockPos dPos)
     {
         BlockPos pos = parent.pos.add(dPos);
 
@@ -699,7 +699,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return true;
     }
 
-    private void performJumpPointSearch(@Nonnull Node parent, @Nonnull BlockPos dPos, @Nonnull Node node)
+    private void performJumpPointSearch(@NotNull Node parent, @NotNull BlockPos dPos, @NotNull Node node)
     {
         if (allowJumpPointSearchTypeWalk && node.heuristic <= parent.heuristic)
         {
@@ -707,8 +707,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
     }
 
-    @Nonnull
-    private Node createNode(Node parent, @Nonnull BlockPos pos, int nodeKey, boolean isSwimming, double heuristic, double cost, double score)
+    @NotNull
+    private Node createNode(Node parent, @NotNull BlockPos pos, int nodeKey, boolean isSwimming, double heuristic, double cost, double score)
     {
         Node node;
         node = new Node(parent, pos, cost, heuristic, score);
@@ -732,7 +732,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return node;
     }
 
-    private boolean updateCurrentNode(@Nonnull Node parent, @Nonnull Node node, double heuristic, double cost, double score)
+    private boolean updateCurrentNode(@NotNull Node parent, @NotNull Node node, double heuristic, double cost, double score)
     {
         //  This node already exists
         if (score >= node.score)
@@ -760,7 +760,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param pos    coordinate of block
      * @return y height of first open, viable block above ground, or -1 if blocked or too far a drop
      */
-    protected int getGroundHeight(Node parent, @Nonnull BlockPos pos)
+    protected int getGroundHeight(Node parent, @NotNull BlockPos pos)
     {
         //  Check (y+1) first, as it's always needed, either for the upper body (level),
         //  lower body (headroom drop) or lower body (jump up)
@@ -787,7 +787,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return handleNotStanding(parent, pos, below);
     }
 
-    private int handleNotStanding(@Nullable Node parent, @Nonnull BlockPos pos, @Nonnull Block below)
+    private int handleNotStanding(@Nullable Node parent, @NotNull BlockPos pos, @NotNull Block below)
     {
         boolean isSwimming = parent != null && parent.isSwimming;
 
@@ -804,7 +804,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return checkDrop(parent, pos, isSwimming);
     }
 
-    private int checkDrop(@Nullable Node parent, @Nonnull BlockPos pos, boolean isSwimming)
+    private int checkDrop(@Nullable Node parent, @NotNull BlockPos pos, boolean isSwimming)
     {
         boolean canDrop = parent != null && !parent.isLadder;
         //  Nothing to stand on
@@ -824,7 +824,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return -1;
     }
 
-    private int handleInLiquid(@Nonnull BlockPos pos, @Nonnull Block below, boolean isSwimming)
+    private int handleInLiquid(@NotNull BlockPos pos, @NotNull Block below, boolean isSwimming)
     {
         if (isSwimming)
         {
@@ -842,7 +842,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return -1;
     }
 
-    private int handleTargeNotPassable(@Nullable Node parent, @Nonnull BlockPos pos, @Nonnull Block target)
+    private int handleTargeNotPassable(@Nullable Node parent, @NotNull BlockPos pos, @NotNull Block target)
     {
         boolean canJump = parent != null && !parent.isLadder && !parent.isSwimming;
         //  Need to try jumping up one, if we can
@@ -867,7 +867,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         return pos.getY() + 1;
     }
 
-    private boolean checkHeadBlock(@Nullable Node parent, @Nonnull BlockPos pos)
+    private boolean checkHeadBlock(@Nullable Node parent, @NotNull BlockPos pos)
     {
         if (!isPassable(pos.up()))
         {
@@ -893,7 +893,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param pos   location of the block.
      * @return true if the block does not block movement
      */
-    protected boolean isPassable(@Nonnull Block block, BlockPos pos)
+    protected boolean isPassable(@NotNull Block block, BlockPos pos)
     {
         if (block.getMaterial(this.world.getBlockState(pos)) != Material.AIR)
         {
@@ -924,7 +924,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param pos   position of block
      * @return true if the block at that location can be walked on.
      */
-    protected boolean isWalkableSurface(@Nonnull Block block, BlockPos pos)
+    protected boolean isWalkableSurface(@NotNull Block block, BlockPos pos)
     {
         return block.getMaterial(this.world.getBlockState(pos)).isSolid()
                  && !(block instanceof BlockFence)
@@ -940,7 +940,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param pos   location of the block.
      * @return true if the block is a ladder.
      */
-    protected boolean isLadder(@Nonnull Block block, BlockPos pos)
+    protected boolean isLadder(@NotNull Block block, BlockPos pos)
     {
         return block.isLadder(this.world.getBlockState(pos), world, pos, null);
     }

@@ -5,8 +5,8 @@ import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.client.world.SchematicWorld;
 import com.schematica.world.storage.Schematic;
 import net.minecraft.util.math.BlockPos;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class used to store
@@ -179,7 +179,7 @@ public final class Settings
     /**
      * @return offset
      */
-    @Nonnull
+    @NotNull
     public BlockPos getOffset()
     {
         return offset.toImmutable();

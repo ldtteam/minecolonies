@@ -6,8 +6,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -27,7 +27,7 @@ public class WorkManager
      * The Colony the workManager takes part of.
      */
     protected final Colony colony;
-    @Nonnull
+    @NotNull
     private Map<Integer, AbstractWorkOrder> workOrders     = new LinkedHashMap<>();
     private int                             topWorkOrderId = 0;
     /**
@@ -50,7 +50,7 @@ public class WorkManager
      *
      * @param order {@link AbstractWorkOrder} to remove
      */
-    public void removeWorkOrder(@Nonnull AbstractWorkOrder order)
+    public void removeWorkOrder(@NotNull AbstractWorkOrder order)
     {
         removeWorkOrder(order.getID());
     }
@@ -75,7 +75,7 @@ public class WorkManager
      * @return the work order of the specified id, or null if it was not found or is of an incompatible type
      */
     @Nullable
-    public <W extends AbstractWorkOrder> W getWorkOrder(int id, @Nonnull Class<W> type)
+    public <W extends AbstractWorkOrder> W getWorkOrder(int id, @NotNull Class<W> type)
     {
         try
         {
@@ -108,9 +108,9 @@ public class WorkManager
      * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found
      */
     @Nullable
-    public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(@Nonnull Class<W> type)
+    public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(@NotNull Class<W> type)
     {
-        for (@Nonnull AbstractWorkOrder o : workOrders.values())
+        for (@NotNull AbstractWorkOrder o : workOrders.values())
         {
             if (!o.isClaimed() && type.isAssignableFrom(o.getClass()))
             {
@@ -128,7 +128,7 @@ public class WorkManager
      * @param <W>  the type of work order to return.
      * @return a list of all work orders of the given type
      */
-    public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(@Nonnull Class<W> type)
+    public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(@NotNull Class<W> type)
     {
         return workOrders.values().stream().filter(o -> type.isAssignableFrom(o.getClass())).map(type::cast).collect(Collectors.toList());
     }
@@ -138,7 +138,7 @@ public class WorkManager
      *
      * @return a list of all work orders.
      */
-    @Nonnull
+    @NotNull
     public Map<Integer, AbstractWorkOrder> getWorkOrders()
     {
         return workOrders;
@@ -149,7 +149,7 @@ public class WorkManager
      *
      * @param citizen Citizen to unclaim work for.
      */
-    public void clearWorkForCitizen(@Nonnull CitizenData citizen)
+    public void clearWorkForCitizen(@NotNull CitizenData citizen)
     {
         dirty = true;
         workOrders.values().stream().filter(o -> o.isClaimedBy(citizen)).forEach(AbstractWorkOrder::clearClaimedBy);
@@ -160,13 +160,13 @@ public class WorkManager
      *
      * @param compound Compound to save to
      */
-    public void writeToNBT(@Nonnull NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         //  Work Orders
-        @Nonnull NBTTagList list = new NBTTagList();
-        for (@Nonnull AbstractWorkOrder o : workOrders.values())
+        @NotNull NBTTagList list = new NBTTagList();
+        for (@NotNull AbstractWorkOrder o : workOrders.values())
         {
-            @Nonnull NBTTagCompound orderCompound = new NBTTagCompound();
+            @NotNull NBTTagCompound orderCompound = new NBTTagCompound();
             o.writeToNBT(orderCompound);
             list.appendTag(orderCompound);
         }
@@ -178,7 +178,7 @@ public class WorkManager
      *
      * @param compound Compound to read from
      */
-    public void readFromNBT(@Nonnull NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         //  Work Orders
         NBTTagList list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
@@ -208,7 +208,7 @@ public class WorkManager
      *
      * @param order Order to add
      */
-    public void addWorkOrder(@Nonnull AbstractWorkOrder order)
+    public void addWorkOrder(@NotNull AbstractWorkOrder order)
     {
         dirty = true;
 
@@ -227,11 +227,11 @@ public class WorkManager
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
-    public void onWorldTick(@Nonnull TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull TickEvent.WorldTickEvent event)
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            @Nonnull Iterator<AbstractWorkOrder> iter = workOrders.values().iterator();
+            @NotNull Iterator<AbstractWorkOrder> iter = workOrders.values().iterator();
             while (iter.hasNext())
             {
                 AbstractWorkOrder o = iter.next();

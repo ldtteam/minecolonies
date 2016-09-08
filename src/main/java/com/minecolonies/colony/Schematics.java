@@ -5,7 +5,7 @@ import com.minecolonies.util.Log;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -26,7 +26,7 @@ public final class Schematics
     //Hut, Styles
     private static       Map<String, List<String>> hutStyleMap           = new HashMap<>();
     //Hut, Levels
-    @Nonnull
+    @NotNull
     private static       Map<String, Integer>      hutLevelsMap          = new HashMap<>();
     //Decoration, Style
     private static       Map<String, List<String>> decorationStyleMap    = new HashMap<>();
@@ -56,7 +56,7 @@ public final class Schematics
     {
         try
         {
-            @Nonnull URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
+            @NotNull URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
             Path basePath;
 
             if ("jar".equals(uri.getScheme()))
@@ -73,7 +73,7 @@ public final class Schematics
                 loadStyleMaps(basePath);
             }
         }
-        catch (@Nonnull IOException | URISyntaxException e)
+        catch (@NotNull IOException | URISyntaxException e)
         {
             Log.logger.error("Error loading Schematic directory. Things will break!", e);
         }

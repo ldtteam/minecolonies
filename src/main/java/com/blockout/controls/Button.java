@@ -1,6 +1,6 @@
 package com.blockout.controls;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import com.blockout.Pane;
 import com.blockout.PaneParams;
@@ -31,7 +31,7 @@ public class Button extends Pane
      *
      * @param params PaneParams from xml file.
      */
-    public Button(@Nonnull PaneParams params)
+    public Button(@NotNull PaneParams params)
     {
         super(params);
         label = params.getLocalizedStringAttribute("label", label);

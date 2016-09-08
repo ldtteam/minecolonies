@@ -7,7 +7,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobPlaceholder;
 import net.minecraft.util.math.BlockPos;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Building for the baker.
@@ -36,7 +36,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      *
      * @return Baker schematic name.
      */
-    @Nonnull
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -59,7 +59,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      *
      * @return The name of the baker's job.
      */
-    @Nonnull
+    @NotNull
     @Override
     public String getJobName()
     {
@@ -72,7 +72,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      * @param citizen the citizen to take the job.
      * @return The new Baker job.
      */
-    @Nonnull
+    @NotNull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -100,7 +100,7 @@ public class BuildingBaker extends AbstractBuildingWorker
          *
          * @return A BlockOut window.
          */
-        @Nonnull
+        @NotNull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, BAKER_HUT_NAME);

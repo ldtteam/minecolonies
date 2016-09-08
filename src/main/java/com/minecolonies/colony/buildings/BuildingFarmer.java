@@ -20,8 +20,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,7 +84,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @return a list of field objects.
      */
-    @Nonnull
+    @NotNull
     public List<Field> getFarmerFields()
     {
         return Collections.unmodifiableList(farmerFields);
@@ -140,7 +140,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public Field getFieldToWorkOn()
     {
         Collections.shuffle(farmerFields);
-        for (@Nonnull final Field field : farmerFields)
+        for (@NotNull final Field field : farmerFields)
         {
             if (field.needsWork())
             {
@@ -151,7 +151,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -164,20 +164,20 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return MAX_BUILDING_LEVEL;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getJobName()
     {
         return FARMER;
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public AbstractJob createJob(@Nonnull CitizenData citizen)
+    public AbstractJob createJob(@NotNull CitizenData citizen)
     {
         if (!farmerFields.isEmpty())
         {
-            for (@Nonnull final Field field : farmerFields)
+            for (@NotNull final Field field : farmerFields)
             {
                 final Field colonyField = getColony().getField(field.getID());
                 if (colonyField != null)
@@ -194,7 +194,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void onDestroyed()
     {
         super.onDestroyed();
-        for (@Nonnull final Field field : farmerFields)
+        for (@NotNull final Field field : farmerFields)
         {
             final Field tempField = getColony().getField(field.getID());
 
@@ -202,7 +202,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             {
                 tempField.setTaken(false);
                 tempField.setOwner("");
-                @Nonnull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+                @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
                 getColony().getWorld().notifyBlockUpdate(scarecrowTileEntity.getPos(), getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()), getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()), 3);
                 scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
             }
@@ -211,7 +211,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     //we have to update our field from the colony!
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
@@ -228,13 +228,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@Nonnull NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        @Nonnull final NBTTagList fieldTagList = new NBTTagList();
-        for (@Nonnull final Field f : farmerFields)
+        @NotNull final NBTTagList fieldTagList = new NBTTagList();
+        for (@NotNull final Field f : farmerFields)
         {
-            @Nonnull final NBTTagCompound fieldCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound fieldCompound = new NBTTagCompound();
             f.writeToNBT(fieldCompound);
             fieldTagList.appendTag(fieldCompound);
         }
@@ -248,14 +248,14 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@Nonnull ByteBuf buf)
+    public void serializeToView(@NotNull ByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(assignManually);
 
         int size = 0;
 
-        for (@Nonnull Field field : getColony().getFields().values())
+        for (@NotNull Field field : getColony().getFields().values())
         {
             if (field.isTaken())
             {
@@ -272,19 +272,19 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         buf.writeInt(size);
 
-        for (@Nonnull final Field field : getColony().getFields().values())
+        for (@NotNull final Field field : getColony().getFields().values())
         {
             if (field.isTaken())
             {
                 if (getWorker() == null || field.getOwner().equals(getWorker().getName()))
                 {
-                    @Nonnull final FieldView fieldView = new FieldView(field);
+                    @NotNull final FieldView fieldView = new FieldView(field);
                     fieldView.serializeViewNetworkData(buf);
                 }
             }
             else
             {
-                @Nonnull final FieldView fieldView = new FieldView(field);
+                @NotNull final FieldView fieldView = new FieldView(field);
                 fieldView.serializeViewNetworkData(buf);
             }
         }
@@ -304,15 +304,15 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param world the world the building is in.
      */
-    public void syncWithColony(@Nonnull World world)
+    public void syncWithColony(@NotNull World world)
     {
         if (!farmerFields.isEmpty())
         {
-            @Nonnull final ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
+            @NotNull final ArrayList<Field> tempFields = new ArrayList<>(farmerFields);
 
-            for (@Nonnull final Field field : tempFields)
+            for (@NotNull final Field field : tempFields)
             {
-                @Nonnull final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
+                @NotNull final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
                 if (scarecrow == null)
                 {
                     farmerFields.remove(field);
@@ -340,7 +340,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public void resetFields()
     {
-        for (@Nonnull final Field field : farmerFields)
+        for (@NotNull final Field field : farmerFields)
         {
             field.setNeedsWork(true);
             field.calculateSize(getColony().getWorld(), field.getLocation().down());
@@ -373,7 +373,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             Field field = getColony().getField(position);
             field.setTaken(false);
             field.setOwner("");
-            @Nonnull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+            @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
             getColony().getWorld().notifyBlockUpdate(scarecrowTileEntity.getPos(), getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()), getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()), 3);
             scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         }
@@ -415,7 +415,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         /**
          * Contains a view object of all the fields in the colony.
          */
-        @Nonnull
+        @NotNull
         private List<FieldView> fields = new ArrayList<>();
 
         /**
@@ -439,14 +439,14 @@ public class BuildingFarmer extends AbstractBuildingWorker
             super(c, l);
         }
 
-        @Nonnull
+        @NotNull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutFarmer(this);
         }
 
         @Override
-        public void deserialize(@Nonnull ByteBuf buf)
+        public void deserialize(@NotNull ByteBuf buf)
         {
             fields = new ArrayList<>();
             super.deserialize(buf);
@@ -454,7 +454,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             final int size = buf.readInt();
             for (int i = 1; i <= size; i++)
             {
-                @Nonnull final FieldView fieldView = new FieldView();
+                @NotNull final FieldView fieldView = new FieldView();
                 fieldView.deserialize(buf);
                 fields.add(fieldView);
                 if (fieldView.isTaken())
@@ -480,7 +480,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
          *
          * @return an unmodifiable List.
          */
-        @Nonnull
+        @NotNull
         public List<FieldView> getFields()
         {
             return Collections.unmodifiableList(fields);

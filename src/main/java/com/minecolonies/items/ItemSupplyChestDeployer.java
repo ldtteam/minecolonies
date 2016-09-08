@@ -17,8 +17,8 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Class to handle the placement of the supplychest and with it the supplyship.
@@ -77,7 +77,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
             return EnumActionResult.FAIL;
         }
 
-        @Nonnull EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
+        @NotNull EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
         if (enumfacing != EnumFacing.DOWN)
         {
             spawnShip(worldIn, pos, playerIn, enumfacing);
@@ -97,7 +97,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param player the player.
      * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
      */
-    boolean isFirstPlacing(@Nonnull EntityPlayer player)
+    boolean isFirstPlacing(@NotNull EntityPlayer player)
     {
     	//TODO
         if (Configurations.allowInfiniteSupplyChests/* || !PlayerProperties.get(player).hasPlacedSupplyChest()*/)
@@ -122,8 +122,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param pos   coordinate clicked.
      * @return facings it can be placed at.
      */
-    @Nonnull
-    public EnumFacing canShipBePlaced(@Nonnull World world, @Nonnull BlockPos pos)
+    @NotNull
+    public EnumFacing canShipBePlaced(@NotNull World world, @NotNull BlockPos pos)
     {
         if (check(world, pos.west(), true, false))
         {
@@ -151,7 +151,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param pos          coordinate clicked.
      * @param entityPlayer the player.
      */
-    private void spawnShip(@Nonnull World world, @Nonnull BlockPos pos, EntityPlayer entityPlayer, @Nonnull EnumFacing chestFacing)
+    private void spawnShip(@NotNull World world, @NotNull BlockPos pos, EntityPlayer entityPlayer, @NotNull EnumFacing chestFacing)
     {
         world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
 
@@ -170,7 +170,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false).
      * @return whether the space in the I shape is free or not.
      */
-    private boolean check(@Nonnull World world, @Nonnull BlockPos pos, boolean shouldCheckX, boolean isCoordPositivelyAdded)
+    private boolean check(@NotNull World world, @NotNull BlockPos pos, boolean shouldCheckX, boolean isCoordPositivelyAdded)
     {
         int k = isCoordPositivelyAdded ? 1 : -1;
 
@@ -232,7 +232,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         return true;
     }
 
-    private void placeSupplyShip(World world, @Nonnull BlockPos pos, @Nonnull EnumFacing direction)
+    private void placeSupplyShip(World world, @NotNull BlockPos pos, @NotNull EnumFacing direction)
     {
         switch (direction)
         {

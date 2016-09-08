@@ -13,8 +13,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Recalls the citizen to the hut
@@ -34,21 +34,21 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
      *
      * @param building View of the building the citizen is working in
      */
-    public RecallCitizenMessage(@Nonnull AbstractBuildingWorker.View building)
+    public RecallCitizenMessage(@NotNull AbstractBuildingWorker.View building)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
     }
 
     @Override
-    public void fromBytes(@Nonnull ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
     }
 
     @Override
-    public void toBytes(@Nonnull ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -56,7 +56,7 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
 
     @Nullable
     @Override
-    public IMessage onMessage(@Nonnull RecallCitizenMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull RecallCitizenMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)

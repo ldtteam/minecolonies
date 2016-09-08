@@ -2,8 +2,8 @@ package com.minecolonies.util;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
@@ -23,12 +23,12 @@ public class LanguageHandler
      * @param key    unlocalized key
      * @param args   Objects for String.format()
      */
-    public static void sendPlayerLocalizedMessage(@Nonnull EntityPlayer player, String key, Object... args)
+    public static void sendPlayerLocalizedMessage(@NotNull EntityPlayer player, String key, Object... args)
     {
         sendPlayerMessage(player, format(key, args));
     }
 
-    public static void sendPlayerMessage(@Nonnull EntityPlayer player, String message)
+    public static void sendPlayerMessage(@NotNull EntityPlayer player, String message)
     {
         player.addChatComponentMessage(new TextComponentString(message));
     }
@@ -86,7 +86,7 @@ public class LanguageHandler
         {
             return;
         }
-        for (@Nonnull EntityPlayer player : players)
+        for (@NotNull EntityPlayer player : players)
         {
             sendPlayerMessage(player, message);
         }

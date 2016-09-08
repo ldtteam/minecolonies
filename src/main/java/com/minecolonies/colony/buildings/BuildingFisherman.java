@@ -8,7 +8,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobFisherman;
 import net.minecraft.util.math.BlockPos;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The fishermans building.
@@ -40,7 +40,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      *
      * @return the schematic name.
      */
-    @Nonnull
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -81,7 +81,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      *
      * @return the description of the fisherman job.
      */
-    @Nonnull
+    @NotNull
     @Override
     public String getJobName()
     {
@@ -94,7 +94,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
-    @Nonnull
+    @NotNull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -122,7 +122,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
          *
          * @return the window of the fisherman building.
          */
-        @Nonnull
+        @NotNull
         @Override
         public com.blockout.views.Window getWindow()
         {

@@ -4,8 +4,8 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.stats.Achievement;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -27,11 +27,11 @@ public final class AchievementUtils
      *
      * @param colony The colony to sync
      */
-    public static void syncAchievements(@Nonnull final Colony colony)
+    public static void syncAchievements(@NotNull final Colony colony)
     {
-        @Nonnull final List<Permissions.Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Permissions.Rank.OFFICER);
+        @NotNull final List<Permissions.Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Permissions.Rank.OFFICER);
 
-        @Nonnull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players);
+        @NotNull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players);
 
         for (@Nullable final EntityPlayer player : lPlayer)
         {

@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
@@ -173,7 +173,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private Colony      colony;
     @Nullable
     private CitizenData citizenData;
-    @Nonnull
+    @NotNull
     private Map<String, Integer> statusMessages = new HashMap<>();
     private        PathNavigate newNavigator;
 
@@ -206,7 +206,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (navigatorField == null)
         {
             Field[] fields = EntityLiving.class.getDeclaredFields();
-            for (@Nonnull Field field : fields)
+            for (@NotNull Field field : fields)
             {
                 if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
                 {
@@ -282,8 +282,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
 
         //  AI Tasks
-        @Nonnull Object currentTasks[] = this.tasks.taskEntries.toArray();
-        for (@Nonnull Object task : currentTasks)
+        @NotNull Object currentTasks[] = this.tasks.taskEntries.toArray();
+        for (@NotNull Object task : currentTasks)
         {
             if (((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIInteract)
             {
@@ -361,7 +361,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param range Range to check in
      * @return True if worker is at site, otherwise false.
      */
-    public boolean isWorkerAtSiteWithMove(@Nonnull BlockPos site, int range)
+    public boolean isWorkerAtSiteWithMove(@NotNull BlockPos site, int range)
     {
         return EntityUtils.isWorkerAtSiteWithMove(this, site.getX(), site.getY(), site.getZ(), range)
                  //Fix for getting stuck sometimes
@@ -369,7 +369,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     @Nullable
-    public <J extends AbstractJob> J getColonyJob(@Nonnull Class<J> type)
+    public <J extends AbstractJob> J getColonyJob(@NotNull Class<J> type)
     {
         return citizenData != null ? citizenData.getJob(type) : null;
     }
@@ -426,7 +426,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void gatherXp()
     {
-        for (@Nonnull EntityXPOrb orb : getXPOrbsOnGrid())
+        for (@NotNull EntityXPOrb orb : getXPOrbsOnGrid())
         {
             addExperience(orb.getXpValue());
             orb.setDead();
@@ -440,7 +440,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private List<EntityXPOrb> getXPOrbsOnGrid()
     {
-        @Nonnull AxisAlignedBB bb = new AxisAlignedBB(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
+        @NotNull AxisAlignedBB bb = new AxisAlignedBB(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
 
         return worldObj.getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
@@ -698,7 +698,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void pickupItems()
     {
-        @Nonnull List<EntityItem> retList = new ArrayList<>();
+        @NotNull List<EntityItem> retList = new ArrayList<>();
         //I know streams look better but they are flawed in type erasure
         for (Object o : worldObj.getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(2.0F, 0.0F, 2.0F)))
         {
@@ -720,7 +720,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //Only check if there are messages and once a second
         if (statusMessages.size() > 0 && ticksExisted % 20 == 0)
         {
-            @Nonnull Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
+            @NotNull Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
             while (it.hasNext())
             {
                 if (ticksExisted - it.next().getValue() > 20 * Configurations.chatFrequency)
@@ -824,7 +824,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return modelId;
     }
 
-    private void handleExistingCitizen(@Nonnull CitizenData data, @Nonnull EntityCitizen existingCitizen)
+    private void handleExistingCitizen(@NotNull CitizenData data, @NotNull EntityCitizen existingCitizen)
     {
         Log.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
           getUniqueID(),
@@ -841,7 +841,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
-    public void setColony(@Nullable Colony c, @Nonnull CitizenData data)
+    public void setColony(@Nullable Colony c, @NotNull CitizenData data)
     {
         if (c == null)
         {
@@ -954,7 +954,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     //    throw new IllegalStateException("DO NOT USE THIS METHOD, DUDE!");
     //}
 
-    public EntityItem entityDropItem(@Nonnull ItemStack itemstack)
+    public EntityItem entityDropItem(@NotNull ItemStack itemstack)
     {
         return entityDropItem(itemstack, 0.0F);
     }
@@ -1023,13 +1023,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @return the inventory this citizen has.
      */
-    @Nonnull
+    @NotNull
     public InventoryCitizen getInventoryCitizen()
     {
         return inventory;
     }
 
-    @Nonnull
+    @NotNull
     public DesiredActivity getDesiredActivity()
     {
         if (!worldObj.isDaytime())
@@ -1057,7 +1057,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //do nothing for now. We may add some funny easter eggs here later (Phrases like: "Nah I won't go there - too hot!").
     }*/
 
-    @Nonnull
+    @NotNull
     @Override
     public BlockPos getPosition()
     {
@@ -1098,8 +1098,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (!worldObj.isRemote)
         {
-            @Nonnull InventoryCitizen newInventory = new InventoryCitizen(inventory.getName(), inventory.hasCustomName(), this);
-            @Nonnull ArrayList<ItemStack> leftOvers = new ArrayList<>();
+            @NotNull InventoryCitizen newInventory = new InventoryCitizen(inventory.getName(), inventory.hasCustomName(), this);
+            @NotNull ArrayList<ItemStack> leftOvers = new ArrayList<>();
             for (int i = 0; i < inventory.getSizeInventory(); i++)
             {
                 ItemStack itemstack = inventory.getStackInSlot(i);
@@ -1124,7 +1124,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
-    private void tryPickupEntityItem(@Nonnull EntityItem entityItem)
+    private void tryPickupEntityItem(@NotNull EntityItem entityItem)
     {
         if (!this.worldObj.isRemote)
         {

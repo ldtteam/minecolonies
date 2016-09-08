@@ -9,8 +9,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +25,7 @@ public final class BlockUtils
     /**
      * Predicated to determine if a block is free to place.
      */
-    @Nonnull
+    @NotNull
     private static List<BiPredicate<Block, IBlockState>> freeToPlaceBlocks =
       Arrays.asList(
         (block, iBlockState) -> block.equals(Blocks.AIR),
@@ -91,7 +91,7 @@ public final class BlockUtils
         {
             return true;
         }
-        for (@Nonnull BiPredicate<Block, IBlockState> predicate : freeToPlaceBlocks)
+        for (@NotNull BiPredicate<Block, IBlockState> predicate : freeToPlaceBlocks)
         {
             if (predicate.test(block, blockState))
             {
@@ -120,7 +120,7 @@ public final class BlockUtils
      * @param pos   the position the block is at.
      * @return true if is a seed.
      */
-    public static boolean isBlockSeed(@Nonnull World world, @Nonnull BlockPos pos)
+    public static boolean isBlockSeed(@NotNull World world, @NotNull BlockPos pos)
     {
         return BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())) != null
                  && BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())).getItem() instanceof ItemSeeds;
@@ -132,7 +132,7 @@ public final class BlockUtils
      * @param blockState the block and state we are creating an ItemStack for.
      * @return ItemStack fromt the BlockState.
      */
-    public static ItemStack getItemStackFromBlockState(@Nonnull IBlockState blockState)
+    public static ItemStack getItemStackFromBlockState(@NotNull IBlockState blockState)
     {
         final Item item = getItem(blockState);
 
@@ -150,7 +150,7 @@ public final class BlockUtils
         return new ItemStack(item, 1, getDamageValue(block, blockState));
     }
 
-    private static Item getItem(@Nonnull IBlockState blockState)
+    private static Item getItem(@NotNull IBlockState blockState)
     {
         if (blockState.getBlock() instanceof BlockBanner)
         {
@@ -284,7 +284,7 @@ public final class BlockUtils
         }
     }
 
-    private static int getDamageValue(Block block, @Nonnull IBlockState blockState)
+    private static int getDamageValue(Block block, @NotNull IBlockState blockState)
     {
         if (block instanceof BlockCocoa)
         {

@@ -10,8 +10,8 @@ import static com.minecolonies.entity.ai.util.AIState.START_WORKING;
 
 import java.util.Random;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.minecolonies.colony.buildings.BuildingFisherman;
 import com.minecolonies.colony.jobs.JobFisherman;
@@ -169,7 +169,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     @Nullable
     private EntityFishHook entityFishHook;
 
-    @Nonnull
+    @NotNull
     private Random random = new Random();
 
     /**
@@ -178,7 +178,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @param job a fisherman job to use.
      */
-    public EntityAIWorkFisherman(@Nonnull JobFisherman job)
+    public EntityAIWorkFisherman(@NotNull JobFisherman job)
     {
         super(job);
         super.registerTargets(
@@ -353,7 +353,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @return the next AIState the fisherman should switch to, after executing this method
      */
-    @Nonnull
+    @NotNull
     private AIState tryDifferentAngles()
     {
         if (job.getWater() == null)

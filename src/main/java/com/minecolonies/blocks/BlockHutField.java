@@ -31,8 +31,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.util.EnumFacing.*;
 
@@ -146,7 +146,7 @@ public class BlockHutField extends BlockContainer
     }
 
     @Override
-    public int getMetaFromState(@Nonnull IBlockState state)
+    public int getMetaFromState(@NotNull IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
@@ -169,7 +169,7 @@ public class BlockHutField extends BlockContainer
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer()
@@ -199,12 +199,12 @@ public class BlockHutField extends BlockContainer
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nullable EntityLivingBase placer)
     {
-        @Nonnull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
     @Override
-    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    public void onBlockPlacedBy(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         //Only work on server side.
         if (worldIn.isRemote)
@@ -218,7 +218,7 @@ public class BlockHutField extends BlockContainer
 
             if (colony != null)
             {
-                @Nonnull final InventoryField inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"));
+                @NotNull final InventoryField inventoryField = new InventoryField(LanguageHandler.getString("com.minecolonies.gui.inventory.scarecrow"));
 
                 ((ScarecrowTileEntity) worldIn.getTileEntity(pos)).setInventoryField(inventoryField);
                 colony.addNewField((ScarecrowTileEntity) worldIn.getTileEntity(pos), ((EntityPlayer) placer).inventory, pos, worldIn);
@@ -226,7 +226,7 @@ public class BlockHutField extends BlockContainer
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState()
     {
@@ -239,7 +239,7 @@ public class BlockHutField extends BlockContainer
         return true;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {

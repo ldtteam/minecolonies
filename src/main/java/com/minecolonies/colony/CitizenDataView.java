@@ -4,8 +4,8 @@ import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The CitizenDataView is the client-side representation of a CitizenData.
@@ -223,7 +223,7 @@ public class CitizenDataView
      *
      * @param buf Byte buffer to deserialize
      */
-    public void deserialize(@Nonnull ByteBuf buf)
+    public void deserialize(@NotNull ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
         female = buf.readBoolean();

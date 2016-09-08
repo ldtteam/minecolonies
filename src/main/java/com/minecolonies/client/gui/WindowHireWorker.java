@@ -14,7 +14,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.HireFireMessage;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.util.math.BlockPos;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,12 +138,12 @@ public class WindowHireWorker extends Window implements Button.Handler
              * @param rowPane the parent Pane for the row, containing the elements to update
              */
             @Override
-            public void updateElement(int index, @Nonnull Pane rowPane)
+            public void updateElement(int index, @NotNull Pane rowPane)
             {
                 CitizenDataView citizen = citizens.get(index);
 
                 //Creates the list of attributes for each citizen
-                @Nonnull String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()) + " " +
+                @NotNull String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()) + " " +
                                       LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.getCharisma()) + " " +
                                       LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.getDexterity()) + " " +
                                       LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.getEndurance()) + " " +
@@ -171,11 +171,11 @@ public class WindowHireWorker extends Window implements Button.Handler
      * @param button the clicked button.
      */
     @Override
-    public void onButtonClicked(@Nonnull Button button)
+    public void onButtonClicked(@NotNull Button button)
     {
         if (button.getID().equals(BUTTON_DONE))
         {
-            @Nonnull final Label idLabel = (Label) button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
+            @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(CITIZEN_ID_LABEL_POSITION);
             final int id = Integer.parseInt(idLabel.getLabelText());
 
             if (building instanceof AbstractBuildingWorker.View)

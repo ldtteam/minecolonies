@@ -10,8 +10,8 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The custom chest of the field.
@@ -46,7 +46,7 @@ public class InventoryField implements IInventory
     /**
      * The inventory stack.
      */
-    @Nonnull
+    @NotNull
     private ItemStack[] stackResult = new ItemStack[1];
 
     /**
@@ -90,7 +90,7 @@ public class InventoryField implements IInventory
      *
      * @param compound with the give tag.
      */
-    public void readFromNBT(@Nonnull NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         final NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
         this.stackResult = new ItemStack[this.getSizeInventory()];
@@ -148,7 +148,7 @@ public class InventoryField implements IInventory
         }
         else
         {
-            @Nonnull final ItemStack itemstack = this.stackResult[index].splitStack(count);
+            @NotNull final ItemStack itemstack = this.stackResult[index].splitStack(count);
 
             if (this.stackResult[index].stackSize == 0)
             {
@@ -294,7 +294,7 @@ public class InventoryField implements IInventory
         {
             this.stackResult[i] = null;
         }
-    }    @Nonnull
+    }    @NotNull
 @Override
     public ITextComponent getDisplayName()
     {
@@ -306,15 +306,15 @@ public class InventoryField implements IInventory
      *
      * @param compound with the given tag.
      */
-    public void writeToNBT(@Nonnull NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
-        @Nonnull final NBTTagList nbttaglist = new NBTTagList();
+        @NotNull final NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.stackResult.length; ++i)
         {
             if (this.stackResult[i] != null)
             {
-                @Nonnull final NBTTagCompound nbttagcompound = new NBTTagCompound();
+                @NotNull final NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte(TAG_SLOT, (byte) i);
                 this.stackResult[i].writeToNBT(nbttagcompound);
                 nbttaglist.appendTag(nbttagcompound);
@@ -344,7 +344,7 @@ public class InventoryField implements IInventory
      *
      * @return the name of the inventory.
      */
-    @Nonnull
+    @NotNull
     @Override
     public String getName()
     {

@@ -10,8 +10,8 @@ import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -40,7 +40,7 @@ public class TextField extends Pane
         //Required
     }
 
-    public TextField(@Nonnull PaneParams params)
+    public TextField(@NotNull PaneParams params)
     {
         super(params);
         maxTextLength = params.getIntegerAttribute("maxlength", maxTextLength);
@@ -66,7 +66,7 @@ public class TextField extends Pane
         return text;
     }
 
-    public void setText(@Nonnull String s)
+    public void setText(@NotNull String s)
     {
         text = s.length() <= maxTextLength ? s : s.substring(0, maxTextLength);
         setCursorPosition(text.length());
@@ -172,7 +172,7 @@ public class TextField extends Pane
         }
     }
 
-    @Nonnull
+    @NotNull
     public String getSelectedText()
     {
         int start = Math.min(cursorPosition, selectionEnd);
@@ -317,7 +317,7 @@ public class TextField extends Pane
         int textX = drawX;
         if (visibleString.length() > 0)
         {
-            @Nonnull String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
+            @NotNull String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
             mc.renderEngine.bindTexture(TEXTURE);
             textX = mc.fontRendererObj.drawString(s1, textX, drawY, color, shadow);
         }
@@ -467,7 +467,7 @@ public class TextField extends Pane
         int insertEnd = Math.max(cursorPosition, selectionEnd);
         int availableChars = (maxTextLength - text.length()) + (insertEnd - insertAt);
 
-        @Nonnull String result = "";
+        @NotNull String result = "";
         if (text.length() > 0 && insertAt > 0)
         {
             result = text.substring(0, insertAt);
@@ -525,7 +525,7 @@ public class TextField extends Pane
             boolean backwards = count < 0;
             int start = backwards ? (this.cursorPosition + count) : this.cursorPosition;
             int end = backwards ? this.cursorPosition : (this.cursorPosition + count);
-            @Nonnull String result = "";
+            @NotNull String result = "";
 
             if (start > 0)
             {

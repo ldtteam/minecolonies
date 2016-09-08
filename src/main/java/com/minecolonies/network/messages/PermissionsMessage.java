@@ -12,8 +12,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -45,7 +45,7 @@ public class PermissionsMessage
             //Required
         }
 
-        public View(@Nonnull Colony colony, @Nonnull Permissions.Rank viewerRank)
+        public View(@NotNull Colony colony, @NotNull Permissions.Rank viewerRank)
         {
             this.colonyID = colony.getID();
             this.data = Unpooled.buffer();
@@ -53,12 +53,12 @@ public class PermissionsMessage
         }
 
         @Override
-        public void fromBytes(@Nonnull ByteBuf buf)
+        public void fromBytes(@NotNull ByteBuf buf)
         {
             colonyID = buf.readInt();
             data = buf;
         }        @Override
-        public void toBytes(@Nonnull ByteBuf buf)
+        public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
             buf.writeBytes(data);
@@ -66,7 +66,7 @@ public class PermissionsMessage
 
         @Nullable
         @Override
-        public IMessage onMessage(@Nonnull View message, MessageContext ctx)
+        public IMessage onMessage(@NotNull View message, MessageContext ctx)
         {
             return ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
         }
@@ -94,7 +94,7 @@ public class PermissionsMessage
          * @param rank   Rank of the permission {@link com.minecolonies.colony.permissions.Permissions.Rank}
          * @param action Action of the permission {@link com.minecolonies.colony.permissions.Permissions.Action}
          */
-        public Permission(@Nonnull ColonyView colony, MessageType type, Permissions.Rank rank, Permissions.Action action)
+        public Permission(@NotNull ColonyView colony, MessageType type, Permissions.Rank rank, Permissions.Action action)
         {
             this.colonyID = colony.getID();
             this.type = type;
@@ -103,7 +103,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void toBytes(@Nonnull ByteBuf buf)
+        public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
             ByteBufUtils.writeUTF8String(buf, type.name());
@@ -112,7 +112,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void fromBytes(@Nonnull ByteBuf buf)
+        public void fromBytes(@NotNull ByteBuf buf)
         {
             colonyID = buf.readInt();
             type = MessageType.valueOf(ByteBufUtils.readUTF8String(buf));
@@ -122,7 +122,7 @@ public class PermissionsMessage
 
         @Nullable
         @Override
-        public IMessage onMessage(@Nonnull Permission message, @Nonnull MessageContext ctx)
+        public IMessage onMessage(@NotNull Permission message, @NotNull MessageContext ctx)
         {
 
             Colony colony = ColonyManager.getColony(message.colonyID);
@@ -176,21 +176,21 @@ public class PermissionsMessage
          * @param colony Colony the permission is set in
          * @param player New player name to be added
          */
-        public AddPlayer(@Nonnull ColonyView colony, String player)
+        public AddPlayer(@NotNull ColonyView colony, String player)
         {
             this.colonyID = colony.getID();
             this.playerName = player;
         }
 
         @Override
-        public void toBytes(@Nonnull ByteBuf buf)
+        public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
             ByteBufUtils.writeUTF8String(buf, playerName);
         }
 
         @Override
-        public void fromBytes(@Nonnull ByteBuf buf)
+        public void fromBytes(@NotNull ByteBuf buf)
         {
             colonyID = buf.readInt();
             playerName = ByteBufUtils.readUTF8String(buf);
@@ -198,7 +198,7 @@ public class PermissionsMessage
 
         @Nullable
         @Override
-        public IMessage onMessage(@Nonnull AddPlayer message, @Nonnull MessageContext ctx)
+        public IMessage onMessage(@NotNull AddPlayer message, @NotNull MessageContext ctx)
         {
 
             Colony colony = ColonyManager.getColony(message.colonyID);
@@ -236,7 +236,7 @@ public class PermissionsMessage
          * @param player UUID of the player to set rank.
          * @param type   Promote or demote.
          */
-        public ChangePlayerRank(@Nonnull ColonyView colony, UUID player, Type type)
+        public ChangePlayerRank(@NotNull ColonyView colony, UUID player, Type type)
         {
             this.colonyID = colony.getID();
             this.playerID = player;
@@ -250,7 +250,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void toBytes(@Nonnull ByteBuf buf)
+        public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
@@ -258,7 +258,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void fromBytes(@Nonnull ByteBuf buf)
+        public void fromBytes(@NotNull ByteBuf buf)
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
@@ -267,7 +267,7 @@ public class PermissionsMessage
 
         @Nullable
         @Override
-        public IMessage onMessage(@Nonnull ChangePlayerRank message, @Nonnull MessageContext ctx)
+        public IMessage onMessage(@NotNull ChangePlayerRank message, @NotNull MessageContext ctx)
         {
 
             Colony colony = ColonyManager.getColony(message.colonyID);
@@ -310,21 +310,21 @@ public class PermissionsMessage
          * @param colony Colony the player is removed from the permission
          * @param player UUID of the removed player
          */
-        public RemovePlayer(@Nonnull ColonyView colony, UUID player)
+        public RemovePlayer(@NotNull ColonyView colony, UUID player)
         {
             this.colonyID = colony.getID();
             this.playerID = player;
         }
 
         @Override
-        public void toBytes(@Nonnull ByteBuf buf)
+        public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
         }
 
         @Override
-        public void fromBytes(@Nonnull ByteBuf buf)
+        public void fromBytes(@NotNull ByteBuf buf)
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
@@ -332,7 +332,7 @@ public class PermissionsMessage
 
         @Nullable
         @Override
-        public IMessage onMessage(@Nonnull RemovePlayer message, @Nonnull MessageContext ctx)
+        public IMessage onMessage(@NotNull RemovePlayer message, @NotNull MessageContext ctx)
         {
 
             Colony colony = ColonyManager.getColony(message.colonyID);

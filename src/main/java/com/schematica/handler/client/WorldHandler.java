@@ -7,8 +7,8 @@ import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * WorldHandler for {@link SchematicWorld}'s.
@@ -21,7 +21,7 @@ public class WorldHandler
      * @param event Forge event.
      */
     @SubscribeEvent
-    public void onLoad(@Nonnull final WorldEvent.Load event)
+    public void onLoad(@NotNull final WorldEvent.Load event)
     {
         if (event.getWorld().isRemote && !(event.getWorld() instanceof SchematicWorld))
         {
@@ -44,7 +44,7 @@ public class WorldHandler
      * @param event Forge event.
      */
     @SubscribeEvent
-    public void onUnload(@Nonnull final WorldEvent.Unload event)
+    public void onUnload(@NotNull final WorldEvent.Unload event)
     {
         if (event.getWorld().isRemote)
         {

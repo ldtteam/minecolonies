@@ -9,8 +9,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a AbstractBuilding.View to a ColonyView on the client
@@ -28,7 +28,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
      *
      * @param building AbstractBuilding to add or update a view for
      */
-    public ColonyViewBuildingViewMessage(@Nonnull AbstractBuilding building)
+    public ColonyViewBuildingViewMessage(@NotNull AbstractBuilding building)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -37,7 +37,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     }
 
     @Override
-    public void fromBytes(@Nonnull ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -46,7 +46,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     }
 
     @Override
-    public void toBytes(@Nonnull ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -55,7 +55,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
 
     @Nullable
     @Override
-    public IMessage onMessage(@Nonnull ColonyViewBuildingViewMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull ColonyViewBuildingViewMessage message, MessageContext ctx)
     {
         return ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData);
     }

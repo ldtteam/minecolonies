@@ -1,6 +1,6 @@
 package com.blockout;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public enum Alignment
 {
@@ -24,7 +24,7 @@ public enum Alignment
     private boolean horizontalCentered;
     private boolean verticalCentered;
 
-    Alignment(@Nonnull String attributes)
+    Alignment(@NotNull String attributes)
     {
         rightAligned = attributes.contains("right");
         bottomAligned = attributes.contains("bottom");

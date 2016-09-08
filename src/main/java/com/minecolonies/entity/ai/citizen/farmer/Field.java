@@ -18,8 +18,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Handles the field class.
@@ -175,7 +175,7 @@ public class Field extends Container
     /**
      * Name of the citizen claiming the field.
      */
-    @Nonnull
+    @NotNull
     private String owner = "";
 
     /**
@@ -197,7 +197,7 @@ public class Field extends Container
      * @param world               the world.
      * @param location            the position of the field.
      */
-    public Field(@Nonnull ScarecrowTileEntity scarecrowTileEntity, InventoryPlayer playerInventory, @Nonnull World world, @Nonnull BlockPos location)
+    public Field(@NotNull ScarecrowTileEntity scarecrowTileEntity, InventoryPlayer playerInventory, @NotNull World world, @NotNull BlockPos location)
     {
         super();
         this.colony = ColonyManager.getColony(world, location);
@@ -240,10 +240,10 @@ public class Field extends Container
      * @param compound The saved data.
      * @return {@link Field} created from the compound.
      */
-    @Nonnull
-    public static Field createFromNBT(Colony colony, @Nonnull NBTTagCompound compound)
+    @NotNull
+    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
     {
-        @Nonnull final Field field = new Field(colony);
+        @NotNull final Field field = new Field(colony);
         field.readFromNBT(compound);
         return field;
     }
@@ -254,7 +254,7 @@ public class Field extends Container
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
      */
-    public void readFromNBT(@Nonnull NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
         taken = compound.getBoolean(TAG_TAKEN);
@@ -286,7 +286,7 @@ public class Field extends Container
 
     @Nullable
     @Override
-    public ItemStack transferStackInSlot(@Nonnull EntityPlayer playerIn, int slotIndex)
+    public ItemStack transferStackInSlot(@NotNull EntityPlayer playerIn, int slotIndex)
     {
         if (slotIndex == 0)
         {
@@ -298,7 +298,7 @@ public class Field extends Container
             final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
             if (playerIn.inventory.getStackInSlot(playerIndex) != null)
             {
-                @Nonnull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
+                @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
                 inventory.setInventorySlotContents(0, stack);
                 if (playerIn.inventory.getStackInSlot(playerIndex).stackSize == 0)
                 {
@@ -311,7 +311,7 @@ public class Field extends Container
     }
 
     @Override
-    public boolean canInteractWith(@Nonnull EntityPlayer playerIn)
+    public boolean canInteractWith(@NotNull EntityPlayer playerIn)
     {
         return getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS);
     }
@@ -335,7 +335,7 @@ public class Field extends Container
      * @param position the start position.
      * @param world    the world the field is in.
      */
-    public final void calculateSize(@Nonnull World world, @Nonnull BlockPos position)
+    public final void calculateSize(@NotNull World world, @NotNull BlockPos position)
     {
         //Calculate in all 4 directions
         this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);
@@ -353,7 +353,7 @@ public class Field extends Container
      * @param world         the world object.
      * @return the distance.
      */
-    private int searchNextBlock(int blocksChecked, @Nonnull BlockPos position, EnumFacing direction, @Nonnull World world)
+    private int searchNextBlock(int blocksChecked, @NotNull BlockPos position, EnumFacing direction, @NotNull World world)
     {
         if (blocksChecked == getMaxRange() || isNoPartOfField(world, position))
         {
@@ -369,7 +369,7 @@ public class Field extends Container
      * @param position the position.
      * @return true if it is.
      */
-    public boolean isNoPartOfField(@Nonnull World world, @Nonnull BlockPos position)
+    public boolean isNoPartOfField(@NotNull World world, @NotNull BlockPos position)
     {
         return world.isAirBlock(position) || world.getBlockState(position.up()).getMaterial().isSolid();
     }
@@ -391,7 +391,7 @@ public class Field extends Container
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
      */
-    public void writeToNBT(@Nonnull NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
         compound.setBoolean(TAG_TAKEN, taken);
@@ -534,7 +534,7 @@ public class Field extends Container
      *
      * @return the inventory this citizen has.
      */
-    @Nonnull
+    @NotNull
     public InventoryField getInventoryField()
     {
         return inventory;
@@ -555,7 +555,7 @@ public class Field extends Container
      *
      * @return the string description of the citizen.
      */
-    @Nonnull
+    @NotNull
     public String getOwner()
     {
         return owner;
@@ -566,7 +566,7 @@ public class Field extends Container
      *
      * @param owner the name of the citizen.
      */
-    public void setOwner(@Nonnull final String owner)
+    public void setOwner(@NotNull final String owner)
     {
         if (owner.isEmpty())
         {

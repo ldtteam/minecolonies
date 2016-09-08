@@ -19,8 +19,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.IPlantable;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.entity.ai.citizen.farmer.Field.FieldStage.*;
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -69,7 +69,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      *
      * @param job a farmer job to use.
      */
-    public EntityAIWorkFarmer(@Nonnull JobFarmer job)
+    public EntityAIWorkFarmer(@NotNull JobFarmer job)
     {
         super(job);
         super.registerTargets(
@@ -104,7 +104,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      *
      * @return the next AIState
      */
-    @Nonnull
+    @NotNull
     private AIState prepareForFarming()
     {
         @Nullable BuildingFarmer building = getOwnBuilding();
@@ -188,7 +188,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param currentField the field to plant.
      * @return true if he is ready.
      */
-    private boolean canGoPlanting(@Nonnull Field currentField, @Nonnull BuildingFarmer buildingFarmer)
+    private boolean canGoPlanting(@NotNull Field currentField, @NotNull BuildingFarmer buildingFarmer)
     {
         if (currentField.getSeed() == null)
         {
@@ -215,7 +215,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      *
      * @return the next state.
      */
-    @Nonnull
+    @NotNull
     private AIState hoe()
     {
         @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
@@ -272,7 +272,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param field    the field close to this position.
      * @return true if should be hoed.
      */
-    private boolean shouldHoe(@Nonnull BlockPos position, @Nonnull Field field)
+    private boolean shouldHoe(@NotNull BlockPos position, @NotNull Field field)
     {
         return !field.isNoPartOfField(world, position)
                  && !BlockUtils.isBlockSeed(world, position.up())
@@ -294,7 +294,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param field the field object.
      * @return true if successful.
      */
-    private boolean handleOffset(@Nonnull Field field)
+    private boolean handleOffset(@NotNull Field field)
     {
         if (workingOffset == null)
         {
@@ -344,7 +344,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      *
      * @return the next state.
      */
-    @Nonnull
+    @NotNull
     private AIState plant()
     {
         @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
@@ -390,7 +390,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param field    the field close to this position.
      * @return true if should be hoed.
      */
-    private boolean shouldPlant(@Nonnull BlockPos position, @Nonnull Field field)
+    private boolean shouldPlant(@NotNull BlockPos position, @NotNull Field field)
     {
         @Nullable ItemStack itemStack = BlockUtils.getItemStackFromBlockState(world.getBlockState(position.up()));
 
@@ -409,12 +409,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param item     the crop.
      * @param position the location.
      */
-    private boolean plantCrop(Item item, @Nonnull BlockPos position)
+    private boolean plantCrop(Item item, @NotNull BlockPos position)
     {
         int slot = worker.findFirstSlotInInventoryWith(item);
         if (slot != -1)
         {
-            @Nonnull IPlantable seed = (IPlantable) item;
+            @NotNull IPlantable seed = (IPlantable) item;
             world.setBlockState(position.up(), seed.getPlant(world, position));
             getInventory().decrStackSize(slot, 1);
             requestSeeds = false;
@@ -434,8 +434,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param field          the field being planted.
      * @return the next state.
      */
-    @Nonnull
-    private AIState terminatePlanting(@Nonnull BuildingFarmer buildingFarmer, @Nonnull Field field)
+    @NotNull
+    private AIState terminatePlanting(@NotNull BuildingFarmer buildingFarmer, @NotNull Field field)
     {
         if (requestSeeds)
         {
@@ -456,7 +456,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      *
      * @return the next state.
      */
-    @Nonnull
+    @NotNull
     private AIState harvest()
     {
         @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
@@ -504,13 +504,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param position the position to check.
      * @return true if should be hoed.
      */
-    private boolean shouldHarvest(@Nonnull BlockPos position)
+    private boolean shouldHarvest(@NotNull BlockPos position)
     {
         IBlockState state = world.getBlockState(position.up());
 
         if (state.getBlock() instanceof IGrowable && state.getBlock() instanceof BlockCrops)
         {
-            @Nonnull BlockCrops block = (BlockCrops) state.getBlock();
+            @NotNull BlockCrops block = (BlockCrops) state.getBlock();
             return !block.canGrow(world, position.up(), state, false);
         }
 

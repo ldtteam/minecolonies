@@ -1,6 +1,6 @@
 package com.minecolonies.items;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
@@ -43,8 +43,8 @@ public class ItemScanTool extends AbstractItemMinecolonies
         }
         else if (!compound.hasKey("pos2"))
         {
-            @Nonnull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            @Nonnull BlockPos pos2 = pos;
+            @NotNull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
+            @NotNull BlockPos pos2 = pos;
             if (pos2.distanceSq(pos1) > 0)
             {
                 BlockPosUtil.writeToNBT(compound, "pos2", pos2);
@@ -62,8 +62,8 @@ public class ItemScanTool extends AbstractItemMinecolonies
         }
         else
         {
-            @Nonnull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            @Nonnull BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
+            @NotNull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
+            @NotNull BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
             if (worldIn.isRemote)
             {
                 String result = SchematicWrapper.saveSchematic(worldIn, pos1, pos2);

@@ -4,7 +4,7 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
 import com.blockout.controls.Scrollbar;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Basic scrolling view.
@@ -42,7 +42,7 @@ public class ScrollingView extends View
         scrollbar.putInside(this);
     }
 
-    @Nonnull
+    @NotNull
     protected ScrollingContainer createScrollingContainer()
     {
         return new ScrollingContainer(this);

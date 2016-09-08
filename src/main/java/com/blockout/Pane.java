@@ -4,8 +4,8 @@ import com.blockout.views.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 
@@ -21,7 +21,7 @@ public class Pane extends Gui
     protected static Pane   lastClickedPane;
     protected static Pane   focus;
     protected static boolean             debugging         = false;
-    @Nonnull
+    @NotNull
     private static   Deque<ScissorsInfo> scissorsInfoStack = new ConcurrentLinkedDeque<>();
     protected        Minecraft           mc                = Minecraft.getMinecraft();
     //  Attributes
@@ -50,11 +50,11 @@ public class Pane extends Gui
      *
      * @param params Params for the Pane
      */
-    public Pane(@Nonnull PaneParams params)
+    public Pane(@NotNull PaneParams params)
     {
         id = params.getStringAttribute("id", id);
 
-        @Nonnull PaneParams.SizePair parentSizePair = new PaneParams.SizePair(params.getParentWidth(), params.getParentHeight());
+        @NotNull PaneParams.SizePair parentSizePair = new PaneParams.SizePair(params.getParentWidth(), params.getParentHeight());
         PaneParams.SizePair sizePair = params.getSizePairAttribute("size", null, parentSizePair);
         if (sizePair != null)
         {
@@ -321,7 +321,7 @@ public class Pane extends Gui
      * @param <T>  The type of pane returned
      * @return a Pane of the given ID, if it matches the specified type
      */
-    public final <T extends Pane> T findPaneOfTypeByID(String id, @Nonnull Class<T> type)
+    public final <T extends Pane> T findPaneOfTypeByID(String id, @NotNull Class<T> type)
     {
         @Nullable Pane p = findPaneByID(id);
         try
@@ -475,7 +475,7 @@ public class Pane extends Gui
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        @Nonnull ScissorsInfo info = new ScissorsInfo(scissorsX, scissorsY, w, h);
+        @NotNull ScissorsInfo info = new ScissorsInfo(scissorsX, scissorsY, w, h);
         scissorsInfoStack.push(info);
 
         int scale = Screen.getScale();

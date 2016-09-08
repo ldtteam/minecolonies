@@ -13,7 +13,7 @@ import net.minecraft.pathfinding.Path;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ConcurrentModificationException;
@@ -43,7 +43,7 @@ public final class Pathfinding
      * @param job PathJob
      * @return a Future containing the Path
      */
-    public static Future<Path> enqueue(@Nonnull AbstractPathJob job)
+    public static Future<Path> enqueue(@NotNull AbstractPathJob job)
     {
         return executor.submit(job);
     }
@@ -89,19 +89,19 @@ public final class Pathfinding
 
         try
         {
-            for (@Nonnull Node n : debugNodesNotVisited)
+            for (@NotNull Node n : debugNodesNotVisited)
             {
                 debugDrawNode(n, (byte) 255, (byte) 0, (byte) 0);
             }
 
-            for (@Nonnull Node n : debugNodesVisited)
+            for (@NotNull Node n : debugNodesVisited)
             {
                 debugDrawNode(n, (byte) 0, (byte) 0, (byte) 255);
             }
 
             if (debugNodesPath != null)
             {
-                for (@Nonnull Node n : debugNodesPath)
+                for (@NotNull Node n : debugNodesPath)
                 {
                     debugDrawNode(n, (byte) 0, (byte) 255, (byte) 0);
                 }
@@ -117,7 +117,7 @@ public final class Pathfinding
     }
 
     @SideOnly(Side.CLIENT)
-    private static void debugDrawNode(@Nonnull Node n, byte r, byte g, byte b)
+    private static void debugDrawNode(@NotNull Node n, byte r, byte g, byte b)
     {
         GL11.glPushMatrix();
         GL11.glTranslated((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
@@ -199,7 +199,7 @@ public final class Pathfinding
     }
 
     @SideOnly(Side.CLIENT)
-    private static void renderDebugText(@Nonnull Node n, float f1)
+    private static void renderDebugText(@NotNull Node n, float f1)
     {
         String s1 = String.format("F: %.3f [%d]", n.cost, n.counterAdded);
         String s2 = String.format("G: %.3f [%d]", n.score, n.counterVisited);

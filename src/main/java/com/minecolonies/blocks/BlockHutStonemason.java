@@ -1,6 +1,6 @@
 package com.minecolonies.blocks;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Hut for the stone mason.
@@ -14,7 +14,7 @@ public class BlockHutStonemason extends AbstractBlockHut
         super();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName()
     {

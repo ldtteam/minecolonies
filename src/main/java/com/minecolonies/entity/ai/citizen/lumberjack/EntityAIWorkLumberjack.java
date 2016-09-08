@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
@@ -177,7 +177,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @param job the lumberjackjob
      */
-    public EntityAIWorkLumberjack(@Nonnull JobLumberjack job)
+    public EntityAIWorkLumberjack(@NotNull JobLumberjack job)
     {
         super(job);
         super.registerTargets(
@@ -360,7 +360,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @param location the block we want to go to
      */
-    private void checkIfStuckOnLeaves(@Nonnull final BlockPos location)
+    private void checkIfStuckOnLeaves(@NotNull final BlockPos location)
     {
         int distance = (int) location.distanceSq(worker.getPosition());
         if (previousDistance != distance)
@@ -420,7 +420,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param location the location to plant the sapling at
      * @return true if a sapling was planted
      */
-    private boolean plantSapling(@Nonnull BlockPos location)
+    private boolean plantSapling(@NotNull BlockPos location)
     {
         if (BlockPosUtil.getBlock(world, location) != Blocks.AIR)
         {
@@ -470,7 +470,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             {
                 for (int z = playerZ - radius; z < playerZ + radius; z++)
                 {
-                    @Nonnull BlockPos pos = new BlockPos(x, y, z);
+                    @NotNull BlockPos pos = new BlockPos(x, y, z);
                     if (world.getBlockState(pos).getBlock().isLeaves(world.getBlockState(pos), world, pos))
                     {
                         return pos;
@@ -494,7 +494,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         return -1;
     }
 
-    private void placeSaplings(int saplingSlot, @Nonnull ItemStack stack, @Nonnull Block block)
+    private void placeSaplings(int saplingSlot, @NotNull ItemStack stack, @NotNull Block block)
     {
         while (!job.tree.getStumpLocations().isEmpty())
         {
@@ -514,7 +514,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
     }
 
-    private boolean isCorrectSapling(@Nonnull ItemStack stack)
+    private boolean isCorrectSapling(@NotNull ItemStack stack)
     {
         return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
     }

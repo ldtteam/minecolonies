@@ -8,8 +8,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Creates the WorkOrderChangeMessage which is responsible for changes in priority or removal of workOrders.
@@ -54,7 +54,7 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
      * @param removeWorkOrder remove the workOrder?
      * @param priority        the new priority.
      */
-    public WorkOrderChangeMessage(@Nonnull AbstractBuilding.View building, int workOrderId, boolean removeWorkOrder, int priority)
+    public WorkOrderChangeMessage(@NotNull AbstractBuilding.View building, int workOrderId, boolean removeWorkOrder, int priority)
     {
         this.colonyId = building.getColony().getID();
         this.workOrderId = workOrderId;
@@ -68,7 +68,7 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytes(@Nonnull ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         colonyId = buf.readInt();
         workOrderId = buf.readInt();
@@ -82,7 +82,7 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytes(@Nonnull ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(workOrderId);
@@ -99,7 +99,7 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
      */
     @Nullable
     @Override
-    public IMessage onMessage(@Nonnull WorkOrderChangeMessage message, @Nonnull MessageContext ctx)
+    public IMessage onMessage(@NotNull WorkOrderChangeMessage message, @NotNull MessageContext ctx)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))

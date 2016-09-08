@@ -4,8 +4,8 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.math.BlockPos;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 
 public final class GeometryTessellator extends Tessellator
@@ -37,12 +37,12 @@ public final class GeometryTessellator extends Tessellator
         deltaS = delta;
     }
 
-    public static void drawCuboid(@Nonnull final VertexBuffer VertexBuffer, @Nonnull final BlockPos pos, final int sides, final int argb)
+    public static void drawCuboid(@NotNull final VertexBuffer VertexBuffer, @NotNull final BlockPos pos, final int sides, final int argb)
     {
         drawCuboid(VertexBuffer, pos, pos, sides, argb);
     }
 
-    private static void drawCuboid(@Nonnull final VertexBuffer VertexBuffer, @Nonnull final BlockPos begin, @Nonnull final BlockPos end, final int sides, final int argb)
+    private static void drawCuboid(@NotNull final VertexBuffer VertexBuffer, @NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb)
     {
         drawCuboid(VertexBuffer, begin, end, sides, argb, GeometryTessellator.deltaS);
     }
@@ -72,17 +72,17 @@ public final class GeometryTessellator extends Tessellator
         this.delta = delta;
     }
 
-    public void drawCuboid(@Nonnull final BlockPos pos, final int sides, final int argb)
+    public void drawCuboid(@NotNull final BlockPos pos, final int sides, final int argb)
     {
         drawCuboid(pos, pos, sides, argb);
     }
 
-    public void drawCuboid(@Nonnull final BlockPos begin, @Nonnull final BlockPos end, final int sides, final int argb)
+    public void drawCuboid(@NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb)
     {
         drawCuboid(getBuffer(), begin, end, sides, argb, this.delta);
     }
 
-    private static void drawCuboid(@Nonnull final VertexBuffer VertexBuffer, @Nonnull final BlockPos begin, @Nonnull final BlockPos end, final int sides, final int argb, final double delta)
+    private static void drawCuboid(@NotNull final VertexBuffer VertexBuffer, @NotNull final BlockPos begin, @NotNull final BlockPos end, final int sides, final int argb, final double delta)
     {
         if (VertexBuffer.getDrawMode() == -1 || sides == 0)
         {
@@ -112,7 +112,7 @@ public final class GeometryTessellator extends Tessellator
     }
 
     private static void drawQuads(
-                                   @Nonnull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
+                                   @NotNull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
                                    final double x1, final double y1, final double z1, final int sides, final int argb)
     {
         final int a = (argb >>> 24) & 0xFF;
@@ -124,7 +124,7 @@ public final class GeometryTessellator extends Tessellator
     }
 
     private static void drawLines(
-                                   @Nonnull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
+                                   @NotNull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
                                    final double x1, final double y1, final double z1, final int sides, final int argb)
     {
         final int a = (argb >>> 24) & 0xFF;
@@ -136,7 +136,7 @@ public final class GeometryTessellator extends Tessellator
     }
 
     private static void drawQuads(
-                                   @Nonnull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
+                                   @NotNull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
                                    final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b)
     {
         if ((sides & GeometryMasks.Quad.DOWN) != 0)
@@ -189,7 +189,7 @@ public final class GeometryTessellator extends Tessellator
     }
 
     private static void drawLines(
-                                   @Nonnull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
+                                   @NotNull final VertexBuffer VertexBuffer, final double x0, final double y0, final double z0,
                                    final double x1, final double y1, final double z1, final int sides, final int a, final int r, final int g, final int b)
     {
         if ((sides & GeometryMasks.Line.DOWN_WEST) != 0)

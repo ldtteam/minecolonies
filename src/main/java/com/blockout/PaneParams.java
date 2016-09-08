@@ -3,8 +3,8 @@ package com.blockout;
 import com.minecolonies.util.Log;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.math.MathHelper;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class PaneParams
         return list;
     }
 
-    @Nonnull
+    @NotNull
     public String getText()
     {
         return node.getTextContent().trim();

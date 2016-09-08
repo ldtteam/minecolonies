@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import com.schematica.nbt.NBTHelper;
 import com.schematica.reference.Names;
@@ -37,7 +37,7 @@ class SchematicAlpha extends SchematicFormat
 
     private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
 
-    @Nonnull
+    @NotNull
     @Override
     public Schematic readFromNBT(final NBTTagCompound tagCompound)
     {

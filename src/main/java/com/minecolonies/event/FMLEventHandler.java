@@ -7,7 +7,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class FMLEventHandler
 {
@@ -54,7 +54,7 @@ public class FMLEventHandler
      * @param event {@link net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent}
      */
     @SubscribeEvent
-    public void onPlayerLogin(@Nonnull PlayerEvent.PlayerLoggedInEvent event)
+    public void onPlayerLogin(@NotNull PlayerEvent.PlayerLoggedInEvent event)
     {
         if (event.player instanceof EntityPlayerMP)
         {

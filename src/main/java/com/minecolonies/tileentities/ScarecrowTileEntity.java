@@ -13,8 +13,8 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -84,17 +84,17 @@ public class ScarecrowTileEntity extends TileEntityChest
 
     ///////////---- Following methods are used to update the tileEntity between client and server ----///////////
 
-    @Nonnull
+    @NotNull
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
     {
-        @Nonnull final NBTTagCompound tag = new NBTTagCompound();
+        @NotNull final NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
         return new SPacketUpdateTileEntity(this.getPos(), 0, tag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, @Nonnull SPacketUpdateTileEntity pkt)
+    public void onDataPacket(NetworkManager net, @NotNull SPacketUpdateTileEntity pkt)
     {
         readFromNBT(pkt.getNbtCompound());
     }

@@ -17,8 +17,8 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.ReportedException;
 import net.minecraftforge.common.util.Constants;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Basic inventory for the citizens.
@@ -56,7 +56,7 @@ public class InventoryCitizen implements IInventory
     /**
      * The inventory content.
      */
-    @Nonnull
+    @NotNull
     private              ItemStack[] stacks          = new ItemStack[INVENTORY_SIZE];
     /**
      * The inventories custom name. In our case the citizens name.
@@ -290,7 +290,7 @@ public class InventoryCitizen implements IInventory
      * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
      * left over items.
      */
-    private int storePartialItemStack(@Nonnull ItemStack itemStackIn)
+    private int storePartialItemStack(@NotNull ItemStack itemStackIn)
     {
         int i = itemStackIn.stackSize;
         int j = this.storeItemStack(itemStackIn);
@@ -341,7 +341,7 @@ public class InventoryCitizen implements IInventory
      *
      * @return the name of the inventory.
      */
-    @Nonnull
+    @NotNull
     @Override
     public String getName()
     {
@@ -351,7 +351,7 @@ public class InventoryCitizen implements IInventory
     /**
      * stores an itemstack in the users inventory
      */
-    private int storeItemStack(@Nonnull ItemStack itemStackIn)
+    private int storeItemStack(@NotNull ItemStack itemStackIn)
     {
         for (int i = 0; i < this.stacks.length; ++i)
         {
@@ -399,7 +399,7 @@ public class InventoryCitizen implements IInventory
     }    /**
      * Get the formatted TextComponent that will be used for the sender's username in chat
      */
-    @Nonnull
+    @NotNull
     @Override
     public ITextComponent getDisplayName()
     {
@@ -417,7 +417,7 @@ public class InventoryCitizen implements IInventory
         return getStackInSlot(index) == null;
     }
 
-    public void createMaterialStore(@Nonnull MaterialSystem system)
+    public void createMaterialStore(@NotNull MaterialSystem system)
     {
         if (materialStore == null)
         {
@@ -461,7 +461,7 @@ public class InventoryCitizen implements IInventory
      *
      * @param compound with the give tag.
      */
-    public void readFromNBT(@Nonnull NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
         this.stacks = new ItemStack[this.getSizeInventory()];
@@ -536,7 +536,7 @@ public class InventoryCitizen implements IInventory
             }
             else
             {
-                @Nonnull ItemStack itemstack = this.stacks[index].splitStack(count);
+                @NotNull ItemStack itemstack = this.stacks[index].splitStack(count);
 
                 if (this.stacks[index].stackSize == 0)
                 {
@@ -631,7 +631,7 @@ public class InventoryCitizen implements IInventory
      * @return if the player is allowed to access.
      */
     @Override
-    public boolean isUseableByPlayer(@Nonnull EntityPlayer player)
+    public boolean isUseableByPlayer(@NotNull EntityPlayer player)
     {
         return this.citizen.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
@@ -743,15 +743,15 @@ public class InventoryCitizen implements IInventory
      *
      * @param compound with the given tag.
      */
-    public void writeToNBT(@Nonnull NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
-        @Nonnull NBTTagList nbttaglist = new NBTTagList();
+        @NotNull NBTTagList nbttaglist = new NBTTagList();
 
         for (int i = 0; i < this.stacks.length; ++i)
         {
             if (this.stacks[i] != null)
             {
-                @Nonnull NBTTagCompound nbttagcompound = new NBTTagCompound();
+                @NotNull NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setByte(TAG_SLOT, (byte) i);
                 this.stacks[i].writeToNBT(nbttagcompound);
                 nbttaglist.appendTag(nbttagcompound);

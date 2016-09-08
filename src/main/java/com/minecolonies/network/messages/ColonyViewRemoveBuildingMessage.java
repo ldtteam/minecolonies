@@ -8,8 +8,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Add or Update a ColonyView on the client
@@ -27,21 +27,21 @@ public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandle
      * @param colony   Colony the building is in
      * @param building AbstractBuilding that is removed
      */
-    public ColonyViewRemoveBuildingMessage(@Nonnull Colony colony, BlockPos building)
+    public ColonyViewRemoveBuildingMessage(@NotNull Colony colony, BlockPos building)
     {
         this.colonyId = colony.getID();
         this.buildingId = building;
     }
 
     @Override
-    public void fromBytes(@Nonnull ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
     }
 
     @Override
-    public void toBytes(@Nonnull ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -49,7 +49,7 @@ public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandle
 
     @Nullable
     @Override
-    public IMessage onMessage(@Nonnull ColonyViewRemoveBuildingMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull ColonyViewRemoveBuildingMessage message, MessageContext ctx)
     {
         return ColonyManager.handleColonyViewRemoveBuildingMessage(message.colonyId, message.buildingId);
     }

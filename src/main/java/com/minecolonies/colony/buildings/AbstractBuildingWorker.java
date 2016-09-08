@@ -9,8 +9,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * The abstract class for each worker building.
@@ -26,7 +26,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @param c the colony
      * @param l the position
      */
-    public AbstractBuildingWorker(@Nonnull Colony c, BlockPos l)
+    public AbstractBuildingWorker(@NotNull Colony c, BlockPos l)
     {
         super(c, l);
     }
@@ -36,7 +36,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      *
      * @return the job name.
      */
-    @Nonnull
+    @NotNull
     public abstract String getJobName();
 
     /**
@@ -45,7 +45,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @param citizen the citizen to take the job.
      * @return the Job.
      */
-    @Nonnull
+    @NotNull
     public abstract AbstractJob createJob(CitizenData citizen);
 
     /**
@@ -103,7 +103,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -119,7 +119,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     @Override
-    public void writeToNBT(@Nonnull NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
@@ -176,7 +176,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
-    public void onWorldTick(@Nonnull TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull TickEvent.WorldTickEvent event)
     {
         super.onWorldTick(event);
 
@@ -199,7 +199,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     @Override
-    public void serializeToView(@Nonnull ByteBuf buf)
+    public void serializeToView(@NotNull ByteBuf buf)
     {
         super.serializeToView(buf);
 
@@ -219,7 +219,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
          * @param c the colony.
          * @param l the location.
          */
-        public View(ColonyView c, @Nonnull BlockPos l)
+        public View(ColonyView c, @NotNull BlockPos l)
         {
             super(c, l);
         }
@@ -245,7 +245,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
 
         @Override
-        public void deserialize(@Nonnull ByteBuf buf)
+        public void deserialize(@NotNull ByteBuf buf)
         {
             super.deserialize(buf);
 

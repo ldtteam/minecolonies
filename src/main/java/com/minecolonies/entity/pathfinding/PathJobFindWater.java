@@ -3,8 +3,8 @@ package com.minecolonies.entity.pathfinding;
 import com.minecolonies.entity.ai.citizen.fisherman.Pond;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class PathJobFindWater extends AbstractPathJob
     private static final int MIN_DISTANCE = 40;
     private static final int MAX_RANGE    = 250;
     private BlockPos hutLocation;
-    @Nonnull
+    @NotNull
     private ArrayList<BlockPos> ponds = new ArrayList<>();
     /**
      * AbstractPathJob constructor
@@ -33,7 +33,7 @@ public class PathJobFindWater extends AbstractPathJob
      * @param range maximum path range
      * @param ponds already visited fishing places
      */
-    PathJobFindWater(World world, @Nonnull BlockPos start, BlockPos home, int range, @Nonnull List<BlockPos> ponds)
+    PathJobFindWater(World world, @NotNull BlockPos start, BlockPos home, int range, @NotNull List<BlockPos> ponds)
     {
         super(world, start, start, range, new WaterPathResult());
         this.ponds = new ArrayList<>(ponds);
@@ -46,12 +46,12 @@ public class PathJobFindWater extends AbstractPathJob
         public boolean  isEmpty;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public WaterPathResult getResult() { return (WaterPathResult) super.getResult(); }
 
     @Override
-    protected double computeHeuristic(@Nonnull BlockPos pos)
+    protected double computeHeuristic(@NotNull BlockPos pos)
     {
         int dx = pos.getX() - hutLocation.getX();
         int dy = pos.getY() - hutLocation.getY();
@@ -63,7 +63,7 @@ public class PathJobFindWater extends AbstractPathJob
 
     //Overrides the Superclass in order to find only ponds of water with follow the wished conditions
     @Override
-    protected boolean isAtDestination(@Nonnull Node n)
+    protected boolean isAtDestination(@NotNull Node n)
     {
         if (n.parent == null)
         {
@@ -87,7 +87,7 @@ public class PathJobFindWater extends AbstractPathJob
         }
     }
 
-    private boolean isWater(@Nonnull BlockPos newPond)
+    private boolean isWater(@NotNull BlockPos newPond)
     {
         if (ponds.contains(newPond) || pondsAreNear(ponds, newPond))
         {
@@ -106,23 +106,23 @@ public class PathJobFindWater extends AbstractPathJob
         return false;
     }
 
-    private static double squareDistance(@Nonnull BlockPos currentPond, @Nonnull BlockPos nextPond)
+    private static double squareDistance(@NotNull BlockPos currentPond, @NotNull BlockPos nextPond)
     {
         return currentPond.distanceSq(nextPond.getX(), nextPond.getY(), nextPond.getZ());
     }
 
-    private Predicate<BlockPos> generateDistanceFrom(int range, @Nonnull BlockPos newpond)
+    private Predicate<BlockPos> generateDistanceFrom(int range, @NotNull BlockPos newpond)
     {
         return pond -> squareDistance(pond, newpond) < range;
     }
 
-    private boolean pondsAreNear(@Nonnull ArrayList<BlockPos> ponds, @Nonnull BlockPos newPond)
+    private boolean pondsAreNear(@NotNull ArrayList<BlockPos> ponds, @NotNull BlockPos newPond)
     {
         if (ponds.isEmpty())
         {
             return false;
         }
-        @Nonnull Predicate<BlockPos> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
+        @NotNull Predicate<BlockPos> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
         return ponds.stream().anyMatch(compare);
     }
 

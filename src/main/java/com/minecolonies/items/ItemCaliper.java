@@ -11,7 +11,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Caliper Item class. Calculates distances, areas, and volumes.
@@ -37,7 +37,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         maxStackSize = 1;
     }
 
-    private static EnumActionResult handleZEqual(@Nonnull EntityPlayer playerIn, int a, int a2)
+    private static EnumActionResult handleZEqual(@NotNull EntityPlayer playerIn, int a, int a2)
     {
         int distance1 = Math.abs(a) + 1;
         int distance2 = Math.abs(a2) + 1;
@@ -79,7 +79,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return handlePlayerMessage(playerIn, pos);
     }
 
-    private EnumActionResult handlePlayerMessage(@Nonnull EntityPlayer playerIn, @Nonnull BlockPos pos)
+    private EnumActionResult handlePlayerMessage(@NotNull EntityPlayer playerIn, @NotNull BlockPos pos)
     {
         if (startPosition.getX() == pos.getX())
         {
@@ -102,7 +102,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return EnumActionResult.SUCCESS;
     }
 
-    private EnumActionResult handleYEqual(@Nonnull EntityPlayer playerIn, @Nonnull BlockPos pos, int a, int a2)
+    private EnumActionResult handleYEqual(@NotNull EntityPlayer playerIn, @NotNull BlockPos pos, int a, int a2)
     {
         if (startPosition.getZ() == pos.getZ())
         {
@@ -113,7 +113,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return handleZEqual(playerIn, a, a2);
     }
 
-    private EnumActionResult handleXEqual(@Nonnull EntityPlayer playerIn, @Nonnull BlockPos pos)
+    private EnumActionResult handleXEqual(@NotNull EntityPlayer playerIn, @NotNull BlockPos pos)
     {
         if (startPosition.getY() == pos.getY())
         {

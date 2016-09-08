@@ -4,7 +4,7 @@ import com.minecolonies.entity.ai.citizen.lumberjack.Tree;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Find and return a path to the nearest tree
@@ -24,7 +24,7 @@ public class PathJobFindTree extends AbstractPathJob
      * @param home  the position of the workers hut
      * @param range maximum path range
      */
-    public PathJobFindTree(World world, @Nonnull BlockPos start, BlockPos home, int range)
+    public PathJobFindTree(World world, @NotNull BlockPos start, BlockPos home, int range)
     {
         super(world, start, start, range, new TreePathResult());
 
@@ -36,7 +36,7 @@ public class PathJobFindTree extends AbstractPathJob
         public BlockPos treeLocation;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public TreePathResult getResult()
     {
@@ -44,7 +44,7 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(@Nonnull BlockPos pos)
+    protected double computeHeuristic(@NotNull BlockPos pos)
     {
         int dx = pos.getX() - hutLocation.getX();
         int dy = pos.getY() - hutLocation.getY();
@@ -55,12 +55,12 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isAtDestination(@Nonnull Node n)
+    protected boolean isAtDestination(@NotNull Node n)
     {
         return n.parent != null && isNearTree(n);
     }
 
-    private boolean isNearTree(@Nonnull Node n)
+    private boolean isNearTree(@NotNull Node n)
     {
         if (n.pos.getX() != n.parent.pos.getX())
         {
@@ -92,7 +92,7 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isPassable(@Nonnull Block block, BlockPos pos)
+    protected boolean isPassable(@NotNull Block block, BlockPos pos)
     {
         return super.isPassable(block, pos) || block.isLeaves(world.getBlockState(pos), world, pos);
     }

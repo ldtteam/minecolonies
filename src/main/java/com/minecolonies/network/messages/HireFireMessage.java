@@ -12,8 +12,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message class which manages the messages hiring or firing of citizens.
@@ -55,7 +55,7 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
      * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(@Nonnull AbstractBuilding.View building, boolean hire, int citizenID)
+    public HireFireMessage(@NotNull AbstractBuilding.View building, boolean hire, int citizenID)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -69,7 +69,7 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytes(@Nonnull ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -83,7 +83,7 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytes(@Nonnull ByteBuf buf)
+    public void toBytes(@NotNull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -100,7 +100,7 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
      */
     @Nullable
     @Override
-    public IMessage onMessage(@Nonnull HireFireMessage message, @Nonnull MessageContext ctx)
+    public IMessage onMessage(@NotNull HireFireMessage message, @NotNull MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)

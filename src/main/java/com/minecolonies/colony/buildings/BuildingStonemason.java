@@ -7,7 +7,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobPlaceholder;
 import net.minecraft.util.math.BlockPos;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BuildingStonemason extends AbstractBuildingWorker
 {
@@ -20,7 +20,7 @@ public class BuildingStonemason extends AbstractBuildingWorker
         super(c, l);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -33,14 +33,14 @@ public class BuildingStonemason extends AbstractBuildingWorker
         return 1;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getJobName()
     {
         return STONEMASON;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -54,7 +54,7 @@ public class BuildingStonemason extends AbstractBuildingWorker
             super(c, l);
         }
 
-        @Nonnull
+        @NotNull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, STONEMASON_HUT_NAME);

@@ -10,8 +10,8 @@ import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class JobBuilder extends AbstractJob
 {
@@ -34,7 +34,7 @@ public class JobBuilder extends AbstractJob
     }
 
     @Override
-    public void readFromNBT(@Nonnull NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_WORK_ORDER))
@@ -51,14 +51,14 @@ public class JobBuilder extends AbstractJob
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName()
     {
         return "com.minecolonies.job.Builder";
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public RenderBipedCitizen.Model getModel()
     {
@@ -66,7 +66,7 @@ public class JobBuilder extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(@Nonnull NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         if (workOrderId != 0)
@@ -75,7 +75,7 @@ public class JobBuilder extends AbstractJob
 
             if (hasSchematic())
             {
-                @Nonnull final NBTTagCompound schematicTag = new NBTTagCompound();
+                @NotNull final NBTTagCompound schematicTag = new NBTTagCompound();
                 schematicTag.setString(TAG_NAME, schematic.getName());
                 BlockPosUtil.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
                 BlockPosUtil.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
@@ -96,7 +96,7 @@ public class JobBuilder extends AbstractJob
         return schematic != null;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public AbstractAISkeleton generateAI()
     {

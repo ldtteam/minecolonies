@@ -1,7 +1,7 @@
 package com.minecolonies.blocks;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
@@ -80,7 +80,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      */
     public abstract String getName();
 
-    @Nonnull
+    @NotNull
     @Override
     public TileEntity createNewTileEntity(World world, int meta)
     {
@@ -100,7 +100,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     @Override
-    public int getMetaFromState(@Nonnull IBlockState state)
+    public int getMetaFromState(@NotNull IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
@@ -111,7 +111,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     // =======================================================================
 
     // render as a solid block, we don't want transparency here
-    @Nonnull
+    @NotNull
     @Override
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer()
@@ -140,7 +140,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nullable EntityLivingBase placer)
     {
-        @Nonnull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+        @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
@@ -157,7 +157,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
      */
     @Override
-    public void onBlockPlacedBy(@Nonnull World worldIn, @Nonnull BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    public void onBlockPlacedBy(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
@@ -172,7 +172,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
-            @Nonnull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
+            @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
             @Nullable final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
 
             if (colony != null)
@@ -182,7 +182,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState()
     {

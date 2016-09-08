@@ -1,7 +1,7 @@
 package com.minecolonies.entity.ai.minimal;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFenceGate;
@@ -66,7 +66,7 @@ public class EntityAIGateInteract extends EntityAIBase
      *
      * @param entityIn the registering entity
      */
-    public EntityAIGateInteract(@Nonnull EntityLiving entityIn)
+    public EntityAIGateInteract(@NotNull EntityLiving entityIn)
     {
         this.gatePosition = BlockPos.ORIGIN;
         this.theEntity = entityIn;
@@ -94,7 +94,7 @@ public class EntityAIGateInteract extends EntityAIBase
      */
     private boolean checkPath()
     {
-        @Nonnull PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
+        @NotNull PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
         Path Path = pathnavigateground.getPath();
         return Path != null && !Path.isFinished() && pathnavigateground.getEnterDoors() && checkFenceGate(Path);
     }
@@ -105,7 +105,7 @@ public class EntityAIGateInteract extends EntityAIBase
      * @param Path the path through the fence.
      * @return true if the gate can be passed
      */
-    private boolean checkFenceGate(@Nonnull Path Path)
+    private boolean checkFenceGate(@NotNull Path Path)
     {
         int maxLengthToCheck = Math.min(Path.getCurrentPathIndex() + LENGTH_TO_CHECK, Path.getCurrentPathLength());
         for (int i = 0; i < maxLengthToCheck; ++i)
@@ -136,7 +136,7 @@ public class EntityAIGateInteract extends EntityAIBase
      * @param pos the position to be searched
      * @return fenceBlock or null
      */
-    private BlockFenceGate getBlockFence(@Nonnull BlockPos pos)
+    private BlockFenceGate getBlockFence(@NotNull BlockPos pos)
     {
         IBlockState blockState = this.theEntity.worldObj.getBlockState(pos);
         Block block = blockState.getBlock();

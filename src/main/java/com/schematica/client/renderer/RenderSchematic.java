@@ -6,8 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -84,7 +84,7 @@ public final class RenderSchematic extends RenderGlobal
     private static final ShaderProgram SHADER_ALPHA         = new ShaderProgram("minecolonies", null, "shaders/alpha.frag");
     private static final double        DOUBLE_EPSILON       = 0.00000001D;
     private static       Vec3d          playerPositionOffset = new Vec3d(0, 0, 0);
-    @Nonnull
+    @NotNull
     private final Minecraft     mc;
     private final Profiler      profiler;
     private final RenderManager renderManager;
@@ -94,9 +94,9 @@ public final class RenderSchematic extends RenderGlobal
     private final BlockPos.MutableBlockPos tmp                      = new BlockPos.MutableBlockPos();
     @Nullable
     private SchematicWorld world;
-    @Nonnull
+    @NotNull
     private Set<RenderChunk>                      chunksToUpdate = Sets.newLinkedHashSet();
-    @Nonnull
+    @NotNull
     private List<ContainerLocalRenderInformation> renderInfos    = Lists.newArrayListWithCapacity(CHUNKS);
     @Nullable
     private ViewFrustumOverlay viewFrustum;
@@ -123,7 +123,7 @@ public final class RenderSchematic extends RenderGlobal
     private       boolean                  displayListEntitiesDirty = true;
     private       int                      frameCount               = 0;
 
-    private RenderSchematic(@Nonnull final Minecraft minecraft)
+    private RenderSchematic(@NotNull final Minecraft minecraft)
     {
         super(minecraft);
         this.mc = minecraft;
@@ -149,16 +149,16 @@ public final class RenderSchematic extends RenderGlobal
         this.renderContainer = new SchematicChunkRenderContainerVbo();
         this.renderChunkFactory = new ISchematicRenderChunkFactory()
         {
-            @Nonnull
+            @NotNull
             @Override
             public RenderChunk create(final World world, final RenderGlobal renderGlobal, final int index)
             {
                 return new SchematicRenderChunkVbo(world, renderGlobal, index);
             }
 
-            @Nonnull
+            @NotNull
             @Override
-            public RenderOverlay makeRenderOverlay(final World world, final RenderGlobal renderGlobal, @Nonnull final BlockPos pos, final int index)
+            public RenderOverlay makeRenderOverlay(final World world, final RenderGlobal renderGlobal, @NotNull final BlockPos pos, final int index)
             {
                 return new RenderOverlay(world, renderGlobal, index);
             }
@@ -170,16 +170,16 @@ public final class RenderSchematic extends RenderGlobal
         this.renderContainer = new SchematicChunkRenderContainerList();
         this.renderChunkFactory = new ISchematicRenderChunkFactory()
         {
-            @Nonnull
+            @NotNull
             @Override
             public RenderChunk create(final World world, final RenderGlobal renderGlobal, final int index)
             {
                 return new SchematicRenderChunkList(world, renderGlobal, index);
             }
 
-            @Nonnull
+            @NotNull
             @Override
-            public RenderOverlay makeRenderOverlay(final World world, final RenderGlobal renderGlobal, @Nonnull final BlockPos pos, final int index)
+            public RenderOverlay makeRenderOverlay(final World world, final RenderGlobal renderGlobal, @NotNull final BlockPos pos, final int index)
             {
                 return new RenderOverlayList(world, renderGlobal, index);
             }
@@ -295,7 +295,7 @@ public final class RenderSchematic extends RenderGlobal
     }
 
     @Override
-    public void renderEntities(@Nonnull final Entity renderViewEntity, @Nonnull final ICamera camera, final float partialTicks)
+    public void renderEntities(@NotNull final Entity renderViewEntity, @NotNull final ICamera camera, final float partialTicks)
     {
         final int entityPass = 0;
 
@@ -322,9 +322,9 @@ public final class RenderSchematic extends RenderGlobal
         this.profiler.endStartSection("blockentities");
         RenderHelper.enableStandardItemLighting();
 
-        for (@Nonnull final ContainerLocalRenderInformation renderInfo : this.renderInfos)
+        for (@NotNull final ContainerLocalRenderInformation renderInfo : this.renderInfos)
         {
-            for (@Nonnull final TileEntity tileEntity : renderInfo.renderChunk.getCompiledChunk().getTileEntities())
+            for (@NotNull final TileEntity tileEntity : renderInfo.renderChunk.getCompiledChunk().getTileEntities())
             {
                 final AxisAlignedBB renderBB = tileEntity.getRenderBoundingBox();
 
@@ -352,7 +352,7 @@ public final class RenderSchematic extends RenderGlobal
         final int total = this.viewFrustum.renderChunks.length;
         int rendered = 0;
 
-        for (@Nonnull final ContainerLocalRenderInformation renderInfo : this.renderInfos)
+        for (@NotNull final ContainerLocalRenderInformation renderInfo : this.renderInfos)
         {
             final CompiledChunk compiledChunk = renderInfo.renderChunk.compiledChunk;
 
@@ -372,7 +372,7 @@ public final class RenderSchematic extends RenderGlobal
     }
 
     @Override
-    public void setupTerrain(final Entity viewEntity, final double partialTicks, @Nonnull final ICamera camera, final int frameCount, final boolean playerSpectator)
+    public void setupTerrain(final Entity viewEntity, final double partialTicks, @NotNull final ICamera camera, final int frameCount, final boolean playerSpectator)
     {
         if (ConfigurationHandler.renderDistance != this.renderDistanceChunks || this.vboEnabled != OpenGlHelper.useVbo())
         {
@@ -408,7 +408,7 @@ public final class RenderSchematic extends RenderGlobal
         this.renderContainer.initialize(posX, posY, posZ);
 
         this.profiler.endStartSection("culling");
-        @Nonnull final BlockPos posEye = new BlockPos(posX, posY + viewEntity.getEyeHeight(), posZ);
+        @NotNull final BlockPos posEye = new BlockPos(posX, posY + viewEntity.getEyeHeight(), posZ);
         final RenderChunk renderchunk = this.viewFrustum.getRenderChunk(posEye);
         final RenderOverlay renderoverlay = this.viewFrustum.getRenderOverlay(posEye);
 
@@ -424,7 +424,7 @@ public final class RenderSchematic extends RenderGlobal
             this.displayListEntitiesDirty = false;
             this.renderInfos = Lists.newArrayListWithCapacity(CHUNKS);
 
-            @Nonnull final LinkedList<ContainerLocalRenderInformation> renderInfoList = Lists.newLinkedList();
+            @NotNull final LinkedList<ContainerLocalRenderInformation> renderInfoList = Lists.newLinkedList();
             boolean renderChunksMany = this.mc.renderChunksMany;
 
             if (renderchunk == null)
@@ -435,7 +435,7 @@ public final class RenderSchematic extends RenderGlobal
                 {
                     for (int chunkZ = -this.renderDistanceChunks; chunkZ <= this.renderDistanceChunks; chunkZ++)
                     {
-                        @Nonnull final BlockPos pos = new BlockPos((chunkX << 4) + 8, chunkY, (chunkZ << 4) + 8);
+                        @NotNull final BlockPos pos = new BlockPos((chunkX << 4) + 8, chunkY, (chunkZ << 4) + 8);
                         final RenderChunk renderChunk = this.viewFrustum.getRenderChunk(pos);
                         final RenderOverlay renderOverlay = this.viewFrustum.getRenderOverlay(pos);
 
@@ -451,7 +451,7 @@ public final class RenderSchematic extends RenderGlobal
             else
             {
                 boolean add = false;
-                @Nonnull final ContainerLocalRenderInformation renderInfo = new ContainerLocalRenderInformation(renderchunk, renderoverlay, null, 0);
+                @NotNull final ContainerLocalRenderInformation renderInfo = new ContainerLocalRenderInformation(renderchunk, renderoverlay, null, 0);
                 final Set<EnumFacing> visibleSides = getVisibleSides(posEye);
 
                 if (!visibleSides.isEmpty() && visibleSides.size() == 1)
@@ -491,7 +491,7 @@ public final class RenderSchematic extends RenderGlobal
                 final BlockPos posChunk = renderChunk.getPosition();
                 this.renderInfos.add(renderInfo);
 
-                for (@Nonnull final EnumFacing side : EnumFacing.VALUES)
+                for (@NotNull final EnumFacing side : EnumFacing.VALUES)
                 {
                     @Nullable final RenderChunk neighborRenderChunk = getNeighborRenderChunk(posEye, posChunk, side);
                     @Nullable final RenderOverlay neighborRenderOverlay = getNeighborRenderOverlay(posEye, posChunk, side);
@@ -514,11 +514,11 @@ public final class RenderSchematic extends RenderGlobal
 
         this.renderDispatcher.clearChunkUpdates();
         this.renderDispatcherOverlay.clearChunkUpdates();
-        @Nonnull final Set<RenderChunk> set = this.chunksToUpdate;
-        @Nonnull final Set<RenderOverlay> set1 = this.overlaysToUpdate;
+        @NotNull final Set<RenderChunk> set = this.chunksToUpdate;
+        @NotNull final Set<RenderOverlay> set1 = this.overlaysToUpdate;
         this.chunksToUpdate = Sets.newLinkedHashSet();
 
-        for (@Nonnull final ContainerLocalRenderInformation renderInfo : this.renderInfos)
+        for (@NotNull final ContainerLocalRenderInformation renderInfo : this.renderInfos)
         {
             final RenderChunk renderChunk = renderInfo.renderChunk;
             final RenderOverlay renderOverlay = renderInfo.renderOverlay;
@@ -544,7 +544,7 @@ public final class RenderSchematic extends RenderGlobal
     }
 
     @Override
-    public int renderBlockLayer(@Nonnull final BlockRenderLayer layer, final double partialTicks, final int pass, final Entity entity)
+    public int renderBlockLayer(@NotNull final BlockRenderLayer layer, final double partialTicks, final int pass, final Entity entity)
     {
         RenderHelper.disableStandardItemLighting();
 
@@ -566,7 +566,7 @@ public final class RenderSchematic extends RenderGlobal
                 this.prevRenderSortZ = posZ;
                 int count = 0;
 
-                for (@Nonnull final ContainerLocalRenderInformation renderInfo : this.renderInfos)
+                for (@NotNull final ContainerLocalRenderInformation renderInfo : this.renderInfos)
                 {
                     if (renderInfo.renderChunk.compiledChunk.isLayerStarted(layer) && count < 15)
                     {
@@ -642,7 +642,7 @@ public final class RenderSchematic extends RenderGlobal
     {
         this.displayListEntitiesDirty |= this.renderDispatcher.runChunkUploads(finishTimeNano);
 
-        @Nonnull final Iterator<RenderChunk> chunkIterator = this.chunksToUpdate.iterator();
+        @NotNull final Iterator<RenderChunk> chunkIterator = this.chunksToUpdate.iterator();
         while (chunkIterator.hasNext())
         {
             final RenderChunk renderChunk = chunkIterator.next();
@@ -657,7 +657,7 @@ public final class RenderSchematic extends RenderGlobal
 
         this.displayListEntitiesDirty |= this.renderDispatcherOverlay.runChunkUploads(finishTimeNano);
 
-        @Nonnull final Iterator<RenderOverlay> overlayIterator = this.overlaysToUpdate.iterator();
+        @NotNull final Iterator<RenderOverlay> overlayIterator = this.overlaysToUpdate.iterator();
         while (overlayIterator.hasNext())
         {
             final RenderOverlay renderOverlay = overlayIterator.next();
@@ -783,7 +783,7 @@ public final class RenderSchematic extends RenderGlobal
             return;
         }
 
-        @Nonnull final BlockPos.MutableBlockPos position = this.world.position;
+        @NotNull final BlockPos.MutableBlockPos position = this.world.position;
         this.viewFrustum.markBlocksForUpdate(x1 - position.getX(), y1 - position.getY(), z1 - position.getZ(), x2 - position.getX(), y2 - position.getY(), z2 - position.getZ(), flag);
     }
 
@@ -793,7 +793,7 @@ public final class RenderSchematic extends RenderGlobal
      * @param event Forge event.
      */
     @SubscribeEvent
-    public void onRenderWorldLast(@Nonnull final RenderWorldLastEvent event)
+    public void onRenderWorldLast(@NotNull final RenderWorldLastEvent event)
     {
         final EntityPlayerSP player = this.mc.thePlayer;
         if (player != null)
@@ -843,7 +843,7 @@ public final class RenderSchematic extends RenderGlobal
         }
     }
 
-    private void renderOverlay(@Nonnull final SchematicWorld schematic)
+    private void renderOverlay(@NotNull final SchematicWorld schematic)
     {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
@@ -874,7 +874,7 @@ public final class RenderSchematic extends RenderGlobal
     {
         GlStateManager.enableCull();
         this.profiler.endStartSection("culling");
-        @Nonnull final Frustum frustum = new Frustum();
+        @NotNull final Frustum frustum = new Frustum();
         final Entity entity = this.mc.getRenderViewEntity();
 
         final double x = playerPositionOffset.xCoord;
@@ -954,7 +954,7 @@ public final class RenderSchematic extends RenderGlobal
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
     }
 
-    private boolean isDisplayListDirty(@Nonnull Entity viewEntity, double posX, double posY, double posZ)
+    private boolean isDisplayListDirty(@NotNull Entity viewEntity, double posX, double posY, double posZ)
     {
         return this.displayListEntitiesDirty ||
                  !this.chunksToUpdate.isEmpty() ||
@@ -962,12 +962,12 @@ public final class RenderSchematic extends RenderGlobal
                  didEntityRotate(viewEntity);
     }
 
-    private Set<EnumFacing> getVisibleSides(@Nonnull final BlockPos pos)
+    private Set<EnumFacing> getVisibleSides(@NotNull final BlockPos pos)
     {
-        @Nonnull final VisGraph visgraph = new VisGraph();
-        @Nonnull final BlockPos posChunk = new BlockPos(pos.getX() & ~0xF, pos.getY() & ~0xF, pos.getZ() & ~0xF);
+        @NotNull final VisGraph visgraph = new VisGraph();
+        @NotNull final BlockPos posChunk = new BlockPos(pos.getX() & ~0xF, pos.getY() & ~0xF, pos.getZ() & ~0xF);
 
-        for (@Nonnull final BlockPos.MutableBlockPos mutableBlockPos : BlockPos.getAllInBoxMutable(posChunk, posChunk.add(15, 15, 15)))
+        for (@NotNull final BlockPos.MutableBlockPos mutableBlockPos : BlockPos.getAllInBoxMutable(posChunk, posChunk.add(15, 15, 15)))
         {
             if (this.world.getBlockState(mutableBlockPos).isOpaqueCube())
             {
@@ -978,7 +978,7 @@ public final class RenderSchematic extends RenderGlobal
         return visgraph.getVisibleFacings(pos);
     }
 
-    private RenderChunk getNeighborRenderChunk(@Nonnull final BlockPos posEye, @Nonnull final BlockPos posChunk, final EnumFacing side)
+    private RenderChunk getNeighborRenderChunk(@NotNull final BlockPos posEye, @NotNull final BlockPos posChunk, final EnumFacing side)
     {
         final BlockPos offset = posChunk.offset(side, 16);
         if (MathHelper.abs_int(posEye.getX() - offset.getX()) > this.renderDistanceChunks * 16)
@@ -999,7 +999,7 @@ public final class RenderSchematic extends RenderGlobal
         return this.viewFrustum.getRenderChunk(offset);
     }
 
-    private RenderOverlay getNeighborRenderOverlay(@Nonnull final BlockPos posEye, @Nonnull final BlockPos posChunk, final EnumFacing side)
+    private RenderOverlay getNeighborRenderOverlay(@NotNull final BlockPos posEye, @NotNull final BlockPos posChunk, final EnumFacing side)
     {
         final BlockPos offset = posChunk.offset(side, 16);
         if (MathHelper.abs_int(posEye.getX() - offset.getX()) > this.renderDistanceChunks * 16)
@@ -1043,7 +1043,7 @@ public final class RenderSchematic extends RenderGlobal
                  doubleEquals(posZ, this.lastViewEntityZ);
     }
 
-    private boolean didEntityRotate(@Nonnull Entity viewEntity)
+    private boolean didEntityRotate(@NotNull Entity viewEntity)
     {
         return doubleEquals(viewEntity.rotationPitch, this.lastViewEntityPitch) ||
                  doubleEquals(viewEntity.rotationYaw, this.lastViewEntityYaw);
@@ -1072,7 +1072,7 @@ public final class RenderSchematic extends RenderGlobal
         private final RenderChunk     renderChunk;
         private final RenderOverlay   renderOverlay;
         private final EnumFacing      facing;
-        @Nonnull
+        @NotNull
         private final Set<EnumFacing> setFacing;
         private final int             counter;
 
