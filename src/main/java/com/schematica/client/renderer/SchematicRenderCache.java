@@ -3,9 +3,9 @@ package com.schematica.client.renderer;
 import com.schematica.Settings;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.ChunkCache;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 

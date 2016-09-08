@@ -1,13 +1,11 @@
 package com.blockout.controls;
 
-import org.jetbrains.annotations.NotNull;
-
 import com.blockout.Pane;
 import com.blockout.PaneParams;
-
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Base button class.
@@ -18,6 +16,7 @@ public class Button extends Pane
     private static final ResourceLocation soundClick = new ResourceLocation("gui.button.press");
     protected Handler handler;
     protected String  label;
+
     /**
      * Default constructor.
      */

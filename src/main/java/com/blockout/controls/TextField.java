@@ -8,8 +8,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
@@ -35,6 +35,7 @@ public class TextField extends Pane
     protected int scrollOffset       = 0;
     protected int selectionEnd       = 0;
     protected int cursorBlinkCounter = 0;
+
     public TextField()
     {
         //Required

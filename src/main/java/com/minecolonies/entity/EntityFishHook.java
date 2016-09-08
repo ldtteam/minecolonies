@@ -1,14 +1,6 @@
 package com.minecolonies.entity;
 
-import static net.minecraft.util.EnumParticleTypes.WATER_BUBBLE;
-import static net.minecraft.util.EnumParticleTypes.WATER_SPLASH;
-import static net.minecraft.util.EnumParticleTypes.WATER_WAKE;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.minecolonies.util.MathUtils;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -26,6 +18,10 @@ import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootTableList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import static net.minecraft.util.EnumParticleTypes.*;
 
 /**
  * Creates a custom fishHook for the Fisherman to throw
@@ -42,7 +38,7 @@ public final class EntityFishHook extends Entity
      * Entity size to scale it down
      */
     private static final float ENTITY_SIZE = 0.25F;
-    
+
     /**
      * 180 degree used in trig. functions
      */
@@ -373,12 +369,12 @@ public final class EntityFishHook extends Entity
             double d4 = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * (j + 1) / numSteps;
 
             @NotNull AxisAlignedBB axisAlignedBB1 = new AxisAlignedBB(
-                                                              this.getEntityBoundingBox().minX,
-                                                              d3,
-                                                              this.getEntityBoundingBox().minZ,
-                                                              this.getEntityBoundingBox().maxX,
-                                                              d4,
-                                                              this.getEntityBoundingBox().maxZ);
+                                                                       this.getEntityBoundingBox().minX,
+                                                                       d3,
+                                                                       this.getEntityBoundingBox().minZ,
+                                                                       this.getEntityBoundingBox().maxX,
+                                                                       d4,
+                                                                       this.getEntityBoundingBox().maxZ);
 
             //If the hook is swimming
             if (this.worldObj.isAABBInMaterial(axisAlignedBB1, Material.WATER))
@@ -706,9 +702,9 @@ public final class EntityFishHook extends Entity
     private ItemStack getFishingLoot(final EntityCitizen citizen)
     {
         //Reduce random to get more fish drops
-        double random     = this.worldObj.rand.nextDouble() / INCREASE_RARENESS_MODIFIER;
+        double random = this.worldObj.rand.nextDouble() / INCREASE_RARENESS_MODIFIER;
         double speedBonus = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
-        double lootBonus  = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
+        double lootBonus = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
         //clamp_float gives the values an upper limit
         speedBonus = MathHelper.clamp_float((float) speedBonus, 0.0F, 1.0F);
         lootBonus = MathHelper.clamp_float((float) lootBonus, 0.0F, 1.0F);
@@ -716,8 +712,10 @@ public final class EntityFishHook extends Entity
 
         if (random < speedBonus || buildingLevel == 1)
         {
-            LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.worldObj);
-            for (ItemStack itemstack : this.worldObj.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING).generateLootForPools(this.rand, lootcontext$builder.build()))
+            LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer) this.worldObj);
+            for (ItemStack itemstack : this.worldObj.getLootTableManager()
+                                         .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING)
+                                         .generateLootForPools(this.rand, lootcontext$builder.build()))
             {
                 return itemstack;
             }
@@ -728,22 +726,26 @@ public final class EntityFishHook extends Entity
 
             if (random < lootBonus || buildingLevel == 2)
             {
-                LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.worldObj);
-                for (ItemStack itemstack : this.worldObj.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_JUNK).generateLootForPools(this.rand, lootcontext$builder.build()))
+                LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer) this.worldObj);
+                for (ItemStack itemstack : this.worldObj.getLootTableManager()
+                                             .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_JUNK)
+                                             .generateLootForPools(this.rand, lootcontext$builder.build()))
                 {
                     return itemstack;
                 }
             }
             else
             {
-                LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer)this.worldObj);
-                for (ItemStack itemstack : this.worldObj.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_TREASURE).generateLootForPools(this.rand, lootcontext$builder.build()))
+                LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer) this.worldObj);
+                for (ItemStack itemstack : this.worldObj.getLootTableManager()
+                                             .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_TREASURE)
+                                             .generateLootForPools(this.rand, lootcontext$builder.build()))
                 {
                     return itemstack;
                 }
             }
         }
-		return null;
+        return null;
     }
 
     /**

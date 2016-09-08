@@ -57,11 +57,6 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             data = buf;
-        }        @Override
-        public void toBytes(@NotNull ByteBuf buf)
-        {
-            buf.writeInt(colonyID);
-            buf.writeBytes(data);
         }
 
         @Nullable
@@ -69,6 +64,11 @@ public class PermissionsMessage
         public IMessage onMessage(@NotNull View message, MessageContext ctx)
         {
             return ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
+        }        @Override
+        public void toBytes(@NotNull ByteBuf buf)
+        {
+            buf.writeInt(colonyID);
+            buf.writeBytes(data);
         }
 
 

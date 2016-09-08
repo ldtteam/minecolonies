@@ -190,25 +190,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return new JobFarmer(citizen);
     }
 
-    @Override
-    public void onDestroyed()
-    {
-        super.onDestroyed();
-        for (@NotNull final Field field : farmerFields)
-        {
-            final Field tempField = getColony().getField(field.getID());
-
-            if (tempField != null)
-            {
-                tempField.setTaken(false);
-                tempField.setOwner("");
-                @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
-                getColony().getWorld().notifyBlockUpdate(scarecrowTileEntity.getPos(), getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()), getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()), 3);
-                scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
-            }
-        }
-    }
-
     //we have to update our field from the colony!
     @Override
     public void readFromNBT(@NotNull NBTTagCompound compound)
@@ -240,6 +221,29 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
         compound.setBoolean(TAG_ASSIGN_MANUALLY, assignManually);
+    }
+
+    @Override
+    public void onDestroyed()
+    {
+        super.onDestroyed();
+        for (@NotNull final Field field : farmerFields)
+        {
+            final Field tempField = getColony().getField(field.getID());
+
+            if (tempField != null)
+            {
+                tempField.setTaken(false);
+                tempField.setOwner("");
+                @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+                getColony().getWorld()
+                  .notifyBlockUpdate(scarecrowTileEntity.getPos(),
+                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                    3);
+                scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
+            }
+        }
     }
 
     /**
@@ -324,7 +328,8 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 else
                 {
                     scarecrow.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
-                    getColony().getWorld().notifyBlockUpdate(scarecrow.getPos(), getColony().getWorld().getBlockState(scarecrow.getPos()), getColony().getWorld().getBlockState(scarecrow.getPos()), 3);
+                    getColony().getWorld()
+                      .notifyBlockUpdate(scarecrow.getPos(), getColony().getWorld().getBlockState(scarecrow.getPos()), getColony().getWorld().getBlockState(scarecrow.getPos()), 3);
                     field.setInventoryField(scarecrow.getInventoryField());
                     if (currentField != null && currentField.getID() == field.getID())
                     {
@@ -374,7 +379,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
             field.setTaken(false);
             field.setOwner("");
             @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
-            getColony().getWorld().notifyBlockUpdate(scarecrowTileEntity.getPos(), getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()), getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()), 3);
+            getColony().getWorld()
+              .notifyBlockUpdate(scarecrowTileEntity.getPos(),
+                getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                3);
             scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         }
     }

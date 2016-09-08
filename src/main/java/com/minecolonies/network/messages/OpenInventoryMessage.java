@@ -10,8 +10,8 @@ import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -27,7 +27,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     /***
      * The inventory name.
      */
-    private String name;
+    private String        name;
     /**
      * The inventory type.
      */
@@ -35,15 +35,15 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     /**
      * The entities id.
      */
-    private int entityID;
+    private int           entityID;
     /**
      * The position of the inventory block/entity.
      */
-    private BlockPos tePos;
+    private BlockPos      tePos;
     /**
      * The colony id the field or building etc is in.
      */
-    private int colonyId;
+    private int           colonyId;
 
     /**
      * Empty public constructor.

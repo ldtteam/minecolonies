@@ -6,9 +6,9 @@ import net.minecraft.item.ItemSeeds;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -278,10 +278,6 @@ public class InventoryField implements IInventory
     public int getFieldCount()
     {
         return 0;
-    }    @Override
-    public boolean hasCustomName()
-    {
-        return true;
     }
 
     /**
@@ -294,11 +290,10 @@ public class InventoryField implements IInventory
         {
             this.stackResult[i] = null;
         }
-    }    @NotNull
-@Override
-    public ITextComponent getDisplayName()
+    }    @Override
+    public boolean hasCustomName()
     {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
+        return true;
     }
 
     /**
@@ -339,7 +334,18 @@ public class InventoryField implements IInventory
     public void setCustomName(final String customName)
     {
         this.customName = customName;
-    }    /**
+    }    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
+    }
+
+
+
+
+
+    /**
      * Get the name of this object. For citizens this returns their name.
      *
      * @return the name of the inventory.
@@ -350,10 +356,4 @@ public class InventoryField implements IInventory
     {
         return this.hasCustomName() ? this.customName : "field.inventory";
     }
-
-
-
-
-
-
 }

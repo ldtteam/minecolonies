@@ -1,27 +1,9 @@
 package com.minecolonies.entity.pathfinding;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.Callable;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.Log;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockFence;
-import net.minecraft.block.BlockFenceGate;
-import net.minecraft.block.BlockLadder;
-import net.minecraft.block.BlockVine;
-import net.minecraft.block.BlockWall;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
@@ -33,6 +15,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
  * Abstract class for Jobs that run in the multithreaded path finder.
@@ -40,14 +27,14 @@ import net.minecraft.world.World;
 public abstract class AbstractPathJob implements Callable<Path>
 {
     //  Debug Output
-    protected static final int DEBUG_VERBOSITY_NONE  = 0;
-    protected static final int DEBUG_VERBOSITY_BASIC = 1;
-    protected static final int DEBUG_VERBOSITY_FULL  = 2;
-    protected static final Object debugNodeMonitor = new Object();
-    private static final int SHIFT_SOUTH = 1;
-    private static final int SHIFT_WEST  = 2;
-    private static final int SHIFT_NORTH = 3;
-    private static final int SHIFT_EAST  = 4;
+    protected static final int    DEBUG_VERBOSITY_NONE  = 0;
+    protected static final int    DEBUG_VERBOSITY_BASIC = 1;
+    protected static final int    DEBUG_VERBOSITY_FULL  = 2;
+    protected static final Object debugNodeMonitor      = new Object();
+    private static final   int    SHIFT_SOUTH           = 1;
+    private static final   int    SHIFT_WEST            = 2;
+    private static final   int    SHIFT_NORTH           = 3;
+    private static final   int    SHIFT_EAST            = 4;
     @Nullable
     protected static Set<Node>    lastDebugNodesVisited;
     @Nullable
@@ -142,8 +129,8 @@ public abstract class AbstractPathJob implements Callable<Path>
     public static BlockPos prepareStart(@NotNull EntityLiving entity)
     {
         @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor_double(entity.posX),
-                                                                     (int) entity.posY,
-                                                                     MathHelper.floor_double(entity.posZ));
+                                                                              (int) entity.posY,
+                                                                              MathHelper.floor_double(entity.posZ));
         IBlockState bs = entity.worldObj.getBlockState(pos);
         Block b = bs.getBlock();
 
@@ -491,7 +478,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     private Node getAndSetupStartNode()
     {
         @NotNull Node startNode = new Node(start,
-                                   computeHeuristic(start));
+                                            computeHeuristic(start));
 
         if (isLadder(start))
         {
@@ -876,7 +863,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (parent != null)
         {
-        	IBlockState hereState = world.getBlockState(parent.pos.down()); 
+            IBlockState hereState = world.getBlockState(parent.pos.down());
             Block here = hereState.getBlock();
             if (hereState.getMaterial().isLiquid() && !isPassable(pos))
             {

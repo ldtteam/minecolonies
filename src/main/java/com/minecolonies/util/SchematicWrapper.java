@@ -18,12 +18,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -46,19 +45,19 @@ public final class SchematicWrapper
     /**
      * The position we use as our uninitialized value.
      */
-    private static final BlockPos NULL_POS = new BlockPos(-1, -1, -1);
-    private static final int NUMBER_OF_ROTATIONS = 4;
-    private static final int REVERSE_ROTATION = 3;
-    private static final int TWO_FOR_HALVING = 2;
-    private static final ItemStack DEFUALT_ICON = new ItemStack(Blocks.RED_MUSHROOM_BLOCK);
+    private static final BlockPos                 NULL_POS            = new BlockPos(-1, -1, -1);
+    private static final int                      NUMBER_OF_ROTATIONS = 4;
+    private static final int                      REVERSE_ROTATION    = 3;
+    private static final int                      TWO_FOR_HALVING     = 2;
+    private static final ItemStack                DEFUALT_ICON        = new ItemStack(Blocks.RED_MUSHROOM_BLOCK);
     /**
      * The SchematicWorld position we are at. Defaulted to NULL_POS.
      */
-    private final BlockPos.MutableBlockPos progressPos = new BlockPos.MutableBlockPos(-1, -1, -1);
+    private final        BlockPos.MutableBlockPos progressPos         = new BlockPos.MutableBlockPos(-1, -1, -1);
     /**
      * The minecraft world this schematic is displayed in.
      */
-    private World world;
+    private World     world;
     /**
      * The schematic world this schematic comes from.
      */
@@ -67,11 +66,11 @@ public final class SchematicWrapper
      * The anchor position this schematic will be
      * placed on in the minecraft world.
      */
-    private BlockPos position;
+    private BlockPos  position;
     /**
      * The name this schematic has.
      */
-    private String name;
+    private String    name;
 
     /**
      * Load a schematic into this world.
@@ -485,11 +484,11 @@ public final class SchematicWrapper
 
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
-        if(schematicBlock instanceof BlockDoor || schematicBlock == Blocks.FLOWER_POT)
+        if (schematicBlock instanceof BlockDoor || schematicBlock == Blocks.FLOWER_POT)
         {
             return schematicBlock == worldBlockState.getBlock();
         }
-        else if(schematicBlock instanceof  BlockStairs && schematicBlockState == worldBlockState)
+        else if (schematicBlock instanceof BlockStairs && schematicBlockState == worldBlockState)
         {
             return true;
         }
@@ -632,7 +631,7 @@ public final class SchematicWrapper
 
     private boolean isBlockNonSolid()
     {
-    	return getBlock() != null && !getBlockState().getMaterial().isSolid();
+        return getBlock() != null && !getBlockState().getMaterial().isSolid();
     }
 
     /**

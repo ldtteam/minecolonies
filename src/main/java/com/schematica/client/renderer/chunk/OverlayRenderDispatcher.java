@@ -14,7 +14,12 @@ import net.minecraft.util.BlockRenderLayer;
 public class OverlayRenderDispatcher extends ChunkRenderDispatcher
 {
     @Override
-    public ListenableFuture<Object> uploadChunk(final BlockRenderLayer layer, final VertexBuffer worldRenderer, final RenderChunk renderChunk, final CompiledChunk compiledChunk, final double par5)
+    public ListenableFuture<Object> uploadChunk(
+                                                 final BlockRenderLayer layer,
+                                                 final VertexBuffer worldRenderer,
+                                                 final RenderChunk renderChunk,
+                                                 final CompiledChunk compiledChunk,
+                                                 final double par5)
     {
         if (!Minecraft.getMinecraft().isCallingFromMinecraftThread() || OpenGlHelper.useVbo())
         {

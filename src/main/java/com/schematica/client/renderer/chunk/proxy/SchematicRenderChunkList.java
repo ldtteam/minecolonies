@@ -2,13 +2,13 @@ package com.schematica.client.renderer.chunk.proxy;
 
 import com.schematica.client.renderer.SchematicRenderCache;
 import com.schematica.client.world.SchematicWorld;
-import net.minecraft.world.ChunkCache;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.chunk.ChunkCompileTaskGenerator;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.ListedRenderChunk;
 import net.minecraft.client.renderer.chunk.SetVisibility;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

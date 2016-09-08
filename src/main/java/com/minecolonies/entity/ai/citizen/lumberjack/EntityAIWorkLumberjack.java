@@ -1,28 +1,11 @@
 package com.minecolonies.entity.ai.citizen.lumberjack;
 
-import static com.minecolonies.entity.ai.util.AIState.IDLE;
-import static com.minecolonies.entity.ai.util.AIState.LUMBERJACK_CHOP_TREE;
-import static com.minecolonies.entity.ai.util.AIState.LUMBERJACK_GATHERING;
-import static com.minecolonies.entity.ai.util.AIState.LUMBERJACK_NO_TREES_FOUND;
-import static com.minecolonies.entity.ai.util.AIState.LUMBERJACK_SEARCHING_TREE;
-import static com.minecolonies.entity.ai.util.AIState.PREPARING;
-import static com.minecolonies.entity.ai.util.AIState.START_WORKING;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.util.BlockPosUtil;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
@@ -32,6 +15,15 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * The lumberjack AI class
@@ -436,8 +428,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             worker.setHeldItem(saplingSlot);
 
             placeSaplings(saplingSlot, stack, block);
-            
-            world.playSound((EntityPlayer)null, this.worker.getPosition(), block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
+
+            world.playSound((EntityPlayer) null,
+              this.worker.getPosition(),
+              block.getSoundType().getBreakSound(),
+              SoundCategory.BLOCKS,
+              block.getSoundType().getVolume(),
+              block.getSoundType().getPitch());
             worker.swingArm(worker.getActiveHand());
         }
 

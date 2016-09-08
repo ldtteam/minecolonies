@@ -26,7 +26,7 @@ public class CommonProxy implements IProxy
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
-    private int nextEntityId = 0;
+    private              int                         nextEntityId         = 0;
 
     /**
      * Adds an entity's custom data to the map for temporary storage
