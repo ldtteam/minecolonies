@@ -41,7 +41,9 @@ import com.minecolonies.util.Log;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -61,6 +63,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
@@ -70,7 +73,9 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 /**
@@ -1051,11 +1056,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param dimension dimension to travel to.
      */
-    /*@Override
-    public void travelToDimension(final int dimension)
-    {
-        //do nothing for now. We may add some funny easter eggs here later (Phrases like: "Nah I won't go there - too hot!").
-    }*/
+    @Override
+    @Nullable
+    public Entity changeDimension(int dimensionIn){
+    	return null;
+    }
 
     @NotNull
     @Override
