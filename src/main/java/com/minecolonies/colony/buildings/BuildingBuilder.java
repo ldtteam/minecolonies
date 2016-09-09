@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.client.gui.WindowHutBuilder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -7,6 +8,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobBuilder;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The builders building.
@@ -16,14 +18,15 @@ public class BuildingBuilder extends AbstractBuildingWorker
     /**
      * The maximum upgrade of the building.
      */
-    private static final int MAX_BUILDING_LEVEL = 2;
+    private static final int    MAX_BUILDING_LEVEL = 2;
     /**
      * The job description.
      */
-    private static final String BUILDER     = "Builder";
+    private static final String BUILDER            = "Builder";
 
     /**
      * Public constructor of the building, creates an object of the building.
+     *
      * @param c the colony.
      * @param l the position.
      */
@@ -34,8 +37,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Getter of the schematic name.
+     *
      * @return the schematic name.
      */
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -44,6 +49,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Getter of the max building level.
+     *
      * @return the integer.
      */
     @Override
@@ -53,9 +59,29 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingBuilder);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
+        }
+    }
+
+    /**
      * Getter of the job description.
+     *
      * @return the description of the builder job.
      */
+    @NotNull
     @Override
     public String getJobName()
     {
@@ -64,9 +90,11 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Create the job for the builder.
+     *
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
+    @NotNull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -80,6 +108,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         /**
          * Public constructor of the view, creates an instance of it.
+         *
          * @param c the colony.
          * @param l the position.
          */
@@ -90,8 +119,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         /**
          * Gets the blockOut Window.
+         *
          * @return the window of the builder building.
          */
+        @NotNull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutBuilder(this);

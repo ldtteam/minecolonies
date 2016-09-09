@@ -4,49 +4,43 @@ import com.blockout.Pane;
 import com.blockout.PaneParams;
 import com.blockout.View;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 public class TextField extends Pane
 {
-    public interface Filter
-    {
-        String filter(String s);
-
-        boolean isAllowedCharacter(char c);
-    }
-
     /**
      * Texture resource location
      */
-    private static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
-
+    private static final ResourceLocation TEXTURE           = new ResourceLocation("textures/gui/widgets.png");
     //  Attributes
-    protected int maxTextLength = 32;
-    protected int textColor = 0xE0E0E0;
-    protected int textColorDisabled = 0x707070;
-    protected boolean shadow = true;
-    protected String tabNextPaneID = null;
-
+    protected            int              maxTextLength     = 32;
+    protected            int              textColor         = 0xE0E0E0;
+    protected            int              textColorDisabled = 0x707070;
+    protected            boolean          shadow            = true;
+    @Nullable
+    protected            String           tabNextPaneID     = null;
     //  Runtime
-    protected String text = "";
+    protected            String           text              = "";
     protected Filter filter;
-    protected int cursorPosition = 0;
-    protected int scrollOffset = 0;
-    protected int selectionEnd = 0;
+    protected int cursorPosition     = 0;
+    protected int scrollOffset       = 0;
+    protected int selectionEnd       = 0;
     protected int cursorBlinkCounter = 0;
-
     public TextField()
     {
         //Required
     }
 
-    public TextField(PaneParams params)
+    public TextField(@NotNull PaneParams params)
     {
         super(params);
         maxTextLength = params.getIntegerAttribute("maxlength", maxTextLength);
@@ -72,10 +66,15 @@ public class TextField extends Pane
         return text;
     }
 
-    public void setText(String s)
+    public void setText(@NotNull String s)
     {
         text = s.length() <= maxTextLength ? s : s.substring(0, maxTextLength);
         setCursorPosition(text.length());
+    }
+
+    public int getInternalWidth()
+    {
+        return getWidth();
     }
 
     public int getMaxTextLength()
@@ -93,14 +92,14 @@ public class TextField extends Pane
         return textColor;
     }
 
-    public int getTextColorDisabled()
-    {
-        return textColorDisabled;
-    }
-
     public void setTextColor(int c)
     {
         textColor = c;
+    }
+
+    public int getTextColorDisabled()
+    {
+        return textColorDisabled;
     }
 
     public void setTextColorDisabled(int c)
@@ -108,6 +107,7 @@ public class TextField extends Pane
         textColorDisabled = c;
     }
 
+    @Nullable
     public String getTabNextPaneID()
     {
         return tabNextPaneID;
@@ -172,178 +172,12 @@ public class TextField extends Pane
         }
     }
 
+    @NotNull
     public String getSelectedText()
     {
         int start = Math.min(cursorPosition, selectionEnd);
         int end = Math.max(cursorPosition, selectionEnd);
         return text.substring(start, end);
-    }
-
-    public int getInternalWidth()
-    {
-        return getWidth();
-    }
-
-    @Override
-    public void putInside(View view)
-    {
-        super.putInside(view);
-
-        //  Recompute scroll offset
-        setSelectionEnd(selectionEnd);
-    }
-
-    @Override
-    protected void drawSelf(int mx, int my)
-    {
-        int color = enabled ? textColor : textColorDisabled;
-        int drawWidth = getInternalWidth();
-        int drawX = x;
-        int drawY = y;
-
-        //  Determine the portion of the string that is visible on screen
-        String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), drawWidth);
-
-        int relativeCursorPosition = cursorPosition - scrollOffset;
-        int relativeSelectionEnd = selectionEnd - scrollOffset;
-        boolean cursorVisible = relativeCursorPosition >= 0 && relativeCursorPosition <= visibleString.length();
-        boolean cursorBeforeEnd = cursorPosition < text.length() || text.length() >= maxTextLength;
-
-        //  Enforce selection to the length limit of the visible string
-        if (relativeSelectionEnd > visibleString.length())
-        {
-            relativeSelectionEnd = visibleString.length();
-        }
-
-        //  Draw string up through cursor
-        int textX = drawX;
-        if (visibleString.length() > 0)
-        {
-            String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
-            mc.renderEngine.bindTexture(TEXTURE);
-            textX = mc.fontRendererObj.drawString(s1, textX, drawY, color, shadow);
-        }
-
-        int cursorX = textX;
-        if (!cursorVisible)
-        {
-            cursorX = relativeCursorPosition > 0 ? (drawX + width) : drawX;
-        }
-        else if (cursorBeforeEnd)
-        {
-            if (shadow)
-            {
-                textX -= 1;
-            }
-            cursorX = textX;
-        }
-
-        //  Draw string after cursor
-        if (visibleString.length() > 0 && cursorVisible && relativeCursorPosition < visibleString.length())
-        {
-            mc.renderEngine.bindTexture(TEXTURE);
-            mc.fontRendererObj.drawString(visibleString.substring(relativeCursorPosition), textX, drawY, color, shadow);
-        }
-
-        //  Should we draw the cursor this frame?
-        if (isFocus() && cursorVisible && (cursorBlinkCounter / 6 % 2 == 0))
-        {
-            if (cursorBeforeEnd)
-            {
-                drawRect(cursorX, drawY - 1, cursorX + 1, drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, -3092272);
-            }
-            else
-            {
-                mc.renderEngine.bindTexture(TEXTURE);
-                mc.fontRendererObj.drawString("_", cursorX, drawY, color, shadow);
-            }
-        }
-
-        //  Draw selection
-        if (relativeSelectionEnd != relativeCursorPosition)
-        {
-            int selectedDrawX = drawX + mc.fontRendererObj.getStringWidth(visibleString.substring(0, relativeSelectionEnd));
-
-            int selectionStartX = Math.min(cursorX, selectedDrawX - 1);
-            int selectionEndX = Math.max(cursorX, selectedDrawX - 1);
-
-            if (selectionStartX > (x + width))
-            {
-                selectionStartX = x + width;
-            }
-
-            if (selectionEndX > (x + width))
-            {
-                selectionEndX = x + width;
-            }
-
-            Tessellator tessellator = Tessellator.getInstance();
-            GL11.glColor4f(0.0F, 0.0F, 255.0F, 255.0F);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glEnable(GL11.GL_COLOR_LOGIC_OP);
-            GL11.glLogicOp(GL11.GL_OR_REVERSE);
-            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-
-            // There are several to choose from, look at DefaultVertexFormats for more info
-            //todo may need to choose a different Format
-            worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-
-            //Since our points do not have any u,v this seems to be the correct code
-            worldrenderer.pos((double) selectionStartX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
-            worldrenderer.pos((double) selectionEndX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
-            worldrenderer.pos((double) selectionEndX, (double) drawY - 1, 0.0D).endVertex();
-            worldrenderer.pos((double) selectionStartX, (double) drawY - 1, 0.0D).endVertex();
-            tessellator.draw();
-            GL11.glDisable(GL11.GL_COLOR_LOGIC_OP);
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-        }
-    }
-
-    @Override
-    public void handleClick(int mx, int my)
-    {
-        if (mx < 0)
-        {
-            return;
-        }
-
-        String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), getInternalWidth());
-        String trimmedString = mc.fontRendererObj.trimStringToWidth(visibleString, mx);
-
-        // Cache and restore scrollOffset when we change focus via click,
-        // because onFocus() sets the cursor (and thus scroll offset) to the end
-        int oldScrollOffset = scrollOffset;
-        setFocus();
-        scrollOffset = oldScrollOffset;
-        setCursorPosition(trimmedString.length() + scrollOffset);
-    }
-
-    @Override
-    public boolean onKeyTyped(char c, int key)
-    {
-        switch (c)
-        {
-            case 1:
-                setCursorPosition(text.length());
-                setSelectionEnd(0);
-                return true;
-
-            case 3:
-                GuiScreen.setClipboardString(getSelectedText());
-                return true;
-
-            case 22:
-                writeText(GuiScreen.getClipboardString());
-                return true;
-
-            case 24:
-                GuiScreen.setClipboardString(getSelectedText());
-                writeText("");
-                return true;
-
-            default:
-                return handleKey(c, key);
-        }
     }
 
     private boolean handleKey(char c, int key)
@@ -451,16 +285,178 @@ public class TextField extends Pane
     }
 
     @Override
-    public void onUpdate()
-    {
-        cursorBlinkCounter++;
-    }
-
-    @Override
     public void onFocus()
     {
         setCursorPosition(text.length());
         cursorBlinkCounter = 0;
+    }
+
+    @Override
+    protected void drawSelf(int mx, int my)
+    {
+        int color = enabled ? textColor : textColorDisabled;
+        int drawWidth = getInternalWidth();
+        int drawX = x;
+        int drawY = y;
+
+        //  Determine the portion of the string that is visible on screen
+        String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), drawWidth);
+
+        int relativeCursorPosition = cursorPosition - scrollOffset;
+        int relativeSelectionEnd = selectionEnd - scrollOffset;
+        boolean cursorVisible = relativeCursorPosition >= 0 && relativeCursorPosition <= visibleString.length();
+        boolean cursorBeforeEnd = cursorPosition < text.length() || text.length() >= maxTextLength;
+
+        //  Enforce selection to the length limit of the visible string
+        if (relativeSelectionEnd > visibleString.length())
+        {
+            relativeSelectionEnd = visibleString.length();
+        }
+
+        //  Draw string up through cursor
+        int textX = drawX;
+        if (visibleString.length() > 0)
+        {
+            @NotNull String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
+            mc.renderEngine.bindTexture(TEXTURE);
+            textX = mc.fontRendererObj.drawString(s1, textX, drawY, color, shadow);
+        }
+
+        int cursorX = textX;
+        if (!cursorVisible)
+        {
+            cursorX = relativeCursorPosition > 0 ? (drawX + width) : drawX;
+        }
+        else if (cursorBeforeEnd)
+        {
+            if (shadow)
+            {
+                textX -= 1;
+            }
+            cursorX = textX;
+        }
+
+        //  Draw string after cursor
+        if (visibleString.length() > 0 && cursorVisible && relativeCursorPosition < visibleString.length())
+        {
+            mc.renderEngine.bindTexture(TEXTURE);
+            mc.fontRendererObj.drawString(visibleString.substring(relativeCursorPosition), textX, drawY, color, shadow);
+        }
+
+        //  Should we draw the cursor this frame?
+        if (isFocus() && cursorVisible && (cursorBlinkCounter / 6 % 2 == 0))
+        {
+            if (cursorBeforeEnd)
+            {
+                drawRect(cursorX, drawY - 1, cursorX + 1, drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, -3092272);
+            }
+            else
+            {
+                mc.renderEngine.bindTexture(TEXTURE);
+                mc.fontRendererObj.drawString("_", cursorX, drawY, color, shadow);
+            }
+        }
+
+        //  Draw selection
+        if (relativeSelectionEnd != relativeCursorPosition)
+        {
+            int selectedDrawX = drawX + mc.fontRendererObj.getStringWidth(visibleString.substring(0, relativeSelectionEnd));
+
+            int selectionStartX = Math.min(cursorX, selectedDrawX - 1);
+            int selectionEndX = Math.max(cursorX, selectedDrawX - 1);
+
+            if (selectionStartX > (x + width))
+            {
+                selectionStartX = x + width;
+            }
+
+            if (selectionEndX > (x + width))
+            {
+                selectionEndX = x + width;
+            }
+
+            Tessellator tessellator = Tessellator.getInstance();
+            GlStateManager.color(0.0F, 0.0F, 255.0F, 255.0F);
+            GlStateManager.disableTexture2D();
+            GlStateManager.enableColorLogic();
+            GlStateManager.colorLogicOp(GL11.GL_OR_REVERSE);
+            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+
+            // There are several to choose from, look at DefaultVertexFormats for more info
+            //todo may need to choose a different Format
+            worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+
+            //Since our points do not have any u,v this seems to be the correct code
+            worldrenderer.pos((double) selectionStartX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            worldrenderer.pos((double) selectionEndX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            worldrenderer.pos((double) selectionEndX, (double) drawY - 1, 0.0D).endVertex();
+            worldrenderer.pos((double) selectionStartX, (double) drawY - 1, 0.0D).endVertex();
+            tessellator.draw();
+            GlStateManager.disableColorLogic();
+            GlStateManager.enableTexture2D();
+        }
+    }
+
+    @Override
+    public void putInside(View view)
+    {
+        super.putInside(view);
+
+        //  Recompute scroll offset
+        setSelectionEnd(selectionEnd);
+    }
+
+    @Override
+    public void handleClick(int mx, int my)
+    {
+        if (mx < 0)
+        {
+            return;
+        }
+
+        String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), getInternalWidth());
+        String trimmedString = mc.fontRendererObj.trimStringToWidth(visibleString, mx);
+
+        // Cache and restore scrollOffset when we change focus via click,
+        // because onFocus() sets the cursor (and thus scroll offset) to the end
+        int oldScrollOffset = scrollOffset;
+        setFocus();
+        scrollOffset = oldScrollOffset;
+        setCursorPosition(trimmedString.length() + scrollOffset);
+    }
+
+    @Override
+    public boolean onKeyTyped(char c, int key)
+    {
+        switch (c)
+        {
+            case 1:
+                setCursorPosition(text.length());
+                setSelectionEnd(0);
+                return true;
+
+            case 3:
+                GuiScreen.setClipboardString(getSelectedText());
+                return true;
+
+            case 22:
+                writeText(GuiScreen.getClipboardString());
+                return true;
+
+            case 24:
+                GuiScreen.setClipboardString(getSelectedText());
+                writeText("");
+                return true;
+
+            default:
+                return handleKey(c, key);
+        }
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        cursorBlinkCounter++;
     }
 
     public void writeText(String str)
@@ -471,7 +467,7 @@ public class TextField extends Pane
         int insertEnd = Math.max(cursorPosition, selectionEnd);
         int availableChars = (maxTextLength - text.length()) + (insertEnd - insertAt);
 
-        String result = "";
+        @NotNull String result = "";
         if (text.length() > 0 && insertAt > 0)
         {
             result = text.substring(0, insertAt);
@@ -529,7 +525,7 @@ public class TextField extends Pane
             boolean backwards = count < 0;
             int start = backwards ? (this.cursorPosition + count) : this.cursorPosition;
             int end = backwards ? this.cursorPosition : (this.cursorPosition + count);
-            String result = "";
+            @NotNull String result = "";
 
             if (start > 0)
             {
@@ -592,5 +588,12 @@ public class TextField extends Pane
     public int getNthWordFromCursor(int count)
     {
         return getNthWordFromPos(count, cursorPosition);
+    }
+
+    public interface Filter
+    {
+        String filter(String s);
+
+        boolean isAllowedCharacter(char c);
     }
 }

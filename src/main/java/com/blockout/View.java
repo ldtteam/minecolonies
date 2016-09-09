@@ -1,7 +1,9 @@
 package com.blockout;
 
 import com.blockout.views.Window;
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +14,9 @@ import java.util.ListIterator;
  */
 public class View extends Pane
 {
+    @NotNull
     protected List<Pane> children = new ArrayList<>();
-    protected int padding = 0;
+    protected int        padding  = 0;
 
     /**
      * Constructs a barebones View
@@ -34,19 +37,10 @@ public class View extends Pane
         padding = params.getIntegerAttribute("padding", padding);
     }
 
+    @NotNull
     public List<Pane> getChildren()
     {
         return children;
-    }
-
-    public int getInteriorWidth()
-    {
-        return width - (padding * 2);
-    }
-
-    public int getInteriorHeight()
-    {
-        return height - (padding * 2);
     }
 
     @Override
@@ -62,6 +56,135 @@ public class View extends Pane
         {
             Loader.createFromPaneParams(node, this);
         }
+    }
+
+    @Override
+    protected void drawSelf(int mx, int my)
+    {
+        //  Translate the drawing origin to our x,y
+        GlStateManager.pushMatrix();
+
+        int paddedX = x + padding;
+        int paddedY = y + padding;
+
+        GlStateManager.translate((float) paddedX, (float) paddedY, 0);
+
+        //  Translate Mouse into the View
+        int drawX = mx - paddedX;
+        int drawY = my - paddedY;
+
+        children.stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
+
+        GlStateManager.popMatrix();
+    }
+
+    @Nullable
+    @Override
+    public Pane findPaneByID(String id)
+    {
+        if (this.id.equals(id))
+        {
+            return this;
+        }
+
+        for (Pane child : children)
+        {
+            Pane found = child.findPaneByID(id);
+            if (found != null)
+            {
+                return found;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    protected void setWindow(Window w)
+    {
+        super.setWindow(w);
+        for (Pane child : children)
+        {
+            child.setWindow(w);
+        }
+    }
+
+    //  Mouse
+    @Override
+    public void click(int mx, int my)
+    {
+        int mxChild = mx - x - padding;
+        int myChild = my - y - padding;
+        Pane clickedPane = findPaneForClick(mxChild, myChild);
+        if (clickedPane != null)
+        {
+            clickedPane.click(mxChild, myChild);
+        }
+        else
+        {
+            super.click(mx, my);
+        }
+    }
+
+    /**
+     * Return a Pane that will handle a click action at the specified mouse coordinates
+     *
+     * @param mx Mouse X, relative to the top-left of this Pane
+     * @param my Mouse Y, relative to the top-left of this Pane
+     * @return a Pane that will handle a click action
+     */
+    @Nullable
+    public Pane findPaneForClick(int mx, int my)
+    {
+        ListIterator<Pane> it = children.listIterator(children.size());
+
+        //  Iterate in reverse, since Panes later in the list draw on top of earlier panes
+        while (it.hasPrevious())
+        {
+            Pane child = it.previous();
+            if (child.canHandleClick(mx, my))
+            {
+                return child;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        children.forEach(Pane::onUpdate);
+    }
+
+    protected boolean childIsVisible(Pane child)
+    {
+        return child.getX() < getInteriorWidth() &&
+                 child.getY() < getInteriorHeight() &&
+                 (child.getX() + child.getWidth()) >= 0 &&
+                 (child.getY() + child.getHeight()) >= 0;
+    }
+
+    public int getInteriorWidth()
+    {
+        return width - (padding * 2);
+    }
+
+    public int getInteriorHeight()
+    {
+        return height - (padding * 2);
+    }
+
+    /**
+     * Add child Pane to this view.
+     *
+     * @param child pane to add.
+     */
+    public void addChild(Pane child)
+    {
+        child.setWindow(getWindow());
+        children.add(child);
+        adjustChild(child);
     }
 
     protected void adjustChild(Pane child)
@@ -107,100 +230,6 @@ public class View extends Pane
         child.setPosition(childX, childY);
     }
 
-    @Override
-    protected void setWindow(Window w)
-    {
-        super.setWindow(w);
-        for (Pane child : children)
-        {
-            child.setWindow(w);
-        }
-    }
-
-    protected boolean childIsVisible(Pane child)
-    {
-        return child.getX() < getInteriorWidth() &&
-                child.getY() < getInteriorHeight() &&
-                (child.getX() + child.getWidth()) >= 0 &&
-                (child.getY() + child.getHeight()) >= 0;
-    }
-
-    @Override
-    protected void drawSelf(int mx, int my)
-    {
-        //  Translate the drawing origin to our x,y
-        GL11.glPushMatrix();
-
-        int paddedX = x + padding;
-        int paddedY = y + padding;
-
-        GL11.glTranslatef((float) paddedX, (float) paddedY, 0);
-
-        //  Translate Mouse into the View
-        int drawX = mx - paddedX;
-        int drawY = my - paddedY;
-
-        children.stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
-
-        GL11.glPopMatrix();
-    }
-
-    @Override
-    public Pane findPaneByID(String id)
-    {
-        if (this.id.equals(id))
-        {
-            return this;
-        }
-
-        for (Pane child : children)
-        {
-            Pane found = child.findPaneByID(id);
-            if (found != null)
-            {
-                return found;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Return a Pane that will handle a click action at the specified mouse coordinates
-     *
-     * @param mx Mouse X, relative to the top-left of this Pane
-     * @param my Mouse Y, relative to the top-left of this Pane
-     * @return a Pane that will handle a click action
-     */
-    public Pane findPaneForClick(int mx, int my)
-    {
-        ListIterator<Pane> it = children.listIterator(children.size());
-
-        //  Iterate in reverse, since Panes later in the list draw on top of earlier panes
-        while (it.hasPrevious())
-        {
-            Pane child = it.previous();
-            if (child.canHandleClick(mx, my))
-            {
-                return child;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Add child Pane to this view.
-     *
-     * @param child pane to add.
-     */
-    public void addChild(Pane child)
-    {
-        child.setWindow(getWindow());
-        children.add(child);
-        adjustChild(child);
-    }
-
     /**
      * Remove pane from view.
      *
@@ -209,28 +238,5 @@ public class View extends Pane
     public void removeChild(Pane child)
     {
         children.remove(child);
-    }
-
-    //  Mouse
-    @Override
-    public void click(int mx, int my)
-    {
-        int mxChild = mx - x - padding;
-        int myChild = my - y - padding;
-        Pane clickedPane = findPaneForClick(mxChild, myChild);
-        if (clickedPane != null)
-        {
-            clickedPane.click(mxChild, myChild);
-        }
-        else
-        {
-            super.click(mx, my);
-        }
-    }
-
-    @Override
-    public void onUpdate()
-    {
-        children.forEach(Pane::onUpdate);
     }
 }

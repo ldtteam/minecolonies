@@ -3,6 +3,8 @@ package com.blockout;
 import com.minecolonies.util.Log;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.MathHelper;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;
@@ -12,12 +14,11 @@ import java.util.regex.Pattern;
 
 public class PaneParams
 {
+    private static final Pattern PERCENTAGE_PATTERN = Pattern.compile("([-+]?\\d+)(%|px)?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern RGBA_PATTERN       =
+      Pattern.compile("rgba?\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*(?:,\\s*([01]\\.\\d+)\\s*)?\\)", Pattern.CASE_INSENSITIVE);
     private Node node;
     private View parentView;
-
-    private static final Pattern PERCENTAGE_PATTERN = Pattern.compile("([-+]?\\d+)(%|px)?", Pattern.CASE_INSENSITIVE);
-    private static final Pattern RGBA_PATTERN =
-            Pattern.compile("rgba?\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*(?:,\\s*([01]\\.\\d+)\\s*)?\\)", Pattern.CASE_INSENSITIVE);
 
     public PaneParams(Node n)
     {
@@ -29,14 +30,14 @@ public class PaneParams
         return node.getNodeName();
     }
 
-    public void setParentView(View parent)
-    {
-        parentView = parent;
-    }
-
     public View getParentView()
     {
         return parentView;
+    }
+
+    public void setParentView(View parent)
+    {
+        parentView = parent;
     }
 
     public int getParentWidth()
@@ -49,6 +50,7 @@ public class PaneParams
         return parentView != null ? parentView.getInteriorHeight() : 0;
     }
 
+    @Nullable
     public List<PaneParams> getChildren()
     {
         List<PaneParams> list = null;
@@ -71,14 +73,51 @@ public class PaneParams
         return list;
     }
 
+    @NotNull
     public String getText()
     {
         return node.getTextContent().trim();
     }
 
+    @Nullable
     public String getLocalizedText()
     {
         return localize(node.getTextContent().trim());
+    }
+
+    @Nullable
+    private static String localize(String str)
+    {
+        if (str == null)
+        {
+            return null;
+        }
+
+        String s = str;
+        int index = s.indexOf("$(");
+        while (index != -1)
+        {
+            int endIndex = s.indexOf(')', index);
+
+            if (endIndex == -1)
+            {
+                break;
+            }
+
+            String key = s.substring(index + 2, endIndex);
+            String replacement = I18n.format(key);
+
+            if (replacement.equals(key))
+            {
+                replacement = "MISSING:" + key;
+            }
+
+            s = s.substring(0, index) + replacement + s.substring(endIndex + 1);
+
+            index = s.indexOf("$(", index + replacement.length());
+        }
+
+        return s;
     }
 
     public String getStringAttribute(String name)
@@ -92,11 +131,18 @@ public class PaneParams
         return (attr != null) ? attr.getNodeValue() : def;
     }
 
+    private Node getAttribute(String name)
+    {
+        return node.getAttributes().getNamedItem(name);
+    }
+
+    @Nullable
     public String getLocalizedStringAttribute(String name)
     {
         return getLocalizedStringAttribute(name, "");
     }
 
+    @Nullable
     public String getLocalizedStringAttribute(String name, String def)
     {
         return localize(getStringAttribute(name, def));
@@ -173,6 +219,21 @@ public class PaneParams
         return def;
     }
 
+    public int getScalableIntegerAttribute(String name, int def, int scale)
+    {
+        String attr = getStringAttribute(name, null);
+        if (attr != null)
+        {
+            Matcher m = PERCENTAGE_PATTERN.matcher(attr);
+            if (m.find())
+            {
+                return parseScalableIntegerRegexMatch(m, def, scale);
+            }
+        }
+
+        return def;
+    }
+
     private static int parseScalableIntegerRegexMatch(Matcher m, int def, int scale)
     {
         try
@@ -197,43 +258,7 @@ public class PaneParams
         return def;
     }
 
-    public int getScalableIntegerAttribute(String name, int def, int scale)
-    {
-        String attr = getStringAttribute(name, null);
-        if (attr != null)
-        {
-            Matcher m = PERCENTAGE_PATTERN.matcher(attr);
-            if (m.find())
-            {
-                return parseScalableIntegerRegexMatch(m, def, scale);
-            }
-        }
-
-        return def;
-    }
-
-    public static class SizePair
-    {
-        private int x;
-        private int y;
-
-        public SizePair(int w, int h)
-        {
-            x = w;
-            y = h;
-        }
-
-        public int getX()
-        {
-            return x;
-        }
-
-        public int getY()
-        {
-            return y;
-        }
-    }
-
+    @Nullable
     public SizePair getSizePairAttribute(String name, SizePair def, SizePair scale)
     {
         String attr = getStringAttribute(name, null);
@@ -286,18 +311,6 @@ public class PaneParams
         }
     }
 
-    private static int getColorByNumberOrName(int def, String attr)
-    {
-        try
-        {
-            return Integer.parseInt(attr);
-        }
-        catch (NumberFormatException ex)
-        {
-            return Color.getByName(attr, def);
-        }
-    }
-
     private static int getRGBA(String attr, Matcher m)
     {
         int r = MathHelper.clamp_int(Integer.parseInt(m.group(1)), 0, 255);
@@ -315,42 +328,37 @@ public class PaneParams
         return color;
     }
 
-    private Node getAttribute(String name)
+    private static int getColorByNumberOrName(int def, String attr)
     {
-        return node.getAttributes().getNamedItem(name);
+        try
+        {
+            return Integer.parseInt(attr);
+        }
+        catch (NumberFormatException ex)
+        {
+            return Color.getByName(attr, def);
+        }
     }
 
-    private static String localize(String str)
+    public static class SizePair
     {
-        if (str == null)
+        private int x;
+        private int y;
+
+        public SizePair(int w, int h)
         {
-            return null;
+            x = w;
+            y = h;
         }
 
-        String s = str;
-        int index = s.indexOf("$(");
-        while (index != -1)
+        public int getX()
         {
-            int endIndex = s.indexOf(')', index);
-
-            if (endIndex == -1)
-            {
-                break;
-            }
-
-            String key = s.substring(index + 2, endIndex);
-            String replacement = I18n.format(key);
-
-            if (replacement.equals(key))
-            {
-                replacement = "MISSING:" + key;
-            }
-
-            s = s.substring(0, index) + replacement + s.substring(endIndex + 1);
-
-            index = s.indexOf("$(", index + replacement.length());
+            return x;
         }
 
-        return s;
+        public int getY()
+        {
+            return y;
+        }
     }
 }

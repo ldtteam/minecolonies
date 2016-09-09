@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -7,6 +8,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobLumberjack;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * The lumberjacks building.
@@ -16,7 +18,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     /**
      * The maximum upgrade of the building.
      */
-    private static final int MAX_BUILDING_LEVEL = 3;
+    private static final int    MAX_BUILDING_LEVEL  = 3;
     /**
      * The job description.
      */
@@ -28,6 +30,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
     /**
      * Public constructor of the building, creates an object of the building.
+     *
      * @param c the colony.
      * @param l the position.
      */
@@ -38,8 +41,10 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
     /**
      * Getter of the schematic name.
+     *
      * @return the schematic name.
      */
+    @NotNull
     @Override
     public String getSchematicName()
     {
@@ -47,7 +52,26 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
+     * @see AbstractBuilding#onUpgradeComplete(int)
+     */
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingLumberjack);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
+        }
+    }
+
+    /**
      * Getter of the max building level.
+     *
      * @return the integer.
      */
     @Override
@@ -58,8 +82,10 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
     /**
      * Getter of the job description.
+     *
      * @return the description of the lumberjacks job.
      */
+    @NotNull
     @Override
     public String getJobName()
     {
@@ -68,9 +94,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
     /**
      * Create the job for the lumberjack.
+     *
      * @param citizen the citizen to take the job.
      * @return the new job.
      */
+    @NotNull
     @Override
     public AbstractJob createJob(CitizenData citizen)
     {
@@ -84,6 +112,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     {
         /**
          * Public constructor of the view, creates an instance of it.
+         *
          * @param c the colony.
          * @param l the position.
          */
@@ -94,8 +123,10 @@ public class BuildingLumberjack extends AbstractBuildingWorker
 
         /**
          * Gets the blockOut Window.
+         *
          * @return the window of the lumberjack building.
          */
+        @NotNull
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, LUMBERJACK_HUT_NAME);

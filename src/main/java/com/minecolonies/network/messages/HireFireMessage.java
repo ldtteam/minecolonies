@@ -5,15 +5,18 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
- * Message class which manages the messages hiring or firing of citizens
+ * Message class which manages the messages hiring or firing of citizens.
  */
 public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessage, IMessage>
 {
@@ -38,35 +41,49 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
     private int citizenID;
 
     /**
-     * Empty public constructor
+     * Empty public constructor.
      */
     public HireFireMessage()
     {
-        /**
-         * Intentionally left empty.
-         */
+        //Required for netty.
     }
 
     /**
      * Creates object for the player to hire or fire a citizen.
-     * @param building view of the building to read data from
-     * @param hire hire or fire the citizens
+     *
+     * @param building  view of the building to read data from
+     * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(AbstractBuilding.View building, boolean hire, int citizenID)
+    public HireFireMessage(@NotNull AbstractBuilding.View building, boolean hire, int citizenID)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
-        this.hire   = hire;
+        this.hire = hire;
         this.citizenID = citizenID;
     }
 
     /**
-     * Transformation to a byteStream.
+     * Transformation from a byteStream to the variables.
+     *
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytes(ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
+    {
+        colonyId = buf.readInt();
+        buildingId = BlockPosUtil.readFromByteBuf(buf);
+        hire = buf.readBoolean();
+        citizenID = buf.readInt();
+    }
+
+    /**
+     * Transformation to a byteStream.
+     *
+     * @param buf the used byteBuffer.
+     */
+    @Override
+    public void toBytes(@NotNull ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -75,31 +92,26 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
     }
 
     /**
-     * Transformation from a byteStream to the variables.
-     * @param buf the used byteBuffer.
-     */
-    @Override
-    public void fromBytes(ByteBuf buf)
-    {
-        colonyId = buf.readInt();
-        buildingId = BlockPosUtil.readFromByteBuf(buf);
-        hire   = buf.readBoolean();
-        citizenID = buf.readInt();
-    }
-
-    /**
      * Called when a message has been received.
+     *
      * @param message the message.
-     * @param ctx the context.
-     * @return possible response, in this case -> null.
+     * @param ctx     the context.
+     * @return possible response, in this case -&gt; null.
      */
+    @Nullable
     @Override
-    public IMessage onMessage(HireFireMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull HireFireMessage message, @NotNull MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
-            if(message.hire)
+            //Verify player has permission to do edit permissions
+            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            {
+                return null;
+            }
+
+            if (message.hire)
             {
                 CitizenData citizen = colony.getCitizen(message.citizenID);
                 ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);

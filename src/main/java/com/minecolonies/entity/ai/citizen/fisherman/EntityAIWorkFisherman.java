@@ -14,12 +14,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
-
 
 /**
  * Fisherman AI class
@@ -137,11 +137,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * The PathResult when the fisherman searches water.
      */
+    @Nullable
     private PathJobFindWater.WaterPathResult pathResult;
 
     /**
      * The Previous PathResult when the fisherman already found water.
      */
+    @Nullable
     private PathJobFindWater.WaterPathResult lastPathResult;
 
     /**
@@ -153,8 +155,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * Connects the citizen with the fishingHook.
      */
+    @Nullable
     private EntityFishHook entityFishHook;
 
+    @NotNull
     private Random random = new Random();
 
     /**
@@ -163,64 +167,22 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @param job a fisherman job to use.
      */
-    public EntityAIWorkFisherman(JobFisherman job)
+    public EntityAIWorkFisherman(@NotNull JobFisherman job)
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, START_WORKING),
-                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-                new AITarget(PREPARING, this::prepareForFishing),
-                new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
-                new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
-                new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
-                new AITarget(FISHERMAN_START_FISHING, this::doFishing)
-                             );
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepareForFishing),
+          new AITarget(FISHERMAN_CHECK_WATER, this::tryDifferentAngles),
+          new AITarget(FISHERMAN_SEARCHING_WATER, this::findWater),
+          new AITarget(FISHERMAN_WALKING_TO_WATER, this::getToWater),
+          new AITarget(FISHERMAN_START_FISHING, this::doFishing)
+        );
         worker.setSkillModifier(
-                INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
-                + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
+          INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
+            + DEXTERITY_MULTIPLIER * worker.getCitizenData().getDexterity());
         worker.setCanPickUpLoot(true);
-    }
-
-    /**
-     * Can be overridden in implementations.
-     * <p>
-     * Here the AI can check if the fishes or rods have to be re rendered and do it.
-     */
-    @Override
-    protected void updateRenderMetaData()
-    {
-        if (hasFish() && hasRodButNotEquipped())
-        {
-            worker.setRenderMetadata(RENDER_META_FISHANDROD);
-        }
-        else if (hasRodButNotEquipped() && !hasFish())
-        {
-            worker.setRenderMetadata(RENDER_META_ROD);
-        }
-        else
-        {
-            worker.setRenderMetadata(hasFish() ? RENDER_META_FISH : "");
-        }
-    }
-
-    /**
-     * Checks if the fisherman has fish in his inventory.
-     *
-     * @return true if so.
-     */
-    private boolean hasFish()
-    {
-        return InventoryUtils.hasitemInInventory(getInventory(), Items.fish);
-    }
-
-    /**
-     * Checks if the fisherman has a rod in his inventory but if he did not equip it.
-     *
-     * @return true if so.
-     */
-    private boolean hasRodButNotEquipped()
-    {
-        return worker.hasItemInInventory(Items.fishing_rod) && worker.getHeldItem()!= null && !(worker.getHeldItem().getItem() instanceof ItemFishingRod);
     }
 
     /**
@@ -281,6 +243,48 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
+     * Can be overridden in implementations.
+     * <p>
+     * Here the AI can check if the fishes or rods have to be re rendered and do it.
+     */
+    @Override
+    protected void updateRenderMetaData()
+    {
+        if (hasFish() && hasRodButNotEquipped())
+        {
+            worker.setRenderMetadata(RENDER_META_FISHANDROD);
+        }
+        else if (hasRodButNotEquipped() && !hasFish())
+        {
+            worker.setRenderMetadata(RENDER_META_ROD);
+        }
+        else
+        {
+            worker.setRenderMetadata(hasFish() ? RENDER_META_FISH : "");
+        }
+    }
+
+    /**
+     * Checks if the fisherman has fish in his inventory.
+     *
+     * @return true if so.
+     */
+    private boolean hasFish()
+    {
+        return InventoryUtils.hasitemInInventory(getInventory(), Items.fish);
+    }
+
+    /**
+     * Checks if the fisherman has a rod in his inventory but if he did not equip it.
+     *
+     * @return true if so.
+     */
+    private boolean hasRodButNotEquipped()
+    {
+        return worker.hasItemInInventory(Items.fishing_rod) && worker.getHeldItem() != null && !(worker.getHeldItem().getItem() instanceof ItemFishingRod);
+    }
+
+    /**
      * Override this method if you want to keep some items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.
      * But you can use this method to hold some stacks back.
@@ -300,7 +304,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * @param stack the stack to decide on
      * @return if the stack matches
      */
-    private static boolean isStackRod(ItemStack stack)
+    private static boolean isStackRod(@Nullable ItemStack stack)
     {
         return stack != null && stack.getItem().equals(Items.fishing_rod);
     }
@@ -338,6 +342,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @return the next AIState the fisherman should switch to, after executing this method
      */
+    @NotNull
     private AIState tryDifferentAngles()
     {
         if (job.getWater() == null)
@@ -377,6 +382,28 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
+     * If the fisherman can't find 20 ponds or already has found 20, the fisherman should randomly choose a fishing spot
+     * from the previously found ones.
+     *
+     * @return the next AIState.
+     */
+    private AIState setRandomWater()
+    {
+        if (job.getPonds().isEmpty())
+        {
+            if (lastPathResult != null && lastPathResult.isEmpty && !lastPathResult.isCancelled())
+            {
+                chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
+            }
+            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
+            return getState();
+        }
+        job.setWater(job.getPonds().get(random.nextInt(job.getPonds().size())));
+
+        return FISHERMAN_CHECK_WATER;
+    }
+
+    /**
      * Uses the pathFinding system to search close water spots which possibilitate fishing.
      * Sets a number of possible water pools and sets the water pool the fisherman should fish now.
      *
@@ -413,28 +440,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * If the fisherman can't find 20 ponds or already has found 20, the fisherman should randomly choose a fishing spot
-     * from the previously found ones.
-     *
-     * @return the next AIState.
-     */
-    private AIState setRandomWater()
-    {
-        if (job.getPonds().isEmpty())
-        {
-            if (lastPathResult != null && lastPathResult.isEmpty && !lastPathResult.isCancelled())
-            {
-                chatSpamFilter.talkWithoutSpam("entity.fisherman.messageWaterTooFar");
-            }
-            pathResult = worker.getNavigator().moveToWater(SEARCH_RANGE, 1.0D, job.getPonds());
-            return getState();
-        }
-        job.setWater(job.getPonds().get(random.nextInt(job.getPonds().size())));
-
-        return FISHERMAN_CHECK_WATER;
-    }
-
-    /**
      * Main fishing methods,
      * let's the fisherman gather xp orbs next to him,
      * check if all requirements to fish are given.
@@ -442,10 +447,11 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @return the next AIState the fisherman should switch to, after executing this method
      */
+    @Nullable
     private AIState doFishing()
     {
         worker.gatherXp();
-        AIState notReadyState = isReadyToFish();
+        @Nullable AIState notReadyState = isReadyToFish();
         if (notReadyState != null)
         {
             return notReadyState;
@@ -501,12 +507,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             worker.faceBlock(job.getWater());
             world.playSoundAtEntity(
-                    worker, "random.bow", VOLUME,
-                    (float) (FREQUENCY_BOUND_VALUE
-                             / (random.nextDouble()
-                                * (FREQUENCY_UPPER_LIMIT_DIVIDER
+              worker, "random.bow", VOLUME,
+              (float) (FREQUENCY_BOUND_VALUE
+                         / (random.nextDouble()
+                              * (FREQUENCY_UPPER_LIMIT_DIVIDER
                                    - FREQUENCY_LOWER_LIMIT_DIVIDER)
-                                + FREQUENCY_LOWER_LIMIT_DIVIDER)));
+                              + FREQUENCY_LOWER_LIMIT_DIVIDER)));
             this.entityFishHook = new EntityFishHook(world, this.getCitizen());
             world.spawnEntityInWorld(this.entityFishHook);
         }
@@ -635,9 +641,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @return citizen object
      */
+    @Nullable
     public EntityCitizen getCitizen()
     {
         return worker;
     }
-
 }

@@ -13,6 +13,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -88,24 +89,24 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Number of ticks to wait for tree.
      */
-    private static final int TIMEOUT_DELAY     = 10;
-    private static final int LEAVES_RADIUS     = 3;
-    private static final int ITEM_PICKUP_RANGE = 3;
-    private static final int STUCK_WAIT_TICKS  = 20;
+    private static final int   TIMEOUT_DELAY           = 10;
+    private static final int   LEAVES_RADIUS           = 3;
+    private static final int   ITEM_PICKUP_RANGE       = 3;
+    private static final int   STUCK_WAIT_TICKS        = 20;
     /**
      * Time in ticks to wait before rechecking
      * if there are trees in the
      * range of the lumberjack
      */
-    private static final int WAIT_BEFORE_SEARCH = 100;
+    private static final int   WAIT_BEFORE_SEARCH      = 100;
     /**
      * Time in ticks before incrementing the search radius.
      */
-    private static final int WAIT_BEFORE_INCREMENT = 20;
+    private static final int   WAIT_BEFORE_INCREMENT   = 20;
     /**
      * The amount of time to wait while walking to items
      */
-    private static final int WAIT_WHILE_WALKING = 5;
+    private static final int   WAIT_WHILE_WALKING      = 5;
     /**
      * Horizontal range in which the lumberjack picks up items
      */
@@ -113,45 +114,47 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Vertical range in which the lumberjack picks up items
      */
-    private static final float RANGE_VERTICAL_PICKUP = 15.0F;
+    private static final float RANGE_VERTICAL_PICKUP   = 15.0F;
     /**
      * How often should strength factor into the lumberjacks skill modifier.
      */
-    private static final int STRENGTH_MULTIPLIER = 2;
+    private static final int   STRENGTH_MULTIPLIER     = 2;
     /**
      * How often should charisma factor into the lumberjacks skill modifier.
      */
-    private static final int CHARISMA_MULTIPLIER = 1;
+    private static final int   CHARISMA_MULTIPLIER     = 1;
     /**
      * Return to chest after half a stack
      */
-    private static final int MAX_BLOCKS_MINED = 32;
+    private static final int   MAX_BLOCKS_MINED        = 32;
     /**
      * The time in ticks the lumberjack has waited already.
      * Directly connected with the MAX_WAITING_TIME.
      */
-    private int timeWaited = 0;
+    private              int   timeWaited              = 0;
     /**
      * Number of ticks the lumberjack is standing still
      */
-    private int stillTicks = 0;
+    private              int   stillTicks              = 0;
     /**
      * Used to store the walk distance
      * to check if the lumberjack is still walking
      */
-    private int previousDistance = 0;
+    private              int   previousDistance        = 0;
     /**
      * Used to store the path index
      * to check if the lumberjack is still walking
      */
-    private int previousIndex = 0;
+    private              int   previousIndex           = 0;
     /**
      * Positions of all items that have to be collected.
      */
-    private List<BlockPos> items;
+    @Nullable
+    private List<BlockPos>                 items;
     /**
      * The active pathfinding job used to walk to trees
      */
+    @Nullable
     private PathJobFindTree.TreePathResult pathResult;
     /**
      * A counter by how much the tree search radius
@@ -164,20 +167,20 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @param job the lumberjackjob
      */
-    public EntityAIWorkLumberjack(JobLumberjack job)
+    public EntityAIWorkLumberjack(@NotNull JobLumberjack job)
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, START_WORKING),
-                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-                new AITarget(PREPARING, this::prepareForWoodcutting),
-                new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
-                new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
-                new AITarget(LUMBERJACK_GATHERING, this::gathering),
-                new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
-                             );
+          new AITarget(IDLE, START_WORKING),
+          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
+          new AITarget(PREPARING, this::prepareForWoodcutting),
+          new AITarget(LUMBERJACK_SEARCHING_TREE, this::findTrees),
+          new AITarget(LUMBERJACK_CHOP_TREE, this::chopWood),
+          new AITarget(LUMBERJACK_GATHERING, this::gathering),
+          new AITarget(LUMBERJACK_NO_TREES_FOUND, this::waitBeforeCheckingAgain)
+        );
         worker.setSkillModifier(STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength()
-                                + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
+                                  + CHARISMA_MULTIPLIER * worker.getCitizenData().getCharisma());
     }
 
     /**
@@ -342,113 +345,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Place a sappling for the current tree.
-     */
-    private void plantSapling()
-    {
-        if (plantSapling(job.tree.getLocation()))
-        {
-            job.tree = null;
-        }
-    }
-
-    /**
-     * Plant a sapling at said location.
-     *
-     * @param location the location to plant the sapling at
-     * @return true if a sapling was planted
-     */
-    private boolean plantSapling(BlockPos location)
-    {
-        if (BlockPosUtil.getBlock(world, location) != Blocks.air)
-        {
-            return false;
-        }
-
-        int saplingSlot = findSaplingSlot();
-
-        if (saplingSlot != -1)
-        {
-            ItemStack stack = getInventory().getStackInSlot(saplingSlot);
-            Block     block = ((ItemBlock) stack.getItem()).getBlock();
-            worker.setHeldItem(saplingSlot);
-
-            placeSaplings(saplingSlot, stack, block);
-
-            world.playSoundEffect((float) location.getX() + HALF_BLOCK_OFFSET,
-                                  (float) location.getY() + HALF_BLOCK_OFFSET,
-                                  (float) location.getZ() + HALF_BLOCK_OFFSET,
-                                  block.stepSound.getBreakSound(),
-                                  block.stepSound.getVolume(),
-                                  block.stepSound.getFrequency());
-            worker.swingItem();
-        }
-
-        if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
-        {
-            timeWaited = 0;
-            setDelay(TIMEOUT_DELAY);
-            return true;
-        }
-        return false;
-    }
-
-    private void placeSaplings(int saplingSlot, ItemStack stack, Block block)
-    {
-        while (!job.tree.getStumpLocations().isEmpty())
-        {
-            BlockPos pos = job.tree.getStumpLocations().get(0);
-
-            if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
-                || Objects.equals(world.getBlockState(pos), block.getStateFromMeta(stack.getMetadata())))
-            {
-
-                getInventory().decrStackSize(saplingSlot, 1);
-                job.tree.removeStump(pos);
-            }
-            else
-            {
-                return;
-            }
-        }
-    }
-
-    private int findSaplingSlot()
-    {
-        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
-        {
-            ItemStack stack = getInventory().getStackInSlot(slot);
-            if (isCorrectSapling(stack))
-            {
-                return slot;
-            }
-        }
-        return -1;
-    }
-
-    private boolean isCorrectSapling(ItemStack stack)
-    {
-        return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
-    }
-
-    /**
-     * Checks if a stack is a type of sapling
-     *
-     * @param stack the stack to check
-     * @return true if sapling
-     */
-    private static boolean isStackSapling(ItemStack stack)
-    {
-        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockSapling;
-    }
-
-    /**
      * Check if distance to block changed and
      * if we are not moving for too long, try to get unstuck
      *
      * @param location the block we want to go to
      */
-    private void checkIfStuckOnLeaves(final BlockPos location)
+    private void checkIfStuckOnLeaves(@NotNull final BlockPos location)
     {
         int distance = (int) location.distanceSq(worker.getPosition());
         if (previousDistance != distance)
@@ -470,13 +372,24 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
+     * Place a sappling for the current tree.
+     */
+    private void plantSapling()
+    {
+        if (plantSapling(job.tree.getLocation()))
+        {
+            job.tree = null;
+        }
+    }
+
+    /**
      * We are stuck, remove some leaves and try to get unstuck
      * <p>
      * if this takes too long, try backing up a bit
      */
     private void tryGettingUnstuckFromLeaves()
     {
-        BlockPos nextLeaves = findNearLeaves();
+        @Nullable BlockPos nextLeaves = findNearLeaves();
         //If the worker gets too stuck he moves around a bit
         if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
         {
@@ -489,7 +402,48 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return;
         }
         stillTicks = 0;
+    }
 
+    /**
+     * Plant a sapling at said location.
+     *
+     * @param location the location to plant the sapling at
+     * @return true if a sapling was planted
+     */
+    private boolean plantSapling(@NotNull BlockPos location)
+    {
+        if (BlockPosUtil.getBlock(world, location) != Blocks.air)
+        {
+            return false;
+        }
+
+        int saplingSlot = findSaplingSlot();
+
+        if (saplingSlot != -1)
+        {
+            ItemStack stack = getInventory().getStackInSlot(saplingSlot);
+            Block block = ((ItemBlock) stack.getItem()).getBlock();
+            worker.setHeldItem(saplingSlot);
+
+            placeSaplings(saplingSlot, stack, block);
+
+            world.playSoundEffect((float) location.getX() + HALF_BLOCK_OFFSET,
+              (float) location.getY() + HALF_BLOCK_OFFSET,
+              (float) location.getZ() + HALF_BLOCK_OFFSET,
+              block.stepSound.getBreakSound(),
+              block.stepSound.getVolume(),
+              block.stepSound.getFrequency());
+            worker.swingItem();
+        }
+
+        if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
+        {
+            timeWaited = 0;
+            setDelay(TIMEOUT_DELAY);
+            return true;
+        }
+        timeWaited++;
+        return false;
     }
 
     /**
@@ -504,14 +458,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         int playerX = worker.getPosition().getX();
         int playerY = worker.getPosition().getY() + 1;
         int playerZ = worker.getPosition().getZ();
-        int radius  = LEAVES_RADIUS;
+        int radius = LEAVES_RADIUS;
         for (int x = playerX - radius; x < playerX + radius; x++)
         {
             for (int y = playerY - radius; y < playerY + radius; y++)
             {
                 for (int z = playerZ - radius; z < playerZ + radius; z++)
                 {
-                    BlockPos pos = new BlockPos(x, y, z);
+                    @NotNull BlockPos pos = new BlockPos(x, y, z);
                     if (world.getBlockState(pos).getBlock().isLeaves(world, pos))
                     {
                         return pos;
@@ -520,6 +474,55 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             }
         }
         return null;
+    }
+
+    private int findSaplingSlot()
+    {
+        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
+        {
+            ItemStack stack = getInventory().getStackInSlot(slot);
+            if (isCorrectSapling(stack))
+            {
+                return slot;
+            }
+        }
+        return -1;
+    }
+
+    private void placeSaplings(int saplingSlot, @NotNull ItemStack stack, @NotNull Block block)
+    {
+        while (!job.tree.getStumpLocations().isEmpty())
+        {
+            BlockPos pos = job.tree.getStumpLocations().get(0);
+
+            if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
+                  || Objects.equals(world.getBlockState(pos), block.getStateFromMeta(stack.getMetadata())))
+            {
+
+                getInventory().decrStackSize(saplingSlot, 1);
+                job.tree.removeStump(pos);
+            }
+            else
+            {
+                return;
+            }
+        }
+    }
+
+    private boolean isCorrectSapling(@NotNull ItemStack stack)
+    {
+        return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
+    }
+
+    /**
+     * Checks if a stack is a type of sapling
+     *
+     * @param stack the stack to check
+     * @return true if sapling
+     */
+    private static boolean isStackSapling(@Nullable ItemStack stack)
+    {
+        return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockSapling;
     }
 
     /**
@@ -553,10 +556,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         //TODO check if sapling or apple (currently picks up all items, which may be okay)
         items = world.getEntitiesWithinAABB(EntityItem.class, worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP))
-                     .stream()
-                     .filter(item -> item != null && !item.isDead)
-                     .map(BlockPosUtil::fromEntity)
-                     .collect(Collectors.toList());
+                  .stream()
+                  .filter(item -> item != null && !item.isDead)
+                  .map(BlockPosUtil::fromEntity)
+                  .collect(Collectors.toList());
     }
 
     /**
@@ -602,7 +605,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private BlockPos getAndRemoveClosestItem()
     {
-        int    index    = 0;
+        int index = 0;
         double distance = Double.MAX_VALUE;
 
         for (int i = 0; i < items.size(); i++)
@@ -616,6 +619,30 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
 
         return items.remove(index);
+    }
+
+    /**
+     * Calculates after how many actions the ai should dump it's inventory.
+     * <p>
+     * Override this to change the value.
+     *
+     * @return the number of actions done before item dump.
+     */
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return MAX_BLOCKS_MINED;
+    }
+
+    /**
+     * Can be overridden in implementations.
+     * <p>
+     * Here the AI can check if the chestBelt has to be re rendered and do it.
+     */
+    @Override
+    protected void updateRenderMetaData()
+    {
+        worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
     }
 
     /**
@@ -639,20 +666,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param stack the stack to check
      * @return true if an axe
      */
-    private static boolean isStackAxe(ItemStack stack)
+    private static boolean isStackAxe(@Nullable ItemStack stack)
     {
         return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
-    }
-
-    /**
-     * Can be overridden in implementations.
-     * <p>
-     * Here the AI can check if the chestBelt has to be re rendered and do it.
-     */
-    @Override
-    protected void updateRenderMetaData()
-    {
-        worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
     }
 
     /**
@@ -678,21 +694,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param stack the stack to check
      * @return true if it is a log type
      */
-    private static boolean isStackLog(ItemStack stack)
+    private static boolean isStackLog(@Nullable ItemStack stack)
     {
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock().isWood(null, new BlockPos(0, 0, 0));
-    }
-
-    /**
-     * Calculates after how many actions the ai should dump it's inventory.
-     * <p>
-     * Override this to change the value.
-     *
-     * @return the number of actions done before item dump.
-     */
-    @Override
-    protected int getActionsDoneUntilDumping()
-    {
-        return MAX_BLOCKS_MINED;
     }
 }

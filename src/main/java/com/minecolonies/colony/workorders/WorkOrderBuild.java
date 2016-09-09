@@ -5,10 +5,10 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.EntityUtils;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents one building order to complete.
@@ -26,11 +26,10 @@ public class WorkOrderBuild extends AbstractWorkOrder
     protected BlockPos buildingLocation;
     protected int      buildingRotation;
     protected String   schematicName;
+    protected boolean  cleared;
     private   int      upgradeLevel;
     private   String   upgradeName;
-    protected boolean  cleared;
     private boolean hasSentMessageForThisWorkOrder = false;
-
 
     /**
      * Unused constructor for reflection.
@@ -46,7 +45,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @param building the building to build.
      * @param level    the level it should have.
      */
-    public WorkOrderBuild(AbstractBuilding building, int level)
+    public WorkOrderBuild(@NotNull AbstractBuilding building, int level)
     {
         super();
         this.buildingLocation = building.getID();
@@ -67,14 +66,17 @@ public class WorkOrderBuild extends AbstractWorkOrder
         return upgradeName;
     }
 
-    /**
-     * Returns the level up level of the building.
-     *
-     * @return Level after upgrade.
-     */
-    public int getUpgradeLevel()
+    @NotNull
+    @Override
+    protected WorkOrderType getType()
     {
-        return upgradeLevel;
+        return WorkOrderType.BUILD;
+    }
+
+    @Override
+    protected String getValue()
+    {
+        return upgradeName;
     }
 
     /**
@@ -83,11 +85,11 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @param compound NBT tag compound.
      */
     @Override
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         BlockPosUtil.writeToNBT(compound, TAG_BUILDING, buildingLocation);
-        if(!(this instanceof WorkOrderBuildDecoration))
+        if (!(this instanceof WorkOrderBuildDecoration))
         {
             compound.setInteger(TAG_UPGRADE_LEVEL, upgradeLevel);
             compound.setString(TAG_UPGRADE_NAME, upgradeName);
@@ -103,11 +105,11 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @param compound NBT Tag compound.
      */
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
-        if(!(this instanceof WorkOrderBuildDecoration))
+        if (!(this instanceof WorkOrderBuildDecoration))
         {
             upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
             upgradeName = compound.getString(TAG_UPGRADE_NAME);
@@ -124,7 +126,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @return True if the building for this work order still exists.
      */
     @Override
-    public boolean isValid(Colony colony)
+    public boolean isValid(@NotNull Colony colony)
     {
         return colony.getBuilding(buildingLocation) != null;
     }
@@ -138,11 +140,12 @@ public class WorkOrderBuild extends AbstractWorkOrder
      * @param colony The colony that owns the Work Order.
      */
     @Override
-    public void attemptToFulfill(Colony colony)
+    public void attemptToFulfill(@NotNull Colony colony)
     {
         boolean sendMessage = true;
+        boolean hasBuilder = false;
 
-        for (CitizenData citizen : colony.getCitizens().values())
+        for (@NotNull CitizenData citizen : colony.getCitizens().values())
         {
             JobBuilder job = citizen.getJob(JobBuilder.class);
 
@@ -151,10 +154,12 @@ public class WorkOrderBuild extends AbstractWorkOrder
                 continue;
             }
 
+            hasBuilder = true;
+
             final int builderLevel = citizen.getWorkBuilding().getBuildingLevel();
 
-            //check if correct level >= 2 etc
-            if (builderLevel >= upgradeLevel || builderLevel == 2)
+            // don't send a message if we have a valid worker that is busy.
+            if (canBuildHut(builderLevel, citizen, colony))
             {
                 sendMessage = false;
             }
@@ -168,9 +173,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
             //  - The Builder's Work AbstractBuilding is built
             //  - OR the WorkOrder is for the Builder's Work AbstractBuilding
             //  - OR the WorkOrder is for the TownHall
-            if (extraChecks(builderLevel) ||
-                citizen.getWorkBuilding().getID().equals(buildingLocation) ||
-                (colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation)))
+            if (canBuildHut(builderLevel, citizen, colony))
             {
                 job.setWorkOrder(this);
                 this.setClaimedBy(citizen);
@@ -178,22 +181,57 @@ public class WorkOrderBuild extends AbstractWorkOrder
             }
         }
 
-        if (sendMessage && !hasSentMessageForThisWorkOrder)
-        {
-            hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersLocalizedMessage(EntityUtils.getPlayersFromUUID(colony.getWorld(), colony.getPermissions().getMessagePlayers()),
-                                                        "entity.builder.messageBuilderNecessary", this.upgradeLevel);
-        }
+        sendBuilderMessage(colony, hasBuilder, sendMessage);
     }
 
     /**
      * Checks if a builder may accept this workOrder.
+     *
      * @param builderLevel the builder level.
      * @return true if he is able to.
      */
-    private boolean extraChecks(int builderLevel)
+    private boolean canBuildHut(int builderLevel, @NotNull CitizenData citizen, @NotNull Colony colony)
     {
-        return builderLevel >= upgradeLevel || builderLevel == 2;
+        return builderLevel >= upgradeLevel || builderLevel == 2
+                 || citizen.getWorkBuilding().getID().equals(buildingLocation)
+                 || isLocationTownhall(colony, buildingLocation);
+    }
+
+    private void sendBuilderMessage(@NotNull Colony colony, boolean hasBuilder, boolean sendMessage)
+    {
+        if (hasSentMessageForThisWorkOrder)
+        {
+            return;
+        }
+
+        if (hasBuilder && sendMessage)
+        {
+            hasSentMessageForThisWorkOrder = true;
+            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageBuilderNecessary", this.upgradeLevel);
+        }
+
+        if (!hasBuilder)
+        {
+            hasSentMessageForThisWorkOrder = true;
+            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageNoBuilder");
+        }
+    }
+
+    private boolean isLocationTownhall(@NotNull Colony colony, BlockPos buildingLocation)
+    {
+        return colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation);
+    }
+
+    /**
+     * Returns the level up level of the building.
+     *
+     * @return Level after upgrade.
+     */
+    public int getUpgradeLevel()
+    {
+        return upgradeLevel;
     }
 
     /**
@@ -227,16 +265,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
     }
 
     /**
-     * Set whether or not the building has been cleared.
-     *
-     * @param cleared true if the building has been cleared.
-     */
-    public void setCleared(boolean cleared)
-    {
-        this.cleared = cleared;
-    }
-
-    /**
      * Gets whether or not the building has been cleared.
      *
      * @return true if the building has been cleared.
@@ -244,5 +272,15 @@ public class WorkOrderBuild extends AbstractWorkOrder
     public boolean isCleared()
     {
         return cleared;
+    }
+
+    /**
+     * Set whether or not the building has been cleared.
+     *
+     * @param cleared true if the building has been cleared.
+     */
+    public void setCleared(boolean cleared)
+    {
+        this.cleared = cleared;
     }
 }

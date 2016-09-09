@@ -3,6 +3,8 @@ package com.minecolonies.util;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.registry.LanguageRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -20,9 +22,14 @@ public class LanguageHandler
      * @param key    unlocalized key
      * @param args   Objects for String.format()
      */
-    public static void sendPlayerLocalizedMessage(EntityPlayer player, String key, Object... args)
+    public static void sendPlayerLocalizedMessage(@NotNull EntityPlayer player, String key, Object... args)
     {
         sendPlayerMessage(player, format(key, args));
+    }
+
+    public static void sendPlayerMessage(@NotNull EntityPlayer player, String message)
+    {
+        player.addChatComponentMessage(new ChatComponentText(message));
     }
 
     /**
@@ -61,11 +68,6 @@ public class LanguageHandler
         return "".equals(value) ? defaultValue : value;
     }
 
-    public static void sendPlayerMessage(EntityPlayer player, String message)
-    {
-        player.addChatComponentMessage(new ChatComponentText(message));
-    }
-
     /**
      * Send a localized and formatted message to multiple players
      *
@@ -78,10 +80,13 @@ public class LanguageHandler
         sendPlayersMessage(players, format(key, args));
     }
 
-    public static void sendPlayersMessage(List<EntityPlayer> players, String message)
+    public static void sendPlayersMessage(@Nullable List<EntityPlayer> players, String message)
     {
-        if (players == null || players.isEmpty()){ return; }
-        for (EntityPlayer player : players)
+        if (players == null || players.isEmpty())
+        {
+            return;
+        }
+        for (@NotNull EntityPlayer player : players)
         {
             sendPlayerMessage(player, message);
         }

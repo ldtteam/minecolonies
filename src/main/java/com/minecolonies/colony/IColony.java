@@ -9,7 +9,7 @@ public interface IColony
     /**
      * Returns the name of the colony
      *
-     * @return  Name of the colony
+     * @return Name of the colony
      */
     String getName();
 
@@ -23,24 +23,24 @@ public interface IColony
     /**
      * Determine if a given chunk coordinate is considered to be within the colony's bounds
      *
-     * @param w         World to check
-     * @param pos		Block Position
-     * @return          True if inside colony, otherwise false
+     * @param w   World to check
+     * @param pos Block Position
+     * @return True if inside colony, otherwise false
      */
     boolean isCoordInColony(World w, BlockPos pos);
 
     /**
      * Returns the squared (x, z) distance to the center
      *
-     * @param pos		Block Position
-     * @return          Squared distance to the center in (x, z) direction
+     * @param pos Block Position
+     * @return Squared distance to the center in (x, z) direction
      */
     float getDistanceSquared(BlockPos pos);
 
     /**
      * Returns whether or not the colony has a town hall
      *
-     * @return  whether or not the colony has a town hall
+     * @return whether or not the colony has a town hall
      */
     boolean hasTownHall();
 }

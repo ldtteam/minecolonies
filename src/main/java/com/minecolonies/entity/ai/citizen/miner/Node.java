@@ -1,9 +1,10 @@
 package com.minecolonies.entity.ai.citizen.miner;
 
 import net.minecraft.nbt.NBTTagCompound;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Miner Node Data Structure
+ * Miner Node Data Structure.
  * <p>
  * When a node is completed we should add the surrounding nodes to level as AVAILABLE
  * also note that we don't want node (0, -1) because there will be a ladder on the back
@@ -22,7 +23,7 @@ public class Node
     private static final String TAG_STATUS_POSITIVE_Z = "positiveZ";
     private static final String TAG_STATUS_NEGATIVE_Z = "negativeZ";
     /**
-     * Location of the node
+     * Location of the node.
      */
     private int        x;
     private int        z;
@@ -59,7 +60,8 @@ public class Node
      * @param compound Compound to read from
      * @return Node created from compound
      */
-    public static Node createFromNBT(NBTTagCompound compound)
+    @NotNull
+    public static Node createFromNBT(@NotNull NBTTagCompound compound)
     {
         int x = compound.getInteger(TAG_X);
         int z = compound.getInteger(TAG_Z);
@@ -73,7 +75,7 @@ public class Node
         NodeStatus directionPosZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_Z));
         NodeStatus directionNegZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_Z));
 
-        Node node = new Node(x, z);
+        @NotNull Node node = new Node(x, z);
         node.setStyle(style);
         node.setStatus(status);
         node.setDirectionPosX(directionPosX);
@@ -165,11 +167,11 @@ public class Node
     }
 
     /**
-     * Writes the node to a NBT-compound
+     * Writes the node to a NBT-compound.
      *
      * @param compound Compound to write to
      */
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         compound.setInteger(TAG_X, x);
         compound.setInteger(TAG_Z, z);
@@ -185,7 +187,7 @@ public class Node
     }
 
     /**
-     * Returns the x-coordinate in the node
+     * Returns the x-coordinate in the node.
      *
      * @return x-coordinate
      */
@@ -195,7 +197,7 @@ public class Node
     }
 
     /**
-     * Returns the z-coordinate in the node
+     * Returns the z-coordinate in the node.
      *
      * @return z-coordinate
      */
@@ -205,7 +207,7 @@ public class Node
     }
 
     /**
-     * Returns the {@link NodeStatus} of the current node
+     * Returns the {@link NodeStatus} of the current node.
      *
      * @return {@link NodeStatus}
      */
@@ -215,7 +217,7 @@ public class Node
     }
 
     /**
-     * Sets the status of the current node
+     * Sets the status of the current node.
      *
      * @param status {@link NodeStatus}
      */
@@ -224,10 +226,11 @@ public class Node
         this.status = status;
     }
 
+    @NotNull
     @Override
     public String toString()
     {
-        final StringBuilder sb = new StringBuilder("Node{");
+        @NotNull final StringBuilder sb = new StringBuilder("Node{");
         sb.append("x=").append(x);
         sb.append(", z=").append(z);
         sb.append(", style=").append(style);
@@ -241,7 +244,7 @@ public class Node
     }
 
     /**
-     * Returns the {@link NodeType} of the current node
+     * Returns the {@link NodeType} of the current node.
      *
      * @return {@link NodeType}
      */
@@ -251,7 +254,7 @@ public class Node
     }
 
     /**
-     * Sets the {@link NodeType} of the current node
+     * Sets the {@link NodeType} of the current node.
      *
      * @param style {@link NodeType}
      */
@@ -261,7 +264,7 @@ public class Node
     }
 
     /**
-     * Sets the status of the node
+     * Sets the status of the node.
      * AVAILABLE means it can be mined
      * IN_PROGRESS means it is currently being mined
      * COMPLETED means it has been mined and all torches/wood structure has been placed
@@ -278,7 +281,7 @@ public class Node
     }
 
     /**
-     * Sets the node style used
+     * Sets the node style used.
      * //TODO document the types
      */
     enum NodeType

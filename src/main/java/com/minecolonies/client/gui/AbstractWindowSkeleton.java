@@ -3,6 +3,7 @@ package com.minecolonies.client.gui;
 import com.blockout.controls.Button;
 import com.blockout.views.Window;
 import com.minecolonies.util.Log;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -12,12 +13,13 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractWindowSkeleton extends Window implements Button.Handler
 {
+    @NotNull
     private final HashMap<String, Consumer<Button>> buttons;
 
     /**
      * Constructor for the skeleton class of the windows.
      *
-     * @param resource      Resource location string.
+     * @param resource Resource location string.
      */
     public AbstractWindowSkeleton(final String resource)
     {
@@ -29,8 +31,8 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
     /**
      * Register a button on the window.
      *
-     * @param id        Button ID.
-     * @param action    Consumer with the action to be performed.
+     * @param id     Button ID.
+     * @param action Consumer with the action to be performed.
      */
     public final void registerButton(String id, Consumer<Button> action)
     {
@@ -46,7 +48,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
      * @param button the button that was clicked.
      */
     @Override
-    public void onButtonClicked(Button button)
+    public void onButtonClicked(@NotNull Button button)
     {
         if (buttons.containsKey(button.getID()))
         {
@@ -61,7 +63,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
     /**
      * Button clicked without an action. Method does nothing.
      *
-     * @param ignored   Parameter is ignored. Since some actions require a button, we must accept a button parameter.
+     * @param ignored Parameter is ignored. Since some actions require a button, we must accept a button parameter.
      */
     public final void doNothing(Button ignored)
     {

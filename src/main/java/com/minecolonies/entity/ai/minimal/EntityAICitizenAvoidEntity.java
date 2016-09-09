@@ -4,6 +4,7 @@ import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     private EntityCitizen theEntity;
     private double        farSpeed;
     private double        nearSpeed;
+    @Nullable
     private Entity        closestLivingEntity;
     private float         distanceFromEntity;
     private Class         targetEntityClass;
@@ -25,11 +27,11 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * Constructor.
      *
-     * @param entity current entity.
-     * @param targetEntityClass entity class we want to avoid.
+     * @param entity             current entity.
+     * @param targetEntityClass  entity class we want to avoid.
      * @param distanceFromEntity how far we want to stay away.
-     * @param farSpeed how fast we should move when we are far away.
-     * @param nearSpeed how fast we should move when we are close.
+     * @param farSpeed           how fast we should move when we are far away.
+     * @param nearSpeed          how fast we should move when we are close.
      */
     public EntityAICitizenAvoidEntity(EntityCitizen entity, Class targetEntityClass, float distanceFromEntity, double farSpeed, double nearSpeed)
     {
@@ -65,15 +67,15 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         else
         {
             Optional<Entity> entityOptional = theEntity.worldObj.getEntitiesInAABBexcluding(
-                    theEntity,
-                    theEntity.getEntityBoundingBox().expand(
-                            (double) distanceFromEntity,
-                            3.0D,
-                            (double) distanceFromEntity),
-                    target -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target))
-                    .stream()
-                    .filter(targetEntityClass::isInstance)
-                    .findFirst();
+              theEntity,
+              theEntity.getEntityBoundingBox().expand(
+                (double) distanceFromEntity,
+                3.0D,
+                (double) distanceFromEntity),
+              target -> target.isEntityAlive() && EntityAICitizenAvoidEntity.this.theEntity.getEntitySenses().canSee(target))
+                                                .stream()
+                                                .filter(targetEntityClass::isInstance)
+                                                .findFirst();
 
             return entityOptional.isPresent() ? entityOptional.get() : null;
         }
@@ -120,7 +122,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Override
     public void updateTask()
     {
-        Entity newClosest = getClosestToAvoid();
+        @Nullable Entity newClosest = getClosestToAvoid();
         if (newClosest != null && newClosest != closestLivingEntity)
         {
             closestLivingEntity = newClosest;

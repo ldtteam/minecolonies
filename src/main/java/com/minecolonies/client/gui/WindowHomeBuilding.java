@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.lib.Constants;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Window for the home building
@@ -25,10 +26,10 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
      *
      * @return Name of a building
      */
+    @NotNull
     @Override
     public String getBuildingName()
     {
         return "com.minecolonies.gui.workerHuts.homeHut";
     }
-
 }

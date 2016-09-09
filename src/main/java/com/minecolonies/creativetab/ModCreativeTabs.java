@@ -11,17 +11,17 @@ public class ModCreativeTabs
     public static final CreativeTabs MINECOLONIES = new CreativeTabs(Constants.MOD_ID)
     {
         @Override
-        public boolean hasSearchBar()
-        {
-            return true;
-        }
-
-        @Override
         public Item getTabIconItem()
         {
             this.setBackgroundImageName("minecolonies_background.jpg");
             this.setNoScrollbar();
             return Item.getItemFromBlock(ModBlocks.blockHutTownHall);
+        }
+
+        @Override
+        public boolean hasSearchBar()
+        {
+            return true;
         }
     };
 
@@ -29,5 +29,4 @@ public class ModCreativeTabs
     {
 
     }
-
 }

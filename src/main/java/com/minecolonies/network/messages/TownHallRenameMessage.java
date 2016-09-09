@@ -9,42 +9,45 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHallRenameMessage, IMessage>
 {
     private int    colonyId;
     private String name;
 
-    public TownHallRenameMessage(){}
+    public TownHallRenameMessage() {}
 
     /**
      * Object creation for the town hall rename message
      *
-     * @param colony    Colony the rename is going to occur in
-     * @param name      New name of the town hall
+     * @param colony Colony the rename is going to occur in
+     * @param name   New name of the town hall
      */
-    public TownHallRenameMessage(ColonyView colony, String name)
+    public TownHallRenameMessage(@NotNull ColonyView colony, String name)
     {
         this.colonyId = colony.getID();
         this.name = name;
     }
 
     @Override
-    public void toBytes(ByteBuf buf)
-    {
-        buf.writeInt(colonyId);
-        ByteBufUtils.writeUTF8String(buf, name);
-    }
-
-    @Override
-    public void fromBytes(ByteBuf buf)
+    public void fromBytes(@NotNull ByteBuf buf)
     {
         colonyId = buf.readInt();
         name = ByteBufUtils.readUTF8String(buf);
     }
 
     @Override
-    public IMessage onMessage(TownHallRenameMessage message, MessageContext ctx)
+    public void toBytes(@NotNull ByteBuf buf)
+    {
+        buf.writeInt(colonyId);
+        ByteBufUtils.writeUTF8String(buf, name);
+    }
+
+    @Nullable
+    @Override
+    public IMessage onMessage(@NotNull TownHallRenameMessage message, MessageContext ctx)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
 

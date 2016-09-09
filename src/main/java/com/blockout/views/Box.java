@@ -3,6 +3,7 @@ package com.blockout.views;
 import com.blockout.PaneParams;
 import com.blockout.Render;
 import com.blockout.View;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Simple box element.
@@ -10,7 +11,7 @@ import com.blockout.View;
 public class Box extends View
 {
     private float lineWidth = 1.0F;
-    private int color = 0xff000000;
+    private int   color     = 0xff000000;
 
     /**
      * Required default constructor.
@@ -25,7 +26,7 @@ public class Box extends View
      *
      * @param params xml parameters.
      */
-    public Box(PaneParams params)
+    public Box(@NotNull PaneParams params)
     {
         super(params);
         lineWidth = params.getFloatAttribute("linewidth", lineWidth);

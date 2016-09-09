@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Determines how the fish hook is rendered.
@@ -34,42 +35,21 @@ public class RenderFishHook extends Render<EntityFishHook>
     }
 
     /**
-     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
-     *
-     * @param entity the entity to get the texture from
-     * @return a resource location for the texture
-     */
-    @Override
-    protected ResourceLocation getEntityTexture(EntityFishHook entity)
-    {
-        return getTexture();
-    }
-
-    /**
-     * Returns the location of an entity's texture.
-     * @return the address of the resource
-     */
-    private static ResourceLocation getTexture()
-    {
-        return texture;
-    }
-
-    /**
      * Render a fishing hook entity in the world
      * This class uses some GL11 stuff
      * and seems hard to document...
      *
-     * @param entity the hook to render
-     * @param x           the x position
-     * @param y           the y position
-     * @param z           the z position
-     * @param entityYaw   the angle thrown
+     * @param entity    the hook to render
+     * @param x         the x position
+     * @param y         the y position
+     * @param z         the z position
+     * @param entityYaw the angle thrown
      */
     @Override
-    public void doRender(EntityFishHook entity, double x, double y, double z, float entityYaw, float partialTicks)
+    public void doRender(@NotNull EntityFishHook entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float)x, (float)y, (float)z);
+        GlStateManager.translate((float) x, (float) y, (float) z);
         GlStateManager.enableRescaleNormal();
         GlStateManager.scale(0.5F, 0.5F, 0.5F);
         this.bindEntityTexture(entity);
@@ -91,13 +71,13 @@ public class RenderFishHook extends Render<EntityFishHook>
 
         //If the citizen is null (Which he probably is) get the nearest citizen to the fishHook position.
         //Check if he is a fisherman -> Through his texture
-        if(citizen==null)
+        if (citizen == null)
         {
-            for (Object citizenX : entity.worldObj.getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10,10,10)))
+            for (@NotNull Object citizenX : entity.worldObj.getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
             {
-                if(((EntityCitizen) citizenX).getModelID().textureBase.contains("Fisherman"))
+                if (((EntityCitizen) citizenX).getModelID().textureBase.contains("Fisherman"))
                 {
-                    citizen = (EntityCitizen)citizenX;
+                    citizen = (EntityCitizen) citizenX;
                     break;
                 }
             }
@@ -105,29 +85,29 @@ public class RenderFishHook extends Render<EntityFishHook>
 
         if (citizen != null)
         {
-            final double orientation      = citizen.getSwingProgress(partialTicks);
+            final double orientation = citizen.getSwingProgress(partialTicks);
             final double finalOrientation = Math.sin(Math.sqrt(orientation) * Math.PI);
-            final Vec3   vec3             = new Vec3(-0.36D, 0.03D, 0.35D);
+            @NotNull final Vec3 vec3 = new Vec3(-0.36D, 0.03D, 0.35D);
 
-            vec3.rotatePitch((float) (-((double)citizen.prevRotationPitch + ((double)citizen.rotationPitch - (double)citizen.prevRotationPitch) * partialTicks)
-                    * Math.PI / Literals.HALF_CIRCKLE));
-            vec3.rotateYaw((float) (-((double)citizen.prevRotationYaw + ((double)citizen.rotationYaw - (double)citizen.prevRotationYaw)
-                    * partialTicks) * Math.PI / Literals.HALF_CIRCKLE));
+            vec3.rotatePitch((float) (-((double) citizen.prevRotationPitch + ((double) citizen.rotationPitch - (double) citizen.prevRotationPitch) * partialTicks)
+                                        * Math.PI / Literals.HALF_CIRCKLE));
+            vec3.rotateYaw((float) (-((double) citizen.prevRotationYaw + ((double) citizen.rotationYaw - (double) citizen.prevRotationYaw)
+                                                                           * partialTicks) * Math.PI / Literals.HALF_CIRCKLE));
             vec3.rotateYaw((float) (finalOrientation * 0.5D));
             vec3.rotatePitch((float) (-finalOrientation * 0.7D));
 
             double thirdPersonOffset = (citizen.prevRenderYawOffset + ((double) citizen.renderYawOffset - citizen.prevRenderYawOffset) * partialTicks)
-                    * Math.PI / Literals.HALF_CIRCKLE;
-            double correctedPosX = citizen.prevPosX + (citizen.posX - citizen.prevPosX) * (double)partialTicks - MathHelper.cos((float)thirdPersonOffset) * 0.35D
-                    - MathHelper.sin((float)thirdPersonOffset) * 0.8D;
-            double correctedPosY = citizen.prevPosY + citizen.getEyeHeight() + (citizen.posY - citizen.prevPosY) * (double)partialTicks - 0.45D;
-            double correctedPosZ = citizen.prevPosZ + (citizen.posZ - citizen.prevPosZ) * (double)partialTicks - MathHelper.sin((float)thirdPersonOffset) * 0.35D
-                    + MathHelper.cos((float)thirdPersonOffset) * 0.8D;
-            double eyeHeight = citizen.isSneaking()?-0.1875D:0.0D;
+                                         * Math.PI / Literals.HALF_CIRCKLE;
+            double correctedPosX = citizen.prevPosX + (citizen.posX - citizen.prevPosX) * (double) partialTicks - MathHelper.cos((float) thirdPersonOffset) * 0.35D
+                                     - MathHelper.sin((float) thirdPersonOffset) * 0.8D;
+            double correctedPosY = citizen.prevPosY + citizen.getEyeHeight() + (citizen.posY - citizen.prevPosY) * (double) partialTicks - 0.45D;
+            double correctedPosZ = citizen.prevPosZ + (citizen.posZ - citizen.prevPosZ) * (double) partialTicks - MathHelper.sin((float) thirdPersonOffset) * 0.35D
+                                     + MathHelper.cos((float) thirdPersonOffset) * 0.8D;
+            double eyeHeight = citizen.isSneaking() ? -0.1875D : 0.0D;
 
             final double distX = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
-            double       distY = entity.posY  + 0.25;
-            double       distZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
+            double distY = entity.posY + 0.25;
+            double distZ = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
 
             double correctionX = correctedPosX - distX;
             double correctionY = correctedPosY - distY + eyeHeight;
@@ -137,9 +117,9 @@ public class RenderFishHook extends Render<EntityFishHook>
             GlStateManager.disableLighting();
             worldrenderer.begin(3, DefaultVertexFormats.POSITION_COLOR);
 
-            for(int l = 0; l <= 16; ++l)
+            for (int l = 0; l <= 16; ++l)
             {
-                double var = (double)l / 16.0;
+                double var = (double) l / 16.0;
                 worldrenderer.pos(x + correctionX * var, y + correctionY * (var * var + var) * 0.5D + 0.25D, z + correctionZ * var).color(0, 0, 0, 255).endVertex();
             }
 
@@ -148,5 +128,29 @@ public class RenderFishHook extends Render<EntityFishHook>
             GlStateManager.enableTexture2D();
             super.doRender(entity, x, y, z, entityYaw, partialTicks);
         }
+    }
+
+    /**
+     * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     *
+     * @param entity the entity to get the texture from
+     * @return a resource location for the texture
+     */
+    @NotNull
+    @Override
+    protected ResourceLocation getEntityTexture(EntityFishHook entity)
+    {
+        return getTexture();
+    }
+
+    /**
+     * Returns the location of an entity's texture.
+     *
+     * @return the address of the resource
+     */
+    @NotNull
+    private static ResourceLocation getTexture()
+    {
+        return texture;
     }
 }

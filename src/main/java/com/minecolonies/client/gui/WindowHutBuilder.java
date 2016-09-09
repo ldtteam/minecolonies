@@ -2,6 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.lib.Constants;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Window for the builder hut
@@ -16,7 +17,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     /**
      * Constructor for window builder hut
      *
-     * @param building      {@link com.minecolonies.colony.buildings.BuildingBuilder.View}
+     * @param building {@link com.minecolonies.colony.buildings.BuildingBuilder.View}
      */
     public WindowHutBuilder(BuildingBuilder.View building)
     {
@@ -28,6 +29,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      *
      * @return Name of a building
      */
+    @NotNull
     @Override
     public String getBuildingName()
     {

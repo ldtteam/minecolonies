@@ -6,11 +6,14 @@ import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
+import com.minecolonies.inventory.GuiHandler;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -19,24 +22,11 @@ import java.util.Map;
 
 public class CommonProxy implements IProxy
 {
-    private int nextEntityId = 0;
-
     /**
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
-
-    @Override
-    public boolean isClient()
-    {
-        return false;
-    }
-
-    @Override
-    public void registerTileEntities()
-    {
-        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, Constants.MOD_ID + ".ColonyBuilding");
-    }
+    private int nextEntityId = 0;
 
     /**
      * Adds an entity's custom data to the map for temporary storage
@@ -52,12 +42,33 @@ public class CommonProxy implements IProxy
     /**
      * Removes the compound from the map and returns the NBT tag stored for name or null if none exists
      *
-     * @param name  player UUID + Properties name, HashMap key
-     * @return      NBTTagCompound PlayerProperties NBT compound
+     * @param name player UUID + Properties name, HashMap key
+     * @return NBTTagCompound PlayerProperties NBT compound
      */
     public static NBTTagCompound getEntityData(String name)
     {
         return playerPropertiesData.remove(name);
+    }
+
+    @Override
+    public boolean isClient()
+    {
+        return false;
+    }
+
+    @Override
+    public void registerTileEntities()
+    {
+        GameRegistry.registerTileEntity(TileEntityColonyBuilding.class, Constants.MOD_ID + ".ColonyBuilding");
+        GameRegistry.registerTileEntity(ScarecrowTileEntity.class, Constants.MOD_ID + ".Scarecrow");
+        NetworkRegistry.INSTANCE.registerGuiHandler(MineColonies.instance, new GuiHandler());
+    }
+
+    @Override
+    public void registerEvents()
+    {
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
+        MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
     }
 
     /*
@@ -78,23 +89,19 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void registerEvents()
-    {
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
-        MinecraftForge.EVENT_BUS.register(new FMLEventHandler());
-    }
+    public void registerEntityRendering() {}
 
     @Override
-    public void registerEntityRendering(){}
-
-    @Override
-    public void registerTileEntityRendering(){}
+    public void registerTileEntityRendering() {}
 
     @Override
     public void showCitizenWindow(CitizenDataView citizen) {}
 
     @Override
     public void openBuildToolWindow(BlockPos pos) {}
+
+    @Override
+    public void registerRenderer() { }
 
     /**
      * Used for entity IDs, starts at 0 & increments for each call
@@ -103,7 +110,4 @@ public class CommonProxy implements IProxy
     {
         return nextEntityId++;
     }
-
-	@Override
-	public void registerRenderer() { }
 }

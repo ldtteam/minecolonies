@@ -1,5 +1,7 @@
 package com.minecolonies.blocks;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Hut for the builder.
  * No different from {@link AbstractBlockHut}
@@ -12,6 +14,7 @@ public class BlockHutBuilder extends AbstractBlockHut
         super();
     }
 
+    @NotNull
     @Override
     public String getName()
     {

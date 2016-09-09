@@ -2,27 +2,33 @@ package com.schematica.core.util;
 
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 
 public class BlockPosHelper
 {
+    @Nullable
     public static Iterable<BlockPos> getAllInBox(final int fromX, final int fromY, final int fromZ, final int toX, final int toY, final int toZ)
     {
-        final BlockPos posMin = new BlockPos(Math.min(fromX, toX), Math.min(fromY, toY), Math.min(fromZ, toZ));
-        final BlockPos posMax = new BlockPos(Math.max(fromX, toX), Math.max(fromY, toY), Math.max(fromZ, toZ));
+        @NotNull final BlockPos posMin = new BlockPos(Math.min(fromX, toX), Math.min(fromY, toY), Math.min(fromZ, toZ));
+        @NotNull final BlockPos posMax = new BlockPos(Math.max(fromX, toX), Math.max(fromY, toY), Math.max(fromZ, toZ));
         return new Iterable<BlockPos>()
         {
+            @Nullable
             @Override
             public Iterator<BlockPos> iterator()
             {
                 return new AbstractIterator<BlockPos>()
                 {
+                    @Nullable
                     private BlockPos pos = null;
                     private int x;
                     private int y;
                     private int z;
 
+                    @Nullable
                     @Override
                     protected BlockPos computeNext()
                     {

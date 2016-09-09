@@ -1,12 +1,12 @@
-.idea/*
-.gradle/*
-classes/*
-build/*
-eclipse/*
-logs/*
-mods/*
-out/*
-run/*
+.idea/
+.gradle/
+classes/
+build/
+eclipse/
+logs/
+mods/
+out/
+run/
 *.iml
 *.ipr
 *.iws
@@ -15,11 +15,26 @@ CREDITS*
 LICENSE-fml*
 *changelog.txt
 README.txt
-Thumbs.db
 /bin/
-*.classpath
-*.project
-.settings/org.eclipse.jdt.core.prefs
-minecolonies_Client.launch
-minecolonies_Server.launch
 *.hprof
+/.gradle/
+/build/
+
+# Exclude all Mac DS_Store files
+/**/.DS_Store
+
+# Exclude all Windows stuff
+/**/Thumbs.db
+
+# Eclipse stuff
+/.settings/
+/.project
+/.classpath
+/MineColonies_Client.launch
+/MineColonies_Server.launch
+
+# Old launcher (different case)
+/minecolonies_Client.launch
+/minecolonies_Server.launch
+
+tools/.api_key

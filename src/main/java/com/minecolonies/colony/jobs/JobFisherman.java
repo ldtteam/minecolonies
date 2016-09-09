@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +38,8 @@ public class JobFisherman extends AbstractJob
      * After the fisherman has visited an fixed amount of ponds the fisherman will choose a random pond
      * from this list as the next fishing spot.
      */
+    @NotNull
     private ArrayList<BlockPos> ponds = new ArrayList<>();
-
 
     /**
      * Initializes the job class
@@ -51,10 +52,34 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
+     * Restore the Job from an NBTTagCompound
+     *
+     * @param compound NBTTagCompound containing saved Job data
+     */
+    @Override
+    public void readFromNBT(@NotNull NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+
+        if (compound.hasKey(TAG_WATER))
+        {
+            water = BlockPosUtil.readFromNBT(compound, TAG_WATER);
+        }
+
+        ponds = new ArrayList<>();
+        NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < listOfPonds.tagCount(); i++)
+        {
+            ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
+        }
+    }
+
+    /**
      * Return a Localization textContent for the Job
      *
      * @return localization textContent String
      */
+    @NotNull
     @Override
     public String getName()
     {
@@ -66,6 +91,7 @@ public class JobFisherman extends AbstractJob
      *
      * @return Model of the citizen
      */
+    @NotNull
     @Override
     public RenderBipedCitizen.Model getModel()
     {
@@ -78,18 +104,18 @@ public class JobFisherman extends AbstractJob
      * @param compound NBTTagCompound to save the Job to
      */
     @Override
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
-        NBTTagCompound waterTag = new NBTTagCompound();
-        if(water != null)
+        @NotNull NBTTagCompound waterTag = new NBTTagCompound();
+        if (water != null)
         {
             BlockPosUtil.writeToNBT(waterTag, TAG_WATER, water);
         }
 
-        NBTTagList lakes = new NBTTagList();
-        for(BlockPos pond : ponds)
+        @NotNull NBTTagList lakes = new NBTTagList();
+        for (@NotNull BlockPos pond : ponds)
         {
             BlockPosUtil.writeToNBTTagList(lakes, pond);
         }
@@ -97,33 +123,11 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Restore the Job from an NBTTagCompound
-     *
-     * @param compound NBTTagCompound containing saved Job data
-     */
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-
-        if(compound.hasKey(TAG_WATER))
-        {
-            water = BlockPosUtil.readFromNBT(compound, TAG_WATER);
-        }
-
-        ponds = new ArrayList<>();
-        NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
-        for(int i = 0; i < listOfPonds.tagCount(); i++)
-        {
-            ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
-        }
-    }
-
-    /**
      * Generate your AI class to register.
      *
      * @return your personal AI instance.
      */
+    @NotNull
     @Override
     public AbstractAISkeleton generateAI()
     {
@@ -131,7 +135,9 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * getter for current water
+     * Getter for current water.
+     *
+     * @return Location of the current water block.
      */
     public BlockPos getWater()
     {
@@ -139,7 +145,9 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Setter for current water
+     * Setter for current water.
+     *
+     * @param water New location for the current water block.
      */
     public void setWater(BlockPos water)
     {
@@ -147,10 +155,11 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Returns a safe copy of all current ponds
+     * Returns a safe copy of all current ponds.
      *
      * @return a list of coordinates
      */
+    @NotNull
     public List<BlockPos> getPonds()
     {
         return new ArrayList<>(ponds);
@@ -175,6 +184,5 @@ public class JobFisherman extends AbstractJob
     {
         this.ponds.remove(pond);
     }
-
 }
 

@@ -6,7 +6,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-
 /**
  * A simple target the AI tries to accomplish.
  * It has a state matcher,
@@ -18,8 +17,11 @@ import java.util.function.Supplier;
 public class AITarget
 {
 
+    @Nullable
     private final AIState           state;
+    @NotNull
     private final BooleanSupplier   predicate;
+    @NotNull
     private final Supplier<AIState> action;
 
     /**
@@ -96,6 +98,7 @@ public class AITarget
      *
      * @return the state
      */
+    @Nullable
     public AIState getState()
     {
         return state;

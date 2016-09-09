@@ -1,10 +1,10 @@
 approve_by_comment: true
-approve_regex: '^(Approved|:shipit:|:\+1:|LGTM)'
-author_approval: required
+approve_regex: '(Approved|:shipit:|:\+1:|LGTM)'
+author_approval: ignored
 reject_regex: ^Rejected
 reset_on_push: true
 reviewers:
   name: maintainers
-  required: 3
+  required: 2
   teams:
     - maintainers

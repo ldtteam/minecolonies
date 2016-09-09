@@ -7,6 +7,8 @@ import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * WorldHandler for {@link SchematicWorld}'s.
@@ -19,12 +21,20 @@ public class WorldHandler
      * @param event Forge event.
      */
     @SubscribeEvent
-    public void onLoad(final WorldEvent.Load event)
+    public void onLoad(@NotNull final WorldEvent.Load event)
     {
         if (event.world.isRemote && !(event.world instanceof SchematicWorld))
         {
             RenderSchematic.INSTANCE.setWorldAndLoadRenderers(Settings.instance.getSchematicWorld());
             addWorldAccess(event.world, RenderSchematic.INSTANCE);
+        }
+    }
+
+    private static void addWorldAccess(@Nullable final World world, @Nullable final IWorldAccess schematic)
+    {
+        if (world != null && schematic != null)
+        {
+            world.addWorldAccess(schematic);
         }
     }
 
@@ -34,7 +44,7 @@ public class WorldHandler
      * @param event Forge event.
      */
     @SubscribeEvent
-    public void onUnload(final WorldEvent.Unload event)
+    public void onUnload(@NotNull final WorldEvent.Unload event)
     {
         if (event.world.isRemote)
         {
@@ -42,15 +52,7 @@ public class WorldHandler
         }
     }
 
-    private static void addWorldAccess(final World world, final IWorldAccess schematic)
-    {
-        if (world != null && schematic != null)
-        {
-            world.addWorldAccess(schematic);
-        }
-    }
-
-    private static void removeWorldAccess(final World world, final IWorldAccess schematic)
+    private static void removeWorldAccess(@Nullable final World world, @Nullable final IWorldAccess schematic)
     {
         if (world != null && schematic != null)
         {

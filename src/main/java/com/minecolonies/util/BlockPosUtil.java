@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -34,11 +35,11 @@ public final class BlockPosUtil
      *
      * @param compound Compound to write to
      * @param name     Name of the tag
-     * @param pos   Coordinates to write to NBT
+     * @param pos      Coordinates to write to NBT
      */
-    public static void writeToNBT(NBTTagCompound compound, String name, BlockPos pos)
+    public static void writeToNBT(@NotNull NBTTagCompound compound, String name, @NotNull BlockPos pos)
     {
-        NBTTagCompound coordsCompound = new NBTTagCompound();
+        @NotNull NBTTagCompound coordsCompound = new NBTTagCompound();
         coordsCompound.setInteger("x", pos.getX());
         coordsCompound.setInteger("y", pos.getY());
         coordsCompound.setInteger("z", pos.getZ());
@@ -52,12 +53,13 @@ public final class BlockPosUtil
      * @param name     Tag name to read data from
      * @return Chunk coordinates read from the compound
      */
-    public static BlockPos readFromNBT(NBTTagCompound compound, String name)
+    @NotNull
+    public static BlockPos readFromNBT(@NotNull NBTTagCompound compound, String name)
     {
         NBTTagCompound coordsCompound = compound.getCompoundTag(name);
-        int            x              = coordsCompound.getInteger("x");
-        int            y              = coordsCompound.getInteger("y");
-        int            z              = coordsCompound.getInteger("z");
+        int x = coordsCompound.getInteger("x");
+        int y = coordsCompound.getInteger("y");
+        int z = coordsCompound.getInteger("z");
         return new BlockPos(x, y, z);
     }
 
@@ -65,11 +67,11 @@ public final class BlockPosUtil
      * Write a compound with chunk coordinate to a tag list.
      *
      * @param tagList Tag list to write compound with chunk coordinates to
-     * @param pos  Coordinate to write to the tag list
+     * @param pos     Coordinate to write to the tag list
      */
-    public static void writeToNBTTagList(NBTTagList tagList, BlockPos pos)
+    public static void writeToNBTTagList(@NotNull NBTTagList tagList, @NotNull BlockPos pos)
     {
-        NBTTagCompound coordsCompound = new NBTTagCompound();
+        @NotNull NBTTagCompound coordsCompound = new NBTTagCompound();
         coordsCompound.setInteger("x", pos.getX());
         coordsCompound.setInteger("y", pos.getY());
         coordsCompound.setInteger("z", pos.getZ());
@@ -83,22 +85,23 @@ public final class BlockPosUtil
      * @param index   Index in the tag list where the required chunk coordinate is
      * @return Chunk coordinate read from the tag list
      */
-    public static BlockPos readFromNBTTagList(NBTTagList tagList, int index)
+    @NotNull
+    public static BlockPos readFromNBTTagList(@NotNull NBTTagList tagList, int index)
     {
         NBTTagCompound coordsCompound = tagList.getCompoundTagAt(index);
-        int            x              = coordsCompound.getInteger("x");
-        int            y              = coordsCompound.getInteger("y");
-        int            z              = coordsCompound.getInteger("z");
+        int x = coordsCompound.getInteger("x");
+        int y = coordsCompound.getInteger("y");
+        int z = coordsCompound.getInteger("z");
         return new BlockPos(x, y, z);
     }
 
     /**
      * Writes chunk coordinates to a {@link ByteBuf}
      *
-     * @param buf    Buf to write to
+     * @param buf Buf to write to
      * @param pos Coordinate to write
      */
-    public static void writeToByteBuf(ByteBuf buf, BlockPos pos)
+    public static void writeToByteBuf(@NotNull ByteBuf buf, @NotNull BlockPos pos)
     {
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
@@ -111,7 +114,8 @@ public final class BlockPosUtil
      * @param buf Buf to read from
      * @return Chunk coordinate that was read
      */
-    public static BlockPos readFromByteBuf(ByteBuf buf)
+    @NotNull
+    public static BlockPos readFromByteBuf(@NotNull ByteBuf buf)
     {
         int x = buf.readInt();
         int y = buf.readInt();
@@ -126,7 +130,7 @@ public final class BlockPosUtil
      * @param citizen    Citizen you want check distance of
      * @return Whether or not the distance is less than 4.84
      */
-    public static boolean isClose(BlockPos coordinate, EntityCitizen citizen)
+    public static boolean isClose(@NotNull BlockPos coordinate, @NotNull EntityCitizen citizen)
     {
         return getDistanceSquared(coordinate, citizen.getPosition()) < CLOSE_DISTANCE;
     }
@@ -138,7 +142,7 @@ public final class BlockPosUtil
      * @param block2 position two.
      * @return squared distance.
      */
-    public static int getDistanceSquared(BlockPos block1, BlockPos block2)
+    public static int getDistanceSquared(@NotNull BlockPos block1, @NotNull BlockPos block2)
     {
         int i = block1.getX() - block2.getX();
         int i1 = block1.getY() - block2.getY();
@@ -149,11 +153,11 @@ public final class BlockPosUtil
     /**
      * Returns the tile entity at a specific chunk coordinate
      *
-     * @param world  World the tile entity is in
-     * @param pos Coordinates of the tile entity
+     * @param world World the tile entity is in
+     * @param pos   Coordinates of the tile entity
      * @return Tile entity at the given coordinates
      */
-    public static TileEntity getTileEntity(World world, BlockPos pos)
+    public static TileEntity getTileEntity(@NotNull World world, @NotNull BlockPos pos)
     {
         return world.getTileEntity(pos);
     }
@@ -166,7 +170,7 @@ public final class BlockPosUtil
      * @param fortune Level of fortune on the pickaxe
      * @return List of {@link ItemStack} with possible drops
      */
-    public static List<ItemStack> getBlockDrops(World world, BlockPos coords, int fortune)
+    public static List<ItemStack> getBlockDrops(@NotNull World world, @NotNull BlockPos coords, int fortune)
     {
         return getBlock(world, coords).getDrops(world, new BlockPos(coords.getX(), coords.getY(), coords.getZ()), getBlockState(world, coords), fortune);
     }
@@ -178,7 +182,7 @@ public final class BlockPosUtil
      * @param coords Coordinates of the block
      * @return Block at the given coordinates
      */
-    public static Block getBlock(World world, BlockPos coords)
+    public static Block getBlock(@NotNull World world, @NotNull BlockPos coords)
     {
         return world.getBlockState(coords).getBlock();
     }
@@ -190,7 +194,7 @@ public final class BlockPosUtil
      * @param coords Coordinates of the block
      * @return Metadata of the block at the given coordinates
      */
-    public static IBlockState getBlockState(World world, BlockPos coords)
+    public static IBlockState getBlockState(@NotNull World world, @NotNull BlockPos coords)
     {
         return world.getBlockState(coords);
     }
@@ -203,68 +207,71 @@ public final class BlockPosUtil
      * @param block  Block to place
      * @return True if block is placed, otherwise false
      */
-    public static boolean setBlock(World world, BlockPos coords, Block block)
+    public static boolean setBlock(@NotNull World world, BlockPos coords, @NotNull Block block)
     {
-         return world.setBlockState(coords, block.getDefaultState());
+        return world.setBlockState(coords, block.getDefaultState());
     }
 
     /**
      * Sets a block in the world, with specific metadata and flags
      *
-     * @param worldIn  World the block needs to be set in
-     * @param coords   Coordinate to place block
-     * @param state    BlockState to be placed
-     * @param flag     Flag to set
+     * @param worldIn World the block needs to be set in
+     * @param coords  Coordinate to place block
+     * @param state   BlockState to be placed
+     * @param flag    Flag to set
      * @return True if block is placed, otherwise false
      */
-    public static boolean setBlock(World worldIn, BlockPos coords, IBlockState state, int flag)
+    public static boolean setBlock(@NotNull World worldIn, @NotNull BlockPos coords, IBlockState state, int flag)
     {
-         return worldIn.setBlockState(coords, state, flag);
+        return worldIn.setBlockState(coords, state, flag);
     }
 
     /**
-     * Returns whether or not the citizen is heading to a specific location
+     * Returns whether or not the citizen is heading to a specific location.
+     * {@link EntityUtils#isPathingTo(EntityCitizen, int, int)}
      *
      * @param citizen Citizen you want to check
      * @param pos     Position you want to check
      * @return True if citizen heads to pos, otherwise false
-     * @see {@link EntityUtils#isPathingTo(EntityCitizen, int, int)}
      */
-    public static boolean isPathingTo(EntityCitizen citizen, BlockPos pos)
+    public static boolean isPathingTo(@NotNull EntityCitizen citizen, @NotNull BlockPos pos)
     {
         return EntityUtils.isPathingTo(citizen, pos.getX(), pos.getZ());
     }
 
     /**
+     * {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int)}.
+     *
      * @param worker Worker to check
      * @param site   Chunk coordinates of site to check
      * @return True when worker is at site, otherwise false
-     * @see {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int)}
      */
-    public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, BlockPos site)
+    public static boolean isWorkerAtSiteWithMove(@NotNull EntityCitizen worker, @NotNull BlockPos site)
     {
         return EntityUtils.isWorkerAtSiteWithMove(worker, site.getX(), site.getY(), site.getZ());
     }
 
     /**
+     * {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}.
+     *
      * @param worker Worker to check
      * @param site   Chunk coordinates of site to check
      * @param range  Range to check in
      * @return True when within range, otherwise false
-     * @see {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}
      */
-    public static boolean isWorkerAtSiteWithMove(EntityCitizen worker, BlockPos site, int range)
+    public static boolean isWorkerAtSiteWithMove(@NotNull EntityCitizen worker, @NotNull BlockPos site, int range)
     {
         return EntityUtils.isWorkerAtSiteWithMove(worker, site.getX(), site.getY(), site.getZ(), range);
     }
 
     /**
+     * {@link EntityUtils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}.
+     *
      * @param living      A living entity
      * @param destination chunk coordinates to check moving to
      * @return True when XYZ is found, an set moving to, otherwise false
-     * @see {@link EntityUtils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}
      */
-    public static boolean tryMoveLivingToXYZ(EntityLiving living, BlockPos destination)
+    public static boolean tryMoveLivingToXYZ(@NotNull EntityLiving living, @NotNull BlockPos destination)
     {
         return EntityUtils.tryMoveLivingToXYZ(living, destination.getX(), destination.getY(), destination.getZ());
     }
@@ -277,7 +284,7 @@ public final class BlockPosUtil
      * @param destination Chunk coordinate of the distance
      * @return True when found, and destination is set, otherwise false
      */
-    public static PathResult moveLivingToXYZ(EntityCitizen citizen, BlockPos destination)
+    public static PathResult moveLivingToXYZ(@NotNull EntityCitizen citizen, @NotNull BlockPos destination)
     {
         return citizen.getNavigator().moveToXYZ(destination.getX(), destination.getY(), destination.getZ(), 1.0);
     }
@@ -285,10 +292,10 @@ public final class BlockPosUtil
     /**
      * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.BlockPos.MutableBlockPos#set(int, int, int)}.
      *
-     * @param pos {@link net.minecraft.util.BlockPos.MutableBlockPos}.
+     * @param pos    {@link net.minecraft.util.BlockPos.MutableBlockPos}.
      * @param newPos The new position to set.
      */
-    public static void set(BlockPos.MutableBlockPos pos, BlockPos newPos)
+    public static void set(@NotNull BlockPos.MutableBlockPos pos, @NotNull BlockPos newPos)
     {
         pos.set(newPos.getX(), newPos.getY(), newPos.getZ());
     }
@@ -302,7 +309,7 @@ public final class BlockPosUtil
      * @param z      z-coordinate        (point 2)
      * @return True when coordinates are equal, otherwise false
      */
-    public static boolean isEqual(BlockPos coords, int x, int y, int z)
+    public static boolean isEqual(@NotNull BlockPos coords, int x, int y, int z)
     {
         return coords.getX() == x && coords.getY() == y && coords.getZ() == z;
     }
@@ -313,7 +320,8 @@ public final class BlockPosUtil
      * @param entity Entity to create chunk coordinates from
      * @return Chunk Coordinates created from the entity
      */
-    public static BlockPos fromEntity(Entity entity)
+    @NotNull
+    public static BlockPos fromEntity(@NotNull Entity entity)
     {
         return new BlockPos(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posY), MathHelper.floor_double(entity.posZ));
     }

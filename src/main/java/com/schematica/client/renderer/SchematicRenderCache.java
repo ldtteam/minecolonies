@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RegionRenderCache;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * RenderCache for schematics.
@@ -23,7 +24,7 @@ public class SchematicRenderCache extends RegionRenderCache
      * @param to       passed to super.
      * @param subtract passed to super.
      */
-    public SchematicRenderCache(final World world, final BlockPos from, final BlockPos to, final int subtract)
+    public SchematicRenderCache(final World world, @NotNull final BlockPos from, @NotNull final BlockPos to, final int subtract)
     {
         super(world, from, to, subtract);
     }

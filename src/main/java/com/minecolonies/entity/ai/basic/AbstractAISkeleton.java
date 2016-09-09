@@ -9,6 +9,7 @@ import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,10 +28,14 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
 {
 
     private static final int MUTEX_MASK = 3;
+    @NotNull
     protected final J                   job;
+    @Nullable
     protected final EntityCitizen       worker;
     protected final World               world;
+    @NotNull
     protected final ChatSpamFilter      chatSpamFilter;
+    @NotNull
     private final   ArrayList<AITarget> targetList;
     /**
      * The current state the ai is in.
@@ -52,20 +57,6 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         this.world = this.worker.worldObj;
         this.chatSpamFilter = new ChatSpamFilter(worker);
         this.state = AIState.INIT;
-
-    }
-
-    /**
-     * Made final to preserve behaviour:
-     * Sets a bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it
-     * yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other.
-     *
-     * @param mutexBits the bits to flag this with.
-     */
-    @Override
-    public final void setMutexBits(int mutexBits)
-    {
-        super.setMutexBits(mutexBits);
     }
 
     /**
@@ -102,12 +93,12 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Resets the task
+     * Returns whether an in-progress EntityAIBase should continue executing
      */
     @Override
-    public final void resetTask()
+    public final boolean continueExecuting()
     {
-        worker.setStatus(IDLE);
+        return super.continueExecuting();
     }
 
     /**
@@ -121,12 +112,12 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Resets the task
      */
     @Override
-    public final boolean continueExecuting()
+    public final void resetTask()
     {
-        return super.continueExecuting();
+        worker.setStatus(IDLE);
     }
 
     /**
@@ -136,6 +127,19 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     public final void updateTask()
     {
         targetList.stream().anyMatch(this::checkOnTarget);
+    }
+
+    /**
+     * Made final to preserve behaviour:
+     * Sets a bitmask telling which other tasks may not run concurrently. The test is a simple bitwise AND - if it
+     * yields zero, the two tasks may run concurrently, if not - they must run exclusively from each other.
+     *
+     * @param mutexBits the bits to flag this with.
+     */
+    @Override
+    public final void setMutexBits(int mutexBits)
+    {
+        super.setMutexBits(mutexBits);
     }
 
     /**
@@ -150,7 +154,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * @param target the target to check
      * @return true if this target worked and we should stop executing this tick
      */
-    private boolean checkOnTarget(AITarget target)
+    private boolean checkOnTarget(@NotNull AITarget target)
     {
         if (state != target.getState() && target.getState() != null)
         {
@@ -180,7 +184,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * @param target the target.
      * @return true if it worked.
      */
-    private boolean applyTarget(AITarget target)
+    private boolean applyTarget(@NotNull AITarget target)
     {
         AIState newState;
         try
@@ -202,6 +206,8 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
 
     /**
      * Get the current state the ai is in.
+     *
+     * @return The current AIState
      */
     public final AIState getState()
     {

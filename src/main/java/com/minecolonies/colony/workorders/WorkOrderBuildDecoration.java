@@ -20,9 +20,9 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
      * Create a new work order telling the building to build a decoration.
      *
      * @param decoration The name of the decoration.
-     * @param style The style of the decoration.
-     * @param rotation The number of times the decoration was rotated.
-     * @param location The location where the decoration should be built.
+     * @param style      The style of the decoration.
+     * @param rotation   The number of times the decoration was rotated.
+     * @param location   The location where the decoration should be built.
      */
     public WorkOrderBuildDecoration(String decoration, String style, int rotation, BlockPos location)
     {
@@ -30,6 +30,12 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
         this.buildingRotation = rotation;
         this.buildingLocation = location;
         this.cleared = false;
+    }
+
+    @Override
+    protected String getValue()
+    {
+        return schematicName;
     }
 
     @Override

@@ -12,6 +12,8 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -19,47 +21,9 @@ public class PermissionsMessage
 {
     private static final String COLONY_DOES_NOT_EXIST = "Colony #%d does not exist.";
 
-    public static class View implements IMessage, IMessageHandler<View, IMessage>
-    {
-        private int     colonyID;
-        private ByteBuf data;
-
-        public View()
-        {
-            //Required
-        }
-
-        public View(Colony colony, Permissions.Rank viewerRank)
-        {
-            this.colonyID = colony.getID();
-            this.data = Unpooled.buffer();
-            colony.getPermissions().serializeViewNetworkData(this.data, viewerRank);
-        }
-
-        @Override
-        public void toBytes(ByteBuf buf)
-        {
-            buf.writeInt(colonyID);
-            buf.writeBytes(data);
-        }
-
-        @Override
-        public void fromBytes(ByteBuf buf)
-        {
-            colonyID = buf.readInt();
-            data = buf;
-        }
-
-        @Override
-        public IMessage onMessage(View message, MessageContext ctx)
-        {
-            return ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
-        }
-    }
-
     /**
      * Enums for Message Type for the permission message
-     *
+     * <p>
      * SET_PERMISSION       Setting a permission
      * REMOVE_PERMISSION    Removing a permission
      * TOGGLE_PERMISSION    Toggeling a permission
@@ -71,12 +35,51 @@ public class PermissionsMessage
         TOGGLE_PERMISSION
     }
 
+    public static class View implements IMessage, IMessageHandler<View, IMessage>
+    {
+        private int     colonyID;
+        private ByteBuf data;
+
+        public View()
+        {
+            //Required
+        }
+
+        public View(@NotNull Colony colony, @NotNull Permissions.Rank viewerRank)
+        {
+            this.colonyID = colony.getID();
+            this.data = Unpooled.buffer();
+            colony.getPermissions().serializeViewNetworkData(this.data, viewerRank);
+        }
+
+        @Override
+        public void fromBytes(@NotNull ByteBuf buf)
+        {
+            colonyID = buf.readInt();
+            data = buf;
+        }        @Override
+        public void toBytes(@NotNull ByteBuf buf)
+        {
+            buf.writeInt(colonyID);
+            buf.writeBytes(data);
+        }
+
+        @Nullable
+        @Override
+        public IMessage onMessage(@NotNull View message, MessageContext ctx)
+        {
+            return ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
+        }
+
+
+    }
+
     public static class Permission implements IMessage, IMessageHandler<Permission, IMessage>
     {
-        private int                 colonyID;
-        private MessageType         type;
-        private Permissions.Rank    rank;
-        private Permissions.Action  action;
+        private int                colonyID;
+        private MessageType        type;
+        private Permissions.Rank   rank;
+        private Permissions.Action action;
 
         public Permission()
         {
@@ -84,14 +87,14 @@ public class PermissionsMessage
         }
 
         /**
-         * @see {@link Permission}
+         * {@link Permission}.
          *
-         * @param colony        Colony the permission is set in
-         * @param type          Type of permission {@link MessageType}
-         * @param rank          Rank of the permission {@link com.minecolonies.colony.permissions.Permissions.Rank}
-         * @param action        Action of the permission {@link com.minecolonies.colony.permissions.Permissions.Action}
+         * @param colony Colony the permission is set in
+         * @param type   Type of permission {@link MessageType}
+         * @param rank   Rank of the permission {@link com.minecolonies.colony.permissions.Permissions.Rank}
+         * @param action Action of the permission {@link com.minecolonies.colony.permissions.Permissions.Action}
          */
-        public Permission(ColonyView colony, MessageType type, Permissions.Rank rank, Permissions.Action action)
+        public Permission(@NotNull ColonyView colony, MessageType type, Permissions.Rank rank, Permissions.Action action)
         {
             this.colonyID = colony.getID();
             this.type = type;
@@ -100,7 +103,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void toBytes(ByteBuf buf)
+        public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
             ByteBufUtils.writeUTF8String(buf, type.name());
@@ -109,7 +112,7 @@ public class PermissionsMessage
         }
 
         @Override
-        public void fromBytes(ByteBuf buf)
+        public void fromBytes(@NotNull ByteBuf buf)
         {
             colonyID = buf.readInt();
             type = MessageType.valueOf(ByteBufUtils.readUTF8String(buf));
@@ -117,8 +120,9 @@ public class PermissionsMessage
             action = Permissions.Action.valueOf(ByteBufUtils.readUTF8String(buf));
         }
 
+        @Nullable
         @Override
-        public IMessage onMessage(Permission message, MessageContext ctx)
+        public IMessage onMessage(@NotNull Permission message, @NotNull MessageContext ctx)
         {
 
             Colony colony = ColonyManager.getColony(message.colonyID);
@@ -130,24 +134,24 @@ public class PermissionsMessage
             }
 
             //Verify player has permission to do edit permissions
-            if(!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.EDIT_PERMISSIONS))
+            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.EDIT_PERMISSIONS))
             {
                 return null;
             }
 
             switch (message.type)
             {
-            case SET_PERMISSION:
-                colony.getPermissions().setPermission(message.rank, message.action);
-                break;
-            case REMOVE_PERMISSION:
-                colony.getPermissions().removePermission(message.rank, message.action);
-                break;
-            case TOGGLE_PERMISSION:
-                colony.getPermissions().togglePermission(message.rank, message.action);
-                break;
-            default:
-                Log.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
+                case SET_PERMISSION:
+                    colony.getPermissions().setPermission(message.rank, message.action);
+                    break;
+                case REMOVE_PERMISSION:
+                    colony.getPermissions().removePermission(message.rank, message.action);
+                    break;
+                case TOGGLE_PERMISSION:
+                    colony.getPermissions().togglePermission(message.rank, message.action);
+                    break;
+                default:
+                    Log.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
             }
             return null;
         }
@@ -169,31 +173,32 @@ public class PermissionsMessage
         /**
          * Constructor for adding player to permission message
          *
-         * @param colony        Colony the permission is set in
-         * @param player        New player name to be added
+         * @param colony Colony the permission is set in
+         * @param player New player name to be added
          */
-        public AddPlayer(ColonyView colony, String player)
+        public AddPlayer(@NotNull ColonyView colony, String player)
         {
             this.colonyID = colony.getID();
             this.playerName = player;
         }
 
         @Override
-        public void toBytes(ByteBuf buf)
+        public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
             ByteBufUtils.writeUTF8String(buf, playerName);
         }
 
         @Override
-        public void fromBytes(ByteBuf buf)
+        public void fromBytes(@NotNull ByteBuf buf)
         {
             colonyID = buf.readInt();
             playerName = ByteBufUtils.readUTF8String(buf);
         }
 
+        @Nullable
         @Override
-        public IMessage onMessage(AddPlayer message, MessageContext ctx)
+        public IMessage onMessage(@NotNull AddPlayer message, @NotNull MessageContext ctx)
         {
 
             Colony colony = ColonyManager.getColony(message.colonyID);
@@ -219,12 +224,6 @@ public class PermissionsMessage
         private UUID playerID;
         private Type type;
 
-        public enum Type
-        {
-            PROMOTE,
-            DEMOTE
-        }
-
         public ChangePlayerRank()
         {
             //Required
@@ -233,19 +232,25 @@ public class PermissionsMessage
         /**
          * Constructor for setting a player rank.
          *
-         * @param colony        Colony the rank is set in.
-         * @param player        UUID of the player to set rank.
-         * @param type          Promote or demote.
+         * @param colony Colony the rank is set in.
+         * @param player UUID of the player to set rank.
+         * @param type   Promote or demote.
          */
-        public ChangePlayerRank(ColonyView colony, UUID player, Type type)
+        public ChangePlayerRank(@NotNull ColonyView colony, UUID player, Type type)
         {
             this.colonyID = colony.getID();
             this.playerID = player;
             this.type = type;
         }
 
+        public enum Type
+        {
+            PROMOTE,
+            DEMOTE
+        }
+
         @Override
-        public void toBytes(ByteBuf buf)
+        public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
@@ -253,30 +258,31 @@ public class PermissionsMessage
         }
 
         @Override
-        public void fromBytes(ByteBuf buf)
+        public void fromBytes(@NotNull ByteBuf buf)
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
             type = Type.valueOf(ByteBufUtils.readUTF8String(buf));
         }
 
+        @Nullable
         @Override
-        public IMessage onMessage(ChangePlayerRank message, MessageContext ctx)
+        public IMessage onMessage(@NotNull ChangePlayerRank message, @NotNull MessageContext ctx)
         {
 
             Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if(colony == null)
+            if (colony == null)
             {
                 Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
-            if(message.type == Type.PROMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE))
+            if (message.type == Type.PROMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE))
             {
                 colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)));
             }
-            else if(message.type == Type.DEMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE))
+            else if (message.type == Type.DEMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE))
             {
                 colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)));
             }
@@ -301,44 +307,45 @@ public class PermissionsMessage
         /**
          * Constructor for removing player from permission set
          *
-         * @param colony        Colony the player is removed from the permission
-         * @param player        UUID of the removed player
+         * @param colony Colony the player is removed from the permission
+         * @param player UUID of the removed player
          */
-        public RemovePlayer(ColonyView colony, UUID player)
+        public RemovePlayer(@NotNull ColonyView colony, UUID player)
         {
             this.colonyID = colony.getID();
             this.playerID = player;
         }
 
         @Override
-        public void toBytes(ByteBuf buf)
+        public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
             PacketUtils.writeUUID(buf, playerID);
         }
 
         @Override
-        public void fromBytes(ByteBuf buf)
+        public void fromBytes(@NotNull ByteBuf buf)
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
         }
 
+        @Nullable
         @Override
-        public IMessage onMessage(RemovePlayer message, MessageContext ctx)
+        public IMessage onMessage(@NotNull RemovePlayer message, @NotNull MessageContext ctx)
         {
 
             Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if(colony == null)
+            if (colony == null)
             {
                 Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
             Permissions.Player player = colony.getPermissions().getPlayers().get(message.playerID);
-            if((player.getRank() == Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE)) ||
-                    (player.getRank() != Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE)))
+            if ((player.getRank() == Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE)) ||
+                  (player.getRank() != Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE)))
             {
                 colony.getPermissions().removePlayer(message.playerID);
             }
