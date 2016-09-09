@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class WorldHandler
 {
     /**
-     * Called when a world is loaded. Adds the {@link RenderSchematic} {@link IWorldAccess} to the {@link SchematicWorld}.
+     * Called when a world is loaded. Adds the {@link RenderSchematic} {@link IWorldEventListener} to the {@link SchematicWorld}.
      *
      * @param event Forge event.
      */
@@ -39,7 +39,7 @@ public class WorldHandler
     }
 
     /**
-     * Called when a world is unloaded. Removes the {@link RenderSchematic} {@link IWorldAccess} from the {@link SchematicWorld}.
+     * Called when a world is unloaded. Removes the {@link RenderSchematic} {@link IWorldEventListener} from the {@link SchematicWorld}.
      *
      * @param event Forge event.
      */

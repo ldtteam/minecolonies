@@ -162,7 +162,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param pos coordinate
      */
-    public WindowBuildTool(@NotNull BlockPos pos)
+    public WindowBuildTool(@Nullable BlockPos pos)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
@@ -173,10 +173,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             rotation = Settings.instance.getRotation();
             level = Settings.instance.getLevel();
         }
-        else
+        else if (pos != null)
         {
             BlockPosUtil.set(this.pos, pos);
         }
+
 
         registerButton(BUTTON_TYPE_ID, this::placementModeClicked);
         registerButton(BUTTON_HUT_DEC_ID, this::hutDecClicked);

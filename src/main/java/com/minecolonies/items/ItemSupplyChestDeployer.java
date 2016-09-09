@@ -63,7 +63,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param playerIn the player placing.
      * @param worldIn  the world.
      * @param pos      the position.
-     * @param side     the direction it faces (not used).
+     * @param hand     the hand used
+     * @param facing   the direction it faces (not used).
      * @param hitX     the hitBox x position (not used).
      * @param hitY     the hitBox y position (not used).
      * @param hitZ     the hitBox z position (not used).

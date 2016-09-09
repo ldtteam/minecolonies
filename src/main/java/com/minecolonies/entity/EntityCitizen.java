@@ -1019,7 +1019,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * We override this method and execute no code to avoid citizens travelling to the nether.
      *
-     * @param dimension dimension to travel to.
+     * @param dimensionIn dimension to travel to.
      */
     @Override
     @Nullable

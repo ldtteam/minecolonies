@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 public class ItemBuildTool extends AbstractItemMinecolonies
 {
@@ -19,6 +20,7 @@ public class ItemBuildTool extends AbstractItemMinecolonies
         setMaxStackSize(1);
     }
 
+    @NotNull
     @Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
@@ -32,14 +34,15 @@ public class ItemBuildTool extends AbstractItemMinecolonies
         return EnumActionResult.FAIL;
     }
 
+    @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(@NotNull ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand)
     {
         if (worldIn.isRemote)
         {
             MineColonies.proxy.openBuildToolWindow(null);
         }
 
-        return new ActionResult(EnumActionResult.PASS, itemStackIn);
+        return new ActionResult<>(EnumActionResult.PASS, itemStackIn);
     }
 }
