@@ -30,7 +30,7 @@ public class EventHandler
      * Event when a block is broken
      * Event gets cancelled when there no permission to break a hut
      *
-     * @param event {@link net.minecraftforge.event.getWorld().BlockEvent.BreakEvent}
+     * @param event {@link net.minecraftforge.event.world.BlockEvent.BreakEvent}
      */
     @SubscribeEvent
     public void onBlockBreak(@NotNull BlockEvent.BreakEvent event)
@@ -285,7 +285,7 @@ public class EventHandler
      * Gets called when world loads.
      * Calls {@link ColonyManager#onWorldLoad(World)}
      *
-     * @param event {@link net.minecraftforge.event.getWorld().getWorld()Event.Load}
+     * @param event {@link net.minecraftforge.event.world.WorldEvent.Load}
      */
     @SubscribeEvent
     public void onWorldLoad(@NotNull WorldEvent.Load event)
@@ -297,7 +297,7 @@ public class EventHandler
      * Gets called when world unloads.
      * Calls {@link ColonyManager#onWorldUnload(World)}
      *
-     * @param event {@link net.minecraftforge.event.getWorld().getWorld()Event.Unload}
+     * @param event {@link net.minecraftforge.event.world.WorldEvent.Unload}
      */
     @SubscribeEvent
     public void onWorldUnload(@NotNull WorldEvent.Unload event)
@@ -309,7 +309,7 @@ public class EventHandler
      * Gets called when world saves.
      * Calls {@link ColonyManager#onWorldSave(World)}
      *
-     * @param event {@link net.minecraftforge.event.getWorld().getWorld()Event.Save}
+     * @param event {@link net.minecraftforge.event.world.WorldEvent.Save}
      */
     @SubscribeEvent
     public void onWorldSave(@NotNull WorldEvent.Save event)
