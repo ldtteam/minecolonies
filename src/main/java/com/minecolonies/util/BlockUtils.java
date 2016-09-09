@@ -152,7 +152,6 @@ public final class BlockUtils
 
     private static Item getItem(@NotNull IBlockState blockState)
     {
-        //todo this whole thing here doesn't work again.
         if (blockState.getBlock() instanceof BlockBanner)
         {
             return Items.BANNER;
@@ -179,14 +178,12 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockCrops)
         {
-            if (blockState.getBlock() instanceof BlockCarrot)
+            ItemStack stack = ((BlockCrops) blockState.getBlock()).getItem(null, null, blockState);
+            if(stack != null)
             {
-                return Items.CARROT;
+                return stack.getItem();
             }
-            else if (blockState.getBlock() instanceof BlockPotato)
-            {
-                return Items.POTATO;
-            }
+
             return Items.WHEAT_SEEDS;
         }
         else if (blockState.getBlock() instanceof BlockDaylightDetector)
@@ -195,9 +192,16 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockDoor)
         {
-            return Item.getItemFromBlock(((BlockDoor) blockState.getBlock()));
+            Item item = blockState.getBlock() == Blocks.IRON_DOOR ? Items.IRON_DOOR :
+                    (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
+                            : (blockState.getBlock() == Blocks.BIRCH_DOOR ? Items.BIRCH_DOOR
+                                    : (blockState.getBlock() == Blocks.JUNGLE_DOOR ? Items.JUNGLE_DOOR
+                                            : (blockState.getBlock() == Blocks.ACACIA_DOOR ? Items.ACACIA_DOOR
+                                                    : (blockState.getBlock() == Blocks.DARK_OAK_DOOR ? Items.DARK_OAK_DOOR : Items.OAK_DOOR)))));
+
+            return item == null ? Item.getItemFromBlock(blockState.getBlock()) : item;
         }
-        else if (blockState.getBlock() instanceof BlockFarmland)
+        else if (blockState.getBlock() instanceof BlockFarmland || blockState.getBlock() instanceof BlockGrassPath)
         {
             return Item.getItemFromBlock(Blocks.DIRT);
         }
@@ -256,15 +260,24 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockSkull)
         {
             return Items.SKULL;
-        }//TODO
-        /*else if (blockState.getBlock() instanceof BlockStem)
+        }
+        else if (blockState.getBlock() instanceof BlockStem)
         {
-            return ((BlockStem) blockState.getBlock()).getSeedItem();
-        }*/
+            ItemStack stack = ((BlockStem) blockState.getBlock()).getItem(null, null, blockState);
+            if(stack != null)
+            {
+                return stack.getItem();
+            }
+            return Items.MELON_SEEDS;
+        }
         else if (blockState.getBlock() instanceof BlockStoneSlab)
         {
             //Builder won't know how to build double stone slab
             return Item.getItemFromBlock(Blocks.STONE_SLAB);
+        }
+        else if(blockState.getBlock() instanceof BlockPurpurSlab)
+        {
+            return Item.getItemFromBlock(Blocks.PURPUR_SLAB);
         }
         else if (blockState.getBlock() instanceof BlockStoneSlabNew)
         {
