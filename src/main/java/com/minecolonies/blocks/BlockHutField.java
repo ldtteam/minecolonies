@@ -9,7 +9,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.block.BlockContainer;
-import net.minecraft.block.BlockDirectional;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -44,8 +44,7 @@ public class BlockHutField extends BlockContainer
     /**
      * The position it faces.
      */
-    public static final  PropertyDirection FACING           = BlockDirectional.FACING;
-    //public static final PropertyDirection FACING = PropertyDirection.create("FACING", Plane.HORIZONTAL);
+    public static final PropertyDirection FACING = BlockHorizontal.FACING;
     /**
      * Hardness of the block.
      */
@@ -109,40 +108,19 @@ public class BlockHutField extends BlockContainer
     @Override
     public EnumBlockRenderType getRenderType(IBlockState state)
     {
-        return EnumBlockRenderType.MODEL;
+        return EnumBlockRenderType.INVISIBLE;
     }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta)
-    {
-        EnumFacing facing;
-        switch (getFront(meta))
-        {
-            case WEST:
-                facing = WEST;
-                break;
-            case EAST:
-                facing = EAST;
-                break;
-            case NORTH:
-                facing = NORTH;
-                break;
-            default:
-                facing = SOUTH;
-        }
-        return this.getDefaultState().withProperty(FACING, facing);
-    }
-    
-    /*@Override
-    public int getRenderType()
-    {
-        return -1;
-    }*/
 
     @Override
     public int getMetaFromState(@NotNull IBlockState state)
     {
         return state.getValue(FACING).getIndex();
+    }
+
+    @Override
+    public boolean isOpaqueCube(final IBlockState state)
+    {
+        return false;
     }
 
     @Override
@@ -157,7 +135,7 @@ public class BlockHutField extends BlockContainer
         return false;
     }
 
-    @Deprecated
+    @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
         return new AxisAlignedBB((float) START_COLLISION,
@@ -166,12 +144,6 @@ public class BlockHutField extends BlockContainer
                                   (float) END_COLLISION,
                                   (float) HEIGHT_COLLISION,
                                   (float) END_COLLISION);
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return true;
     }
 
     @NotNull
@@ -263,4 +235,6 @@ public class BlockHutField extends BlockContainer
     // =======================================================================
     // ===================== END of Rendering & Meta-Data ====================
     // =======================================================================
+
+
 }
