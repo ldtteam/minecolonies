@@ -16,7 +16,7 @@ public class NBTHelper
 
     public static TileEntity readTileEntityFromCompound(final World world, final NBTTagCompound tileEntityCompound)
     {
-        return TileEntity.func_190200_a(world, tileEntityCompound);
+        return TileEntity.create(world, tileEntityCompound);
     }
 
     public static NBTTagCompound writeEntityToCompound(final Entity entity)

@@ -77,7 +77,7 @@ class ViewFrustumOverlay extends ViewFrustum
 
                     if (!blockpos.equals(renderOverlay.getPosition()))
                     {
-                        renderOverlay.setOrigin(blockpos.getX(), blockpos.getY(), blockpos.getZ());
+                        renderOverlay.setPosition(blockpos.getX(), blockpos.getY(), blockpos.getZ());
                     }
                 }
             }
