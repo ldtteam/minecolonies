@@ -255,9 +255,7 @@ public class Pane extends Gui
     {
         if (visible)
         {
-            GlStateManager.pushAttrib();
             drawSelf(mx, my);
-            GlStateManager.popAttrib();
             if (debugging)
             {
                 boolean isMouseOver = isPointInPane(mx, my);

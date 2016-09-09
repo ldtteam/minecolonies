@@ -59,6 +59,7 @@ public class FMLEventHandler
         if (event.player instanceof EntityPlayerMP)
         {
             MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), (EntityPlayerMP) event.player);
+            ColonyManager.syncAllColoniesAchievements();
         }
     }
 }

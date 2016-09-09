@@ -1,6 +1,8 @@
 package com.minecolonies.colony.permissions;
 
+import com.minecolonies.colony.Colony;
 import com.minecolonies.network.PacketUtils;
+import com.minecolonies.util.AchievementUtils;
 import com.minecolonies.util.Utils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
@@ -39,14 +41,19 @@ public class Permissions implements IPermissions
         setPromotionRanks(Rank.HOSTILE, Rank.NEUTRAL, Rank.HOSTILE);
     }
     @NotNull
+    private final Colony colony;
+    @NotNull
     private Map<UUID, Player>  players     = new HashMap<>();
     @NotNull
     private Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
     private boolean            dirty       = false;
+
     /**
      * Saves the permissions with allowed actions
+     *
+     * @param colony the colony this permissions object belongs to.
      */
-    public Permissions()
+    public Permissions(@NotNull final Colony colony)
     {
         //Owner
         permissions.put(Rank.OWNER, 0);
@@ -73,6 +80,8 @@ public class Permissions implements IPermissions
         //Hostile
         permissions.put(Rank.HOSTILE, 0);
         this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
+
+        this.colony = colony;
     }
 
     /**
@@ -261,6 +270,13 @@ public class Permissions implements IPermissions
         return this.players.values().stream()
                  .filter(player -> player.rank.equals(rank))
                  .collect(Collectors.toSet());
+    }
+
+    public Set<Player> getPlayersByRank(@NotNull Set<Rank> ranks)
+    {
+        return this.players.values().stream()
+                 .filter(player -> ranks.contains(player.rank))
+                 .collect(Collectors.toSet());
     }    /**
      * Returns the rank belonging to the UUID
      *
@@ -275,13 +291,6 @@ public class Permissions implements IPermissions
         return player != null ? player.rank : Rank.NEUTRAL;
     }
 
-    public Set<Player> getPlayersByRank(@NotNull Set<Rank> ranks)
-    {
-        return this.players.values().stream()
-                 .filter(player -> ranks.contains(player.rank))
-                 .collect(Collectors.toSet());
-    }
-
     /**
      * Returns the map of permissions and ranks
      *
@@ -291,10 +300,6 @@ public class Permissions implements IPermissions
     public Map<Rank, Integer> getPermissions()
     {
         return permissions;
-    }    @Override
-    public boolean isColonyMember(@NotNull EntityPlayer player)
-    {
-        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -320,6 +325,10 @@ public class Permissions implements IPermissions
     public Rank getRank(@NotNull EntityPlayer player)
     {
         return getRank(player.getGameProfile().getId());
+    }    @Override
+    public boolean isColonyMember(@NotNull EntityPlayer player)
+    {
+        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -365,6 +374,7 @@ public class Permissions implements IPermissions
         {
             player.rank = rank;
             markDirty();
+            AchievementUtils.syncAchievements(colony);
         }
         else
         {
@@ -389,7 +399,7 @@ public class Permissions implements IPermissions
         players.put(p.id, p);
 
         markDirty();
-
+        AchievementUtils.syncAchievements(colony);
         return true;
     }
 
@@ -417,6 +427,7 @@ public class Permissions implements IPermissions
     public boolean removePlayer(UUID id)
     {
         Player player = players.get(id);
+        AchievementUtils.syncAchievements(colony);
         if (player != null && player.getRank() != Rank.OWNER && players.remove(id) != null)
         {
             markDirty();
@@ -682,8 +693,15 @@ public class Permissions implements IPermissions
         public boolean hasPermission(UUID id, @NotNull Action action)
         {
             return hasPermission(getRank(id), action);
-        }        @NotNull
-    public Rank getRank(@NotNull EntityPlayer player)
+        }
+
+        public boolean hasPermission(Rank rank, @NotNull Action action)
+        {
+            return Utils.testFlag(permissions.get(rank), action.flag);
+        }
+
+        @NotNull
+        public Rank getRank(@NotNull EntityPlayer player)
         {
             return getRank(player.getUniqueID());
         }
@@ -699,12 +717,6 @@ public class Permissions implements IPermissions
                 return true;
             }
             return false;
-        }        @NotNull
-    @Override
-        public Rank getRank(UUID id)
-        {
-            Player player = players.get(id);
-            return player != null ? player.rank : Rank.NEUTRAL;
         }
 
         public boolean removePermission(Rank rank, @NotNull Action action)
@@ -716,19 +728,19 @@ public class Permissions implements IPermissions
                 return true;
             }
             return false;
-        }        @Override
-        public boolean hasPermission(@NotNull EntityPlayer player, @NotNull Action action)
+        }
+
+        @NotNull
+        @Override
+        public Rank getRank(UUID id)
         {
-            return hasPermission(getRank(player), action);
+            Player player = players.get(id);
+            return player != null ? player.rank : Rank.NEUTRAL;
         }
 
         public void togglePermission(Rank rank, @NotNull Action action)
         {
             permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
-        }        @Override
-        public boolean isColonyMember(@NotNull EntityPlayer player)
-        {
-            return players.containsKey(player.getUniqueID());
         }
 
         public void deserialize(@NotNull ByteBuf buf)
@@ -756,16 +768,19 @@ public class Permissions implements IPermissions
                 int flags = buf.readInt();
                 permissions.put(rank, flags);
             }
-        }
-
-        public boolean hasPermission(Rank rank, @NotNull Action action)
+        }        @Override
+        public boolean hasPermission(@NotNull EntityPlayer player, @NotNull Action action)
         {
-            return Utils.testFlag(permissions.get(rank), action.flag);
+            return hasPermission(getRank(player), action);
         }
 
 
 
-
+        @Override
+        public boolean isColonyMember(@NotNull EntityPlayer player)
+        {
+            return players.containsKey(player.getUniqueID());
+        }
 
 
 
