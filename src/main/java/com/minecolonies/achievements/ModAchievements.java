@@ -120,6 +120,17 @@ public final class ModAchievements
     public static final Achievement achievementUpgradeFisherMax = new MineColoniesAchievement("upgrade.fisher.max", "upgrade.fisher.max", 2, 5, ModBlocks.blockHutFisherman,
                                                                                                achievementBuildingFisher).registerStat();
 
+    /**
+     * Upgrade a farmer to lv 1.
+     */
+    public static final Achievement achievementBuildingFarmer   = new MineColoniesAchievement("upgrade.farmer.first", "upgrade.fisher.first", 0, 6, ModBlocks.blockHutFarmer,
+                                                                                               achievementGetSupply).registerStat();
+    /**
+     * Max out a farmer.
+     */
+    public static final Achievement achievementUpgradeFarmerMax = new MineColoniesAchievement("upgrade.farmer.max", "upgrade.fisher.max", 2, 6, ModBlocks.blockHutFarmer,
+                                                                                               achievementBuildingFarmer).registerStat();
+
     // Sizes
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_SETTLEMENT} citizens.
