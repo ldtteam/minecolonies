@@ -635,7 +635,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             else if (entity instanceof EntityMinecart)
             {
                 @Nullable EntityMinecart minecart = (EntityMinecart) entity;
-                //minecart.riddenByEntity = null;
+                //todo is this important? minecart.riddenByEntity = null;
                 minecart.posX += pos.getX();
                 minecart.posY += pos.getY();
                 minecart.posZ += pos.getZ();
@@ -694,9 +694,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
         }
 
-        if (block instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+        if (block instanceof BlockDoor)
         {
-            ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), block, false);
+            if(blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+            {
+                ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), block, false);
+            }
         }
         else if (block instanceof BlockBed)
         {

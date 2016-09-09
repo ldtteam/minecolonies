@@ -182,11 +182,11 @@ public class BuildingMiner extends AbstractBuildingWorker
 
         if (newLevel == 1)
         {
-            this.getColony().addStat(ModAchievements.achievementBuildingMiner);
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingMiner);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            this.getColony().addStat(ModAchievements.achievementUpgradeMinerMax);
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
         }
     }
 

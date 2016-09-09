@@ -511,7 +511,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
     }
 
-    private boolean isCorrectSapling(@NotNull ItemStack stack)
+    /**
+     * Checks if this is the correct Sapling. Please stop that @NotNull stuff. You put it where it doesn't belong!!!
+     * @param stack incoming stack.
+     * @return true if so.
+     */
+    private boolean isCorrectSapling(ItemStack stack)
     {
         return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
     }

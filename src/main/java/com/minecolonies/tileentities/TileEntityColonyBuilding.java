@@ -145,7 +145,10 @@ public class TileEntityColonyBuilding extends TileEntityChest
         colony = c;
         colonyId = c.getID();
         markDirty();
-    }    @Override
+    }
+
+    //todo something goes wrong on colony loading
+    @Override
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
@@ -180,7 +183,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public void setBuilding(AbstractBuilding b)
     {
         building = b;
-    }    @Override
+    }
+
+    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);

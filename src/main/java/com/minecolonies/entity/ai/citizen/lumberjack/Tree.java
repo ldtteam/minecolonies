@@ -1,9 +1,7 @@
 package com.minecolonies.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.util.BlockPosUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockNewLog;
-import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -80,9 +78,9 @@ public class Tree
     }
 
     /**
-     * Creates a new tree Object for the lumberjack
-     *
-     * @param world The world where the tree is in
+     * Creates a new tree Object for the lumberjack.
+     * Since the same type of variant of the block old log or new log do not match we have to separate them.
+     * @param world The world where the tree is in.
      * @param log   the position of the found log.
      */
     public Tree(@NotNull World world, @NotNull BlockPos log)
@@ -90,7 +88,19 @@ public class Tree
         Block block = BlockPosUtil.getBlock(world, log);
         if (block.isWood(world, log))
         {
-            variant = world.getBlockState(log).getValue(BlockNewLog.VARIANT);
+            if(block instanceof BlockOldLog)
+            {
+                variant = world.getBlockState(log).getValue(BlockOldLog.VARIANT);
+            }
+            else if(block instanceof BlockNewLog)
+            {
+                variant = world.getBlockState(log).getValue(BlockNewLog.VARIANT);
+            }
+            else
+            {
+                variant = BlockPlanks.EnumType.OAK;
+            }
+
             location = getBaseLog(world, log);
             woodBlocks = new LinkedList<>();
             checkTree(world, getTopLog(world, log));

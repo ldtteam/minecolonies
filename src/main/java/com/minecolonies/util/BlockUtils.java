@@ -152,6 +152,7 @@ public final class BlockUtils
 
     private static Item getItem(@NotNull IBlockState blockState)
     {
+        //todo this whole thing here doesn't work again.
         if (blockState.getBlock() instanceof BlockBanner)
         {
             return Items.BANNER;

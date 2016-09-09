@@ -173,7 +173,10 @@ public class Permissions implements IPermissions
 
             GameProfile gameprofile = Minecraft.getMinecraft().getIntegratedServer().getPlayerProfileCache().getProfileByUUID(id);
 
-            players.put(id, new Player(id, gameprofile.getName(), rank));
+            if(gameprofile != null)
+            {
+                players.put(id, new Player(id, gameprofile.getName(), rank));
+            }
         }
 
         //Permissions
@@ -412,6 +415,10 @@ public class Permissions implements IPermissions
      */
     public boolean addPlayer(@NotNull String player, Rank rank)
     {
+        if(player.isEmpty())
+        {
+            return false;
+        }
         GameProfile gameprofile = Minecraft.getMinecraft().getIntegratedServer().getPlayerProfileCache().getGameProfileForUsername(player);
 
         //Check if the player already exists so that their rank isn't overridden
