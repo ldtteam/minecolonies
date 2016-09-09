@@ -139,12 +139,12 @@ public abstract class AbstractPathJob implements Callable<Path>
             while (bs.getMaterial().isLiquid())
             {
                 pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                b = entity.worldObj.getBlockState(pos).getBlock();
+                bs = entity.worldObj.getBlockState(pos);
             }
         }
         else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof BlockHutField)
         {
-            //  Push away from fence
+            //Push away from fence
             double dX = entity.posX - Math.floor(entity.posX);
             double dZ = entity.posZ - Math.floor(entity.posZ);
 
