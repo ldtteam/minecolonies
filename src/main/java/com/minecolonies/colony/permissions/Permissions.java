@@ -525,6 +525,10 @@ public class Permissions implements IPermissions
 
     /**
      * Ranks within a colony
+     *
+     * NOTE:
+     * The order of declaration defines the ordinal at runtime.
+     * Changing this order may result into bad behavior.
      */
     public enum Rank
     {

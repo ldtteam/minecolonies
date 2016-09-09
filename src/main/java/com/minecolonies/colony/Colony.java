@@ -13,6 +13,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.network.messages.*;
+import com.minecolonies.permissions.events.ColonyPermissionEventHandler;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
@@ -28,6 +29,7 @@ import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -119,6 +121,9 @@ public class Colony implements IColony
         this.dimensionId = dim;
         this.permissions = new Permissions(this);
         this.colonyAchievements = new ArrayList<>();
+
+        // Register a new event handler
+        MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
     }
 
     /**
