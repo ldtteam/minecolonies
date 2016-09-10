@@ -42,12 +42,6 @@ public class SchematicWorld extends WorldClient
     }
 
     @Override
-    public Biome getBiomeGenForCoords(final BlockPos pos)
-    {
-        return Biomes.JUNGLE;
-    }
-
-    @Override
     public boolean isAirBlock(final BlockPos pos)
     {
         return getBlockState(pos).getBlock().isAir(getBlockState(pos), this, pos);

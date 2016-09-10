@@ -397,7 +397,7 @@ public final class SchematicWrapper
             @NotNull NBTTagCompound tileEntityNBT = new NBTTagCompound();
             tileEntity.writeToNBT(tileEntityNBT);
 
-            TileEntity newTileEntity = TileEntity.func_190200_a(tileEntity.getWorld(), tileEntityNBT);
+            TileEntity newTileEntity = TileEntity.create(tileEntity.getWorld(), tileEntityNBT);
             newTileEntity.setPos(newPos);
             schematic.setTileEntity(newPos, newTileEntity);
         }
