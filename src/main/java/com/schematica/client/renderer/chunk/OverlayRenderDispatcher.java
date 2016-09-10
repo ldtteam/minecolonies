@@ -13,6 +13,16 @@ import net.minecraft.util.BlockRenderLayer;
 
 public class OverlayRenderDispatcher extends ChunkRenderDispatcher
 {
+    public OverlayRenderDispatcher()
+    {
+        super();
+    }
+
+    public OverlayRenderDispatcher(int countRenderBuilders)
+    {
+        super(countRenderBuilders);
+    }
+
     @Override
     public ListenableFuture<Object> uploadChunk(
                                                  final BlockRenderLayer layer,

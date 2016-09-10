@@ -2,6 +2,7 @@ package com.schematica.client.renderer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import com.minecolonies.proxy.ClientProxy;
 import com.schematica.Settings;
 import com.schematica.client.renderer.chunk.OverlayRenderDispatcher;
 import com.schematica.client.renderer.chunk.container.AbstractSchematicChunkRenderContainer;
@@ -73,8 +74,8 @@ public final class RenderSchematic extends RenderGlobal
     private final Profiler      profiler;
     private final RenderManager renderManager;
     private final Set<RenderOverlay>       overlaysToUpdate        = Sets.newLinkedHashSet();
-    private final ChunkRenderDispatcher    renderDispatcher        = new ChunkRenderDispatcher();
-    private final OverlayRenderDispatcher  renderDispatcherOverlay = new OverlayRenderDispatcher();
+    private ChunkRenderDispatcher    renderDispatcher        = new ChunkRenderDispatcher();
+    private OverlayRenderDispatcher  renderDispatcherOverlay = new OverlayRenderDispatcher();
     private final BlockPos.MutableBlockPos tmp                     = new BlockPos.MutableBlockPos();
     @Nullable
     private SchematicWorld world;
@@ -98,6 +99,8 @@ public final class RenderSchematic extends RenderGlobal
     private AbstractSchematicChunkRenderContainer renderContainer;
     private int renderDistanceChunks = -1;
     private int countEntitiesTotal;
+    private int countTileEntitiesTotal;
+    private int countTileEntitiesRendered;
     private int countEntitiesRendered;
     private boolean vboEnabled = false;
     private ISchematicRenderChunkFactory renderChunkFactory;
@@ -228,6 +231,33 @@ public final class RenderSchematic extends RenderGlobal
             world.addEventListener(this);
             loadRenderers();
         }
+        else
+        {
+            this.chunksToUpdate.clear();
+            this.overlaysToUpdate.clear();
+            this.renderInfos.clear();
+
+            if (this.viewFrustum != null)
+            {
+                this.viewFrustum.deleteGlResources();
+            }
+
+            this.viewFrustum = null;
+
+            if (this.renderDispatcher != null)
+            {
+                this.renderDispatcher.stopWorkerThreads();
+            }
+
+            this.renderDispatcher = null;
+
+            if (this.renderDispatcherOverlay != null)
+            {
+                this.renderDispatcherOverlay.stopWorkerThreads();
+            }
+
+            this.renderDispatcherOverlay = null;
+        }
     }
 
     @Override
@@ -235,6 +265,16 @@ public final class RenderSchematic extends RenderGlobal
     {
         if (this.world != null)
         {
+            if (this.renderDispatcher == null)
+            {
+                this.renderDispatcher = new ChunkRenderDispatcher(5);
+            }
+
+            if (this.renderDispatcherOverlay == null)
+            {
+                this.renderDispatcherOverlay = new OverlayRenderDispatcher(5);
+            }
+
             this.displayListEntitiesDirty = true;
             this.renderDistanceChunks = ConfigurationHandler.renderDistance;
             final boolean vbo = this.vboEnabled;
@@ -295,6 +335,9 @@ public final class RenderSchematic extends RenderGlobal
         this.countEntitiesTotal = 0;
         this.countEntitiesRendered = 0;
 
+        this.countTileEntitiesTotal = 0;
+        this.countTileEntitiesRendered = 0;
+
         final double x = playerPositionOffset.xCoord;
         final double y = playerPositionOffset.yCoord;
         final double z = playerPositionOffset.zCoord;
@@ -311,6 +354,7 @@ public final class RenderSchematic extends RenderGlobal
         this.profiler.endStartSection("blockentities");
         RenderHelper.enableStandardItemLighting();
 
+        TileEntityRendererDispatcher.instance.preDrawBatch();
         for (@NotNull final ContainerLocalRenderInformation renderInfo : this.renderInfos)
         {
             for (@NotNull final TileEntity tileEntity : renderInfo.renderChunk.getCompiledChunk().getTileEntities())
@@ -328,8 +372,10 @@ public final class RenderSchematic extends RenderGlobal
                 }
 
                 TileEntityRendererDispatcher.instance.renderTileEntity(tileEntity, partialTicks, -1);
+                this.countTileEntitiesRendered++;
             }
         }
+        TileEntityRendererDispatcher.instance.drawBatch(entityPass);
 
         this.mc.entityRenderer.disableLightmap();
         this.profiler.endSection();
@@ -408,6 +454,7 @@ public final class RenderSchematic extends RenderGlobal
         this.lastViewEntityPitch = viewEntity.rotationPitch;
         this.lastViewEntityYaw = viewEntity.rotationYaw;
 
+        this.profiler.endStartSection("update");
         if (this.displayListEntitiesDirty)
         {
             this.displayListEntitiesDirty = false;
@@ -472,6 +519,7 @@ public final class RenderSchematic extends RenderGlobal
                 }
             }
 
+            this.profiler.startSection("iteration");
             while (!renderInfoList.isEmpty())
             {
                 final ContainerLocalRenderInformation renderInfo = renderInfoList.poll();
@@ -500,6 +548,7 @@ public final class RenderSchematic extends RenderGlobal
                 }
             }
         }
+        this.profiler.endStartSection("rebuild");
 
         this.renderDispatcher.clearChunkUpdates();
         this.renderDispatcherOverlay.clearChunkUpdates();
@@ -642,6 +691,12 @@ public final class RenderSchematic extends RenderGlobal
 
             renderChunk.setNeedsUpdate(false);
             chunkIterator.remove();
+
+            final long diff = finishTimeNano - System.nanoTime();
+            if (diff < 0L)
+            {
+                break;
+            }
         }
 
         this.displayListEntitiesDirty |= this.renderDispatcherOverlay.runChunkUploads(finishTimeNano);
@@ -657,6 +712,12 @@ public final class RenderSchematic extends RenderGlobal
 
             renderOverlay.setNeedsUpdate(false);
             overlayIterator.remove();
+
+            final long diff = finishTimeNano - System.nanoTime();
+            if (diff < 0L)
+            {
+                break;
+            }
         }
     }
 
