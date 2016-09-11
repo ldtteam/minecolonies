@@ -864,7 +864,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (parent != null)
         {
             IBlockState hereState = world.getBlockState(parent.pos.down());
-            Block here = hereState.getBlock();
             if (hereState.getMaterial().isLiquid() && !isPassable(pos))
             {
                 return true;

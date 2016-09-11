@@ -631,13 +631,13 @@ public final class RenderSchematic extends RenderGlobal
             final RenderChunk renderChunk = renderInfo.renderChunk;
             final RenderOverlay renderOverlay = renderInfo.renderOverlay;
 
-            if (!renderChunk.getCompiledChunk().isLayerEmpty(layer))
+            //if (renderChunk.getCompiledChunk().isLayerEmpty(layer))
             {
                 count++;
                 this.renderContainer.addRenderChunk(renderChunk, layer);
             }
 
-            if (isTranslucent && renderOverlay != null && !renderOverlay.getCompiledChunk().isLayerEmpty(layer))
+            //if (isTranslucent && renderOverlay != null && !renderOverlay.getCompiledChunk().isLayerEmpty(layer))
             {
                 count++;
                 this.renderContainer.addRenderOverlay(renderOverlay);
