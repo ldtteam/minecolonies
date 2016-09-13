@@ -173,7 +173,9 @@ public final class ModAchievements
                                                                                                         achievementUpgradeLumberjackMax,
                                                                                                         achievementUpgradeMinerMax,
                                                                                                         achievementUpgradeFisherMax,
-                                                                                                        achievementSizeMetropolis
+                                                                                                        achievementSizeMetropolis,
+                                                                                                        achievementBuildingFarmer,
+                                                                                                        achievementUpgradeFarmerMax
     );
 
     /**
