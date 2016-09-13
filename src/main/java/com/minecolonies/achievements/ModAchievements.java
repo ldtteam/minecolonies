@@ -132,7 +132,7 @@ public final class ModAchievements
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_SETTLEMENT} citizens.
      */
-    public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.pioneer", 2, -2, ModItems.itemAchievementProxySettlement, null)
+    public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.settlement", 2, -2, ModItems.itemAchievementProxySettlement, null)
             .registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_TOWN} citizens.
