@@ -461,7 +461,8 @@ public class Colony implements IColony
         //  Subscribers = Owners + Players within (double working town hall range)
         @NotNull Set<EntityPlayerMP> oldSubscribers = subscribers;
         subscribers = new HashSet<>();
-        
+
+        this.getWorld().getMinecraftServer().getPlayerList().getPlayerList();
         // Add owners
         subscribers.addAll(
                 Minecraft.getMinecraft().getIntegratedServer().getServer().getPlayerList().getPlayerList()
