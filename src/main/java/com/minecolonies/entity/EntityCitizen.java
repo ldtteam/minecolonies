@@ -892,12 +892,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     protected void dropEquipment(boolean par1, int par2)
     {
-        //Delete stuff from Inventory Array that isn't really used.
-        for (int i = 0; i < getInventoryCitizen().getSizeInventory(); i++)
-        {
-            setItemStackToSlot(EntityEquipmentSlot.values()[i], null);
-        }
-
         //Drop actual inventory
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
