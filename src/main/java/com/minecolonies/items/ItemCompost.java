@@ -4,6 +4,7 @@ package com.minecolonies.items;
  * Created by Northstar on 8/29/2016.
  */
 
+import com.minecolonies.creativetab.ModCreativeTabs;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +23,8 @@ public class ItemCompost extends AbstractItemMinecolonies
     public ItemCompost()
     {
         super("compost");
+
+        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
         maxStackSize = 64;
     }
     
