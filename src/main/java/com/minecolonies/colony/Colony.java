@@ -462,10 +462,9 @@ public class Colony implements IColony
         @NotNull Set<EntityPlayerMP> oldSubscribers = subscribers;
         subscribers = new HashSet<>();
 
-        this.getWorld().getMinecraftServer().getPlayerList().getPlayerList();
         // Add owners
         subscribers.addAll(
-                Minecraft.getMinecraft().getIntegratedServer().getServer().getPlayerList().getPlayerList()
+                this.getWorld().getMinecraftServer().getPlayerList().getPlayerList()
                         .stream()
             .filter(permissions::isSubscriber)
             .collect(Collectors.toList()));
