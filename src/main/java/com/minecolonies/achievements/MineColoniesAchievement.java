@@ -1,5 +1,6 @@
 package com.minecolonies.achievements;
 
+import com.minecolonies.lib.Constants;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,7 +27,7 @@ public class MineColoniesAchievement extends Achievement
      */
     public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final Item itemIcon, final Achievement parent)
     {
-        super(id, id, offsetX, offsetY, itemIcon, parent);
+        super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, itemIcon, parent);
     }
 
     /**
@@ -40,7 +41,7 @@ public class MineColoniesAchievement extends Achievement
      */
     public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final Block blockIcon, final Achievement parent)
     {
-        super(id, id, offsetX, offsetY, blockIcon, parent);
+        super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, blockIcon, parent);
     }
 
     /**
@@ -54,6 +55,6 @@ public class MineColoniesAchievement extends Achievement
      */
     public MineColoniesAchievement(final String id, final int offsetX, final int offsetY, final ItemStack itemStackIcon, final Achievement parent)
     {
-        super(id, id, offsetX, offsetY, itemStackIcon, parent);
+        super(Constants.MOD_ID + "." + id, id, offsetX, offsetY, itemStackIcon, parent);
     }
 }
