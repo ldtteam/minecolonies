@@ -23,6 +23,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -1105,7 +1106,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 this.worldObj.playSound((EntityPlayer) null,
                   this.getPosition(),
-                  new SoundEvent(new ResourceLocation("random.pop")),
+                        SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
                   0.2F,
                   (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
