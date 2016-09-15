@@ -531,7 +531,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return citizenData.getExperience();
     }
 
-    @NotNull
     @Override
     public EntityAgeable createChild(EntityAgeable var1)
     {
