@@ -76,7 +76,7 @@ public class Button extends Pane
     @Override
     public void handleClick(int mx, int my)
     {
-        mc.getSoundHandler().playSound(PositionedSoundRecord.getMusicRecord(SoundEvents.UI_BUTTON_CLICK)));
+        mc.getSoundHandler().playSound(PositionedSoundRecord.getMusicRecord(SoundEvents.UI_BUTTON_CLICK));
 
         Handler delegatedHandler = handler;
 
