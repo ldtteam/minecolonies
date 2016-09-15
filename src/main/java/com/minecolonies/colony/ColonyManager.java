@@ -74,7 +74,7 @@ public final class ColonyManager
 
         String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
-        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
+        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER, w);
 
         colony.triggerAchievement(ModAchievements.achievementGetSupply);
         colony.triggerAchievement(ModAchievements.achievementBuildingTownhall);

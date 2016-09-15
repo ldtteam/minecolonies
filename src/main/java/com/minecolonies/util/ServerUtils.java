@@ -86,19 +86,19 @@ public final class ServerUtils
      * The {@link Permissions.Player} is a wrapper around a {@link UUID} of minecraft players.
      * The List will simply be converted into an {@link EntityPlayer} type.
      * <p>
-     * Uses {@link ServerUtils#getPlayerFromPermPlayer(Permissions.Player)}.
+     * Uses {@link ServerUtils#getPlayerFromPermPlayer(Permissions.Player, World)}.
      *
      * @param players The list of players to convert.
      * @return A list of {@link EntityPlayer}s
      */
     @NotNull
-    public static List<EntityPlayer> getPlayersFromPermPlayer(@NotNull List<Permissions.Player> players)
+    public static List<EntityPlayer> getPlayersFromPermPlayer(@NotNull List<Permissions.Player> players, @NotNull World world)
     {
         @NotNull final List<EntityPlayer> playerList = new ArrayList<>();
 
         for (@NotNull final Permissions.Player player : players)
         {
-            playerList.add(ServerUtils.getPlayerFromPermPlayer(player));
+            playerList.add(ServerUtils.getPlayerFromPermPlayer(player, world));
         }
 
         return playerList;
@@ -109,15 +109,15 @@ public final class ServerUtils
      * <p>
      * Simply converts our type into the base type.
      * <p>
-     * Passes this {@link Permissions.Player#getID()} to {@link ServerUtils#getPlayerFromUUID(UUID)}.
+     * Passes this {@link Permissions.Player#getID()} to {@link ServerUtils#getPlayerFromUUID(UUID, World)}.
      *
      * @param player The {@link Permissions.Player} to convert
      * @return The {@link EntityPlayer} reference.
      */
     @Nullable
-    public static EntityPlayer getPlayerFromPermPlayer(@NotNull Permissions.Player player)
+    public static EntityPlayer getPlayerFromPermPlayer(@NotNull Permissions.Player player,@NotNull World world)
     {
-        return ServerUtils.getPlayerFromUUID(player.getID());
+        return ServerUtils.getPlayerFromUUID(player.getID(), world);
     }
 
     /**
@@ -129,13 +129,13 @@ public final class ServerUtils
      * @return The player the player if found or null
      */
     @Nullable
-    public static EntityPlayer getPlayerFromUUID(@Nullable UUID uuid)
+    public static EntityPlayer getPlayerFromUUID(@Nullable UUID uuid,@NotNull World world)
     {
         if (uuid == null)
         {
             return null;
         }
-        final List<EntityPlayerMP> allPlayers = Minecraft.getMinecraft().getIntegratedServer().getPlayerList().getPlayerList();
+        final List<EntityPlayerMP> allPlayers = world.getMinecraftServer().getPlayerList().getPlayerList();
         for (@NotNull final EntityPlayerMP player : allPlayers)
         {
             if (player.getUniqueID().equals(uuid))

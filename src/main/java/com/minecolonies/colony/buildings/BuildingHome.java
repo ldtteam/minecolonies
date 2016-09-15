@@ -150,7 +150,7 @@ public class BuildingHome extends AbstractBuildingHut
     {
         super.onUpgradeComplete(newLevel);
 
-        @Nullable final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
+        @Nullable final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner(), getColony().getWorld());
 
         if (newLevel == 1)
         {

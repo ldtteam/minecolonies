@@ -6,11 +6,12 @@ import com.minecolonies.util.AchievementUtils;
 import com.minecolonies.util.Utils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -171,11 +172,11 @@ public class Permissions implements IPermissions
             @NotNull UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
             Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
 
-            GameProfile gameprofile = Minecraft.getMinecraft().getIntegratedServer().getPlayerProfileCache().getProfileByUUID(id);
+            String name = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(id).getName();
 
-            if(gameprofile != null)
+            if(!name.isEmpty())
             {
-                players.put(id, new Player(id, gameprofile.getName(), rank));
+                players.put(id, new Player(id, name, rank));
             }
         }
 
@@ -369,7 +370,7 @@ public class Permissions implements IPermissions
      * @param rank Desired rank
      * @return True if successful, otherwise false
      */
-    public boolean setPlayerRank(UUID id, Rank rank)
+    public boolean setPlayerRank(UUID id, Rank rank, World world)
     {
         Player player = players.get(id);
 
@@ -381,7 +382,8 @@ public class Permissions implements IPermissions
         }
         else
         {
-            GameProfile gameprofile = Minecraft.getMinecraft().getIntegratedServer().getPlayerProfileCache().getProfileByUUID(id);
+
+            GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(id);
 
             return gameprofile != null && addPlayer(gameprofile, rank);
         }
@@ -413,14 +415,13 @@ public class Permissions implements IPermissions
      * @param rank   Rank desired starting rank
      * @return True if successful, otherwise false
      */
-    public boolean addPlayer(@NotNull String player, Rank rank)
+    public boolean addPlayer(@NotNull String player, Rank rank, World world)
     {
         if(player.isEmpty())
         {
             return false;
         }
-        GameProfile gameprofile = Minecraft.getMinecraft().getIntegratedServer().getPlayerProfileCache().getGameProfileForUsername(player);
-
+        GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(player);
         //Check if the player already exists so that their rank isn't overridden
         return gameprofile != null && !players.containsKey(gameprofile.getId()) && addPlayer(gameprofile, rank);
     }
