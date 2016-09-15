@@ -2,6 +2,7 @@ package com.minecolonies.items;
 
 import com.minecolonies.MineColonies;
 import com.minecolonies.achievements.ModAchievements;
+import com.minecolonies.creativetab.ModCreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -14,6 +15,8 @@ public class ItemBuildTool extends AbstractItemMinecolonies
     public ItemBuildTool()
     {
         super("scepterGold");
+
+        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setMaxStackSize(1);
     }
 

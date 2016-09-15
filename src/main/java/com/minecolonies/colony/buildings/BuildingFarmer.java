@@ -1,6 +1,7 @@
 package com.minecolonies.colony.buildings;
 
 import com.minecolonies.MineColonies;
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.client.gui.WindowHutFarmer;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -400,6 +401,21 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void setAssignManually(final boolean assignManually)
     {
         this.assignManually = assignManually;
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            getColony().triggerAchievement(ModAchievements.achievementBuildingFarmer);
+        }
+        if (newLevel >= getMaxBuildingLevel())
+        {
+            getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
+        }
     }
 
     /**
