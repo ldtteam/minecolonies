@@ -90,23 +90,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final double BLOCK_BREAK_SOUND_RANGE = 16.0D;
 
     /**
-     * Modifier to lower the sound of block breaks.
-     * <p>
-     * Decrease this to make sounds louder.
-     */
-    private static final double BLOCK_BREAK_SOUND_DAMPER = 8.0D;
-
-    /**
-     * The height of half a block.
-     */
-    private static final double HALF_BLOCK = 0.5D;
-
-    /**
-     * Modifier for sound frequency when breaking blocks.
-     */
-    private static final double SOUND_FREQ_MODIFIER = 0.5D;
-
-    /**
      * The range in which someone will see the particles from a block breaking.
      */
     private static final double BLOCK_BREAK_PARTICLE_RANGE = 16.0D;
@@ -139,6 +122,21 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private PathNavigate newNavigator;
 
     /**
+     * Height of the citizen.
+     */
+    private static final double CITIZEN_HEIGHT = 1.8D;
+
+    /**
+     * Width of the citizen.
+     */
+    private static final double CITIZEN_WIDTH = 0.6D;
+
+    /**
+     * Defines how far the citizen will be rendered.
+     */
+    private static final double RENDER_DISTANCE_WEIGHT = 2.0D;
+
+    /**
      * Citizen constructor.
      *
      * @param world the world the citizen lives in.
@@ -146,12 +144,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public EntityCitizen(World world)
     {
         super(world);
-        setSize(0.6F, 1.8F);
+        setSize((float)CITIZEN_WIDTH, (float)CITIZEN_HEIGHT);
         this.enablePersistence();
         this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, this);
 
-        this.setRenderDistanceWeight(2.0D);
+        this.setRenderDistanceWeight(RENDER_DISTANCE_WEIGHT);
         this.newNavigator = new PathNavigate(this, world);
 
         updateNavigatorField();
@@ -162,6 +160,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
         initTasks();
     }
 
+    /**
+     *
+     */
     private synchronized void updateNavigatorField()
     {
         if (navigatorField == null)
@@ -212,6 +213,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         onJobChanged(getColonyJob());
     }
 
+    /**
+     * Defines job changes and state changes of the citizen.
+     * @param job the set job.
+     */
     public void onJobChanged(@Nullable AbstractJob job)
     {
         //  Model
@@ -243,7 +248,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
 
         //  AI Tasks
-        @NotNull Object currentTasks[] = this.tasks.taskEntries.toArray();
+        @NotNull Object[] currentTasks = this.tasks.taskEntries.toArray();
         for (@NotNull Object task : currentTasks)
         {
             if (((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIInteract)
@@ -255,7 +260,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (job != null)
         {
             job.addTasks(this.tasks);
-            if (ticksExisted > 0)
+            if (ticksExisted > 0  && getWorkBuilding() != null)
             {
                 BlockPosUtil.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
             }
@@ -893,8 +898,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         return newNavigator;
     }
-
-
+    
     /**
      * Drop the equipment for this entity.
      */
@@ -937,7 +941,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemstack to drop.
      * @return the dropped item.
      */
-    public EntityItem entityDropItem(@NotNull ItemStack itemstack)
+    private EntityItem entityDropItem(@NotNull ItemStack itemstack)
     {
         return entityDropItem(itemstack, 0.0F);
     }
@@ -1048,66 +1052,70 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return new BlockPos(posX, posY, posZ);
     }
 
+    /**
+     * Returns the first slot in the inventory with a specific item.
+     * @param targetItem the item.
+     * @return the slot.
+     */
     public int findFirstSlotInInventoryWith(Item targetItem)
     {
         return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), targetItem);
     }
 
+    /**
+     * Returns the first slot in the inventory with a specific block.
+     * @param block the block.
+     * @return the slot.
+     */
     public int findFirstSlotInInventoryWith(Block block)
     {
         return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), block);
     }
 
+    /**
+     * Returns the amount of a certain block in the inventory.
+     * @param block the block.
+     * @return the quantity.
+     */
     public int getItemCountInInventory(Block block)
     {
         return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), block);
     }
 
-    public int getItemCountInInventory(Item targetitem)
+    /**
+     * Returns the amount of a certain item in the inventory.
+     * @param targetItem the block.
+     * @return the quantity.
+     */
+    public int getItemCountInInventory(Item targetItem)
     {
-        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), targetitem);
+        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), targetItem);
     }
 
+    /**
+     * Checks if citizen has a certain block in the inventory.
+     * @param block the block.
+     * @return true if so.
+     */
     public boolean hasItemInInventory(Block block)
     {
         return InventoryUtils.hasitemInInventory(getInventoryCitizen(), block);
     }
 
+    /**
+     * Checks if citizen has a certain item in the inventory.
+     * @param item the item.
+     * @return true if so.
+     */
     public boolean hasItemInInventory(Item item)
     {
         return InventoryUtils.hasitemInInventory(getInventoryCitizen(), item);
     }
 
-    public void setInventorySize(int newSize, boolean dropLeftovers)
-    {
-        if (!worldObj.isRemote)
-        {
-            @NotNull InventoryCitizen newInventory = new InventoryCitizen(inventory.getName(), inventory.hasCustomName(), this);
-            @NotNull ArrayList<ItemStack> leftOvers = new ArrayList<>();
-            for (int i = 0; i < inventory.getSizeInventory(); i++)
-            {
-                ItemStack itemstack = inventory.getStackInSlot(i);
-                if (i < newInventory.getSizeInventory())
-                {
-                    newInventory.setInventorySlotContents(i, itemstack);
-                }
-                else
-                {
-                    if (itemstack != null)
-                    {
-                        leftOvers.add(itemstack);
-                    }
-                }
-            }
-            inventory = newInventory;
-
-            if (dropLeftovers)
-            {
-                leftOvers.stream().filter(leftover -> leftover.stackSize > 0).forEach(this::entityDropItem);
-            }
-        }
-    }
-
+    /**
+     * Citizen will try to pick up a certain item.
+     * @param entityItem the item he wants to pickup.
+     */
     private void tryPickupEntityItem(@NotNull EntityItem entityItem)
     {
         if (!this.worldObj.isRemote)
@@ -1203,12 +1211,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
                   new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
-            worldObj.playSound((EntityPlayer) null,
+            worldObj.playSound(null,
               blockPos,
               block.getSoundType(blockState, worldObj, blockPos, this).getBreakSound(),
               SoundCategory.BLOCKS,
-               block.getSoundType(blockState, worldObj, blockPos, this).getVolume(),
-               block.getSoundType(blockState, worldObj, blockPos, this).getPitch());
+              block.getSoundType(blockState, worldObj, blockPos, this).getVolume(),
+              block.getSoundType(blockState, worldObj, blockPos, this).getPitch());
             worldObj.setBlockToAir(blockPos);
 
             damageItemInHand(1);
