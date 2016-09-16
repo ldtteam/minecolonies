@@ -499,7 +499,7 @@ public final class ColonyManager
         final Map<Integer, Colony> coloniesCopy = new HashMap<>(colonies);
 
         coloniesCopy.values().stream()
-          .filter(c -> c.getDimensionId() == event.world.provider.getDimensionId())
+          .filter(c -> c.getDimension() == event.world.provider.getDimension())
           .forEach(c -> c.onWorldTick(event));
     }
 

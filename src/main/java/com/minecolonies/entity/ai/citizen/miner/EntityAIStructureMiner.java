@@ -536,14 +536,14 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 @NotNull BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
                 int normalizedX = x - xOffset;
                 int normalizedZ = z - zOffset;
-                if ((Math.abs(normalizedX) >= 2 || Math.abs(normalizedZ) >= 2) && world.getBlockState(curBlock).getBlock() != getOwnBuilding().getFloorBlock())
+                if ((Math.abs(normalizedX) >= 2 || Math.abs(normalizedZ) >= 2) && world.getBlockState(curBlock) != getOwnBuilding().getFloorBlock())
                 {
                     setDelay(DELAY_TIMEOUT);
-                    if (checkOrRequestItems(new ItemStack(getOwnBuilding().getFloorBlock())))
+                    if (checkOrRequestItems(new ItemStack(getOwnBuilding().getFloorBlock().getBlock())))
                     {
                         return true;
                     }
-                    setBlockFromInventory(curBlock, getOwnBuilding().getFloorBlock());
+                    setBlockFromInventory(curBlock, getOwnBuilding().getFloorBlock().getBlock(), getOwnBuilding().getFloorBlock());
                     return true;
                 }
             }
@@ -839,7 +839,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                     for (int z = -1; z <= 1; z++)
                     {
                         @NotNull BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
-                        if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getFloorBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
+                        if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getShaftBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
                         {
                             continue;
                         }
@@ -1135,7 +1135,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 for (int z = negz; z <= posz; z++)
                 {
                     @NotNull BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
-                    if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getFloorBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
+                    if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getShaftBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
                     {
                         continue;
                     }

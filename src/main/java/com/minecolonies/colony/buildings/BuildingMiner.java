@@ -11,6 +11,8 @@ import com.minecolonies.entity.ai.citizen.miner.Level;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSlab;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -83,30 +85,37 @@ public class BuildingMiner extends AbstractBuildingWorker
      * The NBT Tag to store if a ladder has been found yet.
      */
     private static final String  TAG_LADDER         = "found_ladder";
+
+    private static final String TAG_SHAFT_BLOCK     = "shaftBlock";
+
     /**
      * The maximum upgrade of the building.
      */
-    private static final int     MAX_BUILDING_LEVEL = 3;
+    private static final int         MAX_BUILDING_LEVEL = 3;
     /**
      * The job description.
      */
-    private static final String  MINER              = "Miner";
+    private static final String      MINER              = "Miner";
     /**
      * True if shaft is at bottom limit
      */
-    public               boolean clearedShaft       = false;
+    public               boolean     clearedShaft       = false;
+    /**
+     * Defines the material used for the structure of the horizontal shaft.
+     */
+    private              Block       shaftBlock         = Blocks.PLANKS;
     /**
      * Defines the material used for the floor of the shaft.
      */
-    private              Block   floorBlock         = Blocks.PLANKS;
+    private static final IBlockState floorBlock = Blocks.WOODEN_SLAB.getDefaultState().withProperty(Blocks.WOODEN_SLAB.HALF, BlockSlab.EnumBlockHalf.TOP);
     /**
      * Defines the material used for the fence of the shaft.
      */
-    private              Block   fenceBlock         = Blocks.OAK_FENCE;
+    private              Block       fenceBlock         = Blocks.OAK_FENCE;
     /**
      * Here we can detect multiples of 5
      */
-    private              int     startingLevelShaft = 0;
+    private              int         startingLevelShaft = 0;
     /**
      * The location of the topmost cobblestone the ladder starts at
      */
@@ -236,13 +245,13 @@ public class BuildingMiner extends AbstractBuildingWorker
     {
         super.readFromNBT(compound);
 
-        if (compound.hasKey(TAG_FLOOR_BLOCK))
-        {
-            floorBlock = Block.getBlockFromName(compound.getString(TAG_FLOOR_BLOCK));
-        }
         if (compound.hasKey(TAG_FENCE_BLOCK))
         {
             fenceBlock = Block.getBlockFromName(compound.getString(TAG_FENCE_BLOCK));
+        }
+        if (compound.hasKey(TAG_SHAFT_BLOCK))
+        {
+            shaftBlock = Block.getBlockFromName(compound.getString(TAG_SHAFT_BLOCK));
         }
 
         startingLevelShaft = compound.getInteger(TAG_STARTING_LEVEL);
@@ -281,8 +290,9 @@ public class BuildingMiner extends AbstractBuildingWorker
     {
         super.writeToNBT(compound);
 
-        compound.setString(TAG_FLOOR_BLOCK, Block.REGISTRY.getNameForObject(floorBlock).toString());
         compound.setString(TAG_FENCE_BLOCK, Block.REGISTRY.getNameForObject(fenceBlock).toString());
+        compound.setString(TAG_FLOOR_BLOCK, Block.REGISTRY.getNameForObject(shaftBlock).toString());
+
         compound.setInteger(TAG_STARTING_LEVEL, startingLevelShaft);
         compound.setBoolean(TAG_CLEARED, clearedShaft);
         compound.setInteger(TAG_VECTORX, vectorX);
@@ -546,9 +556,19 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @return the material of the floor block.
      */
-    public Block getFloorBlock()
+    public IBlockState getFloorBlock()
     {
         return floorBlock;
+    }
+
+    /**
+     * Getter of the floor block.
+     *
+     * @return the material of the floor block.
+     */
+    public Block getShaftBlock()
+    {
+        return shaftBlock;
     }
 
     /**
