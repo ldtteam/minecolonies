@@ -495,7 +495,7 @@ public final class ColonyManager
     public static void onWorldTick(
                                     @NotNull TickEvent.WorldTickEvent event)
     {
-        Map<Integer, Colony> coloniesCopy = new HashMap<>(colonies);
+        final Map<Integer, Colony> coloniesCopy = new HashMap<>(colonies);
 
         coloniesCopy.values().stream()
           .filter(c -> c.getDimensionId() == event.world.provider.getDimensionId())
