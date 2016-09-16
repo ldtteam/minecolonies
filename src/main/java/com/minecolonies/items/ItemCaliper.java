@@ -1,5 +1,6 @@
 package com.minecolonies.items;
 
+import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -34,6 +35,8 @@ public class ItemCaliper extends AbstractItemMinecolonies
     public ItemCaliper()
     {
         super("caliper");
+
+        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
         maxStackSize = 1;
     }
 

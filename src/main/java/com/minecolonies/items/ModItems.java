@@ -9,6 +9,11 @@ public final class ModItems
     public static final Item scanTool    = new ItemScanTool();
     public static final Item caliper     = new ItemCaliper();
 
+    public static final Item itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
+    public static final Item itemAchievementProxyTown       = new ItemAchievementProxy("sizeTown");
+    public static final Item itemAchievementProxyCity       = new ItemAchievementProxy("sizeCity");
+    public static final Item itemAchievementProxyMetropolis = new ItemAchievementProxy("sizeMetropolis");
+
     // deactivated for now
     // public static final Item compost    = new ItemCompost();
 
