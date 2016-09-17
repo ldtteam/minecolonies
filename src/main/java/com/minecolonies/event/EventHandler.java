@@ -7,6 +7,7 @@ import com.minecolonies.colony.IColony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.MathUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -205,7 +206,9 @@ public class EventHandler
         {
             if (closestColony.hasTownHall() || !closestColony.getPermissions().isColonyMember(player))
             {
-                //  Placing in a colony which already has a town hall
+                Log.logger.info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at " +
+                closestColony.getID().getX() + "." + closestColony.getID().getY() + "." + closestColony.getID().getZ());
+                //Placing in a colony which already has a town hall
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
                 return false;
             }
@@ -222,7 +225,9 @@ public class EventHandler
 
         if (closestColony.getDistanceSquared(pos) <= MathUtils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
         {
-            //  Placing too close to an existing colony
+            Log.logger.info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at " +
+                    closestColony.getID().getX() + "." + closestColony.getID().getY() + "." + closestColony.getID().getZ());
+            //Placing too close to an existing colony
             LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
             return false;
         }

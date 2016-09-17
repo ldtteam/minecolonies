@@ -172,11 +172,11 @@ public class Permissions implements IPermissions
             @NotNull UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
             Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
 
-            String name = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(id).getName();
+            GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(id);;
 
-            if(!name.isEmpty())
+            if(player != null)
             {
-                players.put(id, new Player(id, name, rank));
+                players.put(id, new Player(id, player.getName(), rank));
             }
         }
 

@@ -373,7 +373,7 @@ public final class ColonyManager
     {
         return colonies.values()
                  .stream()
-                 .filter(c -> c.getPermissions().getOwner().equals(owner))
+                 .filter(c -> owner.equals(c.getPermissions().getOwner()))
                  .findFirst()
                  .orElse(null);
     }

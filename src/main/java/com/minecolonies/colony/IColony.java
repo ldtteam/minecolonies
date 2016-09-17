@@ -6,6 +6,14 @@ import net.minecraft.world.World;
 
 public interface IColony
 {
+
+    /**
+     * Returns the position of the colony.
+     *
+     * @return pos of the colony
+     */
+    BlockPos getID();
+
     /**
      * Returns the name of the colony
      *
