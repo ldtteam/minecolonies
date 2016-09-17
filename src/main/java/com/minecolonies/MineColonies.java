@@ -7,6 +7,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.RecipeHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
@@ -63,6 +64,8 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(@NotNull FMLPreInitializationEvent event)
     {
+        Log.logger = event.getModLog();
+
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
 
         proxy.registerEntities();
