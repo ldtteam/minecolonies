@@ -12,7 +12,7 @@ public interface IColony
      *
      * @return pos of the colony
      */
-    BlockPos getID();
+    BlockPos getCenter();
 
     /**
      * Returns the name of the colony
