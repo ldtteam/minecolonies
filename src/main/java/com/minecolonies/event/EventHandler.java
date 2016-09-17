@@ -61,13 +61,11 @@ public class EventHandler
      * Event gets cancelled when player has no permission
      * Event gets cancelled when the player has no permission to place a hut, and tried it
      *
-     * @param event {@link PlayerInteractEvent}
+     * @param event {@link PlayerInteractEvent.RightClickBlock}
      */
     @SubscribeEvent
-    public void onPlayerInteract(@NotNull PlayerInteractEvent event)
+    public void onPlayerInteract(@NotNull PlayerInteractEvent.RightClickBlock event)
     {
-        if (event instanceof PlayerInteractEvent.RightClickBlock)
-        {
             EntityPlayer player = event.getEntityPlayer();
             World world = event.getWorld();
 
@@ -92,7 +90,6 @@ public class EventHandler
             }
 
             handleEventCancellation(event, player);
-        }
     }
 
     private static boolean playerRightClickInteract(@NotNull EntityPlayer player, World world, BlockPos pos)
@@ -207,7 +204,7 @@ public class EventHandler
             if (closestColony.hasTownHall() || !closestColony.getPermissions().isColonyMember(player))
             {
                 Log.logger.info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at " +
-                closestColony.getID().getX() + "." + closestColony.getID().getY() + "." + closestColony.getID().getZ());
+                closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
                 //Placing in a colony which already has a town hall
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
                 return false;
@@ -226,7 +223,7 @@ public class EventHandler
         if (closestColony.getDistanceSquared(pos) <= MathUtils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
         {
             Log.logger.info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at " +
-                    closestColony.getID().getX() + "." + closestColony.getID().getY() + "." + closestColony.getID().getZ());
+                    closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
             //Placing too close to an existing colony
             LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
             return false;

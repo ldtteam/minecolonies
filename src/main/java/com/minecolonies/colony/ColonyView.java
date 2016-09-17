@@ -416,6 +416,12 @@ public final class ColonyView implements IColony
     }
 
     @Override
+    public BlockPos getCenter()
+    {
+        return center;
+    }
+
+    @Override
     public String getName()
     {
         return name;
