@@ -43,7 +43,7 @@ public interface IColony
      * @param pos Block Position
      * @return Squared distance to the center in (x, z) direction
      */
-    float getDistanceSquared(BlockPos pos);
+    long getDistanceSquared(BlockPos pos);
 
     /**
      * Returns whether or not the colony has a town hall

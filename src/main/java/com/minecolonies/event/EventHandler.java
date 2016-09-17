@@ -11,8 +11,11 @@ import com.minecolonies.util.Log;
 import com.minecolonies.util.MathUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -69,27 +72,31 @@ public class EventHandler
             EntityPlayer player = event.getEntityPlayer();
             World world = event.getWorld();
 
-            if (playerRightClickInteract(player, world, event.getPos()) &&
-                  // this was the simple way of doing it, minecraft calls onBlockActivated
-                  // and uses that return value, but I didn't want to call it twice
-                  world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
+            //Only execute for the main hand our colony events.
+            if(event.getHand() == EnumHand.MAIN_HAND && !(event.getWorld().isRemote))
             {
-                IColony colony = ColonyManager.getIColony(world, event.getPos());
-                if (colony != null &&
-                      !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+                if (playerRightClickInteract(player, world, event.getPos()) &&
+                        // this was the simple way of doing it, minecraft calls onBlockActivated
+                        // and uses that return value, but I didn't want to call it twice
+                        world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
                 {
-                    event.setCanceled(true);
+                    IColony colony = ColonyManager.getIColony(world, event.getPos());
+                    if (colony != null &&
+                            !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+                    {
+                        event.setCanceled(true);
+                    }
+
+                    return;
                 }
 
-                return;
-            }
+                if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)
+                {
+                    return;
+                }
 
-            if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)
-            {
-                return;
+                handleEventCancellation(event, player);
             }
-
-            handleEventCancellation(event, player);
     }
 
     private static boolean playerRightClickInteract(@NotNull EntityPlayer player, World world, BlockPos pos)

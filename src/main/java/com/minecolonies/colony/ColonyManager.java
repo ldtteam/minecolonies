@@ -257,13 +257,13 @@ public final class ColonyManager
     public static ColonyView getClosestColonyView(@NotNull World w, @NotNull BlockPos pos)
     {
         @Nullable ColonyView closestColony = null;
-        float closestDist = Float.MAX_VALUE;
+        long closestDist = Long.MAX_VALUE;
 
         for (@NotNull ColonyView c : colonyViews.values())
         {
             if (c.getDimension() == w.provider.getDimension())
             {
-                float dist = c.getDistanceSquared(pos);
+                long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
                 {
                     closestColony = c;
@@ -291,13 +291,13 @@ public final class ColonyManager
         }
 
         @Nullable Colony closestColony = null;
-        float closestDist = Float.MAX_VALUE;
+        long closestDist = Long.MAX_VALUE;
 
         for (@NotNull Colony c : coloniesInWorld)
         {
             if (c.getDimension() == w.provider.getDimension())
             {
-                float dist = c.getDistanceSquared(pos);
+                long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
                 {
                     closestColony = c;
