@@ -74,8 +74,8 @@ public final class RenderSchematic extends RenderGlobal
     private final Profiler      profiler;
     private final RenderManager renderManager;
     private final Set<RenderOverlay>       overlaysToUpdate        = Sets.newLinkedHashSet();
-    private ChunkRenderDispatcher    renderDispatcher        = new ChunkRenderDispatcher();
-    private OverlayRenderDispatcher  renderDispatcherOverlay = new OverlayRenderDispatcher();
+    private ChunkRenderDispatcher    renderDispatcher        = null;
+    private OverlayRenderDispatcher  renderDispatcherOverlay = null;
     private final BlockPos.MutableBlockPos tmp                     = new BlockPos.MutableBlockPos();
     @Nullable
     private SchematicWorld world;
@@ -116,8 +116,8 @@ public final class RenderSchematic extends RenderGlobal
         this.mc = minecraft;
         this.profiler = minecraft.mcProfiler;
         this.renderManager = minecraft.getRenderManager();
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+        GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+        GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
         GlStateManager.bindTexture(0);
         this.vboEnabled = OpenGlHelper.useVbo();
 
@@ -407,6 +407,12 @@ public final class RenderSchematic extends RenderGlobal
     }
 
     @Override
+    protected Vector3f getViewVector(final Entity entity, final double partialTicks)
+    {
+        return super.getViewVector(entity, partialTicks);
+    }
+
+    @Override
     public void setupTerrain(final Entity viewEntity, final double partialTicks, @NotNull final ICamera camera, final int frameCount, final boolean playerSpectator)
     {
         if (ConfigurationHandler.renderDistance != this.renderDistanceChunks || this.vboEnabled != OpenGlHelper.useVbo())
@@ -490,7 +496,7 @@ public final class RenderSchematic extends RenderGlobal
                 @NotNull final ContainerLocalRenderInformation renderInfo = new ContainerLocalRenderInformation(renderchunk, renderoverlay, null, 0);
                 final Set<EnumFacing> visibleSides = getVisibleSides(posEye);
 
-                if (!visibleSides.isEmpty() && visibleSides.size() == 1)
+                if (visibleSides.size() == 1)
                 {
                     final Vector3f viewVector = getViewVector(viewEntity, partialTicks);
                     final EnumFacing facing = EnumFacing.getFacingFromVector(viewVector.x, viewVector.y, viewVector.z).getOpposite();
@@ -751,7 +757,6 @@ public final class RenderSchematic extends RenderGlobal
     @Override
     public void notifyLightSet(final BlockPos pos)
     {
-        //TODO CHECK
         final int x = pos.getX();
         final int y = pos.getY();
         final int z = pos.getZ();
@@ -761,7 +766,7 @@ public final class RenderSchematic extends RenderGlobal
     @Override
     public void markBlockRangeForRenderUpdate(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
     {
-        markBlocksForUpdate(x1 - 1, y1 - 1, z1 - 1, x2 + 1, y2 + 1, z2 + 1, false);
+        markBlocksForUpdate(x1 - 1, y1 - 1, z1 - 1, x2 + 1, y2 + 1, z2 + 1, true);
     }
 
     @Override
@@ -843,6 +848,21 @@ public final class RenderSchematic extends RenderGlobal
           flag);
     }
 
+    @Override
+    public boolean hasNoChunkUpdates()
+    {
+        return this.chunksToUpdate.isEmpty() && this.renderDispatcher.hasChunkUpdates();
+    }
+
+    @Override
+    public void updateTileEntities(final Collection<TileEntity> tileEntitiesToRemove, final Collection<TileEntity> tileEntitiesToAdd)
+    {
+        /**
+         * Not needed.
+         */
+    }
+
+
     /**
      * Render the schematic and colored overlay.
      *
@@ -862,10 +882,7 @@ public final class RenderSchematic extends RenderGlobal
             {
                 GlStateManager.pushMatrix();
                 renderSchematic(Settings.instance.getSchematicWorld(), event.getPartialTicks());
-                GlStateManager.popMatrix();
-
-                GlStateManager.pushMatrix();
-                renderOverlay(Settings.instance.getSchematicWorld());
+                renderSchematic(Settings.instance.getSchematicWorld(), event.getPartialTicks());
                 GlStateManager.popMatrix();
             }
 
