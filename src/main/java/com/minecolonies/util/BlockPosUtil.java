@@ -142,11 +142,11 @@ public final class BlockPosUtil
      * @param block2 position two.
      * @return squared distance.
      */
-    public static int getDistanceSquared(@NotNull BlockPos block1, @NotNull BlockPos block2)
+    public static long getDistanceSquared(@NotNull BlockPos block1, @NotNull BlockPos block2)
     {
-        int i = block1.getX() - block2.getX();
-        int i1 = block1.getY() - block2.getY();
-        int i2 = block1.getZ() - block2.getZ();
+        long i = block1.getX() - block2.getX();
+        long i1 = block1.getY() - block2.getY();
+        long i2 = block1.getZ() - block2.getZ();
         return i * i + i1 * i1 + i2 * i2;
     }
 
