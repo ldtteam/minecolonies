@@ -22,7 +22,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.powermock.api.mockito.PowerMockito.*;
 
-@PrepareForTest({ColonyManager.class, LanguageHandler.class, Log.class})
+@PrepareForTest({ColonyManager.class, LanguageHandler.class})
 @RunWith(PowerMockRunner.class)
 public class TownHallPlacementTest
 {
