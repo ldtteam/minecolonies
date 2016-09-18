@@ -7,9 +7,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
-import com.minecolonies.util.Log;
 import com.minecolonies.util.RecipeHandler;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -59,6 +57,15 @@ public class MineColonies
     public static boolean isServer()
     {
         return !proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isServer();
+    }
+
+    /**
+     * Getter for the minecolonies Logger.
+     * @return the logger.
+     */
+    public static Logger getLogger()
+    {
+        return logger;
     }
 
     /**

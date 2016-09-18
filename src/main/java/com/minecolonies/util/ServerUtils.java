@@ -1,7 +1,6 @@
 package com.minecolonies.util;
 
 import com.minecolonies.colony.permissions.Permissions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;

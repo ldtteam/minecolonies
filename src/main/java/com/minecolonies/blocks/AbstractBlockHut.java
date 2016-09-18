@@ -7,7 +7,6 @@ import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;

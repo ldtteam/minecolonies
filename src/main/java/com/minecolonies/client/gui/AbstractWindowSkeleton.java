@@ -2,7 +2,6 @@ package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
 import com.blockout.views.Window;
-import com.minecolonies.util.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -56,7 +55,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
         }
         else
         {
-            Log.logger.warn(this.getClass().getName() + ": Unhandled Button ID:" + button.getID());
+            MineColonies.getLogger().warn(this.getClass().getName() + ": Unhandled Button ID:" + button.getID());
         }
     }
 

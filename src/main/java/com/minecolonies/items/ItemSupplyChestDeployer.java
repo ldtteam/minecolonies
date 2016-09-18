@@ -6,7 +6,6 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Log;
 import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
@@ -266,7 +265,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         if (chest == null)
         {
-            Log.logger.error("Supply chest tile entity was null.");
+            MineColonies.getLogger().error("Supply chest tile entity was null.");
             return;
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
