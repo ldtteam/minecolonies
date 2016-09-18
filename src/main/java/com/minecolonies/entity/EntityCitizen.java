@@ -150,7 +150,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, this);
         this.newNavigator = new PathNavigate(this, world);
         updateNavigatorField();
-        if(!world.isRemote)
+        if(world.isRemote)
         {
             setRenderDistanceWeight(RENDER_DISTANCE_WEIGHT);
         }
