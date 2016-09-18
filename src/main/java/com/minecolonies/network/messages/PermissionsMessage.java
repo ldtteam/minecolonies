@@ -1,11 +1,11 @@
 package com.minecolonies.network.messages;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.network.PacketUtils;
-import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -129,7 +129,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                MineColonies.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
@@ -151,7 +151,7 @@ public class PermissionsMessage
                     colony.getPermissions().togglePermission(message.rank, message.action);
                     break;
                 default:
-                    Log.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
+                    MineColonies.getLogger().error(String.format("Invalid MessageType %s", message.type.toString()));
             }
             return null;
         }
@@ -209,7 +209,7 @@ public class PermissionsMessage
             }
             else
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                MineColonies.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
             }
             return null;
         }
@@ -274,7 +274,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                MineColonies.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
@@ -339,7 +339,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                MineColonies.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 

@@ -1,8 +1,8 @@
 package com.minecolonies.entity.pathfinding;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.PathEntity;
@@ -178,7 +178,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
             }
             catch (@NotNull InterruptedException | ExecutionException e)
             {
-                Log.logger.catching(e);
+                MineColonies.getLogger().catching(e);
             }
 
             future = null;

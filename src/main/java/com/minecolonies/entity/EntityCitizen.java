@@ -184,7 +184,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
         catch (IllegalAccessException e)
         {
-            Log.logger.error("Navigator error", e);
+            MineColonies.getLogger().error("Navigator error", e);
         }
     }
 
@@ -746,7 +746,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (c == null)
         {
-            Log.logger.warn(String.format("EntityCitizen '%s' unable to find Colony #%d", getUniqueID(), colonyId));
+            MineColonies.getLogger().warn(String.format("EntityCitizen '%s' unable to find Colony #%d", getUniqueID(), colonyId));
             setDead();
             return;
         }
@@ -755,7 +755,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (data == null)
         {
             //  Citizen does not exist in the Colony
-            Log.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen %d, but not known to colony",
+            MineColonies.getLogger().warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen %d, but not known to colony",
               getUniqueID(),
               colonyId,
               citizenId));
@@ -786,7 +786,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     private void handleExistingCitizen(@NotNull CitizenData data, @NotNull EntityCitizen existingCitizen)
     {
-        Log.logger.warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
+        MineColonies.getLogger().warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
           getUniqueID(),
           colonyId,
           citizenId,

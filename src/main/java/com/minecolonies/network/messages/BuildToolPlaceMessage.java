@@ -8,7 +8,6 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -142,7 +141,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
     {
         if (Schematics.getStylesForHut(hut) == null)
         {
-            Log.logger.error("No record of hut: " + hut);
+            MineColonies.getLogger().error("No record of hut: " + hut);
             return;
         }
 
@@ -165,7 +164,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
             }
             else
             {
-                Log.logger.error("BuildTool: building is null!");
+                MineColonies.getLogger().error("BuildTool: building is null!");
             }
         }
     }
@@ -184,7 +183,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
     {
         if (Schematics.getStylesForDecoration(decoration) == null)
         {
-            Log.logger.error("No record of decoration: " + decoration);
+            MineColonies.getLogger().error("No record of decoration: " + decoration);
             return;
         }
 

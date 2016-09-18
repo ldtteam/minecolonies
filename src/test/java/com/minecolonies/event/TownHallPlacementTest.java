@@ -4,7 +4,6 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -53,7 +52,7 @@ public class TownHallPlacementTest
         mockStatic(LanguageHandler.class);
         doNothing().when(LanguageHandler.class, "sendPlayerLocalizedMessage", anyObject(), anyString());
 
-        Log.logger = logger;
+        MineColonies.getLogger() = logger;
         doNothing().when(logger).info(anyString());
         //Doesn't matter only used for logging
         when(colony.getCenter()).thenReturn(PLACE_POS);

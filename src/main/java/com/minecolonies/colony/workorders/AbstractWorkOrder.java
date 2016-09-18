@@ -3,7 +3,6 @@ package com.minecolonies.colony.workorders;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.WorkOrderView;
-import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -97,12 +96,12 @@ public abstract class AbstractWorkOrder
         }
         catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
         {
-            Log.logger.trace(e);
+            MineColonies.getLogger().trace(e);
         }
 
         if (order == null)
         {
-            Log.logger.warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            MineColonies.getLogger().warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
             return null;
         }
         try
@@ -111,7 +110,7 @@ public abstract class AbstractWorkOrder
         }
         catch (RuntimeException ex)
         {
-            Log.logger.error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+            MineColonies.getLogger().error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
               compound.getString(TAG_TYPE), oclass.getName()), ex);
             return null;
         }
@@ -147,7 +146,7 @@ public abstract class AbstractWorkOrder
         }
         catch (RuntimeException ex)
         {
-            Log.logger.error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+            MineColonies.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
               workOrderView.getId()), ex);
             workOrderView = null;
         }

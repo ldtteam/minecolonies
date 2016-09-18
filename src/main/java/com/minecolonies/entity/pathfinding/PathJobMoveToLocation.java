@@ -1,5 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.Log;
 import net.minecraft.pathfinding.PathEntity;
@@ -48,7 +49,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
-            Log.logger.info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
+            MineColonies.getLogger().info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
               start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));
         }
 
