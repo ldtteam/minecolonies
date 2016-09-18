@@ -1,5 +1,6 @@
 package com.minecolonies.network.messages;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.Schematics;

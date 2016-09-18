@@ -1,5 +1,6 @@
 package com.minecolonies.colony.jobs;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;

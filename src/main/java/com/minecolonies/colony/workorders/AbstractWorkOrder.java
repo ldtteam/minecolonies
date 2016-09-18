@@ -1,5 +1,6 @@
 package com.minecolonies.colony.workorders;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.WorkOrderView;

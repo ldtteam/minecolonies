@@ -1,5 +1,6 @@
 package com.minecolonies.colony;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;

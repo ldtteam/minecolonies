@@ -1,5 +1,6 @@
 package com.minecolonies.items;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
