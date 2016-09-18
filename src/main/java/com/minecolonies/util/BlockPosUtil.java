@@ -23,7 +23,15 @@ import java.util.List;
  */
 public final class BlockPosUtil
 {
+    /**
+     * Min distance to availate two positions as close.
+     */
     private static final double CLOSE_DISTANCE = 4.84;
+
+    /**
+     * Max distance two points should have divided by 3 because of 3dim positions.
+     */
+    private static final long MAX_SQRT = 3_000_000_000L / 3;
 
     private BlockPosUtil()
     {
@@ -144,10 +152,22 @@ public final class BlockPosUtil
      */
     public static long getDistanceSquared(@NotNull BlockPos block1, @NotNull BlockPos block2)
     {
-        long i = (long) block1.getX() - block2.getX();
-        long i1 = (long) block1.getY() - block2.getY();
-        long i2 = (long) block1.getZ() - block2.getZ();
-        return i * i + i1 * i1 + i2 * i2;
+        final long xDiff = Math.abs((long) block1.getX() - block2.getX());
+        final long yDiff = Math.abs((long) block1.getY() - block2.getY());
+        final long zDiff = Math.abs((long) block1.getZ() - block2.getZ());
+
+        if (xDiff > MAX_SQRT || yDiff > MAX_SQRT || zDiff > MAX_SQRT)
+        {
+            return Long.MAX_VALUE;
+        }
+
+        final long result = xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
+        if (result < 0)
+        {
+            throw new IllegalStateException("max-sqrt is to high! Failure to catch overflow with "
+                    + xDiff + " | " + yDiff + " | " + zDiff);
+        }
+        return result;
     }
 
     /**
@@ -159,9 +179,21 @@ public final class BlockPosUtil
      */
     public static long getDistanceSquared2D(@NotNull BlockPos block1, @NotNull BlockPos block2)
     {
-        long i = (long) block1.getX() - block2.getX();
-        long i2 = (long) block1.getZ() - block2.getZ();
-        return i * i + i2 * i2;
+        final long xDiff = Math.abs((long) block1.getX() - block2.getX());
+        final long zDiff = Math.abs((long) block1.getZ() - block2.getZ());
+
+        if (xDiff > MAX_SQRT || zDiff > MAX_SQRT)
+        {
+            return Integer.MAX_VALUE;
+        }
+
+        final long result = xDiff * xDiff + zDiff * zDiff;
+        if (result < 0)
+        {
+            throw new IllegalStateException("max-sqrt is to high! Failure to catch overflow with "
+                    + xDiff + " | " + zDiff);
+        }
+        return result;
     }
 
     /**
