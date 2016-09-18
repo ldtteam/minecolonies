@@ -27,10 +27,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import static net.minecraft.util.EnumFacing.NORTH;
-import static net.minecraft.util.EnumFacing.fromAngle;
-
+import static net.minecraft.util.EnumFacing.*;
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
@@ -39,7 +36,7 @@ public class BlockHutField extends BlockContainer
     /**
      * The position it faces.
      */
-    public static final PropertyDirection FACING = PropertyDirection.create("FACING", Plane.HORIZONTAL);
+    public static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
     /**
      * Hardness of the block.
      */
@@ -160,7 +157,8 @@ public class BlockHutField extends BlockContainer
     }
 
     @Override
-    public boolean onBlockActivated(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, @NotNull EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, @NotNull EntityPlayer playerIn, EnumFacing side,
+            float hitX, float hitY, float hitZ)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)

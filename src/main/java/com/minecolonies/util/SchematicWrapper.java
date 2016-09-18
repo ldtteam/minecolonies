@@ -341,7 +341,7 @@ public final class SchematicWrapper
                         }
                         else
                         {
-                            schematic.setBlockState(localPos, Blocks.AIR.getDefaultState());
+                            schematic.setBlockState(localPos, Blocks.air.getDefaultState());
                             MineColonies.getLogger().warn("Scan contained multiple AbstractBlockHut's ignoring this one");
                         }
                     }

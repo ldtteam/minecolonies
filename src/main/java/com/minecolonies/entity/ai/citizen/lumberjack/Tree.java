@@ -1,7 +1,9 @@
 package com.minecolonies.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.util.BlockPosUtil;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockNewLog;
+import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
