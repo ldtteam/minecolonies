@@ -1,5 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

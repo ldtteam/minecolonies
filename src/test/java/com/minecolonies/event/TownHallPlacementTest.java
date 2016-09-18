@@ -54,7 +54,6 @@ public class TownHallPlacementTest
         mockStatic(LanguageHandler.class);
         doNothing().when(LanguageHandler.class, "sendPlayerLocalizedMessage", anyObject(), anyString());
 
-        MineColonies.getLogger() = logger;
         doNothing().when(logger).info(anyString());
         //Doesn't matter only used for logging
         when(colony.getCenter()).thenReturn(PLACE_POS);
