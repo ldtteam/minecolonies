@@ -369,7 +369,8 @@ public final class ColonyManager
      * @param owner UUID of the owner
      * @return Colony that belong to given owner UUID
      */
-    private static IColony getColonyByOwner(UUID owner)
+    @Nullable
+    private static IColony getColonyByOwner(@Nullable UUID owner)
     {
         if(owner == null)
         {

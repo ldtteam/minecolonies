@@ -150,31 +150,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, this);
         this.newNavigator = new PathNavigate(this, world);
         updateNavigatorField();
-
+        if(!world.isRemote)
+        {
+            setRenderDistanceWeight(RENDER_DISTANCE_WEIGHT);
+        }
         this.newNavigator.setCanSwim(true);
         this.newNavigator.setEnterDoors(true);
 
         initTasks();
     }
-
-    /**
-     * We seem to need this to set the renderDistance weight in 1.10. The setRenderDistanceWeight is clientSide only.
-     * @param range the current range.
-     * @return true if should be rendered.
-     */
-    @Override
-    public boolean isInRangeToRenderDist(final double range)
-    {
-        double edgeLength = this.getEntityBoundingBox().getAverageEdgeLength();
-        if(Double.isNaN(edgeLength))
-        {
-            edgeLength = 1.0D;
-        }
-
-        edgeLength = edgeLength * 64.0D * RENDER_DISTANCE_WEIGHT;
-        return range < edgeLength * edgeLength;
-    }
-
+    
     /**
      *
      */
