@@ -9,6 +9,7 @@ import com.minecolonies.network.messages.*;
 import com.minecolonies.proxy.IProxy;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.RecipeHandler;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -18,12 +19,16 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
   dependencies = Constants.FORGE_VERSION, acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
+    private static Logger logger = LogManager.getLogger(Constants.MOD_ID);
+
     /**
      * Forge created instance of the Mod.
      */
@@ -64,7 +69,10 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(@NotNull FMLPreInitializationEvent event)
     {
-        Log.logger = event.getModLog();
+        if(MineColonies.logger == null)
+        {
+            MineColonies.logger = event.getModLog();
+        }
 
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
 
