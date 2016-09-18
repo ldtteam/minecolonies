@@ -4,9 +4,11 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +43,9 @@ public class TownHallPlacementTest
     @Mock
     private Permissions permissions;
 
+    @Mock
+    private Logger logger;
+
     private static final BlockPos PLACE_POS = new BlockPos(0, 0, 0);
 
     @Before
@@ -49,6 +54,11 @@ public class TownHallPlacementTest
         mockStatic(ColonyManager.class);
         mockStatic(LanguageHandler.class);
         doNothing().when(LanguageHandler.class, "sendPlayerLocalizedMessage", anyObject(), anyString());
+
+        Log.logger = logger;
+        doNothing().when(logger).info(anyString());
+        //Doesn't matter only used for logging
+        when(colony.getCenter()).thenReturn(PLACE_POS);
     }
 
     //first townhall
@@ -203,7 +213,7 @@ public class TownHallPlacementTest
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
         when(ColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(false);
-        when(colony.getDistanceSquared(PLACE_POS)).thenReturn(0F);
+        when(colony.getDistanceSquared(PLACE_POS)).thenReturn(0L);
 
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
@@ -217,7 +227,7 @@ public class TownHallPlacementTest
         when(ColonyManager.getIColonyByOwner(world, player)).thenReturn(null);
         when(ColonyManager.getClosestIColony(world, PLACE_POS)).thenReturn(colony);
         when(colony.isCoordInColony(world, PLACE_POS)).thenReturn(false);
-        when(colony.getDistanceSquared(PLACE_POS)).thenReturn(Float.MAX_VALUE);
+        when(colony.getDistanceSquared(PLACE_POS)).thenReturn(Long.MAX_VALUE);
 
         Assert.assertTrue(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
