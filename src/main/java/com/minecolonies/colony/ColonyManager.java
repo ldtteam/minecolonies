@@ -371,6 +371,11 @@ public final class ColonyManager
     @Nullable
     private static IColony getColonyByOwner(@Nullable UUID owner)
     {
+        if(owner == null)
+        {
+            return null;
+        }
+
         return colonies.values()
                  .stream()
                  .filter(c -> owner.equals(c.getPermissions().getOwner()))
