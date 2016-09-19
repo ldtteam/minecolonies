@@ -103,8 +103,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     boolean isFirstPlacing(@NotNull EntityPlayer player)
     {
-        //TODO
-        if (Configurations.allowInfiniteSupplyChests/* || !PlayerProperties.get(player).hasPlacedSupplyChest()*/)
+        if (Configurations.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
         {
             return true;
         }

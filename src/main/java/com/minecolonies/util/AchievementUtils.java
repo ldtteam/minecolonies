@@ -1,5 +1,6 @@
 package com.minecolonies.util;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,7 +38,7 @@ public final class AchievementUtils
         {
             for (final Achievement achievement : colony.getAchievements())
             {
-                if (player == null)
+                if (player == null || ModAchievements.achievementGetSupply == achievement)
                 {
                     continue;
                 }
