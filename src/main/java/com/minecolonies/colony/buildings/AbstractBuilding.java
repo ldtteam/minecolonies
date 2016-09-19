@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.*;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -11,7 +12,6 @@ import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
@@ -157,7 +157,7 @@ public abstract class AbstractBuilding
         }
         catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
-            Log.logger.error(exception);
+            MineColonies.getLogger().error(exception);
         }
 
         if (building != null)
@@ -168,14 +168,14 @@ public abstract class AbstractBuilding
             }
             catch (RuntimeException ex)
             {
-                Log.logger.error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                MineColonies.getLogger().error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                   compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
                 building = null;
             }
         }
         else
         {
-            Log.logger.warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
+            MineColonies.getLogger().warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
         }
 
         return building;
@@ -195,7 +195,7 @@ public abstract class AbstractBuilding
         style = compound.getString(TAG_STYLE);
         if ("".equals(style))
         {
-            Log.logger.warn("Loaded empty style, setting to classic");
+            MineColonies.getLogger().warn("Loaded empty style, setting to classic");
             style = "classic";
         }
 
@@ -230,12 +230,12 @@ public abstract class AbstractBuilding
             }
             else
             {
-                Log.logger.error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
+                MineColonies.getLogger().error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
             }
         }
         catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
-            Log.logger.error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
+            MineColonies.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
         return building;
@@ -275,7 +275,7 @@ public abstract class AbstractBuilding
         }
         catch (@NotNull NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
         {
-            Log.logger.error(exception);
+            MineColonies.getLogger().error(exception);
         }
 
         if (view != null)
@@ -286,7 +286,7 @@ public abstract class AbstractBuilding
             }
             catch (IndexOutOfBoundsException ex)
             {
-                Log.logger.error(
+                MineColonies.getLogger().error(
                   String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
                     oclass.getName()), ex);
                 view = null;
@@ -294,7 +294,7 @@ public abstract class AbstractBuilding
         }
         else
         {
-            Log.logger.warn("Unknown AbstractBuilding type, missing View subclass, or missing constructor of proper format.");
+            MineColonies.getLogger().warn("Unknown AbstractBuilding type, missing View subclass, or missing constructor of proper format.");
         }
 
         return view;

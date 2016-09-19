@@ -144,10 +144,24 @@ public final class BlockPosUtil
      */
     public static long getDistanceSquared(@NotNull BlockPos block1, @NotNull BlockPos block2)
     {
-        long i = block1.getX() - block2.getX();
-        long i1 = block1.getY() - block2.getY();
-        long i2 = block1.getZ() - block2.getZ();
+        long i = (long) block1.getX() - block2.getX();
+        long i1 = (long) block1.getY() - block2.getY();
+        long i2 = (long) block1.getZ() - block2.getZ();
         return i * i + i1 * i1 + i2 * i2;
+    }
+
+    /**
+     * 2D Squared distance between two BlockPos.
+     *
+     * @param block1 position one.
+     * @param block2 position two.
+     * @return 2D squared distance.
+     */
+    public static long getDistanceSquared2D(@NotNull BlockPos block1, @NotNull BlockPos block2)
+    {
+        long i = (long) block1.getX() - block2.getX();
+        long i2 = (long) block1.getZ() - block2.getZ();
+        return i * i + i2 * i2;
     }
 
     /**

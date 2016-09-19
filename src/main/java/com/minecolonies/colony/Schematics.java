@@ -1,7 +1,7 @@
 package com.minecolonies.colony;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.lib.Constants;
-import com.minecolonies.util.Log;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -75,7 +75,7 @@ public final class Schematics
         }
         catch (@NotNull IOException | URISyntaxException e)
         {
-            Log.logger.error("Error loading Schematic directory. Things will break!", e);
+            MineColonies.getLogger().error("Error loading Schematic directory. Things will break!", e);
         }
     }
 

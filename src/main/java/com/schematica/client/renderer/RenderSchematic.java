@@ -2,7 +2,6 @@ package com.schematica.client.renderer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.minecolonies.proxy.ClientProxy;
 import com.schematica.Settings;
 import com.schematica.client.renderer.chunk.OverlayRenderDispatcher;
 import com.schematica.client.renderer.chunk.container.AbstractSchematicChunkRenderContainer;

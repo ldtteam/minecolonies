@@ -1,11 +1,15 @@
 package com.minecolonies.entity.ai.basic;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.inventory.InventoryCitizen;
-import com.minecolonies.util.*;
+import com.minecolonies.util.EntityUtils;
+import com.minecolonies.util.InventoryFunctions;
+import com.minecolonies.util.InventoryUtils;
+import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -877,7 +881,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 checkForPickaxe(required);
                 break;
             default:
-                Log.logger.error("Invalid tool " + tool + " not implemented as tool!");
+                MineColonies.getLogger().error("Invalid tool " + tool + " not implemented as tool!");
         }
     }
 

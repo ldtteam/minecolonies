@@ -5,7 +5,6 @@ import com.blockout.PaneParams;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
