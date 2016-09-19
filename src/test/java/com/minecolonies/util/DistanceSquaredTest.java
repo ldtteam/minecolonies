@@ -7,8 +7,6 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Random;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 
@@ -23,7 +21,7 @@ public class DistanceSquaredTest
     private static final int MAX_POSITION =  30_000_000;
 
     @Test
-    public void test2DTwoPositions()
+    public void testDistance2DTwoPositions()
     {
         for (int i = -400; i < 400; i+=20)
         {
@@ -47,7 +45,7 @@ public class DistanceSquaredTest
     }
 
     @Test
-    public void test3DTwoPositions()
+    public void testDistance3DTwoPositions()
     {
         for (int i = -400; i < 400; i+=20)
         {

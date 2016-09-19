@@ -385,6 +385,7 @@ public class Colony implements IColony
      *
      * @return Chunk Coordinates of the center of the colony.
      */
+    @Override
     public BlockPos getCenter()
     {
         return center;
