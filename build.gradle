@@ -89,7 +89,7 @@ processResources {
 
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked -Xlint:deprecation"
+    options.compilerArgs << "-Xlint"
 }
 
 //task sourceJar(type: Jar) {
