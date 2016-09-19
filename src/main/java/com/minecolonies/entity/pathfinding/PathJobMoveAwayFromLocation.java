@@ -1,6 +1,5 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.Log;
 import net.minecraft.pathfinding.PathEntity;
@@ -59,7 +58,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
-            MineColonies.getLogger().info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]", start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
+            Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] away from [%d,%d,%d]", start.getX(), start.getY(), start.getZ(), avoid.getX(), avoid.getY(), avoid.getZ()));
         }
 
         return super.search();

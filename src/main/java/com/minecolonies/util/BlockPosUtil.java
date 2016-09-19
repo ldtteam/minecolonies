@@ -28,11 +28,6 @@ public final class BlockPosUtil
      */
     private static final double CLOSE_DISTANCE = 4.84;
 
-    /**
-     * Max distance two points should have divided by 3 because of 3dim positions.
-     */
-    private static final long MAX_SQRT = 3_000_000_000L / 3;
-
     private BlockPosUtil()
     {
         //Hide default constructor.
@@ -152,14 +147,9 @@ public final class BlockPosUtil
      */
     public static long getDistanceSquared(@NotNull BlockPos block1, @NotNull BlockPos block2)
     {
-        final long xDiff = Math.abs((long) block1.getX() - block2.getX());
-        final long yDiff = Math.abs((long) block1.getY() - block2.getY());
-        final long zDiff = Math.abs((long) block1.getZ() - block2.getZ());
-
-        if (xDiff > MAX_SQRT || yDiff > MAX_SQRT || zDiff > MAX_SQRT)
-        {
-            return Long.MAX_VALUE;
-        }
+        final long xDiff = (long) block1.getX() - block2.getX();
+        final long yDiff = (long) block1.getY() - block2.getY();
+        final long zDiff = (long) block1.getZ() - block2.getZ();
 
         final long result = xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
         if (result < 0)
@@ -179,13 +169,8 @@ public final class BlockPosUtil
      */
     public static long getDistanceSquared2D(@NotNull BlockPos block1, @NotNull BlockPos block2)
     {
-        final long xDiff = Math.abs((long) block1.getX() - block2.getX());
-        final long zDiff = Math.abs((long) block1.getZ() - block2.getZ());
-
-        if (xDiff > MAX_SQRT || zDiff > MAX_SQRT)
-        {
-            return Integer.MAX_VALUE;
-        }
+        final long xDiff = (long) block1.getX() - block2.getX();
+        final long zDiff = (long) block1.getZ() - block2.getZ();
 
         final long result = xDiff * xDiff + zDiff * zDiff;
         if (result < 0)

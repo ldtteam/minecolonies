@@ -1,6 +1,5 @@
 package com.minecolonies.entity.ai.citizen.builder;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.buildings.AbstractBuilding;
@@ -156,7 +155,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             WorkOrderBuild wo = job.getWorkOrder();
             if (wo == null)
             {
-                MineColonies.getLogger().error(
+                Log.getLogger().error(
                   String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)",
                     worker.getColony().getID(),
                     worker.getCitizenData().getId(), job.getWorkOrderId()));
@@ -180,7 +179,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
                 if (building == null)
                 {
-                    MineColonies.getLogger().error(
+                    Log.getLogger().error(
                       String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)",
                         worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()));
                     return this.getState();
@@ -228,7 +227,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if (!(workOrder instanceof WorkOrderBuildDecoration) && worker.getColony().getBuilding(pos) == null)
         {
-            MineColonies.getLogger().warn("AbstractBuilding does not exist - removing build request");
+            Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
             worker.getColony().getWorkManager().removeWorkOrder(workOrder);
             return;
         }
@@ -239,7 +238,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         catch (IllegalStateException e)
         {
-            MineColonies.getLogger().warn(String.format("Schematic: (%s) does not exist - removing build request", workOrder.getSchematicName()), e);
+            Log.getLogger().warn(String.format("Schematic: (%s) does not exist - removing build request", workOrder.getSchematicName()), e);
             job.setSchematic(null);
             return;
         }
@@ -390,7 +389,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 if (!world.setBlockToAir(coordinates))
                 {
                     //TODO: create own logger in class
-                    MineColonies.getLogger().error(String.format("Block break failure at %d, %d, %d", coordinates.getX(), coordinates.getY(), coordinates.getZ()));
+                    Log.getLogger().error(String.format("Block break failure at %d, %d, %d", coordinates.getX(), coordinates.getY(), coordinates.getZ()));
                     //TODO handle - for now, just skipping
                 }
                 worker.swingItem();
@@ -500,7 +499,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (block == null)
         {
             @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            MineColonies.getLogger().error(String.format("Schematic has null block at %s - local(%s)", coordinates, local));
+            Log.getLogger().error(String.format("Schematic has null block at %s - local(%s)", coordinates, local));
             findNextBlockSolid();
             return this.getState();
         }
@@ -552,7 +551,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (block == null)
         {
             @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            MineColonies.getLogger().error(String.format("Schematic has null block at %s- local(%s)", coords, local));
+            Log.getLogger().error(String.format("Schematic has null block at %s- local(%s)", coords, local));
             findNextBlockNonSolid();
             return this.getState();
         }
@@ -584,7 +583,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (!world.setBlockToAir(coords))
             {
-                MineColonies.getLogger().error(String.format("Block break failure at %s", coords));
+                Log.getLogger().error(String.format("Block break failure at %s", coords));
                 //TODO handle - for now, just skipping
             }
         }
@@ -599,7 +598,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
             else
             {
-                MineColonies.getLogger().error(String.format("Block place failure %s at %s", block.getUnlocalizedName(), coords));
+                Log.getLogger().error(String.format("Block place failure %s at %s", block.getUnlocalizedName(), coords));
                 //TODO handle - for now, just skipping
             }
             worker.swingItem();
@@ -737,7 +736,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         @Nullable ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
         if (stack == null)
         {
-            MineColonies.getLogger().error("Block causes NPE: " + blockState.getBlock());
+            Log.getLogger().error("Block causes NPE: " + blockState.getBlock());
             return false;
         }
 
@@ -806,7 +805,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 }
                 else
                 {
-                    MineColonies.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
+                    Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
                       worker.getColony().getID(),
                       worker.getCitizenData().getId(),
                       wo.getBuildingLocation()));
@@ -816,7 +815,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         else
         {
-            MineColonies.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
+            Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
               worker.getColony().getID(),
               worker.getCitizenData().getId(),
               job.getWorkOrderId()));

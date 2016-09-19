@@ -2,7 +2,6 @@ package com.minecolonies.util;
 
 import com.minecolonies.colony.ColonyManager;
 import net.minecraft.util.BlockPos;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -17,23 +16,29 @@ import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 @RunWith(PowerMockRunner.class)
 public class DistanceSquaredTest
 {
-    /**
-     * Random seed.
-     */
-    private static final Random random = new Random(1839045834);
 
     /**
-     * Nunber of iterations in testCase.
+     * Max x/z position in vanilla minecraft.
      */
-    private static final int NOTestCases = 10000;
+    private static final int MAX_POSITION =  30_000_000;
 
     @Test
     public void test2DTwoPositions()
     {
-        for (int i = 0; i < NOTestCases; i++)
+        for (int i = -400; i < 400; i+=20)
         {
-            BlockPos posA = new BlockPos(random.nextInt(), 0, random.nextInt());
-            BlockPos posB = new BlockPos(random.nextInt(), 0, random.nextInt());
+            BlockPos posA = new BlockPos(i*10, 0, i*2);
+            BlockPos posB = new BlockPos(i, 0, i*5);
+
+            long distance = BlockPosUtil.getDistanceSquared2D(posA, posB);
+
+            assertThat("2Dim distance between " + posA + " and " + posB, distance, greaterThanOrEqualTo(0L));
+        }
+
+        for (int i = -20_000_000; i < 20_000_000; i+=1230)
+        {
+            BlockPos posA = new BlockPos(i/10, 0, i);
+            BlockPos posB = new BlockPos(i, 0, i/5);
 
             long distance = BlockPosUtil.getDistanceSquared2D(posA, posB);
 
@@ -44,14 +49,24 @@ public class DistanceSquaredTest
     @Test
     public void test3DTwoPositions()
     {
-        for (int i = 0; i < NOTestCases; i++)
+        for (int i = -400; i < 400; i+=20)
         {
-            BlockPos posA = new BlockPos(random.nextInt(), random.nextInt(), random.nextInt());
-            BlockPos posB = new BlockPos(random.nextInt(), random.nextInt(), random.nextInt());
+            BlockPos posA = new BlockPos(i*10, i*3, i*2);
+            BlockPos posB = new BlockPos(i, i*4, i*5);
 
-            long distance = BlockPosUtil.getDistanceSquared(posA, posB);
+            long distance = BlockPosUtil.getDistanceSquared2D(posA, posB);
 
-            assertThat("3Dim distance between " + posA + " and " + posB, distance, greaterThanOrEqualTo(0L));
+            assertThat("2Dim distance between " + posA + " and " + posB, distance, greaterThanOrEqualTo(0L));
+        }
+
+        for (int i = -20_000_000; i < 20_000_000; i+=1230)
+        {
+            BlockPos posA = new BlockPos(i/10, i/2, i);
+            BlockPos posB = new BlockPos(i, i/3, i/5);
+
+            long distance = BlockPosUtil.getDistanceSquared2D(posA, posB);
+
+            assertThat("2Dim distance between " + posA + " and " + posB, distance, greaterThanOrEqualTo(0L));
         }
     }
 }

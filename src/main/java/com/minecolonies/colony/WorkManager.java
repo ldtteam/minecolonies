@@ -1,7 +1,7 @@
 package com.minecolonies.colony;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -83,7 +83,7 @@ public class WorkManager
         }
         catch (ClassCastException exc)
         {
-            MineColonies.getLogger().catching(exc);
+            Log.getLogger().catching(exc);
         }
 
         return null;

@@ -1,11 +1,7 @@
 package com.minecolonies.entity.ai.basic;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.jobs.AbstractJob;
-import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.BlockUtils;
-import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -146,7 +142,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.bedrock)
         {
-            MineColonies.getLogger().info(String.format(
+            Log.getLogger().info(String.format(
               "ForgeHook not in sync with EfficientTool for %s and %s\n"
                 + "Please report to MineColonies with this text to add support!",
               curBlock, tool
