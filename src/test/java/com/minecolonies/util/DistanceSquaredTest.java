@@ -27,20 +27,20 @@ public class DistanceSquaredTest
     {
         for (int i = -400; i < 400; i+=20)
         {
-            BlockPos posA = new BlockPos(i*10, 0, i*2);
-            BlockPos posB = new BlockPos(i, 0, i*5);
+            BlockPos posA = new BlockPos(i^2, 0, i*2);
+            BlockPos posB = new BlockPos(i, 0, i^3);
 
             long distance = BlockPosUtil.getDistanceSquared2D(posA, posB);
 
             assertThat("2Dim distance between " + posA + " and " + posB, distance, greaterThanOrEqualTo(0L));
         }
 
-        for (int i = -20_000_000; i < 20_000_000; i+=1230)
+        for(int i = 0; i < 100 ; i++)
         {
-            BlockPos posA = new BlockPos(i/10, 0, i);
-            BlockPos posB = new BlockPos(i, 0, i/5);
+            BlockPos posA = new BlockPos(MAX_POSITION-i, 0, MAX_POSITION-i);
+            BlockPos posB = new BlockPos(-MAX_POSITION+i, 0, -MAX_POSITION+i);
 
-            long distance = BlockPosUtil.getDistanceSquared2D(posA, posB);
+            long distance = BlockPosUtil.getDistanceSquared(posA, posB);
 
             assertThat("2Dim distance between " + posA + " and " + posB, distance, greaterThanOrEqualTo(0L));
         }
@@ -51,22 +51,23 @@ public class DistanceSquaredTest
     {
         for (int i = -400; i < 400; i+=20)
         {
-            BlockPos posA = new BlockPos(i*10, i*3, i*2);
-            BlockPos posB = new BlockPos(i, i*4, i*5);
+            BlockPos posA = new BlockPos(i^2, i*3, i*2);
+            BlockPos posB = new BlockPos(i, i*4, i^3);
 
-            long distance = BlockPosUtil.getDistanceSquared2D(posA, posB);
+            long distance = BlockPosUtil.getDistanceSquared(posA, posB);
 
             assertThat("2Dim distance between " + posA + " and " + posB, distance, greaterThanOrEqualTo(0L));
         }
 
-        for (int i = -20_000_000; i < 20_000_000; i+=1230)
+        for(int i = 0; i < 100 ; i++)
         {
-            BlockPos posA = new BlockPos(i/10, i/2, i);
-            BlockPos posB = new BlockPos(i, i/3, i/5);
+            BlockPos posA = new BlockPos(MAX_POSITION-i, i, MAX_POSITION-i);
+            BlockPos posB = new BlockPos(-MAX_POSITION+i, 255-i, -MAX_POSITION+i);
 
-            long distance = BlockPosUtil.getDistanceSquared2D(posA, posB);
+            long distance = BlockPosUtil.getDistanceSquared(posA, posB);
 
             assertThat("2Dim distance between " + posA + " and " + posB, distance, greaterThanOrEqualTo(0L));
         }
+
     }
 }
