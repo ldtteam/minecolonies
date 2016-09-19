@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 /**
  * Logging utility class
  */
-public class Log
+public final class Log
 {
     /**
      * Mod logger
