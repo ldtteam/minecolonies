@@ -37,7 +37,7 @@ public class BlockHutField extends BlockContainer
     /**
      * The position it faces.
      */
-    public static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
+    public static final PropertyDirection FACING = PropertyDirection.create("FACING", Plane.HORIZONTAL);
     /**
      * Hardness of the block.
      */

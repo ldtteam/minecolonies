@@ -129,23 +129,23 @@ public final class ModAchievements
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_SETTLEMENT} citizens.
      */
-    public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.settlement", 2, -2, ModItems.itemAchievementProxySettlement,
+    public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.settlement", -4, 0, ModItems.itemAchievementProxySettlement,
             achievementBuildingTownhall).registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_TOWN} citizens.
      */
-    public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", 4, -2, ModItems.itemAchievementProxyTown, achievementSizeSettlement)
-                                                                  .registerStat();
+    public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", -6, 0, ModItems.itemAchievementProxyTown, achievementSizeSettlement)
+            .registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_CITY} citizens.
      */
-    public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", 6, -2, ModItems.itemAchievementProxyCity, achievementSizeTown)
+    public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", -8, 0, ModItems.itemAchievementProxyCity, achievementSizeTown)
             .registerStat();
 
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_METROPOLIS} citizens.
      */
-    public static final Achievement achievementSizeMetropolis = new MineColoniesAchievement("size.metropolis", 8, -2, ModItems.itemAchievementProxyMetropolis, achievementSizeCity)
+    public static final Achievement achievementSizeMetropolis = new MineColoniesAchievement("size.metropolis", -10, 0, ModItems.itemAchievementProxyMetropolis, achievementSizeCity)
             .registerStat();
 
     // Achievement pages
