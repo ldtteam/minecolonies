@@ -27,13 +27,12 @@ public class ItemBuildTool extends AbstractItemMinecolonies
     @Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        if (!worldIn.isRemote)
+        if (worldIn.isRemote)
         {
-            return EnumActionResult.FAIL;
+            playerIn.addStat(ModAchievements.achievementWandOfbuilding);
+            MineColonies.proxy.openBuildToolWindow(pos.offset(facing));
+            return EnumActionResult.SUCCESS;
         }
-
-        playerIn.addStat(ModAchievements.achievementWandOfbuilding);
-        MineColonies.proxy.openBuildToolWindow(pos.offset(facing));
         return EnumActionResult.FAIL;
     }
 
