@@ -3,28 +3,20 @@ package com.minecolonies.event;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.permissions.Permissions;
-import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.test.AbstractTest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
-import static org.powermock.api.mockito.PowerMockito.*;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
-@PrepareForTest({ColonyManager.class, LanguageHandler.class, Log.class})
-@RunWith(PowerMockRunner.class)
-public class TownHallPlacementTest
+public class TownHallPlacementTest extends AbstractTest
 {
     @Mock
     private ColonyManager colonyManager;
@@ -41,22 +33,18 @@ public class TownHallPlacementTest
     @Mock
     private Permissions permissions;
 
-    @Mock
-    private Logger logger;
-
     private static final BlockPos PLACE_POS = new BlockPos(0, 0, 0);
 
     @Before
-    public void setup() throws Exception
+    public void setupColonyPlacement() throws Exception
     {
-        mockStatic(ColonyManager.class);
-        mockStatic(LanguageHandler.class);
-        mockStatic(Log.class);
-        doNothing().when(LanguageHandler.class, "sendPlayerLocalizedMessage", anyObject(), anyString());
-
-        doReturn(logger).when(Log.class, "getLogger");
-        //Doesn't matter only used for logging
         when(colony.getCenter()).thenReturn(PLACE_POS);
+    }
+
+    @Override
+    public String getTestName()
+    {
+        return "TownHallPlacementTest";
     }
 
     //first townhall
