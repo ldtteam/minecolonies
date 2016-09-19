@@ -97,12 +97,12 @@ public abstract class AbstractWorkOrder
         }
         catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException e)
         {
-            MineColonies.getLogger().trace(e);
+            Log.getLogger().trace(e);
         }
 
         if (order == null)
         {
-            MineColonies.getLogger().warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            Log.getLogger().warn(String.format("Unknown WorkOrder type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
             return null;
         }
         try
@@ -111,7 +111,7 @@ public abstract class AbstractWorkOrder
         }
         catch (RuntimeException ex)
         {
-            MineColonies.getLogger().error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+            Log.getLogger().error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
               compound.getString(TAG_TYPE), oclass.getName()), ex);
             return null;
         }
@@ -147,7 +147,7 @@ public abstract class AbstractWorkOrder
         }
         catch (RuntimeException ex)
         {
-            MineColonies.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+            Log.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
               workOrderView.getId()), ex);
             workOrderView = null;
         }

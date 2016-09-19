@@ -251,7 +251,7 @@ public class PaneParams
         }
         catch (NumberFormatException | IndexOutOfBoundsException | IllegalStateException ex)
         {
-            ex.printStackTrace();
+            Log.getLogger().warn(ex);
         }
 
         return def;

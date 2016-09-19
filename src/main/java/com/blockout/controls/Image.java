@@ -96,7 +96,7 @@ public class Image extends Pane
             }
             catch (IOException e)
             {
-                e.printStackTrace();
+                Log.getLogger().warn(e);
             }
             finally
             {

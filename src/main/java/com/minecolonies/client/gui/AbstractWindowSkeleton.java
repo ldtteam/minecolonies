@@ -56,7 +56,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
         }
         else
         {
-            MineColonies.getLogger().warn(this.getClass().getName() + ": Unhandled Button ID:" + button.getID());
+            Log.getLogger().warn(this.getClass().getName() + ": Unhandled Button ID:" + button.getID());
         }
     }
 

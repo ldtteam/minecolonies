@@ -22,8 +22,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.powermock.api.mockito.PowerMockito.*;
 
-@PowerMockIgnore("javax.management.*")
-@PrepareForTest({ColonyManager.class, LanguageHandler.class})
+@PrepareForTest({ColonyManager.class, LanguageHandler.class, Log.class})
 @RunWith(PowerMockRunner.class)
 public class TownHallPlacementTest
 {
@@ -52,9 +51,10 @@ public class TownHallPlacementTest
     {
         mockStatic(ColonyManager.class);
         mockStatic(LanguageHandler.class);
+        mockStatic(Log.class);
         doNothing().when(LanguageHandler.class, "sendPlayerLocalizedMessage", anyObject(), anyString());
 
-        doNothing().when(logger).info(anyString());
+        doReturn(logger).when(Log.class, "getLogger");
         //Doesn't matter only used for logging
         when(colony.getCenter()).thenReturn(PLACE_POS);
     }

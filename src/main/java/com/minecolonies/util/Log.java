@@ -1,5 +1,7 @@
 package com.minecolonies.util;
 
+import com.minecolonies.lib.Constants;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
@@ -10,5 +12,18 @@ public class Log
     /**
      * Mod logger
      */
-    public static Logger logger = null;
+    private static Logger logger = null;
+
+    /**
+     * Getter for the minecolonies Logger.
+     * @return the logger.
+     */
+    public static Logger getLogger()
+    {
+        if (logger == null)
+        {
+           Log.logger = LogManager.getLogger(Constants.MOD_ID);
+        }
+        return logger;
+    }
 }

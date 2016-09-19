@@ -75,7 +75,7 @@ public final class Schematics
         }
         catch (@NotNull IOException | URISyntaxException e)
         {
-            MineColonies.getLogger().error("Error loading Schematic directory. Things will break!", e);
+            Log.getLogger().error("Error loading Schematic directory. Things will break!", e);
         }
     }
 

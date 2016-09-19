@@ -109,7 +109,7 @@ public final class Pathfinding
         }
         catch (ConcurrentModificationException exc)
         {
-            MineColonies.getLogger().catching(exc);
+            Log.getLogger().catching(exc);
         }
 
         GL11.glPopAttrib();

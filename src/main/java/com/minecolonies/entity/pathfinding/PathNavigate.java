@@ -198,7 +198,7 @@ public class PathNavigate extends PathNavigateGround
             }
             catch (@NotNull InterruptedException | ExecutionException e)
             {
-                MineColonies.getLogger().catching(e);
+                Log.getLogger().catching(e);
             }
 
             future = null;

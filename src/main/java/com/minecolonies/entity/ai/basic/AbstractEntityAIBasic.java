@@ -881,7 +881,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 checkForPickaxe(required);
                 break;
             default:
-                MineColonies.getLogger().error("Invalid tool " + tool + " not implemented as tool!");
+                Log.getLogger().error("Invalid tool " + tool + " not implemented as tool!");
         }
     }
 

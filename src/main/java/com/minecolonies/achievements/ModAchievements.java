@@ -89,8 +89,7 @@ public final class ModAchievements
     public static final Achievement achievementUpgradeLumberjackMax = new MineColoniesAchievement("upgrade.lumberjack.max",
                                                                                                    2,
                                                                                                    3,
-                                                                                                   ModBlocks
-                                                                                                     .blockHutLumberjack,
+                                                                                                   ModBlocks.blockHutLumberjack,
                                                                                                    achievementBuildingLumberjack).registerStat();
 
     /**

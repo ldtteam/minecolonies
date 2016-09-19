@@ -265,7 +265,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         if (chest == null)
         {
-            MineColonies.getLogger().error("Supply chest tile entity was null.");
+            Log.getLogger().error("Supply chest tile entity was null.");
             return;
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));

@@ -83,7 +83,7 @@ public class WorkManager
         }
         catch (ClassCastException exc)
         {
-            MineColonies.getLogger().catching(exc);
+            Log.getLogger().catching(exc);
         }
 
         return null;

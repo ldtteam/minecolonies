@@ -108,7 +108,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     public final void startExecuting()
     {
         worker.setStatus(EntityCitizen.Status.WORKING);
-        MineColonies.getLogger().info("Starting AI job " + job.getName());
+        Log.getLogger().info("Starting AI job " + job.getName());
     }
 
     /**
@@ -169,7 +169,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
         catch (RuntimeException e)
         {
-            MineColonies.getLogger().warn("Condition check for target " + target + " threw an exception:", e);
+            Log.getLogger().warn("Condition check for target " + target + " threw an exception:", e);
             return false;
         }
         return applyTarget(target);
@@ -193,7 +193,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
         catch (RuntimeException e)
         {
-            MineColonies.getLogger().warn("Action for target " + target + " threw an exception:", e);
+            Log.getLogger().warn("Action for target " + target + " threw an exception:", e);
             return false;
         }
         if (newState != null)
