@@ -41,6 +41,12 @@ public class TownHallPlacementTest extends AbstractTest
         when(colony.getCenter()).thenReturn(PLACE_POS);
     }
 
+    @Override
+    public String getTestName()
+    {
+        return "TownHallPlacementTest";
+    }
+
     //first townhall
     // replace townhall
     //  owner

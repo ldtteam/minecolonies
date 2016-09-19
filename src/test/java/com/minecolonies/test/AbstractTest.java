@@ -11,6 +11,8 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.util.Random;
+
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.powermock.api.mockito.PowerMockito.*;
@@ -24,6 +26,8 @@ import static org.powermock.api.mockito.PowerMockito.*;
 public abstract class AbstractTest
 {
 
+    private Random random;
+
     @Before
     public void setupStaticMocks() throws Exception
     {
@@ -33,8 +37,19 @@ public abstract class AbstractTest
 
         doNothing().when(LanguageHandler.class, "sendPlayerLocalizedMessage", anyObject(), anyString());
 
-        Logger logger = LogManager.getLogger();
+        Logger logger = LogManager.getLogger(getTestName());
+        random = new Random(getTestName().hashCode());
 
         doReturn(logger).when(Log.class, "getLogger");
+    }
+
+    public Random getRandom()
+    {
+        return random;
+    }
+
+    public String getTestName()
+    {
+        return "AbstractTest";
     }
 }

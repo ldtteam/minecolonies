@@ -1,6 +1,7 @@
 package com.minecolonies.entity.ai.util;
 
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.test.AbstractTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -11,7 +12,7 @@ import static com.minecolonies.entity.ai.util.ChatSpamFilter.MAX_TIMEOUT;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
-public class ChatSpamFilterTest
+public class ChatSpamFilterTest extends AbstractTest
 {
     @Mock
     private EntityCitizen citizen;
@@ -23,7 +24,6 @@ public class ChatSpamFilterTest
 
     @Before
     public void setup() {
-        MockitoAnnotations.initMocks(this);
         filter = new ChatSpamFilter(citizen);
         when(citizen.getOffsetTicks()).thenReturn(0);
     }
