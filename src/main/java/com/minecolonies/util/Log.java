@@ -15,14 +15,23 @@ public class Log
     private static Logger logger = null;
 
     /**
+     * Private constructor to hide the public one.
+     */
+    private Log()
+    {
+        //Hides implicit constructor.
+    }
+
+    /**
      * Getter for the minecolonies Logger.
+     *
      * @return the logger.
      */
     public static Logger getLogger()
     {
         if (logger == null)
         {
-           Log.logger = LogManager.getLogger(Constants.MOD_ID);
+            Log.logger = LogManager.getLogger(Constants.MOD_ID);
         }
         return logger;
     }

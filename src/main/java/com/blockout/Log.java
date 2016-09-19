@@ -5,24 +5,34 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Logging utility class
+ * Logging utility class.
  */
 public class Log
 {
+
     /**
-     * Mod logger
+     * Mod logger.
      */
     private static Logger logger = null;
 
     /**
+     * Private constructor to hide the public one.
+     */
+    private Log()
+    {
+        //Hides implicit constructor.
+    }
+
+    /**
      * Getter for the blockout Logger.
+     *
      * @return the logger.
      */
     public static Logger getLogger()
     {
         if (logger == null)
         {
-           Log.logger = LogManager.getLogger(Constants.MOD_ID+"blockout");
+            Log.logger = LogManager.getLogger(Constants.MOD_ID + "blockout");
         }
         return logger;
     }
