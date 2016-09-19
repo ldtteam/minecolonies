@@ -536,14 +536,14 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 @NotNull BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
                 int normalizedX = x - xOffset;
                 int normalizedZ = z - zOffset;
-                if ((Math.abs(normalizedX) >= 2 || Math.abs(normalizedZ) >= 2) && world.getBlockState(curBlock).getBlock() != getOwnBuilding().getFloorBlock())
+                if ((Math.abs(normalizedX) >= 2 || Math.abs(normalizedZ) >= 2) && world.getBlockState(curBlock) != getOwnBuilding().getFloorBlock())
                 {
                     setDelay(DELAY_TIMEOUT);
-                    if (checkOrRequestItems(new ItemStack(getOwnBuilding().getFloorBlock())))
+                    if (checkOrRequestItems(new ItemStack(getOwnBuilding().getFloorBlock().getBlock())))
                     {
                         return true;
                     }
-                    setBlockFromInventory(curBlock, getOwnBuilding().getFloorBlock());
+                    setBlockFromInventory(curBlock, getOwnBuilding().getFloorBlock().getBlock(), getOwnBuilding().getFloorBlock());
                     return true;
                 }
             }
@@ -631,7 +631,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         @Nullable Level currentLevel = getOwnBuilding().getCurrentLevel();
         if (currentLevel == null)
         {
-            Log.logger.warn("Current Level not set, resetting...");
+            Log.getLogger().warn("Current Level not set, resetting...");
             getOwnBuilding().setCurrentLevel(getOwnBuilding().getNumberOfLevels() - 1);
             return doNodeMining();
         }
@@ -839,7 +839,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                     for (int z = -1; z <= 1; z++)
                     {
                         @NotNull BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
-                        if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getFloorBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
+                        if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getShaftBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
                         {
                             continue;
                         }
@@ -889,7 +889,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             //already done
             return true;
         }
-        Log.logger.info("None of the above: " + mineNode);
+        Log.getLogger().info("None of the above: " + mineNode);
         return false;
     }
 
@@ -926,7 +926,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         catch (IllegalStateException e)
         {
-            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
+            Log.getLogger().warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
             job.setSchematic(null);
         }
     }
@@ -978,7 +978,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         if (block == null)
         {
             @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            Log.getLogger().error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockNonSolid();
             return false;
         }
@@ -1031,7 +1031,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         if (block == null)
         {
             @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            Log.getLogger().error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
             return false;
         }
@@ -1135,7 +1135,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 for (int z = negz; z <= posz; z++)
                 {
                     @NotNull BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
-                    if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getFloorBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
+                    if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getShaftBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
                     {
                         continue;
                     }

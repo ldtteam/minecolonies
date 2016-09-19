@@ -129,7 +129,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
@@ -151,7 +151,7 @@ public class PermissionsMessage
                     colony.getPermissions().togglePermission(message.rank, message.action);
                     break;
                 default:
-                    Log.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
+                    Log.getLogger().error(String.format("Invalid MessageType %s", message.type.toString()));
             }
             return null;
         }
@@ -203,13 +203,13 @@ public class PermissionsMessage
 
             Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if (colony != null && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE))
+            if (colony != null && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE) && colony.getWorld() != null)
             {
-                colony.getPermissions().addPlayer(message.playerName, Permissions.Rank.NEUTRAL);
+                colony.getPermissions().addPlayer(message.playerName, Permissions.Rank.NEUTRAL, colony.getWorld());
             }
             else
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
             }
             return null;
         }
@@ -272,19 +272,19 @@ public class PermissionsMessage
 
             Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if (colony == null)
+            if (colony == null || colony.getWorld() == null)
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
             if (message.type == Type.PROMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE))
             {
-                colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)));
+                colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
             }
             else if (message.type == Type.DEMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE))
             {
-                colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)));
+                colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
             }
 
             return null;
@@ -339,7 +339,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 

@@ -7,7 +7,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathFinder;
+import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -22,7 +24,7 @@ import java.util.concurrent.Future;
 /**
  * Minecolonies async PathNavigate.
  */
-public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
+public class PathNavigate extends PathNavigateGround
 {
     //  Parent class private members
     private EntityLiving entity;
@@ -35,7 +37,6 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
     @Nullable
     private PathResult   pathResult;
 
-    private boolean shouldAvoidWater = false;
     private boolean canEnterDoors    = false;
     private boolean canBreakDoors    = false;
     private boolean canSwim          = false;
@@ -197,7 +198,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
             }
             catch (@NotNull InterruptedException | ExecutionException e)
             {
-                Log.logger.catching(e);
+                Log.getLogger().catching(e);
             }
 
             future = null;
@@ -213,26 +214,26 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
 
             if (pEx.isOnLadder)
             {
-                Vec3d Vec3d = this.getPath().getPosition(this.entity);
+                Vec3d vec3 = this.getPath().getPosition(this.entity);
 
-                if (Vec3d.squareDistanceTo(new Vec3d(entity.posX, Vec3d.yCoord, entity.posZ)) < 0.1)
+                if (vec3.squareDistanceTo(new Vec3d(entity.posX, vec3.yCoord, entity.posZ)) < 0.1)
                 {
                     //This way he is less nervous and gets up the ladder
-                    double newSpeed = 0.2;
+                    double newSpeed = 0.05;
                     switch (pEx.ladderFacing)
                     {
                         //  Any of these values is climbing, so adjust our direction of travel towards the ladder
                         case NORTH:
-                            Vec3d.addVector(0, 0, 1);
+                            vec3.addVector(0, 0, 1);
                             break;
                         case SOUTH:
-                            Vec3d.addVector(0, 0, -1);
+                            vec3.addVector(0, 0, -1);
                             break;
                         case WEST:
-                            Vec3d.addVector(1, 0, 0);
+                            vec3.addVector(1, 0, 0);
                             break;
                         case EAST:
-                            Vec3d.addVector(-1, 0, 0);
+                            vec3.addVector(-1, 0, 0);
                             break;
                         //  Any other value is going down, so lets not move at all
                         default:
@@ -240,7 +241,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
                             break;
                     }
 
-                    this.entity.getMoveHelper().setMoveTo(Vec3d.xCoord, Vec3d.yCoord, Vec3d.zCoord, newSpeed);
+                    this.entity.getMoveHelper().setMoveTo(vec3.xCoord, vec3.yCoord, vec3.zCoord, newSpeed);
                 }
             }
             else if (entity.isInWater())
@@ -280,6 +281,36 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
             pathResult.setStatus(PathResult.Status.COMPLETE);
             pathResult = null;
         }
+    }
+
+
+    @Override
+    protected void pathFollow()
+    {
+        int curNode = currentPath.getCurrentPathIndex();
+        int curNodeNext = curNode + 1;
+        if (curNodeNext < currentPath.getCurrentPathLength())
+        {
+            PathPointExtended pEx = (PathPointExtended)currentPath.getPathPointFromIndex(curNode);
+            PathPointExtended pExNext = (PathPointExtended)currentPath.getPathPointFromIndex(curNodeNext);
+
+            //  If current node is bottom of a ladder, then stay on this node until
+            //  the entity reaches the bottom, otherwise they will try to head out early
+            if (pEx.isOnLadder && pEx.ladderFacing == EnumFacing.DOWN &&
+                    !pExNext.isOnLadder)
+            {
+                Vec3d vec3 = getEntityPosition();
+                if ((vec3.yCoord - (double)pEx.yCoord) < 0.001)
+                {
+                    this.currentPath.setCurrentPathIndex(curNodeNext);
+                }
+
+                this.checkForStuck(vec3);
+                return;
+            }
+        }
+
+        super.pathFollow();
     }
 
     /**

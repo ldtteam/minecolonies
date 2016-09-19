@@ -23,6 +23,9 @@ import java.util.List;
  */
 public final class BlockPosUtil
 {
+    /**
+     * Min distance to availate two positions as close.
+     */
     private static final double CLOSE_DISTANCE = 4.84;
 
     private BlockPosUtil()
@@ -142,12 +145,40 @@ public final class BlockPosUtil
      * @param block2 position two.
      * @return squared distance.
      */
-    public static int getDistanceSquared(@NotNull BlockPos block1, @NotNull BlockPos block2)
+    public static long getDistanceSquared(@NotNull BlockPos block1, @NotNull BlockPos block2)
     {
-        int i = block1.getX() - block2.getX();
-        int i1 = block1.getY() - block2.getY();
-        int i2 = block1.getZ() - block2.getZ();
-        return i * i + i1 * i1 + i2 * i2;
+        final long xDiff = (long) block1.getX() - block2.getX();
+        final long yDiff = (long) block1.getY() - block2.getY();
+        final long zDiff = (long) block1.getZ() - block2.getZ();
+
+        final long result = xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
+        if (result < 0)
+        {
+            throw new IllegalStateException("max-sqrt is to high! Failure to catch overflow with "
+                    + xDiff + " | " + yDiff + " | " + zDiff);
+        }
+        return result;
+    }
+
+    /**
+     * 2D Squared distance between two BlockPos.
+     *
+     * @param block1 position one.
+     * @param block2 position two.
+     * @return 2D squared distance.
+     */
+    public static long getDistanceSquared2D(@NotNull BlockPos block1, @NotNull BlockPos block2)
+    {
+        final long xDiff = (long) block1.getX() - block2.getX();
+        final long zDiff = (long) block1.getZ() - block2.getZ();
+
+        final long result = xDiff * xDiff + zDiff * zDiff;
+        if (result < 0)
+        {
+            throw new IllegalStateException("max-sqrt is to high! Failure to catch overflow with "
+                    + xDiff + " | " + zDiff);
+        }
+        return result;
     }
 
     /**

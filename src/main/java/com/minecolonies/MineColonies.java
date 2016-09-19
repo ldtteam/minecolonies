@@ -17,12 +17,16 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
   /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
+    private static Logger logger = LogManager.getLogger(Constants.MOD_ID);
+
     /**
      * Forge created instance of the Mod.
      */
@@ -53,6 +57,15 @@ public class MineColonies
     public static boolean isServer()
     {
         return !proxy.isClient() && FMLCommonHandler.instance().getEffectiveSide().isServer();
+    }
+
+    /**
+     * Getter for the minecolonies Logger.
+     * @return the logger.
+     */
+    public static Logger getLogger()
+    {
+        return logger;
     }
 
     /**

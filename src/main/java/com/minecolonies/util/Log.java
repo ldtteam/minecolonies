@@ -12,16 +12,18 @@ public class Log
     /**
      * Mod logger
      */
-    public static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
+    private static Logger logger = null;
 
     /**
-     * Generates a logger for a specific class
-     *
-     * @param clazz Class to generate logger for
-     * @return Created {@link Logger}
+     * Getter for the minecolonies Logger.
+     * @return the logger.
      */
-    public static Logger generateLoggerForClass(Class<?> clazz)
+    public static Logger getLogger()
     {
-        return LogManager.getLogger(Constants.MOD_ID + "::" + clazz.getSimpleName());
+        if (logger == null)
+        {
+           Log.logger = LogManager.getLogger(Constants.MOD_ID);
+        }
+        return logger;
     }
 }

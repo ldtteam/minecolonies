@@ -73,8 +73,8 @@ public final class RenderSchematic extends RenderGlobal
     private final Profiler      profiler;
     private final RenderManager renderManager;
     private final Set<RenderOverlay>       overlaysToUpdate        = Sets.newLinkedHashSet();
-    private final ChunkRenderDispatcher    renderDispatcher        = new ChunkRenderDispatcher();
-    private final OverlayRenderDispatcher  renderDispatcherOverlay = new OverlayRenderDispatcher();
+    private ChunkRenderDispatcher    renderDispatcher        = null;
+    private OverlayRenderDispatcher  renderDispatcherOverlay = null;
     private final BlockPos.MutableBlockPos tmp                     = new BlockPos.MutableBlockPos();
     @Nullable
     private SchematicWorld world;
@@ -98,6 +98,8 @@ public final class RenderSchematic extends RenderGlobal
     private AbstractSchematicChunkRenderContainer renderContainer;
     private int renderDistanceChunks = -1;
     private int countEntitiesTotal;
+    private int countTileEntitiesTotal;
+    private int countTileEntitiesRendered;
     private int countEntitiesRendered;
     private boolean vboEnabled = false;
     private ISchematicRenderChunkFactory renderChunkFactory;
@@ -113,8 +115,8 @@ public final class RenderSchematic extends RenderGlobal
         this.mc = minecraft;
         this.profiler = minecraft.mcProfiler;
         this.renderManager = minecraft.getRenderManager();
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
+        GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
+        GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL11.GL_REPEAT);
         GlStateManager.bindTexture(0);
         this.vboEnabled = OpenGlHelper.useVbo();
 
@@ -228,6 +230,33 @@ public final class RenderSchematic extends RenderGlobal
             world.addEventListener(this);
             loadRenderers();
         }
+        else
+        {
+            this.chunksToUpdate.clear();
+            this.overlaysToUpdate.clear();
+            this.renderInfos.clear();
+
+            if (this.viewFrustum != null)
+            {
+                this.viewFrustum.deleteGlResources();
+            }
+
+            this.viewFrustum = null;
+
+            if (this.renderDispatcher != null)
+            {
+                this.renderDispatcher.stopWorkerThreads();
+            }
+
+            this.renderDispatcher = null;
+
+            if (this.renderDispatcherOverlay != null)
+            {
+                this.renderDispatcherOverlay.stopWorkerThreads();
+            }
+
+            this.renderDispatcherOverlay = null;
+        }
     }
 
     @Override
@@ -235,6 +264,16 @@ public final class RenderSchematic extends RenderGlobal
     {
         if (this.world != null)
         {
+            if (this.renderDispatcher == null)
+            {
+                this.renderDispatcher = new ChunkRenderDispatcher(5);
+            }
+
+            if (this.renderDispatcherOverlay == null)
+            {
+                this.renderDispatcherOverlay = new OverlayRenderDispatcher(5);
+            }
+
             this.displayListEntitiesDirty = true;
             this.renderDistanceChunks = ConfigurationHandler.renderDistance;
             final boolean vbo = this.vboEnabled;
@@ -295,6 +334,9 @@ public final class RenderSchematic extends RenderGlobal
         this.countEntitiesTotal = 0;
         this.countEntitiesRendered = 0;
 
+        this.countTileEntitiesTotal = 0;
+        this.countTileEntitiesRendered = 0;
+
         final double x = playerPositionOffset.xCoord;
         final double y = playerPositionOffset.yCoord;
         final double z = playerPositionOffset.zCoord;
@@ -311,6 +353,7 @@ public final class RenderSchematic extends RenderGlobal
         this.profiler.endStartSection("blockentities");
         RenderHelper.enableStandardItemLighting();
 
+        TileEntityRendererDispatcher.instance.preDrawBatch();
         for (@NotNull final ContainerLocalRenderInformation renderInfo : this.renderInfos)
         {
             for (@NotNull final TileEntity tileEntity : renderInfo.renderChunk.getCompiledChunk().getTileEntities())
@@ -328,8 +371,10 @@ public final class RenderSchematic extends RenderGlobal
                 }
 
                 TileEntityRendererDispatcher.instance.renderTileEntity(tileEntity, partialTicks, -1);
+                this.countTileEntitiesRendered++;
             }
         }
+        TileEntityRendererDispatcher.instance.drawBatch(entityPass);
 
         this.mc.entityRenderer.disableLightmap();
         this.profiler.endSection();
@@ -358,6 +403,12 @@ public final class RenderSchematic extends RenderGlobal
     public String getDebugInfoEntities()
     {
         return String.format("E: %d/%d", this.countEntitiesRendered, this.countEntitiesTotal);
+    }
+
+    @Override
+    protected Vector3f getViewVector(final Entity entity, final double partialTicks)
+    {
+        return super.getViewVector(entity, partialTicks);
     }
 
     @Override
@@ -408,6 +459,7 @@ public final class RenderSchematic extends RenderGlobal
         this.lastViewEntityPitch = viewEntity.rotationPitch;
         this.lastViewEntityYaw = viewEntity.rotationYaw;
 
+        this.profiler.endStartSection("update");
         if (this.displayListEntitiesDirty)
         {
             this.displayListEntitiesDirty = false;
@@ -443,7 +495,7 @@ public final class RenderSchematic extends RenderGlobal
                 @NotNull final ContainerLocalRenderInformation renderInfo = new ContainerLocalRenderInformation(renderchunk, renderoverlay, null, 0);
                 final Set<EnumFacing> visibleSides = getVisibleSides(posEye);
 
-                if (!visibleSides.isEmpty() && visibleSides.size() == 1)
+                if (visibleSides.size() == 1)
                 {
                     final Vector3f viewVector = getViewVector(viewEntity, partialTicks);
                     final EnumFacing facing = EnumFacing.getFacingFromVector(viewVector.x, viewVector.y, viewVector.z).getOpposite();
@@ -472,6 +524,7 @@ public final class RenderSchematic extends RenderGlobal
                 }
             }
 
+            this.profiler.startSection("iteration");
             while (!renderInfoList.isEmpty())
             {
                 final ContainerLocalRenderInformation renderInfo = renderInfoList.poll();
@@ -500,6 +553,7 @@ public final class RenderSchematic extends RenderGlobal
                 }
             }
         }
+        this.profiler.endStartSection("rebuild");
 
         this.renderDispatcher.clearChunkUpdates();
         this.renderDispatcherOverlay.clearChunkUpdates();
@@ -582,13 +636,13 @@ public final class RenderSchematic extends RenderGlobal
             final RenderChunk renderChunk = renderInfo.renderChunk;
             final RenderOverlay renderOverlay = renderInfo.renderOverlay;
 
-            if (!renderChunk.getCompiledChunk().isLayerEmpty(layer))
+            //if (renderChunk.getCompiledChunk().isLayerEmpty(layer))
             {
                 count++;
                 this.renderContainer.addRenderChunk(renderChunk, layer);
             }
 
-            if (isTranslucent && renderOverlay != null && !renderOverlay.getCompiledChunk().isLayerEmpty(layer))
+            //if (isTranslucent && renderOverlay != null && !renderOverlay.getCompiledChunk().isLayerEmpty(layer))
             {
                 count++;
                 this.renderContainer.addRenderOverlay(renderOverlay);
@@ -642,6 +696,12 @@ public final class RenderSchematic extends RenderGlobal
 
             renderChunk.setNeedsUpdate(false);
             chunkIterator.remove();
+
+            final long diff = finishTimeNano - System.nanoTime();
+            if (diff < 0L)
+            {
+                break;
+            }
         }
 
         this.displayListEntitiesDirty |= this.renderDispatcherOverlay.runChunkUploads(finishTimeNano);
@@ -657,6 +717,12 @@ public final class RenderSchematic extends RenderGlobal
 
             renderOverlay.setNeedsUpdate(false);
             overlayIterator.remove();
+
+            final long diff = finishTimeNano - System.nanoTime();
+            if (diff < 0L)
+            {
+                break;
+            }
         }
     }
 
@@ -690,7 +756,6 @@ public final class RenderSchematic extends RenderGlobal
     @Override
     public void notifyLightSet(final BlockPos pos)
     {
-        //TODO CHECK
         final int x = pos.getX();
         final int y = pos.getY();
         final int z = pos.getZ();
@@ -700,7 +765,7 @@ public final class RenderSchematic extends RenderGlobal
     @Override
     public void markBlockRangeForRenderUpdate(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
     {
-        markBlocksForUpdate(x1 - 1, y1 - 1, z1 - 1, x2 + 1, y2 + 1, z2 + 1, false);
+        markBlocksForUpdate(x1 - 1, y1 - 1, z1 - 1, x2 + 1, y2 + 1, z2 + 1, true);
     }
 
     @Override
@@ -782,6 +847,21 @@ public final class RenderSchematic extends RenderGlobal
           flag);
     }
 
+    @Override
+    public boolean hasNoChunkUpdates()
+    {
+        return this.chunksToUpdate.isEmpty() && this.renderDispatcher.hasChunkUpdates();
+    }
+
+    @Override
+    public void updateTileEntities(final Collection<TileEntity> tileEntitiesToRemove, final Collection<TileEntity> tileEntitiesToAdd)
+    {
+        /**
+         * Not needed.
+         */
+    }
+
+
     /**
      * Render the schematic and colored overlay.
      *
@@ -801,10 +881,7 @@ public final class RenderSchematic extends RenderGlobal
             {
                 GlStateManager.pushMatrix();
                 renderSchematic(Settings.instance.getSchematicWorld(), event.getPartialTicks());
-                GlStateManager.popMatrix();
-
-                GlStateManager.pushMatrix();
-                renderOverlay(Settings.instance.getSchematicWorld());
+                renderSchematic(Settings.instance.getSchematicWorld(), event.getPartialTicks());
                 GlStateManager.popMatrix();
             }
 
@@ -895,10 +972,10 @@ public final class RenderSchematic extends RenderGlobal
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        renderBlockLayer(BlockRenderLayer.SOLID, partialTicks, PASS, entity);
-        renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, partialTicks, PASS, entity);
+        renderBlockLayer(BlockRenderLayer.SOLID, (double)partialTicks, PASS, entity);
+        renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, (double)partialTicks, PASS, entity);
         this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-        renderBlockLayer(BlockRenderLayer.CUTOUT, partialTicks, PASS, entity);
+        renderBlockLayer(BlockRenderLayer.CUTOUT, (double)partialTicks, PASS, entity);
         this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
         GlStateManager.disableBlend();
         GlStateManager.shadeModel(GL11.GL_FLAT);
@@ -928,7 +1005,7 @@ public final class RenderSchematic extends RenderGlobal
         this.profiler.endStartSection("translucent");
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        renderBlockLayer(BlockRenderLayer.TRANSLUCENT, partialTicks, PASS, entity);
+        renderBlockLayer(BlockRenderLayer.TRANSLUCENT, (double)partialTicks, PASS, entity);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
         GlStateManager.depthMask(true);

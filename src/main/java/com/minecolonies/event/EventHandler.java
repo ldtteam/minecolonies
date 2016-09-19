@@ -7,9 +7,11 @@ import com.minecolonies.colony.IColony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.MathUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -60,38 +62,39 @@ public class EventHandler
      * Event gets cancelled when player has no permission
      * Event gets cancelled when the player has no permission to place a hut, and tried it
      *
-     * @param event {@link PlayerInteractEvent}
+     * @param event {@link PlayerInteractEvent.RightClickBlock}
      */
     @SubscribeEvent
-    public void onPlayerInteract(@NotNull PlayerInteractEvent event)
+    public void onPlayerInteract(@NotNull PlayerInteractEvent.RightClickBlock event)
     {
-        if (event instanceof PlayerInteractEvent.RightClickBlock)
-        {
             EntityPlayer player = event.getEntityPlayer();
             World world = event.getWorld();
 
-            if (playerRightClickInteract(player, world, event.getPos()) &&
-                  // this was the simple way of doing it, minecraft calls onBlockActivated
-                  // and uses that return value, but I didn't want to call it twice
-                  world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
+            //Only execute for the main hand our colony events.
+            if(event.getHand() == EnumHand.MAIN_HAND && !(event.getWorld().isRemote))
             {
-                IColony colony = ColonyManager.getIColony(world, event.getPos());
-                if (colony != null &&
-                      !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+                if (playerRightClickInteract(player, world, event.getPos()) &&
+                        // this was the simple way of doing it, minecraft calls onBlockActivated
+                        // and uses that return value, but I didn't want to call it twice
+                        world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
                 {
-                    event.setCanceled(true);
+                    IColony colony = ColonyManager.getIColony(world, event.getPos());
+                    if (colony != null &&
+                            !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+                    {
+                        event.setCanceled(true);
+                    }
+
+                    return;
                 }
 
-                return;
-            }
+                if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)
+                {
+                    return;
+                }
 
-            if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)
-            {
-                return;
+                handleEventCancellation(event, player);
             }
-
-            handleEventCancellation(event, player);
-        }
     }
 
     private static boolean playerRightClickInteract(@NotNull EntityPlayer player, World world, BlockPos pos)
@@ -205,7 +208,9 @@ public class EventHandler
         {
             if (closestColony.hasTownHall() || !closestColony.getPermissions().isColonyMember(player))
             {
-                //  Placing in a colony which already has a town hall
+                Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
+                        + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
+                //Placing in a colony which already has a town hall
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
                 return false;
             }
@@ -222,7 +227,9 @@ public class EventHandler
 
         if (closestColony.getDistanceSquared(pos) <= MathUtils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
         {
-            //  Placing too close to an existing colony
+            Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
+                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
+            //Placing too close to an existing colony
             LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
             return false;
         }

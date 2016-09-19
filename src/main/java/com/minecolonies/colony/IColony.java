@@ -6,6 +6,14 @@ import net.minecraft.world.World;
 
 public interface IColony
 {
+
+    /**
+     * Returns the position of the colony.
+     *
+     * @return pos of the colony
+     */
+    BlockPos getCenter();
+
     /**
      * Returns the name of the colony
      *
@@ -35,7 +43,7 @@ public interface IColony
      * @param pos Block Position
      * @return Squared distance to the center in (x, z) direction
      */
-    float getDistanceSquared(BlockPos pos);
+    long getDistanceSquared(BlockPos pos);
 
     /**
      * Returns whether or not the colony has a town hall

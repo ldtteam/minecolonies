@@ -109,7 +109,7 @@ public final class Pathfinding
         }
         catch (ConcurrentModificationException exc)
         {
-            Log.logger.catching(exc);
+            Log.getLogger().catching(exc);
         }
 
         GL11.glPopAttrib();

@@ -3,6 +3,7 @@ package com.minecolonies.items;
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
@@ -52,6 +53,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     public ItemSupplyChestDeployer()
     {
         super("supplyChestDeployer");
+
+        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setMaxStackSize(1);
     }
 
@@ -100,8 +103,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     boolean isFirstPlacing(@NotNull EntityPlayer player)
     {
-        //TODO
-        if (Configurations.allowInfiniteSupplyChests/* || !PlayerProperties.get(player).hasPlacedSupplyChest()*/)
+        if (Configurations.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
         {
             return true;
         }
@@ -263,7 +265,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         if (chest == null)
         {
-            Log.logger.error("Supply chest tile entity was null.");
+            Log.getLogger().error("Supply chest tile entity was null.");
             return;
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));

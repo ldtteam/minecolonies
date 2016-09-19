@@ -3,8 +3,8 @@ package com.blockout.controls;
 import com.blockout.Pane;
 import com.blockout.PaneParams;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -75,7 +75,7 @@ public class Button extends Pane
     @Override
     public void handleClick(int mx, int my)
     {
-        mc.getSoundHandler().playSound(PositionedSoundRecord.getMusicRecord((new SoundEvent(soundClick))));
+        mc.getSoundHandler().playSound(PositionedSoundRecord.getMusicRecord(SoundEvents.UI_BUTTON_CLICK));
 
         Handler delegatedHandler = handler;
 

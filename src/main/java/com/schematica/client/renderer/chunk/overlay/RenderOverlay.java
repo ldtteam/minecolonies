@@ -46,7 +46,7 @@ public class RenderOverlay extends RenderChunk
         final BlockPos from = getPosition();
         final BlockPos to = from.add(15, 15, 15);
         generator.getLock().lock();
-        ChunkCache ChunkCache;
+        ChunkCache chunkCache;
         final SchematicWorld schematic = (SchematicWorld) this.getWorld();
 
         try
@@ -62,7 +62,7 @@ public class RenderOverlay extends RenderChunk
                 return;
             }
 
-            ChunkCache = new ChunkCache(this.getWorld(), from.add(-1, -1, -1), to.add(1, 1, 1), 1);
+            chunkCache = new ChunkCache(this.getWorld(), from.add(-1, -1, -1), to.add(1, 1, 1), 1);
             generator.setCompiledChunk(compiledOverlay);
         }
         finally
@@ -72,7 +72,7 @@ public class RenderOverlay extends RenderChunk
 
         final VisGraph visgraph = new VisGraph();
 
-        if (!ChunkCache.extendedLevelsInChunkCache())
+        if (!chunkCache.extendedLevelsInChunkCache())
         {
             increamentRenderChunkedUpdated();
 

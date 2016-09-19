@@ -302,7 +302,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
         catch (RuntimeException e)
         {
-            Log.logger.debug(e);
+            Log.getLogger().debug(e);
         }
 
         return null;
@@ -338,8 +338,8 @@ public abstract class AbstractPathJob implements Callable<Path>
 
             if (Configurations.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
             {
-                Log.logger.info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
-                  currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.cost, currentNode.score));
+                Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
+                        currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.cost, currentNode.score));
             }
 
             if (isAtDestination(currentNode))
@@ -573,14 +573,14 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
-            Log.logger.info("Path found:");
+            Log.getLogger().info("Path found:");
 
             for (@NotNull PathPoint p : points)
             {
-                Log.logger.info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
+                Log.getLogger().info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
             }
 
-            Log.logger.info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
+            Log.getLogger().info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
         }
     }
 
@@ -864,7 +864,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (parent != null)
         {
             IBlockState hereState = world.getBlockState(parent.pos.down());
-            Block here = hereState.getBlock();
             if (hereState.getMaterial().isLiquid() && !isPassable(pos))
             {
                 return true;

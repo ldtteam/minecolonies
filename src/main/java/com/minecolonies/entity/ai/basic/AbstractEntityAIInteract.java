@@ -33,7 +33,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * The percentage of time needed if we are one level higher.
      */
-    private static final double LEVEL_MODIFIER       = 0.95D;
+    private static final double LEVEL_MODIFIER       = 0.85D;
     /**
      * The Multiplier to add to hand mining speed.
      */
@@ -144,7 +144,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK)
         {
-            Log.logger.info(String.format(
+            Log.getLogger().info(String.format(
               "ForgeHook not in sync with EfficientTool for %s and %s\n"
                 + "Please report to MineColonies with this text to add support!",
               curBlock, tool

@@ -1,5 +1,6 @@
 package com.minecolonies.items;
 
+import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.SchematicWrapper;
@@ -18,6 +19,8 @@ public class ItemScanTool extends AbstractItemMinecolonies
     public ItemScanTool()
     {
         super("scepterSteel");
+
+        super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
         setMaxStackSize(1);
     }
 

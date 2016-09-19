@@ -150,15 +150,15 @@ public class BuildingHome extends AbstractBuildingHut
     {
         super.onUpgradeComplete(newLevel);
 
-        @Nullable final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
+        @Nullable final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner(), getColony().getWorld());
 
         if (newLevel == 1)
         {
-            owner.addStat(ModAchievements.achievementBuildingColonist);
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingColonist);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            owner.addStat(ModAchievements.achievementUpgradeColonistMax);
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
         }
     }
 

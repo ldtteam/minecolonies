@@ -119,7 +119,7 @@ public abstract class AbstractJob
         }
         catch (@NotNull NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e)
         {
-            Log.logger.trace(e);
+            Log.getLogger().trace(e);
         }
 
         if (job != null)
@@ -130,14 +130,14 @@ public abstract class AbstractJob
             }
             catch (RuntimeException ex)
             {
-                Log.logger.error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                Log.getLogger().error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                   compound.getString(TAG_TYPE), oclass.getName()), ex);
                 job = null;
             }
         }
         else
         {
-            Log.logger.warn(String.format("Unknown Job type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
+            Log.getLogger().warn(String.format("Unknown Job type '%s' or missing constructor of proper format.", compound.getString(TAG_TYPE)));
         }
 
         return job;
