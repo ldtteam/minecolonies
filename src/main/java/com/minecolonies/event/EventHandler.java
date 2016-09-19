@@ -1,6 +1,5 @@
 package com.minecolonies.event;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.BlockHutTownHall;
 import com.minecolonies.colony.ColonyManager;
@@ -8,6 +7,7 @@ import com.minecolonies.colony.IColony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.MathUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;

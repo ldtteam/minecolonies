@@ -1,6 +1,5 @@
 package com.minecolonies.util;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
@@ -340,7 +339,7 @@ public final class SchematicWrapper
                         }
                         else
                         {
-                            schematic.setBlockState(localPos, Blocks.air.getDefaultState());
+                            schematic.setBlockState(localPos, Blocks.AIR.getDefaultState());
                             Log.getLogger().warn("Scan contained multiple AbstractBlockHut's ignoring this one");
                         }
                     }

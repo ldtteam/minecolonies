@@ -1,7 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.util.Log;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

@@ -1,11 +1,7 @@
 package com.minecolonies.entity.ai.basic;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.jobs.AbstractJob;
-import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.BlockUtils;
-import com.minecolonies.util.InventoryUtils;
-import com.minecolonies.util.Utils;
+import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;

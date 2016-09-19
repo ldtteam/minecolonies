@@ -1,12 +1,12 @@
 package com.minecolonies.items;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.SchematicWrapper;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;

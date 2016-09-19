@@ -1,12 +1,12 @@
 package com.minecolonies.entity.ai.citizen.miner;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.SchematicWrapper;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;

@@ -1,8 +1,8 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.Log;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;

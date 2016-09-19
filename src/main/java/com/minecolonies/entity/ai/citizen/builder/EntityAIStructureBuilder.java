@@ -1,6 +1,5 @@
 package com.minecolonies.entity.ai.citizen.builder;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.buildings.AbstractBuilding;

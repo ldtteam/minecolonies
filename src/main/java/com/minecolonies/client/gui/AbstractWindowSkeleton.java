@@ -2,7 +2,7 @@ package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
 import com.blockout.views.Window;
-import com.minecolonies.MineColonies;
+import com.minecolonies.util.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;

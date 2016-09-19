@@ -1,8 +1,8 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;

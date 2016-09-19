@@ -1,10 +1,10 @@
 package com.minecolonies.colony.jobs;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
+import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
