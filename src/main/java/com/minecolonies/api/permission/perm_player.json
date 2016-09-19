@@ -1,0 +1,41 @@
+[
+  {
+    "id": "UUID of isfirs",
+    "groups": [
+      "VIP"
+    ],
+    "permission": [
+      "block.place.minecraft:command_block"
+    ]
+  },
+  {
+    "id": "UUID of kostronor",
+    "groups": [
+      "staff"
+    ],
+    "permission": []
+  },
+  {
+    "id": "UUID of raycoms",
+    "groups": [
+      "member"
+    ],
+    "permission": []
+  },
+  {
+    "id": "UUID of colton",
+    "groups": [
+      "member"
+    ],
+    "permission": [
+      "block.place.minecraft:tnt"
+    ]
+  },
+  {
+    "id": "UUID of pmardl",
+    "groups": [
+      "member"
+    ],
+    "permission": []
+  }
+]

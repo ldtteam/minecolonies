@@ -7,8 +7,10 @@ package com.minecolonies.api.permission;
 public interface IPermissionKey
 {
 
-    void serialize();
+    String serialize();
 
     void deserialize();
+
+    boolean compare(IPermissionKey permKey);
 
 }

@@ -7,8 +7,13 @@ package com.minecolonies.api.permission;
 public interface IPermissionGroup
 {
 
-    void serialize();
+    String serialize();
 
-    void deserialize();
+    void deserialize(String data);
 
+    void addKey(IPermissionKey key);
+
+    boolean hasKey(IPermissionKey key);
+
+    void removeKey(IPermissionKey key);
 }

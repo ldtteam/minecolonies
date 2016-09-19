@@ -1,20 +1,25 @@
 package com.minecolonies.permissions;
 
 import com.minecolonies.api.permission.IPermissionGroup;
+import com.sun.tools.javac.util.List;
 
 /**
  */
 public class PermissionGroup implements IPermissionGroup
 {
 
+    private List<PermissionKey> keys;
+
     @Override
-    public void serialize()
+    public String serialize()
     {
         // TODO
+
+        return null;
     }
 
     @Override
-    public void deserialize()
+    public void deserialize(final String data)
     {
 
     }

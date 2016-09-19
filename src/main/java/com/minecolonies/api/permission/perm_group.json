@@ -1,0 +1,35 @@
+{
+  "groups": [
+    {
+      "id": "player",
+      "name": "Player",
+      "permission": [
+        "block.break.minecraft:*",
+        "!block.break.minecraft:tnt",
+        "!block.break.minecraft:command_block",
+        "block.place.minecraft:*",
+        "!block.place.minecraft:tnt",
+        "!block.place.minecraft:command_block"
+      ]
+    },
+    {
+      "id": "vip",
+      "name": "VIP",
+      "parent": "player",
+      "permission": [
+        "block.place.minecraft:tnt",
+        "block.break.minecraft:tnt"
+      ]
+    },
+    {
+      "id": "staff",
+      "name": "Staff",
+      "parent": "vip",
+      "permission": [
+        "block.break.minecraft:*",
+        "block.place.minecraft:*"
+      ]
+    }
+  ],
+  "default": "player"
+}
