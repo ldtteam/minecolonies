@@ -1,0 +1,29 @@
+package com.blockout;
+
+import com.minecolonies.lib.Constants;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+/**
+ * Logging utility class
+ */
+public class Log
+{
+    /**
+     * Mod logger
+     */
+    private static Logger logger = null;
+
+    /**
+     * Getter for the blockout Logger.
+     * @return the logger.
+     */
+    public static Logger getLogger()
+    {
+        if (logger == null)
+        {
+           Log.logger = LogManager.getLogger(Constants.MOD_ID+"blockout");
+        }
+        return logger;
+    }
+}

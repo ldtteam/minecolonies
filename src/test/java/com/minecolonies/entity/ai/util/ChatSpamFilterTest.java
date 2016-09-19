@@ -5,7 +5,6 @@ import com.minecolonies.test.AbstractTest;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import static com.minecolonies.entity.ai.util.ChatSpamFilter.BASE_TIMEOUT;
 import static com.minecolonies.entity.ai.util.ChatSpamFilter.MAX_TIMEOUT;
