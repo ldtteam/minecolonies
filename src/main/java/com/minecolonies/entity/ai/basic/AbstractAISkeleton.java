@@ -1,11 +1,11 @@
 package com.minecolonies.entity.ai.basic;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.ai.util.ChatSpamFilter;
+import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -108,7 +108,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     public final void startExecuting()
     {
         worker.setStatus(EntityCitizen.Status.WORKING);
-        MineColonies.getLogger().info("Starting AI job " + job.getName());
+        Log.getLogger().info("Starting AI job " + job.getName());
     }
 
     /**
@@ -169,7 +169,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
         catch (RuntimeException e)
         {
-            MineColonies.getLogger().warn("Condition check for target " + target + " threw an exception:", e);
+            Log.getLogger().warn("Condition check for target " + target + " threw an exception:", e);
             return false;
         }
         return applyTarget(target);
@@ -193,7 +193,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         }
         catch (RuntimeException e)
         {
-            MineColonies.getLogger().warn("Action for target " + target + " threw an exception:", e);
+            Log.getLogger().warn("Action for target " + target + " threw an exception:", e);
             return false;
         }
         if (newState != null)

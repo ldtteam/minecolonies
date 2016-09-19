@@ -1,8 +1,8 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -302,7 +302,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
         catch (RuntimeException e)
         {
-            MineColonies.getLogger().debug(e);
+            Log.getLogger().debug(e);
         }
 
         return null;
@@ -338,7 +338,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
             if (Configurations.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
             {
-                MineColonies.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
+                Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
                         currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.cost, currentNode.score));
             }
 
@@ -573,14 +573,14 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
-            MineColonies.getLogger().info("Path found:");
+            Log.getLogger().info("Path found:");
 
             for (@NotNull PathPoint p : points)
             {
-                MineColonies.getLogger().info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
+                Log.getLogger().info(String.format("Step: [%d,%d,%d]", p.xCoord, p.yCoord, p.zCoord));
             }
 
-            MineColonies.getLogger().info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
+            Log.getLogger().info(String.format("Total Nodes Visited %d / %d", totalNodesVisited, totalNodesAdded));
         }
     }
 

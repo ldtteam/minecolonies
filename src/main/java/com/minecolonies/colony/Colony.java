@@ -369,7 +369,6 @@ public class Colony implements IColony
     @Override
     public long getDistanceSquared(@NotNull BlockPos pos)
     {
-        //  Perform a 2D distance calculation, so pass center.posY as the Y
         return BlockPosUtil.getDistanceSquared2D(center, pos);
     }
 
@@ -384,6 +383,7 @@ public class Colony implements IColony
      *
      * @return Chunk Coordinates of the center of the colony.
      */
+    @Override
     public BlockPos getCenter()
     {
         return center;
@@ -711,7 +711,7 @@ public class Colony implements IColony
                 citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null)
                   .forEach(citizen ->
                   {
-                      MineColonies.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
+                      Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
                       spawnCitizen(citizen);
                   });
             }
@@ -989,7 +989,7 @@ public class Colony implements IColony
         }
         catch (ClassCastException e)
         {
-            MineColonies.getLogger().warn("getBuilding called with wrong type: ", e);
+            Log.getLogger().warn("getBuilding called with wrong type: ", e);
             return null;
         }
     }
@@ -1027,14 +1027,14 @@ public class Colony implements IColony
             addBuilding(building);
             tileEntity.setBuilding(building);
 
-            MineColonies.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
+            Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
         }
         else
         {
-            MineColonies.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
+            Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
@@ -1093,7 +1093,7 @@ public class Colony implements IColony
                 MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(this, building.getID()), player);
             }
 
-            MineColonies.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
+            Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
               getID(),
               building.getID(),
               building.getSchematicName()));

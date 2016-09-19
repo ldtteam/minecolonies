@@ -76,11 +76,6 @@ public class MineColonies
     @Mod.EventHandler
     public void preInit(@NotNull FMLPreInitializationEvent event)
     {
-        if(MineColonies.logger == null)
-        {
-            MineColonies.logger = event.getModLog();
-        }
-
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
 
         proxy.registerEntities();

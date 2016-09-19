@@ -1,6 +1,5 @@
 package com.minecolonies.util;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
@@ -166,7 +165,7 @@ public final class SchematicWrapper
         }
         catch (IllegalStateException e)
         {
-            MineColonies.getLogger().warn("Could not load schematic!", e);
+            Log.getLogger().warn("Could not load schematic!", e);
         }
     }
 
@@ -257,7 +256,7 @@ public final class SchematicWrapper
         }
         catch (RotationHelper.RotationException e)
         {
-            MineColonies.getLogger().debug(e);
+            Log.getLogger().debug(e);
         }
     }
 
@@ -341,7 +340,7 @@ public final class SchematicWrapper
                         else
                         {
                             schematic.setBlockState(localPos, Blocks.AIR.getDefaultState());
-                            MineColonies.getLogger().warn("Scan contained multiple AbstractBlockHut's ignoring this one");
+                            Log.getLogger().warn("Scan contained multiple AbstractBlockHut's ignoring this one");
                         }
                     }
 
@@ -408,7 +407,7 @@ public final class SchematicWrapper
     {
         if (!directory.exists() && !directory.mkdirs())
         {
-            MineColonies.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
+            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
     }
 

@@ -36,7 +36,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.util.EnumFacing.NORTH;
 import static net.minecraft.util.EnumFacing.fromAngle;
-
 /**
  * The class handling the fieldBlocks, placement and activation.
  */

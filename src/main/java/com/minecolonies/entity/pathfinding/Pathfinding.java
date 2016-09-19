@@ -1,7 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.util.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -109,7 +109,7 @@ public final class Pathfinding
         }
         catch (ConcurrentModificationException exc)
         {
-            MineColonies.getLogger().catching(exc);
+            Log.getLogger().catching(exc);
         }
 
         GL11.glPopAttrib();

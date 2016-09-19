@@ -456,7 +456,6 @@ public final class ColonyView implements IColony
     @Override
     public long getDistanceSquared(@NotNull BlockPos pos)
     {
-        //  Perform a 2D distance calculation, so pass center.posY as the Y
         return BlockPosUtil.getDistanceSquared2D(center, pos);
     }
 

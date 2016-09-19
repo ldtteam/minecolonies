@@ -1,8 +1,8 @@
 package com.minecolonies.blocks;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.Log;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
@@ -76,12 +76,12 @@ public class BlockBarrel extends Block
     //whenever player right click to barrel call this.
     public boolean UseBarrel(World worldIn, EntityPlayer playerIn, ItemStack itemstack, IBlockState state, BlockPos pos)
     {
-        MineColonies.getLogger().info("block activated");
+        Log.getLogger().info("block activated");
 
         int barrelState = state.getValue(BARRELSTATE);
         int fullness = fillings.getOrDefault(pos, 0);
 
-        MineColonies.getLogger().info("At this moment bs= " + barrelState + " and fl=" + fullness);
+        Log.getLogger().info("At this moment bs= " + barrelState + " and fl=" + fullness);
 
 
         //if statement 1
@@ -91,7 +91,7 @@ public class BlockBarrel extends Block
             // playerIn.inventory.addItemStackToInventory(new ItemStack(ModItems.compost, 8));
             worldIn.setBlockState(pos, state.withProperty(BARRELSTATE, BARRELSTATE_FILLING));
             fillings.put(pos, MIN_FULLNESS);
-            MineColonies.getLogger().info("Set Blockstate to " + worldIn.getBlockState(pos));
+            Log.getLogger().info("Set Blockstate to " + worldIn.getBlockState(pos));
             return true;
         }
 
@@ -104,7 +104,7 @@ public class BlockBarrel extends Block
 
         if (item == Items.ROTTEN_FLESH && barrelState == BARRELSTATE_FILLING)
         {
-            MineColonies.getLogger().info("item Consumed");
+            Log.getLogger().info("item Consumed");
 
             itemstack.stackSize--;
 
@@ -115,7 +115,7 @@ public class BlockBarrel extends Block
                 worldIn.setBlockState(pos, state.withProperty(BARRELSTATE, BARRELSTATE_COMPOSTING));
             }
             fillings.put(pos, fullness);
-            MineColonies.getLogger().info("now FULLNESS = " + fullness);
+            Log.getLogger().info("now FULLNESS = " + fullness);
 
             return true;
         }
@@ -158,11 +158,11 @@ public class BlockBarrel extends Block
     @Override
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
     {
-        MineColonies.getLogger().info("UpdateTick called");
+        Log.getLogger().info("UpdateTick called");
 
         int barrelState = state.getValue(BARRELSTATE);
 
-        MineColonies.getLogger().info("now BARRELSTATE = " + barrelState);
+        Log.getLogger().info("now BARRELSTATE = " + barrelState);
         switch (state.getValue(BARRELSTATE))
         {
             case BARRELSTATE_FILLING:
@@ -181,7 +181,7 @@ public class BlockBarrel extends Block
         int fullness = fillings.getOrDefault(pos, 0);
         if (fullness >= MAX_FULLNESS)
         {
-            MineColonies.getLogger().info("Barrel is full.");
+            Log.getLogger().info("Barrel is full.");
             world.setBlockState(pos, state.withProperty(BARRELSTATE, BARRELSTATE_COMPOSTING));
         }
     }
@@ -206,7 +206,7 @@ public class BlockBarrel extends Block
 
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        MineColonies.getLogger().info("block right-clicked");
+        Log.getLogger().info("block right-clicked");
 
         ItemStack itemstack = playerIn.inventory.getCurrentItem();
         UseBarrel(worldIn, playerIn, itemstack, state, pos);
