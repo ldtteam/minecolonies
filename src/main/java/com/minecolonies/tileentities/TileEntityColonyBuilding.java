@@ -140,7 +140,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (building == null && colony != null)
         {
             building = colony.getBuilding(getPosition());
-            if (building != null)
+            if (building != null  && (worldObj == null || !worldObj.isRemote))
             {
                 building.setTileEntity(this);
             }
