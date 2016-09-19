@@ -9,10 +9,12 @@ import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -412,7 +414,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean plantSapling(@NotNull BlockPos location)
     {
-        if (BlockPosUtil.getBlock(world, location) != Blocks.air)
+        if (BlockPosUtil.getBlock(world, location) != Blocks.AIR)
         {
             return false;
         }
@@ -427,13 +429,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
             placeSaplings(saplingSlot, stack, block);
 
-            world.playSoundEffect((float) location.getX() + HALF_BLOCK_OFFSET,
-              (float) location.getY() + HALF_BLOCK_OFFSET,
-              (float) location.getZ() + HALF_BLOCK_OFFSET,
-              block.stepSound.getBreakSound(),
-              block.stepSound.getVolume(),
-              block.stepSound.getFrequency());
-            worker.swingItem();
+            world.playSound((EntityPlayer) null,
+              this.worker.getPosition(),
+              block.getSoundType().getBreakSound(),
+              SoundCategory.BLOCKS,
+              block.getSoundType().getVolume(),
+              block.getSoundType().getPitch());
+            worker.swingArm(worker.getActiveHand());
         }
 
         if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
@@ -466,7 +468,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 for (int z = playerZ - radius; z < playerZ + radius; z++)
                 {
                     @NotNull BlockPos pos = new BlockPos(x, y, z);
-                    if (world.getBlockState(pos).getBlock().isLeaves(world, pos))
+                    if (world.getBlockState(pos).getBlock().isLeaves(world.getBlockState(pos), world, pos))
                     {
                         return pos;
                     }
@@ -509,7 +511,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
     }
 
-    private boolean isCorrectSapling(@NotNull ItemStack stack)
+    /**
+     * Checks if this is the correct Sapling. Please stop that @NotNull stuff. You put it where it doesn't belong!!!
+     * @param stack incoming stack.
+     * @return true if so.
+     */
+    private boolean isCorrectSapling(ItemStack stack)
     {
         return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
     }

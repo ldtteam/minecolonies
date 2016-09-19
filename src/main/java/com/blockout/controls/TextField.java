@@ -6,10 +6,10 @@ import com.blockout.View;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
@@ -35,6 +35,7 @@ public class TextField extends Pane
     protected int scrollOffset       = 0;
     protected int selectionEnd       = 0;
     protected int cursorBlinkCounter = 0;
+
     public TextField()
     {
         //Required
@@ -380,17 +381,17 @@ public class TextField extends Pane
             GlStateManager.disableTexture2D();
             GlStateManager.enableColorLogic();
             GlStateManager.colorLogicOp(GL11.GL_OR_REVERSE);
-            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+            VertexBuffer VertexBuffer = tessellator.getBuffer();
 
             // There are several to choose from, look at DefaultVertexFormats for more info
             //todo may need to choose a different Format
-            worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            VertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
             //Since our points do not have any u,v this seems to be the correct code
-            worldrenderer.pos((double) selectionStartX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
-            worldrenderer.pos((double) selectionEndX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
-            worldrenderer.pos((double) selectionEndX, (double) drawY - 1, 0.0D).endVertex();
-            worldrenderer.pos((double) selectionStartX, (double) drawY - 1, 0.0D).endVertex();
+            VertexBuffer.pos((double) selectionStartX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            VertexBuffer.pos((double) selectionEndX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            VertexBuffer.pos((double) selectionEndX, (double) drawY - 1, 0.0D).endVertex();
+            VertexBuffer.pos((double) selectionStartX, (double) drawY - 1, 0.0D).endVertex();
             tessellator.draw();
             GlStateManager.disableColorLogic();
             GlStateManager.enableTexture2D();

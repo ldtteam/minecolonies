@@ -10,7 +10,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -171,9 +172,12 @@ public class Permissions implements IPermissions
             @NotNull UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
             Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
 
-            GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getProfileByUUID(id);
+            GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(id);;
 
-            players.put(id, new Player(id, gameprofile.getName(), rank));
+            if(player != null)
+            {
+                players.put(id, new Player(id, player.getName(), rank));
+            }
         }
 
         //Permissions
@@ -277,6 +281,17 @@ public class Permissions implements IPermissions
         return this.players.values().stream()
                  .filter(player -> ranks.contains(player.rank))
                  .collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns the map of permissions and ranks
+     *
+     * @return map of permissions
+     */
+    @NotNull
+    public Map<Rank, Integer> getPermissions()
+    {
+        return permissions;
     }    /**
      * Returns the rank belonging to the UUID
      *
@@ -289,17 +304,6 @@ public class Permissions implements IPermissions
     {
         Player player = players.get(id);
         return player != null ? player.rank : Rank.NEUTRAL;
-    }
-
-    /**
-     * Returns the map of permissions and ranks
-     *
-     * @return map of permissions
-     */
-    @NotNull
-    public Map<Rank, Integer> getPermissions()
-    {
-        return permissions;
     }
 
     /**
@@ -325,10 +329,6 @@ public class Permissions implements IPermissions
     public Rank getRank(@NotNull EntityPlayer player)
     {
         return getRank(player.getGameProfile().getId());
-    }    @Override
-    public boolean isColonyMember(@NotNull EntityPlayer player)
-    {
-        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -357,6 +357,10 @@ public class Permissions implements IPermissions
     {
         permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
         markDirty();
+    }    @Override
+    public boolean isColonyMember(@NotNull EntityPlayer player)
+    {
+        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -366,7 +370,7 @@ public class Permissions implements IPermissions
      * @param rank Desired rank
      * @return True if successful, otherwise false
      */
-    public boolean setPlayerRank(UUID id, Rank rank)
+    public boolean setPlayerRank(UUID id, Rank rank, World world)
     {
         Player player = players.get(id);
 
@@ -378,7 +382,8 @@ public class Permissions implements IPermissions
         }
         else
         {
-            GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getProfileByUUID(id);
+
+            GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(id);
 
             return gameprofile != null && addPlayer(gameprofile, rank);
         }
@@ -410,10 +415,13 @@ public class Permissions implements IPermissions
      * @param rank   Rank desired starting rank
      * @return True if successful, otherwise false
      */
-    public boolean addPlayer(@NotNull String player, Rank rank)
+    public boolean addPlayer(@NotNull String player, Rank rank, World world)
     {
-        GameProfile gameprofile = MinecraftServer.getServer().getPlayerProfileCache().getGameProfileForUsername(player);
-
+        if(player.isEmpty())
+        {
+            return false;
+        }
+        GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(player);
         //Check if the player already exists so that their rank isn't overridden
         return gameprofile != null && !players.containsKey(gameprofile.getId()) && addPlayer(gameprofile, rank);
     }
@@ -700,12 +708,6 @@ public class Permissions implements IPermissions
             return Utils.testFlag(permissions.get(rank), action.flag);
         }
 
-        @NotNull
-        public Rank getRank(@NotNull EntityPlayer player)
-        {
-            return getRank(player.getUniqueID());
-        }
-
         public boolean setPermission(Rank rank, @NotNull Action action)
         {
             int flags = permissions.get(rank);
@@ -717,6 +719,10 @@ public class Permissions implements IPermissions
                 return true;
             }
             return false;
+        }        @NotNull
+        public Rank getRank(@NotNull EntityPlayer player)
+        {
+            return getRank(player.getUniqueID());
         }
 
         public boolean removePermission(Rank rank, @NotNull Action action)
@@ -728,14 +734,6 @@ public class Permissions implements IPermissions
                 return true;
             }
             return false;
-        }
-
-        @NotNull
-        @Override
-        public Rank getRank(UUID id)
-        {
-            Player player = players.get(id);
-            return player != null ? player.rank : Rank.NEUTRAL;
         }
 
         public void togglePermission(Rank rank, @NotNull Action action)
@@ -768,23 +766,29 @@ public class Permissions implements IPermissions
                 int flags = buf.readInt();
                 permissions.put(rank, flags);
             }
-        }        @Override
+        }        @NotNull
+        @Override
+        public Rank getRank(UUID id)
+        {
+            Player player = players.get(id);
+            return player != null ? player.rank : Rank.NEUTRAL;
+        }
+
+
+
+
+
+        @Override
         public boolean hasPermission(@NotNull EntityPlayer player, @NotNull Action action)
         {
             return hasPermission(getRank(player), action);
         }
-
-
 
         @Override
         public boolean isColonyMember(@NotNull EntityPlayer player)
         {
             return players.containsKey(player.getUniqueID());
         }
-
-
-
-
     }
 
 

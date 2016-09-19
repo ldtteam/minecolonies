@@ -1,11 +1,13 @@
 package com.minecolonies.util;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -169,9 +171,9 @@ public final class Utils
         {
             yHolder++;
         }
-        while (!world.getBlockState(new BlockPos(x, yHolder, z)).getBlock().isOpaqueCube() ||
+        while (!world.getBlockState(new BlockPos(x, yHolder, z)).isOpaqueCube() ||
                  arrayContains(
-                   new Block[] {Blocks.air, Blocks.leaves, Blocks.leaves2}
+                   new Block[] {Blocks.AIR, Blocks.LEAVES, Blocks.LEAVES2}
                    , world.getBlockState(new BlockPos(x, yHolder, z)).getBlock()))
         {
             yHolder--;
@@ -270,7 +272,7 @@ public final class Utils
      */
     public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata)
     {
-        world.playAuxSFX(SOUND_EVENT_ID, pos, Block.getIdFromBlock(block) + (metadata << METADATA_BITSHIFT));
+        world.playSound((EntityPlayer) null, pos, block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
     }
 
     /**

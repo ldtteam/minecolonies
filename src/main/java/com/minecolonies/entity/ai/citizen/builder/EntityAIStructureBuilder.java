@@ -17,13 +17,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -40,11 +41,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally)
      */
-    private static final double   XP_EACH_BUILDING        = 2.5;
+    private static final double   XP_EACH_BUILDING              = 2.5;
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
-    private static final int      INTELLIGENCE_MULTIPLIER = 2;
+    private static final int      INTELLIGENCE_MULTIPLIER       = 2;
     /**
      * How often should strength factor into the builders skill modifier.
      */
@@ -56,20 +57,20 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * The standard range the builder should reach until his target.
      */
-    private static final int      STANDARD_WORKING_RANGE  = 5;
+    private static final int      STANDARD_WORKING_RANGE        = 5;
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int      MIN_WORKING_RANGE       = 7;
+    private static final int      MIN_WORKING_RANGE             = 7;
     /**
      * After how many actions should the builder dump his inventory.
      */
-    private static final int      ACTIONS_UNTIL_DUMP      = 1024;
+    private static final int      ACTIONS_UNTIL_DUMP            = 1024;
     /**
      * Position where the Builders constructs from.
      */
     @Nullable
-    private              BlockPos workFrom                = null;
+    private              BlockPos workFrom                      = null;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -367,11 +368,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         BlockPos coordinates = job.getSchematic().getBlockPosition();
-        Block worldBlock = world.getBlockState(coordinates).getBlock();
+        IBlockState worldBlockState = world.getBlockState(coordinates);
+        Block worldBlock = worldBlockState.getBlock();
 
-        if (worldBlock != Blocks.air
+        if (worldBlock != Blocks.AIR
               && !(worldBlock instanceof AbstractBlockHut)
-              && worldBlock != Blocks.bedrock
+              && worldBlock != Blocks.BEDROCK
               && job.getSchematic().getBlock() != ModBlocks.blockSubstitution)
         {
             //Fill workFrom with the position from where the builder should build.
@@ -382,9 +384,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             worker.faceBlock(coordinates);
             //We need to deal with materials
-            if (Configurations.builderInfiniteResources || worldBlock.getMaterial().isLiquid())
+            if (Configurations.builderInfiniteResources || worldBlockState.getMaterial().isLiquid())
             {
-                worker.setCurrentItemOrArmor(0, null);
+                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
 
                 if (!world.setBlockToAir(coordinates))
                 {
@@ -392,7 +394,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     Log.logger.error(String.format("Block break failure at %d, %d, %d", coordinates.getX(), coordinates.getY(), coordinates.getZ()));
                     //TODO handle - for now, just skipping
                 }
-                worker.swingItem();
+                worker.swingArm(worker.getActiveHand());
             }
             else
             {
@@ -435,8 +437,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
                 if (itemstack.getItem() != null
                       && block != null
-                      && block != Blocks.air
-                      && worldBlock != Blocks.bedrock
+                      && block != Blocks.AIR
+                      && worldBlock != Blocks.BEDROCK
                       && !(worldBlock instanceof AbstractBlockHut)
                       && !isBlockFree(block, 0)
                       && checkOrRequestItems(new ItemStack(block)))
@@ -462,12 +464,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         return block == null
                  || BlockUtils.isWater(block.getDefaultState())
-                 || block.equals(Blocks.leaves)
-                 || block.equals(Blocks.leaves2)
-                 || (block.equals(Blocks.double_plant) && Utils.testFlag(metadata, 0x08))
+                 || block.equals(Blocks.LEAVES)
+                 || block.equals(Blocks.LEAVES2)
+                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
                  || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08))
-                 || block.equals(Blocks.grass)
-                 || block.equals(Blocks.dirt);
+                 || block.equals(Blocks.GRASS)
+                 || block.equals(Blocks.DIRT);
     }
 
     private AIState structureStep()
@@ -479,8 +481,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if (job.getSchematic().getBlock() == null
               || job.getSchematic().doesSchematicBlockEqualWorldBlock()
-              || (!job.getSchematic().getBlock().getMaterial().isSolid()
-                    && job.getSchematic().getBlock() != Blocks.air))
+              || (!job.getSchematic().getBlockState().getMaterial().isSolid()
+                    && job.getSchematic().getBlock() != Blocks.AIR))
         {
             //findNextBlock count was reached and we can ignore this block
             return findNextBlockSolid();
@@ -506,7 +508,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         //don't overwrite huts or bedrock, nor place huts
         if (worldBlock instanceof AbstractBlockHut
-              || worldBlock == Blocks.bedrock
+              || worldBlock == Blocks.BEDROCK
               || block instanceof AbstractBlockHut)
         {
             return findNextBlockSolid();
@@ -530,9 +532,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             return this.getState();
         }
-        //|| job.getSchematic().getBlock() == Blocks.air
+        //|| job.getSchematic().getBlock() == Blocks.AIR
         if (job.getSchematic().doesSchematicBlockEqualWorldBlock()
-              || job.getSchematic().getBlock().getMaterial().isSolid())
+              || job.getSchematic().getBlockState().getMaterial().isSolid())
         {
             //findNextBlock count was reached and we can ignore this block
             return findNextBlockNonSolid();
@@ -557,7 +559,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         //don't overwrite huts or bedrock, nor place huts
         if (worldBlock instanceof AbstractBlockHut
-              || worldBlock == Blocks.bedrock
+              || worldBlock == Blocks.BEDROCK
               || block instanceof AbstractBlockHut)
         {
             findNextBlockNonSolid();
@@ -577,9 +579,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private void placeBlockAt(@NotNull Block block, @NotNull IBlockState blockState, @NotNull BlockPos coords)
     {
-        if (block == Blocks.air)
+        if (block == Blocks.AIR)
         {
-            worker.setCurrentItemOrArmor(0, null);
+            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
 
             if (!world.setBlockToAir(coords))
             {
@@ -590,7 +592,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         else
         {
             Item item = Item.getItemFromBlock(block);
-            worker.setCurrentItemOrArmor(0, item != null ? new ItemStack(item, 1) : null);
+            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item != null ? new ItemStack(item, 1) : null);
 
             if (placeBlock(coords, block, blockState))
             {
@@ -601,7 +603,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 Log.logger.error(String.format("Block place failure %s at %s", block.getUnlocalizedName(), coords));
                 //TODO handle - for now, just skipping
             }
-            worker.swingItem();
+            worker.swingArm(worker.getActiveHand());
         }
     }
 
@@ -626,20 +628,20 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                   entityHanging.getHangingPosition().getZ());
 
                 entityHanging.setWorld(world);
-                entityHanging.dimension = world.provider.getDimensionId();
+                entityHanging.dimension = world.provider.getDimension();
 
                 world.spawnEntityInWorld(entityHanging);
             }
             else if (entity instanceof EntityMinecart)
             {
                 @Nullable EntityMinecart minecart = (EntityMinecart) entity;
-                minecart.riddenByEntity = null;
+                //todo is this important? minecart.riddenByEntity = null;
                 minecart.posX += pos.getX();
                 minecart.posY += pos.getY();
                 minecart.posZ += pos.getZ();
 
                 minecart.setWorld(world);
-                minecart.dimension = world.provider.getDimensionId();
+                minecart.dimension = world.provider.getDimension();
 
                 world.spawnEntityInWorld(minecart);
             }
@@ -649,7 +651,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     private boolean handleMaterials(@NotNull Block block, @NotNull IBlockState blockState)
     {
         //Breaking blocks doesn't require taking materials from the citizens inventory
-        if (block == Blocks.air)
+        if (block == Blocks.AIR)
         {
             return true;
         }
@@ -683,7 +685,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         //We need to deal with materials
-        if (!Configurations.builderInfiniteResources && world.getBlockState(pos).getBlock() != Blocks.air)
+        if (!Configurations.builderInfiniteResources && world.getBlockState(pos).getBlock() != Blocks.AIR)
         {
             List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
             for (ItemStack item : items)
@@ -692,9 +694,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
         }
 
-        if (block instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+        if (block instanceof BlockDoor)
         {
-            ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), block);
+            if(blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+            {
+                ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), block, false);
+            }
         }
         else if (block instanceof BlockBed)
         {

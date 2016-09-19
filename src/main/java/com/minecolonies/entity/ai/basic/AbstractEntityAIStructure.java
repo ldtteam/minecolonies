@@ -7,8 +7,9 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.ai.util.Structure;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.EntityUtils;
-import net.minecraft.util.BlockPos;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
@@ -229,9 +230,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             //We need to deal with materials
             if (Configurations.builderInfiniteResources)
             {
-                worker.setCurrentItemOrArmor(0, null);
+                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
                 world.setBlockToAir(currentBlock.blockPosition);
-                worker.swingItem();
+                worker.swingArm(worker.getActiveHand());
                 setDelay(UNLIMITED_RESOURCES_TIMEOUT);
             }
             else

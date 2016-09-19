@@ -1,9 +1,6 @@
 package com.minecolonies.util;
 
-import com.minecolonies.lib.Constants;
-import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Utilities for playing sounds.
@@ -30,12 +27,12 @@ public final class SoundUtils
      * @param y     Y-coordinate
      * @param z     Z-coordinate
      */
-    public static void playSound(@NotNull World world, String name, int x, int y, int z)
+    /*public static void playSound(@NotNull World world, String name, int x, int y, int z)
     {
         playSound(world, name,
           x + HALF_BLOCK_OFFSET, y + HALF_BLOCK_OFFSET, z + HALF_BLOCK_OFFSET,
           1.0F, (float) (world.rand.nextDouble() * RANDOM_PITCH_VALUE + STATIC_PITCH_VALUE));
-    }
+    }*/
 
     /**
      * Plays a sound effect at a specific location.
@@ -49,10 +46,10 @@ public final class SoundUtils
      * @param volume Volume to play sound
      * @param pitch  Pitch to play sound
      */
-    public static void playSound(@NotNull World world, String name, double x, double y, double z, float volume, float pitch)
+    /*public static void playSound(@NotNull World world, String name, double x, double y, double z, float volume, float pitch)
     {
         world.playSoundEffect(x, y, z, Constants.MOD_ID + ":" + name, volume, pitch);
-    }
+    }*/
 
     /**
      * Plays sound near an entity.
@@ -62,8 +59,8 @@ public final class SoundUtils
      * @param volume Volume to play sound
      * @param pitch  Pitch to play sound
      */
-    public static void playSoundAtEntity(@NotNull Entity entity, String name, float volume, float pitch)
+    /*public static void playSoundAtEntity(@NotNull Entity entity, String name, float volume, float pitch)
     {
         entity.worldObj.playSoundAtEntity(entity, Constants.MOD_ID + ":" + name, volume, pitch);
-    }
+    }*/
 }

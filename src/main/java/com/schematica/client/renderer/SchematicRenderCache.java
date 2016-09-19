@@ -3,16 +3,16 @@ package com.schematica.client.renderer;
 import com.schematica.Settings;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RegionRenderCache;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * RenderCache for schematics.
  */
-public class SchematicRenderCache extends RegionRenderCache
+public class SchematicRenderCache extends ChunkCache
 {
     private final Minecraft minecraft = Minecraft.getMinecraft();
 
@@ -37,14 +37,16 @@ public class SchematicRenderCache extends RegionRenderCache
     @Override
     public IBlockState getBlockState(final BlockPos pos)
     {
-        final BlockPos realPos = pos.add(Settings.instance.getSchematicWorld().position);
-        final World world = this.minecraft.theWorld;
-
-        if (!world.isAirBlock(realPos))
+        if(Settings.instance.getSchematicWorld() != null)
         {
-            return Blocks.air.getDefaultState();
-        }
+            final BlockPos realPos = pos.add(Settings.instance.getSchematicWorld().position);
+            final World world = this.minecraft.theWorld;
 
+            if (!world.isAirBlock(realPos))
+            {
+                return Blocks.AIR.getDefaultState();
+            }
+        }
         return super.getBlockState(pos);
     }
 }

@@ -1,14 +1,12 @@
 package com.minecolonies.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.util.BlockPosUtil;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockNewLog;
-import net.minecraft.block.BlockPlanks;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -80,9 +78,9 @@ public class Tree
     }
 
     /**
-     * Creates a new tree Object for the lumberjack
-     *
-     * @param world The world where the tree is in
+     * Creates a new tree Object for the lumberjack.
+     * Since the same type of variant of the block old log or new log do not match we have to separate them.
+     * @param world The world where the tree is in.
      * @param log   the position of the found log.
      */
     public Tree(@NotNull World world, @NotNull BlockPos log)
@@ -90,7 +88,19 @@ public class Tree
         Block block = BlockPosUtil.getBlock(world, log);
         if (block.isWood(world, log))
         {
-            variant = world.getBlockState(log).getValue(BlockNewLog.VARIANT);
+            if(block instanceof BlockOldLog)
+            {
+                variant = world.getBlockState(log).getValue(BlockOldLog.VARIANT);
+            }
+            else if(block instanceof BlockNewLog)
+            {
+                variant = world.getBlockState(log).getValue(BlockNewLog.VARIANT);
+            }
+            else
+            {
+                variant = BlockPlanks.EnumType.OAK;
+            }
+
             location = getBaseLog(world, log);
             woodBlocks = new LinkedList<>();
             checkTree(world, getTopLog(world, log));
@@ -123,7 +133,7 @@ public class Tree
      */
     private void checkTree(@NotNull World world, @NotNull BlockPos topLog)
     {
-        if (!world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ())).getBlock().getMaterial().isSolid())
+        if (!world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ())).getMaterial().isSolid())
         {
             return;
         }
@@ -134,7 +144,7 @@ public class Tree
             {
                 for (int y = -1; y <= 1; y++)
                 {
-                    if (world.getBlockState(new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z)).getBlock().getMaterial().equals(Material.leaves))
+                    if (world.getBlockState(new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z)).getMaterial().equals(Material.LEAVES))
                     {
                         leafCount++;
                         if (leafCount >= NUMBER_OF_LEAVES)
@@ -184,8 +194,8 @@ public class Tree
         BlockPos basePos = getBaseLog(world, pos);
 
         //Make sure tree is on solid ground and tree is not build above cobblestone
-        return world.getBlockState(basePos.down()).getBlock().getMaterial().isSolid()
-                 && world.getBlockState(basePos.down()).getBlock() != Blocks.cobblestone
+        return world.getBlockState(basePos.down()).getMaterial().isSolid()
+                 && world.getBlockState(basePos.down()).getBlock() != Blocks.COBBLESTONE
                  && hasEnoughLeaves(world, pos);
     }
 
@@ -201,7 +211,7 @@ public class Tree
             {
                 for (int dy = -1; dy <= 1; dy++)
                 {
-                    if (world.getBlockState(topPos.add(dx, dy, dz)).getBlock().getMaterial().equals(Material.leaves))
+                    if (world.getBlockState(topPos.add(dx, dy, dz)).getMaterial().equals(Material.LEAVES))
                     {
                         leafCount++;
                         if (leafCount >= NUMBER_OF_LEAVES)

@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai.minimal;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -76,7 +77,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
         if (iblockstate.getBlock() == this.gateBlock && (iblockstate.getValue(BlockFenceGate.OPEN)) != open)
         {
             this.theEntity.worldObj.setBlockState(this.gatePosition, iblockstate.withProperty(BlockFenceGate.OPEN, open), 2);
-            this.theEntity.worldObj.playAuxSFXAtEntity(null, open ? OPEN_SOUND : CLOSE_SOUND, this.gatePosition, 0);
+            this.theEntity.worldObj.playEvent((EntityPlayer) null, open ? OPEN_SOUND : CLOSE_SOUND, this.gatePosition, 0);
         }
     }
 

@@ -7,7 +7,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,13 +28,13 @@ public final class BlockUtils
     @NotNull
     private static List<BiPredicate<Block, IBlockState>> freeToPlaceBlocks =
       Arrays.asList(
-        (block, iBlockState) -> block.equals(Blocks.air),
-        (block, iBlockState) -> block.getMaterial().isLiquid(),
+        (block, iBlockState) -> block.equals(Blocks.AIR),
+        (block, iBlockState) -> iBlockState.getMaterial().isLiquid(),
         (block, iBlockState) -> BlockUtils.isWater(block.getDefaultState()),
-        (block, iBlockState) -> block.equals(Blocks.leaves),
-        (block, iBlockState) -> block.equals(Blocks.leaves2),
-        (block, iBlockState) -> block.equals(Blocks.double_plant),
-        (block, iBlockState) -> block.equals(Blocks.grass),
+        (block, iBlockState) -> block.equals(Blocks.LEAVES),
+        (block, iBlockState) -> block.equals(Blocks.LEAVES2),
+        (block, iBlockState) -> block.equals(Blocks.DOUBLE_PLANT),
+        (block, iBlockState) -> block.equals(Blocks.GRASS),
         (block, iBlockState) -> block instanceof BlockDoor
                                   && iBlockState != null
                                   && iBlockState.getValue(PropertyBool.create("upper"))
@@ -60,7 +60,7 @@ public final class BlockUtils
     public static boolean shouldNeverBeMessedWith(Block block)
     {
         return block instanceof AbstractBlockHut
-                 || Objects.equals(block, Blocks.bedrock);
+                 || Objects.equals(block, Blocks.BEDROCK);
     }
 
     /**
@@ -109,8 +109,8 @@ public final class BlockUtils
      */
     public static boolean isWater(IBlockState iBlockState)
     {
-        return Objects.equals(iBlockState, Blocks.water.getDefaultState())
-                 || Objects.equals(iBlockState, Blocks.flowing_water.getDefaultState());
+        return Objects.equals(iBlockState, Blocks.WATER.getDefaultState())
+                 || Objects.equals(iBlockState, Blocks.FLOWING_WATER.getDefaultState());
     }
 
     /**
@@ -154,59 +154,64 @@ public final class BlockUtils
     {
         if (blockState.getBlock() instanceof BlockBanner)
         {
-            return Items.banner;
+            return Items.BANNER;
         }
         else if (blockState.getBlock() instanceof BlockBed)
         {
-            return Items.bed;
+            return Items.BED;
         }
         else if (blockState.getBlock() instanceof BlockBrewingStand)
         {
-            return Items.brewing_stand;
+            return Items.BREWING_STAND;
         }
         else if (blockState.getBlock() instanceof BlockCake)
         {
-            return Items.cake;
+            return Items.CAKE;
         }
         else if (blockState.getBlock() instanceof BlockCauldron)
         {
-            return Items.cauldron;
+            return Items.CAULDRON;
         }
         else if (blockState.getBlock() instanceof BlockCocoa)
         {
-            return Items.dye;
+            return Items.DYE;
         }
         else if (blockState.getBlock() instanceof BlockCrops)
         {
-            if (blockState.getBlock() instanceof BlockCarrot)
+            ItemStack stack = ((BlockCrops) blockState.getBlock()).getItem(null, null, blockState);
+            if(stack != null)
             {
-                return Items.carrot;
+                return stack.getItem();
             }
-            else if (blockState.getBlock() instanceof BlockPotato)
-            {
-                return Items.potato;
-            }
-            return Items.wheat_seeds;
+
+            return Items.WHEAT_SEEDS;
         }
         else if (blockState.getBlock() instanceof BlockDaylightDetector)
         {
-            return Item.getItemFromBlock(Blocks.daylight_detector);
+            return Item.getItemFromBlock(Blocks.DAYLIGHT_DETECTOR);
         }
         else if (blockState.getBlock() instanceof BlockDoor)
         {
-            return ((BlockDoor) blockState.getBlock()).getItem();
+            Item item = blockState.getBlock() == Blocks.IRON_DOOR ? Items.IRON_DOOR :
+                    (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
+                            : (blockState.getBlock() == Blocks.BIRCH_DOOR ? Items.BIRCH_DOOR
+                                    : (blockState.getBlock() == Blocks.JUNGLE_DOOR ? Items.JUNGLE_DOOR
+                                            : (blockState.getBlock() == Blocks.ACACIA_DOOR ? Items.ACACIA_DOOR
+                                                    : (blockState.getBlock() == Blocks.DARK_OAK_DOOR ? Items.DARK_OAK_DOOR : Items.OAK_DOOR)))));
+
+            return item == null ? Item.getItemFromBlock(blockState.getBlock()) : item;
         }
-        else if (blockState.getBlock() instanceof BlockFarmland)
+        else if (blockState.getBlock() instanceof BlockFarmland || blockState.getBlock() instanceof BlockGrassPath)
         {
-            return Item.getItemFromBlock(Blocks.dirt);
+            return Item.getItemFromBlock(Blocks.DIRT);
         }
         else if (blockState.getBlock() instanceof BlockFlowerPot)
         {
-            return Items.flower_pot;
+            return Items.FLOWER_POT;
         }
         else if (blockState.getBlock() instanceof BlockFurnace)
         {
-            return Item.getItemFromBlock(Blocks.furnace);
+            return Item.getItemFromBlock(Blocks.FURNACE);
         }
         else if (blockState.getBlock() instanceof BlockHugeMushroom)
         {
@@ -215,68 +220,77 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockNetherWart)
         {
-            return Items.nether_wart;
+            return Items.NETHER_WART;
         }
         else if (blockState.getBlock() instanceof BlockPistonExtension)
         {
             // Not really sure what we want to do here...
             return blockState.getValue(BlockPistonExtension.TYPE) == BlockPistonExtension.EnumPistonType.STICKY
-                     ? Item.getItemFromBlock(Blocks.sticky_piston)
-                     : Item.getItemFromBlock(Blocks.piston);
+                     ? Item.getItemFromBlock(Blocks.STICKY_PISTON)
+                     : Item.getItemFromBlock(Blocks.PISTON);
         }
         else if (blockState.getBlock() instanceof BlockRedstoneComparator)
         {
-            return Items.comparator;
+            return Items.COMPARATOR;
         }
         else if (blockState.getBlock() instanceof BlockRedstoneLight)
         {
-            return Item.getItemFromBlock(Blocks.redstone_lamp);
+            return Item.getItemFromBlock(Blocks.REDSTONE_LAMP);
         }
         else if (blockState.getBlock() instanceof BlockRedstoneRepeater)
         {
-            return Items.repeater;
+            return Items.REPEATER;
         }
         else if (blockState.getBlock() instanceof BlockRedstoneTorch)
         {
-            return Item.getItemFromBlock(Blocks.redstone_torch);
+            return Item.getItemFromBlock(Blocks.REDSTONE_TORCH);
         }
         else if (blockState.getBlock() instanceof BlockRedstoneWire)
         {
-            return Items.redstone;
+            return Items.REDSTONE;
         }
         else if (blockState.getBlock() instanceof BlockReed)
         {
-            return Items.reeds;
+            return Items.REEDS;
         }
         else if (blockState.getBlock() instanceof BlockSign)
         {
-            return Items.sign;
+            return Items.SIGN;
         }
         else if (blockState.getBlock() instanceof BlockSkull)
         {
-            return Items.skull;
+            return Items.SKULL;
         }
         else if (blockState.getBlock() instanceof BlockStem)
         {
-            return ((BlockStem) blockState.getBlock()).getSeedItem();
+            ItemStack stack = ((BlockStem) blockState.getBlock()).getItem(null, null, blockState);
+            if(stack != null)
+            {
+                return stack.getItem();
+            }
+            return Items.MELON_SEEDS;
         }
         else if (blockState.getBlock() instanceof BlockStoneSlab)
         {
             //Builder won't know how to build double stone slab
-            return Item.getItemFromBlock(Blocks.stone_slab);
+            return Item.getItemFromBlock(Blocks.STONE_SLAB);
+        }
+        else if(blockState.getBlock() instanceof BlockPurpurSlab)
+        {
+            return Item.getItemFromBlock(Blocks.PURPUR_SLAB);
         }
         else if (blockState.getBlock() instanceof BlockStoneSlabNew)
         {
-            return Item.getItemFromBlock(Blocks.stone_slab2);
+            return Item.getItemFromBlock(Blocks.STONE_SLAB2);
         }
         else if (blockState.getBlock() instanceof BlockTripWire)
         {
-            return Items.string;
+            return Items.STRING;
         }
         else if (blockState.getBlock() instanceof BlockWoodSlab)
         {
             //Builder will also have trouble with double wood slab
-            return Item.getItemFromBlock(Blocks.wooden_slab);
+            return Item.getItemFromBlock(Blocks.WOODEN_SLAB);
         }
         else
         {

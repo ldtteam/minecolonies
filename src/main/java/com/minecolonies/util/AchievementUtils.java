@@ -31,7 +31,7 @@ public final class AchievementUtils
     {
         @NotNull final List<Permissions.Player> players = PermissionUtils.getPlayersWithAtLeastRank(colony, Permissions.Rank.OFFICER);
 
-        @NotNull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players);
+        @NotNull final List<EntityPlayer> lPlayer = ServerUtils.getPlayersFromPermPlayer(players, colony.getWorld());
 
         for (@Nullable final EntityPlayer player : lPlayer)
         {
@@ -42,7 +42,7 @@ public final class AchievementUtils
                     continue;
                 }
 
-                player.triggerAchievement(achievement);
+                player.addStat(achievement);
             }
         }
     }

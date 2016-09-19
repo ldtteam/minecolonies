@@ -12,7 +12,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
             
       echo "Start javadoc gradle..."
       
-      if ./gradlew javadoc; then
+      if ./gradlew javadoc -DXmx2g; then
             curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
                   --request POST \
                   --data '{"state":"success",

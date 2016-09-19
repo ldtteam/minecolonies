@@ -11,7 +11,7 @@ import com.minecolonies.network.messages.TownHallRenameMessage;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.MathUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -27,8 +27,8 @@ public final class ColonyView implements IColony
 {
     //  General Attributes
     private final int id;
-    private final Map<Integer, WorkOrderView>   workOrders = new HashMap<>();
-    private String name = "Unknown";
+    private final Map<Integer, WorkOrderView> workOrders = new HashMap<>();
+    private       String                      name       = "Unknown";
     private int      dimensionId;
     private BlockPos center;
     /**
@@ -81,7 +81,7 @@ public final class ColonyView implements IColony
     {
         //  General Attributes
         ByteBufUtils.writeUTF8String(buf, colony.getName());
-        buf.writeInt(colony.getDimensionId());
+        buf.writeInt(colony.getDimension());
         BlockPosUtil.writeToByteBuf(buf, colony.getCenter());
         buf.writeBoolean(colony.isManualHiring());
         //  Citizenry
@@ -104,7 +104,7 @@ public final class ColonyView implements IColony
      *
      * @return dimension ID of the view.
      */
-    public int getDimensionId()
+    public int getDimension()
     {
         return dimensionId;
     }
@@ -416,6 +416,12 @@ public final class ColonyView implements IColony
     }
 
     @Override
+    public BlockPos getCenter()
+    {
+        return center;
+    }
+
+    @Override
     public String getName()
     {
         return name;
@@ -443,12 +449,12 @@ public final class ColonyView implements IColony
     public boolean isCoordInColony(@NotNull World w, @NotNull BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.provider.getDimensionId() == dimensionId &&
+        return w.provider.getDimension() == dimensionId &&
                  BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
     }
 
     @Override
-    public float getDistanceSquared(@NotNull BlockPos pos)
+    public long getDistanceSquared(@NotNull BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ()));

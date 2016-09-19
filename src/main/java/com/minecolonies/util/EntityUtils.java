@@ -5,8 +5,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3i;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -221,7 +221,7 @@ public final class EntityUtils
                 return false;
             }
         }
-        return world.getBlockState(groundPosition).getBlock().getMaterial().isSolid();
+        return world.getBlockState(groundPosition).getMaterial().isSolid();
     }
 
     /**
@@ -236,7 +236,7 @@ public final class EntityUtils
      */
     public static boolean solidOrLiquid(@NotNull World world, @NotNull BlockPos blockPos)
     {
-        final Material material = world.getBlockState(blockPos).getBlock().getMaterial();
+        final Material material = world.getBlockState(blockPos).getMaterial();
         return material.isSolid()
                  || material.isLiquid();
     }

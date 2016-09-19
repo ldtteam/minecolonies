@@ -17,7 +17,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -241,8 +241,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     return AIState.PREPARING;
                 }
                 equipHoe();
-                worker.swingItem();
-                world.setBlockState(position, Blocks.farmland.getDefaultState());
+                worker.swingArm(worker.getActiveHand());
+                world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
                 worker.damageItemInHand(1);
                 mineBlock(position.up());
             }
@@ -277,7 +277,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return !field.isNoPartOfField(world, position)
                  && !BlockUtils.isBlockSeed(world, position.up())
                  && !(world.getBlockState(position).getBlock() instanceof BlockHutField)
-                 && (world.getBlockState(position).getBlock() == Blocks.dirt || world.getBlockState(position).getBlock() == Blocks.grass);
+                 && (world.getBlockState(position).getBlock() == Blocks.DIRT || world.getBlockState(position).getBlock() == Blocks.GRASS);
     }
 
     /**
@@ -400,7 +400,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
 
         return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof BlockCrops)
-                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField) && world.getBlockState(position).getBlock() == Blocks.farmland;
+                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField) && world.getBlockState(position).getBlock() == Blocks.FARMLAND;
     }
 
     /**

@@ -8,7 +8,7 @@ import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -70,7 +70,7 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
                 {
                     @Nullable World world = colony.getWorld();
                     @Nullable BlockPos spawnPoint =
-                      Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.air, Blocks.snow_layer, Blocks.tallgrass, Blocks.red_flower, Blocks.yellow_flower);
+                      Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER);
 
                     citizen.setLocationAndAngles(spawnPoint.getX() + 0.5, spawnPoint.getY(), spawnPoint.getZ() + 0.5, citizen.rotationYaw, citizen.rotationPitch);
                 }

@@ -5,7 +5,7 @@ import net.minecraftforge.fml.common.registry.GameData;
 /**
  * A MaterialException for not enough items.
  */
-class QuantityNotFound extends MaterialException
+class QuantityNotFound extends RuntimeException
 {
     /**
      * Create a new Exception fo this type.

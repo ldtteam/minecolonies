@@ -12,10 +12,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,7 +73,7 @@ public class InventoryCitizen implements IInventory
     /**
      * Updated after the inventory has been changed
      */
-    private              boolean inventoryChanged = false;
+    private boolean inventoryChanged = false;
     /**
      * The citizen which owns the inventory.
      */
@@ -149,7 +149,7 @@ public class InventoryCitizen implements IInventory
      *
      * @return {@link ItemStack} currently being held by citizen
      */
-    public ItemStack getHeldItem()
+    public ItemStack getHeldItemMainhand()
     {
         return getStackInSlot(heldItem);
     }
@@ -254,7 +254,14 @@ public class InventoryCitizen implements IInventory
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
-                crashreportcategory.addCrashSectionCallable("Item name", itemStackIn::getDisplayName);
+                try
+                {
+                    crashreportcategory.addCrashSection("Item name", itemStackIn.getDisplayName());
+                }
+                catch (Throwable throwable)
+                {
+                    crashreportcategory.addCrashSectionThrowable("Item name", throwable);
+                }
                 throw new ReportedException(crashreport);
             }
         }
@@ -332,16 +339,6 @@ public class InventoryCitizen implements IInventory
                 return i;
             }
         }
-    }    /**
-     * Get the name of this object. For citizens this returns their name.
-     *
-     * @return the name of the inventory.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     /**
@@ -361,6 +358,16 @@ public class InventoryCitizen implements IInventory
         }
 
         return NO_SLOT;
+    }    /**
+     * Get the name of this object. For citizens this returns their name.
+     *
+     * @return the name of the inventory.
+     */
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     /**
@@ -372,34 +379,17 @@ public class InventoryCitizen implements IInventory
     public boolean hasItem(Item itemIn)
     {
         return getInventorySlotContainItem(itemIn) != NO_SLOT;
-    }    /**
-     * Checks if the inventory is named.
-     *
-     * @return true if the inventory has a custom name.
-     */
-    @Override
-    public boolean hasCustomName()
-    {
-        return this.customName != null;
     }
 
     /**
      * Gets slot that hold item that is being held by citizen.
-     * {@link #getHeldItem()}.
+     * {@link #getHeldItemMainhand()}.
      *
      * @return Slot index of held item
      */
     public int getHeldItemSlot()
     {
         return heldItem;
-    }    /**
-     * Get the formatted ChatComponent that will be used for the sender's username in chat
-     */
-    @NotNull
-    @Override
-    public IChatComponent getDisplayName()
-    {
-        return this.hasCustomName() ? new ChatComponentText(this.getName()) : new ChatComponentTranslation(this.getName());
     }
 
     /**
@@ -411,6 +401,15 @@ public class InventoryCitizen implements IInventory
     public boolean isSlotEmpty(int index)
     {
         return getStackInSlot(index) == null;
+    }    /**
+     * Checks if the inventory is named.
+     *
+     * @return true if the inventory has a custom name.
+     */
+    @Override
+    public boolean hasCustomName()
+    {
+        return this.customName != null;
     }
 
     public void createMaterialStore(@NotNull MaterialSystem system)
@@ -424,6 +423,14 @@ public class InventoryCitizen implements IInventory
     public MaterialStore getMaterialStore()
     {
         return materialStore;
+    }    /**
+     * Get the formatted TextComponent that will be used for the sender's username in chat
+     */
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     private void addStackToMaterialStore(@Nullable ItemStack stack)
@@ -697,8 +704,6 @@ public class InventoryCitizen implements IInventory
          */
     }
 
-    //-----------------------------Material Handling--------------------------------
-
     /**
      * Returns the number of fields.
      *
@@ -721,18 +726,6 @@ public class InventoryCitizen implements IInventory
             this.stacks[i] = null;
         }
     }
-
-    //todo missing now
-    /*
-    @Override
-    public ItemStack getStackInSlotOnClosing(int index)
-    {
-            ItemStack removed = super.getStackInSlotOnClosing(index);
-
-                    removeStackFromMaterialStore(removed);
-
-                    return removed;
-    }*/
 
     /**
      * Used to store variables.
@@ -768,9 +761,23 @@ public class InventoryCitizen implements IInventory
         compound.setTag(TAG_INVENTORY, nbttaglist);
     }
 
+    //-----------------------------Material Handling--------------------------------
 
 
 
+
+
+    //todo missing now
+    /*
+    @Override
+    public ItemStack getStackInSlotOnClosing(int index)
+    {
+            ItemStack removed = super.getStackInSlotOnClosing(index);
+
+                    removeStackFromMaterialStore(removed);
+
+                    return removed;
+    }*/
 
 
 }

@@ -11,8 +11,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -142,11 +142,11 @@ public final class BlockPosUtil
      * @param block2 position two.
      * @return squared distance.
      */
-    public static int getDistanceSquared(@NotNull BlockPos block1, @NotNull BlockPos block2)
+    public static long getDistanceSquared(@NotNull BlockPos block1, @NotNull BlockPos block2)
     {
-        int i = block1.getX() - block2.getX();
-        int i1 = block1.getY() - block2.getY();
-        int i2 = block1.getZ() - block2.getZ();
+        long i = block1.getX() - block2.getX();
+        long i1 = block1.getY() - block2.getY();
+        long i2 = block1.getZ() - block2.getZ();
         return i * i + i1 * i1 + i2 * i2;
     }
 
@@ -290,14 +290,14 @@ public final class BlockPosUtil
     }
 
     /**
-     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.BlockPos.MutableBlockPos#set(int, int, int)}.
+     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.MutableBlockPos#setPos(int, int, int)}.
      *
-     * @param pos    {@link net.minecraft.util.BlockPos.MutableBlockPos}.
+     * @param pos    {@link net.minecraft.util.math.BlockPos.MutableBlockPos}.
      * @param newPos The new position to set.
      */
     public static void set(@NotNull BlockPos.MutableBlockPos pos, @NotNull BlockPos newPos)
     {
-        pos.set(newPos.getX(), newPos.getY(), newPos.getZ());
+        pos.setPos(newPos.getX(), newPos.getY(), newPos.getZ());
     }
 
     /**

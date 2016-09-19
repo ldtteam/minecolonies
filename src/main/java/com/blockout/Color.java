@@ -33,7 +33,6 @@ public final class Color
         nameToColorMap.put("lightgray", 0xD3D3D3);
         nameToColorMap.put("slategray", 0x708090);
     }
-
     private Color()
     {
         // Hides default constructor.

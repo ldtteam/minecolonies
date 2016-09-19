@@ -10,6 +10,6 @@ public class ClientEventHandler
     @SubscribeEvent
     public void renderWorldLastEvent(@NotNull RenderWorldLastEvent event)
     {
-        Pathfinding.debugDraw(event.partialTicks);
+        Pathfinding.debugDraw(event.getPartialTicks());
     }
 }
