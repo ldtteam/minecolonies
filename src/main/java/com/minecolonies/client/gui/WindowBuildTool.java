@@ -119,7 +119,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final int ROTATE_RIGHT       = 1;
     private static final int ROTATE_LEFT        = 3;
 
+    /**
+     * Language key for missing hut message
+     */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
+
     /**
      * List of huts or decorations possible to make.
      */
