@@ -48,7 +48,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
     {
         if (Configurations.pathfindingDebugVerbosity > DEBUG_VERBOSITY_NONE)
         {
-            Log.logger.info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
+            Log.getLogger().info(String.format("Pathfinding from [%d,%d,%d] to [%d,%d,%d]",
               start.getX(), start.getY(), start.getZ(), destination.getX(), destination.getY(), destination.getZ()));
         }
 

@@ -630,7 +630,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         @Nullable Level currentLevel = getOwnBuilding().getCurrentLevel();
         if (currentLevel == null)
         {
-            Log.logger.warn("Current Level not set, resetting...");
+            Log.getLogger().warn("Current Level not set, resetting...");
             getOwnBuilding().setCurrentLevel(getOwnBuilding().getNumberOfLevels() - 1);
             return doNodeMining();
         }
@@ -888,7 +888,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             //already done
             return true;
         }
-        Log.logger.info("None of the above: " + mineNode);
+        Log.getLogger().info("None of the above: " + mineNode);
         return false;
     }
 
@@ -925,7 +925,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         catch (IllegalStateException e)
         {
-            Log.logger.warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
+            Log.getLogger().warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
             job.setSchematic(null);
         }
     }
@@ -977,7 +977,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         if (block == null)
         {
             @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            Log.getLogger().error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockNonSolid();
             return false;
         }
@@ -1030,7 +1030,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         if (block == null)
         {
             @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            Log.logger.error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            Log.getLogger().error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
             return false;
         }

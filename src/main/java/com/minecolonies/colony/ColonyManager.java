@@ -81,7 +81,7 @@ public final class ColonyManager
 
         markDirty();
 
-        Log.logger.info(String.format("New Colony %d", colony.getID()));
+        Log.getLogger().info("New Colony %d", colony.getID());
 
         return colony;
     }
@@ -256,13 +256,13 @@ public final class ColonyManager
     public static ColonyView getClosestColonyView(@NotNull World w, @NotNull BlockPos pos)
     {
         @Nullable ColonyView closestColony = null;
-        float closestDist = Float.MAX_VALUE;
+        long closestDist = Long.MAX_VALUE;
 
         for (@NotNull ColonyView c : colonyViews.values())
         {
             if (c.getDimensionId() == w.provider.getDimensionId())
             {
-                float dist = c.getDistanceSquared(pos);
+                long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
                 {
                     closestColony = c;
@@ -290,13 +290,13 @@ public final class ColonyManager
         }
 
         @Nullable Colony closestColony = null;
-        float closestDist = Float.MAX_VALUE;
+        long closestDist = Long.MAX_VALUE;
 
         for (@NotNull Colony c : coloniesInWorld)
         {
             if (c.getDimensionId() == w.provider.getDimensionId())
             {
-                float dist = c.getDistanceSquared(pos);
+                long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
                 {
                     closestColony = c;
@@ -368,11 +368,17 @@ public final class ColonyManager
      * @param owner UUID of the owner
      * @return Colony that belong to given owner UUID
      */
-    private static IColony getColonyByOwner(UUID owner)
+    @Nullable
+    private static IColony getColonyByOwner(@Nullable UUID owner)
     {
+        if(owner == null)
+        {
+            return null;
+        }
+
         return colonies.values()
                  .stream()
-                 .filter(c -> c.getPermissions().getOwner().equals(owner))
+                 .filter(c -> owner.equals(c.getPermissions().getOwner()))
                  .findFirst()
                  .orElse(null);
     }
@@ -468,7 +474,7 @@ public final class ColonyManager
         }
         catch (IOException exception)
         {
-            Log.logger.error("Exception when saving ColonyManager", exception);
+            Log.getLogger().error("Exception when saving ColonyManager", exception);
         }
     }
 
@@ -554,7 +560,7 @@ public final class ColonyManager
         }
         catch (IOException exception)
         {
-            Log.logger.error("Exception when loading ColonyManger", exception);
+            Log.getLogger().error("Exception when loading ColonyManger", exception);
         }
         return null;
     }
@@ -581,7 +587,7 @@ public final class ColonyManager
             topColonyId = Math.max(topColonyId, colony.getID());
         }
 
-        Log.logger.info(String.format("Loaded %d colonies", colonies.size()));
+        Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
     }
 
     /**
@@ -675,7 +681,7 @@ public final class ColonyManager
         }
         else
         {
-            Log.logger.error(String.format("Colony view does not exist for ID #%d", colonyID));
+            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyID));
             return null;
         }
     }
@@ -758,7 +764,7 @@ public final class ColonyManager
         }
         else
         {
-            Log.logger.error(String.format("Colony view does not exist for ID #%d", colonyId));
+            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyId));
             return null;
         }
     }

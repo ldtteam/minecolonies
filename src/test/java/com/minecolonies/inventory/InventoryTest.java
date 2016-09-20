@@ -3,6 +3,7 @@ package com.minecolonies.inventory;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
+import com.minecolonies.test.AbstractTest;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class InventoryTest
+public class InventoryTest extends AbstractTest
 {
 
     private IInventory     inventory;
