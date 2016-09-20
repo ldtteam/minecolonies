@@ -1,6 +1,5 @@
 package com.blockout;
 
-import com.minecolonies.lib.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,7 +31,7 @@ public final class Log
     {
         if (logger == null)
         {
-            Log.logger = LogManager.getLogger(Constants.MOD_ID + "blockout");
+            Log.logger = LogManager.getLogger("Minecolonies:blockout");
         }
         return logger;
     }
