@@ -124,7 +124,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * List of huts or decorations possible to make.
      */
     @NotNull
-    private              List<String> hutDec              = new ArrayList<>();
+    private List<String> hutDec = new ArrayList<>();
 
     /**
      * Index of the rendered hutDec/decoration.
