@@ -935,4 +935,22 @@ public abstract class AbstractPathJob implements Callable<Path>
     {
         return isLadder(world.getBlockState(pos).getBlock(), pos);
     }
+
+    /**
+     * Getter for the allowSwimming.
+     * @return true if is allowed.
+     */
+    protected boolean isAllowedSwimming()
+    {
+        return allowSwimming;
+    }
+
+    /**
+     * Setter for the allowSwimming.
+     * @param allowSwimming the value to set.
+     */
+    protected void setAllowedSwimming(boolean allowSwimming)
+    {
+        this.allowSwimming = allowSwimming;
+    }
 }

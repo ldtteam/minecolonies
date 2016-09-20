@@ -83,7 +83,7 @@ public final class RenderSchematic extends RenderGlobal
     @NotNull
     private List<ContainerLocalRenderInformation> renderInfos    = Lists.newArrayListWithCapacity(CHUNKS);
     @Nullable
-    private ViewFrustumOverlay viewFrustum;
+    private ViewFrustumOverlay viewFrustum = null;
     private double frustumUpdatePosX      = Double.MIN_VALUE;
     private double frustumUpdatePosY      = Double.MIN_VALUE;
     private double frustumUpdatePosZ      = Double.MIN_VALUE;
@@ -266,12 +266,12 @@ public final class RenderSchematic extends RenderGlobal
         {
             if (this.renderDispatcher == null)
             {
-                this.renderDispatcher = new ChunkRenderDispatcher(5);
+                this.renderDispatcher = new ChunkRenderDispatcher();
             }
 
             if (this.renderDispatcherOverlay == null)
             {
-                this.renderDispatcherOverlay = new OverlayRenderDispatcher(5);
+                this.renderDispatcherOverlay = new OverlayRenderDispatcher();
             }
 
             this.displayListEntitiesDirty = true;
