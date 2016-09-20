@@ -178,7 +178,7 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
             }
             catch (@NotNull InterruptedException | ExecutionException e)
             {
-                Log.logger.catching(e);
+                Log.getLogger().catching(e);
             }
 
             future = null;

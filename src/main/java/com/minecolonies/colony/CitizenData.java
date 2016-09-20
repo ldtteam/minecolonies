@@ -183,7 +183,7 @@ public class CitizenData
         }
         catch (RuntimeException ex)
         {
-            Log.logger.error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+            Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
               citizenDataView.getID()), ex);
             citizenDataView = null;
         }

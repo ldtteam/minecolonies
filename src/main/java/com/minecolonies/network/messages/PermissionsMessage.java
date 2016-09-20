@@ -129,7 +129,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
@@ -151,7 +151,7 @@ public class PermissionsMessage
                     colony.getPermissions().togglePermission(message.rank, message.action);
                     break;
                 default:
-                    Log.logger.error(String.format("Invalid MessageType %s", message.type.toString()));
+                    Log.getLogger().error(String.format("Invalid MessageType %s", message.type.toString()));
             }
             return null;
         }
@@ -209,7 +209,7 @@ public class PermissionsMessage
             }
             else
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
             }
             return null;
         }
@@ -274,7 +274,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
@@ -339,7 +339,7 @@ public class PermissionsMessage
 
             if (colony == null)
             {
-                Log.logger.error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
                 return null;
             }
 
