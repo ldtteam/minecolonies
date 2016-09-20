@@ -178,3 +178,4 @@ com.minecolonies.gui.workerHuts.farmerHut.West=West
 com.minecolonies.gui.workerHuts.farmerHut.unused=unused
 com.minecolonies.gui.scarecrow.user=Field used by: %s
 com.minecolonies.gui.scarecrow.user.noone=no-one
+com.minecolonies.gui.buildtool.nohutininventory=The hut was not found in your inventory.

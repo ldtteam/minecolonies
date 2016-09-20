@@ -115,17 +115,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private static final String HUT_PREFIX = ":blockHut";
 
-    private static final BlockPos DEFAULT_POS = new BlockPos(0, 0, 0);
-
     private static final int POSSIBLE_ROTATIONS = 4;
     private static final int ROTATE_RIGHT       = 1;
     private static final int ROTATE_LEFT        = 3;
 
+    private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
     /**
      * List of huts or decorations possible to make.
      */
     @NotNull
-    private List<String> hutDec = new ArrayList<>();
+    private              List<String> hutDec              = new ArrayList<>();
 
     /**
      * Index of the rendered hutDec/decoration.
@@ -448,8 +447,20 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void confirmClicked(Button button)
     {
-        MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
-                                                                          getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
+        InventoryPlayer inventory = this.mc.thePlayer.inventory;
+        if (null != Settings.instance.getActiveSchematic() &&
+              ((Settings.instance.isInHutMode() && inventoryHasHut(inventory, hutDec.get(hutDecIndex)))
+                 || !Settings.instance.isInHutMode())
+          )
+        {
+            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
+                                                                              getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
+        }
+        else
+        {
+            LanguageHandler.sendPlayerLocalizedMessage(this.mc.thePlayer, WindowBuildTool.NO_HUT_IN_INVENTORY);
+        }
+
         Settings.instance.setActiveSchematic(null);
         close();
     }
