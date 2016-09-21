@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
+import sun.misc.JavaIOAccess;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,16 +21,34 @@ import java.util.stream.Stream;
  */
 public final class Schematics
 {
-    private static final String                    NULL_STYLE            = "schematics";
-    private static final String                    SCHEMATIC_EXTENSION   = ".schematic";
-    private static final String                    SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
-    //Hut, Styles
-    private static       Map<String, List<String>> hutStyleMap           = new HashMap<>();
-    //Hut, Levels
+    private static final String NULL_STYLE          = "schematics";
+    private static final String SCHEMATIC_EXTENSION = ".schematic";
+
+    /**
+     * path to the assets within the jar
+     */
+    private static final String SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
+
+    /**
+     * relative file path to the schematics folder in the Minecraft instance
+     */
+    private static final String SCHEMATICS_FILE_PATH = "minecolonies/schematics/";
+
+    /**
+     * Hut, Styles
+     */
+    private static Map<String, List<String>> hutStyleMap = new HashMap<>();
+
+    /**
+     * Hut, Levels
+     */
     @NotNull
-    private static       Map<String, Integer>      hutLevelsMap          = new HashMap<>();
-    //Decoration, Style
-    private static       Map<String, List<String>> decorationStyleMap    = new HashMap<>();
+    private static Map<String, Integer> hutLevelsMap = new HashMap<>();
+
+    /**
+     * Decoration, Style
+     */
+    private static Map<String, List<String>> decorationStyleMap = new HashMap<>();
 
     /**
      * Private constructor so Schematics objects can't be made.
@@ -41,10 +60,34 @@ public final class Schematics
 
     /**
      * Calls {@link #loadStyleMaps()}
+     * Calls {@Link #copySchematicsToFileSystem()}
      */
     public static void init()
     {
+        copySchematicsToFileSystem(SCHEMATICS_FILE_PATH);
         loadStyleMaps();
+    }
+
+    private static void copySchematicsToFileSystem(String basePath)
+    {
+        final java.io.File folder = new java.io.File(basePath);
+        verifySchematicsFolder(folder);
+    }
+
+    private static void verifySchematicsFolder(final java.io.File folder)
+    {
+            if (!folder.exists())
+            {
+                if (folder.getParentFile() != null)
+                {
+                    folder.getParentFile().mkdirs();
+                }
+            }
+
+            if (!folder.exists() && !folder.mkdir())
+            {
+                return;
+            }
     }
 
     /**
@@ -52,6 +95,7 @@ public final class Schematics
      * Puts these in {@link #hutStyleMap}, with key being the name of the hutDec (E.G. Lumberjack)
      * and the value is a list of styles. Puts decorations in {@link #decorationStyleMap}.
      */
+
     private static void loadStyleMaps()
     {
         try
