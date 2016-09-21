@@ -23,13 +23,12 @@ public class ItemBuildTool extends AbstractItemMinecolonies
     @Override
     public boolean onItemUse(ItemStack stack, @NotNull EntityPlayer playerIn, @NotNull World worldIn, @NotNull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {
-        if (!worldIn.isRemote)
-        {
-            return false;
-        }
-
         playerIn.triggerAchievement(ModAchievements.achievementWandOfbuilding);
-        MineColonies.proxy.openBuildToolWindow(pos.offset(side));
+        if (worldIn.isRemote)
+        {
+            MineColonies.proxy.openBuildToolWindow(pos.offset(side));
+            return true;
+        }
         return false;
     }
 

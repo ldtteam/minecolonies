@@ -166,7 +166,7 @@ public final class SchematicWrapper
         }
         catch (IllegalStateException e)
         {
-            Log.logger.warn("Could not load schematic!", e);
+            Log.getLogger().warn("Could not load schematic!", e);
         }
     }
 
@@ -257,7 +257,7 @@ public final class SchematicWrapper
         }
         catch (RotationHelper.RotationException e)
         {
-            Log.logger.debug(e);
+            Log.getLogger().debug(e);
         }
     }
 
@@ -341,7 +341,7 @@ public final class SchematicWrapper
                         else
                         {
                             schematic.setBlockState(localPos, Blocks.air.getDefaultState());
-                            Log.logger.warn("Scan contained multiple AbstractBlockHut's ignoring this one");
+                            Log.getLogger().warn("Scan contained multiple AbstractBlockHut's ignoring this one");
                         }
                     }
 
@@ -408,7 +408,7 @@ public final class SchematicWrapper
     {
         if (!directory.exists() && !directory.mkdirs())
         {
-            Log.logger.error("Directory doesn't exist and failed to be created: " + directory.toString());
+            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
     }
 

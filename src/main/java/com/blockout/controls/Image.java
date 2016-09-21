@@ -2,7 +2,6 @@ package com.blockout.controls;
 
 import com.blockout.Pane;
 import com.blockout.PaneParams;
-import com.minecolonies.util.Log;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
@@ -13,6 +12,8 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.io.IOException;
 import java.util.Iterator;
+
+import static com.blockout.Log.getLogger;
 
 /**
  * Simple image element.
@@ -97,7 +98,7 @@ public class Image extends Pane
             }
             catch (IOException e)
             {
-                Log.logger.error(e);
+                getLogger().warn(e);
             }
             finally
             {

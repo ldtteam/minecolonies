@@ -448,10 +448,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Takes whatever is in that slot of the workers chest and puts it in his inventory.
      * If the inventory is full, only the fitting part will be moved.
+     * Beware this method shouldn't be private, because the generic access won't work within a lambda won't work else.
      *
      * @param slot the slot in the buildings inventory
      */
-    private void takeItemStackFromChest(final int slot)
+    public void takeItemStackFromChest(final int slot)
     {
         @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
         if (ownBuilding == null)
@@ -877,7 +878,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 checkForPickaxe(required);
                 break;
             default:
-                Log.logger.error("Invalid tool " + tool + " not implemented as tool!");
+                Log.getLogger().error("Invalid tool " + tool + " not implemented as tool!");
         }
     }
 
