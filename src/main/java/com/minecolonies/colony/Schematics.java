@@ -62,10 +62,16 @@ public final class Schematics
      * Calls {@link #loadStyleMaps()}
      * Calls {@Link #copySchematicsToFileSystem()}
      */
-    public static void init()
+    public static void init(final boolean useNewDirectoryStructure)
     {
-        copySchematicsToFileSystem(SCHEMATICS_FILE_PATH);
-        loadStyleMaps();
+        if(useNewDirectoryStructure)
+        {
+            copySchematicsToFileSystem(SCHEMATICS_FILE_PATH);
+        }
+        else
+        {
+            loadStyleMaps();
+        }
     }
 
     private static void copySchematicsToFileSystem(String basePath)
