@@ -390,7 +390,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
         catch(java.lang.IllegalStateException err)
         {
-
+            LanguageHandler.sendPlayerLocalizedMessage(mc.thePlayer,"com.minecolonies.gui.buildtool.missingSchematic",resourceName);
         }
     }
 

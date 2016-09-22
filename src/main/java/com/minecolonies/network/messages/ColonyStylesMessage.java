@@ -33,7 +33,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         writeStyleMapToByteBuf(buf, Schematics.getDecorations(), Schematics::getStylesForDecoration);
     }
 
-    private static void writeStyleMapToByteBuf(@NotNull ByteBuf buf, @NotNull Set<String> objects, @NotNull Function<String, List<String>> getStyles)
+    private static void writeStyleMapToByteBuf(@NotNull ByteBuf buf, @NotNull List<String> objects, @NotNull Function<String, List<String>> getStyles)
     {
         buf.writeInt(objects.size());
         for (@NotNull String object : objects)
