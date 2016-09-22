@@ -8,6 +8,7 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
@@ -38,6 +39,12 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
     private BlockPos pos;
 
     private boolean isHut;
+
+
+    /**
+     * Language key for missing hut message
+     */
+    private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
 
     /**
      * Empty constructor used when registering the message.
@@ -149,7 +156,8 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
 
-        if (player.inventory.hasItemStack(new ItemStack(block)) && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
+        if (player.inventory.hasItemStack(new ItemStack(block))
+              && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
         {
             world.destroyBlock(buildPos, true);
             world.setBlockState(buildPos, block.getDefaultState());
@@ -168,6 +176,10 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
             {
                 Log.getLogger().error("BuildTool: building is null!");
             }
+        }
+        else
+        {
+            LanguageHandler.sendPlayerLocalizedMessage(player, BuildToolPlaceMessage.NO_HUT_IN_INVENTORY);
         }
     }
 

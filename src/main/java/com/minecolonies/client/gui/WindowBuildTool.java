@@ -451,11 +451,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void confirmClicked(Button button)
     {
-        final InventoryPlayer inventory = this.mc.thePlayer.inventory;
-        if (null != Settings.instance.getActiveSchematic()
-              && ((Settings.instance.isInHutMode() && inventoryHasHut(inventory, hutDec.get(hutDecIndex)))
-                    || !Settings.instance.isInHutMode())
-          )
+        if (hutDecIndex < hutDec.size())
         {
             MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
                                                                               getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
