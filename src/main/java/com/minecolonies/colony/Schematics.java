@@ -21,7 +21,14 @@ import java.util.stream.Stream;
  */
 public final class Schematics
 {
-    private static final String NULL_STYLE          = "schematics";
+    /**
+     * the root directory for schematics
+     */
+    private static final String SCHEMATIC_ROOT = "schematics";
+
+    /**
+     * File extension for schematic files
+     */
     private static final String SCHEMATIC_EXTENSION = ".schematic";
 
     /**
@@ -64,7 +71,7 @@ public final class Schematics
      */
     public static void init(final boolean useNewDirectoryStructure)
     {
-        if(useNewDirectoryStructure)
+        if (useNewDirectoryStructure)
         {
             copySchematicsToFileSystem(SCHEMATICS_FILE_PATH);
         }
@@ -82,18 +89,18 @@ public final class Schematics
 
     private static void verifySchematicsFolder(final java.io.File folder)
     {
-            if (!folder.exists())
+        if (!folder.exists())
+        {
+            if (folder.getParentFile() != null)
             {
-                if (folder.getParentFile() != null)
-                {
-                    folder.getParentFile().mkdirs();
-                }
+                folder.getParentFile().mkdirs();
             }
+        }
 
-            if (!folder.exists() && !folder.mkdir())
-            {
-                return;
-            }
+        if (!folder.exists() && !folder.mkdir())
+        {
+            return;
+        }
     }
 
     /**
@@ -139,13 +146,15 @@ public final class Schematics
             {
                 Path path = it.next();
 
-                String style = path.getParent().getFileName().toString();
+                String style = getDirectoryFromPathAfterADirectory(path,SCHEMATIC_ROOT);
 
                 //Don't treat generic schematics as decorations or huts - ex: supply ship
-                if (NULL_STYLE.equals(style))
+                if (SCHEMATIC_ROOT.equals(style) || style.startsWith("_"))
                 {
                     continue;
                 }
+
+                String category = getDirectoryFromPathAfterADirectory(path,style);
 
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
@@ -164,6 +173,19 @@ public final class Schematics
                 }
             }
         }
+    }
+
+    private static String getDirectoryFromPathAfterADirectory(@NotNull Path path, String startingDirecotry)
+    {
+        Path parent = path;
+        while(parent.getParent() !=null
+                && !startingDirecotry.equalsIgnoreCase(parent.getFileName().toString()) //stop at the root
+                && !startingDirecotry.equalsIgnoreCase(parent.getParent().getFileName().toString())) //stop if the parent is the root
+        {
+            parent=parent.getParent();
+        }
+        return parent.getFileName().toString();
+
     }
 
     private static boolean isSchematicHut(String name)

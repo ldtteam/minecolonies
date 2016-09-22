@@ -364,24 +364,33 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
         String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-        @NotNull SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
-
-        Settings.instance.setActiveSchematic(schematic.getSchematic());
-
-        Settings.instance.moveTo(this.pos);
-
-        //Catch up on rotations, makes it so going up a level or changing style doesn't reset rotation.
-        if (this.rotation == ROTATE_LEFT)
+        String resourceName = labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : "");
+        try
         {
-            RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
-        }
-        else
-        {
-            //Runs 0, 1, or 2 times.
-            for (int times = 0; times < rotation; times++)
+
+            @NotNull SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, resourceName);
+
+            Settings.instance.setActiveSchematic(schematic.getSchematic());
+
+            Settings.instance.moveTo(this.pos);
+
+            //Catch up on rotations, makes it so going up a level or changing style doesn't reset rotation.
+            if (this.rotation == ROTATE_LEFT)
             {
-                RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
+                RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
             }
+            else
+            {
+                //Runs 0, 1, or 2 times.
+                for (int times = 0; times < rotation; times++)
+                {
+                    RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
+                }
+            }
+        }
+        catch(java.lang.IllegalStateException err)
+        {
+
         }
     }
 
