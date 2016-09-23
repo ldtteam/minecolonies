@@ -2,17 +2,20 @@ package com.minecolonies.colony;
 
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.Log;
+import com.minecolonies.util.StructureInfo;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
-import sun.misc.JavaIOAccess;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -42,20 +45,9 @@ public final class Schematics
     private static final String SCHEMATICS_FILE_PATH = "minecolonies/schematics/";
 
     /**
-     * Hut, Styles
+     * Name,style, category,
      */
-    private static Map<String, List<String>> hutStyleMap = new HashMap<>();
-
-    /**
-     * Hut, Levels
-     */
-    @NotNull
-    private static Map<String, Integer> hutLevelsMap = new HashMap<>();
-
-    /**
-     * Decoration, Style
-     */
-    private static Map<String, List<String>> decorationStyleMap = new HashMap<>();
+    private static Map<String, StructureInfo> structureMap = new HashMap<>();
 
     /**
      * Private constructor so Schematics objects can't be made.
@@ -66,8 +58,10 @@ public final class Schematics
     }
 
     /**
-     * Calls {@link #loadStyleMaps()}
+     * Calls {@link #loadStyleMaps(Boolean)}
      * Calls {@Link #copySchematicsToFileSystem()}
+     *
+     * @param useNewDirectoryStructure toggles if the schematics should be loaded from the files steam or the jar.
      */
     public static void init(final boolean useNewDirectoryStructure)
     {
@@ -77,7 +71,7 @@ public final class Schematics
         }
         else
         {
-            loadStyleMaps();
+            loadStyleMaps(useNewDirectoryStructure);
         }
     }
 
@@ -105,11 +99,11 @@ public final class Schematics
 
     /**
      * Loads all styles saved in ["/assets/minecolonies/schematics/"]
-     * Puts these in {@link #hutStyleMap}, with key being the name of the hutDec (E.G. Lumberjack)
-     * and the value is a list of styles. Puts decorations in {@link #decorationStyleMap}.
-     */
+     * Puts these in {@link #structureMap}, with key being the name of the hutDec (E.G. Lumberjack)
+     * and the value is a list of styles.
+     * */
 
-    private static void loadStyleMaps()
+    private static void loadStyleMaps(Boolean useNewDirectoryStructure)
     {
         try
         {
@@ -121,13 +115,13 @@ public final class Schematics
                 try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap()))
                 {
                     basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
-                    loadStyleMaps(basePath);
+                    loadStyleMaps(basePath, useNewDirectoryStructure);
                 }
             }
             else
             {
                 basePath = Paths.get(uri);
-                loadStyleMaps(basePath);
+                loadStyleMaps(basePath, useNewDirectoryStructure);
             }
         }
         catch (@NotNull IOException | URISyntaxException e)
@@ -136,7 +130,7 @@ public final class Schematics
         }
     }
 
-    private static void loadStyleMaps(Path basePath) throws IOException
+    private static void loadStyleMaps(Path basePath, Boolean useNewDirectoryStructure) throws IOException
     {
         try (Stream<Path> walk = Files.walk(basePath))
         {
@@ -146,7 +140,7 @@ public final class Schematics
             {
                 Path path = it.next();
 
-                String style = getDirectoryFromPathAfterADirectory(path,SCHEMATIC_ROOT);
+                String style = getDirectoryFromPathAfterADirectory(path, SCHEMATIC_ROOT);
 
                 //Don't treat generic schematics as decorations or huts - ex: supply ship
                 if (SCHEMATIC_ROOT.equals(style) || style.startsWith("_"))
@@ -154,77 +148,69 @@ public final class Schematics
                     continue;
                 }
 
-                String category = getDirectoryFromPathAfterADirectory(path,style);
+                String category = getDirectoryFromPathAfterADirectory(path, style);
 
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
                     String filename = path.getFileName().toString().split("\\.schematic")[0];
                     String hut = filename.split("\\d+")[0];
 
-                    if (isSchematicHut(hut))
+                    StructureInfo info = null;
+
+                    if (!structureMap.containsKey(hut))
                     {
-                        addHutStyle(hut, style);
-                        incrementHutMaxLevel(hut);
+                        Boolean isHut = isSchematicHut(hut);
+                        if (!useNewDirectoryStructure)
+                        {
+                            if (isHut)
+                            {
+                                category = "hut";
+                            }
+                            else
+                            {
+                                category = "decoration";
+                            }
+                        }
+
+                        info = new StructureInfo(hut, isHut, category);
+                        structureMap.put(hut, info);
                     }
                     else
                     {
-                        addDecorationStyle(filename, style);
+                        info = structureMap.get(hut);
                     }
+                    info.addLevel(style, extractInt(filename), path);
                 }
             }
         }
     }
 
+    private static int extractInt(String fileName)
+    {
+        int result = 1;
+        Matcher matcher = Pattern.compile("\\d+").matcher(fileName);
+        if (matcher.find())
+        {
+            result = Integer.parseInt(matcher.group());
+        }
+        return result;
+    }
+
     private static String getDirectoryFromPathAfterADirectory(@NotNull Path path, String startingDirecotry)
     {
         Path parent = path;
-        while(parent.getParent() !=null
-                && !startingDirecotry.equalsIgnoreCase(parent.getFileName().toString()) //stop at the root
-                && !startingDirecotry.equalsIgnoreCase(parent.getParent().getFileName().toString())) //stop if the parent is the root
+        while (parent.getParent() != null
+                 && !startingDirecotry.equalsIgnoreCase(parent.getFileName().toString()) //stop at the root
+                 && !startingDirecotry.equalsIgnoreCase(parent.getParent().getFileName().toString())) //stop if the parent is the root
         {
-            parent=parent.getParent();
+            parent = parent.getParent();
         }
         return parent.getFileName().toString();
-
     }
 
     private static boolean isSchematicHut(String name)
     {
         return Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + name) != null;
-    }
-
-    private static void addHutStyle(String hut, String style)
-    {
-        if (!hutStyleMap.containsKey(hut))
-        {
-            hutStyleMap.put(hut, new ArrayList<>());
-        }
-
-        if (!hutStyleMap.get(hut).contains(style))
-        {
-            hutStyleMap.get(hut).add(style);
-        }
-    }
-
-    private static void incrementHutMaxLevel(String hut)
-    {
-        //Only count the number of huts in 1 style.
-        if (getStylesForHut(hut).size() > 1)
-        {
-            return;
-        }
-
-        Integer level = hutLevelsMap.getOrDefault(hut, 0);
-        hutLevelsMap.put(hut, level + 1);
-    }
-
-    private static void addDecorationStyle(String decoration, String style)
-    {
-        if (!decorationStyleMap.containsKey(decoration))
-        {
-            decorationStyleMap.put(decoration, new ArrayList<>());
-        }
-        decorationStyleMap.get(decoration).add(style);
     }
 
     /**
@@ -235,18 +221,24 @@ public final class Schematics
      */
     public static List<String> getStylesForHut(String hut)
     {
-        return hutStyleMap.get(hut);
+        if (!structureMap.containsKey(hut))
+        {
+            return new ArrayList<>();
+        }
+        return structureMap.get(hut).getStyles();
     }
 
     /**
      * Returns a set of huts.
-     * This is the key set of {@link #hutStyleMap}.
+     * This is the list of huts.
      *
      * @return Set of huts with a schematic.
      */
-    public static Set<String> getHuts()
+    public static List<String> getHuts()
     {
-        return hutStyleMap.keySet();
+        return structureMap.values().stream()
+                 .filter(StructureInfo::getIsHut)
+                 .map(StructureInfo::getName).collect(Collectors.toList());
     }
 
     /**
@@ -257,18 +249,26 @@ public final class Schematics
      */
     public static int getMaxLevelForHut(String hut)
     {
-        return hutLevelsMap.getOrDefault(hut, 0);
+        if (!structureMap.containsKey(hut))
+        {
+            return 0;
+        }
+        return structureMap.get(hut).getMaxLevel();
     }
 
     /**
      * Returns a set of decorations.
-     * This is the key set of {@link #decorationStyleMap}
      *
      * @return Set of decorations with a schematic
      */
-    public static Set<String> getDecorations()
+    public static List<String> getDecorations()
     {
-        return decorationStyleMap.keySet();
+
+        return structureMap.values().stream()
+                                .filter(b -> !b.getIsHut())
+                                .map(StructureInfo::getName)
+                                .collect(Collectors.toList());
+
     }
 
     /**
@@ -279,7 +279,7 @@ public final class Schematics
      */
     public static List<String> getStylesForDecoration(String decoration)
     {
-        return decorationStyleMap.get(decoration);
+        return getStylesForHut(decoration);
     }
 
     /**
@@ -291,7 +291,12 @@ public final class Schematics
     @SideOnly(Side.CLIENT)
     public static void setStyles(Map<String, List<String>> hutStyleMap, Map<String, List<String>> decorationStyleMap)
     {
-        Schematics.hutStyleMap = hutStyleMap;
-        Schematics.decorationStyleMap = decorationStyleMap;
+        /*todo this isnt right.  we need to look at the build tool
+        and this methods interaction in order to correct it.
+
+         */
+
+        //Schematics.hutStyleMap = hutStyleMap;
+        //Schematics.decorationStyleMap = decorationStyleMap;
     }
 }
