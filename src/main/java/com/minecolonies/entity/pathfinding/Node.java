@@ -1,6 +1,6 @@
 package com.minecolonies.entity.pathfinding;
 
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

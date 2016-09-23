@@ -5,6 +5,7 @@ public class PathResult
     protected volatile Status  status                 = Status.IN_PROGRESS_COMPUTING;
     protected volatile boolean pathReachesDestination = false;
     protected volatile int     pathLength             = 0;
+
     public PathResult() {}
 
     /**

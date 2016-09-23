@@ -3,7 +3,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/baker/grind",
+                "name": "minecolonies:mob/baker/grind",
                 "stream": false
             }
         ]
@@ -12,7 +12,7 @@
         "category": "hostile",
         "sounds": [
             {
-                "name": "mob/barbarian/death",
+                "name": "minecolonies:mob/barbarian/death",
                 "stream": false
             }
         ]
@@ -21,19 +21,19 @@
         "category": "hostile",
         "sounds": [
             {
-                "name": "mob/barbarian/hurt1",
+                "name": "minecolonies:mob/barbarian/hurt1",
                 "stream": false
             },
             {
-                "name": "mob/barbarian/hurt2",
+                "name": "minecolonies:mob/barbarian/hurt2",
                 "stream": false
             },
             {
-                "name": "mob/barbarian/hurt3",
+                "name": "minecolonies:mob/barbarian/hurt3",
                 "stream": false
             },
             {
-                "name": "mob/barbarian/hurt4",
+                "name": "minecolonies:mob/barbarian/hurt4",
                 "stream": false
             }
         ]
@@ -42,7 +42,7 @@
         "category": "hostile",
         "sounds": [
             {
-                "name": "mob/barbarian/say",
+                "name": "minecolonies:mob/barbarian/say",
                 "stream": false
             }
         ]
@@ -51,11 +51,11 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/built1",
+                "name": "minecolonies:mob/blacksmith/built1",
                 "stream": false
             },
             {
-                "name": "mob/blacksmith/built2",
+                "name": "minecolonies:mob/blacksmith/built2",
                 "stream": false
             }
         ]
@@ -64,7 +64,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/death",
+                "name": "minecolonies:mob/blacksmith/death",
                 "stream": false
             }
         ]
@@ -73,7 +73,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/fight",
+                "name": "minecolonies:mob/blacksmith/fight",
                 "stream": false
             }
         ]
@@ -82,7 +82,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/grind",
+                "name": "minecolonies:mob/blacksmith/grind",
                 "stream": false
             }
         ]
@@ -91,11 +91,11 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/hammer1",
+                "name": "minecolonies:mob/blacksmith/hammer1",
                 "stream": false
             },
             {
-                "name": "mob/blacksmith/hammer2",
+                "name": "minecolonies:mob/blacksmith/hammer2",
                 "stream": false
             }
         ]
@@ -104,7 +104,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/levelup",
+                "name": "minecolonies:mob/blacksmith/levelup",
                 "stream": false
             }
         ]
@@ -113,7 +113,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/quench",
+                "name": "minecolonies:mob/blacksmith/quench",
                 "stream": false
             }
         ]
@@ -122,7 +122,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/sing",
+                "name": "minecolonies:mob/blacksmith/sing",
                 "stream": false
             }
         ]
@@ -131,7 +131,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/startwork",
+                "name": "minecolonies:mob/blacksmith/startwork",
                 "stream": false
             }
         ]
@@ -140,7 +140,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/target",
+                "name": "minecolonies:mob/blacksmith/target",
                 "stream": false
             }
         ]
@@ -149,19 +149,19 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/blacksmith/work1",
+                "name": "minecolonies:mob/blacksmith/work1",
                 "stream": false
             },
             {
-                "name": "mob/blacksmith/work2",
+                "name": "minecolonies:mob/blacksmith/work2",
                 "stream": false
             },
             {
-                "name": "mob/blacksmith/work3",
+                "name": "minecolonies:mob/blacksmith/work3",
                 "stream": false
             },
             {
-                "name": "mob/blacksmith/work4",
+                "name": "minecolonies:mob/blacksmith/work4",
                 "stream": false
             }
         ]
@@ -170,15 +170,15 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/citizen/female/say1",
+                "name": "minecolonies:mob/citizen/female/say1",
                 "stream": false
             },
             {
-                "name": "mob/citizen/female/say2",
+                "name": "minecolonies:mob/citizen/female/say2",
                 "stream": false
             },
             {
-                "name": "mob/citizen/female/say2",
+                "name": "minecolonies:mob/citizen/female/say2",
                 "stream": false
             }
         ]
@@ -187,15 +187,15 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/citizen/male/say1",
+                "name": "minecolonies:mob/citizen/male/say1",
                 "stream": false
             },
             {
-                "name": "mob/citizen/male/say2",
+                "name": "minecolonies:mob/citizen/male/say2",
                 "stream": false
             },
             {
-                "name": "mob/citizen/male/say3",
+                "name": "minecolonies:mob/citizen/male/say3",
                 "stream": false
             }
         ]
@@ -204,7 +204,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/citizen/snore",
+                "name": "minecolonies:mob/citizen/snore",
                 "stream": false
             }
         ]
@@ -213,7 +213,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/hunter/death",
+                "name": "minecolonies:mob/hunter/death",
                 "stream": false
             }
         ]
@@ -222,7 +222,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/hunter/fight",
+                "name": "minecolonies:mob/hunter/fight",
                 "stream": false
             }
         ]
@@ -231,7 +231,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/hunter/flee",
+                "name": "minecolonies:mob/hunter/flee",
                 "stream": false
             }
         ]
@@ -240,7 +240,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/hunter/hounds",
+                "name": "minecolonies:mob/hunter/hounds",
                 "stream": false
             }
         ]
@@ -249,7 +249,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/hunter/idle",
+                "name": "minecolonies:mob/hunter/idle",
                 "stream": false
             }
         ]
@@ -258,7 +258,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/hunter/levelup",
+                "name": "minecolonies:mob/hunter/levelup",
                 "stream": false
             }
         ]
@@ -267,7 +267,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/hunter/loot",
+                "name": "minecolonies:mob/hunter/loot",
                 "stream": false
             }
         ]
@@ -276,7 +276,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/hunter/target",
+                "name": "minecolonies:mob/hunter/target",
                 "stream": false
             }
         ]
@@ -285,7 +285,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/soldier/death",
+                "name": "minecolonies:mob/soldier/death",
                 "stream": false
             }
         ]
@@ -294,7 +294,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/soldier/fight",
+                "name": "minecolonies:mob/soldier/fight",
                 "stream": false
             }
         ]
@@ -303,7 +303,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/soldier/flee",
+                "name": "minecolonies:mob/soldier/flee",
                 "stream": false
             }
         ]
@@ -312,7 +312,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/soldier/idle",
+                "name": "minecolonies:mob/soldier/idle",
                 "stream": false
             }
         ]
@@ -321,7 +321,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/soldier/levelup",
+                "name": "minecolonies:mob/soldier/levelup",
                 "stream": false
             }
         ]
@@ -330,7 +330,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/soldier/maxlevel",
+                "name": "minecolonies:mob/soldier/maxlevel",
                 "stream": false
             }
         ]
@@ -339,7 +339,7 @@
         "category": "neutral",
         "sounds": [
             {
-                "name": "mob/soldier/target",
+                "name": "minecolonies:mob/soldier/target",
                 "stream": false
             }
         ]
@@ -348,7 +348,7 @@
         "category": "block",
         "sounds": [
             {
-                "name": "tile/bell/ring",
+                "name": "minecolonies:tile/bell/ring",
                 "stream": false
             }
         ]
@@ -357,7 +357,7 @@
         "category": "block",
         "sounds": [
             {
-                "name": "tile/hutbaker/windmill",
+                "name": "minecolonies:tile/hutbaker/windmill",
                 "stream": false
             }
         ]

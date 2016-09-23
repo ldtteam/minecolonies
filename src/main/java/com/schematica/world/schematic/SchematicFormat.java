@@ -21,7 +21,6 @@ public abstract class SchematicFormat
 
         FORMAT_DEFAULT = Names.NBT.FORMAT_ALPHA;
     }
-
     public static Schematic readFromStream(InputStream stream)
     {
         try

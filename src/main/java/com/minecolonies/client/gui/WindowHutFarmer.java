@@ -12,7 +12,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -222,7 +222,8 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 final FieldView field = fields.get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
                 final String direction = calcDirection(building.getLocation(), field.getId());
-                @NotNull final String owner = field.getOwner().isEmpty() ? ("<" + LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
+                @NotNull final String owner =
+                  field.getOwner().isEmpty() ? ("<" + LanguageHandler.format("com.minecolonies.gui.workerHuts.farmerHut.unused") + ">") : field.getOwner();
 
                 rowPane.findPaneOfTypeByID(TAG_WORKER, Label.class).setLabelText(owner);
                 rowPane.findPaneOfTypeByID(TAG_DISTANCE, Label.class).setLabelText(distance + "m");
@@ -240,7 +241,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
                 else
                 {
                     assignButton.setLabel(APPROVE);
-                    if(building.getBuildingLevel() <= building.getAmountOfFields())
+                    if (building.getBuildingLevel() <= building.getAmountOfFields())
                     {
                         assignButton.disable();
                     }

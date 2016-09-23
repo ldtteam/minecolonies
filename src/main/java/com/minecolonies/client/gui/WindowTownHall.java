@@ -222,11 +222,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * The deliverymen job description string.
      */
-    private static final String DELIVERYMEN_JOB = "com.minecolonies.job.Deliveryman";
+    private static final String              DELIVERYMEN_JOB = "com.minecolonies.job.Deliveryman";
     /**
      * List of workOrders.
      */
-    private final List<WorkOrderView> workOrders = new ArrayList<>();
+    private final        List<WorkOrderView> workOrders      = new ArrayList<>();
     /**
      * The view of the current building.
      */

@@ -47,7 +47,7 @@ public final class ModAchievements
     /**
      * Place a townhall.
      */
-    public static final Achievement achievementBuildingTownhall = new MineColoniesAchievement("townhall", -2, 0, ModBlocks.blockHutTownHall, achievementGetSupply)
+    public static final Achievement achievementBuildingTownhall = new MineColoniesAchievement("townhall", -2, 0, ModBlocks.blockHutTownHall, null)
                                                                     .registerStat();
 
     /**
@@ -135,7 +135,7 @@ public final class ModAchievements
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_TOWN} citizens.
      */
     public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", -6, 0, ModItems.itemAchievementProxyTown, achievementSizeSettlement)
-            .registerStat();
+                                                                  .registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_CITY} citizens.
      */

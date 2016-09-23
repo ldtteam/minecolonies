@@ -5,24 +5,35 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.schematica.client.renderer.chunk.overlay.RenderOverlayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.chunk.ChunkRenderDispatcher;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.chunk.RenderChunk;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.BlockRenderLayer;
 
 public class OverlayRenderDispatcher extends ChunkRenderDispatcher
 {
+    public OverlayRenderDispatcher()
+    {
+        super();
+    }
+
+    public OverlayRenderDispatcher(int countRenderBuilders)
+    {
+        super(countRenderBuilders);
+    }
+
     @Override
     public ListenableFuture<Object> uploadChunk(
-                                                 final EnumWorldBlockLayer layer,
-                                                 final WorldRenderer worldRenderer,
+                                                 final BlockRenderLayer layer,
+                                                 final VertexBuffer worldRenderer,
                                                  final RenderChunk renderChunk,
-                                                 final CompiledChunk compiledChunk)
+                                                 final CompiledChunk compiledChunk,
+                                                 final double par5)
     {
         if (!Minecraft.getMinecraft().isCallingFromMinecraftThread() || OpenGlHelper.useVbo())
         {
-            return super.uploadChunk(layer, worldRenderer, renderChunk, compiledChunk);
+            return super.uploadChunk(layer, worldRenderer, renderChunk, compiledChunk, par5);
         }
 
         uploadDisplayList(worldRenderer, ((RenderOverlayList) renderChunk).getDisplayList(layer, compiledChunk), renderChunk);

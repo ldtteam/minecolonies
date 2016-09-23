@@ -14,8 +14,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
@@ -371,7 +371,7 @@ public class Field extends Container
      */
     public boolean isNoPartOfField(@NotNull World world, @NotNull BlockPos position)
     {
-        return world.isAirBlock(position) || world.getBlockState(position.up()).getBlock().getMaterial().isSolid();
+        return world.isAirBlock(position) || world.getBlockState(position.up()).getMaterial().isSolid();
     }
 
     /**

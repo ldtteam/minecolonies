@@ -15,37 +15,37 @@ public class ButtonImage extends Button
     /**
      * Default size is a small square button.
      */
-    private static final int DEFAULT_BUTTON_SIZE = 20;
-    private static final float HALF = 0.5F;
+    private static final int   DEFAULT_BUTTON_SIZE = 20;
+    private static final float HALF                = 0.5F;
     protected ResourceLocation image;
     protected ResourceLocation imageHighlight;
     protected ResourceLocation imageDisabled;
-    protected int imageOffsetX   = 0;
-    protected int imageOffsetY   = 0;
-    protected int imageWidth     = 0;
-    protected int imageHeight    = 0;
-    protected int imageMapWidth  = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-    protected int imageMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-    protected int highlightOffsetX   = 0;
-    protected int highlightOffsetY   = 0;
-    protected int highlightWidth     = 0;
-    protected int highlightHeight    = 0;
-    protected int highlightMapWidth  = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-    protected int highlightMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-    protected int disabledOffsetX   = 0;
-    protected int disabledOffsetY   = 0;
-    protected int disabledWidth     = 0;
-    protected int disabledHeight    = 0;
-    protected int disabledMapWidth  = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-    protected int disabledMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
-    protected double    textScale         = 1.0;
-    protected Alignment textAlignment     = Alignment.Middle;
-    protected int       textColor         = 0xffffff;
-    protected int       textHoverColor    = 0xffffff;
-    protected int       textDisabledColor = 0xffffff;
-    protected boolean   shadow            = false;
-    protected int       textOffsetX       = 0;
-    protected int       textOffsetY       = 0;
+    protected int       imageOffsetX       = 0;
+    protected int       imageOffsetY       = 0;
+    protected int       imageWidth         = 0;
+    protected int       imageHeight        = 0;
+    protected int       imageMapWidth      = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int       imageMapHeight     = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int       highlightOffsetX   = 0;
+    protected int       highlightOffsetY   = 0;
+    protected int       highlightWidth     = 0;
+    protected int       highlightHeight    = 0;
+    protected int       highlightMapWidth  = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int       highlightMapHeight = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int       disabledOffsetX    = 0;
+    protected int       disabledOffsetY    = 0;
+    protected int       disabledWidth      = 0;
+    protected int       disabledHeight     = 0;
+    protected int       disabledMapWidth   = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected int       disabledMapHeight  = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
+    protected double    textScale          = 1.0;
+    protected Alignment textAlignment      = Alignment.Middle;
+    protected int       textColor          = 0xffffff;
+    protected int       textHoverColor     = 0xffffff;
+    protected int       textDisabledColor  = 0xffffff;
+    protected boolean   shadow             = false;
+    protected int       textOffsetX        = 0;
+    protected int       textOffsetY        = 0;
 
     /**
      * Default constructor. Makes a small square button.

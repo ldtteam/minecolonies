@@ -5,17 +5,13 @@ buildscript {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
         }
-        maven {
-            name = "sonatype"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
-        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
     }
 }
 plugins {
-    id "org.sonarqube" version "2.0.1"
+    id "org.sonarqube" version "2.1-rc3"
 } 
 
 
@@ -93,7 +89,7 @@ processResources {
 
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << "-Xlint:unchecked"
+    options.compilerArgs << "-Xlint"
 }
 
 //task sourceJar(type: Jar) {

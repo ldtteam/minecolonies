@@ -1,7 +1,7 @@
 package com.minecolonies.colony.workorders;
 
 import com.minecolonies.colony.Colony;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 /**
  * A work order that the build can take to build decorations.
@@ -33,14 +33,14 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
     }
 
     @Override
-    protected String getValue()
-    {
-        return schematicName;
-    }
-
-    @Override
     public boolean isValid(Colony colony)
     {
         return true;
+    }
+
+    @Override
+    protected String getValue()
+    {
+        return schematicName;
     }
 }

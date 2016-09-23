@@ -1,79 +1,66 @@
 package com.schematica.client.world.chunk;
 
+import com.google.common.base.Objects;
 import com.schematica.client.world.SchematicWorld;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.IProgressUpdate;
-import net.minecraft.world.ChunkCoordIntPair;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.client.multiplayer.ChunkProviderClient;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.EmptyChunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ChunkProviderSchematic implements IChunkProvider
+public class ChunkProviderSchematic extends ChunkProviderClient implements IChunkProvider
 {
     private final SchematicWorld world;
-    private final Chunk          emptyChunk;
-    private final Map<Long, ChunkSchematic> chunks = new ConcurrentHashMap<>();
+    private final Chunk emptyChunk;
+    private final Map<Long, ChunkSchematic> chunks = new ConcurrentHashMap();
 
     public ChunkProviderSchematic(final SchematicWorld world)
     {
+        super(world);
         this.world = world;
-        this.emptyChunk = new EmptyChunk(world, 0, 0);
+        this.emptyChunk = new EmptyChunk(world, 0, 0)
+        {
+            @Override
+            public boolean isEmpty()
+            {
+                return false;
+            }
+        };
     }
 
-    @Override
-    public boolean chunkExists(final int x, final int z)
+    private boolean chunkExists(final int x, final int z)
     {
         return x >= 0 && z >= 0 && x < this.world.getWidth() && z < this.world.getLength();
     }
 
     @Override
-    public Chunk provideChunk(final int x, final int z)
+    public Chunk getLoadedChunk(final int x, final int z)
     {
-        if (chunkExists(x, z))
+        if (!chunkExists(x, z))
         {
-            final long key = ChunkCoordIntPair.chunkXZ2Int(x, z);
-
-            ChunkSchematic chunk = this.chunks.get(key);
-            if (chunk == null)
-            {
-                chunk = new ChunkSchematic(this.world, x, z);
-                this.chunks.put(key, chunk);
-            }
-
-            return chunk;
+            return this.emptyChunk;
         }
 
-        return this.emptyChunk;
+        final long key = ChunkPos.chunkXZ2Int(x, z);
+
+        ChunkSchematic chunk = this.chunks.get(key);
+        if (chunk == null)
+        {
+            chunk = new ChunkSchematic(this.world, x, z);
+            this.chunks.put(key, chunk);
+        }
+
+        return chunk;
     }
 
     @Override
-    public Chunk provideChunk(final BlockPos pos)
+    public Chunk provideChunk(final int x, final int z)
     {
-        return provideChunk(pos.getX() >> 4, pos.getZ() >> 4);
-    }
-
-    @Override
-    public void populate(final IChunkProvider provider, final int x, final int z)
-    {
-    }
-
-    @Override
-    public boolean populateChunk(final IChunkProvider chunkProvider, final Chunk chunk, final int x, final int z)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean saveChunks(final boolean saveExtra, final IProgressUpdate progressUpdate)
-    {
-        return true;
+        return getLoadedChunk(x, z);
     }
 
     @Override
@@ -82,43 +69,26 @@ public class ChunkProviderSchematic implements IChunkProvider
         return false;
     }
 
-    @Override
-    public boolean canSave()
-    {
-        return false;
-    }
-
+    @NotNull
     @Override
     public String makeString()
     {
         return "SchematicChunkCache";
     }
 
+    // ChunkProviderClient
+    @NotNull
     @Override
-    public List<BiomeGenBase.SpawnListEntry> getPossibleCreatures(final EnumCreatureType creatureType, final BlockPos pos)
+    public Chunk loadChunk(int x, int z)
     {
-        return null;
+        return Objects.firstNonNull(getLoadedChunk(x, z), this.emptyChunk);
     }
 
+    // ChunkProviderClient
     @Override
-    public BlockPos getStrongholdGen(final World world, final String name, final BlockPos pos)
+    public void unloadChunk(int x, int z)
     {
-        return null;
-    }
-
-    @Override
-    public int getLoadedChunkCount()
-    {
-        return this.world.getWidth() * this.world.getLength();
-    }
-
-    @Override
-    public void recreateStructures(final Chunk chunk, final int x, final int z)
-    {
-    }
-
-    @Override
-    public void saveExtraData()
-    {
+        // NOOP: schematic chunks are part of the schematic world and are never unloaded separately
     }
 }
+

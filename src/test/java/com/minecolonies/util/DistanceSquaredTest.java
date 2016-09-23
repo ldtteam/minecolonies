@@ -1,7 +1,7 @@
 package com.minecolonies.util;
 
 import com.minecolonies.test.AbstractTest;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.junit.Test;
 
 import java.util.Random;
