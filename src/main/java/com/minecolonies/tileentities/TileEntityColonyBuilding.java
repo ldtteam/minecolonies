@@ -30,12 +30,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * The colony id.
      */
-    private              int    colonyId   = 0;
+    private int colonyId = 0;
 
     /**
      * The colony.
      */
-    private Colony           colony;
+    private Colony colony;
 
     /**
      * The building the tileEntity belongs to.
@@ -142,7 +142,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (building == null && colony != null)
         {
             building = colony.getBuilding(getPosition());
-            if (building != null  && (worldObj == null || !worldObj.isRemote))
+            if (building != null && (worldObj == null || !worldObj.isRemote))
             {
                 building.setTileEntity(this);
             }
