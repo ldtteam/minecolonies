@@ -81,7 +81,7 @@ public final class ColonyManager
 
         markDirty();
 
-        Log.getLogger().info("New Colony %d", colony.getID());
+        Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(),player.getName()));
 
         return colony;
     }
