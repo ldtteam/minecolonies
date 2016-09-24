@@ -81,7 +81,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (!worldObj.isRemote && colonyId == 0)
         {
-            Logging.getLogger().severe(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
+            Log.getLogger().fatal(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
               worldObj.getWorldInfo().getWorldName(),
               pos.getX(),
               pos.getY(),
