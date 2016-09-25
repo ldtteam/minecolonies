@@ -17,27 +17,18 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 
-public class ItemBuildPreview extends Item{
-	
-	@Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn, EnumHand hand){
-		if(playerIn.isSneaking()){
-			TESTMain.instance.pinnedPos = null;
-			TESTMain.instance.structure = null;
-			playerIn.addChatMessage(new TextComponentString("Structure unpinned"));
-	        return new ActionResult(EnumActionResult.SUCCESS, itemStackIn);
-		}
-        return new ActionResult(EnumActionResult.PASS, itemStackIn);
-    }
+public class ItemBuildScanner extends Item{
 	
 	@Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
 		if(!playerIn.isSneaking()){
-			TESTMain.instance.pinnedPos = pos.up();
-			TESTMain.instance.structure = new Structure(null, "endcity/ship", new PlacementSettings().setRotation(StructPrevMath.getRotationFromYaw()).setMirror(Mirror.NONE));
-			playerIn.addChatMessage(new TextComponentString("Structure pinned at X:" + pos.getX() + ", Y:" + pos.getY() + 1 + ", Z:" + pos.getZ()));
+			TESTMain.instance.firstPos = pos;
+			playerIn.addChatMessage(new TextComponentString("First pos set at X:" + pos.getX() + ", Y:" + pos.getY() + 1 + ", Z:" + pos.getZ()));
+	        return EnumActionResult.SUCCESS;
+		}else{
+			TESTMain.instance.secondPos = pos;
+			playerIn.addChatMessage(new TextComponentString("Second pos set at X:" + pos.getX() + ", Y:" + pos.getY() + 1 + ", Z:" + pos.getZ()));
 	        return EnumActionResult.SUCCESS;
 		}
-		return EnumActionResult.FAIL;
     }
 }

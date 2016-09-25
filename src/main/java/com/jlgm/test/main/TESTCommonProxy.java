@@ -1,5 +1,6 @@
 package com.jlgm.test.main;
 
+import com.jlgm.structurepreview.event.RenderEventHandler;
 import com.jlgm.test.item.TESTItem;
 
 import net.minecraftforge.common.config.Configuration;
@@ -21,6 +22,7 @@ public class TESTCommonProxy{
 
 	public void init(FMLInitializationEvent initEvent){
 		TESTItem.registerItem();
+		MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
 	}
 
 	public void postInit(FMLPostInitializationEvent postInitEvent){
