@@ -4,8 +4,8 @@ package com.jlgm.structurepreview.event;
  * https://github.com/maruohon/placementpreview
  */
 
+import com.jlgm.structurepreview.helpers.StructPrevMath;
 import com.jlgm.structurepreview.helpers.Structure;
-import com.jlgm.structurepreview.helpers.TESTMath;
 import com.jlgm.test.item.TESTItem;
 import com.jlgm.test.main.TESTMain;
 
@@ -23,7 +23,7 @@ public class RenderEventHandler{
 		if((Minecraft.getMinecraft().thePlayer.getHeldItemMainhand() != null && Minecraft.getMinecraft().thePlayer.getHeldItemMainhand().getItem() == TESTItem.buildPreview) || TESTMain.instance.pinnedPos != null){
 			Structure structure;
 			if(TESTMain.instance.structure == null){
-				structure = new Structure(null, "endcity/ship", new PlacementSettings().setRotation(TESTMath.getRotationFromYaw()).setMirror(Mirror.NONE));
+				structure = new Structure(null, "endcity/ship", new PlacementSettings().setRotation(StructPrevMath.getRotationFromYaw()).setMirror(Mirror.NONE));
 			}else{
 				structure = TESTMain.instance.structure;
 			}

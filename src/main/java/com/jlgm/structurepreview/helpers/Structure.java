@@ -68,6 +68,10 @@ public class Structure{
 		this.mc = Minecraft.getMinecraft();
 	}
 	
+	public boolean doesExist(){
+		return structure == null ? false : true;
+	}
+	
 	public Template.BlockInfo[] getBlockInfo(){
         Template.BlockInfo[] blockList = new Template.BlockInfo[structure.blocks.size()];
         blockList = structure.blocks.toArray(blockList);

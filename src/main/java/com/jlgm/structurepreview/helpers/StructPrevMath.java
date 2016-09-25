@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 
-public class TESTMath {
+public class StructPrevMath {
     public static Rotation getRotationFromYaw(){
     	EnumFacing facing = Minecraft.getMinecraft().thePlayer.getHorizontalFacing();
     	if(facing == EnumFacing.NORTH)
