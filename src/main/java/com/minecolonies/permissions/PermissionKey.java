@@ -16,15 +16,28 @@ import java.util.Map;
  *     <li>item.pickup.[id]</li>
  *     <li>item.use.[id]</li>
  * </ul>
+ * 
+ * The negate keyword is: ^
  */
 public class PermissionKey implements IPermissionKey
 {
 
-    private Map<String, Object> dataStorage;
+    private static final String PATTERN = "/^(\\^?)block.(place|break).([a-zA-Z]+|\\*):([a-zA-Z,*]+)$/";
+    
+	private Map<String, Object> dataStorage;
     private String key;
 
+    /**
+     * Constructor.
+     * 
+     * @param key
+     * @throws IllegalArgumentException If the key does not match the pattern.
+     */
     public PermissionKey(String key)
     {
+    	if (!key.matches(this.getRegex()))
+    		throw new IllegalArgumentException("The given key does not match the pattern.");
+    	
         this.key = key;
         dataStorage = new HashMap<>();
     }
@@ -83,7 +96,7 @@ public class PermissionKey implements IPermissionKey
         {
             PermissionKey permKey = (PermissionKey) iPermKey;
 
-            if (this.key.equals(permKey.key))
+            if (this.key.matches(permKey.key))
             {
                 return true;
             }
@@ -91,5 +104,10 @@ public class PermissionKey implements IPermissionKey
 
         return false;
     }
+
+	@Override
+	public String getRegex() {
+		return PermissionKey.PATTERN;
+	}
 
 }

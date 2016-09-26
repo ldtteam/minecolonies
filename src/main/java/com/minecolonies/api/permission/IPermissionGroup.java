@@ -12,8 +12,11 @@ public interface IPermissionGroup
     void deserialize(String data);
 
     void addKey(IPermissionKey key);
+    void addKey(String key);
 
     boolean hasKey(IPermissionKey key);
+    boolean hasKey(String key);
 
     void removeKey(IPermissionKey key);
+    void removeKey(String key);
 }

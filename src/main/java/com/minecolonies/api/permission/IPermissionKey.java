@@ -12,5 +12,7 @@ public interface IPermissionKey
     void deserialize();
 
     boolean compare(IPermissionKey permKey);
-
+    
+    public String getRegex();
+    
 }

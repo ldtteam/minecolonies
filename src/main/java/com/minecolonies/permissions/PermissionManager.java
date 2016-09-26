@@ -12,7 +12,7 @@ import java.util.*;
 public class PermissionManager implements IPermissionManager
 {
 
-    private static final String TEMPLATE_BLOCK = "/^(!{0,1})block.(place|break).([a-zA-Z]{1,}|\\*):([a-zA-Z,*]{1,})$/";
+    private static final String TEMPLATE_BLOCK = "";
 
     private static final PermissionManager instance = new PermissionManager();
 
@@ -87,7 +87,7 @@ public class PermissionManager implements IPermissionManager
 
     private void loadGroups()
     {
-        // TODO
+    	// TODO
     }
 
     private void loadUserdata()
