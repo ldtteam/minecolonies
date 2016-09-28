@@ -6,6 +6,7 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -28,12 +29,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
     /**
      * The colony id.
      */
-    private              int    colonyId   = 0;
+    private int colonyId = 0;
 
     /**
      * The colony.
      */
-    private Colony           colony;
+    private Colony colony;
 
     /**
      * The building the tileEntity belongs to.
@@ -79,11 +80,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (!worldObj.isRemote && colonyId == 0)
         {
-            throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
-                    worldObj.getWorldInfo().getWorldName(),
-                    pos.getX(),
-                    pos.getY(),
-                    pos.getZ()));
+            Log.getLogger().fatal(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
+              worldObj.getWorldInfo().getWorldName(),
+              pos.getX(),
+              pos.getY(),
+              pos.getZ()));
         }
     }
 
@@ -113,34 +114,38 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         if (colony == null)
         {
-            if (colonyId != 0)
+            if (colonyId == 0)
             {
-                colony = ColonyManager.getColony(colonyId);
+                colony = ColonyManager.getColony(worldObj, this.getPos());
             }
             else
             {
-                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
-                  worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                colony = ColonyManager.getColony(colonyId);
             }
 
-//            else if (worldObj != null)
-//            {
-//                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
-//                        worldObj.getWorldInfo().getWorldName(), xCoord, yCoord, zCoord));
-//
-//                colony = ColonyManager.getColony(worldObj, xCoord, yCoord, zCoord);
-//
-//                if (colony != null)
-//                {
-//                    colonyId = colony.getID();
-//                }
-//            }
+            if (colony == null)
+            {
+                //we tried to update the colony it is still missing... so we...
+                if (worldObj == null || worldObj.isRemote)
+                {
+                    Log.getLogger()
+                      .warn(String.format("TileEntityColonyBuilding at :[%d,%d,%d] had no colony.  It could be a previewed building.",
+                        pos.getX(), pos.getY(), pos.getZ()));
+                }
+                else
+                {
+                    //log on the server
+                    Log.getLogger()
+                      .warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
+                        worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                }
+            }
         }
 
         if (building == null && colony != null)
         {
             building = colony.getBuilding(getPosition());
-            if (building != null  && (worldObj == null || !worldObj.isRemote))
+            if (building != null && (worldObj == null || !worldObj.isRemote))
             {
                 building.setTileEntity(this);
             }
@@ -187,12 +192,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public void readFromNBT(NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-        if (!compound.hasKey(TAG_COLONY))
+        if (compound.hasKey(TAG_COLONY))
         {
-            throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] missing COLONY tag.",
-              worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+            colonyId = compound.getInteger(TAG_COLONY);
         }
-        colonyId = compound.getInteger(TAG_COLONY);
+
         updateColonyReferences();
     }
 
@@ -225,9 +229,10 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-        if (colonyId == 0)
+        if (colonyId == 0 && colony == null)
         {
-            throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId; %s colony reference.",
+            colony = ColonyManager.getColony(worldObj, this.getPosition());
+            Log.getLogger().fatal(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId; %s colony reference.",
               worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(),
               colony == null ? "NO" : "valid"));
         }

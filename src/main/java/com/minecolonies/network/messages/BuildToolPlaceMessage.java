@@ -40,7 +40,6 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
     private boolean isHut;
 
-
     /**
      * Language key for missing hut message
      */
@@ -156,25 +155,39 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
 
-        if (player.inventory.hasItemStack(new ItemStack(block))
-              && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
+        if (player.inventory.hasItemStack(new ItemStack(block)))
         {
-            world.destroyBlock(buildPos, true);
-            world.setBlockState(buildPos, block.getDefaultState());
-            block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);
-
-            player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
-
-            @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
-
-            if (building != null)
+            if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
-                building.setStyle(style);
-                building.setRotation(rotation);
-            }
-            else
-            {
-                Log.getLogger().error("BuildTool: building is null!");
+                world.destroyBlock(buildPos, true);
+                world.setBlockState(buildPos, block.getDefaultState());
+                block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);
+
+                player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
+
+                @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
+
+                if (building == null)
+                {
+                    Log.getLogger().error("BuildTool: building is null!");
+                }
+                else
+                {
+                    if (building.getTileEntity() != null)
+                    {
+                        final Colony colony = ColonyManager.getColony(world, buildPos);
+                        if (colony == null)
+                        {
+                            Log.getLogger().info("No colony for " + player.getName());
+                        }
+                        else
+                        {
+                            building.getTileEntity().setColony(colony);
+                        }
+                    }
+                    building.setStyle(style);
+                    building.setRotation(rotation);
+                }
             }
         }
         else

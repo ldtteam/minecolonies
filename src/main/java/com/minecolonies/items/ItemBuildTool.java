@@ -45,6 +45,6 @@ public class ItemBuildTool extends AbstractItemMinecolonies
             MineColonies.proxy.openBuildToolWindow(null);
         }
 
-        return new ActionResult<>(EnumActionResult.PASS, itemStackIn);
+        return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
     }
 }
