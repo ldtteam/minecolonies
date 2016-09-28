@@ -47,9 +47,19 @@ public class Tree
     private static final int NUMBER_OF_LEAVES = 3;
 
     /**
+     * Max size a tree should have.
+     */
+    private static final int MAX_TREE_SIZE    = 128;
+
+    /**
      * The location of the tree stump.
      */
     private BlockPos location;
+
+    /**
+     * The location of the tree stump.
+     */
+    private BlockPos topLog;
 
     /**
      * All wood blocks connected to the tree.
@@ -105,9 +115,14 @@ public class Tree
             }
 
             location = getBaseLog(world, log);
+            topLog = getTopLog(world, log);
+
             woodBlocks = new LinkedList<>();
+            addAndSearch(world, location);
+
             checkTree(world, getTopLog(world, log));
             stumpLocations = new ArrayList<>();
+            woodBlocks = new LinkedList<>();
         }
     }
 
@@ -193,13 +208,66 @@ public class Tree
             return false;
         }
 
+        BlockPos[] baseAndTOp = getBottomAndTopLog(world, pos, new LinkedList<>(), null, null);
+
+        if(baseAndTOp == null || baseAndTOp.length < 2)
+        {
+            return false;
+        }
+
         //Get base log, should already be base log
-        BlockPos basePos = getBaseLog(world, pos);
+        BlockPos basePos = baseAndTOp[0];
 
         //Make sure tree is on solid ground and tree is not build above cobblestone
         return world.getBlockState(basePos.down()).getMaterial().isSolid()
                  && world.getBlockState(basePos.down()).getBlock() != Blocks.COBBLESTONE
-                 && hasEnoughLeaves(world, pos);
+                 && hasEnoughLeaves(world, baseAndTOp[1]);
+    }
+
+    /**
+     * Adds a log and searches for further logs(Breadth first search)
+     *
+     * @param world The world the log is in
+     * @param log   the log to add
+     */
+    private static BlockPos[] getBottomAndTopLog(@NotNull IBlockAccess world, @NotNull BlockPos log, @NotNull LinkedList<BlockPos> woodenBlocks, BlockPos bottomLog,
+            BlockPos topLog)
+    {
+        if(woodenBlocks.size() >= MAX_TREE_SIZE)
+        {
+            return null;
+        }
+
+        BlockPos bottom = bottomLog == null ? log  : bottomLog;
+        BlockPos top = topLog == null ? log : topLog;
+
+        if(log.getY() < bottom.getY())
+        {
+            bottom = log;
+        }
+
+        if(log.getY() > top.getY())
+        {
+            top = log;
+        }
+
+        woodenBlocks.add(log);
+        for (int y = -1; y <= 1; y++)
+        {
+            for (int x = -1; x <= 1; x++)
+            {
+                for (int z = -1; z <= 1; z++)
+                {
+                    BlockPos temp = log.add(x, y, z);
+                    if (world.getBlockState(temp).getBlock().isWood(null, new BlockPos(0, 0, 0)) && !woodenBlocks.contains(temp))
+                    {
+                        getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
+                    }
+                }
+            }
+        }
+
+        return new BlockPos[]{bottomLog, topLog};
     }
 
     private static boolean hasEnoughLeaves(@NotNull IBlockAccess world, BlockPos pos)
@@ -305,6 +373,21 @@ public class Tree
      */
     private void addAndSearch(@NotNull World world, @NotNull BlockPos log)
     {
+        if(woodBlocks.size() >= MAX_TREE_SIZE)
+        {
+            return;
+        }
+
+        if(log.getY() < location.getY())
+        {
+            location = log;
+        }
+
+        if(log.getY() > topLog.getY())
+        {
+            topLog = log;
+        }
+
         woodBlocks.add(log);
         for (int y = -1; y <= 1; y++)
         {

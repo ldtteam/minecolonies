@@ -147,7 +147,7 @@ public class PathNavigate extends PathNavigateGround
     }
 
     @Override
-    public boolean setPath(@NotNull Path path, double speed)
+    public boolean setPath(Path path, double speed)
     {
         int pathLength = path.getCurrentPathLength();
         if (pathLength > 0 && !(path.getPathPointFromIndex(0) instanceof PathPointExtended))
