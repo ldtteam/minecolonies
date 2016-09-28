@@ -49,7 +49,7 @@ public class Tree
     /**
      * Max size a tree should have.
      */
-    private static final int MAX_TREE_SIZE    = 128;
+    private static final int MAX_TREE_SIZE    = 256;
 
     /**
      * The location of the tree stump.
@@ -233,13 +233,13 @@ public class Tree
     private static BlockPos[] getBottomAndTopLog(@NotNull IBlockAccess world, @NotNull BlockPos log, @NotNull LinkedList<BlockPos> woodenBlocks, BlockPos bottomLog,
             BlockPos topLog)
     {
-        if(woodenBlocks.size() >= MAX_TREE_SIZE)
-        {
-            return null;
-        }
-
         BlockPos bottom = bottomLog == null ? log  : bottomLog;
         BlockPos top = topLog == null ? log : topLog;
+
+        if(woodenBlocks.size() >= MAX_TREE_SIZE)
+        {
+            return new BlockPos[]{bottom, top};
+        }
 
         if(log.getY() < bottom.getY())
         {
@@ -261,13 +261,13 @@ public class Tree
                     BlockPos temp = log.add(x, y, z);
                     if (world.getBlockState(temp).getBlock().isWood(null, new BlockPos(0, 0, 0)) && !woodenBlocks.contains(temp))
                     {
-                        getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
+                        return getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
                     }
                 }
             }
         }
 
-        return new BlockPos[]{bottomLog, topLog};
+        return new BlockPos[]{bottom, top};
     }
 
     private static boolean hasEnoughLeaves(@NotNull IBlockAccess world, BlockPos pos)
