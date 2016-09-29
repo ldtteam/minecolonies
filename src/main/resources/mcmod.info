@@ -1,11 +1,20 @@
 [
 {
+<<<<<<< HEAD
   "modid": "placementpreview",
   "name": "Placement Preview",
   "description": "Shows a preview of the block that will be placed",
   "version": "${mod_version}",
   "mcversion": "${minecraft_version}",
   "url": "http://minecraft.curseforge.com/projects/placement-preview",
+=======
+  "modid": "minecolonies",
+  "name": "MineColonies",
+  "description": " MineColonies is a Colony/Town Simulator that adds many structures and NPC workers and guards that you control and put to work for you! Based around a townhall and village mechanic, there are numerous workers that can be added to your colony, building a busy and vibrant village/town/city within Minecraft. There is no coded limit to the number of NPC�s at your disposal, so you can create a small efficient Village dedicated to a particular type of worker, or a sprawling metropolis with many workers. \n It�s entirely up to you!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "http://minecolonies.com",
+>>>>>>> origin/develop
   "updateUrl": "",
   "authorList": ["masa"],
   "credits": "",

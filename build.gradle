@@ -10,14 +10,48 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.2-SNAPSHOT'
+<<<<<<< HEAD
+=======
+    }
+}
+plugins {
+    id "org.sonarqube" version "2.1-rc3"
+} 
+
+
+sonarqube {
+    properties{
+        property "sonar.host.url", "http://home.kk-sc.de:9000"
+        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.projectName", "Minecolonies"
+        property "sonar.branch", System.getenv()['TRAVIS_BRANCH'] != null ? System.getenv()['TRAVIS_BRANCH'] : System.getenv()['bamboo_repository_branch_name']
+>>>>>>> origin/develop
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
+<<<<<<< HEAD
 /*
 // for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
 plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
+=======
+apply plugin: 'jacoco'
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+dependencies {
+    testCompile 'junit:junit:4.11'
+    testCompile "org.mockito:mockito-core:1.+"
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito', version: '1.6.5'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+
+    compile 'com.intellij:annotations:+@jar'
+>>>>>>> origin/develop
 }
 */
 version = "1.0"
@@ -85,3 +119,54 @@ processResources
         exclude 'mcmod.info'
     }
 }
+<<<<<<< HEAD
+=======
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << "-Xlint"
+}
+
+//task sourceJar(type: Jar) {
+//    from sourceSets.main.allSource
+//    appendix = 'src'
+//}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    appendix = 'deobf'
+}
+
+task incrementBuildNumber() {
+    dependsOn "reobf"
+    doLast {
+        config.minecolonies_build = (config.minecolonies_build.toString().toInteger()) + 1
+
+        configFile.withWriter {
+            config.toProperties().store(it, "")
+        }
+    }
+}
+
+jar {
+    appendix = 'universal'
+    archiveName = "minecolonies-universal-" + project.version + ".jar"
+
+    manifest {
+        attributes 'FMLAT': "minecolonies_at.cfg"
+    }
+}
+
+apply plugin: 'idea'
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
+
+task copyToLib(type: Copy) {
+    // into "build/lib"
+    into "lib"
+    from configurations.runtime
+}
+>>>>>>> origin/develop
