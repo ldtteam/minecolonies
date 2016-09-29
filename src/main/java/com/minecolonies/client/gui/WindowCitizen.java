@@ -188,7 +188,7 @@ public class WindowCitizen extends Window implements Button.Handler
         for (int i = 0; i < citizen.getMaxHealth() / 2; i++)
         {
             @NotNull Image heart = new Image();
-            heart.setImage(Gui.icons, EMPTY_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            heart.setImage(Gui.ICONS, EMPTY_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
             heart.setPosition(i * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
             findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
         }
@@ -198,7 +198,7 @@ public class WindowCitizen extends Window implements Button.Handler
         for (heartPos = 0; heartPos < ((int) citizen.getHealth() / 2); heartPos++)
         {
             @NotNull Image heart = new Image();
-            heart.setImage(Gui.icons, FULL_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            heart.setImage(Gui.ICONS, FULL_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
             heart.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
             findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
         }
@@ -207,7 +207,7 @@ public class WindowCitizen extends Window implements Button.Handler
         if (citizen.getHealth() / 2 % 1 > 0)
         {
             @NotNull Image heart = new Image();
-            heart.setImage(Gui.icons, HALF_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
+            heart.setImage(Gui.ICONS, HALF_HEART_ICON_ROW_POS, HEART_ICON_COLUMN, HEART_ICON_HEIGHT_WIDTH, HEART_ICON_HEIGHT_WIDTH);
             heart.setPosition(heartPos * HEART_ICON_POS_X + HEART_ICON_OFFSET_X, HEART_ICON_POS_Y);
             findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
         }
@@ -227,11 +227,11 @@ public class WindowCitizen extends Window implements Button.Handler
         findPaneOfTypeByID(WINDOW_ID_XP, Label.class).setPosition(XP_LABEL_X, XP_LABEL_Y);
 
         @NotNull Image xpBar = new Image();
-        xpBar.setImage(Gui.icons, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT);
+        xpBar.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, XP_BAR_EMPTY_ROW, XP_BAR_WIDTH, XP_HEIGHT);
         xpBar.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
 
         @NotNull Image xpBar2 = new Image();
-        xpBar2.setImage(Gui.icons, XP_BAR_ICON_COLUMN_END, XP_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT);
+        xpBar2.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN_END, XP_BAR_EMPTY_ROW, XP_BAR_ICON_COLUMN_END_WIDTH, XP_HEIGHT);
         xpBar2.setPosition(XP_BAR_ICON_END_OFFSET + LEFT_BORDER_X, LEFT_BORDER_Y);
 
         findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBar);
@@ -240,7 +240,7 @@ public class WindowCitizen extends Window implements Button.Handler
         if (experienceRatio > 0)
         {
             @NotNull Image xpBarFull = new Image();
-            xpBarFull.setImage(Gui.icons, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT);
+            xpBarFull.setImage(Gui.ICONS, XP_BAR_ICON_COLUMN, XP_BAR_FULL_ROW, (int) experienceRatio, XP_HEIGHT);
             xpBarFull.setPosition(LEFT_BORDER_X, LEFT_BORDER_Y);
             findPaneOfTypeByID(WINDOW_ID_XPBAR, View.class).addChild(xpBarFull);
         }

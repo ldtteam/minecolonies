@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 
 final class SchematicUtil
 {
-    private static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.grass);
+    private static final ItemStack DEFAULT_ICON = new ItemStack(Blocks.GRASS);
 
     @NotNull
     public static ItemStack getIconFromNBT(final NBTTagCompound tagCompound)

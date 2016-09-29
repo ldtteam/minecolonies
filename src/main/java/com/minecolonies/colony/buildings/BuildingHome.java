@@ -9,7 +9,7 @@ import com.minecolonies.util.ServerUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,19 +28,6 @@ public class BuildingHome extends AbstractBuildingHut
     public BuildingHome(Colony c, BlockPos l)
     {
         super(c, l);
-    }
-
-    @NotNull
-    @Override
-    public String getSchematicName()
-    {
-        return CITIZEN;
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return 4;
     }
 
     @Override
@@ -63,6 +50,13 @@ public class BuildingHome extends AbstractBuildingHut
         }
     }
 
+    @NotNull
+    @Override
+    public String getSchematicName()
+    {
+        return CITIZEN;
+    }
+
     @Override
     public void writeToNBT(@NotNull NBTTagCompound compound)
     {
@@ -77,13 +71,6 @@ public class BuildingHome extends AbstractBuildingHut
             }
             compound.setIntArray(TAG_RESIDENTS, residentIds);
         }
-    }
-
-    @Override
-    public void setBuildingLevel(int level)
-    {
-        super.setBuildingLevel(level);
-        getColony().calculateMaxCitizens();
     }
 
     @Override
@@ -163,15 +150,15 @@ public class BuildingHome extends AbstractBuildingHut
     {
         super.onUpgradeComplete(newLevel);
 
-        @Nullable final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
+        @Nullable final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner(), getColony().getWorld());
 
         if (newLevel == 1)
         {
-            owner.triggerAchievement(ModAchievements.achievementBuildingColonist);
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingColonist);
         }
         if (newLevel >= this.getMaxBuildingLevel())
         {
-            owner.triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeColonistMax);
         }
     }
 
@@ -185,6 +172,19 @@ public class BuildingHome extends AbstractBuildingHut
         {
             buf.writeInt(citizen.getId());
         }
+    }
+
+    @Override
+    public void setBuildingLevel(int level)
+    {
+        super.setBuildingLevel(level);
+        getColony().calculateMaxCitizens();
+    }
+
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return 4;
     }
 
     /**

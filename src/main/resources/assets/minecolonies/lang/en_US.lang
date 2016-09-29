@@ -164,7 +164,8 @@ tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts i
 
 com.minecolonies.gui.workerHuts.workOrderAdded=Construction added to build queue.
 com.minecolonies.gui.workerHuts.workOrder=Work Orders
-
+achievement.upgrade.fisher.first=A fisherman.
+achievement.upgrade.fisher.max=The whale catcher!
 com.minecolonies.gui.inventory.scarecrow= Scarecrow
 entity.farmer.noSeedSet= Please define a seed to grow in the scarecrow.
 entity.farmer.NeedSeed= I need %s to plant.
@@ -177,3 +178,4 @@ com.minecolonies.gui.workerHuts.farmerHut.West=West
 com.minecolonies.gui.workerHuts.farmerHut.unused=unused
 com.minecolonies.gui.scarecrow.user=Field used by: %s
 com.minecolonies.gui.scarecrow.user.noone=no-one
+com.minecolonies.gui.buildtool.nohutininventory=The hut was not found in your inventory.

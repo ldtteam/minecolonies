@@ -1,16 +1,16 @@
-package com.minecolonies.util;
+package com.blockout;
 
-import com.minecolonies.lib.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Logging utility class
+ * Logging utility class.
  */
 public final class Log
 {
+
     /**
-     * Mod logger
+     * Mod logger.
      */
     private static Logger logger = null;
 
@@ -23,7 +23,7 @@ public final class Log
     }
 
     /**
-     * Getter for the minecolonies Logger.
+     * Getter for the blockout Logger.
      *
      * @return the logger.
      */
@@ -31,7 +31,7 @@ public final class Log
     {
         if (logger == null)
         {
-            Log.logger = LogManager.getLogger(Constants.MOD_ID);
+            Log.logger = LogManager.getLogger("Minecolonies:blockout");
         }
         return logger;
     }

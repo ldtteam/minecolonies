@@ -1,7 +1,7 @@
 package com.schematica.core.util;
 
 import com.google.common.collect.AbstractIterator;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

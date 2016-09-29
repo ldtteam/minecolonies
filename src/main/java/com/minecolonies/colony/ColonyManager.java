@@ -13,7 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -65,32 +65,25 @@ public final class ColonyManager
         @NotNull Colony colony = new Colony(topColonyId, w, pos);
         colonies.put(colony.getID(), colony);
 
-        if (!coloniesByWorld.containsKey(colony.getDimensionId()))
+        if (!coloniesByWorld.containsKey(colony.getDimension()))
         {
-            coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
+            coloniesByWorld.put(colony.getDimension(), new ArrayList<>());
         }
 
-        coloniesByWorld.get(colony.getDimensionId()).add(colony);
+        coloniesByWorld.get(colony.getDimension()).add(colony);
 
         String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
-        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
+        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER, w);
 
         colony.triggerAchievement(ModAchievements.achievementGetSupply);
         colony.triggerAchievement(ModAchievements.achievementBuildingTownhall);
 
         markDirty();
 
-        Log.logger.info(String.format("New Colony %d", colony.getID()));
+        Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
         return colony;
-    }
-
-    /**
-     * Syncs the achievements for all colonies.
-     */
-    public static void syncAllColoniesAchievements(){
-        colonies.values().forEach(AchievementUtils::syncAchievements);
     }
 
     /**
@@ -99,6 +92,14 @@ public final class ColonyManager
     public static void markDirty()
     {
         saveNeeded = true;
+    }
+
+    /**
+     * Syncs the achievements for all colonies.
+     */
+    public static void syncAllColoniesAchievements()
+    {
+        colonies.values().forEach(AchievementUtils::syncAchievements);
     }
 
     /**
@@ -132,9 +133,9 @@ public final class ColonyManager
         }
 
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius
-        if (coloniesByWorld.containsKey(w.provider.getDimensionId()))
+        if (coloniesByWorld.containsKey(w.provider.getDimension()))
         {
-            for (@NotNull Colony otherColony : coloniesByWorld.get(w.provider.getDimensionId()))
+            for (@NotNull Colony otherColony : coloniesByWorld.get(w.provider.getDimension()))
             {
                 AbstractBuilding building = otherColony.getBuilding(pos);
                 if (building != null)
@@ -156,7 +157,7 @@ public final class ColonyManager
      */
     public static Colony getColony(@NotNull World w, @NotNull BlockPos pos)
     {
-        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
+        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
         if (coloniesInWorld == null)
         {
             return null;
@@ -256,13 +257,13 @@ public final class ColonyManager
     public static ColonyView getClosestColonyView(@NotNull World w, @NotNull BlockPos pos)
     {
         @Nullable ColonyView closestColony = null;
-        float closestDist = Float.MAX_VALUE;
+        long closestDist = Long.MAX_VALUE;
 
         for (@NotNull ColonyView c : colonyViews.values())
         {
-            if (c.getDimensionId() == w.provider.getDimensionId())
+            if (c.getDimension() == w.provider.getDimension())
             {
-                float dist = c.getDistanceSquared(pos);
+                long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
                 {
                     closestColony = c;
@@ -283,20 +284,20 @@ public final class ColonyManager
      */
     private static Colony getClosestColony(@NotNull World w, @NotNull BlockPos pos)
     {
-        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
+        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
         if (coloniesInWorld == null)
         {
             return null;
         }
 
         @Nullable Colony closestColony = null;
-        float closestDist = Float.MAX_VALUE;
+        long closestDist = Long.MAX_VALUE;
 
         for (@NotNull Colony c : coloniesInWorld)
         {
-            if (c.getDimensionId() == w.provider.getDimensionId())
+            if (c.getDimension() == w.provider.getDimension())
             {
-                float dist = c.getDistanceSquared(pos);
+                long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
                 {
                     closestColony = c;
@@ -368,11 +369,17 @@ public final class ColonyManager
      * @param owner UUID of the owner
      * @return Colony that belong to given owner UUID
      */
-    private static IColony getColonyByOwner(UUID owner)
+    @Nullable
+    private static IColony getColonyByOwner(@Nullable UUID owner)
     {
+        if (owner == null)
+        {
+            return null;
+        }
+
         return colonies.values()
                  .stream()
-                 .filter(c -> c.getPermissions().getOwner().equals(owner))
+                 .filter(c -> owner.equals(c.getPermissions().getOwner()))
                  .findFirst()
                  .orElse(null);
     }
@@ -468,7 +475,7 @@ public final class ColonyManager
         }
         catch (IOException exception)
         {
-            Log.logger.error("Exception when saving ColonyManager", exception);
+            Log.getLogger().error("Exception when saving ColonyManager", exception);
         }
     }
 
@@ -495,8 +502,10 @@ public final class ColonyManager
     public static void onWorldTick(
                                     @NotNull TickEvent.WorldTickEvent event)
     {
-        colonies.values().stream()
-          .filter(c -> c.getDimensionId() == event.world.provider.getDimensionId())
+        final Map<Integer, Colony> coloniesCopy = new HashMap<>(colonies);
+
+        coloniesCopy.values().stream()
+          .filter(c -> c.getDimension() == event.world.provider.getDimension())
           .forEach(c -> c.onWorldTick(event));
     }
 
@@ -521,7 +530,7 @@ public final class ColonyManager
             }
             ++numWorldsLoaded;
 
-            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimensionId());
+            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimension());
             if (worldColonies != null)
             {
                 for (@NotNull Colony c : worldColonies)
@@ -530,7 +539,7 @@ public final class ColonyManager
                 }
             }
 
-            world.addWorldAccess(new ColonyManagerWorldAccess());
+            world.addEventListener(new ColonyManagerWorldAccess());
         }
     }
 
@@ -552,7 +561,7 @@ public final class ColonyManager
         }
         catch (IOException exception)
         {
-            Log.logger.error("Exception when loading ColonyManger", exception);
+            Log.getLogger().error("Exception when loading ColonyManger", exception);
         }
         return null;
     }
@@ -570,16 +579,16 @@ public final class ColonyManager
             @NotNull Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i));
             colonies.put(colony.getID(), colony);
 
-            if (!coloniesByWorld.containsKey(colony.getDimensionId()))
+            if (!coloniesByWorld.containsKey(colony.getDimension()))
             {
-                coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
+                coloniesByWorld.put(colony.getDimension(), new ArrayList<>());
             }
-            coloniesByWorld.get(colony.getDimensionId()).add(colony);
+            coloniesByWorld.get(colony.getDimension()).add(colony);
 
             topColonyId = Math.max(topColonyId, colony.getID());
         }
 
-        Log.logger.info(String.format("Loaded %d colonies", colonies.size()));
+        Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
     }
 
     /**
@@ -590,7 +599,7 @@ public final class ColonyManager
     public static void onWorldSave(@NotNull World world)
     {
         //We save when the first dimension is saved.
-        if (!world.isRemote && world.provider.getDimensionId() == 0)
+        if (!world.isRemote && world.provider.getDimension() == 0)
         {
             saveColonies();
         }
@@ -606,7 +615,7 @@ public final class ColonyManager
     {
         if (!world.isRemote)
         {
-            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimensionId());
+            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimension());
             if (worldColonies != null)
             {
                 for (@NotNull Colony c : worldColonies)
@@ -673,7 +682,7 @@ public final class ColonyManager
         }
         else
         {
-            Log.logger.error(String.format("Colony view does not exist for ID #%d", colonyID));
+            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyID));
             return null;
         }
     }
@@ -756,7 +765,7 @@ public final class ColonyManager
         }
         else
         {
-            Log.logger.error(String.format("Colony view does not exist for ID #%d", colonyId));
+            Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyId));
             return null;
         }
     }

@@ -1,8 +1,7 @@
 package com.blockout;
 
-import com.minecolonies.util.Log;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Node;
@@ -11,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.blockout.Log.getLogger;
 
 public class PaneParams
 {
@@ -252,7 +253,7 @@ public class PaneParams
         }
         catch (NumberFormatException | IndexOutOfBoundsException | IllegalStateException ex)
         {
-            Log.logger.warn(ex);
+            getLogger().warn(ex);
         }
 
         return def;

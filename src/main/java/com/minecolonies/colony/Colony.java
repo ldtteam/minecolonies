@@ -23,11 +23,10 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -103,7 +102,7 @@ public class Colony implements IColony
      */
     Colony(int id, @NotNull World w, BlockPos c)
     {
-        this(id, w.provider.getDimensionId());
+        this(id, w.provider.getDimension());
         center = c;
         world = w;
         this.permissions = new Permissions(this);
@@ -315,7 +314,7 @@ public class Colony implements IColony
      *
      * @return Dimension ID.
      */
-    public int getDimensionId()
+    public int getDimension()
     {
         return dimensionId;
     }
@@ -373,10 +372,9 @@ public class Colony implements IColony
     }
 
     @Override
-    public float getDistanceSquared(@NotNull BlockPos pos)
+    public long getDistanceSquared(@NotNull BlockPos pos)
     {
-        //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ()));
+        return BlockPosUtil.getDistanceSquared2D(center, pos);
     }
 
     @Override
@@ -390,6 +388,7 @@ public class Colony implements IColony
      *
      * @return Chunk Coordinates of the center of the colony.
      */
+    @Override
     public BlockPos getCenter()
     {
         return center;
@@ -418,7 +417,7 @@ public class Colony implements IColony
      */
     public void onWorldLoad(@NotNull World w)
     {
-        if (w.provider.getDimensionId() == dimensionId)
+        if (w.provider.getDimension() == dimensionId)
         {
             world = w;
         }
@@ -469,8 +468,8 @@ public class Colony implements IColony
 
         // Add owners
         subscribers.addAll(
-          MinecraftServer.getServer().getConfigurationManager().playerEntityList
-            .stream()
+                this.getWorld().getMinecraftServer().getPlayerList().getPlayerList()
+                        .stream()
             .filter(permissions::isSubscriber)
             .collect(Collectors.toList()));
 
@@ -717,7 +716,7 @@ public class Colony implements IColony
                 citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null)
                   .forEach(citizen ->
                   {
-                      Log.logger.warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
+                      Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
                       spawnCitizen(citizen);
                   });
             }
@@ -828,7 +827,7 @@ public class Colony implements IColony
             return;
         }
 
-        @Nullable BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, center, 1, 1, 1, 2, Blocks.air, Blocks.snow_layer);
+        @Nullable BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, center, 1, 1, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
 
         if (spawnPoint != null)
         {
@@ -995,7 +994,7 @@ public class Colony implements IColony
         }
         catch (ClassCastException e)
         {
-            Log.logger.warn("getBuilding called with wrong type: ", e);
+            Log.getLogger().warn("getBuilding called with wrong type: ", e);
             return null;
         }
     }
@@ -1033,14 +1032,14 @@ public class Colony implements IColony
             addBuilding(building);
             tileEntity.setBuilding(building);
 
-            Log.logger.info(String.format("Colony %d - new AbstractBuilding for %s at %s",
+            Log.getLogger().info(String.format("Colony %d - new AbstractBuilding for %s at %s",
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
         }
         else
         {
-            Log.logger.error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
+            Log.getLogger().error(String.format("Colony %d unable to create AbstractBuilding for %s at %s",
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
@@ -1099,7 +1098,7 @@ public class Colony implements IColony
                 MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(this, building.getID()), player);
             }
 
-            Log.logger.info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
+            Log.getLogger().info(String.format("Colony %d - removed AbstractBuilding %s of type %s",
               getID(),
               building.getID(),
               building.getSchematicName()));

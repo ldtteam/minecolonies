@@ -14,8 +14,9 @@ import com.schematica.client.util.RotationHelper;
 import com.schematica.world.storage.Schematic;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,11 +115,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private static final String HUT_PREFIX = ":blockHut";
 
-    private static final BlockPos DEFAULT_POS = new BlockPos(0, 0, 0);
-
     private static final int POSSIBLE_ROTATIONS = 4;
     private static final int ROTATE_RIGHT       = 1;
     private static final int ROTATE_LEFT        = 3;
+
+    /**
+     * Language key for missing hut message
+     */
+    private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
 
     /**
      * List of huts or decorations possible to make.
@@ -161,7 +165,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param pos coordinate
      */
-    public WindowBuildTool(@NotNull BlockPos pos)
+    public WindowBuildTool(@Nullable BlockPos pos)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
@@ -172,10 +176,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             rotation = Settings.instance.getRotation();
             level = Settings.instance.getLevel();
         }
-        else
+        else if (pos != null)
         {
             BlockPosUtil.set(this.pos, pos);
         }
+
 
         registerButton(BUTTON_TYPE_ID, this::placementModeClicked);
         registerButton(BUTTON_HUT_DEC_ID, this::hutDecClicked);
@@ -195,7 +200,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private static boolean inventoryHasHut(@NotNull InventoryPlayer inventory, String hut)
     {
-        return inventory.hasItem(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut).getItem(null, DEFAULT_POS));
+        return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
     }
 
     /**
@@ -446,8 +451,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void confirmClicked(Button button)
     {
-        MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
-                                                                          getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
+        if (hutDecIndex < hutDec.size())
+        {
+            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(hutDec.get(hutDecIndex),
+                                                                              getStyles().get(styleIndex), this.pos, rotation, Settings.instance.isInHutMode()));
+        }
+        else
+        {
+            LanguageHandler.sendPlayerLocalizedMessage(this.mc.thePlayer, WindowBuildTool.NO_HUT_IN_INVENTORY);
+        }
+
         Settings.instance.setActiveSchematic(null);
         close();
     }

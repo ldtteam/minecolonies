@@ -7,7 +7,7 @@ import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -66,17 +66,24 @@ public class WorkOrderBuild extends AbstractWorkOrder
         return upgradeName;
     }
 
-    @NotNull
+    /**
+     * Read the WorkOrder data from the NBTTagCompound.
+     *
+     * @param compound NBT Tag compound.
+     */
     @Override
-    protected WorkOrderType getType()
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
-        return WorkOrderType.BUILD;
-    }
-
-    @Override
-    protected String getValue()
-    {
-        return upgradeName;
+        super.readFromNBT(compound);
+        buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
+        if (!(this instanceof WorkOrderBuildDecoration))
+        {
+            upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
+            upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        }
+        cleared = compound.getBoolean(TAG_IS_CLEARED);
+        schematicName = compound.getString(TAG_SCHEMATIC_NAME);
+        buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
     }
 
     /**
@@ -97,26 +104,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
         compound.setBoolean(TAG_IS_CLEARED, cleared);
         compound.setString(TAG_SCHEMATIC_NAME, schematicName);
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
-    }
-
-    /**
-     * Read the WorkOrder data from the NBTTagCompound.
-     *
-     * @param compound NBT Tag compound.
-     */
-    @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        buildingLocation = BlockPosUtil.readFromNBT(compound, TAG_BUILDING);
-        if (!(this instanceof WorkOrderBuildDecoration))
-        {
-            upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
-            upgradeName = compound.getString(TAG_UPGRADE_NAME);
-        }
-        cleared = compound.getBoolean(TAG_IS_CLEARED);
-        schematicName = compound.getString(TAG_SCHEMATIC_NAME);
-        buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
     }
 
     /**
@@ -182,6 +169,19 @@ public class WorkOrderBuild extends AbstractWorkOrder
         }
 
         sendBuilderMessage(colony, hasBuilder, sendMessage);
+    }
+
+    @NotNull
+    @Override
+    protected WorkOrderType getType()
+    {
+        return WorkOrderType.BUILD;
+    }
+
+    @Override
+    protected String getValue()
+    {
+        return upgradeName;
     }
 
     /**

@@ -4,7 +4,6 @@ import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.creativetab.ModCreativeTabs;
-import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
@@ -14,8 +13,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -65,32 +66,33 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param playerIn the player placing.
      * @param worldIn  the world.
      * @param pos      the position.
-     * @param side     the direction it faces (not used).
+     * @param hand     the hand used
+     * @param facing   the direction it faces (not used).
      * @param hitX     the hitBox x position (not used).
      * @param hitY     the hitBox y position (not used).
      * @param hitZ     the hitBox z position (not used).
      * @return if the chest has been successfully placed.
      */
     @Override
-    public boolean onItemUse(@NotNull ItemStack stack, @Nullable EntityPlayer playerIn, @Nullable World worldIn, @NotNull BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
         if (worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
         {
-            return false;
+            return EnumActionResult.FAIL;
         }
 
-        @NotNull EnumFacing facing = canShipBePlaced(worldIn, pos);
-        if (facing != EnumFacing.DOWN)
+        @NotNull EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
+        if (enumfacing != EnumFacing.DOWN)
         {
-            spawnShip(worldIn, pos, playerIn, facing);
+            spawnShip(worldIn, pos, playerIn, enumfacing);
             stack.stackSize--;
 
-            playerIn.triggerAchievement(ModAchievements.achievementGetSupply);
+            playerIn.addStat(ModAchievements.achievementGetSupply);
 
-            return true;
+            return EnumActionResult.SUCCESS;
         }
         LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.supplyChestDeployer.invalid");
-        return false;
+        return EnumActionResult.FAIL;
     }
 
     /**
@@ -101,7 +103,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     boolean isFirstPlacing(@NotNull EntityPlayer player)
     {
-        if (Configurations.allowInfiniteSupplyChests || !PlayerProperties.get(player).hasPlacedSupplyChest())
+        if (Configurations.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
         {
             return true;
         }
@@ -154,12 +156,12 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private void spawnShip(@NotNull World world, @NotNull BlockPos pos, EntityPlayer entityPlayer, @NotNull EnumFacing chestFacing)
     {
-        world.setBlockState(pos.up(), Blocks.chest.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
+        world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
 
         placeSupplyShip(world, pos, chestFacing);
 
         fillChest((TileEntityChest) world.getTileEntity(pos.up()));
-        PlayerProperties.get(entityPlayer).placeSupplyChest();
+        //PlayerProperties.get(entityPlayer).placeSupplyChest();
     }
 
     /**
@@ -263,7 +265,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     {
         if (chest == null)
         {
-            Log.logger.error("Supply chest tile entity was null.");
+            Log.getLogger().error("Supply chest tile entity was null.");
             return;
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));

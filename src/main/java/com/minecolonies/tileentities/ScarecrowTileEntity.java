@@ -9,8 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -86,15 +85,15 @@ public class ScarecrowTileEntity extends TileEntityChest
 
     @NotNull
     @Override
-    public Packet getDescriptionPacket()
+    public SPacketUpdateTileEntity getUpdatePacket()
     {
         @NotNull final NBTTagCompound tag = new NBTTagCompound();
         writeToNBT(tag);
-        return new S35PacketUpdateTileEntity(this.getPos(), 0, tag);
+        return new SPacketUpdateTileEntity(this.getPos(), 0, tag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, @NotNull S35PacketUpdateTileEntity pkt)
+    public void onDataPacket(NetworkManager net, @NotNull SPacketUpdateTileEntity pkt)
     {
         readFromNBT(pkt.getNbtCompound());
     }
@@ -134,13 +133,14 @@ public class ScarecrowTileEntity extends TileEntityChest
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
         compound.setInteger(TAG_TYPE, this.getType().ordinal());
         getInventoryField().writeToNBT(compound);
         compound.setString(TAG_NAME, name);
+        return compound;
     }
 
     /**

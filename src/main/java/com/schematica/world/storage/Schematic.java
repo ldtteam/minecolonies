@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
 import org.jetbrains.annotations.NotNull;
@@ -20,17 +20,17 @@ import java.util.List;
 
 public class Schematic implements ISchematic
 {
-    private static final ItemStack                              DEFAULT_ICON   = new ItemStack(Blocks.grass);
+    private static final ItemStack                              DEFAULT_ICON   = new ItemStack(Blocks.GRASS);
     private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
     private final short[][][] blocks;
     private final byte[][][]  metadata;
     private final List<TileEntity> tileEntities = new ArrayList<>();
     private final List<Entity>     entities     = new ArrayList<>();
-    private final int width;
-    private final int height;
-    private final int length;
-    private       ItemStack   icon;
-    private BlockPos offset;
+    private final int       width;
+    private final int       height;
+    private final int       length;
+    private       ItemStack icon;
+    private       BlockPos  offset;
 
     public Schematic(final ItemStack icon, final int width, final int height, final int length)
     {
@@ -78,7 +78,7 @@ public class Schematic implements ISchematic
     {
         if (isInvalid(pos))
         {
-            return Blocks.air.getDefaultState();
+            return Blocks.AIR.getDefaultState();
         }
 
         final int x = pos.getX();

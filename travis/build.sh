@@ -12,7 +12,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ -n "${GITHUB_TOKEN:-}" ]; then
             
       echo "Start Build gradle..."
       
-      if ./gradlew build; then
+      if ./gradlew build -DXmx2g; then
             curl -H "Content-Type: application/json" -H "Authorization: token $GITHUB_TOKEN" \
                   --request POST \
                   --data '{"state":"success",

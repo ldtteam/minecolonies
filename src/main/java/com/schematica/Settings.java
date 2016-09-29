@@ -4,7 +4,7 @@ import com.minecolonies.util.BlockPosUtil;
 import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.client.world.SchematicWorld;
 import com.schematica.world.storage.Schematic;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -182,6 +182,6 @@ public final class Settings
     @NotNull
     public BlockPos getOffset()
     {
-        return offset.getImmutable();
+        return offset.toImmutable();
     }
 }

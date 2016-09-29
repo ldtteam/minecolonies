@@ -8,12 +8,14 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -37,6 +39,11 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
     private BlockPos pos;
 
     private boolean isHut;
+
+    /**
+     * Language key for missing hut message
+     */
+    private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
 
     /**
      * Empty constructor used when registering the message.
@@ -142,31 +149,50 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
     {
         if (Schematics.getStylesForHut(hut) == null)
         {
-            Log.logger.error("No record of hut: " + hut);
+            Log.getLogger().error("No record of hut: " + hut);
             return;
         }
 
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
 
-        if (player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
+        if (player.inventory.hasItemStack(new ItemStack(block)))
         {
-            world.destroyBlock(buildPos, true);
-            world.setBlockState(buildPos, block.getDefaultState());
-            block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);
-
-            player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));
-
-            @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
-
-            if (building != null)
+            if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
-                building.setStyle(style);
-                building.setRotation(rotation);
+                world.destroyBlock(buildPos, true);
+                world.setBlockState(buildPos, block.getDefaultState());
+                block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);
+
+                player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
+
+                @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
+
+                if (building == null)
+                {
+                    Log.getLogger().error("BuildTool: building is null!");
+                }
+                else
+                {
+                    if (building.getTileEntity() != null)
+                    {
+                        final Colony colony = ColonyManager.getColony(world, buildPos);
+                        if (colony == null)
+                        {
+                            Log.getLogger().info("No colony for " + player.getName());
+                        }
+                        else
+                        {
+                            building.getTileEntity().setColony(colony);
+                        }
+                    }
+                    building.setStyle(style);
+                    building.setRotation(rotation);
+                }
             }
-            else
-            {
-                Log.logger.error("BuildTool: building is null!");
-            }
+        }
+        else
+        {
+            LanguageHandler.sendPlayerLocalizedMessage(player, BuildToolPlaceMessage.NO_HUT_IN_INVENTORY);
         }
     }
 
@@ -184,7 +210,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
     {
         if (Schematics.getStylesForDecoration(decoration) == null)
         {
-            Log.logger.error("No record of decoration: " + decoration);
+            Log.getLogger().error("No record of decoration: " + decoration);
             return;
         }
 

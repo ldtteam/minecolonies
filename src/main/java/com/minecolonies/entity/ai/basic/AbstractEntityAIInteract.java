@@ -3,9 +3,10 @@ package com.minecolonies.entity.ai.basic;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,7 +33,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * The percentage of time needed if we are one level higher.
      */
-    private static final double LEVEL_MODIFIER       = 0.95D;
+    private static final double LEVEL_MODIFIER       = 0.85D;
     /**
      * The Multiplier to add to hand mining speed.
      */
@@ -80,13 +81,14 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     protected final boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
-        Block curBlock = world.getBlockState(blockToMine).getBlock();
+        IBlockState curBlockState = world.getBlockState(blockToMine);
+        Block curBlock = curBlockState.getBlock();
         if (curBlock == null
-              || curBlock.equals(Blocks.air)
+              || curBlock.equals(Blocks.AIR)
               || BlockUtils.shouldNeverBeMessedWith(curBlock))
         {
             if (curBlock != null
-                  && curBlock.getMaterial().isLiquid())
+                  && curBlockState.getMaterial().isLiquid())
             {
                 world.setBlockToAir(blockToMine);
             }
@@ -100,7 +102,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return false;
         }
 
-        final ItemStack tool = worker.getHeldItem();
+        final ItemStack tool = worker.getHeldItemMainhand();
 
         //calculate fortune enchantment
         int fortune = Utils.getFortuneOf(tool);
@@ -138,11 +140,11 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return true;
         }
 
-        ItemStack tool = worker.getHeldItem();
+        ItemStack tool = worker.getHeldItemMainhand();
 
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.bedrock)
+        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK)
         {
-            Log.logger.info(String.format(
+            Log.getLogger().info(String.format(
               "ForgeHook not in sync with EfficientTool for %s and %s\n"
                 + "Please report to MineColonies with this text to add support!",
               curBlock, tool
@@ -169,17 +171,14 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     private int getBlockMiningDelay(@NotNull final Block block, @NotNull final BlockPos pos)
     {
-        if (worker.getHeldItem() == null)
+        if (worker.getHeldItemMainhand() == null)
         {
-            return (int) block.getBlockHardness(world, pos) * HAND_MINING_MODIFIER;
+            return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
-        return (int) (
-                       (DELAY_MODIFIER * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
-                         * ((double) block.getBlockHardness(world, pos))
-                         / ((double) (worker.getHeldItem().getItem()
-                                        .getDigSpeed(
-                                          worker.getHeldItem(),
-                                          block.getDefaultState()
-                                        ))));
+        return (int) ((DELAY_MODIFIER * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
+                        * (double) world.getBlockState(pos).getBlockHardness(world, pos)
+                        / (double) (worker.getHeldItemMainhand().getItem()
+                                      .getStrVsBlock(worker.getHeldItemMainhand(),
+                                        block.getDefaultState())));
     }
 }
