@@ -194,6 +194,8 @@ public class Tree
      *
      * @param world The world the log is in.
      * @param log   the log to add.
+     *
+     * @return a tuple containing, first: bottom log and second: top log.
      */
     @NotNull
     private static Tuple<BlockPos, BlockPos> getBottomAndTopLog(@NotNull IBlockAccess world, @NotNull BlockPos log, @NotNull LinkedList<BlockPos> woodenBlocks, BlockPos bottomLog,
@@ -301,7 +303,7 @@ public class Tree
         Collections.sort(woodBlocks, (c1, c2) -> (int) (c1.distanceSq(location) - c2.distanceSq(location)));
         if (getStumpLocations().isEmpty())
         {
-            fillTreeStumps(world, location.getY());
+            fillTreeStumps(location.getY());
         }
     }
 
@@ -309,10 +311,9 @@ public class Tree
      * Checks if the tree has been planted from more than 1 saplings.
      * Meaning that more than 1 log is on the lowest level.
      *
-     * @param world  The world where the tree is in.
      * @param yLevel The base y.
      */
-    public void fillTreeStumps(@NotNull World world, int yLevel)
+    public void fillTreeStumps(int yLevel)
     {
         for (@NotNull BlockPos pos : woodBlocks)
         {
@@ -354,7 +355,7 @@ public class Tree
                 for (int z = -1; z <= 1; z++)
                 {
                     BlockPos temp = log.add(x, y, z);
-                    if (BlockPosUtil.getBlock(world, temp).isWood(null, new BlockPos(0, 0, 0)) && !woodBlocks.contains(temp))
+                    if (BlockPosUtil.getBlock(world, temp).isWood(null, temp) && !woodBlocks.contains(temp))
                     {
                         addAndSearch(world, temp);
                     }

@@ -414,7 +414,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean plantSapling(@NotNull BlockPos location)
     {
-        Block worldBlock = world.getBlockState(location).getBlock();
+        final Block worldBlock = world.getBlockState(location).getBlock();
         if (worldBlock != Blocks.AIR && !(worldBlock instanceof BlockSapling))
         {
             return false;
