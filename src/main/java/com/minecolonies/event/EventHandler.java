@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -23,11 +24,26 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+
 /**
  * Handles all forge events.
  */
 public class EventHandler
 {
+
+    /**
+     * Event called when the debug screen is opened.
+     * Event gets cancelled when there no permission to break a hut
+     *
+     * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent}
+     */
+    @SubscribeEvent
+    public void onDebugScreenObened(@NotNull RenderGameOverlayEvent.Text event)
+    {
+        System.out.println("workinnn");
+    }
+
     /**
      * Event when a block is broken
      * Event gets cancelled when there no permission to break a hut
