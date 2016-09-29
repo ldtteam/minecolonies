@@ -37,4 +37,6 @@ README.txt
 /minecolonies_Client.launch
 /minecolonies_Server.launch
 
+*.launch
+
 tools/.api_key
