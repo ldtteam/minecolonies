@@ -116,7 +116,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Vertical range in which the lumberjack picks up items
      */
-    private static final float RANGE_VERTICAL_PICKUP   = 15.0F;
+    private static final float RANGE_VERTICAL_PICKUP   = 3.0F;
     /**
      * How often should strength factor into the lumberjacks skill modifier.
      */
@@ -414,7 +414,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean plantSapling(@NotNull BlockPos location)
     {
-        if (BlockPosUtil.getBlock(world, location) != Blocks.AIR)
+        final Block worldBlock = world.getBlockState(location).getBlock();
+        if (worldBlock != Blocks.AIR && !(worldBlock instanceof BlockSapling))
         {
             return false;
         }
