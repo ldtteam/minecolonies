@@ -39,8 +39,18 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final BlockEvent.PlaceEvent event)
     {
-        if (checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getPlacedBlock())) {
-            event.setResult(Event.Result.DENY);
+        if (checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getPlacedBlock()))
+        {
+            cancelEvent(event);
+        }
+    }
+
+    private void cancelEvent(Event event)
+    {
+        event.setResult(Event.Result.DENY);
+        if (event.isCancelable())
+        {
+            event.setCanceled(true);
         }
     }
 
@@ -52,8 +62,9 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final BlockEvent.BreakEvent event)
     {
-        if (checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos()))) {
-            event.setResult(Event.Result.DENY);
+        if (checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos())))
+        {
+            cancelEvent(event);
         }
     }
 
@@ -68,7 +79,7 @@ public class ColonyPermissionEventHandler
         Log.getLogger().debug("ExplosionEvent.Detonate");
 
         // if block is in colony -> remove from list
-        for (BlockPos pos: event.getAffectedBlocks())
+        for (BlockPos pos : event.getAffectedBlocks())
         {
             if (colony.isCoordInColony(event.getWorld(), pos))
             {
@@ -78,9 +89,10 @@ public class ColonyPermissionEventHandler
         }
 
         // if entity is in colony -> remove from list
-        for (Entity entity: event.getAffectedEntities())
+        for (Entity entity : event.getAffectedEntities())
         {
-            if (colony.isCoordInColony(entity.getEntityWorld(), entity.getPosition())) {
+            if (colony.isCoordInColony(entity.getEntityWorld(), entity.getPosition()))
+            {
                 Log.getLogger().info("Found affected entity in colony, removing from affected list");
                 event.getAffectedEntities().remove(entity);
             }
@@ -88,8 +100,25 @@ public class ColonyPermissionEventHandler
     }
 
     /**
-     * PlayerInteractEvent handler.
+     * ExplosionEvent.Start handler.
      *
+     * @param event ExplosionEvent.Detonate
+     */
+    @SubscribeEvent
+    public void on(ExplosionEvent.Start event)
+    {
+        Log.getLogger().debug("ExplosionEvent.Start");
+        if (colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
+        {
+            Log.getLogger().info("Explosion in colony, removing!");
+            cancelEvent(event);
+        }
+
+    }
+
+    /**
+     * PlayerInteractEvent handler.
+     * <p>
      * Check, if a player right clicked a block.
      * Deny if:
      * - If the block is in colony
@@ -105,8 +134,6 @@ public class ColonyPermissionEventHandler
         if (colony.isCoordInColony(event.getWorld(), event.getPos()))
         {
             Log.getLogger().info("Coordinate is in colony");
-            //todo: check to what hand rightclick maps to
-            //if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
 
             final Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
 
@@ -114,17 +141,13 @@ public class ColonyPermissionEventHandler
             if (block instanceof AbstractBlockHut &&
                   !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_HUTS))
             {
-                //todo: hopefully that works
-                event.setResult(Event.Result.DENY);
+                cancelEvent(event);
             }
-
         }
     }
 
     /**
      * TODO Check this behavior
-     *
-     * @param event
      */
     @SubscribeEvent
     public void on(final PlayerContainerEvent.Open event)
@@ -163,10 +186,18 @@ public class ColonyPermissionEventHandler
 
             Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 
-            if (rank.ordinal() < Permissions.Rank.FRIEND.ordinal()) {
-                event.setResult(Event.Result.DENY);
+            if (rank.ordinal() < Permissions.Rank.FRIEND.ordinal())
+            {
+                /*
+                    this will delete the item entirely:
+                    Canceling the event will stop the items from entering the world,
+                    but will not prevent them being removed from the inventory
+                    - and thus removed from the system.
+                 */
+                cancelEvent(event);
             }
-        } else
+        }
+        else
         {
             Log.getLogger().info(String.format("Player `%s` is not inside colony `%s`", playerIn.getName(), colony.getName()));
         }
@@ -182,12 +213,6 @@ public class ColonyPermissionEventHandler
 
     /**
      * This method returns TRUE if this event should be denied.
-     *
-     * @param worldIn
-     * @param posIn
-     * @param playerIn
-     * @param blockState
-     * @return
      */
     private boolean checkBlockEventDenied(final World worldIn, final BlockPos posIn, final EntityPlayer playerIn, final IBlockState blockState)
     {
@@ -197,7 +222,8 @@ public class ColonyPermissionEventHandler
             Log.getLogger().info("Coordinate is inside colony");
 
             Log.getLogger().debug("Check if player `" + playerIn.getName() + "` is member of `" + this.colony.getName() + "`.");
-            if (colony.getPermissions().isColonyMember(playerIn)) {
+            if (colony.getPermissions().isColonyMember(playerIn))
+            {
                 Log.getLogger().info("Player `" + playerIn.getName() + "` is member");
                 final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 
@@ -210,7 +236,8 @@ public class ColonyPermissionEventHandler
                 }
 
                 Log.getLogger().debug("Check of block `" + blockState.getBlock().getRegistryName() + "` is instanceof `" + AbstractBlockHut.class.getSimpleName() + "`");
-                if (blockState.getBlock() instanceof AbstractBlockHut) {
+                if (blockState.getBlock() instanceof AbstractBlockHut)
+                {
                     Log.getLogger().info("The block is instance of `" + AbstractBlockHut.class.getSimpleName() + "`");
 
                     Log.getLogger().debug("Check if player `" + playerIn.getName() + "` has at least rank `" + Permissions.Rank.OFFICER + "`");
@@ -236,5 +263,4 @@ public class ColonyPermissionEventHandler
          */
         return false;
     }
-
 }
