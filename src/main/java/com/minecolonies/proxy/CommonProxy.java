@@ -10,7 +10,7 @@ import com.minecolonies.inventory.GuiHandler;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.ModSoundEvents;
+import com.minecolonies.sounds.ModSoundEvents;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
