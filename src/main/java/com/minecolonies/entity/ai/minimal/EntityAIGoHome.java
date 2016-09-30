@@ -1,7 +1,6 @@
 package com.minecolonies.entity.ai.minimal;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.sounds.CitizenSounds;
 import com.minecolonies.sounds.FishermanSounds;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.SoundUtils;
@@ -79,9 +78,9 @@ public class EntityAIGoHome extends EntityAIBase
      */
     private void playGoHomeSounds()
     {
-        Random rand = new Random();
+        final Random rand = new Random();
 
-        int chance = rand.nextInt(ONE_IN_A_THOUSAND);
+        final int chance = rand.nextInt(ONE_IN_A_THOUSAND);
 
         if(chance <= 1)
         {

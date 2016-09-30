@@ -624,7 +624,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
-            if(!(this.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP))
+            if(this.getDesiredActivity() != EntityCitizen.DesiredActivity.SLEEP)
             {
                 SoundUtils.playRandomSound(worldObj, this);
             }

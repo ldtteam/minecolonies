@@ -29,7 +29,7 @@ public final class SoundUtils
     /**
      * Random object.
      */
-    private static Random rand = new Random();
+    private static final Random rand = new Random();
 
     /**
      * Volume to play at.
@@ -42,7 +42,7 @@ public final class SoundUtils
     private static final int CHANCE_TO_PLAY_SOUND = 20*60*2;
 
     /**
-     * Private constructor to hide the implicit public one
+     * Private constructor to hide the implicit public one.
      */
     private SoundUtils()
     {
@@ -80,7 +80,7 @@ public final class SoundUtils
     }
 
     /**
-     * Play a sound at a certain position
+     * Play a sound at a certain position.
      * @param worldIn the world to play the sound in.
      * @param position the position to play the sound at.
      * @param event sound to play.
