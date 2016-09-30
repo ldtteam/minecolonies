@@ -39,6 +39,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final BlockEvent.PlaceEvent event)
     {
+        Log.getLogger().info("BlockEvent.PlaceEvent: "+event.getPos() + " | "+ event.getPlacedBlock());
         if (checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getPlacedBlock()))
         {
             cancelEvent(event);
@@ -76,7 +77,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(ExplosionEvent.Detonate event)
     {
-        Log.getLogger().debug("ExplosionEvent.Detonate");
+        Log.getLogger().info("ExplosionEvent.Detonate");
 
         // if block is in colony -> remove from list
         for (BlockPos pos : event.getAffectedBlocks())
@@ -107,7 +108,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(ExplosionEvent.Start event)
     {
-        Log.getLogger().debug("ExplosionEvent.Start");
+        Log.getLogger().info("ExplosionEvent.Start");
         if (colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
         {
             Log.getLogger().info("Explosion in colony, removing!");
@@ -130,10 +131,10 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent event)
     {
-        Log.getLogger().debug("Check if coordinate is in colony `" + this.colony.getName() + "`");
+        Log.getLogger().info("Check if coordinate is in colony `" + this.colony.getName() + "`");
         if (colony.isCoordInColony(event.getWorld(), event.getPos()))
         {
-            Log.getLogger().info("Coordinate is in colony");
+            Log.getLogger().info("Rightclick Coordinate is in `" + this.colony.getName() + "`");
 
             final Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
 
@@ -179,10 +180,10 @@ public class ColonyPermissionEventHandler
     {
         final EntityPlayer playerIn = event.getPlayer();
 
-        Log.getLogger().debug(String.format("Check if playerIn `%s` is inside colony `%s`", playerIn.getName(), colony.getName()));
+        Log.getLogger().info(String.format("Check if playerIn `%s` is inside colony `%s`", playerIn.getName(), colony.getName()));
         if (colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
         {
-            Log.getLogger().debug(String.format("Check if playerIn `%s` has at least Rank `%s`", playerIn.getName(), colony.getName()));
+            Log.getLogger().info(String.format("Check if playerIn `%s` has at least Rank `%s`", playerIn.getName(), colony.getName()));
 
             Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 
@@ -216,50 +217,52 @@ public class ColonyPermissionEventHandler
      */
     private boolean checkBlockEventDenied(final World worldIn, final BlockPos posIn, final EntityPlayer playerIn, final IBlockState blockState)
     {
-        Log.getLogger().debug("Check if coordinate is in colony `" + this.colony.getName() + "`");
+        Log.getLogger().info("Check if coordinate is in colony `" + this.colony.getName() + "`");
         if (colony.isCoordInColony(worldIn, posIn))
         {
-            Log.getLogger().info("Coordinate is inside colony");
+            Log.getLogger().info("Coordinate is inside `" + this.colony.getName() + "`");
 
-            Log.getLogger().debug("Check if player `" + playerIn.getName() + "` is member of `" + this.colony.getName() + "`.");
+            Log.getLogger().info("Check if player `" + playerIn.getName() + "` is member of `" + this.colony.getName() + "`.");
             if (colony.getPermissions().isColonyMember(playerIn))
             {
                 Log.getLogger().info("Player `" + playerIn.getName() + "` is member");
                 final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 
-                Log.getLogger().debug("Check if player `" + playerIn.getName() + "` has at least rank `" + Permissions.Rank.NEUTRAL + "`");
+                Log.getLogger().info("Check if player `" + playerIn.getName() + "` has at least rank `" + Permissions.Rank.NEUTRAL + "`");
                 if (rank.ordinal() >= Permissions.Rank.NEUTRAL.ordinal())
                 {
-                    Log.getLogger().info("Player `" + playerIn.getName() + "` has no permission to place/break a block in `" + this.colony.getName() + "`");
+                    Log.getLogger().info("Player `" + playerIn.getName() + "` has no permission to place/break a block in `" + this.colony.getName() + "` - DENY");
 
                     return true;
                 }
 
-                Log.getLogger().debug("Check of block `" + blockState.getBlock().getRegistryName() + "` is instanceof `" + AbstractBlockHut.class.getSimpleName() + "`");
+                Log.getLogger().info("Check of block `" + blockState.getBlock().getRegistryName() + "` is instanceof `" + AbstractBlockHut.class.getSimpleName() + "`");
                 if (blockState.getBlock() instanceof AbstractBlockHut)
                 {
                     Log.getLogger().info("The block is instance of `" + AbstractBlockHut.class.getSimpleName() + "`");
 
-                    Log.getLogger().debug("Check if player `" + playerIn.getName() + "` has at least rank `" + Permissions.Rank.OFFICER + "`");
+                    Log.getLogger().info("Check if player `" + playerIn.getName() + "` has at least rank `" + Permissions.Rank.OFFICER + "`");
                     if (rank.ordinal() >= Permissions.Rank.OFFICER.ordinal())
                     {
+                        Log.getLogger().info("Player `" + playerIn.getName() + "` is no officer and cannot change huts in `" + this.colony.getName() + "` - DENY");
                         return true;
                     }
                 }
+                Log.getLogger().info("Player `" + playerIn.getName() + "` has permissions for `" + this.colony.getName() + "` - PASS");
+
             }
             else
             {
-                Log.getLogger().info("Player `" + playerIn.getName() + "` is not a member of `" + this.colony.getName() + "`");
+                Log.getLogger().info("Player `" + playerIn.getName() + "` is not a member of `" + this.colony.getName() + "` - DENY");
+                return true;
             }
         }
         else
         {
-            Log.getLogger().info("The coordinate is not inside `" + this.colony.getName() + "`");
+            Log.getLogger().info("The coordinate is not inside `" + this.colony.getName() + "` - PASS");
         }
         /*
          * - We are not inside the colony
-         * - We are not a member
-         * - We are an officer or owner
          */
         return false;
     }
