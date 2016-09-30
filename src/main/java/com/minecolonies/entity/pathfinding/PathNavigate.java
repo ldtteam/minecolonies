@@ -182,6 +182,12 @@ public class PathNavigate extends PathNavigateGround
 
             try
             {
+                if(future.get() == null)
+                {
+                    future = null;
+                    return;
+                }
+
                 setPath(future.get(), walkSpeed);
 
                 pathResult.setPathLength(getPath().getCurrentPathLength());
