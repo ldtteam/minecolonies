@@ -615,6 +615,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
+            if(!this.getStatus().equals(Status.SLEEPING))
+            {
+                SoundUtils.playRandomSound(worldObj, this);
+            }
         }
 
         if (isEntityInsideOpaqueBlock() || isInsideOfMaterial(Material.leaves))
