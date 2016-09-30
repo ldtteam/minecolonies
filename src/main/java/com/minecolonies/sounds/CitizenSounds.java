@@ -5,8 +5,6 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.Random;
-
 /**
  * Class used to store the basic citizen sounds.
  */
