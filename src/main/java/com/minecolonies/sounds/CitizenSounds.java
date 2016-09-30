@@ -25,7 +25,7 @@ public class CitizenSounds
     /**
      * Chance to say a phrase.
      */
-    private static final int PHRASE_CHANCE = 25;
+    private static final int PHRASE_CHANCE = 50;
 
     /**
      * Chance to play a basic sound.
@@ -62,7 +62,7 @@ public class CitizenSounds
     {
         if(isFemale)
         {
-            switch (rand.nextInt(NUMBER_OF_SOUNDS))
+            switch (rand.nextInt(NUMBER_OF_SOUNDS+1))
             {
                 case 1:
                     SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.say1, PHRASE_CHANCE);
@@ -77,7 +77,7 @@ public class CitizenSounds
         }
         else
         {
-            switch (rand.nextInt(NUMBER_OF_SOUNDS))
+            switch (rand.nextInt(NUMBER_OF_SOUNDS+1))
             {
                 case 1:
                     SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.say1, PHRASE_CHANCE);

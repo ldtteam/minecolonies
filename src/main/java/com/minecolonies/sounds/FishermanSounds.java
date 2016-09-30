@@ -51,7 +51,7 @@ public class FishermanSounds
         public static SoundEvent lovelyDay;
         public static SoundEvent needFishingRod;
         public static SoundEvent notBitingToday;
-        public static SoundEvent offToBed; //todo
+        public static SoundEvent offToBed;
         public static SoundEvent offToFish;
         public static SoundEvent rowYourBoat;
         public static SoundEvent sighs;
@@ -79,7 +79,7 @@ public class FishermanSounds
     {
         if(isFemale)
         {
-            switch(rand.nextInt(NUMBER_OF_SOUNDS))
+            switch(rand.nextInt(NUMBER_OF_SOUNDS+1))
             {
                 case 1:
                     SoundUtils.playSoundAtCitizenWithChance(worldIn, position, FishermanSounds.Female.callingItADay, PHRASE_CHANCE);
