@@ -9,6 +9,7 @@ import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.util.InventoryUtils;
+import com.minecolonies.util.SoundUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -461,6 +462,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
+            SoundUtils.playRandomSound(world, this.getCitizen());
             if (random.nextDouble() < CHANCE_NEW_POND)
             {
                 job.setWater(null);
