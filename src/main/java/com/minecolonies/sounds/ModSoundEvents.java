@@ -38,13 +38,13 @@ public class ModSoundEvents
         FishermanSounds.Female.workWorkWork = registerSound("mob.fisherman.female.workWorkWork");
         FishermanSounds.Female.yawns = registerSound("mob.fisherman.female.yawns");
 
-        CitizenSounds.Female.say1 = registerSound("mob.citizen.female.say.1");
-        CitizenSounds.Female.say2 = registerSound("mob.citizen.female.say.2");
-        CitizenSounds.Female.say3 = registerSound("mob.citizen.female.say.3");
+        CitizenSounds.Female.say1 = registerSound("mob.citizen.female.say1");
+        CitizenSounds.Female.say2 = registerSound("mob.citizen.female.say2");
+        CitizenSounds.Female.say3 = registerSound("mob.citizen.female.say3");
 
-        CitizenSounds.Male.say1 = registerSound("mob.citizen.male.say.1");
-        CitizenSounds.Male.say2 = registerSound("mob.citizen.male.say[1]");
-        CitizenSounds.Male.say3 = registerSound("mob.citizen.male.say");
+        CitizenSounds.Male.say1 = registerSound("mob.citizen.male.say1");
+        CitizenSounds.Male.say2 = registerSound("mob.citizen.male.say2");
+        CitizenSounds.Male.say3 = registerSound("mob.citizen.male.say3");
     }
 
     /**

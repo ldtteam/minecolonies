@@ -166,34 +166,54 @@
       }
     ]
   },
-  "mob.citizen.female.say": {
+  "mob.citizen.female.say1": {
     "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/citizen/female/say1",
         "stream": false
-      },
-      {
-        "name": "minecolonies:mob/citizen/female/say2",
-        "stream": false
-      },
+      }
+    ]
+  },
+  "mob.citizen.female.say2": {
+    "category": "neutral",
+    "sounds": [
       {
         "name": "minecolonies:mob/citizen/female/say2",
         "stream": false
       }
     ]
   },
-  "mob.citizen.male.say": {
+  "mob.citizen.female.say3": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.citizen.male.say1": {
     "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/citizen/male/say1",
         "stream": false
-      },
+      }
+    ]
+  },
+  "mob.citizen.male.say2": {
+    "category": "neutral",
+    "sounds": [
       {
         "name": "minecolonies:mob/citizen/male/say2",
         "stream": false
-      },
+      }
+    ]
+  },
+  "mob.citizen.male.say3": {
+    "category": "neutral",
+    "sounds": [
       {
         "name": "minecolonies:mob/citizen/male/say3",
         "stream": false

@@ -34,7 +34,7 @@ public final class SoundUtils
     /**
      * in average 1 minute to the next sound which are 20 ticks the second * 60 seconds * 1 minute.
      */
-    private static final int CHANCE_TO_PLAY_SOUND = 20*60*1;
+    private static final int CHANCE_TO_PLAY_SOUND = 20*60*2;
 
     /**
      * Private constructor to hide the implicit public one
@@ -50,7 +50,7 @@ public final class SoundUtils
      */
     public static void playRandomSound(World worldIn, EntityCitizen citizen)
     {
-        if(2 > rand.nextInt(CHANCE_TO_PLAY_SOUND))
+        if(1 >= rand.nextInt(CHANCE_TO_PLAY_SOUND))
         {
             String prefix = "";
 
@@ -103,7 +103,8 @@ public final class SoundUtils
                     event,
                     SoundCategory.NEUTRAL,
                     (float) VOLUME,
-                    0.8F);
+                    0.9F);
+            Log.getLogger().info("Sound: " + event.getSoundName() + " played at: " + position);
         }
     }
 }
