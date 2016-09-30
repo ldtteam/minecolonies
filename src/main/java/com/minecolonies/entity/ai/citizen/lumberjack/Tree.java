@@ -121,6 +121,8 @@ public class Tree
             }
 
             woodBlocks = new LinkedList<>();
+            location = log;
+            topLog = log;
 
             addAndSearch(world, log);
 
