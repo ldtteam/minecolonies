@@ -22,6 +22,11 @@ public final class SoundUtils
     private static final int ONE_HUNDRED = 100;
 
     /**
+     * Standard pitch value.
+     */
+    private static final double PITCH = 0.9D;
+
+    /**
      * Random object.
      */
     private static Random rand = new Random();
@@ -41,6 +46,9 @@ public final class SoundUtils
      */
     private SoundUtils()
     {
+        /**
+         * Intentionally left empty.
+         */
     }
 
     /**
@@ -84,7 +92,7 @@ public final class SoundUtils
                 event,
                 SoundCategory.NEUTRAL,
                 (float) VOLUME,
-                (float) ((rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
+                (float) PITCH);
     }
 
     /**
@@ -103,8 +111,7 @@ public final class SoundUtils
                     event,
                     SoundCategory.NEUTRAL,
                     (float) VOLUME,
-                    0.9F);
-            Log.getLogger().info("Sound: " + event.getSoundName() + " played at: " + position);
+                    (float) PITCH);
         }
     }
 }

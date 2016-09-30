@@ -166,54 +166,34 @@
       }
     ]
   },
-  "mob.citizen.female.say1": {
+  "mob.citizen.female.say": {
     "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/citizen/female/say1",
         "stream": false
-      }
-    ]
-  },
-  "mob.citizen.female.say2": {
-    "category": "neutral",
-    "sounds": [
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
       {
         "name": "minecolonies:mob/citizen/female/say2",
         "stream": false
       }
     ]
   },
-  "mob.citizen.female.say3": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/citizen/female/say3",
-        "stream": false
-      }
-    ]
-  },
-  "mob.citizen.male.say1": {
+  "mob.citizen.male.say": {
     "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/citizen/male/say1",
         "stream": false
-      }
-    ]
-  },
-  "mob.citizen.male.say2": {
-    "category": "neutral",
-    "sounds": [
+      },
       {
         "name": "minecolonies:mob/citizen/male/say2",
         "stream": false
-      }
-    ]
-  },
-  "mob.citizen.male.say3": {
-    "category": "neutral",
-    "sounds": [
+      },
       {
         "name": "minecolonies:mob/citizen/male/say3",
         "stream": false
@@ -382,132 +362,95 @@
       }
     ]
   },
-  "mob.fisherman.female.callingItADay": {
+
+  "mob.fisherman.female.generalPhrases": {
     "category": "neutral",
     "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/female/workWorkWork",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/theresFishToCatch",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/rowYourBoat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/offToFish",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/notBitingToday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/lovelyDay",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/lousyWheather",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/haveAGoodDay",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/goodDayToYou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/fishingWeWillGo",
+        "stream": false
+      },
       {
         "name": "minecolonies:mob/fisherman/female/callingItADay",
         "stream": false
       }
     ]
   },
-  "mob.fisherman.female.cheers": {
+
+  "mob.fisherman.female.noise": {
     "category": "neutral",
     "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/female/yawns",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/sniffles",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/sighs",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/ho_hum",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/hey",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/grumbles",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/coughs",
+        "stream": false
+      },
       {
         "name": "minecolonies:mob/fisherman/female/cheers",
         "stream": false
       }
     ]
   },
-  "mob.fisherman.female.coughs": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/coughs",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.fishingWeWillGo": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/fishingWeWillGo",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.goodDayToYou": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/goodDayToYou",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.grumbles": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/grumbles",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.haveAGoodDay": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/haveAGoodDay",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.hey": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/hey",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.ho_hum": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/ho_hum",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.iGotOne": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/iGotOne",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.lousyWheather": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/lousyWheather",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.lovelyDay": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/lovelyDay",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.needFishingRod": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/needFishingRod",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.notBitingToday": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/notBitingToday",
-        "stream": false
-      }
-    ]
-  },
+
   "mob.fisherman.female.offToBed": {
     "category": "neutral",
     "sounds": [
@@ -517,65 +460,22 @@
       }
     ]
   },
-  "mob.fisherman.female.offToFish": {
+
+  "mob.fisherman.female.needFishingRod": {
     "category": "neutral",
     "sounds": [
       {
-        "name": "minecolonies:mob/fisherman/female/offToFish",
+        "name": "minecolonies:mob/fisherman/female/needFishingRod",
         "stream": false
       }
     ]
   },
-  "mob.fisherman.female.rowYourBoat": {
+  
+  "mob.fisherman.female.iGotOne": {
     "category": "neutral",
     "sounds": [
       {
-        "name": "minecolonies:mob/fisherman/female/rowYourBoat",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.sighs": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/sighs",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.sniffles": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/sniffles",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.theresFishToCatch": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/theresFishToCatch",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.workWorkWork": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/workWorkWork",
-        "stream": false
-      }
-    ]
-  },
-  "mob.fisherman.female.yawns": {
-    "category": "neutral",
-    "sounds": [
-      {
-        "name": "minecolonies:mob/fisherman/female/yawns",
+        "name": "minecolonies:mob/fisherman/female/iGotOne",
         "stream": false
       }
     ]

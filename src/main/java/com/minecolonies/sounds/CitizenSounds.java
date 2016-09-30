@@ -13,33 +13,16 @@ import java.util.Random;
 public class CitizenSounds
 {
     /**
-     * Random generator.
-     */
-    private static Random rand = new Random();
-
-    /**
-     * Number of different sounds in this class.
-     */
-    private static final int NUMBER_OF_SOUNDS = 3;
-
-    /**
      * Chance to say a phrase.
      */
     private static final int PHRASE_CHANCE = 50;
-
-    /**
-     * Chance to play a basic sound.
-     */
-    private static final int BASIC_SOUND_CHANCE = 100;
 
     /**
      * The citizen sound events for the females.
      */
     public static class Female
     {
-        public static SoundEvent say1;
-        public static SoundEvent say2;
-        public static SoundEvent say3;
+        public static SoundEvent say;
     }
 
     /**
@@ -47,9 +30,7 @@ public class CitizenSounds
      */
     public static class Male
     {
-        public static SoundEvent say1;
-        public static SoundEvent say2;
-        public static SoundEvent say3;
+        public static SoundEvent say;
     }
 
     /**
@@ -62,33 +43,11 @@ public class CitizenSounds
     {
         if(isFemale)
         {
-            switch (rand.nextInt(NUMBER_OF_SOUNDS+1))
-            {
-                case 1:
-                    SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.say1, PHRASE_CHANCE);
-                    break;
-                case 2:
-                    SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.say2, PHRASE_CHANCE);
-                    break;
-                case 3:
-                    SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.say3, PHRASE_CHANCE);
-                    break;
-            }
+            SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.say, PHRASE_CHANCE);
         }
         else
         {
-            switch (rand.nextInt(NUMBER_OF_SOUNDS+1))
-            {
-                case 1:
-                    SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.say1, PHRASE_CHANCE);
-                    break;
-                case 2:
-                    SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.say2, PHRASE_CHANCE);
-                    break;
-                case 3:
-                    SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.say3, PHRASE_CHANCE);
-                    break;
-            }
+            SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.say, PHRASE_CHANCE);
         }
     }
 
