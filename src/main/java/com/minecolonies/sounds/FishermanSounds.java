@@ -1,8 +1,8 @@
 package com.minecolonies.sounds;
 
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.util.SoundUtils;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Random;
@@ -47,12 +47,12 @@ public final class FishermanSounds
      */
     public static final class Female
     {
-        public static final SoundEvent generalPhrases = ModSoundEvents.registerSound("mob.fisherman.female.generalPhrases");
-        public static final SoundEvent noises = ModSoundEvents.registerSound("mob.fisherman.female.noise");
-        public static final SoundEvent iGotOne = ModSoundEvents.registerSound("mob.fisherman.female.iGotOne");
-        public static final SoundEvent needFishingRod = ModSoundEvents.registerSound("mob.fisherman.female.needFishingRod");
-        public static final SoundEvent offToBed = ModSoundEvents.registerSound("mob.fisherman.female.offToBed");
-        public static final SoundEvent badWeather = ModSoundEvents.registerSound("mob.fisherman.female.badWeather");
+        public static final String generalPhrases = Constants.MOD_ID + ":mob.fisherman.female.generalPhrases";
+        public static final String noises = Constants.MOD_ID + ":mob.fisherman.female.noise";
+        public static final String iGotOne = Constants.MOD_ID + ":mob.fisherman.female.iGotOne";
+        public static final String needFishingRod = Constants.MOD_ID + ":mob.fisherman.female.needFishingRod";
+        public static final String offToBed = Constants.MOD_ID + ":mob.fisherman.female.offToBed";
+        public static final String badWeather = Constants.MOD_ID + ":mob.fisherman.female.badWeather";
 
         /**
          * Private constructor to hide the implicit public one.
@@ -70,12 +70,12 @@ public final class FishermanSounds
      */
     public static final class Male
     {
-        public static final SoundEvent generalPhrases = ModSoundEvents.registerSound("mob.fisherman.male.generalPhrases");
-        public static final SoundEvent noises = ModSoundEvents.registerSound("mob.fisherman.male.noise");
-        public static final SoundEvent iGotOne = ModSoundEvents.registerSound("mob.fisherman.male.iGotOne");
-        public static final SoundEvent needFishingRod = ModSoundEvents.registerSound("mob.fisherman.male.needFishingRod");
-        public static final SoundEvent offToBed = ModSoundEvents.registerSound("mob.fisherman.male.offToBed");
-        public static final SoundEvent badWeather = ModSoundEvents.registerSound("mob.fisherman.male.badWeather");
+        public static final String generalPhrases = Constants.MOD_ID + ":mob.fisherman.male.generalPhrases";
+        public static final String noises = Constants.MOD_ID + ":mob.fisherman.male.noise";
+        public static final String iGotOne = Constants.MOD_ID + ":mob.fisherman.male.iGotOne";
+        public static final String needFishingRod = Constants.MOD_ID + ":mob.fisherman.male.needFishingRod";
+        public static final String offToBed = Constants.MOD_ID + ":mob.fisherman.male.offToBed";
+        public static final String badWeather = Constants.MOD_ID + ":mob.fisherman.male.badWeather";
 
         /**
          * Private constructor to hide the implicit public one.
@@ -91,21 +91,21 @@ public final class FishermanSounds
     /**
      * Plays fisherman sounds.
      * @param worldIn the world to play the sound in.
-     * @param position the position to play the sound at.
+     * @param citizen the entity to play the sound at.
      * @param isFemale the gender.
      */
-    public static void playFishermanSound(World worldIn, BlockPos position, boolean isFemale)
+    public static void playFishermanSound(World worldIn, EntityCitizen citizen, boolean isFemale)
     {
         //Leaving it as switch-case we may add further random sound categories here (Whistling, singing, etc).
         switch (rand.nextInt(NUMBER_OF_SOUNDS + 1))
         {
             case 1:
-                final SoundEvent generalPhrases = isFemale ? FishermanSounds.Female.generalPhrases : FishermanSounds.Male.generalPhrases;
-                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, generalPhrases, PHRASE_CHANCE);
+                final String generalPhrases = isFemale ? FishermanSounds.Female.generalPhrases : FishermanSounds.Male.generalPhrases;
+                SoundUtils.playSoundAtCitizenWithChance(worldIn, citizen, generalPhrases, PHRASE_CHANCE);
                 break;
             case 2:
-                final SoundEvent noises = isFemale ? FishermanSounds.Female.noises : FishermanSounds.Male.noises;
-                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, noises, BASIC_SOUND_CHANCE);
+                final String noises = isFemale ? FishermanSounds.Female.noises : FishermanSounds.Male.noises;
+                SoundUtils.playSoundAtCitizenWithChance(worldIn, citizen, noises, BASIC_SOUND_CHANCE);
                 break;
         }
     }

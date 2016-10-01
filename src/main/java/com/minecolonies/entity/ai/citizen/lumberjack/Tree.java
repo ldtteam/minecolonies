@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai.citizen.lumberjack;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockNewLog;
+import net.minecraft.block.BlockOldLog;
 import net.minecraft.block.BlockPlanks;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -10,7 +11,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -186,8 +186,8 @@ public class Tree
         final BlockPos basePos = baseAndTOp.getFirst();
 
         //Make sure tree is on solid ground and tree is not build above cobblestone.
-        return world.getBlockState(basePos.down()).getMaterial().isSolid()
-                 && world.getBlockState(basePos.down()).getBlock() != Blocks.COBBLESTONE
+        return world.getBlockState(basePos.down()).getBlock().getMaterial().isSolid()
+                 && world.getBlockState(basePos.down()).getBlock() != Blocks.cobblestone
                  && hasEnoughLeaves(world, baseAndTOp.getSecond());
     }
 
@@ -249,7 +249,7 @@ public class Tree
             {
                 for (int dy = -1; dy <= 1; dy++)
                 {
-                    if (world.getBlockState(topPos.add(dx, dy, dz)).getBlock().getMaterial().equals(Material.leaves))
+                    if (world.getBlockState(pos.add(dx, dy, dz)).getBlock().getMaterial().equals(Material.leaves))
                     {
                         leafCount++;
                         if (leafCount >= NUMBER_OF_LEAVES)

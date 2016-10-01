@@ -1,8 +1,8 @@
 package com.minecolonies.sounds;
 
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.util.SoundUtils;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
@@ -29,7 +29,7 @@ public final class CitizenSounds
      */
     public static final class Female
     {
-        public static final SoundEvent say = ModSoundEvents.registerSound("mob.citizen.female.say");
+        public static final String say = Constants.MOD_ID + ":mob.citizen.female.say";
 
 
         /**
@@ -48,7 +48,7 @@ public final class CitizenSounds
      */
     public static final class Male
     {
-        public static final SoundEvent say = ModSoundEvents.registerSound("mob.citizen.male.say");
+        public static final String say = Constants.MOD_ID + ":mob.citizen.male.say";
 
         /**
          * Private constructor to hide the implicit public one.
@@ -64,18 +64,18 @@ public final class CitizenSounds
     /**
      * Plays citizen sounds.
      * @param worldIn the world to play the sound in.
-     * @param position the position to play the sound at.
+     * @param citizen the citizen to play the sound at.
      * @param isFemale the gender.
      */
-    public static void playCitizenSounds(World worldIn, BlockPos position, boolean isFemale)
+    public static void playCitizenSounds(World worldIn, EntityCitizen citizen, boolean isFemale)
     {
         if(isFemale)
         {
-            SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.say, PHRASE_CHANCE);
+            SoundUtils.playSoundAtCitizenWithChance(worldIn, citizen, Female.say, PHRASE_CHANCE);
         }
         else
         {
-            SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.say, PHRASE_CHANCE);
+            SoundUtils.playSoundAtCitizenWithChance(worldIn, citizen, Male.say, PHRASE_CHANCE);
         }
     }
 

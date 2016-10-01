@@ -3,10 +3,6 @@ package com.minecolonies.util;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.sounds.CitizenSounds;
 import com.minecolonies.sounds.FishermanSounds;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,10 +67,10 @@ public final class SoundUtils
             switch (prefix)
             {
                 case "Fisherman":
-                    FishermanSounds.playFishermanSound(worldIn, citizen.getPosition(), citizen.isFemale());
+                    FishermanSounds.playFishermanSound(worldIn, citizen, citizen.isFemale());
                     break;
                 default:
-                    CitizenSounds.playCitizenSounds(worldIn, citizen.getPosition(), citizen.isFemale());
+                    CitizenSounds.playCitizenSounds(worldIn, citizen, citizen.isFemale());
                     break;
             }
         }
@@ -83,36 +79,27 @@ public final class SoundUtils
     /**
      * Play a sound at a certain position.
      * @param worldIn the world to play the sound in.
-     * @param position the position to play the sound at.
+     * @param citizen the citizen to play the sound at.
      * @param event sound to play.
      */
-    public static void playSoundAtCitizen(@NotNull World worldIn, @NotNull BlockPos position, @NotNull SoundEvent event)
+    public static void playSoundAtCitizen(@NotNull World worldIn, @NotNull EntityCitizen citizen, @NotNull String event)
     {
-        worldIn.playSound((EntityPlayer) null,
-                position,
-                event,
-                SoundCategory.NEUTRAL,
-                (float) VOLUME,
-                (float) PITCH);
+        worldIn.playSoundAtEntity(citizen, event, (float) VOLUME, (float) PITCH);
     }
 
     /**
      * Plays a sound with a certain chance at a certain position.
      * @param worldIn the world to play the sound in.
-     * @param position position to play the sound at.
+     * @param citizen citizen to play the sound at.
      * @param event sound to play.
      * @param chance chance in percent.
      */
-    public static void playSoundAtCitizenWithChance(@NotNull World worldIn, @NotNull BlockPos position, @NotNull SoundEvent event, int chance)
+    public static void playSoundAtCitizenWithChance(@NotNull World worldIn, @NotNull EntityCitizen citizen, String event, int chance)
     {
         if(chance > rand.nextInt(ONE_HUNDRED))
         {
-            worldIn.playSound((EntityPlayer) null,
-                    position,
-                    event,
-                    SoundCategory.NEUTRAL,
-                    (float) VOLUME,
-                    (float) PITCH);
+            worldIn.playSoundAtEntity(citizen, event, (float) VOLUME, (float) PITCH);
+
         }
     }
 }

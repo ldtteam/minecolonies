@@ -16,8 +16,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -203,8 +201,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             if(worker != null)
             {
-                final SoundEvent needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
-                SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), needFishingRod, CHANCE_TO_PLAY_SOUND);
+                final String needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
+                SoundUtils.playSoundAtCitizenWithChance(world, worker, needFishingRod, CHANCE_TO_PLAY_SOUND);
             }
 
             return getState();
@@ -456,8 +454,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
-            final SoundEvent iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
-            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), iGotOne, CHANCE_TO_PLAY_SOUND);
+            final String iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
+            SoundUtils.playSoundAtCitizenWithChance(world, worker, iGotOne, CHANCE_TO_PLAY_SOUND);
 
             if (random.nextDouble() < CHANCE_NEW_POND)
             {
@@ -508,12 +506,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         {
             worker.faceBlock(job.getWater());
             world.playSoundAtEntity(
-              worker, "random.bow", VOLUME,
-              (float) (FREQUENCY_BOUND_VALUE
+              worker, "random.bow", 0.8F,
+              (float) (0.8F
                          / (random.nextDouble()
-                              * (FREQUENCY_UPPER_LIMIT_DIVIDER
-                                   - FREQUENCY_LOWER_LIMIT_DIVIDER)
-                              + FREQUENCY_LOWER_LIMIT_DIVIDER)));
+                              * (0.2D
+                                   - 1.0D)
+                              + 0.3D)));
             this.entityFishHook = new EntityFishHook(world, this.getCitizen());
             world.spawnEntityInWorld(this.entityFishHook);
         }
