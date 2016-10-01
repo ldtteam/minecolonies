@@ -162,6 +162,12 @@ public class PathNavigate extends net.minecraft.pathfinding.PathNavigateGround
 
             try
             {
+                if(future.get() == null)
+                {
+                    future = null;
+                    return;
+                }
+
                 setPath(future.get(), walkSpeed);
 
                 pathResult.setPathLength(getPath().getCurrentPathLength());
