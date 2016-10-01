@@ -96,29 +96,16 @@ public final class FishermanSounds
      */
     public static void playFishermanSound(World worldIn, BlockPos position, boolean isFemale)
     {
-        if(isFemale)
-        {
-            //Leaving it as switch-case we may add further random sound categories here (Whistling, singing, etc).
-            switch(rand.nextInt(NUMBER_OF_SOUNDS+1))
-            {
-                case 1:
-                    SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.generalPhrases, PHRASE_CHANCE);
-                    break;
-                case 2:
-                    SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.noises, BASIC_SOUND_CHANCE);
-                    break;
-            }
-
-            return;
-        }
-
-        switch(rand.nextInt(NUMBER_OF_SOUNDS+1))
+        //Leaving it as switch-case we may add further random sound categories here (Whistling, singing, etc).
+        switch (rand.nextInt(NUMBER_OF_SOUNDS + 1))
         {
             case 1:
-                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.generalPhrases, PHRASE_CHANCE);
+                final SoundEvent generalPhrases = isFemale ? FishermanSounds.Female.generalPhrases : FishermanSounds.Male.generalPhrases;
+                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, generalPhrases, PHRASE_CHANCE);
                 break;
             case 2:
-                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.noises, BASIC_SOUND_CHANCE);
+                final SoundEvent noises = isFemale ? FishermanSounds.Female.noises : FishermanSounds.Male.noises;
+                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, noises, BASIC_SOUND_CHANCE);
                 break;
         }
     }
