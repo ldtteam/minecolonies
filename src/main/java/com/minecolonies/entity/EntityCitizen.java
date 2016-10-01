@@ -16,6 +16,7 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.INpc;
@@ -616,7 +617,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             updateColonyServer();
         }
 
-        if (isEntityInsideOpaqueBlock() || isInsideOfMaterial(Material.LEAVES))
+        if (isEntityInsideOpaqueBlock() || isInsideOfMaterial(Material.leaves))
         {
             getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
         }

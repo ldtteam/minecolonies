@@ -11,9 +11,13 @@ import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.MathUtils;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -29,6 +33,45 @@ import org.jetbrains.annotations.Nullable;
  */
 public class EventHandler
 {
+    /**
+     * Event when the debug screen is opened.
+     * Event gets called by displayed text on the screen, we only need it when f3 is clicked.
+     *
+     *  @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
+     */
+    @SubscribeEvent
+    public void onDebugOverlay(RenderGameOverlayEvent.Text event)
+    {
+        final Minecraft mc = Minecraft.getMinecraft();
+        if(mc.gameSettings.showDebugInfo)
+        {
+            final WorldClient world = mc.theWorld;
+            final EntityPlayerSP player = mc.thePlayer;
+            IColony colony = ColonyManager.getIColony(world,player.getPosition());
+            final double minDistance = ColonyManager.getMinimumDistanceBetweenTownHalls();
+
+            if(colony == null)
+            {
+                colony = ColonyManager.getClosestIColony(world, player.getPosition());
+
+                if (colony == null || Math.sqrt(colony.getDistanceSquared(player.getPosition())) > 2 * minDistance)
+                {
+                    event.left.add(LanguageHandler.format("com.minecolonies.gui.debugScreen.noCloseColony"));
+                    return;
+                }
+                
+                event.left.add(LanguageHandler.format("com.minecolonies.gui.debugScreen.nextColony", (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())))
+                        + " ( "
+                        + LanguageHandler.format("com.minecolonies.gui.debugScreen.required", minDistance)
+                        + " ) ");
+                return;
+            }
+
+            event.left.add(colony.getName() + " : "
+                    + LanguageHandler.format("com.minecolonies.gui.debugScreen.blocksFromCenter", (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
+        }
+    }
+
     /**
      * Event when a block is broken
      * Event gets cancelled when there no permission to break a hut

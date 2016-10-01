@@ -178,3 +178,9 @@ com.minecolonies.gui.workerHuts.farmerHut.West=West
 com.minecolonies.gui.workerHuts.farmerHut.unused=unused
 com.minecolonies.gui.scarecrow.user=Field used by: %s
 com.minecolonies.gui.scarecrow.user.noone=no-one
+com.minecolonies.gui.buildtool.nohutininventory=The hut was not found in your inventory.
+
+com.minecolonies.gui.debugScreen.noCloseColony=No close colony!
+com.minecolonies.gui.debugScreen.nextColony=Next colony is %d blocks away.
+com.minecolonies.gui.debugScreen.blocksFromCenter=%d blocks from the center.
+com.minecolonies.gui.debugScreen.required=%d required to place a Colony.
