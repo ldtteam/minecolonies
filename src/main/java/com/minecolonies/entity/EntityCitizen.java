@@ -14,6 +14,7 @@ import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
+import com.minecolonies.sounds.FishermanSounds;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -624,9 +625,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
-            if(this.getDesiredActivity() != EntityCitizen.DesiredActivity.SLEEP)
+            if(worldObj.isDaytime())
             {
                 SoundUtils.playRandomSound(worldObj, this);
+            }
+            else if(worldObj.isRaining())
+            {
+                if(isFemale())
+                {
+                    SoundUtils.playSoundAtCitizenWithChance(worldObj, this.getPosition(), FishermanSounds.Female.badWeather ,20);
+                }
+                else
+                {
+                    SoundUtils.playSoundAtCitizenWithChance(worldObj, this.getPosition(), FishermanSounds.Male.badWeather ,20);
+                }
             }
         }
         if (isEntityInsideOpaqueBlock())

@@ -391,10 +391,6 @@
         "stream": false
       },
       {
-        "name": "minecolonies:mob/fisherman/female/lousyWheather",
-        "stream": false
-      },
-      {
         "name": "minecolonies:mob/fisherman/female/haveAGoodDay",
         "stream": false
       },
@@ -451,11 +447,217 @@
     ]
   },
 
+  "mob.fisherman.male.noise": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/cough_cough",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/doopy_doopy_doo",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/dum_dee_dum",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/groan",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/ha_ha_ha",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/ho_hum",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/ho_hum_dum_dee_dum",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/sniff",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/tired_groan",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/tired_sigh",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/yawn",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/yawn_alt_",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.male.generalPhrases": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/a-fishing_we_will_go",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/annoyed",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/brand_new_day",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/brand_new_day_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/bye_bye",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/calling_it_a_day",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/get_on_the_hook_fishy",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/good_day_to_you",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/hello",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/here_fishy_fishy",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/here_fishy_fishy_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/hey_hows_it_going",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/hey_hows_it_going_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/hey_whats_up",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/howdy",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/lovely_day_today",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/lovely_weather_today",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/nice_weather_today",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/row_your_boat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/row_your_boat_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/see_ya_later",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/see_ya_later_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/take_care",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/take_care_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/talk_to_you_later",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/theyre_just_not_biting",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/theyre_just_not_biting_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/well_off_to_fish",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/well_off_to_fish_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/well_theres_fish_to_catch",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/well_theres_fish_to_catch_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/work_work_work",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/you_can_do_it",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/you_know_you_want_it",
+        "stream": false
+      }
+    ]
+  },
+
   "mob.fisherman.female.offToBed": {
     "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/offToBed",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.male.offToBed": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/off_to_bed",
         "stream": false
       }
     ]
@@ -470,12 +672,60 @@
       }
     ]
   },
-  
+
+  "mob.fisherman.male.needFishingRod": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/need_a_fishing_rod",
+        "stream": false
+      }
+    ]
+  },
+
   "mob.fisherman.female.iGotOne": {
     "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/iGotOne",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.male.iGotOne": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/hey_i_got_one",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/youre_mine_now",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.male.badWeather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/awful_weather_today",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/ahg_this_rain",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.female.badWeather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/female/lousyWheather",
         "stream": false
       }
     ]
