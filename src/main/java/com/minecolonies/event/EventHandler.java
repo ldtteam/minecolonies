@@ -24,6 +24,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -45,33 +46,36 @@ public class EventHandler
     @SubscribeEvent
     public void onDebugOverlay(RenderGameOverlayEvent.Text event)
     {
-        final Minecraft mc = Minecraft.getMinecraft();
-        if(mc.gameSettings.showDebugInfo)
+        if(FMLCommonHandler.instance().getEffectiveSide().isClient())
         {
-            final WorldClient world = mc.theWorld;
-            final EntityPlayerSP player = mc.thePlayer;
-            IColony colony = ColonyManager.getIColony(world,player.getPosition());
-            final double minDistance = ColonyManager.getMinimumDistanceBetweenTownHalls();
-
-            if(colony == null)
+            final Minecraft mc = Minecraft.getMinecraft();
+            if (mc.gameSettings.showDebugInfo)
             {
-                colony = ColonyManager.getClosestIColony(world, player.getPosition());
+                final WorldClient world = mc.theWorld;
+                final EntityPlayerSP player = mc.thePlayer;
+                IColony colony = ColonyManager.getIColony(world, player.getPosition());
+                final double minDistance = ColonyManager.getMinimumDistanceBetweenTownHalls();
 
-                if (colony == null || Math.sqrt(colony.getDistanceSquared(player.getPosition())) > 2 * minDistance)
+                if (colony == null)
                 {
-                    event.left.add(LanguageHandler.format("com.minecolonies.gui.debugScreen.noCloseColony"));
+                    colony = ColonyManager.getClosestIColony(world, player.getPosition());
+
+                    if (colony == null || Math.sqrt(colony.getDistanceSquared(player.getPosition())) > 2 * minDistance)
+                    {
+                        event.left.add(LanguageHandler.format("com.minecolonies.gui.debugScreen.noCloseColony"));
+                        return;
+                    }
+
+                    event.left.add(LanguageHandler.format("com.minecolonies.gui.debugScreen.nextColony", (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())))
+                            + " ( "
+                            + LanguageHandler.format("com.minecolonies.gui.debugScreen.required", minDistance)
+                            + " ) ");
                     return;
                 }
-                
-                event.left.add(LanguageHandler.format("com.minecolonies.gui.debugScreen.nextColony", (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())))
-                        + " ( "
-                        + LanguageHandler.format("com.minecolonies.gui.debugScreen.required", minDistance)
-                        + " ) ");
-                return;
-            }
 
-            event.left.add(colony.getName() + " : "
-                    + LanguageHandler.format("com.minecolonies.gui.debugScreen.blocksFromCenter", (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
+                event.left.add(colony.getName() + " : "
+                        + LanguageHandler.format("com.minecolonies.gui.debugScreen.blocksFromCenter", (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
+            }
         }
     }
 
