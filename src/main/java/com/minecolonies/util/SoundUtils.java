@@ -1,6 +1,15 @@
 package com.minecolonies.util;
 
+import com.minecolonies.entity.EntityCitizen;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.world.IWorldEventListener;
 import net.minecraft.world.World;
+import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+
+import java.util.Random;
 
 /**
  * Utilities for playing sounds.
@@ -18,6 +27,38 @@ public final class SoundUtils
     {
     }
 
+
+
+    public static void getRandomSound(World worldIn, EntityCitizen citizen)
+    {
+        worldIn.playSound(null, "examplemod:song1", 1.0F, 1.0F);
+
+        //    public static PlaySoundAtEntityEvent onPlaySoundAtEntity(Entity entity, SoundEvent name, SoundCategory category, float volume, float pitch) {
+
+        PlaySoundAtEntityEvent event = ForgeEventFactory.onPlaySoundAtEntity(citizen, "name", SoundCategory.NEUTRAL, 0.2F, (float)STATIC_PITCH_VALUE);
+        if(!event.isCanceled() && event.getSound() != null) {
+            p_playSound_8_ = event.getSound();
+            p_playSound_9_ = event.getCategory();
+            p_playSound_10_ = event.getVolume();
+            p_playSound_11_ = event.getPitch();
+
+            for(int i = 0; i < this.eventListeners.size(); ++i) {
+                ((IWorldEventListener)this.eventListeners.get(i)).playSoundToAllNearExcept(p_playSound_1_, p_playSound_8_, p_playSound_9_, p_playSound_2_, p_playSound_4_, p_playSound_6_, p_playSound_10_, p_playSound_11_);
+            }
+
+        }
+
+        this.worldObj.playSound(
+                (EntityPlayer) null,
+                this.getPosition(),
+                SoundEvents.ENTITY_ITEM_PICKUP,
+                SoundCategory.AMBIENT,
+                0.2F,
+                (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
+    }
+
+
+
     /**
      * {@link #playSound(World, String, double, double, double, float, float)}.
      *
@@ -29,7 +70,7 @@ public final class SoundUtils
      */
     /*public static void playSound(@NotNull World world, String name, int x, int y, int z)
     {
-        playSound(world, name,
+        world.playSound(world, name,
           x + HALF_BLOCK_OFFSET, y + HALF_BLOCK_OFFSET, z + HALF_BLOCK_OFFSET,
           1.0F, (float) (world.rand.nextDouble() * RANDOM_PITCH_VALUE + STATIC_PITCH_VALUE));
     }*/
