@@ -26,24 +26,22 @@ public final class ModSoundEvents
     public static void registerSounds()
     {
 
-        FishermanSounds.Female.iGotOne = registerSound("mob.fisherman.female.iGotOne");
-        FishermanSounds.Female.badWeather = registerSound("mob.fisherman.female.badWeather");
-        FishermanSounds.Female.needFishingRod = registerSound("mob.fisherman.female.needFishingRod");
-        FishermanSounds.Female.offToBed = registerSound("mob.fisherman.female.offToBed");
-        FishermanSounds.Female.generalPhrases = registerSound("mob.fisherman.female.generalPhrases");
-        FishermanSounds.Female.noises = registerSound("mob.fisherman.female.noise");
+        GameRegistry.register(FishermanSounds.Female.iGotOne);
+        GameRegistry.register(FishermanSounds.Female.badWeather);
+        GameRegistry.register(FishermanSounds.Female.needFishingRod);
+        GameRegistry.register(FishermanSounds.Female.offToBed);
+        GameRegistry.register(FishermanSounds.Female.generalPhrases);
+        GameRegistry.register(FishermanSounds.Female.noises);
 
+        GameRegistry.register(FishermanSounds.Male.iGotOne);
+        GameRegistry.register(FishermanSounds.Male.badWeather);
+        GameRegistry.register(FishermanSounds.Male.needFishingRod);
+        GameRegistry.register(FishermanSounds.Male.offToBed);
+        GameRegistry.register(FishermanSounds.Male.generalPhrases);
+        GameRegistry.register(FishermanSounds.Male.noises);
 
-        FishermanSounds.Male.iGotOne = registerSound("mob.fisherman.male.iGotOne");
-        FishermanSounds.Male.badWeather = registerSound("mob.fisherman.male.badWeather");
-        FishermanSounds.Male.needFishingRod = registerSound("mob.fisherman.male.needFishingRod");
-        FishermanSounds.Male.offToBed = registerSound("mob.fisherman.male.offToBed");
-        FishermanSounds.Male.generalPhrases = registerSound("mob.fisherman.male.generalPhrases");
-        FishermanSounds.Male.noises = registerSound("mob.fisherman.male.noise");
-
-
-        CitizenSounds.Female.say = registerSound("mob.citizen.female.say");
-        CitizenSounds.Male.say = registerSound("mob.citizen.male.say");
+        GameRegistry.register(CitizenSounds.Female.say);
+        GameRegistry.register(CitizenSounds.Male.say);
     }
 
     /**
@@ -52,9 +50,8 @@ public final class ModSoundEvents
      * @param soundName The SoundEvent's name without the minecolonies prefix
      * @return The SoundEvent
      */
-    private static SoundEvent registerSound(String soundName)
+    public static SoundEvent registerSound(String soundName)
     {
-        final ResourceLocation soundID = new ResourceLocation(Constants.MOD_ID, soundName);
-        return GameRegistry.register(new SoundEvent(soundID).setRegistryName(soundID));
+        return new SoundEvent(new ResourceLocation(Constants.MOD_ID, soundName)).setRegistryName(soundName);
     }
 }
