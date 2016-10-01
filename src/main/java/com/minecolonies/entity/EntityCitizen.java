@@ -637,14 +637,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             else if(worldObj.isRaining() && 1 <=rand.nextInt(RANT_ABOUT_WEATHER_CHANCE))
             {
                 //todo add sounds of other workers as well.
-                if (isFemale())
-                {
-                    SoundUtils.playSoundAtCitizenWithChance(worldObj, this.getPosition(), FishermanSounds.Female.badWeather, 1);
-                }
-                else
-                {
-                    SoundUtils.playSoundAtCitizenWithChance(worldObj, this.getPosition(), FishermanSounds.Male.badWeather, 1);
-                }
+                final SoundEvent badWeather = isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
+                SoundUtils.playSoundAtCitizenWithChance(worldObj, this.getPosition(), badWeather, 1);
             }
         }
         if (isEntityInsideOpaqueBlock())

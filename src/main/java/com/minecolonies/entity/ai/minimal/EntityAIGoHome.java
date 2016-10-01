@@ -5,6 +5,7 @@ import com.minecolonies.sounds.FishermanSounds;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 
 import java.util.Random;
@@ -86,14 +87,8 @@ public class EntityAIGoHome extends EntityAIBase
         {
             if (citizen.getWorkBuilding() != null && ("fisherman").equals(citizen.getWorkBuilding().getJobName()))
             {
-                if(citizen.isFemale())
-                {
-                    SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), FishermanSounds.Female.offToBed, 1);
-                }
-                else
-                {
-                    SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), FishermanSounds.Male.offToBed, 1);
-                }
+                final SoundEvent offToBed = citizen.isFemale() ? FishermanSounds.Female.offToBed : FishermanSounds.Male.offToBed;
+                SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), offToBed, 1);
             }
             //add for further workers as soon as available
         }

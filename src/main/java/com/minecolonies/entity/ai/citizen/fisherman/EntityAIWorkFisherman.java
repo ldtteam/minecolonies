@@ -19,6 +19,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -200,15 +201,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private AIState prepareForFishing()
     {
-        if (checkOrRequestItems(new ItemStack(Items.FISHING_ROD)) && worker != null)
+        if (checkOrRequestItems(new ItemStack(Items.FISHING_ROD)))
         {
-            if(worker.isFemale())
+            if(worker != null)
             {
-                SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), FishermanSounds.Female.needFishingRod, CHANCE_TO_PLAY_SOUND);
-            }
-            else
-            {
-                SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), FishermanSounds.Male.needFishingRod, CHANCE_TO_PLAY_SOUND);
+                final SoundEvent needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
+                SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), needFishingRod, CHANCE_TO_PLAY_SOUND);
             }
 
             return getState();
@@ -460,14 +458,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
-            if(worker.isFemale())
-            {
-                SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), FishermanSounds.Female.iGotOne, CHANCE_TO_PLAY_SOUND);
-            }
-            else
-            {
-                SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), FishermanSounds.Male.iGotOne, CHANCE_TO_PLAY_SOUND);
-            }
+            final SoundEvent iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
+            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), iGotOne, CHANCE_TO_PLAY_SOUND);
 
             if (random.nextDouble() < CHANCE_NEW_POND)
             {
