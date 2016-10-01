@@ -199,7 +199,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         if (checkOrRequestItems(new ItemStack(Items.fishing_rod)))
         {
-            if(worker != null && worker.isFemale())
+            if(worker.isFemale())
             {
                 SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), FishermanSounds.Female.needFishingRod, CHANCE_TO_PLAY_SOUND);
             }
