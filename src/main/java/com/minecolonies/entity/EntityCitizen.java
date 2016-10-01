@@ -630,11 +630,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
-            if(worldObj.isDaytime())
+            if(worldObj.isDaytime() && !worldObj.isRaining())
             {
                 SoundUtils.playRandomSound(worldObj, this);
             }
-            else if(worldObj.isRaining() && 1 <=rand.nextInt(RANT_ABOUT_WEATHER_CHANCE))
+            else if(worldObj.isRaining() && 1 >=rand.nextInt(RANT_ABOUT_WEATHER_CHANCE))
             {
                 //todo add sounds of other workers as well.
                 final SoundEvent badWeather = isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
