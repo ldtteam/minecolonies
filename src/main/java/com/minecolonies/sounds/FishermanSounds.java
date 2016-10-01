@@ -10,7 +10,7 @@ import java.util.Random;
 /**
  * Class containing the fisherman sounds.
  */
-public class FishermanSounds
+public final class FishermanSounds
 {
     /**
      * Random generator.
@@ -33,9 +33,19 @@ public class FishermanSounds
     private static final int BASIC_SOUND_CHANCE = 100;
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private FishermanSounds()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    /**
      * Containing the female fisherman sounds.
      */
-    public static class Female
+    public static final class Female
     {
         public static SoundEvent generalPhrases;
         public static SoundEvent noises;
@@ -43,12 +53,22 @@ public class FishermanSounds
         public static SoundEvent needFishingRod;
         public static SoundEvent offToBed;
         public static SoundEvent badWeather;
+
+        /**
+         * Private constructor to hide the implicit public one.
+         */
+        private Female()
+        {
+            /*
+              Intentionally left empty.
+             */
+        }
     }
 
     /**
      * Containing the male fisherman sounds.
      */
-    public static class Male
+    public static final class Male
     {
         public static SoundEvent generalPhrases;
         public static SoundEvent noises;
@@ -56,6 +76,16 @@ public class FishermanSounds
         public static SoundEvent needFishingRod;
         public static SoundEvent offToBed;
         public static SoundEvent badWeather;
+
+        /**
+         * Private constructor to hide the implicit public one.
+         */
+        private Male()
+        {
+            /*
+             * Intentionally left empty.
+             */
+        }
     }
 
     /**
