@@ -8,6 +8,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -46,7 +47,7 @@ public final class SoundUtils
      */
     private SoundUtils()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
@@ -56,7 +57,7 @@ public final class SoundUtils
      * @param worldIn the world to play the sound in.
      * @param citizen the citizen to play the sound for.
      */
-    public static void playRandomSound(World worldIn, EntityCitizen citizen)
+    public static void playRandomSound(@NotNull World worldIn, @NotNull EntityCitizen citizen)
     {
         if(1 >= rand.nextInt(CHANCE_TO_PLAY_SOUND))
         {
@@ -85,7 +86,7 @@ public final class SoundUtils
      * @param position the position to play the sound at.
      * @param event sound to play.
      */
-    public static void playSoundAtCitizen(World worldIn, BlockPos position, SoundEvent event)
+    public static void playSoundAtCitizen(@NotNull World worldIn, @NotNull BlockPos position, @NotNull SoundEvent event)
     {
         worldIn.playSound((EntityPlayer) null,
                 position,
@@ -102,7 +103,7 @@ public final class SoundUtils
      * @param event sound to play.
      * @param chance chance in percent.
      */
-    public static void playSoundAtCitizenWithChance(World worldIn, BlockPos position, SoundEvent event, int chance)
+    public static void playSoundAtCitizenWithChance(@NotNull World worldIn, @NotNull BlockPos position, @NotNull SoundEvent event, int chance)
     {
         if(chance > rand.nextInt(ONE_HUNDRED))
         {

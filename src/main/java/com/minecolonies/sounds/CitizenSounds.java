@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 /**
  * Class used to store the basic citizen sounds.
  */
-public class CitizenSounds
+public final class CitizenSounds
 {
     /**
      * Chance to say a phrase.
@@ -16,23 +16,52 @@ public class CitizenSounds
     private static final int PHRASE_CHANCE = 50;
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private CitizenSounds()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+    /**
      * The citizen sound events for the females.
      */
-    public static class Female
+    public static final class Female
     {
         public static SoundEvent say;
+
+        /**
+         * Private constructor to hide the implicit public one.
+         */
+        private Female()
+        {
+            /*
+             * Intentionally left empty.
+             */
+        }
     }
 
     /**
      * The citizen sound events for the males.
      */
-    public static class Male
+    public static final class Male
     {
         public static SoundEvent say;
+
+        /**
+         * Private constructor to hide the implicit public one.
+         */
+        private Male()
+        {
+           /*
+            * Intentionally left empty.
+            */
+        }
     }
 
     /**
-     * Plays fisherman sounds.
+     * Plays citizen sounds.
      * @param worldIn the world to play the sound in.
      * @param position the position to play the sound at.
      * @param isFemale the gender.

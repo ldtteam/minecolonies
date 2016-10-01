@@ -8,8 +8,18 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 /**
  * Registering of sound events for our colony.
  */
-public class ModSoundEvents
+public final class ModSoundEvents
 {
+    /**
+     * Private constructor to hide the implicit public one.
+     */
+    private ModSoundEvents()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
     /**
      * Register the {@link SoundEvent}s.
      */
