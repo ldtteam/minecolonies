@@ -17,11 +17,20 @@ public class ModSoundEvents
     {
 
         FishermanSounds.Female.iGotOne = registerSound("mob.fisherman.female.iGotOne");
-
+        FishermanSounds.Female.badWeather = registerSound("mob.fisherman.female.badWeather");
         FishermanSounds.Female.needFishingRod = registerSound("mob.fisherman.female.needFishingRod");
         FishermanSounds.Female.offToBed = registerSound("mob.fisherman.female.offToBed");
         FishermanSounds.Female.generalPhrases = registerSound("mob.fisherman.female.generalPhrases");
         FishermanSounds.Female.noises = registerSound("mob.fisherman.female.noise");
+
+
+        FishermanSounds.Male.iGotOne = registerSound("mob.fisherman.male.iGotOne");
+        FishermanSounds.Male.badWeather = registerSound("mob.fisherman.male.badWeather");
+        FishermanSounds.Male.needFishingRod = registerSound("mob.fisherman.male.needFishingRod");
+        FishermanSounds.Male.offToBed = registerSound("mob.fisherman.male.offToBed");
+        FishermanSounds.Male.generalPhrases = registerSound("mob.fisherman.male.generalPhrases");
+        FishermanSounds.Male.noises = registerSound("mob.fisherman.male.noise");
+
 
         CitizenSounds.Female.say = registerSound("mob.citizen.female.say");
         CitizenSounds.Male.say = registerSound("mob.citizen.male.say");

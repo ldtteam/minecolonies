@@ -203,7 +203,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             {
                 SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), FishermanSounds.Female.needFishingRod, CHANCE_TO_PLAY_SOUND);
             }
-            //todo add else for male sound once ready.
+            else
+            {
+                SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), FishermanSounds.Male.needFishingRod, CHANCE_TO_PLAY_SOUND);
+            }
 
             return getState();
         }
@@ -458,7 +461,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             {
                 SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), FishermanSounds.Female.iGotOne, CHANCE_TO_PLAY_SOUND);
             }
-            //todo add else for male sounds once ready.
+            else
+            {
+                SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), FishermanSounds.Male.iGotOne, CHANCE_TO_PLAY_SOUND);
+            }
 
             if (random.nextDouble() < CHANCE_NEW_POND)
             {

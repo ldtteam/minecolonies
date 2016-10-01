@@ -39,10 +39,10 @@ public class FishermanSounds
     {
         public static SoundEvent generalPhrases;
         public static SoundEvent noises;
-
         public static SoundEvent iGotOne;
         public static SoundEvent needFishingRod;
         public static SoundEvent offToBed;
+        public static SoundEvent badWeather;
     }
 
     /**
@@ -50,7 +50,12 @@ public class FishermanSounds
      */
     public static class Male
     {
-
+        public static SoundEvent generalPhrases;
+        public static SoundEvent noises;
+        public static SoundEvent iGotOne;
+        public static SoundEvent needFishingRod;
+        public static SoundEvent offToBed;
+        public static SoundEvent badWeather;
     }
 
     /**
@@ -77,7 +82,14 @@ public class FishermanSounds
             return;
         }
 
-        //Following the male sounds as soon as they are uploaded.
-
+        switch(rand.nextInt(NUMBER_OF_SOUNDS+1))
+        {
+            case 1:
+                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.generalPhrases, PHRASE_CHANCE);
+                break;
+            case 2:
+                SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.noises, BASIC_SOUND_CHANCE);
+                break;
+        }
     }
 }

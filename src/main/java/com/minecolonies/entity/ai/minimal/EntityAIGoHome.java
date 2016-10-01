@@ -25,7 +25,7 @@ public class EntityAIGoHome extends EntityAIBase
     /**
      * Chance to play goHomeSound.
      */
-    private static final int ONE_IN_A_THOUSAND = 1000;
+    private static final int CHANCE = 100;
 
     public EntityAIGoHome(EntityCitizen citizen)
     {
@@ -80,15 +80,22 @@ public class EntityAIGoHome extends EntityAIBase
     {
         final Random rand = new Random();
 
-        final int chance = rand.nextInt(ONE_IN_A_THOUSAND);
+        final int chance = rand.nextInt(CHANCE);
 
         if(chance <= 1)
         {
             if (citizen.getWorkBuilding() != null && ("fisherman").equals(citizen.getWorkBuilding().getJobName()))
             {
-                SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), FishermanSounds.Female.offToBed, 1);
+                if(citizen.isFemale())
+                {
+                    SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), FishermanSounds.Female.offToBed, 1);
+                }
+                else
+                {
+                    SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), FishermanSounds.Male.offToBed, 1);
+                }
             }
-            //todo add for other workers as soon as available.
+            //add for further workers as soon as available
         }
     }
 }
