@@ -615,7 +615,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             cleanupChatMessages();
             updateColonyServer();
         }
-        if (isEntityInsideOpaqueBlock())
+
+        if (isEntityInsideOpaqueBlock() || isInsideOfMaterial(Material.LEAVES))
         {
             getNavigator().moveAwayFromXYZ(this.getPosition(), MOVE_AWAY_RANGE, MOVE_AWAY_SPEED);
         }
