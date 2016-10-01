@@ -362,8 +362,8 @@
       }
     ]
   },
-  "mob.fisherman.callItAday": {
-    "category": "block",
+  "mob.fisherman.female.callingItADay": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/callingItADay",
@@ -371,8 +371,8 @@
       }
     ]
   },
-  "mob.fisherman.cheers": {
-    "category": "block",
+  "mob.fisherman.female.cheers": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/cheers",
@@ -380,8 +380,8 @@
       }
     ]
   },
-  "mob.fisherman.coughs": {
-    "category": "block",
+  "mob.fisherman.female.coughs": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/coughs",
@@ -389,8 +389,8 @@
       }
     ]
   },
-  "mob.fisherman.fishingWeWillGo": {
-    "category": "block",
+  "mob.fisherman.female.fishingWeWillGo": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/fishingWeWillGo",
@@ -398,8 +398,8 @@
       }
     ]
   },
-  "mob.fisherman.goodDayToYou": {
-    "category": "block",
+  "mob.fisherman.female.goodDayToYou": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/goodDayToYou",
@@ -407,8 +407,8 @@
       }
     ]
   },
-  "mob.fisherman.grumbles": {
-    "category": "block",
+  "mob.fisherman.female.grumbles": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/grumbles",
@@ -416,8 +416,8 @@
       }
     ]
   },
-  "mob.fisherman.haveAGoodDay": {
-    "category": "block",
+  "mob.fisherman.female.haveAGoodDay": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/haveAGoodDay",
@@ -425,8 +425,8 @@
       }
     ]
   },
-  "mob.fisherman.hey": {
-    "category": "block",
+  "mob.fisherman.female.hey": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/hey",
@@ -434,8 +434,8 @@
       }
     ]
   },
-  "mob.fisherman.ho_hum": {
-    "category": "block",
+  "mob.fisherman.female.ho_hum": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/ho_hum",
@@ -443,8 +443,8 @@
       }
     ]
   },
-  "mob.fisherman.iGotOne": {
-    "category": "block",
+  "mob.fisherman.female.iGotOne": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/iGotOne",
@@ -452,8 +452,8 @@
       }
     ]
   },
-  "mob.fisherman.lousyWheather": {
-    "category": "block",
+  "mob.fisherman.female.lousyWheather": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/lousyWheather",
@@ -461,8 +461,8 @@
       }
     ]
   },
-  "mob.fisherman.lovelyDay": {
-    "category": "block",
+  "mob.fisherman.female.lovelyDay": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/lovelyDay",
@@ -470,8 +470,8 @@
       }
     ]
   },
-  "mob.fisherman.needFishingRod": {
-    "category": "block",
+  "mob.fisherman.female.needFishingRod": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/needFishingRod",
@@ -479,8 +479,8 @@
       }
     ]
   },
-  "mob.fisherman.notBitingToday": {
-    "category": "block",
+  "mob.fisherman.female.notBitingToday": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/notBitingToday",
@@ -488,8 +488,8 @@
       }
     ]
   },
-  "mob.fisherman.offToBed": {
-    "category": "block",
+  "mob.fisherman.female.offToBed": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/offToBed",
@@ -497,8 +497,8 @@
       }
     ]
   },
-  "mob.fisherman.offToFish": {
-    "category": "block",
+  "mob.fisherman.female.offToFish": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/offToFish",
@@ -506,8 +506,8 @@
       }
     ]
   },
-  "mob.fisherman.rowYourBoat": {
-    "category": "block",
+  "mob.fisherman.female.rowYourBoat": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/rowYourBoat",
@@ -515,8 +515,8 @@
       }
     ]
   },
-  "mob.fisherman.sighs": {
-    "category": "block",
+  "mob.fisherman.female.sighs": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/sighs",
@@ -524,8 +524,8 @@
       }
     ]
   },
-  "mob.fisherman.sniffles": {
-    "category": "block",
+  "mob.fisherman.female.sniffles": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/sniffles",
@@ -533,8 +533,8 @@
       }
     ]
   },
-  "mob.fisherman.theresFishToCatch": {
-    "category": "block",
+  "mob.fisherman.female.theresFishToCatch": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/theresFishToCatch",
@@ -542,8 +542,8 @@
       }
     ]
   },
-  "mob.fisherman.workWorkWork": {
-    "category": "block",
+  "mob.fisherman.female.workWorkWork": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/workWorkWork",
@@ -551,14 +551,13 @@
       }
     ]
   },
-  "mob.fisherman.yawns": {
-    "category": "block",
+  "mob.fisherman.female.yawns": {
+    "category": "neutral",
     "sounds": [
       {
         "name": "minecolonies:mob/fisherman/female/yawns",
         "stream": false
       }
     ]
-  },
-
+  }
 }
