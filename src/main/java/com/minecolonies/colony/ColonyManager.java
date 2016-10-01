@@ -81,7 +81,7 @@ public final class ColonyManager
 
         markDirty();
 
-        Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(),player.getName()));
+        Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
         return colony;
     }
@@ -371,7 +371,7 @@ public final class ColonyManager
     @Nullable
     private static IColony getColonyByOwner(@Nullable UUID owner)
     {
-        if(owner == null)
+        if (owner == null)
         {
             return null;
         }

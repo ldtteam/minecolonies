@@ -18,9 +18,24 @@ import net.minecraft.util.BlockPos;
 
 public class TileEntityColonyBuilding extends TileEntityChest
 {
-    private final static String TAG_COLONY = "colony";
+    /**
+     * NBTTag to store the colony id.
+     */
+    private static final String TAG_COLONY = "colony";
+
+    /**
+     * The colony id.
+     */
     private int colonyId = 0;
-    private Colony           colony;
+
+    /**
+     * The colony.
+     */
+    private Colony colony;
+
+    /**
+     * The building the tileEntity belongs to.
+     */
     private AbstractBuilding building;
 
     public TileEntityColonyBuilding() {}
@@ -84,7 +99,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (building == null && colony != null)
         {
             building = colony.getBuilding(getPosition());
-            if (building != null  && (worldObj == null || !worldObj.isRemote))
+            if (building != null && (worldObj == null || !worldObj.isRemote))
             {
                 building.setTileEntity(this);
             }
