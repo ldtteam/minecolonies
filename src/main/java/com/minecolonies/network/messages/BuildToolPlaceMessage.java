@@ -158,26 +158,26 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
             @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 
-            if (building != null)
+            if (building == null)
+            {
+                Log.getLogger().error("BuildTool: building is null!");
+            }
+            else
             {
                 if (building.getTileEntity() != null)
                 {
-                    Colony colony = ColonyManager.getColony(world, buildPos);
-                    if (colony != null)
+                    final Colony colony = ColonyManager.getColony(world, buildPos);
+                    if (colony == null)
                     {
-                        building.getTileEntity().setColony(colony);
+                        Log.getLogger().info("No colony for " + player.getName());
                     }
                     else
                     {
-                        Log.getLogger().info("No colony for " + player.getName());
+                        building.getTileEntity().setColony(colony);
                     }
                 }
                 building.setStyle(style);
                 building.setRotation(rotation);
-            }
-            else
-            {
-                Log.getLogger().error("BuildTool: building is null!");
             }
         }
     }
