@@ -25,6 +25,8 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,6 +41,7 @@ public class EventHandler
      *
      *  @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
      */
+    @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onDebugOverlay(RenderGameOverlayEvent.Text event)
     {
