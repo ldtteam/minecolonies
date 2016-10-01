@@ -6,6 +6,8 @@ import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.util.Log;
+import com.sun.javafx.binding.Logging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,16 +36,13 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         super.update();
 
-        if (!worldObj.isRemote)
+        if (!worldObj.isRemote && colonyId == 0)
         {
-            if (colonyId == 0)
-            {
-                throw new IllegalStateException(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
-                  worldObj.getWorldInfo().getWorldName(),
-                  pos.getX(),
-                  pos.getY(),
-                  pos.getZ()));
-            }
+            Log.getLogger().warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
+              worldObj.getWorldInfo().getWorldName(),
+              pos.getX(),
+              pos.getY(),
+              pos.getZ()));
         }
     }
 

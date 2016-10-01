@@ -160,6 +160,18 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
 
             if (building != null)
             {
+                if(building.getTileEntity()!= null)
+                {
+                    Colony colony=ColonyManager.getColony(world,buildPos);
+                    if(colony!=null)
+                    {
+                        building.getTileEntity().setColony(colony);
+                    }
+                    else
+                    {
+                        Log.getLogger().info("No colony for " + player.getName());
+                    }
+                }
                 building.setStyle(style);
                 building.setRotation(rotation);
             }
