@@ -1,14 +1,2 @@
 version: 2
-groups:
-  maintainers:
-    required: 3
-    author_approval:
-      auto: true
-    approve_by_comment: 
-      enabled: true
-      approve_regex: '(Approved|:shipit:|:\+1:|LGTM)'
-      reject_regex: 'Rejected'
-    reset_on_push: 
-      enabled: true
-    teams:
-      - maintainers
+extends: minecolonies
