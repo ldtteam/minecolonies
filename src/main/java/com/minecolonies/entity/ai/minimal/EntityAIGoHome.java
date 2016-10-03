@@ -1,14 +1,10 @@
 package com.minecolonies.entity.ai.minimal;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.sounds.FishermanSounds;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-
-import java.util.Random;
 
 /**
  * EntityCitizen go home AI

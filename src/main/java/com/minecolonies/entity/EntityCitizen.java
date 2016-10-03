@@ -14,7 +14,6 @@ import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
-import com.minecolonies.sounds.FishermanSounds;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
