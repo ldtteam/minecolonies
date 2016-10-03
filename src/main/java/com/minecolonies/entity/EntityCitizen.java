@@ -273,7 +273,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
-    private AbstractJob getColonyJob()
+    public AbstractJob getColonyJob()
     {
         return citizenData != null ? citizenData.getJob() : null;
     }
@@ -634,11 +634,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 SoundUtils.playRandomSound(worldObj, this);
             }
-            else if(worldObj.isRaining() && 1 >=rand.nextInt(RANT_ABOUT_WEATHER_CHANCE))
+            else if(worldObj.isRaining() && 1 >=rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && this.getColonyJob() != null)
             {
-                //todo add sounds of other workers as well.
-                final SoundEvent badWeather = isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
-                SoundUtils.playSoundAtCitizenWithChance(worldObj, this.getPosition(), badWeather, 1);
+                SoundUtils.playSoundAtCitizenWithChance(worldObj, this.getPosition(), this.getColonyJob().getBadWeatherSound(), 1);
             }
         }
         if (isEntityInsideOpaqueBlock())
@@ -648,6 +646,15 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         checkHeal();
         super.onLivingUpdate();
+    }
+
+    /**
+     * Getter of the citizens random object.
+     * @return random object.
+     */
+    public Random getRandom()
+    {
+        return rand;
     }
 
     private void updateColonyClient()

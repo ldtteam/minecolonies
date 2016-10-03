@@ -79,18 +79,15 @@ public class EntityAIGoHome extends EntityAIBase
      */
     private void playGoHomeSounds()
     {
-        final Random rand = new Random();
-
-        final int chance = rand.nextInt(CHANCE);
+        final int chance = citizen.getRandom().nextInt(CHANCE);
 
         if(chance <= 1)
         {
-            if (citizen.getWorkBuilding() != null && ("fisherman").equals(citizen.getWorkBuilding().getJobName()))
+            if (citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
             {
-                final SoundEvent offToBed = citizen.isFemale() ? FishermanSounds.Female.offToBed : FishermanSounds.Male.offToBed;
-                SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), offToBed, 1);
+                SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
             }
-            //add for further workers as soon as available
+            //add further workers as soon as available.
         }
     }
 }

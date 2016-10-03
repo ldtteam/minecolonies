@@ -29,7 +29,7 @@ public final class CitizenSounds
      */
     public static final class Female
     {
-        public static final SoundEvent say = ModSoundEvents.registerSound("mob.citizen.female.say");
+        public static final SoundEvent say = ModSoundEvents.getSoundID("mob.citizen.female.say");
 
 
         /**
@@ -48,7 +48,7 @@ public final class CitizenSounds
      */
     public static final class Male
     {
-        public static final SoundEvent say = ModSoundEvents.registerSound("mob.citizen.male.say");
+        public static final SoundEvent say = ModSoundEvents.getSoundID("mob.citizen.male.say");
 
         /**
          * Private constructor to hide the implicit public one.

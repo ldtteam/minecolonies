@@ -203,12 +203,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         if (checkOrRequestItems(new ItemStack(Items.FISHING_ROD)))
         {
-            if(worker != null)
-            {
-                final SoundEvent needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
-                SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), needFishingRod, CHANCE_TO_PLAY_SOUND);
-            }
-
+            playNeedRodSound();
             return getState();
         }
         if (job.getWater() == null)
@@ -216,6 +211,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return FISHERMAN_SEARCHING_WATER;
         }
         return FISHERMAN_WALKING_TO_WATER;
+    }
+
+    /**
+     * Plays a sound when the fisherman needs a rod.
+     */
+    private void playNeedRodSound()
+    {
+        if(worker != null)
+        {
+            final SoundEvent needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
+            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), needFishingRod, CHANCE_TO_PLAY_SOUND);
+        }
     }
 
     /**
@@ -283,6 +290,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         return worker.hasItemInInventory(Items.FISHING_ROD) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
     }
+
+
 
     /**
      * Override this method if you want to keep some items in inventory.
@@ -458,9 +467,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
-            final SoundEvent iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
-            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), iGotOne, CHANCE_TO_PLAY_SOUND);
-
+            playCaughtFishSound();
             if (random.nextDouble() < CHANCE_NEW_POND)
             {
                 job.setWater(null);
@@ -470,6 +477,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
 
         return throwOrRetrieveHook();
+    }
+
+    /**
+     * Plays a sound with a chance when a fish has been caught.
+     */
+    private void playCaughtFishSound()
+    {
+        if(worker != null)
+        {
+            final SoundEvent iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
+            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), iGotOne, CHANCE_TO_PLAY_SOUND);
+        }
     }
 
     /**
@@ -647,5 +666,33 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     public EntityCitizen getCitizen()
     {
         return worker;
+    }
+
+    /**
+     * Override this to let the worker return a bedTimeSound.
+     * @return soundEvent to be played.
+     */
+    @Override
+    protected SoundEvent getBedTimeSound()
+    {
+        if(worker != null)
+        {
+            return worker.isFemale() ? FishermanSounds.Female.offToBed : FishermanSounds.Male.offToBed;
+        }
+        return null;
+    }
+
+    /**
+     * Override this to let the worker return a badWeatherSound.
+     * @return soundEvent to be played.
+     */
+    @Override
+    protected SoundEvent getBadWeatherSound()
+    {
+        if(worker != null)
+        {
+            return worker.isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
+        }
+        return null;
     }
 }

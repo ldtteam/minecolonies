@@ -9,6 +9,7 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.SoundEvent;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -345,5 +346,23 @@ public abstract class AbstractJob
     public final void setNameTag(final String nameTag)
     {
         this.nameTag = nameTag;
+    }
+
+    /**
+     * Override this to let the worker return a bedTimeSound.
+     * @return soundEvent to be played.
+     */
+    public SoundEvent getBedTimeSound()
+    {
+        return null;
+    }
+
+    /**
+     * Override this to let the worker return a badWeatherSound.
+     * @return soundEvent to be played.
+     */
+    public SoundEvent getBadWeatherSound()
+    {
+        return null;
     }
 }

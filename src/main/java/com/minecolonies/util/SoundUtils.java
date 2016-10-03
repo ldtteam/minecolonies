@@ -9,6 +9,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Random;
 
@@ -103,8 +104,13 @@ public final class SoundUtils
      * @param event sound to play.
      * @param chance chance in percent.
      */
-    public static void playSoundAtCitizenWithChance(@NotNull World worldIn, @NotNull BlockPos position, @NotNull SoundEvent event, int chance)
+    public static void playSoundAtCitizenWithChance(@NotNull World worldIn, @NotNull BlockPos position, @Nullable SoundEvent event, int chance)
     {
+        if(event == null)
+        {
+            return;
+        }
+
         if(chance > rand.nextInt(ONE_HUNDRED))
         {
             worldIn.playSound((EntityPlayer) null,
