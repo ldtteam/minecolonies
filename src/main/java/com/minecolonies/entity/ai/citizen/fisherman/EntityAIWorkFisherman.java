@@ -668,31 +668,4 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         return worker;
     }
 
-    /**
-     * Override this to let the worker return a bedTimeSound.
-     * @return soundEvent to be played.
-     */
-    @Override
-    protected SoundEvent getBedTimeSound()
-    {
-        if(worker != null)
-        {
-            return worker.isFemale() ? FishermanSounds.Female.offToBed : FishermanSounds.Male.offToBed;
-        }
-        return null;
-    }
-
-    /**
-     * Override this to let the worker return a badWeatherSound.
-     * @return soundEvent to be played.
-     */
-    @Override
-    protected SoundEvent getBadWeatherSound()
-    {
-        if(worker != null)
-        {
-            return worker.isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
-        }
-        return null;
-    }
 }
