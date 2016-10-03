@@ -65,10 +65,8 @@ public class EventHandler
                         return;
                     }
 
-                    event.getLeft().add(LanguageHandler.format("com.minecolonies.gui.debugScreen.nextColony", (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())))
-                            + " ( "
-                            + LanguageHandler.format("com.minecolonies.gui.debugScreen.required", minDistance)
-                            + " ) ");
+                    event.getLeft().add(LanguageHandler.format("com.minecolonies.gui.debugScreen.nextColony",
+                            (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), minDistance));
                     return;
                 }
 
