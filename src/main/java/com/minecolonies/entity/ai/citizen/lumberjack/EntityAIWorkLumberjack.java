@@ -11,6 +11,7 @@ import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -680,10 +681,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @return a list of objects which should be kept.
      */
-    protected Map<Item, Integer> needXForWorker()
+    protected Map<ItemStack, Integer> needXForWorker()
     {
-        Map<Item, Integer> keepX = new HashMap<>();
-        keepX.put(new ItemStack(Blocks.SAPLING).getItem(), SAPLINGS_TO_KEEP);
+        Map<ItemStack, Integer> keepX = new HashMap<>();
+        keepX.put(new ItemStack(Blocks.SAPLING), SAPLINGS_TO_KEEP);
+
         return keepX;
     }
 

@@ -14,6 +14,7 @@ import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -165,21 +166,23 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     /**
-     * Can be overridden by implementations to specify items useful for the worker.
-     * When the workers inventory is full, he will try to keep these items.
-     * ItemStack amounts are ignored, the first stack found will be taken.
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
      *
-     * @return a list with items nice to have for the worker
+     * @return a list of objects which should be kept.
      */
-    @NotNull
-    @Override
-    protected List<ItemStack> itemsNiceToHave()
+    protected Map<ItemStack, Integer> needXForWorker()
     {
-        return Arrays.asList(new ItemStack(Blocks.LADDER),
-          new ItemStack(Blocks.PLANKS),
-          new ItemStack(Blocks.OAK_FENCE),
-          new ItemStack(Blocks.TORCH),
-          new ItemStack(Blocks.COBBLESTONE));
+        Map<ItemStack, Integer> keepX = new HashMap<>();
+        keepX.put(new ItemStack(Blocks.PLANKS), 64);
+        keepX.put(new ItemStack(Blocks.LADDER), 64);
+        keepX.put(new ItemStack(Blocks.OAK_FENCE), 64);
+        keepX.put(new ItemStack(Blocks.TORCH), 64);
+        keepX.put(new ItemStack(Blocks.COBBLESTONE), 64);
+        keepX.put(new ItemStack(Blocks.WOODEN_SLAB), 64);
+
+        return keepX;
     }
 
     @Override

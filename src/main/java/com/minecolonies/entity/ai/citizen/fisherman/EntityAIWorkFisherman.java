@@ -20,6 +20,8 @@ import net.minecraft.util.SoundCategory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -288,17 +290,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Override this method if you want to keep some items in inventory.
+     * Override this method if you want to keep an amount of items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.
      * But you can use this method to hold some stacks back.
      *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
+     * @return a list of objects which should be kept.
      */
-    @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
+    protected Map<ItemStack, Integer> needXForWorker()
     {
-        return isStackRod(stack);
+        Map<ItemStack, Integer> keepX = new HashMap<>();
+        keepX.put(new ItemStack(Items.FISHING_ROD), 1);
+
+        return keepX;
     }
 
     /**

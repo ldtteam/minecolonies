@@ -667,7 +667,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private AIState dumpInventory()
     {
         //Items already kept in the inventory
-        Map<Item, Integer> keptX = new HashMap<>();
+        Map<ItemStack, Integer> keptX = new HashMap<>();
 
         if (dumpOneMoreSlot(keptX))
         {
@@ -691,7 +691,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Only dumps one block at a time!
      * @param keptX items already kept in the inventory.
      */
-    private boolean dumpOneMoreSlot(Map<Item, Integer> keptX)
+    private boolean dumpOneMoreSlot(Map<ItemStack, Integer> keptX)
     {
         return dumpOneMoreSlot(this::neededForWorker, keptX);
     }
@@ -738,9 +738,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param keptX items already kept
      * @return true if is has to dump more.
      */
-    private boolean dumpOneMoreSlot(@NotNull Predicate<ItemStack> keepIt, Map<Item, Integer> keptX)
+    private boolean dumpOneMoreSlot(@NotNull Predicate<ItemStack> keepIt, Map<ItemStack, Integer> keptX)
     {
-        Map<Item, Integer> toKeep = Collections.unmodifiableMap(this.needXForWorker());
+        Map<ItemStack, Integer> toKeep = this.needXForWorker();
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return walkToBuilding()
@@ -754,42 +754,41 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
               @Nullable ItemStack returnStack;
               int amountToKeep = 0;
-              if(keptEnough(keptX, toKeep, stack.getItem()))
+              if(keptEnough(keptX, toKeep, stack))
               {
                   //Returns a rest if he can't dump all of it in the building.
                   returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
               }
               else
               {
-                  Item item = stack.getItem();
                   int dump = 0;
-                  amountToKeep = toKeep.get(item);
+                  amountToKeep = toKeep.get(stack);
 
-                  if(keptX.get(item) == null)
+                  if(keptX.get(stack) == null)
                   {
-                      if (toKeep.get(item) > stack.stackSize)
+                      if (toKeep.get(stack) > stack.stackSize)
                       {
-                          keptX.put(item, stack.stackSize);
+                          keptX.put(stack, stack.stackSize);
                           return false;
                       }
 
-                      dump = stack.stackSize - toKeep.get(item);
-                      keptX.put(item, toKeep.get(item));
+                      dump = stack.stackSize - toKeep.get(stack);
+                      keptX.put(stack, toKeep.get(stack));
                   }
                   else
                   {
-                      int amountKept = keptX.remove(item);
-                      if (toKeep.get(item) > (stack.stackSize + amountKept))
+                      int amountKept = keptX.remove(stack);
+                      if (toKeep.get(stack) > (stack.stackSize + amountKept))
                       {
-                          keptX.put(stack.getItem(), stack.stackSize + amountKept);
+                          keptX.put(stack, stack.stackSize + amountKept);
                           return false;
                       }
-                      keptX.put(item, toKeep.get(item));
-                      dump = stack.stackSize + amountKept - toKeep.get(item);
+                      keptX.put(stack, toKeep.get(stack));
+                      dump = stack.stackSize + amountKept - toKeep.get(stack);
                   }
 
                   //Create tempStack with the amount of items that should be dumped.
-                  ItemStack tempStack = new ItemStack(item, dump);
+                  ItemStack tempStack = new ItemStack(stack.getItem(), dump, stack.getItemDamage());
 
                   //Returns a rest if he can't dump all of it in the building.
                   returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), tempStack);
@@ -813,8 +812,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param stack stack to analyse.
      * @return true if kept enough already.
      */
-    private boolean keptEnough(Map<Item, Integer> kept, Map<Item, Integer> keep, Item stack)
+    private boolean keptEnough(Map<ItemStack, Integer> kept, Map<ItemStack, Integer> keep, ItemStack stack)
     {
+        for(ItemStack tempStack: keep.keySet())
+        {
+            if(tempStack.getItem() == stack.getItem() && tempStack.getItemDamage() != stack.getItemDamage())
+            {
+                keep.put(stack, keep.get(tempStack));
+                return false;
+            }
+        }
         return keep.get(stack) == null || (kept.get(stack) != null && kept.get(stack) >= keep.get(stack));
     }
 
@@ -888,7 +895,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return a list of objects which should be kept.
      */
-    protected Map<Item, Integer> needXForWorker()
+    protected Map<ItemStack, Integer> needXForWorker()
     {
         return new HashMap<>();
     }
