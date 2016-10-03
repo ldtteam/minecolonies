@@ -7,14 +7,13 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -667,7 +666,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState dumpInventory()
     {
-        if (dumpOneMoreSlot())
+        //Items already kept in the inventory
+        Map<Item, Integer> keptX = new HashMap<>();
+
+        if (dumpOneMoreSlot(keptX))
         {
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
@@ -687,10 +689,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Dump the workers inventory into his building chest.
      * Only useful tools are kept!
      * Only dumps one block at a time!
+     * @param keptX items already kept in the inventory.
      */
-    private boolean dumpOneMoreSlot()
+    private boolean dumpOneMoreSlot(Map<Item, Integer> keptX)
     {
-        return dumpOneMoreSlot(this::neededForWorker);
+        return dumpOneMoreSlot(this::neededForWorker, keptX);
     }
 
     /**
@@ -732,10 +735,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Dumps one inventory slot into the building chest.
      *
      * @param keepIt used to test it that stack should be kept
+     * @param keptX items already kept
      * @return true if is has to dump more.
      */
-    private boolean dumpOneMoreSlot(@NotNull Predicate<ItemStack> keepIt)
+    private boolean dumpOneMoreSlot(@NotNull Predicate<ItemStack> keepIt, Map<Item, Integer> keptX)
     {
+        Map<Item, Integer> toKeep = Collections.unmodifiableMap(this.needXForWorker());
+
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return walkToBuilding()
                  || InventoryFunctions.matchFirstInInventory(
@@ -746,17 +752,70 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                   return false;
               }
 
-              @Nullable ItemStack returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
+              @Nullable ItemStack returnStack;
+              int amountToKeep = 0;
+              if(keptEnough(keptX, toKeep, stack.getItem()))
+              {
+                  //Returns a rest if he can't dump all of it in the building.
+                  returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
+              }
+              else
+              {
+                  Item item = stack.getItem();
+                  int dump = 0;
+                  amountToKeep = toKeep.get(item);
+
+                  if(keptX.get(item) == null)
+                  {
+                      if (toKeep.get(item) > stack.stackSize)
+                      {
+                          keptX.put(item, stack.stackSize);
+                          return false;
+                      }
+
+                      dump = stack.stackSize - toKeep.get(item);
+                      keptX.put(item, toKeep.get(item));
+                  }
+                  else
+                  {
+                      int amountKept = keptX.remove(item);
+                      if (toKeep.get(item) > (stack.stackSize + amountKept))
+                      {
+                          keptX.put(stack.getItem(), stack.stackSize + amountKept);
+                          return false;
+                      }
+                      keptX.put(item, toKeep.get(item));
+                      dump = stack.stackSize + amountKept - toKeep.get(item);
+                  }
+
+                  //Create tempStack with the amount of items that should be dumped.
+                  ItemStack tempStack = new ItemStack(item, dump);
+
+                  //Returns a rest if he can't dump all of it in the building.
+                  returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), tempStack);
+              }
               if (returnStack == null)
               {
-                  worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
-                  return true;
+                  worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - amountToKeep);
+                  return amountToKeep == 0;
               }
-              worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+              worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize - amountToKeep);
               //Check that we are not inserting
               // into a full inventory.
               return stack.stackSize != returnStack.stackSize;
           });
+    }
+
+    /**
+     * Checks if enough items have been kept already.
+     * @param kept kept items.
+     * @param keep items to keep.
+     * @param stack stack to analyse.
+     * @return true if kept enough already.
+     */
+    private boolean keptEnough(Map<Item, Integer> kept, Map<Item, Integer> keep, Item stack)
+    {
+        return keep.get(stack) == null || (kept.get(stack) != null && kept.get(stack) >= keep.get(stack));
     }
 
     /**
@@ -820,6 +879,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return false;
+    }
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    protected Map<Item, Integer> needXForWorker()
+    {
+        return new HashMap<>();
     }
 
     /**

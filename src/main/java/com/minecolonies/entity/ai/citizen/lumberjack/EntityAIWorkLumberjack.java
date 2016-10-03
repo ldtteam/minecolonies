@@ -11,6 +11,7 @@ import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
@@ -18,9 +19,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -86,7 +85,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private static final int MAX_WAITING_TIME = 500;
 
-    private static final double HALF_BLOCK_OFFSET = 0.5D;
+    /**
+     * Sets the amount of saplings the lumberjack should keep.
+     */
+    private static final int SAPLINGS_TO_KEEP = 10;
 
     /**
      * Number of ticks to wait for tree.
@@ -148,11 +150,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * to check if the lumberjack is still walking
      */
     private              int   previousIndex           = 0;
+
     /**
      * Positions of all items that have to be collected.
      */
     @Nullable
     private List<BlockPos>                 items;
+
     /**
      * The active pathfinding job used to walk to trees
      */
@@ -171,6 +175,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     public EntityAIWorkLumberjack(@NotNull JobLumberjack job)
     {
+
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
@@ -664,7 +669,22 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     @Override
     protected boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return isStackAxe(stack) || isStackSapling(stack);
+        return isStackAxe(stack);
+    }
+
+
+     /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    protected Map<Item, Integer> needXForWorker()
+    {
+        Map<Item, Integer> keepX = new HashMap<>();
+        keepX.put(new ItemStack(Blocks.SAPLING).getItem(), SAPLINGS_TO_KEEP);
+        return keepX;
     }
 
     /**
