@@ -745,10 +745,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final Map<ItemStorage, Integer> toKeep = this.needXForWorker();
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        return walkToBuilding()
-                 || InventoryFunctions.matchFirstInInventory(
-          worker.getInventoryCitizen(), (i, stack) ->
-                        !(buildingWorker == null || stack == null || keepIt.test(stack)) && shouldKeep(keptX, toKeep, buildingWorker, stack, i));
+
+        return buildingWorker != null && (walkToBuilding() || InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(),
+                (i, stack) -> (stack != null && keepIt.test(stack)) || shouldKeep(keptX, toKeep, buildingWorker, stack, i)));
     }
 
     /**
