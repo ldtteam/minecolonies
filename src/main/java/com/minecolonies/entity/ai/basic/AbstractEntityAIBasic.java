@@ -821,6 +821,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 keep.put(stack, keep.get(tempStack));
                 return false;
             }
+            else if(tempStack.getItem() == stack.getItem())
+            {
+                return kept.get(stack) != null && kept.get(stack) >= keep.get(stack);
+            }
         }
         return keep.get(stack) == null || (kept.get(stack) != null && kept.get(stack) >= keep.get(stack));
     }
