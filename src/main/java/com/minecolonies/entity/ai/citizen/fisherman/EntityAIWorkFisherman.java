@@ -297,6 +297,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @return a list of objects which should be kept.
      */
+    @Override
     protected Map<ItemStorage, Integer> needXForWorker()
     {
         Map<ItemStorage, Integer> keepX = new HashMap<>();

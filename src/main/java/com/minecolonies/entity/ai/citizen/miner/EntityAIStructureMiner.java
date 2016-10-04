@@ -15,7 +15,6 @@ import net.minecraft.block.BlockLadder;
 import net.minecraft.block.BlockOre;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -38,8 +37,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private static final int        NODE_DISTANCE             = 7;
     /**
      * Return to chest after 3 stacks
-     *///todo change back to 64*3
-    private static final int        MAX_BLOCKS_MINED          = 32;
+     */
+    private static final int        MAX_BLOCKS_MINED          = 3*64;
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
@@ -173,15 +172,16 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      *
      * @return a list of objects which should be kept.
      */
+    @Override
     protected Map<ItemStorage, Integer> needXForWorker()
     {
         Map<ItemStorage, Integer> keepX = new HashMap<>();
-        ItemStack stack1 = new ItemStack(Blocks.LADDER);
-        ItemStack stack2 = new ItemStack(Blocks.OAK_FENCE);
-        ItemStack stack3 = new ItemStack(Blocks.TORCH);
-        ItemStack stack4 = new ItemStack(Blocks.COBBLESTONE);
-        ItemStack stack5 = new ItemStack(Blocks.WOODEN_SLAB);
-        ItemStack stack6 = new ItemStack(Blocks.PLANKS);
+        final ItemStack stack1 = new ItemStack(Blocks.LADDER);
+        final ItemStack stack2 = new ItemStack(Blocks.OAK_FENCE);
+        final ItemStack stack3 = new ItemStack(Blocks.TORCH);
+        final ItemStack stack4 = new ItemStack(Blocks.COBBLESTONE);
+        final ItemStack stack5 = new ItemStack(Blocks.WOODEN_SLAB);
+        final ItemStack stack6 = new ItemStack(Blocks.PLANKS);
         
         keepX.put(new ItemStorage(stack1.getItem(), stack1.getItemDamage(), 0, false), 64);
         keepX.put(new ItemStorage(stack2.getItem(), stack2.getItemDamage(), 0, false), 64);

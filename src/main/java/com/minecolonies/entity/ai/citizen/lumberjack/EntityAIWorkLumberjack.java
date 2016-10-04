@@ -12,8 +12,6 @@ import net.minecraft.block.BlockSapling;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
@@ -675,19 +673,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
 
-     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
+    /**
+    * Override this method if you want to keep an amount of items in inventory.
+    * When the inventory is full, everything get's dumped into the building chest.
+    * But you can use this method to hold some stacks back.
+    *
+    * @return a list of objects which should be kept.
+    */
+    @Override
     protected Map<ItemStorage, Integer> needXForWorker()
     {
         Map<ItemStorage, Integer> keepX = new HashMap<>();
-        ItemStack stack = new ItemStack(Blocks.SAPLING);
-
-
+        final ItemStack stack = new ItemStack(Blocks.SAPLING);
         keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
 
         return keepX;

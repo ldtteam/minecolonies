@@ -1,7 +1,6 @@
 package com.minecolonies.entity.ai.util;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,7 +19,7 @@ public class ItemStorage
     private final int damageValue;
 
     /**
-     * The amount;
+     * The amount.
      */
     private final int amount;
 
@@ -29,6 +28,13 @@ public class ItemStorage
      */
     private final boolean ignoreDamageValue;
 
+    /**
+     * Creates an instance of the storage.
+     * @param item the item.
+     * @param damageValue it's damage value.
+     * @param amount optional amount.
+     * @param ignoreDamageValue should the damage value be ignored?
+     */
     public ItemStorage(@NotNull Item item, int damageValue, int amount, boolean ignoreDamageValue)
     {
         this.item = item;
@@ -66,7 +72,7 @@ public class ItemStorage
     }
 
     /**
-     * Getter for the ignoreDamageValue
+     * Getter for the ignoreDamageValue.
      * @return true if should ignore.
      */
     public boolean ignoreDamageValue()

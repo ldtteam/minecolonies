@@ -767,7 +767,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                   final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
                   amountToKeep = toKeep.get(tempStorage);
                   ItemStack tempStack = handleKeepX(keptX, toKeep, tempStorage);
-                  if(tempStack == null)
+                  if(tempStack == null || tempStack.stackSize == 0)
                   {
                       return false;
                   }
@@ -775,10 +775,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
               }
               if (returnStack == null)
               {
-                  worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
+                  worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - amountToKeep);
                   return amountToKeep == 0;
               }
-              worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+              worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize - amountToKeep);
               //Check that we are not inserting into a full inventory.
               return stack.stackSize != returnStack.stackSize;
           });
@@ -797,7 +797,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         if(keptX.get(tempStorage) == null)
         {
-            if (toKeep.get(tempStorage) > tempStorage.getAmount())
+            if (toKeep.get(tempStorage) >= tempStorage.getAmount())
             {
                 keptX.put(tempStorage, tempStorage.getAmount());
                 return null;
