@@ -8,7 +8,9 @@ import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
+import com.minecolonies.sounds.FishermanSounds;
 import com.minecolonies.util.InventoryUtils;
+import com.minecolonies.util.SoundUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -17,6 +19,7 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -96,26 +99,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private static final int SEARCH_RANGE = 50;
 
     /**
-     * The volume in percent which shall be played for the entity sounds
-     */
-    private static final float VOLUME = 0.5F;
-
-    /**
-     * The upper limit for the frequency of the played sounds
-     */
-    private static final double FREQUENCY_UPPER_LIMIT_DIVIDER = 1.2D;
-
-    /**
-     * The lower limit for the frequency of the played sounds
-     */
-    private static final double FREQUENCY_LOWER_LIMIT_DIVIDER = 0.8D;
-
-    /**
-     * The frequency should be around this value
-     */
-    private static final double FREQUENCY_BOUND_VALUE = 0.4D;
-
-    /**
      * The percentage of times where the fisherman will check out a new pond.
      */
     private static final double CHANCE_NEW_POND = 0.05D;
@@ -130,7 +113,15 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private static final int DEXTERITY_MULTIPLIER = 1;
 
-    private static final int FISHING_TIMEOUT = 5;
+    /**
+     * Time out fo fish again.
+     */
+    private static final int FISHING_TIMEOUT      = 5;
+
+    /**
+     * Chance to play a specific fisherman sound.
+     */
+    private static final int CHANCE_TO_PLAY_SOUND = 20;
 
     /**
      * The number of executed adjusts of the fisherman's rotation.
@@ -212,6 +203,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         if (checkOrRequestItems(new ItemStack(Items.FISHING_ROD)))
         {
+            playNeedRodSound();
             return getState();
         }
         if (job.getWater() == null)
@@ -219,6 +211,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return FISHERMAN_SEARCHING_WATER;
         }
         return FISHERMAN_WALKING_TO_WATER;
+    }
+
+    /**
+     * Plays a sound when the fisherman needs a rod.
+     */
+    private void playNeedRodSound()
+    {
+        if(worker != null)
+        {
+            final SoundEvent needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
+            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), needFishingRod, CHANCE_TO_PLAY_SOUND);
+        }
     }
 
     /**
@@ -286,6 +290,8 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         return worker.hasItemInInventory(Items.FISHING_ROD) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
     }
+
+
 
     /**
      * Override this method if you want to keep some items in inventory.
@@ -461,6 +467,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
+            playCaughtFishSound();
             if (random.nextDouble() < CHANCE_NEW_POND)
             {
                 job.setWater(null);
@@ -470,6 +477,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
 
         return throwOrRetrieveHook();
+    }
+
+    /**
+     * Plays a sound with a chance when a fish has been caught.
+     */
+    private void playCaughtFishSound()
+    {
+        if(worker != null)
+        {
+            final SoundEvent iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
+            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), iGotOne, CHANCE_TO_PLAY_SOUND);
+        }
     }
 
     /**
@@ -648,4 +667,5 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         return worker;
     }
+
 }

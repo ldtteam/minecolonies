@@ -4,9 +4,11 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.fisherman.EntityAIWorkFisherman;
+import com.minecolonies.sounds.FishermanSounds;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -183,6 +185,35 @@ public class JobFisherman extends AbstractJob
     public void removeFromPonds(BlockPos pond)
     {
         this.ponds.remove(pond);
+    }
+
+
+    /**
+     * Override this to let the worker return a bedTimeSound.
+     * @return soundEvent to be played.
+     */
+    @Override
+    public SoundEvent getBedTimeSound()
+    {
+        if(getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? FishermanSounds.Female.offToBed : FishermanSounds.Male.offToBed;
+        }
+        return null;
+    }
+
+    /**
+     * Override this to let the worker return a badWeatherSound.
+     * @return soundEvent to be played.
+     */
+    @Override
+    public SoundEvent getBadWeatherSound()
+    {
+        if(getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
+        }
+        return null;
     }
 }
 

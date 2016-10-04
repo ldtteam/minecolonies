@@ -952,4 +952,5 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         actionsDone++;
     }
+
 }
