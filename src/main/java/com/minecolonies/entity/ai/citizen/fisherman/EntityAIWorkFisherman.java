@@ -305,18 +305,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 
         return keepX;
     }
-
-    /**
-     * Checks if a given stack equals a fishingRod.
-     *
-     * @param stack the stack to decide on
-     * @return if the stack matches
-     */
-    private static boolean isStackRod(@Nullable ItemStack stack)
-    {
-        return stack != null && stack.getItem().equals(Items.FISHING_ROD);
-    }
-
+    
     /**
      * If the job class has no water object the fisherman should search water.
      *
