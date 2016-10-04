@@ -305,7 +305,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 
         return keepX;
     }
-    
+
     /**
      * If the job class has no water object the fisherman should search water.
      *

@@ -182,19 +182,19 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     protected Map<ItemStorage, Integer> needXForWorker()
     {
         final Map<ItemStorage, Integer> keepX = new HashMap<>();
-        final ItemStack stack1 = new ItemStack(Blocks.LADDER);
-        final ItemStack stack2 = new ItemStack(Blocks.OAK_FENCE);
-        final ItemStack stack3 = new ItemStack(Blocks.TORCH);
-        final ItemStack stack4 = new ItemStack(Blocks.COBBLESTONE);
-        final ItemStack stack5 = new ItemStack(Blocks.WOODEN_SLAB);
-        final ItemStack stack6 = new ItemStack(Blocks.PLANKS);
+        final ItemStack stackLadder = new ItemStack(Blocks.LADDER);
+        final ItemStack stackFence = new ItemStack(Blocks.OAK_FENCE);
+        final ItemStack stackTorch = new ItemStack(Blocks.TORCH);
+        final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
+        final ItemStack stackSlab = new ItemStack(Blocks.WOODEN_SLAB);
+        final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
         
-        keepX.put(new ItemStorage(stack1.getItem(), stack1.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stack2.getItem(), stack2.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stack3.getItem(), stack3.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stack4.getItem(), stack4.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stack5.getItem(), stack5.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stack6.getItem(), stack6.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackLadder.getItem(), stackLadder.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackFence.getItem(), stackFence.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackTorch.getItem(), stackTorch.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackCobble.getItem(), stackCobble.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackSlab.getItem(), stackSlab.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackPlanks.getItem(), stackPlanks.getItemDamage(), 0, false), STACK_MAX_SIZE);
 
         return keepX;
     }

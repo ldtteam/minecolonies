@@ -748,37 +748,45 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return walkToBuilding()
                  || InventoryFunctions.matchFirstInInventory(
           worker.getInventoryCitizen(), (i, stack) ->
-          {
-              if (buildingWorker == null || stack == null || keepIt.test(stack))
-              {
-                  return false;
-              }
-              @Nullable ItemStack returnStack;
-              int amountToKeep = 0;
-              if(keptEnough(keptX, toKeep, stack))
-              {
-                  returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
-              }
-              else
-              {
-                  final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
-                  ItemStack tempStack = handleKeepX(keptX, toKeep, tempStorage);
-                  if(tempStack == null || tempStack.stackSize == 0)
-                  {
-                      return false;
-                  }
-                  amountToKeep = toKeep.get(tempStorage) - tempStack.stackSize;
-                  returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), tempStack);
-              }
-              if (returnStack == null)
-              {
-                  worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - amountToKeep);
-                  return amountToKeep == 0;
-              }
-              worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize - amountToKeep);
-              //Check that we are not inserting into a full inventory.
-              return stack.stackSize != returnStack.stackSize;
-          });
+                        !(buildingWorker == null || stack == null || keepIt.test(stack)) && shouldKeep(keptX, toKeep, buildingWorker, stack, i));
+    }
+
+    /**
+     * Checks if an item should be kept.
+     * @param keptX already kept items.
+     * @param toKeep items that should be kept.
+     * @param buildingWorker the building of the worker.
+     * @param stack the stack being analyzed.
+     * @param i the iteration inside the inventory.
+     * @return false if should be kept.
+     */
+    private boolean shouldKeep(Map<ItemStorage, Integer> keptX, Map<ItemStorage, Integer> toKeep, AbstractBuildingWorker buildingWorker, ItemStack stack, int i)
+    {
+        @Nullable ItemStack returnStack;
+        int amountToKeep = 0;
+        if(keptEnough(keptX, toKeep, stack))
+        {
+            returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
+        }
+        else
+        {
+            final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
+            ItemStack tempStack = handleKeepX(keptX, toKeep, tempStorage);
+            if(tempStack == null || tempStack.stackSize == 0)
+            {
+                return false;
+            }
+            amountToKeep = toKeep.get(tempStorage) - tempStack.stackSize;
+            returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), tempStack);
+        }
+        if (returnStack == null)
+        {
+            worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - amountToKeep);
+            return amountToKeep == 0;
+        }
+        worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize - amountToKeep);
+        //Check that we are not inserting into a full inventory.
+        return stack.stackSize != returnStack.stackSize;
     }
 
     /**
@@ -790,30 +798,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private static ItemStack handleKeepX(Map<ItemStorage, Integer> keptX, Map<ItemStorage, Integer> toKeep, ItemStorage tempStorage)
     {
-        int dump;
-
-        if(keptX.get(tempStorage) == null)
+        int amountKept = 0;
+        if(keptX.get(tempStorage) != null)
         {
-            if (toKeep.get(tempStorage) >= tempStorage.getAmount())
-            {
-                keptX.put(tempStorage, tempStorage.getAmount());
-                return null;
-            }
+            amountKept = keptX.remove(tempStorage);
+        }
 
-            dump = tempStorage.getAmount() - toKeep.get(tempStorage);
-            keptX.put(tempStorage, toKeep.get(tempStorage));
-        }
-        else
+        if (toKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
         {
-            final int amountKept = keptX.remove(tempStorage);
-            if (toKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
-            {
-                keptX.put(tempStorage, tempStorage.getAmount() + amountKept);
-                return null;
-            }
-            keptX.put(tempStorage, toKeep.get(tempStorage));
-            dump = tempStorage.getAmount() + amountKept - toKeep.get(tempStorage);
+            keptX.put(tempStorage, tempStorage.getAmount() + amountKept);
+            return null;
         }
+        keptX.put(tempStorage, toKeep.get(tempStorage));
+        int dump = tempStorage.getAmount() + amountKept - toKeep.get(tempStorage);
 
         //Create tempStack with the amount of items that should be dumped.
         return new ItemStack(tempStorage.getItem(), dump, tempStorage.getDamageValue());
