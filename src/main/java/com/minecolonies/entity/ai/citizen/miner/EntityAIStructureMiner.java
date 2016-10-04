@@ -38,7 +38,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Return to chest after 3 stacks
      */
-    private static final int        MAX_BLOCKS_MINED          = 16;
+    private static final int        MAX_BLOCKS_MINED          = 3*64;
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
@@ -49,6 +49,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private static final int        SAFE_CHECK_RANGE          = 5;
     private static final int        SAFE_CHECK_UPPER_BOUND    = 4;
     private static final int        SAFE_CHECK_LOWER_BOUND    = -7;
+
+    /**
+     * Amount of items to be kept.
+     */
+    private static final int STACK_MAX_SIZE               = 64;
+
     //The current block to mine
     @Nullable
     private BlockPos currentWorkingLocation;
@@ -175,7 +181,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @Override
     protected Map<ItemStorage, Integer> needXForWorker()
     {
-        Map<ItemStorage, Integer> keepX = new HashMap<>();
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
         final ItemStack stack1 = new ItemStack(Blocks.LADDER);
         final ItemStack stack2 = new ItemStack(Blocks.OAK_FENCE);
         final ItemStack stack3 = new ItemStack(Blocks.TORCH);
@@ -183,12 +189,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         final ItemStack stack5 = new ItemStack(Blocks.WOODEN_SLAB);
         final ItemStack stack6 = new ItemStack(Blocks.PLANKS);
         
-        keepX.put(new ItemStorage(stack1.getItem(), stack1.getItemDamage(), 0, false), 64);
-        keepX.put(new ItemStorage(stack2.getItem(), stack2.getItemDamage(), 0, false), 64);
-        keepX.put(new ItemStorage(stack3.getItem(), stack3.getItemDamage(), 0, false), 64);
-        keepX.put(new ItemStorage(stack4.getItem(), stack4.getItemDamage(), 0, false), 64);
-        keepX.put(new ItemStorage(stack5.getItem(), stack5.getItemDamage(), 0, false), 64);
-        keepX.put(new ItemStorage(stack6.getItem(), stack6.getItemDamage(), 0, false), 64);
+        keepX.put(new ItemStorage(stack1.getItem(), stack1.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stack2.getItem(), stack2.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stack3.getItem(), stack3.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stack4.getItem(), stack4.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stack5.getItem(), stack5.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stack6.getItem(), stack6.getItemDamage(), 0, false), STACK_MAX_SIZE);
 
         return keepX;
     }

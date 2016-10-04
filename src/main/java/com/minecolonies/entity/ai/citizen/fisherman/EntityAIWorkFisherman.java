@@ -300,7 +300,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     @Override
     protected Map<ItemStorage, Integer> needXForWorker()
     {
-        Map<ItemStorage, Integer> keepX = new HashMap<>();
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
         keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
 
         return keepX;

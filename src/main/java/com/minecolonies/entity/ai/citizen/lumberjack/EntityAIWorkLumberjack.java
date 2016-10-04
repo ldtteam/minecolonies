@@ -683,7 +683,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     @Override
     protected Map<ItemStorage, Integer> needXForWorker()
     {
-        Map<ItemStorage, Integer> keepX = new HashMap<>();
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
         final ItemStack stack = new ItemStack(Blocks.SAPLING);
         keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
 

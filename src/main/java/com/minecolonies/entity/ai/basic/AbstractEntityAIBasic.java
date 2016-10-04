@@ -671,10 +671,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private AIState dumpInventory()
     {
-        //Items already kept in the inventory
-        final Map<ItemStorage, Integer> keptX = new HashMap<>();
-
-        if (dumpOneMoreSlot(keptX))
+        if (dumpOneMoreSlot())
         {
             delay += DELAY_RECHECK;
             return INVENTORY_FULL;
@@ -694,11 +691,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Dump the workers inventory into his building chest.
      * Only useful tools are kept!
      * Only dumps one block at a time!
-     * @param keptX items already kept in the inventory.
      */
-    private boolean dumpOneMoreSlot(Map<ItemStorage, Integer> keptX)
+    private boolean dumpOneMoreSlot()
     {
-        return dumpOneMoreSlot(this::neededForWorker, keptX);
+        return dumpOneMoreSlot(this::neededForWorker);
     }
 
     /**
@@ -740,11 +736,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Dumps one inventory slot into the building chest.
      *
      * @param keepIt used to test it that stack should be kept
-     * @param keptX items already kept
      * @return true if is has to dump more.
      */
-    private boolean dumpOneMoreSlot(@NotNull Predicate<ItemStack> keepIt, Map<ItemStorage, Integer> keptX)
+    private boolean dumpOneMoreSlot(@NotNull Predicate<ItemStack> keepIt)
     {
+        //Items already kept in the inventory
+        final Map<ItemStorage, Integer> keptX = new HashMap<>();
         final Map<ItemStorage, Integer> toKeep = this.needXForWorker();
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
@@ -827,7 +824,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param kept kept items.
      * @param keep items to keep.
      * @param stack stack to analyse.
-     * @return true if kept enough already.
+     * @return true if the the item shouldn't be kept.
      */
     private static boolean keptEnough(Map<ItemStorage, Integer> kept, Map<ItemStorage, Integer> keep, ItemStack stack)
     {
@@ -840,6 +837,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
         }
         final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false);
+
+        //Check first if the the item shouldn't be kept if it should be kept check if we already kept enough of them.
         return keep.get(tempStorage) == null || (kept.get(tempStorage) != null && kept.get(tempStorage) >= keep.get(tempStorage));
     }
 
