@@ -746,7 +746,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
-        return buildingWorker != null && (walkToBuilding() || InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(),
+        return buildingWorker != null
+                && (walkToBuilding()
+                || InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(),
                 (i, stack) -> (stack != null && keepIt.test(stack)) || shouldKeep(keptX, toKeep, buildingWorker, stack, i)));
     }
 
