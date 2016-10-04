@@ -761,7 +761,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param i the iteration inside the inventory.
      * @return false if should be kept.
      */
-    private boolean shouldKeep(Map<ItemStorage, Integer> keptX, Map<ItemStorage, Integer> toKeep, AbstractBuildingWorker buildingWorker, ItemStack stack, int i)
+    private boolean shouldKeep(@NotNull Map<ItemStorage, Integer> keptX, @NotNull Map<ItemStorage, Integer> toKeep,
+            @NotNull AbstractBuildingWorker buildingWorker, ItemStack stack, int i)
     {
         @Nullable ItemStack returnStack;
         int amountToKeep = 0;
@@ -797,7 +798,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tempStorage item to analyze.
      * @return null if should be kept entirely, else itemStack with amount which should be dumped.
      */
-    private static ItemStack handleKeepX(Map<ItemStorage, Integer> keptX, Map<ItemStorage, Integer> toKeep, ItemStorage tempStorage)
+    private static ItemStack handleKeepX(@NotNull Map<ItemStorage, Integer> keptX,
+            @NotNull Map<ItemStorage, Integer> toKeep,@NotNull ItemStorage tempStorage)
     {
         int amountKept = 0;
         if(keptX.get(tempStorage) != null)
@@ -824,7 +826,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param stack stack to analyse.
      * @return true if the the item shouldn't be kept.
      */
-    private static boolean keptEnough(Map<ItemStorage, Integer> kept, Map<ItemStorage, Integer> keep, ItemStack stack)
+    private static boolean keptEnough(@NotNull Map<ItemStorage, Integer> kept, @NotNull Map<ItemStorage, Integer> keep, @NotNull ItemStack stack)
     {
         for(ItemStorage tempStack: keep.keySet())
         {
