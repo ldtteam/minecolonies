@@ -38,7 +38,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Return to chest after 3 stacks
      */
-    private static final int        MAX_BLOCKS_MINED          = 3*64;
+    private static final int        MAX_BLOCKS_MINED          = 16;
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
