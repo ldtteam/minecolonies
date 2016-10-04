@@ -753,7 +753,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Checks if an item should be kept.
+     * Checks if an item should be kept and does deposit the rest into his chest.
      * @param keptX already kept items.
      * @param toKeep items that should be kept.
      * @param buildingWorker the building of the worker.
@@ -820,7 +820,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Checks if enough items have been kept already.
+     * Checks if enough items have been marked as to be kept already.
      * @param kept kept items.
      * @param keep items to keep.
      * @param stack stack to analyse.
