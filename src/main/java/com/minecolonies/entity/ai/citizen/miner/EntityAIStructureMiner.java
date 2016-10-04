@@ -6,6 +6,7 @@ import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.entity.ai.util.ItemStorage;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.SchematicWrapper;
 import com.minecolonies.util.Utils;
@@ -172,15 +173,22 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      *
      * @return a list of objects which should be kept.
      */
-    protected Map<ItemStack, Integer> needXForWorker()
+    protected Map<ItemStorage, Integer> needXForWorker()
     {
-        Map<ItemStack, Integer> keepX = new HashMap<>();
-        keepX.put(new ItemStack(Blocks.PLANKS), 64);
-        keepX.put(new ItemStack(Blocks.LADDER), 64);
-        keepX.put(new ItemStack(Blocks.OAK_FENCE), 64);
-        keepX.put(new ItemStack(Blocks.TORCH), 64);
-        keepX.put(new ItemStack(Blocks.COBBLESTONE), 64);
-        keepX.put(new ItemStack(Blocks.WOODEN_SLAB), 64);
+        Map<ItemStorage, Integer> keepX = new HashMap<>();
+        ItemStack stack1 = new ItemStack(Blocks.LADDER);
+        ItemStack stack2 = new ItemStack(Blocks.OAK_FENCE);
+        ItemStack stack3 = new ItemStack(Blocks.TORCH);
+        ItemStack stack4 = new ItemStack(Blocks.COBBLESTONE);
+        ItemStack stack5 = new ItemStack(Blocks.WOODEN_SLAB);
+        ItemStack stack6 = new ItemStack(Blocks.PLANKS);
+        
+        keepX.put(new ItemStorage(stack1.getItem(), stack1.getItemDamage(), 0, false), 64);
+        keepX.put(new ItemStorage(stack2.getItem(), stack2.getItemDamage(), 0, false), 64);
+        keepX.put(new ItemStorage(stack3.getItem(), stack3.getItemDamage(), 0, false), 64);
+        keepX.put(new ItemStorage(stack4.getItem(), stack4.getItemDamage(), 0, false), 64);
+        keepX.put(new ItemStorage(stack5.getItem(), stack5.getItemDamage(), 0, false), 64);
+        keepX.put(new ItemStorage(stack6.getItem(), stack6.getItemDamage(), 0, false), 64);
 
         return keepX;
     }

@@ -4,10 +4,10 @@ import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.entity.ai.util.ItemStorage;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -42,6 +42,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private static final int ACTIONS_UNTIL_DUMP = 32;
 
     /**
+     * Hit a block every x ticks when mining.
+     */
+    private static final int HIT_EVERY_X_TICKS  = 5;
+
+    /**
      * The block the ai is currently working at or wants to work.
      */
     @Nullable
@@ -54,7 +59,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected BlockPos currentStandingLocation = null;
 
     /**
-     * The time in ticks until the next action is made
+     * The time in ticks until the next action is made.
      */
     private int delay = 0;
 
@@ -78,7 +83,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Will be cleared on restart, be aware!
      */
     @NotNull
-    private List<ItemStack> itemsNeeded = new ArrayList<>();
+    private final List<ItemStack> itemsNeeded = new ArrayList<>();
 
     /**
      * This flag tells if we need a shovel, will be set on tool needs.
@@ -106,7 +111,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private int needsPickaxeLevel = -1;
 
     /**
-     * If we have waited one delay
+     * If we have waited one delay.
      */
     private boolean hasDelayed = false;
 
@@ -274,13 +279,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         if (delay > 0)
         {
-            if (currentStandingLocation != null &&
-                  !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
+            if (currentStandingLocation != null
+                    && !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
             {
                 //Don't decrease delay as we are just walking...
                 return true;
             }
-            if (delay % 5 == 0)
+            if (delay % HIT_EVERY_X_TICKS == 0)
             {
                 worker.hitBlockWithToolInHand(currentWorkingLocation);
             }
@@ -331,7 +336,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (!walkToBuilding())
         {
             delay += DELAY_RECHECK;
-            ItemStack first = itemsCurrentlyNeeded.get(0);
+            final ItemStack first = itemsCurrentlyNeeded.get(0);
             //Takes one Stack from the hut if existent
             if (isInHut(first))
             {
@@ -380,9 +385,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     public boolean isInHut(@Nullable final ItemStack is)
     {
         @Nullable final AbstractBuildingWorker buildingMiner = getOwnBuilding();
-        return buildingMiner != null &&
-                 is != null &&
-                 InventoryFunctions
+        return buildingMiner != null
+                && is != null
+                && InventoryFunctions
                    .matchFirstInInventory(
                      buildingMiner.getTileEntity(),
                      stack -> stack != null && is.isItemEqual(stack),
@@ -491,7 +496,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     private boolean checkForTool(@NotNull String tool)
     {
-        boolean needsTool = !InventoryFunctions
+        final boolean needsTool = !InventoryFunctions
                                .matchFirstInInventory(
                                  worker.getInventoryCitizen(),
                                  stack -> Utils.isTool(stack, tool),
@@ -667,7 +672,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private AIState dumpInventory()
     {
         //Items already kept in the inventory
-        Map<ItemStack, Integer> keptX = new HashMap<>();
+        final Map<ItemStorage, Integer> keptX = new HashMap<>();
 
         if (dumpOneMoreSlot(keptX))
         {
@@ -691,13 +696,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Only dumps one block at a time!
      * @param keptX items already kept in the inventory.
      */
-    private boolean dumpOneMoreSlot(Map<ItemStack, Integer> keptX)
+    private boolean dumpOneMoreSlot(Map<ItemStorage, Integer> keptX)
     {
         return dumpOneMoreSlot(this::neededForWorker, keptX);
     }
 
     /**
-     * Checks if the worker inventory and his building chest are full
+     * Checks if the worker inventory and his building chest are full.
      *
      * @return true if both are full, else false
      */
@@ -738,9 +743,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param keptX items already kept
      * @return true if is has to dump more.
      */
-    private boolean dumpOneMoreSlot(@NotNull Predicate<ItemStack> keepIt, Map<ItemStack, Integer> keptX)
+    private boolean dumpOneMoreSlot(@NotNull Predicate<ItemStack> keepIt, Map<ItemStorage, Integer> keptX)
     {
-        Map<ItemStack, Integer> toKeep = this.needXForWorker();
+        final Map<ItemStorage, Integer> toKeep = this.needXForWorker();
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         return walkToBuilding()
@@ -751,58 +756,70 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
               {
                   return false;
               }
-
               @Nullable ItemStack returnStack;
               int amountToKeep = 0;
               if(keptEnough(keptX, toKeep, stack))
               {
-                  //Returns a rest if he can't dump all of it in the building.
                   returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
               }
               else
               {
-                  int dump = 0;
-                  amountToKeep = toKeep.get(stack);
-
-                  if(keptX.get(stack) == null)
+                  final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
+                  amountToKeep = toKeep.get(tempStorage);
+                  ItemStack tempStack = handleKeepX(keptX, toKeep, tempStorage);
+                  if(tempStack == null)
                   {
-                      if (toKeep.get(stack) > stack.stackSize)
-                      {
-                          keptX.put(stack, stack.stackSize);
-                          return false;
-                      }
-
-                      dump = stack.stackSize - toKeep.get(stack);
-                      keptX.put(stack, toKeep.get(stack));
+                      return false;
                   }
-                  else
-                  {
-                      int amountKept = keptX.remove(stack);
-                      if (toKeep.get(stack) > (stack.stackSize + amountKept))
-                      {
-                          keptX.put(stack, stack.stackSize + amountKept);
-                          return false;
-                      }
-                      keptX.put(stack, toKeep.get(stack));
-                      dump = stack.stackSize + amountKept - toKeep.get(stack);
-                  }
-
-                  //Create tempStack with the amount of items that should be dumped.
-                  ItemStack tempStack = new ItemStack(stack.getItem(), dump, stack.getItemDamage());
-
-                  //Returns a rest if he can't dump all of it in the building.
                   returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), tempStack);
               }
               if (returnStack == null)
               {
-                  worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - amountToKeep);
+                  worker.getInventoryCitizen().decrStackSize(i, stack.stackSize);
                   return amountToKeep == 0;
               }
-              worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize - amountToKeep);
-              //Check that we are not inserting
-              // into a full inventory.
+              worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize);
+              //Check that we are not inserting into a full inventory.
               return stack.stackSize != returnStack.stackSize;
           });
+    }
+
+    /**
+     * Handle the cases when X items should be kept.
+     * @param keptX already kept items.
+     * @param toKeep to keep items.
+     * @param tempStorage item to analyze.
+     * @return null if should be kept entirely, else itemStack with amount which should be dumped.
+     */
+    private static ItemStack handleKeepX(Map<ItemStorage, Integer> keptX, Map<ItemStorage, Integer> toKeep, ItemStorage tempStorage)
+    {
+        int dump;
+
+        if(keptX.get(tempStorage) == null)
+        {
+            if (toKeep.get(tempStorage) > tempStorage.getAmount())
+            {
+                keptX.put(tempStorage, tempStorage.getAmount());
+                return null;
+            }
+
+            dump = tempStorage.getAmount() - toKeep.get(tempStorage);
+            keptX.put(tempStorage, toKeep.get(tempStorage));
+        }
+        else
+        {
+            final int amountKept = keptX.remove(tempStorage);
+            if (toKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
+            {
+                keptX.put(tempStorage, tempStorage.getAmount() + amountKept);
+                return null;
+            }
+            keptX.put(tempStorage, toKeep.get(tempStorage));
+            dump = tempStorage.getAmount() + amountKept - toKeep.get(tempStorage);
+        }
+
+        //Create tempStack with the amount of items that should be dumped.
+        return new ItemStack(tempStorage.getItem(), dump, tempStorage.getDamageValue());
     }
 
     /**
@@ -812,21 +829,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param stack stack to analyse.
      * @return true if kept enough already.
      */
-    private boolean keptEnough(Map<ItemStack, Integer> kept, Map<ItemStack, Integer> keep, ItemStack stack)
+    private static boolean keptEnough(Map<ItemStorage, Integer> kept, Map<ItemStorage, Integer> keep, ItemStack stack)
     {
-        for(ItemStack tempStack: keep.keySet())
+        for(ItemStorage tempStack: keep.keySet())
         {
-            if(tempStack.getItem() == stack.getItem() && tempStack.getItemDamage() != stack.getItemDamage())
+            if(tempStack.getItem() == stack.getItem() && tempStack.getDamageValue() != stack.getItemDamage())
             {
-                keep.put(stack, keep.get(tempStack));
-                return false;
-            }
-            else if(tempStack.getItem() == stack.getItem())
-            {
-                return kept.get(stack) != null && kept.get(stack) >= keep.get(stack);
+                keep.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, tempStack.ignoreDamageValue()), keep.get(tempStack));
+                break;
             }
         }
-        return keep.get(stack) == null || (kept.get(stack) != null && kept.get(stack) >= keep.get(stack));
+        final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false);
+        return keep.get(tempStorage) == null || (kept.get(tempStorage) != null && kept.get(tempStorage) >= keep.get(tempStorage));
     }
 
     /**
@@ -844,17 +858,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return false;
         }
         boolean allClear = true;
-        for (@Nullable ItemStack stack : items)
+        for (final @Nullable ItemStack stack : items)
         {
             if (stack == null || stack.getItem() == null)
             {
                 continue;
             }
-            int countOfItem = worker.getItemCountInInventory(stack.getItem());
+            final int countOfItem = worker.getItemCountInInventory(stack.getItem());
             if (countOfItem < stack.stackSize)
             {
-                int itemsLeft = stack.stackSize - countOfItem;
-                @NotNull ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
+                final int itemsLeft = stack.stackSize - countOfItem;
+                @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
                 itemsCurrentlyNeeded.add(requiredStack);
                 allClear = false;
             }
@@ -899,7 +913,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return a list of objects which should be kept.
      */
-    protected Map<ItemStack, Integer> needXForWorker()
+    protected Map<ItemStorage, Integer> needXForWorker()
     {
         return new HashMap<>();
     }
@@ -914,7 +928,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected final boolean holdEfficientTool(@NotNull final Block target)
     {
-        int bestSlot = getMostEfficientTool(target);
+        final int bestSlot = getMostEfficientTool(target);
         if (bestSlot >= 0)
         {
             worker.setHeldItem(bestSlot);
@@ -931,8 +945,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private void requestTool(@NotNull final Block target)
     {
-        String tool = target.getHarvestTool(target.getDefaultState());
-        int required = target.getHarvestLevel(target.getDefaultState());
+        final String tool = target.getHarvestTool(target.getDefaultState());
+        final int required = target.getHarvestLevel(target.getDefaultState());
         updateToolFlag(tool, required);
     }
 
@@ -973,15 +987,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private int getMostEfficientTool(@NotNull final Block target)
     {
-        String tool = target.getHarvestTool(target.getDefaultState());
-        int required = target.getHarvestLevel(target.getDefaultState());
+        final String tool = target.getHarvestTool(target.getDefaultState());
+        final int required = target.getHarvestLevel(target.getDefaultState());
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull InventoryCitizen inventory = worker.getInventoryCitizen();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack item = inventory.getStackInSlot(i);
-            int level = Utils.getMiningLevel(item, tool);
+            final ItemStack item = inventory.getStackInSlot(i);
+            final int level = Utils.getMiningLevel(item, tool);
             if (level >= required && level < bestLevel)
             {
                 bestSlot = i;

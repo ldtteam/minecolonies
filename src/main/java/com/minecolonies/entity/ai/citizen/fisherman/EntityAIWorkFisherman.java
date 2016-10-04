@@ -7,6 +7,7 @@ import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.entity.ai.util.ItemStorage;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
@@ -296,10 +297,10 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @return a list of objects which should be kept.
      */
-    protected Map<ItemStack, Integer> needXForWorker()
+    protected Map<ItemStorage, Integer> needXForWorker()
     {
-        Map<ItemStack, Integer> keepX = new HashMap<>();
-        keepX.put(new ItemStack(Items.FISHING_ROD), 1);
+        Map<ItemStorage, Integer> keepX = new HashMap<>();
+        keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
 
         return keepX;
     }

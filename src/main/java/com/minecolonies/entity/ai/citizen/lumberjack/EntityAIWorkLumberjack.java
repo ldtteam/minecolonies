@@ -4,6 +4,7 @@ import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.entity.ai.util.ItemStorage;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
@@ -681,10 +682,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @return a list of objects which should be kept.
      */
-    protected Map<ItemStack, Integer> needXForWorker()
+    protected Map<ItemStorage, Integer> needXForWorker()
     {
-        Map<ItemStack, Integer> keepX = new HashMap<>();
-        keepX.put(new ItemStack(Blocks.SAPLING), SAPLINGS_TO_KEEP);
+        Map<ItemStorage, Integer> keepX = new HashMap<>();
+        ItemStack stack = new ItemStack(Blocks.SAPLING);
+
+
+        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
 
         return keepX;
     }
