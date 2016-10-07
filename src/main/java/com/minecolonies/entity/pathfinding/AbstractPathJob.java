@@ -767,14 +767,14 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         //  Now check the block we want to move to
-        IBlockState target = world.getBlockState(pos);
+        final IBlockState target = world.getBlockState(pos);
         if (!isPassable(target))
         {
             return handleTargeNotPassable(parent, pos, target);
         }
 
         //  Do we have something to stand on in the target space?
-        IBlockState below = world.getBlockState(pos.down());
+        final IBlockState below = world.getBlockState(pos.down());
         if (isWalkableSurface(below) == SurfaceType.WALKABLE)
         {
             //  Level path
@@ -814,8 +814,8 @@ public abstract class AbstractPathJob implements Callable<Path>
             return -1;
         }
 
-        BlockPos down = pos.down(2);
-        IBlockState below = world.getBlockState(down);
+        final BlockPos down = pos.down(2);
+        final IBlockState below = world.getBlockState(down);
         if (isWalkableSurface(below) == SurfaceType.WALKABLE)
         {
             //  Level path
@@ -877,7 +877,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (parent != null)
         {
-            IBlockState hereState = world.getBlockState(parent.pos.down());
+            final IBlockState hereState = world.getBlockState(parent.pos.down());
             if (hereState.getMaterial().isLiquid() && !isPassable(pos))
             {
                 return true;
@@ -922,9 +922,10 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param blockState Block to check
      * @return true if the block at that location can be walked on.
      */
+    @NotNull
     protected SurfaceType isWalkableSurface(@NotNull IBlockState blockState)
     {
-        Block block = blockState.getBlock();
+        final Block block = blockState.getBlock();
         if(block instanceof BlockFence
                 || block instanceof BlockFenceGate
                 || block instanceof BlockWall
