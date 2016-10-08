@@ -66,6 +66,16 @@ public abstract class AbstractPathJob implements Callable<Path>
     private       int                totalNodesVisited            = 0;
 
     /**
+     * Check if we can walk on a surface, drop into, or neither.
+     */
+    private enum SurfaceType
+    {
+        WALKABLE,
+        DROPABLE,
+        NOT_PASSABLE
+    }
+
+    /**
      * AbstractPathJob constructor
      *
      * @param world the world within which to path
@@ -757,33 +767,37 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         //  Now check the block we want to move to
-        Block target = world.getBlockState(pos).getBlock();
-        if (!isPassable(target, pos))
+        final IBlockState target = world.getBlockState(pos);
+        if (!isPassable(target))
         {
             return handleTargeNotPassable(parent, pos, target);
         }
 
         //  Do we have something to stand on in the target space?
-        Block below = world.getBlockState(pos.down()).getBlock();
-        if (isWalkableSurface(below, pos.down()))
+        final IBlockState below = world.getBlockState(pos.down());
+        if (isWalkableSurface(below) == SurfaceType.WALKABLE)
         {
             //  Level path
             return pos.getY();
+        }
+        else if(isWalkableSurface(below) == SurfaceType.NOT_PASSABLE)
+        {
+            return -1;
         }
 
         return handleNotStanding(parent, pos, below);
     }
 
-    private int handleNotStanding(@Nullable Node parent, @NotNull BlockPos pos, @NotNull Block below)
+    private int handleNotStanding(@Nullable Node parent, @NotNull BlockPos pos, @NotNull IBlockState below)
     {
         boolean isSwimming = parent != null && parent.isSwimming;
 
-        if (below.getMaterial(this.world.getBlockState(pos)).isLiquid())
+        if (below.getMaterial().isLiquid())
         {
             return handleInLiquid(pos, below, isSwimming);
         }
 
-        if (isLadder(below, pos.down()))
+        if (isLadder(below.getBlock(), pos.down()))
         {
             return pos.getY();
         }
@@ -800,18 +814,18 @@ public abstract class AbstractPathJob implements Callable<Path>
             return -1;
         }
 
-        //  How far of a drop?
-        Block below = world.getBlockState(pos.down(2)).getBlock();
-        if (isWalkableSurface(below, pos.down(2)))
+        final BlockPos down = pos.down(2);
+        final IBlockState below = world.getBlockState(down);
+        if (isWalkableSurface(below) == SurfaceType.WALKABLE)
         {
-            return pos.getY() - 1;
+            //  Level path
+            return pos.getY()-1;
         }
 
-        //  Too far
         return -1;
     }
 
-    private int handleInLiquid(@NotNull BlockPos pos, @NotNull Block below, boolean isSwimming)
+    private int handleInLiquid(@NotNull BlockPos pos, @NotNull IBlockState below, boolean isSwimming)
     {
         if (isSwimming)
         {
@@ -819,7 +833,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             return pos.getY();
         }
 
-        if (allowSwimming && below.getMaterial(this.world.getBlockState(pos)) == Material.WATER)
+        if (allowSwimming && below.getMaterial() == Material.WATER)
         {
             //  This is water, and we are allowed to swim
             return pos.getY();
@@ -829,11 +843,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         return -1;
     }
 
-    private int handleTargeNotPassable(@Nullable Node parent, @NotNull BlockPos pos, @NotNull Block target)
+    private int handleTargeNotPassable(@Nullable Node parent, @NotNull BlockPos pos, @NotNull IBlockState target)
     {
         boolean canJump = parent != null && !parent.isLadder && !parent.isSwimming;
         //  Need to try jumping up one, if we can
-        if (!canJump || !isWalkableSurface(target, pos))
+        if (!canJump || isWalkableSurface(target) != SurfaceType.WALKABLE)
         {
             return -1;
         }
@@ -863,7 +877,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (parent != null)
         {
-            IBlockState hereState = world.getBlockState(parent.pos.down());
+            final IBlockState hereState = world.getBlockState(parent.pos.down());
             if (hereState.getMaterial().isLiquid() && !isPassable(pos))
             {
                 return true;
@@ -876,20 +890,19 @@ public abstract class AbstractPathJob implements Callable<Path>
      * Is the space passable?
      *
      * @param block the block we are checking.
-     * @param pos   location of the block.
      * @return true if the block does not block movement
      */
-    protected boolean isPassable(@NotNull Block block, BlockPos pos)
+    protected boolean isPassable(@NotNull IBlockState block)
     {
-        if (block.getMaterial(this.world.getBlockState(pos)) != Material.AIR)
+        if (block.getMaterial() != Material.AIR)
         {
-            if (block.getMaterial(this.world.getBlockState(pos)).blocksMovement())
+            if (block.getMaterial().blocksMovement())
             {
-                return block instanceof BlockDoor ||
+                return block.getBlock() instanceof BlockDoor ||
                          //  block instanceof BlockTrapDoor ||
-                         block instanceof BlockFenceGate;
+                         block.getBlock() instanceof BlockFenceGate;
             }
-            else if (block.getMaterial(this.world.getBlockState(pos)).isLiquid())
+            else if (block.getMaterial().isLiquid())
             {
                 return false;
             }
@@ -900,23 +913,33 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     protected boolean isPassable(BlockPos pos)
     {
-        return isPassable(world.getBlockState(pos).getBlock(), pos);
+        return isPassable(world.getBlockState(pos));
     }
 
     /**
      * Is the block solid and can be stood upon?
      *
-     * @param block Block to check
-     * @param pos   position of block
+     * @param blockState Block to check
      * @return true if the block at that location can be walked on.
      */
-    protected boolean isWalkableSurface(@NotNull Block block, BlockPos pos)
+    @NotNull
+    protected SurfaceType isWalkableSurface(@NotNull IBlockState blockState)
     {
-        return block.getMaterial(this.world.getBlockState(pos)).isSolid()
-                 && !(block instanceof BlockFence)
-                 && !(block instanceof BlockFenceGate)
-                 && !(block instanceof BlockWall)
-                 && !(block instanceof BlockHutField);
+        final Block block = blockState.getBlock();
+        if(block instanceof BlockFence
+                || block instanceof BlockFenceGate
+                || block instanceof BlockWall
+                || block instanceof BlockHutField)
+        {
+            return SurfaceType.NOT_PASSABLE;
+        }
+
+        if(blockState.getMaterial().isSolid())
+        {
+            return SurfaceType.WALKABLE;
+        }
+
+        return SurfaceType.DROPABLE;
     }
 
     /**
