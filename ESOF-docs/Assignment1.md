@@ -100,14 +100,23 @@ Cada ponto a trabalhar geralmente é feito apenas por uma pessoa, embora possa h
 
 ## Opiniões, Críticas e Alternativas ##
 
-Críticas Positivas
+### Críticas Positivas ###
 
 Este projeto revela ter muitos pontos a favor, sendo um daqueles que mais se destacou num primeiro contacto, a disponibilidade e recepção que dão a novos potenciais contribuidores. Nesta primeira fase, o feedback e a rapidez de um dos membros principais (Marvin Hofmann) quanto ao nosso interesse em participar no projeto e entrevistar foi surpreendente. 
+
 Quem está ligado a este projeto, tanto por ser programador ou utilizador, existe uma comunidade própria onde há a discussão de assuntos por fóruns e por onde pode ser feita a reportagem de erros/bugs ou sugestões. Os interessados podem ainda usufruir de tutoriais e detalhes sobre as funcionalidades. Desta forma, existe uma boa comunicação e contribuição tanto a nível de programadores como de utilizadores, onde o contacto entre eles é amigável mas sempre mantendo um nível formal. A divulgação e tutoriais/informações sobre este mod também é feita através do youtube, twitter e outros sites que fornecem informações sobre mods para o jogo base.
+
 Para novos contribuidores, existe uma série de instruções para quem quer começar e de que maneira gerem as coisas. Também têm regras sobre a organização de código (code style) que devem ser respeitadas para uma leitura e interpretação mais legível e uniforme do mesmo. Estas informações podem ser encontradas na wiki do seu site oficial.
+
 Em termos de trabalho no código, ultimamente têm sido feitas alterações/inserções com intervalos de um a dois dias, o que significa que o projeto ainda está ativo. Existem também pelos menos três contribuidores principais que participam de forma frequente e em quem nos podemos fiar para nos direcionar em futuras contribuições. A discussão de assuntos entre programadores é feito a nível do slack com um feedback bastante rápido, o que facilita a resolução de alguns problemas ou questões diretas. Também têm objetivos a curto, médio e longo prazo o que demonstra que é um projecto que terá continuidade e espaço para evoluir.
+
 Em geral, apesar de haver informação em grande quantidade, tanto a nível de código como de detalhes sobre funcionalidades entre outros assuntos, está tudo muito bem documentado e de fácil acesso e compreensão.
 
+### Críticas Negativas
+
+Na nossa opinião, como a comunicação de problemas entre programadores é feita essencialmente no slack, pode não ser eficiente pois podem haver tópicos que possam ficar esquecidos não existindo, portanto, um histórico bem definido que inclua todos os problemas. Uma alternativa seria relatar todos os problemas na parte dos “issues” no repositório do github do projeto, evitando a acumulação ou esquecimento de problemas, visto que a reportagem de problemas através do site oficial fica registado no github diretamente.
+	
+Ao analisar a frequência de “commits” no último ano, deparamo-nos com períodos intensos intercalados com períodos de inatividade. O período de maior inatividade foi entre Outubro de 2015 a Janeiro de 2016, onde teve apenas três commits. Isto torna a evolução deste projecto um bocado inconstante. Os últimos dois meses foi um período de commits intensivo tendo chegado a noventa commits por semana. Em geral, o valor mais alto registado foi de 131 numa semana de Abril. Destes valores podemos assumir que pode ser muito complicado estar sempre a par das modificações do código fonte para quem está a fazer alguma modificação ao código ou quem acaba de entrar como contribuidor.
 
 ### Comparação com outros modelos ###
 
@@ -124,3 +133,5 @@ Ao utilizar o método da incrementação, a exposição e adesão que a modifica
 ## Autores ##
 
 * [Inês Gomes](https://github.com/inesgomes) (up201405778@fe.up.pt) 
+
+* [Catarina Ramos] (https://github.com/catramos96) (up201406219@fe.up.pt)
