@@ -112,7 +112,7 @@ Em termos de trabalho no código, ultimamente têm sido feitas alterações/inse
 
 Em geral, apesar de haver informação em grande quantidade, tanto a nível de código como de detalhes sobre funcionalidades entre outros assuntos, está tudo muito bem documentado e de fácil acesso e compreensão.
 
-### Críticas Negativas
+### Críticas Negativas ###
 
 Na nossa opinião, como a comunicação de problemas entre programadores é feita essencialmente no slack, pode não ser eficiente pois podem haver tópicos que possam ficar esquecidos não existindo, portanto, um histórico bem definido que inclua todos os problemas. Uma alternativa seria relatar todos os problemas na parte dos “issues” no repositório do github do projeto, evitando a acumulação ou esquecimento de problemas, visto que a reportagem de problemas através do site oficial fica registado no github diretamente.
 	
