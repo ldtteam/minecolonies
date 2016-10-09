@@ -100,3 +100,12 @@ Existem 3 mantenedores que maioritariamente verificam o código submitido e apó
 Cada ponto a trabalhar geralmente é feito apenas por uma pessoa, embora possa haver ajuda, o minecolonies costuma ser um projeto em que se segue uma política de "one branch one person".
 
 ## Opiniões, Críticas e Alternativas ##
+
+
+
+### Comparação com outros modelos ###
+
+Na nossa opinião, o método de processo que a equipa do MineColonies utiliza é o mais adequado ao tipo de projeto pois torna a maneira como o projeto evolui bastante mais dinâmica do que qualquer outro modelo. 
+Comparando com o modelo de cascata, apesar deste poder ser utilizado, não seria tão adequado uma vez que modificações de minecraft é um mercado bastante competitivo, por isto, cada modificação tem de seguir um modelo propício à inovação rápida e com bastantes novidades; se tal não acontecer a modificação rapidamente perderá a adesão que tem pois ficará "velho" rapidamente.
+Relativamente aos modelos de protótipo de software e reutilização de software, consideramos que neste tipo de projetos não são propriamente possíveis de implementar com sucesso pois são dirigidos a projetos de grandes empresas que querem ou validar e tirar conclusões com um protótipo ou poupar dinheiro em código. Ora, visto que é um projeto open source que é feito por quem quiser e sem pagamentos, poupar dinheiro em código está fora de questão. Lançar um protótipo, pelo menos nesta fase já avançada, nao faria muito sentido uma vez que acarretaria um volume de trabalho desnecessário excessiva à execução do mesmo.
+Ao utilizar o método da incrementação, a exposição e adesão que o "mod" recebe crescem substancialmente com cada novo update!
