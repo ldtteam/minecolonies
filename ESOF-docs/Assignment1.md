@@ -15,6 +15,8 @@ Todas estas funcionalidades são feitas a partir do MineColonies, transformando 
 
 ## Processo de desenvolvimento ##
 
+Um processo de desenvolvimento de software é a descrição de uma série de atividades requeridas para desenvolver um sistema de software. Vantagens: eficiência, consistência e uma base para melhorias.
+
 ### Comunidade ###
 
 A comunidade MineColonies é formada por utilizadores e programadores do jogo. Além da sua página oficial (www.minecolines.com) existe ainda um canal do youtube com vídeos oficiais do jogo. No site é possível receber as últimas novidades do jogo, aceder a fóruns, fazer download do jogo, seguir tutoriais e até inscrever-se como programador.
@@ -34,21 +36,28 @@ As novas versões do jogo incluem modo multiplayer, mais trabalhadores, menos bu
 
 ### Repositório ###
 
--> falar aqui sobre o nucleo da equipa (nem todos os contribuidores estão ativos)
+O projecto é desenvolvido na linguagem java e normalmente utilizam o IntelliJ IDEA da JetBrains para programar e para a documentação do mesmo código.
 
-O projeto MineColonies tem 13 contribuidores e está numa fase de grande evolução e bastante ativa. No último mês 8 autores fizeram mais de 400 commits, 389 ficheiros foram modificados e houveram 18171 adições e 12280 eliminações; 44 issues foram resolvidas e surgiram 12 novas.
+O projeto MineColonies tem 13 contribuidores e está numa fase bastante ativa. No último mês 8 autores fizeram mais de 400 commits,389 ficheiros foram modificados e houveram 18171 adições e 12280 eliminações; 44 issues foram resolvidas e surgiram 12 novas. A maior frequência de commits realizou-se ao longo do primeiro ano e desde o início deste ano (2016).
+
+Com a contribuição do programador 'raycom', conseguimos chegar à conclusão existe um núcleo de programadores. Este núcleo é formado por 'raycom', 'colton' e 'marvin' que ocupam a maior percentagem de commits e modificações. Nenhum dos três trabalha a tempo inteiro no projeto. 'raycom' explicou-nos que a maior ou menor afluência de trabalho depende apenas da disponibilidade de cada contribuidor. Todos os outros contribuidores são programadores que de alguma forma decidiram deixar a sua pequena contribuição neste projeto open source. 
 
 ### Fase do projeto ###
 
--> encontra-se em fase de evolução porque ... (ver alguns aspetos no relatório)
+Um projeto pode ser dividido em várias fases: especificação, design e implementação, validação e evolução.
+Neste caso o nosso projeto encontra-se em fase de evolução, visto que já foi publicado e está suscetivel a críticas e opiniões por parte dos utilizadores.
+A fase de evolução deste projeto é caracterizada em dois tipos:
 
-Neste momento a equipa está a focar o seu trabalho na correção de bugs e na preparação de novas etapas a médio prazo, tais como melhorarias de trabalhadores e novas implementações.
+  * Corretiva : existem bugs reportados pela comunidade que são convertidos em issues. Estes issues são uma prioridade para a equipa.
+  * Perfetiva : existem diversa funcionalidades que estão na TODO list a médio e longo prazo para serem ou implementadas ou melhoradas. 
 
 ### Modelo de desenvolvimento ###
 
--> explicar o que é este modelo. Justificar com algumas coisas que os programadores responderam
+Um modelo de um processo de desenvolvimento de software é uma representação abstrata de um processo.
 
-No que diz respeito ao modelo de processo, este trabalho insere-se no "incremental development and delivery", visto que cada funcionalidade é um branch, cada commit é transformado num .jar e cada pull request é libertado ao público automaticamente.
+Depois de uma análise ao projeto e alguns esclarecimentos por parte da equipa, mais especificamente por 'marvin', chegamos à conclusão que este projeto se inclui no modelo "incremental development and delivery". Este modelo consiste em desenvolver o projeto aos poucos, avaliando cada incremento antes de proceder ao próximo. Neste projeto é possível aplicar o modelo "incremental development and delivery" devido à estruturação pessoa-branch verificada ao longo do projeto. Isto significa que cada pessoa é reponsável por um branch, que por sua vez por estar associado a um issue (ou seja, o programador cria um branch para resolver esse issue). Depois de resolvido executa um pull request que será analisado por um dos elementos do núcleo. Se correto, junta-se ao master branch que, como é um projeto open source, está disponivel para o público. Deste modo, a cada incremento é executada uma entrega! Após várias issues resolvidos, ou até uma nova funcionalidade é lançada então uma nova versão. 
+
+O modelo "incremental development and delivery" tem várias vantagens como: menos documentação para mudar, feedback mais rápido, menos riscos do projeto falhar, e mais testes. A principal desvantagem passa por cada branch ter de ser verificado para não existirem conflitos.
 
 ### Estruturação ###
 
