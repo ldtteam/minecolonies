@@ -100,6 +100,15 @@ Cada ponto a trabalhar geralmente é feito apenas por uma pessoa, embora possa h
 
 ## Opiniões, Críticas e Alternativas ##
 
+Críticas Positivas
+
+Este projeto revela ter muitos pontos a favor, sendo um daqueles que mais se destacou num primeiro contacto, a disponibilidade e recepção que dão a novos potenciais contribuidores. Nesta primeira fase, o feedback e a rapidez de um dos membros principais (Marvin Hofmann) quanto ao nosso interesse em participar no projeto e entrevistar foi surpreendente. 
+Quem está ligado a este projeto, tanto por ser programador ou utilizador, existe uma comunidade própria onde há a discussão de assuntos por fóruns e por onde pode ser feita a reportagem de erros/bugs ou sugestões. Os interessados podem ainda usufruir de tutoriais e detalhes sobre as funcionalidades. Desta forma, existe uma boa comunicação e contribuição tanto a nível de programadores como de utilizadores, onde o contacto entre eles é amigável mas sempre mantendo um nível formal. A divulgação e tutoriais/informações sobre este mod também é feita através do youtube, twitter e outros sites que fornecem informações sobre mods para o jogo base.
+Para novos contribuidores, existe uma série de instruções para quem quer começar e de que maneira gerem as coisas. Também têm regras sobre a organização de código (code style) que devem ser respeitadas para uma leitura e interpretação mais legível e uniforme do mesmo. Estas informações podem ser encontradas na wiki do seu site oficial.
+Em termos de trabalho no código, ultimamente têm sido feitas alterações/inserções com intervalos de um a dois dias, o que significa que o projeto ainda está ativo. Existem também pelos menos três contribuidores principais que participam de forma frequente e em quem nos podemos fiar para nos direcionar em futuras contribuições. A discussão de assuntos entre programadores é feito a nível do slack com um feedback bastante rápido, o que facilita a resolução de alguns problemas ou questões diretas. Também têm objetivos a curto, médio e longo prazo o que demonstra que é um projecto que terá continuidade e espaço para evoluir.
+Em geral, apesar de haver informação em grande quantidade, tanto a nível de código como de detalhes sobre funcionalidades entre outros assuntos, está tudo muito bem documentado e de fácil acesso e compreensão.
+
+
 ### Comparação com outros modelos ###
 
 Na nossa opinião, embora seja difícil adequar um modelo teórica a um projeto *Open Source*, o método de processo que a equipa do **MineColonies** utiliza é o mais adequado ao tipo de projeto. Isto verifica-se pois torna a maneira como o projeto evolui bastante mais dinâmica do que qualquer outro modelo. 
