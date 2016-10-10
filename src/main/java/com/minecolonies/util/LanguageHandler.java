@@ -2,7 +2,7 @@ package com.minecolonies.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +64,12 @@ public class LanguageHandler
      */
     public static String getString(String key, String defaultValue)
     {
-        return I18n.translateToLocal(key);
+        String result = new TextComponentTranslation(key).getUnformattedComponentText();
+        if (result.equalsIgnoreCase(key))
+        {
+            result = defaultValue;
+        }
+        return result;
     }
 
     /**

@@ -8,6 +8,7 @@ public class Configurations
     public static       int     townHallPadding              = 20;
     public static       boolean supplyChests                 = true;
     public static       boolean allowInfiniteSupplyChests    = false;
+    public static       boolean useSchematicsFromFileSystem  = true;
     public static       int     citizenRespawnInterval       = 30;
     public static       boolean builderInfiniteResources     = false;
 

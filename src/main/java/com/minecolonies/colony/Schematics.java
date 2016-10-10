@@ -265,9 +265,9 @@ public final class Schematics
     {
 
         return structureMap.values().stream()
-                 .filter(b -> !b.getIsHut())
-                 .map(StructureInfo::getName)
-                 .collect(Collectors.toList());
+                                .filter(b -> !b.getIsHut())
+                                .map(StructureInfo::getName)
+                                .collect(Collectors.toList());
 
     }
 

@@ -65,6 +65,8 @@ public final class ConfigurationHandler
             maleFirstNames = config.get(CATEGORY_NAMES, "maleFirstNames", maleFirstNames, "Male First Names").getStringList();
             femaleFirstNames = config.get(CATEGORY_NAMES, "femaleFirstNames", femaleFirstNames, "Female First Names").getStringList();
             lastNames = config.get(CATEGORY_NAMES, "lastNames", lastNames, "Last Names").getStringList();
+            useSchematicsFromFileSystem = config.get(CATEGORY_GAMEPLAY,"useSchematicsFromFileSystem",useSchematicsFromFileSystem,
+              "Turn this off to use the schematics from the jar only.  Leaving this enabled allows you to customize the schematics you can use.").getBoolean();
         }
         finally
         {
