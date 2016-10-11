@@ -8,14 +8,14 @@
 
 **MineColonies** é uma modificação do famoso jogo *Minecraft* da Mojang. Esta modificação permite a simulação de uma cidade através da adição de estruturas e trabalhadores NPC (*Non Player Characters*) que podem ser controlados pelo utilizador. Tal liberdade permite a construção desde pequenas aldeias eficientes especializadas num trabalhador até grandes e vibrantes metrópoles! As possibilidades são infinitas!
 
-[Figura 1 - *Gameplay*](resources/images2.jpg)
+![Figura 1 - *Gameplay*](resources/images2.jpg)
 
 #### Funcionalidades dentro do jogo ####
 
 A modificação permite ao utilizador gerar automaticamente navios, câmaras municipais, quintas, casas, entre outras estruturas e posteriormente associa-la a um trabalhador. Os trabalhadores, com os seus sistems de niveis e experiência, trabalham no seu ofício, e quanto maior for o seu nível, mais rápidos e eficientes eles são. Existe uma grande variedade de trabalhos, desde construtores, agricultores, mineiros até mesmo guardas da cidade ou carteiros.
 Todas estas funcionalidades são feitas a partir do **MineColonies**, transformando assim o *Minecraft*, um jogo no qual raramente se via outro humano, num jogo bastante diferente e mais emocionante!
 
-[Figura 2 -*ALguns trabalhadores disponíveis na modificação*](resources/Villagers1.png)
+![Figura 2 -*ALguns trabalhadores disponíveis na modificação*](resources/Villagers1.png)
 
 ## Processo de desenvolvimento ##
 
@@ -44,7 +44,7 @@ O projecto é desenvolvido na linguagem Java e normalmente utilizam o IntelliJ I
 
 O projeto **MineColonies** tem 13 contribuidores e está numa fase bastante ativa. No [último mês](https://github.com/Minecolonies/minecolonies/pulse/monthly) 6 autores fizeram mais de 300 commits em todos os branches,283 ficheiros foram modificados e houveram 4587 adições e 2891 eliminações; 40 issues foram resolvidas e surgiram 18 novas. A maior frequência de commits realizou-se ao longo do primeiro ano e desde o início deste ano (2016).
 
-[Figura 3 - *Número de contribuições ao longo do projeto*](resources/contribuicoes.png)
+![Figura 3 - *Número de contribuições ao longo do projeto*](resources/contribuicoes.png)
 
 Com a contribuição do programador [Raycoms](https://github.com/Raycoms), conseguimos chegar à conclusão existe um núcleo de programadores. Este núcleo é formado por [Raycoms](https://github.com/Raycoms), [Colton](https://github.com/cltnschlosser) e [Marvin](https://github.com/Kostronor) que ocupam a maior percentagem de commits e modificações. Nenhum dos três trabalha a tempo inteiro no projeto. [Raycoms](https://github.com/Raycoms) explicou-nos que a maior ou menor afluência de trabalho depende apenas da disponibilidade de cada contribuidor. Todos os outros contribuidores são programadores que de alguma forma decidiram deixar a sua pequena contribuição neste projeto open source. 
 
@@ -119,7 +119,7 @@ Ainda sobre a organização, não achamos eficiente a política "*one man one br
 	
 Ao analisar a frequência de *commits* no último ano, deparamo-nos com períodos intensos intercalados com períodos de inatividade. O período de maior inatividade foi entre Outubro de 2015 a Janeiro de 2016, onde teve apenas três *commits*. Isto torna a evolução deste projecto um bocado inconstante. Os últimos dois meses foi um período de *commits* intensivo tendo chegado a noventa *commits* por semana. Em geral, o valor mais alto registado foi de 131 numa semana de Abril. Tal como já foi referido antes, podemos justificar estes factos com a disponibilidade do núcleo de programadores. No entanto, concluímos que esta inconsistência não é favorável ao projeto. Pode ser muito complicado estar sempre a par das modificações do código fonte para quem está a fazer alguma modificação ao código ou quem acaba de entrar como contribuidor. O facto de por vezes o projeto parecer inativo pode ter repercursões a nível de novos contribuidores que podem perder o interesse por não haver um feedback responsivo. Para os outros contribuidores, não ter um núcleo ativo também pode ser desmotivante. 
 
-[Figura 4 - *Commits no último ano*](resources/commits.png)
+![Figura 4 - *Commits no último ano*](resources/commits.png)
 
 ### Comparação com outros modelos ###
 
