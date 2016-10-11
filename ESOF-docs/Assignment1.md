@@ -147,4 +147,4 @@ Num trabalho open source, implementar e definir um modelo de processo específic
 
 * [Mário Fernandes](https://github.com/MarioFernandes73) (up201201705@fe.up.pt) - X%
 
-* [Manuel Curral](https://github.com/Camolas)  (up201202445.fe.up.pt) - X%
+* [Manuel Curral](https://github.com/Camolas)  (up201202445@fe.up.pt) - X%
