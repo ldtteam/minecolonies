@@ -48,8 +48,6 @@ O projeto **MineColonies** tem 13 contribuidores e está numa fase bastante ativ
 
 Com a contribuição do programador [Raycoms](https://github.com/Raycoms), conseguimos chegar à conclusão existe um núcleo de programadores. Este núcleo é formado por [Raycoms](https://github.com/Raycoms), [Colton](https://github.com/cltnschlosser) e [Marvin](https://github.com/Kostronor) que ocupam a maior percentagem de commits e modificações. Nenhum dos três trabalha a tempo inteiro no projeto. [Raycoms](https://github.com/Raycoms) explicou-nos que a maior ou menor afluência de trabalho depende apenas da disponibilidade de cada contribuidor. Todos os outros contribuidores são programadores que de alguma forma decidiram deixar a sua pequena contribuição neste projeto open source. 
 
-![alt tag](resources/commits.png)
-
 De forma a facilitar a resolução das issues existem 14 [labels](https://github.com/Minecolonies/minecolonies/labels) que podem ser usadas aquando a sua criação. Cada issue pode ter várias labels associadas, o que ajuda os programadores, ou potênciais programadores a encontrar problemas a resolver. As labels também podem servir para identificar problemas em resolução, resolvidos e até quem precisa de ajuda. Ainda nas issues, existem também as [milestones](https://github.com/Minecolonies/minecolonies/milestones) que são problemas a médio e longo prazo. Neste momento, todas as milestones estão em aberto.
 
 ### Fase do projeto ###
@@ -102,29 +100,34 @@ Cada ponto a trabalhar geralmente é feito apenas por uma pessoa, embora possa h
 
 ### Críticas Positivas ###
 
-Este projeto revela ter muitos pontos a favor, sendo um daqueles que mais se destacou num primeiro contacto, a disponibilidade e recepção que dão a novos potenciais contribuidores. Nesta primeira fase, o feedback e a rapidez de um dos membros principais (Marvin Hofmann) quanto ao nosso interesse em participar no projeto e entrevistar foi surpreendente. 
+Este projeto revela ter muitos pontos a favor, sendo um daqueles que mais se destacou num primeiro contacto, a disponibilidade e recepção que dão a novos potenciais contribuidores. Nesta primeira fase, o feedback e a rapidez de um dos membros principais [Marvin](https://github.com/Kostronor) quanto ao nosso interesse em participar no projeto e entrevistar foi surpreendente. 
 
-Quem está ligado a este projeto, tanto por ser programador ou utilizador, existe uma comunidade própria onde há a discussão de assuntos por fóruns e por onde pode ser feita a reportagem de erros/bugs ou sugestões. Os interessados podem ainda usufruir de tutoriais e detalhes sobre as funcionalidades. Desta forma, existe uma boa comunicação e contribuição tanto a nível de programadores como de utilizadores, onde o contacto entre eles é amigável mas sempre mantendo um nível formal. A divulgação e tutoriais/informações sobre este mod também é feita através do youtube, twitter e outros sites que fornecem informações sobre mods para o jogo base.
+Para quem está ligado a este projeto, tanto programador como utilizador, existe a comunidade onde há a discussão de assuntos por fóruns e por onde pode ser feito o *report* de erros/*bugs* ou sugestões. Na nossa opinião, a comunidade é um fator chave para o sucesso da equipa devido ao contacto amigável e bastante responsivo entre programadores-utilizadores.
+Ainda na comunidade, qualquer utilizador pode descarregar o jogo com facilidade e ainda existe a divulgação de tutorias, o que torna a comunidade ainda mais integrante. 
 
-Para novos contribuidores, existe uma série de instruções para quem quer começar e de que maneira gerem as coisas. Também têm regras sobre a organização de código (code style) que devem ser respeitadas para uma leitura e interpretação mais legível e uniforme do mesmo. Estas informações podem ser encontradas na wiki do seu site oficial.
+Passando para os novos contribuidores, existe uma série de instruções (TODO list) e regras sobre a organização de código (code style) para quem quer começar, que devem ser respeitadas. Na nossa opinião é um dos pontos mais positivos, visto que torna uma leitura e interpretação mais legível e uniforme do mesmo, evitando *refactorings*.
 
-Em termos de trabalho no código, ultimamente têm sido feitas alterações/inserções com intervalos de um a dois dias, o que significa que o projeto ainda está ativo. Existem também pelos menos três contribuidores principais que participam de forma frequente e em quem nos podemos fiar para nos direcionar em futuras contribuições. A discussão de assuntos entre programadores é feito a nível do slack com um feedback bastante rápido, o que facilita a resolução de alguns problemas ou questões diretas. Também têm objetivos a curto, médio e longo prazo o que demonstra que é um projecto que terá continuidade e espaço para evoluir.
+O facto de a discussão de assuntos entre programadores ser feito a nível do slack permite um feedback bastante rápido, o que facilita a resolução de alguns problemas ou questões diretas. Também têm objetivos a curto, médio e longo prazo o que demonstra que é um projecto que terá continuidade e espaço para evoluir. 
 
 Em geral, apesar de haver informação em grande quantidade, tanto a nível de código como de detalhes sobre funcionalidades entre outros assuntos, está tudo muito bem documentado e de fácil acesso e compreensão.
 
 ### Críticas Negativas ###
 
-Na nossa opinião, como a comunicação de problemas entre programadores é feita essencialmente no slack, pode não ser eficiente pois podem haver tópicos que possam ficar esquecidos não existindo, portanto, um histórico bem definido que inclua todos os problemas. Uma alternativa seria relatar todos os problemas na parte dos “issues” no repositório do github do projeto, evitando a acumulação ou esquecimento de problemas, visto que a reportagem de problemas através do site oficial fica registado no github diretamente.
+Na nossa opinião, a organização está um bocadinho aquém do espectado para um projeto desta dimensão. A comunicação de problemas entre programadores é feita essencialmente no slack. No entanto, existem ainda os *issues* e uma *TODO list* que acabam por repetir alguns problemas e, provavelmente, nem abordar outros. Dentro dos *issues* existem ainda os *milestones* que quase não são utilizados. A *TODO list* é apenas um ficheiro de texto sem qualquer detalhe, apenas com alguns objetivos, que nem sabemos se está atualizada. 
+
+Ainda sobre a organização, não achamos eficiente a política "*one man one branch*". O facto de cada *branch* resolver um problema, e cada *branch* estar apenas associado a uma pessoa, acaba por destruir um pouco a ideia de uma equipa. Cada detalhe é resolvido individualmente, podendo haver pouca comunicação. Embora seja um projeto *Open Source* em que o conceito de equipa não é o mesmo do abordado nas aulas, continuamos a achar que não é uma maneira muito eficaz, pois pode trazer problemas futuros. Por exemplo, basta o projeto não estar numa fase mais ativa que alguma dependência pode ficar esquecida, ou seja, se houver um detalhe que impede a realização de outros, pode impedir o progresso do projeto.
 	
-Ao analisar a frequência de “commits” no último ano, deparamo-nos com períodos intensos intercalados com períodos de inatividade. O período de maior inatividade foi entre Outubro de 2015 a Janeiro de 2016, onde teve apenas três commits. Isto torna a evolução deste projecto um bocado inconstante. Os últimos dois meses foi um período de commits intensivo tendo chegado a noventa commits por semana. Em geral, o valor mais alto registado foi de 131 numa semana de Abril. Destes valores podemos assumir que pode ser muito complicado estar sempre a par das modificações do código fonte para quem está a fazer alguma modificação ao código ou quem acaba de entrar como contribuidor.
+Ao analisar a frequência de *commits* no último ano, deparamo-nos com períodos intensos intercalados com períodos de inatividade. O período de maior inatividade foi entre Outubro de 2015 a Janeiro de 2016, onde teve apenas três *commits*. Isto torna a evolução deste projecto um bocado inconstante. Os últimos dois meses foi um período de *commits* intensivo tendo chegado a noventa *commits* por semana. Em geral, o valor mais alto registado foi de 131 numa semana de Abril. Tal como já foi referido antes, podemos justificar estes factos com a disponibilidade do núcleo de programadores. No entanto, concluímos que esta inconsistência não é favorável ao projeto. Pode ser muito complicado estar sempre a par das modificações do código fonte para quem está a fazer alguma modificação ao código ou quem acaba de entrar como contribuidor. O facto de por vezes o projeto parecer inativo pode ter repercursões a nível de novos contribuidores que podem perder o interesse por não haver um feedback responsivo. Para os outros contribuidores, não ter um núcleo ativo também pode ser desmotivante. 
+
+![alt tag](resources/commits.png)
 
 ### Comparação com outros modelos ###
 
-Na nossa opinião, embora seja difícil adequar um modelo teórica a um projeto *Open Source*, o método de processo que a equipa do **MineColonies** utiliza é o mais adequado ao tipo de projeto. Isto verifica-se pois torna a maneira como o projeto evolui bastante mais dinâmica do que qualquer outro modelo. 
+Na nossa opinião, embora seja difícil adequar um modelo teórico a um projeto *Open Source*, o método de processo que a equipa do **MineColonies** utiliza é o mais adequado ao tipo de projeto. Isto verifica-se pois torna a maneira como o projeto evolui bastante mais dinâmica do que qualquer outro modelo. 
 
-Comparando com o modelo de cascata, apesar deste poder ser utilizado, não seria tão adequado uma vez que modificações de *Minecraft* é um mercado bastante competitivo, por isto, cada modificação tem de seguir um modelo propício à inovação rápida e com bastantes novidades; se tal não acontecer a modificação rapidamente perderá a adesão que tem pois ficará "velho" rapidamente.
+Comparando com o modelo de cascata, apesar deste poder ser utilizado, não seria tão adequado uma vez que modificações de *Minecraft* é um mercado bastante competitivo, por isto, cada modificação tem de seguir um modelo propício à inovação rápida e com bastantes novidades; se tal não acontecer a modificação rapidamente perderá a adesão que tem pois envelhecerá rapidamente.
 
-Relativamente aos modelos de protótipo de software e reutilização de software, consideramos que neste tipo de projetos não são propriamente possíveis de implementar com sucesso pois são dirigidos a projetos de grandes empresas que querem ou validar e tirar conclusões com um protótipo ou poupar dinheiro em código. Ora, visto que é um projeto *Open Source* que é feito por quem quiser e sem pagamentos, poupar dinheiro em código está fora de questão. Lançar um protótipo, pelo menos nesta fase já avançada, nao faria muito sentido uma vez que acarretaria um volume de trabalho desnecessário excessiva à execução do mesmo.
+Relativamente aos modelos de protótipo de software e reutilização de software, consideramos que, neste tipo de projetos, não são propriamente possíveis de implementar com sucesso pois são dirigidos a projetos de grandes empresas que querem ou validar e tirar conclusões com um protótipo ou poupar dinheiro em código. Ora, visto que é um projeto *Open Source* que é feito por quem quiser e sem pagamentos, poupar dinheiro em código está fora de questão. Lançar um protótipo, pelo menos nesta fase já avançada, nao faria muito sentido uma vez que acarretaria um volume de trabalho desnecessário excessiva à execução do mesmo.
 
 Ao utilizar o método da incrementação, a exposição e adesão que a modificação recebe crescem substancialmente com cada novo update!
 
@@ -134,4 +137,6 @@ Ao utilizar o método da incrementação, a exposição e adesão que a modifica
 
 * [Inês Gomes](https://github.com/inesgomes) (up201405778@fe.up.pt) 
 
-* [Catarina Ramos] (https://github.com/catramos96) (up201406219@fe.up.pt)
+* [Catarina Ramos](https://github.com/catramos96) (up201406219@fe.up.pt)
+
+* [Mário Fernandes](https://github.com/MarioFernandes73) (up201201705@fe.up.pt)
