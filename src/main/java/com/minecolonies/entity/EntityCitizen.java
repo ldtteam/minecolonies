@@ -7,8 +7,10 @@ import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.jobs.AbstractJob;
+import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.citizen.guard.EntityAIGuard;
 import com.minecolonies.entity.ai.minimal.*;
 import com.minecolonies.entity.pathfinding.PathNavigate;
 import com.minecolonies.inventory.InventoryCitizen;
@@ -22,6 +24,7 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -206,7 +209,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private void initTasks()
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
+
+        if(this.getColonyJob() == null || !this.getColonyJob().getName().equals("com.minecolonies.job.Guard"))
+        {
+            this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
+        }
         this.tasks.addTask(2, new EntityAIGoHome(this));
         this.tasks.addTask(3, new EntityAISleep(this));
         this.tasks.addTask(4, new EntityAIOpenDoor(this, true));

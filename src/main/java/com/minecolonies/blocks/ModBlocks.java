@@ -25,6 +25,7 @@ public final class ModBlocks
     public static final Block blockHutFisherman  = new BlockHutFisherman();
     public static final Block blockSubstitution  = new BlockSubstitution();
     public static final Block blockHutField      = new BlockHutField();
+    public static final Block blockHutGuardTower = new BlockHutGuardTower();
 
     // Deactivated for now
     // public static final Block blockBarrel        = new BlockBarrel();

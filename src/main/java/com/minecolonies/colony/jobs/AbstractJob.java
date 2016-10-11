@@ -33,6 +33,8 @@ public abstract class AbstractJob
     private static final String MAPPING_LUMBERJACK  = "Lumberjack";
     private static final String MAPPING_FARMER      = "Farmer";
     private static final String MAPPING_FISHERMAN   = "Fisherman";
+    private static final String MAPPING_TOWER_GUARD = "TowerGuard";
+
     /**
      * The priority assigned with every main AI job.
      */
@@ -52,6 +54,8 @@ public abstract class AbstractJob
         addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
         addMapping(MAPPING_FARMER, JobFarmer.class);
         addMapping(MAPPING_FISHERMAN, JobFisherman.class);
+        addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
+
     }
 
     private final CitizenData citizen;

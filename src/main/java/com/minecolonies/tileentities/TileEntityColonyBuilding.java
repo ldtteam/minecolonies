@@ -14,7 +14,10 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+
+import javax.swing.plaf.basic.BasicComboBoxUI;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -49,6 +52,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
         /**
          * Intentionally left empty.
          */
+        this.createUnSidedHandler();
+        this.getSingleChestHandler();
     }
 
     @Override
