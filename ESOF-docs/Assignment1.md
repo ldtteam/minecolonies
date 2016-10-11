@@ -131,12 +131,20 @@ Relativamente aos modelos de protótipo de software e reutilização de software
 
 Ao utilizar o método da incrementação, a exposição e adesão que a modificação recebe crescem substancialmente com cada novo update!
 
-## Conclusões ##
+## Conclusão ##
 
-## Autores ##
+Em suma, este projeto revela-se muito interessante e dentro dos critérios requeridos e aconselhados pelos professores da cadeira. A comunicação e feedback é bastante fácil e rápida tanto entre os utilizadores e os programadores, consistindo num fator chave para o desenvolvimento deste trabalho. A participação pelos membros na implementação/melhoria de código tem sido bastante ativa, o que torna a adesão por novos membros, como é o nosso caso, mais acessível.
 
-* [Inês Gomes](https://github.com/inesgomes) (up201405778@fe.up.pt) 
+A linguagem Java, utilizada no desenvolvimento deste projeto, sendo esta, bastante versátil e das mais utilizadas mundialmente, incentiva novos contribuidores a fazer parte deste projeto open source.
 
-* [Catarina Ramos](https://github.com/catramos96) (up201406219@fe.up.pt)
+Num trabalho open source, implementar e definir um modelo de processo específico é um obstáculo. No entanto, conseguimos associar com facilidade o modelo de incremento ao que a equipa deste projeto pratica, pela maneira como os membros se organizam. Na nossa opinião, este é o modelo mais eficiente uma vez que é o mais propício a receber um feedback contínuo, assim como se revela.
 
-* [Mário Fernandes](https://github.com/MarioFernandes73) (up201201705@fe.up.pt)
+## Autores e Contribuições ##
+
+* [Inês Gomes](https://github.com/inesgomes) (up201405778@fe.up.pt) - X%
+
+* [Catarina Ramos](https://github.com/catramos96) (up201406219@fe.up.pt) - X%
+
+* [Mário Fernandes](https://github.com/MarioFernandes73) (up201201705@fe.up.pt) - X%
+
+* [Manuel Curral](https://github.com/Camolas)  (up201202445.fe.up.pt) - X%
