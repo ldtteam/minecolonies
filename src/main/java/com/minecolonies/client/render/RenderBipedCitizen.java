@@ -5,6 +5,7 @@ import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,6 +45,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     public RenderBipedCitizen(RenderManager renderManagerIn)
     {
         super(renderManagerIn, defaultModelMale, 0.5F);
+        this.addLayer(new LayerBipedArmor(this));
     }
 
     @Override

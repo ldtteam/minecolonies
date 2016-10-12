@@ -1,5 +1,6 @@
 package com.minecolonies.entity.ai.minimal;
 
+import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -50,7 +51,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public boolean shouldExecute()
     {
         closestLivingEntity = getClosestToAvoid();
-        return closestLivingEntity != null;
+        return closestLivingEntity != null && !(theEntity.getColonyJob() instanceof JobGuard);
     }
 
     /**

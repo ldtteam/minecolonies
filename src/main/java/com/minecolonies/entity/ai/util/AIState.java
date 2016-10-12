@@ -183,4 +183,19 @@ public enum AIState
      * Harvest the crops.
      */
     FARMER_HARVEST,
+
+      /*
+###Guard###
+    */
+
+    /**
+     * Check if the fields need any work.
+     */
+    GUARD_SEARCH_TARGET,
+
+    /**
+     * Hoe the field.
+     */
+    GUARD_HUNT_DOWN_TARGET,
+
 }
