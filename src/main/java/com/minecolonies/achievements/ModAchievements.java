@@ -57,7 +57,7 @@ public final class ModAchievements
                                                                                                   achievementTownhall).registerStat();
 
     /**
-     * Max out a townhall
+     * Max out a townhall.
      */
     public static final Achievement achievementUpgradeTownhallMax = new MineColoniesAchievement("upgrade.townhall.max", 2, 0, ModBlocks.blockHutTownHall,
                                                                                                 achievementBuildingTownhall).registerStat();
