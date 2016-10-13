@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.client.gui.WindowTownHall;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
@@ -39,6 +40,15 @@ public class BuildingTownHall extends AbstractBuildingHut
         public com.blockout.views.Window getWindow()
         {
             return new WindowTownHall(this);
+        }
+    }
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeTownhallMax);
         }
     }
 }
