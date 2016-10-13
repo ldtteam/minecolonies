@@ -49,6 +49,12 @@ public final class ModAchievements
      */
     public static final Achievement achievementBuildingTownhall = new MineColoniesAchievement("townhall", -2, 0, ModBlocks.blockHutTownHall, null)
                                                                     .registerStat();
+    /**
+     * Max out a townhall
+     */
+    public static final Achievement achievementUpgradeTownhallMax = new MineColoniesAchievement("upgrade.townhall.max", 0, 0, ModBlocks.blockHutTownHall,
+                                                                                                achievementBuildingTownhall).registerStat();
+
 
     /**
      * Upgrade a builder to lv 1.
@@ -157,6 +163,7 @@ public final class ModAchievements
                                                                                                         achievementGetSupply,
                                                                                                         achievementWandOfbuilding,
                                                                                                         achievementBuildingTownhall,
+                                                                                                        achievementUpgradeTownhallMax,
                                                                                                         achievementBuildingBuilder,
                                                                                                         achievementBuildingColonist,
                                                                                                         achievementBuildingLumberjack,
