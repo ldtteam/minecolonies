@@ -42,6 +42,7 @@ public class BuildingTownHall extends AbstractBuildingHut
             return new WindowTownHall(this);
         }
     }
+    @Override
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
