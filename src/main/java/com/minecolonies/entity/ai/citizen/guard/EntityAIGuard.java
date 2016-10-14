@@ -47,11 +47,11 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, () -> GUARD_SEARCH_TARGET),
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, () -> GUARD_SEARCH_TARGET),
                 new AITarget(GUARD_SEARCH_TARGET, searchTarget()),
                 new AITarget(GUARD_HUNT_DOWN_TARGET, huntDown())
                 );
-        worker.targetTasks.removeTask(new EntityAICitizenAvoidEntity(worker, EntityMob.class, 8.0F, 0.6D, 1.6D));
         worker.setSkillModifier(2 * worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
     }
@@ -84,7 +84,7 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
 
     /**
      * Searches for the next taget.
-     * @return
+     * @return the next AIState.
      */
     private AIState searchTarget()
     {
@@ -95,7 +95,6 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
             return AIState.GUARD_SEARCH_TARGET;
         }
 
-        updateArmor();
         List entityList = this.worker.worldObj.getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(20));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(20)));
 
@@ -112,27 +111,32 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
         else
         {
             targetEntity = (EntityLivingBase) entityList.get(0);
-
             return AIState.GUARD_HUNT_DOWN_TARGET;
         }
     }
 
+    /**
+     * Follow the target and kill it.
+     * @return the next AIState.
+     */
     private AIState huntDown()
     {
-
         //todo if can't see path to it.
         if (targetEntity != null)
         {
-
-            worker.resetActiveHand();
-            attackEntityWithRangedAttack(targetEntity, 1);
-            setDelay(100);
-            return AIState.GUARD_HUNT_DOWN_TARGET;
+            if(worker.getEntitySenses().canSee(targetEntity))
+            {
+                worker.resetActiveHand();
+                attackEntityWithRangedAttack(targetEntity, 1);
+                setDelay(100);
+                return AIState.GUARD_HUNT_DOWN_TARGET;
+            }
+            worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), 5);
+            return AIState.GUARD_SEARCH_TARGET;
         }
 
         return AIState.GUARD_SEARCH_TARGET;
     }
-
 
 
     @Override

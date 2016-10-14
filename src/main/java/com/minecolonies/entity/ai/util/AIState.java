@@ -196,6 +196,5 @@ public enum AIState
     /**
      * Hoe the field.
      */
-    GUARD_HUNT_DOWN_TARGET,
-
+    GUARD_HUNT_DOWN_TARGET
 }
