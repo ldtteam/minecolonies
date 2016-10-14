@@ -35,6 +35,10 @@ public class ListColonies extends AbstractSingleCommand
         return super.getCommandUsage(sender) + "";
     }
 
+    private static final String writeId = "§2ID: §f";
+    private static final String writeName = "§2 Name: §f";
+    private static final String writeCoords = "§8Coordinates: ";
+
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
@@ -42,6 +46,7 @@ public class ListColonies extends AbstractSingleCommand
         final int colonyCount = ColonyManager.getColonies().size();
         int pageCount;
         final int coloniesOnPage = 8;
+
         if (colonyCount % coloniesOnPage == 0)
         {
             pageCount = colonyCount / coloniesOnPage;
@@ -63,10 +68,6 @@ public class ListColonies extends AbstractSingleCommand
         }
         final TextComponentString headerLine = new TextComponentString("§2----------page " + page + " of " + pageCount + "----------");
         sender.addChatMessage(headerLine);
-
-        final String writeId = "§2ID: §f";
-        final String writeName = "§2 Name: §f";
-        final String writeCoords = "§8Coordinates: ";
         final int lastColonyNumber = coloniesOnPage * page - (coloniesOnPage - 1);
         final int latestColonyNumber = coloniesOnPage * page;
         final int lastPageColonies = colonyCount % coloniesOnPage;

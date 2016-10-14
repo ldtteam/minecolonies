@@ -26,7 +26,7 @@ public abstract class AbstractSplitCommand implements ISubCommand
      */
     public AbstractSplitCommand(@NotNull String... parents)
     {
-        this.parents = parents;
+        this.parents = parents.clone();
     }
 
     @NotNull
@@ -67,7 +67,7 @@ public abstract class AbstractSplitCommand implements ISubCommand
             //todo: check if WrongUsageException is better
             throw new CommandException(getCommandUsage(sender));
         }
-        ISubCommand child = childs.get(args[0]);
+        final ISubCommand child = childs.get(args[0]);
         final String[] newArgs = new String[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
         child.execute(server, sender, newArgs);
@@ -88,7 +88,7 @@ public abstract class AbstractSplitCommand implements ISubCommand
         {
             return new ArrayList<>(childs.keySet());
         }
-        ISubCommand child = childs.get(args[0]);
+        final ISubCommand child = childs.get(args[0]);
         final String[] newArgs = new String[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
         return child.getTabCompletionOptions(server, sender, newArgs, pos);

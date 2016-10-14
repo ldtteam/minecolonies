@@ -18,7 +18,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      */
     public AbstractSingleCommand(@NotNull String... parents)
     {
-        this.parents = parents;
+        this.parents = parents.clone();
     }
 
     @NotNull
