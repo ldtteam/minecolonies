@@ -1,17 +1,12 @@
 package com.minecolonies.commands;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -22,16 +17,16 @@ import java.util.Map;
  */
 public class MinecoloniesCommand extends SplitCommand implements ICommand
 {
-
+    private ImmutableMap<String, ISubCommand> subCommands =
+      new ImmutableMap.Builder<String, ISubCommand>()
+        .put("colonies", new ColoniesCommand())
+        .build();
     public MinecoloniesCommand()
     {
         super(new String[] {"mc"});
     }
 
-    private ImmutableMap<String, ISubCommand> subCommands =
-      new ImmutableMap.Builder<String, ISubCommand>()
-        .put("colonies", new ColoniesCommand())
-        .build();
+
 
     @NotNull
     @Override
