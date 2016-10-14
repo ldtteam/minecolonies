@@ -1,12 +1,12 @@
 package com.minecolonies.commands;
 
-import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -52,17 +52,34 @@ public class ListColonies extends SingleCommand
                 //ignore and keep page 1
             }
         }
-        TextComponentString headerLine = new TextComponentString("----------page "+page+" of "+pageCount+"----------");
+        TextComponentString headerLine = new TextComponentString("§2----------page "+page+" of "+pageCount+"----------");
         sender.addChatMessage(headerLine);
         int lastColonyNumber = coloniesOnPage * page - (coloniesOnPage - 1);
         int latestColonyNumber = coloniesOnPage * page;
         int lastPageColonies = colonyCount % coloniesOnPage;
-        if (page == pageCount){
-            for (int i = lastColonyNumber; i <= latestColonyNumber - (coloniesOnPage - lastPageColonies); i++){
-                TextComponentString colonyData = new TextComponentString("§2ID: "  + "§f" + ColonyManager.getColony(i).getID() + "§2 Name: " + "§f" + ColonyManager.getColony(i).getName());
-                sender.addChatMessage(colonyData);
-                TextComponentString colonyCoords = new TextComponentString("§8Coordinates: " + ColonyManager.getColony(i).getCenter());
-                sender.addChatMessage(colonyCoords);
+        if (page == pageCount)
+        {
+            if (coloniesOnPage == lastPageColonies)
+            {
+                for (int i = lastColonyNumber; i <= latestColonyNumber; i++)
+                {
+                    TextComponentString colonyData =
+                      new TextComponentString("§2ID: " + "§f" + ColonyManager.getColony(i).getID() + "§2 Name: " + "§f" + ColonyManager.getColony(i).getName());
+                    sender.addChatMessage(colonyData);
+                    TextComponentString colonyCoords = new TextComponentString("§8Coordinates: " + ColonyManager.getColony(i).getCenter());
+                    sender.addChatMessage(colonyCoords);
+                }
+            }
+            else
+            {
+                for (int i = lastColonyNumber; i <= latestColonyNumber - (coloniesOnPage - lastPageColonies); i++)
+                {
+                    TextComponentString colonyData =
+                      new TextComponentString("§2ID: " + "§f" + ColonyManager.getColony(i).getID() + "§2 Name: " + "§f" + ColonyManager.getColony(i).getName());
+                    sender.addChatMessage(colonyData);
+                    TextComponentString colonyCoords = new TextComponentString("§8Coordinates: " + ColonyManager.getColony(i).getCenter());
+                    sender.addChatMessage(colonyCoords);
+                }
             }
         }
         else{
@@ -73,8 +90,7 @@ public class ListColonies extends SingleCommand
                 sender.addChatMessage(colonyCoords);
             }
         }
-
-        TextComponentString footerLine = new TextComponentString("---------------------------------------------------");
+        TextComponentString footerLine = new TextComponentString("§2------------------------------");
         sender.addChatMessage(footerLine);
     }
 
