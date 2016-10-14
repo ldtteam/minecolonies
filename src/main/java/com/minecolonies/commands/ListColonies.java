@@ -1,11 +1,16 @@
 package com.minecolonies.commands;
 
+import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -17,6 +22,13 @@ import java.util.List;
  */
 public class ListColonies extends AbstractSingleCommand
 {
+
+    private static final String ID_TEXT                = "§2ID: §f";
+    private static final String NAME_TEXT              = "§2 Name: §f";
+    private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
+    private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list ";
+    private static final int    COLONIES_ON_PAGE       = 8;
+    private static final int    MAX_LINE_LENGTH        = 54;
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -35,26 +47,15 @@ public class ListColonies extends AbstractSingleCommand
         return super.getCommandUsage(sender) + "";
     }
 
-    private static final String ID_TEXT = "§2ID: §f";
-    private static final String NAME_TEXT = "§2 Name: §f";
-    private static final String COORDINATES_TEXT = "§8Coordinates: ";
-
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int page = 1;
-        final int colonyCount = ColonyManager.getColonies().size();
-        int pageCount;
-        final int coloniesOnPage = 8;
+        final List<Colony> colonies = ColonyManager.getColonies();
+        final int colonyCount = colonies.size();
+        // The last page may have less entries, so we cut off and add +1
+        final int pageCount = ((colonyCount - (colonyCount % COLONIES_ON_PAGE)) / COLONIES_ON_PAGE) + 1;
 
-        if (colonyCount % coloniesOnPage == 0)
-        {
-            pageCount = colonyCount / coloniesOnPage;
-        }
-        else
-        {
-            pageCount = colonyCount / coloniesOnPage + 1;
-        }
         if (args.length != 0)
         {
             try
@@ -66,50 +67,49 @@ public class ListColonies extends AbstractSingleCommand
                 //ignore and keep page 1.
             }
         }
-        final TextComponentString headerLine = new TextComponentString("§2----------page " + page + " of " + pageCount + "----------");
-        sender.addChatMessage(headerLine);
-        final int lastColonyNumber = coloniesOnPage * page - (coloniesOnPage - 1);
-        final int latestColonyNumber = coloniesOnPage * page;
-        final int lastPageColonies = colonyCount % coloniesOnPage;
-        if (page == pageCount)
+        if (page < 1 || page > pageCount)
         {
-            if (coloniesOnPage == lastPageColonies)
-            {
-                for (int i = lastColonyNumber; i <= latestColonyNumber; i++)
-                {
-                    final TextComponentString colonyData =
-                      new TextComponentString(ID_TEXT + ColonyManager.getColony(i).getID() + NAME_TEXT + ColonyManager.getColony(i).getName());
-                    sender.addChatMessage(colonyData);
-                    final TextComponentString colonyCoords = new TextComponentString(COORDINATES_TEXT + ColonyManager.getColony(i).getCenter());
-                    sender.addChatMessage(colonyCoords);
-                }
-            }
-            else
-            {
-                for (int i = lastColonyNumber; i <= latestColonyNumber - (coloniesOnPage - lastPageColonies); i++)
-                {
-                    final TextComponentString colonyData =
-                      new TextComponentString(ID_TEXT + ColonyManager.getColony(i).getID() + NAME_TEXT + ColonyManager.getColony(i).getName());
-                    sender.addChatMessage(colonyData);
-                    final TextComponentString colonyCoords = new TextComponentString(COORDINATES_TEXT + ColonyManager.getColony(i).getCenter());
-                    sender.addChatMessage(colonyCoords);
-                }
-            }
+            page = 1;
+        }
+
+        final int pageStartIndex = COLONIES_ON_PAGE * (page - 1);
+        final int pageStopIndex = Math.min(COLONIES_ON_PAGE * page - 1, colonyCount);
+        final int prevPage = Math.max(0, page - 1);
+        final int nextPage = Math.min(page + 1, (colonyCount / COLONIES_ON_PAGE) + 1);
+
+        List<Colony> coloniesPage;
+
+        if (pageStartIndex < 0 || pageStartIndex >= colonyCount)
+        {
+            coloniesPage = new ArrayList<>();
         }
         else
         {
-            for (int i = lastColonyNumber; i <= latestColonyNumber; i++)
-            {
-                final TextComponentString colonyData = new TextComponentString(ID_TEXT + ColonyManager.getColony(i).getID()
-                                                                                 + NAME_TEXT + ColonyManager.getColony(i).getName());
-                sender.addChatMessage(colonyData);
-                final TextComponentString colonyCoords = new TextComponentString(COORDINATES_TEXT + ColonyManager.getColony(i).getCenter());
-                sender.addChatMessage(colonyCoords);
-            }
+            coloniesPage = colonies.subList(pageStartIndex, pageStopIndex);
         }
-        final TextComponentString footerLine = new TextComponentString("§2------------------------------");
-        sender.addChatMessage(footerLine);
+
+        final ITextComponent headerLine = new TextComponentString("§2   ------------------ page " + page + " of " + pageCount + " ------------------");
+        sender.addChatMessage(headerLine);
+
+        for (final Colony colony : coloniesPage)
+        {
+            sender.addChatMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
+            final BlockPos center = colony.getCenter();
+            sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format("§4x=§f%s §4y=§f%s §4z=§f%s", center.getX(), center.getY(), center.getZ())));
+        }
+
+        final ITextComponent prevButton = new TextComponentString(" <- prev").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+prevPage)
+        ));
+        final ITextComponent nextButton = new TextComponentString("next -> ").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+nextPage)
+        ));
+
+        final ITextComponent beginLine = new TextComponentString("§2 ----------------");
+        final ITextComponent endLine = new TextComponentString("§2---------------- ");
+        sender.addChatMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString("§2 | ")).appendSibling(nextButton).appendSibling(endLine));
     }
+
 
     @NotNull
     @Override
