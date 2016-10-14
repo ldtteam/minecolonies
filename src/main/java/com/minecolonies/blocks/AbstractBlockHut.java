@@ -85,17 +85,6 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     @Override
-    public IBlockState getStateFromMeta(int meta)
-    {
-        EnumFacing facing = EnumFacing.getFront(meta);
-        if (facing.getAxis() == EnumFacing.Axis.Y)
-        {
-            facing = EnumFacing.NORTH;
-        }
-        return this.getDefaultState().withProperty(FACING, facing);
-    }
-
-    @Override
     public int getMetaFromState(@NotNull IBlockState state)
     {
         return state.getValue(FACING).getIndex();
