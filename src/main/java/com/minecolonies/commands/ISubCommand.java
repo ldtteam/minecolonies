@@ -25,7 +25,7 @@ public interface ISubCommand
     String getCommandUsage(@NotNull final ICommandSender sender);
 
     /**
-     * Callback for when the command is executed
+     * Callback for when the command is executed.
      *
      * @param server the server this is executed on
      * @param sender this commands executor

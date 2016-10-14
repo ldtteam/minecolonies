@@ -39,7 +39,7 @@ public class ListColonies extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int page = 1;
-        int colonyCount = ColonyManager.getColonies().size();
+        final int colonyCount = ColonyManager.getColonies().size();
         int pageCount;
         final int coloniesOnPage = 8;
         if (colonyCount % coloniesOnPage == 0)
@@ -64,11 +64,11 @@ public class ListColonies extends AbstractSingleCommand
         final TextComponentString headerLine = new TextComponentString("§2----------page " + page + " of " + pageCount + "----------");
         sender.addChatMessage(headerLine);
 
-        final String writeId = ("§2ID: §f");
-        final String writeName = ("§2 Name: §f");
-        final String writeCoords = ("§8Coordinates: ");
-        int lastColonyNumber = coloniesOnPage * page - (coloniesOnPage - 1);
-        int latestColonyNumber = coloniesOnPage * page;
+        final String writeId = "§2ID: §f";
+        final String writeName = "§2 Name: §f";
+        final String writeCoords = "§8Coordinates: ";
+        final int lastColonyNumber = coloniesOnPage * page - (coloniesOnPage - 1);
+        final int latestColonyNumber = coloniesOnPage * page;
         final int lastPageColonies = colonyCount % coloniesOnPage;
         if (page == pageCount)
         {
