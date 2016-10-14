@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * A command that has children.
  */
-public abstract class SingleCommand implements ISubCommand
+public abstract class AbstractSingleCommand implements ISubCommand
 {
 
     private final String[] parents;
@@ -16,7 +16,7 @@ public abstract class SingleCommand implements ISubCommand
      *
      * @param parents an array of all the parents.
      */
-    public SingleCommand(@NotNull String... parents)
+    public AbstractSingleCommand(@NotNull String... parents)
     {
         this.parents = parents;
     }

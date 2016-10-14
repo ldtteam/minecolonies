@@ -15,9 +15,9 @@ import java.util.Map;
  * <p>
  * Manages all sub commands.
  */
-public class MinecoloniesCommand extends SplitCommand implements ICommand
+public class MinecoloniesCommand extends AbstractSplitCommand implements ICommand
 {
-    private ImmutableMap<String, ISubCommand> subCommands =
+    private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
         .put("colonies", new ColoniesCommand())
         .build();

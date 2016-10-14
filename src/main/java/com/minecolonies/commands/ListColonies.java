@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * List all colonies.
  */
-public class ListColonies extends SingleCommand
+public class ListColonies extends AbstractSingleCommand
 {
 
     /**

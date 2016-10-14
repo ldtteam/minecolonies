@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * A command that has children.
  */
-public abstract class SplitCommand implements ISubCommand
+public abstract class AbstractSplitCommand implements ISubCommand
 {
 
     private final String[] parents;
@@ -24,7 +24,7 @@ public abstract class SplitCommand implements ISubCommand
      *
      * @param parents an array of all the parents.
      */
-    public SplitCommand(@NotNull String... parents)
+    public AbstractSplitCommand(@NotNull String... parents)
     {
         this.parents = parents;
     }
@@ -35,13 +35,13 @@ public abstract class SplitCommand implements ISubCommand
     {
         final Map<String, ISubCommand> childs = getSubCommands();
         final StringBuilder sb = new StringBuilder().append('/');
-        for (String parent : parents)
+        for (final String parent : parents)
         {
             sb.append(parent).append(' ');
         }
         sb.append('<');
         boolean first = true;
-        for (String child : childs.keySet())
+        for (final String child : childs.keySet())
         {
             if (first)
             {

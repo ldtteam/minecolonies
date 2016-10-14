@@ -9,7 +9,7 @@ import java.util.Map;
  * <p>
  * Manages all sub commands.
  */
-public class ColoniesCommand extends SplitCommand
+public class ColoniesCommand extends AbstractSplitCommand
 {
 
     private final ImmutableMap<String, ISubCommand> subCommands =
