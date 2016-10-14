@@ -26,7 +26,7 @@ public abstract class AbstractSplitCommand implements ISubCommand
      */
     public AbstractSplitCommand(@NotNull String... parents)
     {
-        this.parents = parents.clone();
+        this.parents = parents;
     }
 
     @NotNull
