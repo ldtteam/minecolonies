@@ -35,9 +35,9 @@ public class ListColonies extends AbstractSingleCommand
         return super.getCommandUsage(sender) + "";
     }
 
-    private static final String writeId = "§2ID: §f";
-    private static final String writeName = "§2 Name: §f";
-    private static final String writeCoords = "§8Coordinates: ";
+    private static final String ID_TEXT = "§2ID: §f";
+    private static final String NAME_TEXT = "§2 Name: §f";
+    private static final String COORDINATES_TEXT = "§8Coordinates: ";
 
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
@@ -78,9 +78,9 @@ public class ListColonies extends AbstractSingleCommand
                 for (int i = lastColonyNumber; i <= latestColonyNumber; i++)
                 {
                     final TextComponentString colonyData =
-                      new TextComponentString(writeId + ColonyManager.getColony(i).getID() + writeName + ColonyManager.getColony(i).getName());
+                      new TextComponentString(ID_TEXT + ColonyManager.getColony(i).getID() + NAME_TEXT + ColonyManager.getColony(i).getName());
                     sender.addChatMessage(colonyData);
-                    final TextComponentString colonyCoords = new TextComponentString(writeCoords + ColonyManager.getColony(i).getCenter());
+                    final TextComponentString colonyCoords = new TextComponentString(COORDINATES_TEXT + ColonyManager.getColony(i).getCenter());
                     sender.addChatMessage(colonyCoords);
                 }
             }
@@ -89,9 +89,9 @@ public class ListColonies extends AbstractSingleCommand
                 for (int i = lastColonyNumber; i <= latestColonyNumber - (coloniesOnPage - lastPageColonies); i++)
                 {
                     final TextComponentString colonyData =
-                      new TextComponentString(writeId + ColonyManager.getColony(i).getID() + writeName + ColonyManager.getColony(i).getName());
+                      new TextComponentString(ID_TEXT + ColonyManager.getColony(i).getID() + NAME_TEXT + ColonyManager.getColony(i).getName());
                     sender.addChatMessage(colonyData);
-                    final TextComponentString colonyCoords = new TextComponentString(writeCoords + ColonyManager.getColony(i).getCenter());
+                    final TextComponentString colonyCoords = new TextComponentString(COORDINATES_TEXT + ColonyManager.getColony(i).getCenter());
                     sender.addChatMessage(colonyCoords);
                 }
             }
@@ -100,10 +100,10 @@ public class ListColonies extends AbstractSingleCommand
         {
             for (int i = lastColonyNumber; i <= latestColonyNumber; i++)
             {
-                final TextComponentString colonyData = new TextComponentString(writeId + ColonyManager.getColony(i).getID()
-                                                                                 + writeName + ColonyManager.getColony(i).getName());
+                final TextComponentString colonyData = new TextComponentString(ID_TEXT + ColonyManager.getColony(i).getID()
+                                                                                 + NAME_TEXT + ColonyManager.getColony(i).getName());
                 sender.addChatMessage(colonyData);
-                final TextComponentString colonyCoords = new TextComponentString(writeCoords + ColonyManager.getColony(i).getCenter());
+                final TextComponentString colonyCoords = new TextComponentString(COORDINATES_TEXT + ColonyManager.getColony(i).getCenter());
                 sender.addChatMessage(colonyCoords);
             }
         }
