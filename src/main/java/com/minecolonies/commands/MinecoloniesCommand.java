@@ -21,12 +21,11 @@ public class MinecoloniesCommand extends SplitCommand implements ICommand
       new ImmutableMap.Builder<String, ISubCommand>()
         .put("colonies", new ColoniesCommand())
         .build();
+
     public MinecoloniesCommand()
     {
-        super(new String[] {"mc"});
+        super("mc");
     }
-
-
 
     @NotNull
     @Override

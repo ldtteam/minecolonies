@@ -19,7 +19,7 @@ public abstract class SplitCommand implements ISubCommand
 
     private final String[] parents;
 
-    public SplitCommand(@NotNull String[] parents)
+    public SplitCommand(@NotNull String... parents)
     {
         this.parents = parents;
     }
@@ -101,7 +101,7 @@ public abstract class SplitCommand implements ISubCommand
         final ISubCommand child = childs.get(args[0]);
         final String[] newArgs = new String[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
-        return child.isUsernameIndex(newArgs, index-1);
+        return child.isUsernameIndex(newArgs, index - 1);
     }
 
     public abstract Map<String, ISubCommand> getSubCommands();

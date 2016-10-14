@@ -56,7 +56,7 @@ public class ListColonies extends SingleCommand
                 //ignore and keep page 1.
             }
         }
-        final TextComponentString headerLine = new TextComponentString("§2----------page "+page+" of "+pageCount+"----------");
+        final TextComponentString headerLine = new TextComponentString("§2----------page " + page + " of " + pageCount + "----------");
         sender.addChatMessage(headerLine);
 
         final String writeId = ("§2ID: §f");
@@ -91,11 +91,11 @@ public class ListColonies extends SingleCommand
             }
         }
         else
-            {
+        {
             for (int i = lastColonyNumber; i <= latestColonyNumber; i++)
             {
                 final TextComponentString colonyData = new TextComponentString(writeId + ColonyManager.getColony(i).getID()
-                                                                           + writeName + ColonyManager.getColony(i).getName());
+                                                                                 + writeName + ColonyManager.getColony(i).getName());
                 sender.addChatMessage(colonyData);
                 final TextComponentString colonyCoords = new TextComponentString(writeCoords + ColonyManager.getColony(i).getCenter());
                 sender.addChatMessage(colonyCoords);

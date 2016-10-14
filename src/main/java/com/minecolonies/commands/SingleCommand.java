@@ -3,7 +3,6 @@ package com.minecolonies.commands;
 import net.minecraft.command.ICommandSender;
 import org.jetbrains.annotations.NotNull;
 
-
 /**
  * A command that has children.
  */
@@ -28,5 +27,4 @@ public abstract class SingleCommand implements ISubCommand
         }
         return sb.toString();
     }
-
 }
