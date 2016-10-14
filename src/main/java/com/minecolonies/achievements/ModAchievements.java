@@ -48,7 +48,6 @@ public final class ModAchievements
      * Place a townhall.
      */
     public static final Achievement achievementTownhall = new MineColoniesAchievement("townhall", -2, 0, ModBlocks.blockHutTownHall, null)
-
                                                                     .registerStat();
     /**
      * Upgrade a townhall to lv 1.
