@@ -22,6 +22,9 @@ public class MinecoloniesCommand extends SplitCommand implements ICommand
         .put("colonies", new ColoniesCommand())
         .build();
 
+    /**
+     * Initialize this command with the shortest alias.
+     */
     public MinecoloniesCommand()
     {
         super("mc");

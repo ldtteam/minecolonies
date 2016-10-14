@@ -18,6 +18,11 @@ import java.util.List;
 public class ListColonies extends SingleCommand
 {
 
+    /**
+     * Initialize this SubCommand with it's parents.
+     *
+     * @param parents an array of all the parents.
+     */
     public ListColonies(@NotNull final String... parents)
     {
         super(parents);

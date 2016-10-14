@@ -11,7 +11,12 @@ public abstract class SingleCommand implements ISubCommand
 
     private final String[] parents;
 
-    public SingleCommand(@NotNull String[] parents)
+    /**
+     * Initialize this SubCommand with it's parents.
+     *
+     * @param parents an array of all the parents.
+     */
+    public SingleCommand(@NotNull String... parents)
     {
         this.parents = parents;
     }

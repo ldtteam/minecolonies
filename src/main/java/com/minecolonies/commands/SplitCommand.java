@@ -19,6 +19,11 @@ public abstract class SplitCommand implements ISubCommand
 
     private final String[] parents;
 
+    /**
+     * Initialize this SubCommand with it's parents.
+     *
+     * @param parents an array of all the parents.
+     */
     public SplitCommand(@NotNull String... parents)
     {
         this.parents = parents;
@@ -104,5 +109,10 @@ public abstract class SplitCommand implements ISubCommand
         return child.isUsernameIndex(newArgs, index - 1);
     }
 
+    /**
+     * Get all sub-commands that can be reached.
+     *
+     * @return a mapping from command text to ISubCommand
+     */
     public abstract Map<String, ISubCommand> getSubCommands();
 }

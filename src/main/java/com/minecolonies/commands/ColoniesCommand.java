@@ -17,6 +17,9 @@ public class ColoniesCommand extends SplitCommand
         .put("list", new ListColonies("mc", "colonies", "list"))
         .build();
 
+    /**
+     * Initialize this command with it's parents.
+     */
     public ColoniesCommand()
     {
         super("mc", "colonies");
