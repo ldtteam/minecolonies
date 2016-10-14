@@ -77,7 +77,7 @@ public final class ColonyManager
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER, w);
 
         colony.triggerAchievement(ModAchievements.achievementGetSupply);
-        colony.triggerAchievement(ModAchievements.achievementBuildingTownhall);
+        colony.triggerAchievement(ModAchievements.achievementTownhall);
 
         markDirty();
 
