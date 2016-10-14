@@ -7,7 +7,7 @@ import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
-import com.minecolonies.entity.ai.util.ItemStorage;
+import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;

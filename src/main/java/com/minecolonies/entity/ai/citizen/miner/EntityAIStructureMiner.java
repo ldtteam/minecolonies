@@ -6,7 +6,7 @@ import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
-import com.minecolonies.entity.ai.util.ItemStorage;
+import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.SchematicWrapper;
 import com.minecolonies.util.Utils;

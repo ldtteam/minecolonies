@@ -1,4 +1,4 @@
-package com.minecolonies.entity.ai.util;
+package com.minecolonies.entity.ai.item.handling;
 
 import net.minecraft.item.Item;
 import org.jetbrains.annotations.NotNull;
@@ -24,7 +24,7 @@ public class ItemStorage
     private final int amount;
 
     /**
-     * Ignore the damage value in the comparison?
+     * Set this to ignore the damage value in comparisons.
      */
     private final boolean ignoreDamageValue;
 
@@ -101,8 +101,6 @@ public class ItemStorage
     @Override
     public int hashCode()
     {
-        int result = getItem().hashCode();
-        result = 31 * result + getDamageValue();
-        return result;
+        return 31 * getItem().hashCode() + getDamageValue();
     }
 }
