@@ -22,7 +22,7 @@ public abstract class SingleCommand implements ISubCommand
     public String getCommandUsage(@NotNull final ICommandSender sender)
     {
         final StringBuilder sb = new StringBuilder().append('/');
-        for (String parent : parents)
+        for (final String parent : parents)
         {
             sb.append(parent).append(' ');
         }

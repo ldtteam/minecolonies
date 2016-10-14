@@ -18,7 +18,7 @@ public interface ISubCommand
     @NotNull
     String getCommandUsage(@NotNull final ICommandSender sender);
 
-    void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args) throws CommandException;
+    void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException;
 
     @NotNull
     List<String> getTabCompletionOptions(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args, @Nullable final BlockPos pos);

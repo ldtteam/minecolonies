@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * List all colonies
+ * List all colonies.
  */
 public class ListColonies extends SingleCommand
 {
@@ -36,7 +36,7 @@ public class ListColonies extends SingleCommand
         int page = 1;
         int colonyCount = ColonyManager.getColonies().size();
         int pageCount;
-        int coloniesOnPage = 8;
+        final int coloniesOnPage = 8;
         if (colonyCount % coloniesOnPage == 0)
         {
             pageCount = colonyCount / coloniesOnPage;
@@ -56,22 +56,25 @@ public class ListColonies extends SingleCommand
                 //ignore and keep page 1.
             }
         }
-        TextComponentString headerLine = new TextComponentString("§2----------page "+page+" of "+pageCount+"----------");
+        final TextComponentString headerLine = new TextComponentString("§2----------page "+page+" of "+pageCount+"----------");
         sender.addChatMessage(headerLine);
 
+        final String writeId = ("§2ID: §f");
+        final String writeName = ("§2 Name: §f");
+        final String writeCoords = ("§8Coordinates: ");
         int lastColonyNumber = coloniesOnPage * page - (coloniesOnPage - 1);
         int latestColonyNumber = coloniesOnPage * page;
-        int lastPageColonies = colonyCount % coloniesOnPage;
+        final int lastPageColonies = colonyCount % coloniesOnPage;
         if (page == pageCount)
         {
             if (coloniesOnPage == lastPageColonies)
             {
                 for (int i = lastColonyNumber; i <= latestColonyNumber; i++)
                 {
-                    TextComponentString colonyData =
-                      new TextComponentString("§2ID: " + "§f" + ColonyManager.getColony(i).getID() + "§2 Name: " + "§f" + ColonyManager.getColony(i).getName());
+                    final TextComponentString colonyData =
+                      new TextComponentString(writeId + ColonyManager.getColony(i).getID() + writeName + ColonyManager.getColony(i).getName());
                     sender.addChatMessage(colonyData);
-                    TextComponentString colonyCoords = new TextComponentString("§8Coordinates: " + ColonyManager.getColony(i).getCenter());
+                    final TextComponentString colonyCoords = new TextComponentString(writeCoords + ColonyManager.getColony(i).getCenter());
                     sender.addChatMessage(colonyCoords);
                 }
             }
@@ -79,10 +82,10 @@ public class ListColonies extends SingleCommand
             {
                 for (int i = lastColonyNumber; i <= latestColonyNumber - (coloniesOnPage - lastPageColonies); i++)
                 {
-                    TextComponentString colonyData =
-                      new TextComponentString("§2ID: " + "§f" + ColonyManager.getColony(i).getID() + "§2 Name: " + "§f" + ColonyManager.getColony(i).getName());
+                    final TextComponentString colonyData =
+                      new TextComponentString(writeId + ColonyManager.getColony(i).getID() + writeName + ColonyManager.getColony(i).getName());
                     sender.addChatMessage(colonyData);
-                    TextComponentString colonyCoords = new TextComponentString("§8Coordinates: " + ColonyManager.getColony(i).getCenter());
+                    final TextComponentString colonyCoords = new TextComponentString(writeCoords + ColonyManager.getColony(i).getCenter());
                     sender.addChatMessage(colonyCoords);
                 }
             }
@@ -91,14 +94,14 @@ public class ListColonies extends SingleCommand
             {
             for (int i = lastColonyNumber; i <= latestColonyNumber; i++)
             {
-                TextComponentString colonyData = new TextComponentString("§2ID: "  + "§f" + ColonyManager.getColony(i).getID()
-                                                                           + "§2 Name: " + "§f" + ColonyManager.getColony(i).getName());
+                final TextComponentString colonyData = new TextComponentString(writeId + ColonyManager.getColony(i).getID()
+                                                                           + writeName + ColonyManager.getColony(i).getName());
                 sender.addChatMessage(colonyData);
-                TextComponentString colonyCoords = new TextComponentString("§8Coordinates: " + ColonyManager.getColony(i).getCenter());
+                final TextComponentString colonyCoords = new TextComponentString(writeCoords + ColonyManager.getColony(i).getCenter());
                 sender.addChatMessage(colonyCoords);
             }
         }
-        TextComponentString footerLine = new TextComponentString("§2------------------------------");
+        final TextComponentString footerLine = new TextComponentString("§2------------------------------");
         sender.addChatMessage(footerLine);
     }
 

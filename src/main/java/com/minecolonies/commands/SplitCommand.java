@@ -98,7 +98,7 @@ public abstract class SplitCommand implements ISubCommand
         {
             return false;
         }
-        ISubCommand child = childs.get(args[0]);
+        final ISubCommand child = childs.get(args[0]);
         final String[] newArgs = new String[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
         return child.isUsernameIndex(newArgs, index-1);
