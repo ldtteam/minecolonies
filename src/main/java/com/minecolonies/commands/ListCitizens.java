@@ -3,6 +3,7 @@ package com.minecolonies.commands;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.IColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -52,6 +53,16 @@ public class ListCitizens extends AbstractSingleCommand
         int page = 1;
         int colonyId = 1;
 
+        final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
+        if(tempColony != null)
+        {
+            final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
+            if(colony != null)
+            {
+                colonyId = colony.getID();
+            }
+        }
+
         if (args.length != 0)
         {
             if(args.length >= 2)
@@ -79,7 +90,7 @@ public class ListCitizens extends AbstractSingleCommand
             }
         }
 
-        Colony colony = ColonyManager.getColony(colonyId);
+        final Colony colony = ColonyManager.getColony(colonyId);
 
         if(colony == null)
         {
