@@ -53,8 +53,16 @@ public class ListColonies extends AbstractSingleCommand
         final List<Colony> colonies = ColonyManager.getColonies();
         final int colonyCount = colonies.size();
         // The last page may have less entries, so we cut off and add +1
-        final int pageCount = ((colonyCount - (colonyCount % COLONIES_ON_PAGE)) / COLONIES_ON_PAGE) + 1;
+        final int pageCount;
 
+        if (colonyCount % COLONIES_ON_PAGE == 0)
+        {
+            pageCount = colonyCount / COLONIES_ON_PAGE;
+        }
+        else
+        {
+            pageCount = colonyCount / COLONIES_ON_PAGE + 1;
+        }
         if (args.length != 0)
         {
             try
