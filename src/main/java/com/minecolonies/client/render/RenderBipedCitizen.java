@@ -86,7 +86,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         // Lumberjack: 4 male, 1 female
         LUMBERJACK("Lumberjack", 1),
         FARMER("Farmer", 1),
-        FISHERMAN("Fisherman", 1);
+        FISHERMAN("Fisherman", 1),
+        GUARD("Knight", 1);
 
         /**
          * String describing the citizen.
