@@ -9,23 +9,20 @@ import java.util.Map;
  * <p>
  * Manages all sub commands.
  */
-public class MinecoloniesCommand extends AbstractSplitCommand
+public class ColonyCommand extends AbstractSplitCommand
 {
-
-    public static final String DESC = "minecolonies";
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put("colonies", new ColoniesCommand(DESC))
-        .put("colony", new ColonyCommand(DESC))
+        .put("kill", new ListColonies("mc", "colony", "kill"))
         .build();
 
     /**
-     * Initialize this command with the canon alias.
+     * Initialize this command with it's parents.
      */
-    public MinecoloniesCommand()
+    public ColonyCommand()
     {
-        super(DESC);
+        super("mc", "colonies");
     }
 
     @Override
