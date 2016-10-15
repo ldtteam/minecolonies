@@ -75,8 +75,8 @@ public class ListColonies extends AbstractSingleCommand
         final int pageStopIndex = Math.min(COLONIES_ON_PAGE * page, colonyCount);
         final int prevPage = Math.max(0, page - 1);
         // fill up to a whole page to show the last half page
-        final int restFill = COLONIES_ON_PAGE - (colonyCound % COLONIES_ON_PAGE);
-        final int nextPage = Math.min(page + 1, ((colonyCount + restFill)  / COLONIES_ON_PAGE));
+        final int halfPage = (colonyCount % COLONIES_ON_PAGE == 0) ? 0 : 1;
+        final int nextPage = Math.min(page + 1, ((colonyCount)  / COLONIES_ON_PAGE) + halfPage);
 
         List<Colony> coloniesPage;
 
