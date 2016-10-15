@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A command that has children.
+ * A command that has children. Split-command with various parts.
  */
 public abstract class AbstractSplitCommand implements ISubCommand
 {
