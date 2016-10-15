@@ -59,6 +59,17 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
     }
 
     /**
+     * Can be overridden in implementations.
+     * <p>
+     * Here the AI can check if the fishes or rods have to be re rendered and do it.
+     */
+    @Override
+    protected void updateRenderMetaData()
+    {
+        updateArmor();
+    }
+
+    /**
      * Updates the equipment. Always take the first item of each type and set it.
      */
     private void updateArmor()
@@ -86,7 +97,7 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
 
     /**
      * Chooses a target from the list.
-     * @return
+     * @return the next state.
      */
     private AIState getTarget()
     {
@@ -113,8 +124,6 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
      */
     private AIState searchTarget()
     {
-        updateArmor();
-
         if (worker == null)
         {
             return AIState.GUARD_SEARCH_TARGET;
@@ -211,6 +220,7 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
 
         worker.faceEntity(entityToAttack, 30.0F, 30.0F);
         worker.getLookHelper().setLookPositionWithEntity(entityToAttack, 30.0F, 30.0F);
+        worker.setMoveForward(10);
 
         worker.swingArm(EnumHand.MAIN_HAND);
         worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (worker.getRNG().nextFloat() * 0.4F + 0.8F));

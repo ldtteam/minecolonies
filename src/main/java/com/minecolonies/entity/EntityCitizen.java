@@ -7,6 +7,7 @@ import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.jobs.AbstractJob;
+import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.minimal.*;
@@ -1050,7 +1051,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
-        if (!worldObj.isDaytime())
+        if (!worldObj.isDaytime() && !(this.getColonyJob() instanceof JobGuard))
         {
             return DesiredActivity.SLEEP;
         }
@@ -1276,13 +1277,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         boolean result = super.attackEntityFrom(damageSource, damage);
 
+        if(damageSource.isMagicDamage() || damageSource.isFireDamage())
+        {
+            return result;
+        }
+
         for(ItemStack stack: this.getArmorInventoryList())
         {
             if(stack == null || stack.getItem() == null || ! (stack.getItem() instanceof ItemArmor))
             {
                 continue;
             }
-            stack.damageItem((int)(damage + this.rand.nextInt() * damage), this);
+            stack.damageItem((int)(damage), this);
             setItemStackToSlot(getSlotForItemStack(stack), stack);
         }
 
