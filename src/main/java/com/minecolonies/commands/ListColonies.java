@@ -26,7 +26,15 @@ public class ListColonies extends AbstractSingleCommand
     private static final String ID_TEXT                = "§2ID: §f";
     private static final String NAME_TEXT              = "§2 Name: §f";
     private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
+    private static final String COORDINATES_XYZ = "§4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list ";
+    private static final String PAGE_TOP_LEFT = "§2   ------------------ page ";
+    private static final String PAGE_TOP_RIGHT = " ------------------";
+    private static final String PAGE_TOP_MIDDLE = " of ";
+    private static final String PREV_PAGE = " <- prev";
+    private static final String NEXT_PAGE = "next -> ";
+    private static final String PAGE_LINE = "§2 ----------------";
+    private static final String PAGE_LINE_DIVIDER = "§2 | ";
     private static final int    COLONIES_ON_PAGE       = 9;
 
     /**
@@ -89,26 +97,26 @@ public class ListColonies extends AbstractSingleCommand
             coloniesPage = colonies.subList(pageStartIndex, pageStopIndex);
         }
 
-        final ITextComponent headerLine = new TextComponentString("§2   ------------------ page " + page + " of " + pageCount + " ------------------");
+        final ITextComponent headerLine = new TextComponentString(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
         sender.addChatMessage(headerLine);
 
         for (final Colony colony : coloniesPage)
         {
             sender.addChatMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
             final BlockPos center = colony.getCenter();
-            sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format("§4x=§f%s §4y=§f%s §4z=§f%s", center.getX(), center.getY(), center.getZ())));
+            sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ())));
         }
 
-        final ITextComponent prevButton = new TextComponentString(" <- prev").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent prevButton = new TextComponentString(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+prevPage)
         ));
-        final ITextComponent nextButton = new TextComponentString("next -> ").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+        final ITextComponent nextButton = new TextComponentString(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+nextPage)
         ));
 
-        final ITextComponent beginLine = new TextComponentString("§2 ----------------");
-        final ITextComponent endLine = new TextComponentString("§2---------------- ");
-        sender.addChatMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString("§2 | ")).appendSibling(nextButton).appendSibling(endLine));
+        final ITextComponent beginLine = new TextComponentString(PAGE_LINE);
+        final ITextComponent endLine = new TextComponentString(PAGE_LINE);
+        sender.addChatMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
     }
 
 
