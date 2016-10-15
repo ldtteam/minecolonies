@@ -1,5 +1,6 @@
 package com.minecolonies.commands;
 
+import com.blockout.Log;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import net.minecraft.command.CommandException;
@@ -27,7 +28,7 @@ public class ListColonies extends AbstractSingleCommand
     private static final String NAME_TEXT              = "§2 Name: §f";
     private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
     private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list ";
-    private static final int    COLONIES_ON_PAGE       = 9;
+    private static final int    COLONIES_ON_PAGE       = 3;
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -52,8 +53,11 @@ public class ListColonies extends AbstractSingleCommand
         int page = 1;
         final List<Colony> colonies = ColonyManager.getColonies();
         final int colonyCount = colonies.size();
+
+        final int halfPage = (colonyCount % COLONIES_ON_PAGE == 0) ? 0 : 1;
+
         // The last page may have less entries, so we cut off and add +1
-        final int pageCount = ((colonyCount - (colonyCount % COLONIES_ON_PAGE)) / COLONIES_ON_PAGE) + 1;
+        final int pageCount = ((colonyCount) / COLONIES_ON_PAGE) + halfPage;
 
         if (args.length != 0)
         {
@@ -75,8 +79,7 @@ public class ListColonies extends AbstractSingleCommand
         final int pageStopIndex = Math.min(COLONIES_ON_PAGE * page, colonyCount);
         final int prevPage = Math.max(0, page - 1);
         // fill up to a whole page to show the last half page
-        final int halfPage = (colonyCount % COLONIES_ON_PAGE == 0) ? 0 : 1;
-        final int nextPage = Math.min(page + 1, ((colonyCount)  / COLONIES_ON_PAGE) + halfPage);
+        final int nextPage = Math.min(page + 1, (colonyCount / COLONIES_ON_PAGE) + halfPage);
 
         List<Colony> coloniesPage;
 
