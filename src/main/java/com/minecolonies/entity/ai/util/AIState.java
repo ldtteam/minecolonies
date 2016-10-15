@@ -189,12 +189,17 @@ public enum AIState
     */
 
     /**
-     * Check if the fields need any work.
+     * Let the guard search for targets.
      */
     GUARD_SEARCH_TARGET,
 
     /**
-     * Hoe the field.
+     * Choose a target.
+     */
+    GUARD_GET_TARGET,
+
+    /**
+     * Hunt the target down.
      */
     GUARD_HUNT_DOWN_TARGET
 }

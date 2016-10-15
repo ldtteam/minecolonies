@@ -37,7 +37,8 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
 {
     private static final double MAX_ATTACK_DISTANCE = 20.0D;
     EntityLivingBase targetEntity;
-
+    private int searchDistance = 5;
+    List entityList;
     /**
      * Sets up some important skeleton stuff for every ai.
      *
@@ -49,8 +50,9 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
         super.registerTargets(
                 new AITarget(IDLE, () -> START_WORKING),
                 new AITarget(START_WORKING, () -> GUARD_SEARCH_TARGET),
-                new AITarget(GUARD_SEARCH_TARGET, searchTarget()),
-                new AITarget(GUARD_HUNT_DOWN_TARGET, huntDown())
+                new AITarget(GUARD_SEARCH_TARGET, this::searchTarget),
+                new AITarget(GUARD_GET_TARGET, this::getTarget),
+                new AITarget(GUARD_HUNT_DOWN_TARGET, this::huntDown)
                 );
         worker.setSkillModifier(2 * worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
@@ -83,6 +85,29 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
     }
 
     /**
+     * Chooses a target from the list.
+     * @return
+     */
+    private AIState getTarget()
+    {
+        if(entityList.isEmpty())
+        {
+            return AIState.GUARD_SEARCH_TARGET;
+        }
+        if (!worker.getEntitySenses().canSee((EntityLivingBase) entityList.get(0)) || !((EntityLivingBase) entityList.get(0)).isEntityAlive())
+        {
+            entityList.remove(0);
+            setDelay(10);
+            return AIState.GUARD_GET_TARGET;
+        }
+        else
+        {
+            targetEntity = (EntityLivingBase) entityList.get(0);
+            return AIState.GUARD_HUNT_DOWN_TARGET;
+        }
+    }
+
+    /**
      * Searches for the next taget.
      * @return the next AIState.
      */
@@ -95,8 +120,8 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
             return AIState.GUARD_SEARCH_TARGET;
         }
 
-        List entityList = this.worker.worldObj.getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(20));
-        entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(20)));
+        entityList = this.worker.worldObj.getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(searchDistance));
+        entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(searchDistance)));
 
         if(!worker.hasItemInInventory(Items.BOW))
         {
@@ -104,15 +129,17 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
         }
         worker.setHeldItem(worker.findFirstSlotInInventoryWith(Items.BOW));
 
-        if(entityList.isEmpty()  || !worker.getEntitySenses().canSee((EntityLivingBase) entityList.get(0)))
+        setDelay(10);
+        if(entityList.isEmpty())
         {
+            if(searchDistance < MAX_ATTACK_DISTANCE)
+            {
+                searchDistance += 5;
+            }
+
             return AIState.GUARD_SEARCH_TARGET;
         }
-        else
-        {
-            targetEntity = (EntityLivingBase) entityList.get(0);
-            return AIState.GUARD_HUNT_DOWN_TARGET;
-        }
+        return AIState.GUARD_GET_TARGET;
     }
 
     /**
@@ -121,7 +148,11 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
      */
     private AIState huntDown()
     {
-        //todo if can't see path to it.
+        if(!targetEntity.isEntityAlive())
+        {
+            targetEntity = null;
+        }
+
         if (targetEntity != null)
         {
             if(worker.getEntitySenses().canSee(targetEntity))
