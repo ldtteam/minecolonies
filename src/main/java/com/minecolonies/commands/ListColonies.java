@@ -54,11 +54,10 @@ public class ListColonies extends AbstractSingleCommand
         final List<Colony> colonies = ColonyManager.getColonies();
         final int colonyCount = colonies.size();
 
+        // check to see if we have to add one page to show the half page
         final int halfPage = (colonyCount % COLONIES_ON_PAGE == 0) ? 0 : 1;
-
-        // The last page may have less entries, so we cut off and add +1
         final int pageCount = ((colonyCount) / COLONIES_ON_PAGE) + halfPage;
-        
+
         if (args.length != 0)
         {
             try
@@ -78,7 +77,6 @@ public class ListColonies extends AbstractSingleCommand
         final int pageStartIndex = COLONIES_ON_PAGE * (page - 1);
         final int pageStopIndex = Math.min(COLONIES_ON_PAGE * page, colonyCount);
         final int prevPage = Math.max(0, page - 1);
-        // fill up to a whole page to show the last half page
         final int nextPage = Math.min(page + 1, (colonyCount / COLONIES_ON_PAGE) + halfPage);
 
         List<Colony> coloniesPage;
