@@ -54,7 +54,7 @@ public class ListCitizens extends AbstractSingleCommand
 
         if (args.length != 0)
         {
-            if(args.length > 2)
+            if(args.length >= 2)
             {
                 try
                 {
@@ -132,7 +132,7 @@ public class ListCitizens extends AbstractSingleCommand
           new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+prevPage)
         ));
         final ITextComponent nextButton = new TextComponentString("next -> ").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+nextPage)
+          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + + colonyId + " " + nextPage)
         ));
 
         final ITextComponent beginLine = new TextComponentString("§2 ----------------");

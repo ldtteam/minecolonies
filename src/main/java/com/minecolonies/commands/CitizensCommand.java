@@ -9,20 +9,20 @@ import java.util.Map;
  * <p>
  * Manages all sub commands.
  */
-public class ColoniesCommand extends AbstractSplitCommand
+public class CitizensCommand extends AbstractSplitCommand
 {
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put("list", new ListColonies("mc", "colonies", "list"))
+        .put("list", new ListCitizens("mc", "citizens", "list"))
         .build();
 
     /**
      * Initialize this command with it's parents.
      */
-    public ColoniesCommand()
+    public CitizensCommand()
     {
-        super("mc", "colonies");
+        super("mc", "citizens");
     }
 
     @Override
