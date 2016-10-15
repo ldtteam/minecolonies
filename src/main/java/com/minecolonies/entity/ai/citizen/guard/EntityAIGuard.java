@@ -58,6 +58,8 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
         worker.setCanPickUpLoot(true);
     }
 
+    //todo change guard death to "a guard has died"
+    //todo turn off friendly fire (or toggle it?)
     /**
      * Can be overridden in implementations.
      * <p>
