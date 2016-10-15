@@ -17,7 +17,7 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
     private int    colonyId;
     private String name;
     private static final int MAX_NAME_LENGTH = 25;
-    private static final int SUBSTRING_LENGTH = 24;
+    private static final int SUBSTRING_LENGTH = MAX_NAME_LENGTH - 1;
 
     public TownHallRenameMessage() {}
 
@@ -55,7 +55,7 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
 
         if (colony != null)
         {
-            this.name = (name.length() <= 25)? name : name.substring(0, 24);
+            this.name = (name.length() <= MAX_NAME_LENGTH)? name : name.substring(0, SUBSTRING_LENGTH);
             colony.setName(message.name);
             MineColonies.getNetwork().sendToAll(message);
         }
