@@ -1,6 +1,7 @@
 package com.minecolonies.commands;
 
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -49,7 +50,7 @@ public class ListCitizens extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int page = 1;
-        int colonyId = 0;
+        int colonyId = 1;
 
         if (args.length != 0)
         {
@@ -78,8 +79,14 @@ public class ListCitizens extends AbstractSingleCommand
             }
         }
 
+        Colony colony = ColonyManager.getColony(colonyId);
 
-        final List<CitizenData> citizens = new ArrayList<>(ColonyManager.getColony(colonyId).getCitizens().values());
+        if(colony == null)
+        {
+            return;
+        }
+
+        final List<CitizenData> citizens = new ArrayList<>(colony.getCitizens().values());
         final int citizenCount = citizens.size();
 
         // check to see if we have to add one page to show the half page
