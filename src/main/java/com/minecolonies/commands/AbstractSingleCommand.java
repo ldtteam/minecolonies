@@ -4,7 +4,7 @@ import net.minecraft.command.ICommandSender;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A command that has children.
+ * A command that has children. Is a single one-word command.
  */
 public abstract class AbstractSingleCommand implements ISubCommand
 {
