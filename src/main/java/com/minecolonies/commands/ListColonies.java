@@ -59,6 +59,14 @@ public class ListColonies extends AbstractSingleCommand
         // The last page may have less entries, so we cut off and add +1
         final int pageCount = ((colonyCount) / COLONIES_ON_PAGE) + halfPage;
 
+        if (colonyCount % COLONIES_ON_PAGE == 0)
+        {
+            pageCount = colonyCount / COLONIES_ON_PAGE;
+        }
+        else
+        {
+            pageCount = colonyCount / COLONIES_ON_PAGE + 1;
+        }
         if (args.length != 0)
         {
             try
