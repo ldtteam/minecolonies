@@ -27,7 +27,7 @@ public class ListColonies extends AbstractSingleCommand
     private static final String NAME_TEXT              = "§2 Name: §f";
     private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
     private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list ";
-    private static final int    COLONIES_ON_PAGE       = 8;
+    private static final int    COLONIES_ON_PAGE       = 9;
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -72,7 +72,7 @@ public class ListColonies extends AbstractSingleCommand
         }
 
         final int pageStartIndex = COLONIES_ON_PAGE * (page - 1);
-        final int pageStopIndex = Math.min(COLONIES_ON_PAGE * page - 1, colonyCount);
+        final int pageStopIndex = Math.min(COLONIES_ON_PAGE * page, colonyCount);
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (colonyCount / COLONIES_ON_PAGE) + 1);
 
