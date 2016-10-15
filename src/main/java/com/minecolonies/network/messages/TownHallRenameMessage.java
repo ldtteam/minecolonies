@@ -28,7 +28,7 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
     public TownHallRenameMessage(@NotNull ColonyView colony, String name)
     {
         this.colonyId = colony.getID();
-        this.name = name;
+        this.name = (name.length() <= 25)? name : name.substring(0, 24);
     }
 
     @Override
