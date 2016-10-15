@@ -28,7 +28,7 @@ public class ListColonies extends AbstractSingleCommand
     private static final String NAME_TEXT              = "§2 Name: §f";
     private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
     private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list ";
-    private static final int    COLONIES_ON_PAGE       = 3;
+    private static final int    COLONIES_ON_PAGE       = 9;
 
     /**
      * Initialize this SubCommand with it's parents.
