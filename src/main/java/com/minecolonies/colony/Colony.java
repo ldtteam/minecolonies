@@ -711,7 +711,7 @@ public class Colony implements IColony
                 citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null)
                   .forEach(citizen ->
                   {
-                      Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
+                      Log.getLogger().warn(String.format("Colony #%d citizen:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
                       spawnCitizen(citizen);
                   });
             }

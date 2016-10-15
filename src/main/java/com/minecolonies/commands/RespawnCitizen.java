@@ -8,13 +8,8 @@ import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -24,20 +19,20 @@ import java.util.List;
 /**
  * List all colonies.
  */
-public class KillCitizen extends AbstractSingleCommand
+public class RespawnCitizen extends AbstractSingleCommand
 {
 
-    private static final String ID_TEXT                = "§2ID: §f";
-    private static final String NAME_TEXT              = "§2 Name: §f";
-    private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
-    private static final String REMOVED_MESSAGE        = "Has been removed";
+    private static final String ID_TEXT          = "§2ID: §f";
+    private static final String NAME_TEXT        = "§2 Name: §f";
+    private static final String COORDINATES_TEXT = "§2Coordinates: §f";
+    private static final String RESPAWN_MESSAGE  = "Will be respawned";
 
     /**
      * Initialize this SubCommand with it's parents.
      *
      * @param parents an array of all the parents.
      */
-    public KillCitizen(@NotNull final String... parents)
+    public RespawnCitizen(@NotNull final String... parents)
     {
         super(parents);
     }
@@ -105,12 +100,13 @@ public class KillCitizen extends AbstractSingleCommand
             return;
         }
 
+        entityCitizen.setDead();
+
         sender.addChatMessage(new TextComponentString(ID_TEXT + citizenData.getId() + NAME_TEXT + citizenData.getName()));
         final BlockPos center = entityCitizen.getPosition();
         sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format("§4x=§f%s §4y=§f%s §4z=§f%s", center.getX(), center.getY(), center.getZ())));
-        sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
+        sender.addChatMessage(new TextComponentString(RESPAWN_MESSAGE));
 
-        entityCitizen.onDeath(new DamageSource("Console"));
     }
 
     @NotNull
