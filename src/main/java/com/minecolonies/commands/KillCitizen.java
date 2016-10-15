@@ -2,6 +2,7 @@ package com.minecolonies.commands;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
+import com.minecolonies.colony.IColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -50,8 +51,18 @@ public class KillCitizen extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int colonyId = 1;
-        int citizenId = 0;
-        
+        int citizenId = 1;
+
+        final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
+        if(tempColony != null)
+        {
+            final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
+            if(colony != null)
+            {
+                colonyId = colony.getID();
+            }
+        }
+
         if (args.length != 0)
         {
             if(args.length >= 2)
@@ -59,12 +70,15 @@ public class KillCitizen extends AbstractSingleCommand
                 try
                 {
                     colonyId = Integer.parseInt(args[0]);
-                    citizenId = Integer.parseInt(args[1]);
                 }
                 catch (NumberFormatException e)
                 {
                     //ignore and keep page 1.
                 }
+            }
+            else
+            {
+                citizenId = Integer.parseInt(args[0]);
             }
         }
 
@@ -73,49 +87,12 @@ public class KillCitizen extends AbstractSingleCommand
 
         // check to see if we have to add one page to show the half page
         final int halfPage = (colonyCount % COLONIES_ON_PAGE == 0) ? 0 : 1;
-        final int pageCount = ((colonyCount) / COLONIES_ON_PAGE) + halfPage;
+        
+        //todo add has been removed.
+        sender.addChatMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
+        final BlockPos center = colony.getCenter();
+        sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format("§4x=§f%s §4y=§f%s §4z=§f%s", center.getX(), center.getY(), center.getZ())));
 
-        if (page < 1 || page > pageCount)
-        {
-            page = 1;
-        }
-
-        final int pageStartIndex = COLONIES_ON_PAGE * (page - 1);
-        final int pageStopIndex = Math.min(COLONIES_ON_PAGE * page, colonyCount);
-        final int prevPage = Math.max(0, page - 1);
-        final int nextPage = Math.min(page + 1, (colonyCount / COLONIES_ON_PAGE) + halfPage);
-
-        List<Colony> coloniesPage;
-
-        if (pageStartIndex < 0 || pageStartIndex >= colonyCount)
-        {
-            coloniesPage = new ArrayList<>();
-        }
-        else
-        {
-            coloniesPage = colonies.subList(pageStartIndex, pageStopIndex);
-        }
-
-        final ITextComponent headerLine = new TextComponentString("§2   ------------------ page " + page + " of " + pageCount + " ------------------");
-        sender.addChatMessage(headerLine);
-
-        for (final Colony colony : coloniesPage)
-        {
-            sender.addChatMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
-            final BlockPos center = colony.getCenter();
-            sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format("§4x=§f%s §4y=§f%s §4z=§f%s", center.getX(), center.getY(), center.getZ())));
-        }
-
-        final ITextComponent prevButton = new TextComponentString(" <- prev").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+prevPage)
-        ));
-        final ITextComponent nextButton = new TextComponentString("next -> ").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+nextPage)
-        ));
-
-        final ITextComponent beginLine = new TextComponentString("§2 ----------------");
-        final ITextComponent endLine = new TextComponentString("§2---------------- ");
-        sender.addChatMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString("§2 | ")).appendSibling(nextButton).appendSibling(endLine));
     }
 
 
