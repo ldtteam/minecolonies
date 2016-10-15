@@ -1,6 +1,5 @@
 package com.minecolonies.commands;
 
-import com.blockout.Log;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import net.minecraft.command.CommandException;
