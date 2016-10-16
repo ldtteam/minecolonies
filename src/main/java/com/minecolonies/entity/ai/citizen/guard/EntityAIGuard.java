@@ -36,9 +36,11 @@ import static com.minecolonies.entity.ai.util.AIState.*;
 public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IRangedAttackMob
 {
     private static final double MAX_ATTACK_DISTANCE = 20.0D;
-    EntityLivingBase targetEntity;
+    private static final int BASE_RELOAD_TIME = 100;
+
+    private EntityLivingBase targetEntity;
     private int searchDistance = 5;
-    List entityList;
+    private List entityList;
     /**
      * Sets up some important skeleton stuff for every ai.
      *
@@ -69,6 +71,11 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
     protected void updateRenderMetaData()
     {
         updateArmor();
+    }
+
+    private int getReloadTime()
+    {
+        return BASE_RELOAD_TIME / (worker.getExperienceLevel()+1);
     }
 
     /**
@@ -170,7 +177,7 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
             {
                 worker.resetActiveHand();
                 attackEntityWithRangedAttack(targetEntity, 1);
-                setDelay(100);
+                setDelay(getReloadTime());
                 return AIState.GUARD_HUNT_DOWN_TARGET;
             }
             worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), 5);
@@ -220,9 +227,10 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
             arrowEntity.setPotionEffect(holdItem);
         }
 
+        worker.addExperience(1);
         worker.faceEntity(entityToAttack, 30.0F, 30.0F);
         worker.getLookHelper().setLookPositionWithEntity(entityToAttack, 30.0F, 30.0F);
-        worker.setMoveForward(10);
+        worker.moveToBlockPosAndAngles(worker.getPosition(), worker.rotationYaw, worker.rotationPitch);
 
         worker.swingArm(EnumHand.MAIN_HAND);
         worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (worker.getRNG().nextFloat() * 0.4F + 0.8F));
