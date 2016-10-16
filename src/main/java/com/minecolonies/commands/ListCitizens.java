@@ -24,10 +24,21 @@ import java.util.*;
 public class ListCitizens extends AbstractSingleCommand
 {
 
-    private static final String ID_TEXT                 = "§2ID: §f";
-    private static final String NAME_TEXT               = "§2 Name: §f";
-    private static final String COORDINATES_TEXT        = "§2Coordinates: §f";
+    /**
+     * Static final string used to draw.
+     */
+    private static final String ID_TEXT                = "§2ID: §f";
+    private static final String NAME_TEXT              = "§2 Name: §f";
+    private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
+    private static final String COORDINATES_XYZ = "§4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String LIST_COMMAND_SUGGESTED  = "/mc citizens list ";
+    private static final String PAGE_TOP_LEFT = "§2   ------------------ page ";
+    private static final String PAGE_TOP_RIGHT = " ------------------";
+    private static final String PAGE_TOP_MIDDLE = " of ";
+    private static final String PREV_PAGE = " <- prev";
+    private static final String NEXT_PAGE = "next -> ";
+    private static final String PAGE_LINE = "§2 ----------------";
+    private static final String PAGE_LINE_DIVIDER = "§2 | ";
     private static final int    CITIZENS_ON_PAGE        = 9;
     private static final String NO_COLONY_FOUND_MESSAGE = "No colony found for id: %d.";
 
@@ -88,7 +99,7 @@ public class ListCitizens extends AbstractSingleCommand
             citizensPage = citizens.subList(pageStartIndex, pageStopIndex);
         }
 
-        final ITextComponent headerLine = new TextComponentString("§2   ------------------ page " + page + " of " + pageCount + " ------------------");
+        final ITextComponent headerLine = new TextComponentString(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
         sender.addChatMessage(headerLine);
 
         for (final CitizenData citizen : citizensPage)
@@ -98,7 +109,7 @@ public class ListCitizens extends AbstractSingleCommand
             if (citizen.getCitizenEntity() != null)
             {
                 final BlockPos position = citizen.getCitizenEntity().getPosition();
-                sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format("§4x=§f%s §4y=§f%s §4z=§f%s", position.getX(), position.getY(), position.getZ())));
+                sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             }
         }
         drawPageSwitcher(sender, colonyId, page, citizenCount, halfPage);
@@ -125,6 +136,7 @@ public class ListCitizens extends AbstractSingleCommand
 
     /**
      * Returns the colony of the owner or if not available colony 1.
+     * First tries to get the IColony and then the Colony from the ColonyManager.
      * @param sender the sender of the command.
      * @return the colonyId.
      */
@@ -156,16 +168,16 @@ public class ListCitizens extends AbstractSingleCommand
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);
 
-        final ITextComponent prevButton = new TextComponentString(" <- prev").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + colonyId + prevPage)
+        final ITextComponent prevButton = new TextComponentString(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+prevPage)
         ));
-        final ITextComponent nextButton = new TextComponentString("next -> ").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-                new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + colonyId + " " + nextPage)
+        final ITextComponent nextButton = new TextComponentString(NEXT_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
+                new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+nextPage)
         ));
 
-        final ITextComponent beginLine = new TextComponentString("§2 ----------------");
-        final ITextComponent endLine = new TextComponentString("§2---------------- ");
-        sender.addChatMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString("§2 | ")).appendSibling(nextButton).appendSibling(endLine));
+        final ITextComponent beginLine = new TextComponentString(PAGE_LINE);
+        final ITextComponent endLine = new TextComponentString(PAGE_LINE);
+        sender.addChatMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
     }
 
 
