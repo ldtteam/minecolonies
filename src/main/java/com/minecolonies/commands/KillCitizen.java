@@ -10,11 +10,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.ClickEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -31,6 +27,9 @@ public class KillCitizen extends AbstractSingleCommand
     private static final String NAME_TEXT              = "§2 Name: §f";
     private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
     private static final String REMOVED_MESSAGE        = "Has been removed";
+    private static final String NO_COLONY_CITIZEN_FOUND_MESSAGE = "No citizen %d found in colony %d.";
+    private static final String COORDINATES_XYZ = "§4x=§f%s §4y=§f%s §4z=§f%s";
+
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -52,19 +51,10 @@ public class KillCitizen extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId = 1;
-        int citizenId = 1;
+        int colonyId = -1;
+        int citizenId = -1;
 
-        final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
-        if(tempColony != null)
-        {
-            final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
-            if(colony != null)
-            {
-                colonyId = colony.getID();
-            }
-        }
-
+        //todo framework for argument parsing
         if (args.length != 0)
         {
             if(args.length >= 2)
@@ -80,14 +70,33 @@ public class KillCitizen extends AbstractSingleCommand
             }
             else
             {
-                citizenId = Integer.parseInt(args[0]);
+                try
+                {
+                    citizenId = Integer.parseInt(args[0]);
+                }
+                catch (NumberFormatException e)
+                {
+                    //ignore and keep page 1.
+                }
             }
         }
 
-        final Colony colony = ColonyManager.getColony(colonyId);
-
-        if(colony == null)
+        Colony colony = null;
+        final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
+        if(tempColony != null)
         {
+            colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
+            colony = colony == null ? ColonyManager.getColony(colonyId) : colony;
+
+            if(colony != null)
+            {
+                colonyId = colony.getID();
+            }
+        }
+
+        if(colony == null || colonyId == -1 || citizenId == -1)
+        {
+            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
             return;
         }
 
@@ -95,6 +104,7 @@ public class KillCitizen extends AbstractSingleCommand
 
         if(citizenData == null)
         {
+            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
             return;
         }
 
@@ -102,12 +112,13 @@ public class KillCitizen extends AbstractSingleCommand
 
         if(entityCitizen == null)
         {
+            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
             return;
         }
 
         sender.addChatMessage(new TextComponentString(ID_TEXT + citizenData.getId() + NAME_TEXT + citizenData.getName()));
-        final BlockPos center = entityCitizen.getPosition();
-        sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format("§4x=§f%s §4y=§f%s §4z=§f%s", center.getX(), center.getY(), center.getZ())));
+        final BlockPos position = entityCitizen.getPosition();
+        sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
         sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
 
         entityCitizen.onDeath(new DamageSource("Console"));
