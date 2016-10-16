@@ -149,6 +149,34 @@ public final class ColonyManager
     }
 
     /**
+     * Get all colonies in this world.
+     *
+     * @param w World
+     * @return a list of colonies
+     */
+    @NotNull
+    public static List<Colony> getColonies(@NotNull World w)
+    {
+        final List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
+        if (coloniesInWorld == null)
+        {
+            return new ArrayList<>();
+        }
+        return coloniesInWorld;
+    }
+
+    /**
+     * Get all colonies in all worlds.
+     *
+     * @return a list of colonies
+     */
+    @NotNull
+    public static List<Colony> getColonies()
+    {
+        return new ArrayList<>(colonies.values());
+    }
+
+    /**
      * Get colony that contains a given coordinate
      *
      * @param w   World
