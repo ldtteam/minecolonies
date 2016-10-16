@@ -147,6 +147,8 @@ Figura 4 - *Commits no último ano*
 
 ## Autores e Contribuições ##
 
+   No âmbito da cadeira de Engenharia de Software da Faculdade de Engenharia da Universidade do Porto, os estudantes autores deste primeiro relatório e a sua percentagem de contribuição encontra-se abaixo.
+   
 * [Inês Gomes](https://github.com/inesgomes) (up201405778@fe.up.pt) - 30%
 
 * [Catarina Ramos](https://github.com/catramos96) (up201406219@fe.up.pt) - 30%
