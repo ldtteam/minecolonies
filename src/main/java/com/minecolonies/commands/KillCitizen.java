@@ -100,7 +100,7 @@ public class KillCitizen extends AbstractSingleCommand
             return;
         }
 
-        CitizenData citizenData = colony.getCitizen(citizenId);
+        final CitizenData citizenData = colony.getCitizen(citizenId);
 
         if(citizenData == null)
         {
@@ -108,7 +108,7 @@ public class KillCitizen extends AbstractSingleCommand
             return;
         }
 
-        EntityCitizen entityCitizen = citizenData.getCitizenEntity();
+        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
 
         if(entityCitizen == null)
         {
