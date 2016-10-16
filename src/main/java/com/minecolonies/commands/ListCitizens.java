@@ -24,11 +24,12 @@ import java.util.*;
 public class ListCitizens extends AbstractSingleCommand
 {
 
-    private static final String ID_TEXT                = "§2ID: §f";
-    private static final String NAME_TEXT              = "§2 Name: §f";
-    private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
-    private static final String LIST_COMMAND_SUGGESTED = "/mc citizens list ";
-    private static final int    CITIZENS_ON_PAGE       = 9;
+    private static final String ID_TEXT                 = "§2ID: §f";
+    private static final String NAME_TEXT               = "§2 Name: §f";
+    private static final String COORDINATES_TEXT        = "§2Coordinates: §f";
+    private static final String LIST_COMMAND_SUGGESTED  = "/mc citizens list ";
+    private static final int    CITIZENS_ON_PAGE        = 9;
+    private static final String NO_COLONY_FOUND_MESSAGE = "No colony found for id: %d.";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -50,50 +51,12 @@ public class ListCitizens extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int page = 1;
-        int colonyId = 1;
-
-        final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
-        if(tempColony != null)
-        {
-            final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
-            if(colony != null)
-            {
-                colonyId = colony.getID();
-            }
-        }
-
-        if (args.length != 0)
-        {
-            if(args.length >= 2)
-            {
-                try
-                {
-                    colonyId = Integer.parseInt(args[0]);
-                    page = Integer.parseInt(args[1]);
-                }
-                catch (NumberFormatException e)
-                {
-                    //ignore and keep page 1.
-                }
-            }
-            else
-            {
-                try
-                {
-                    colonyId = Integer.parseInt(args[0]);
-                }
-                catch (NumberFormatException e)
-                {
-                    //ignore and keep page 1.
-                }
-            }
-        }
-
+        int colonyId = getIthArgument(args, 0, getColonyId(sender));
         final Colony colony = ColonyManager.getColony(colonyId);
 
-        if(colony == null)
+        if (colony == null)
         {
+            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, colonyId)));
             return;
         }
 
@@ -101,6 +64,7 @@ public class ListCitizens extends AbstractSingleCommand
         final int citizenCount = citizens.size();
 
         // check to see if we have to add one page to show the half page
+        int page = getIthArgument(args, 0, 1);
         final int halfPage = (citizenCount % CITIZENS_ON_PAGE == 0) ? 0 : 1;
         final int pageCount = ((citizenCount) / CITIZENS_ON_PAGE) + halfPage;
 
@@ -111,8 +75,7 @@ public class ListCitizens extends AbstractSingleCommand
 
         final int pageStartIndex = CITIZENS_ON_PAGE * (page - 1);
         final int pageStopIndex = Math.min(CITIZENS_ON_PAGE * page, citizenCount);
-        final int prevPage = Math.max(0, page - 1);
-        final int nextPage = Math.min(page + 1, (citizenCount / CITIZENS_ON_PAGE) + halfPage);
+
 
         List<CitizenData> citizensPage;
 
@@ -132,18 +95,72 @@ public class ListCitizens extends AbstractSingleCommand
         {
             sender.addChatMessage(new TextComponentString(ID_TEXT + citizen.getId() + NAME_TEXT + citizen.getName()));
 
-            if(citizen.getCitizenEntity() != null)
+            if (citizen.getCitizenEntity() != null)
             {
                 final BlockPos position = citizen.getCitizenEntity().getPosition();
                 sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format("§4x=§f%s §4y=§f%s §4z=§f%s", position.getX(), position.getY(), position.getZ())));
             }
         }
+        drawPageSwitcher(sender, colonyId, page, citizenCount, halfPage);
+    }
+
+    /**
+     * Get the ith argument (An Integer).
+     * @param i the argument from the list you want.
+     * @param args the list of arguments.
+     * @param def the default value.
+     * @return the argument.
+     */
+    private int getIthArgument(String[] args, int i, int def)
+    {
+        try
+        {
+            return Integer.parseInt(args[i]);
+        }
+        catch (NumberFormatException e)
+        {
+            return def;
+        }
+    }
+
+    /**
+     * Returns the colony of the owner or if not available colony 1.
+     * @param sender the sender of the command.
+     * @return the colonyId.
+     */
+    private int getColonyId( @NotNull final ICommandSender sender)
+    {
+        final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
+        if(tempColony != null)
+        {
+            final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
+            if(colony != null)
+            {
+                return colony.getID();
+            }
+        }
+
+        return 1;
+    }
+
+    /**
+     * Draws the page switcher at the bottom
+     * @param sender the sender.
+     * @param colonyId the colonyid.
+     * @param page the page number.
+     * @param count number of citizens.
+     * @param halfPage the halfPage.
+     */
+    private static void drawPageSwitcher(@NotNull final ICommandSender sender, int colonyId, int page, int count, int halfPage)
+    {
+        final int prevPage = Math.max(0, page - 1);
+        final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);
 
         final ITextComponent prevButton = new TextComponentString(" <- prev").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED+prevPage)
+                new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + colonyId + prevPage)
         ));
         final ITextComponent nextButton = new TextComponentString("next -> ").setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
-          new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + + colonyId + " " + nextPage)
+                new ClickEvent(ClickEvent.Action.RUN_COMMAND, LIST_COMMAND_SUGGESTED + colonyId + " " + nextPage)
         ));
 
         final ITextComponent beginLine = new TextComponentString("§2 ----------------");

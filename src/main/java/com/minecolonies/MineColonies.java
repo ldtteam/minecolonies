@@ -164,7 +164,6 @@ public class MineColonies
     {
         // register server commands
         event.registerServerCommand(new MinecoloniesCommand());
-
     }
 
 }
