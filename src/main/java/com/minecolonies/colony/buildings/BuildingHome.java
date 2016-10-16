@@ -181,12 +181,6 @@ public class BuildingHome extends AbstractBuildingHut
         getColony().calculateMaxCitizens();
     }
 
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return 4;
-    }
-
     /**
      * Returns whether the citizen has this as home or not
      *

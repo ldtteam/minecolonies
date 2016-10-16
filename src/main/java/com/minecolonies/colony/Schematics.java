@@ -247,13 +247,13 @@ public final class Schematics
      * @param hut Hut to get max level for.
      * @return Max level of hut.
      */
-    public static int getMaxLevelForHut(String hut)
+    public static int getMaxLevelForHut(String hut, String style)
     {
         if (!structureMap.containsKey(hut))
         {
             return 0;
         }
-        return structureMap.get(hut).getMaxLevel();
+        return structureMap.get(hut).getMaxLevel(style);
     }
 
     /**

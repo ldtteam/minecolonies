@@ -22,12 +22,6 @@ public class BuildingTownHall extends AbstractBuildingHut
         return TOWN_HALL;
     }
 
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return 4;
-    }
-
     public static class View extends AbstractBuildingHut.View
     {
         public View(ColonyView c, BlockPos l)

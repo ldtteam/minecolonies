@@ -18,8 +18,6 @@ public class BuildingBaker extends AbstractBuildingWorker
     private static final String BAKER          = "Baker";
     private static final String BAKER_HUT_NAME = "bakerHut";
 
-    private static final int BAKER_HUT_MAX_LEVEL = 3;
-
     /**
      * Constructor for the baker building.
      *
@@ -41,17 +39,6 @@ public class BuildingBaker extends AbstractBuildingWorker
     public String getSchematicName()
     {
         return BAKER;
-    }
-
-    /**
-     * Gets the max level of the baker's hut.
-     *
-     * @return The max level of the baker's hut.
-     */
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return BAKER_HUT_MAX_LEVEL;
     }
 
     /**

@@ -53,12 +53,6 @@ public class BuildingWarehouse extends AbstractBuildingWorker
         return WAREHOUSE;
     }
 
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return 4;
-    }
-
     @NotNull
     @Override
     public String getJobName()

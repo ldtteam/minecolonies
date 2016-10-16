@@ -16,10 +16,6 @@ import org.jetbrains.annotations.NotNull;
 public class BuildingBuilder extends AbstractBuildingWorker
 {
     /**
-     * The maximum upgrade of the building.
-     */
-    private static final int    MAX_BUILDING_LEVEL = 2;
-    /**
      * The job description.
      */
     private static final String BUILDER            = "Builder";
@@ -63,17 +59,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             this.getColony().triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
         }
-    }
-
-    /**
-     * Getter of the max building level.
-     *
-     * @return the integer.
-     */
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
     }
 
     /**

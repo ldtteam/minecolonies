@@ -200,17 +200,6 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * Getter of the max building level.
-     *
-     * @return the integer.
-     */
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
-    }
-
-    /**
      * Getter of the job description.
      *
      * @return the description of the miners job.

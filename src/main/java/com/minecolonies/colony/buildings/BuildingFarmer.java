@@ -39,11 +39,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private static final String FARMER = "Farmer";
 
     /**
-     * The maximum building level of the hut.
-     */
-    private static final int MAX_BUILDING_LEVEL = 3;
-
-    /**
      * NBTTag to store the fields.
      */
     private static final String TAG_FIELDS = "fields";
@@ -157,12 +152,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public String getSchematicName()
     {
         return FARMER;
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
     }
 
     @NotNull

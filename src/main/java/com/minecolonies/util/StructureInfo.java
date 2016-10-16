@@ -24,7 +24,7 @@ public class StructureInfo
     /**
      * style, level, path
      */
-    private final Map<String, TreeMap<Integer, Path>> resourceLocationsByLevel = new HashMap<>();
+    private final Map<String, TreeMap<Integer, Path>> resourceLocationsByStyleAndLevel = new HashMap<>();
 
     /**
      *
@@ -49,27 +49,15 @@ public class StructureInfo
         return this.category;
     }
 
-    public int getMaxLevel()
+    public int getMaxLevel(String style)
     {
-        final Comparator<Map<Integer,Path>> valueComparator =
-          new Comparator<Map<Integer,Path>>() {
-              public int compare(Map<Integer,Path> k1, Map<Integer,Path> k2) {
-                  int compare =
-                    ((Integer)k1.size()).compareTo((k2.size()));
-                  if (compare == 0)
-                      return 1;
-                  else
-                      return compare;
-              }
-          };
-
-          Optional<TreeMap<Integer,Path>> levelControl= this.resourceLocationsByLevel.values().stream()
-                       .max(valueComparator);
-        if(levelControl.isPresent())
+        if(!this.resourceLocationsByStyleAndLevel.containsKey(style))
         {
-            return levelControl.get().size();
+            return 0;
         }
-        return 0;
+        Integer maxLevel =
+          Collections.max(this.resourceLocationsByStyleAndLevel.get(style).keySet());
+        return maxLevel;
     }
 
     public Boolean getIsHut()
@@ -85,18 +73,18 @@ public class StructureInfo
      */
     public void addLevel(String style, int level, Path path)
     {
-        if (!this.resourceLocationsByLevel.containsKey(style))
+        if (!this.resourceLocationsByStyleAndLevel.containsKey(style))
         {
-            this.resourceLocationsByLevel.put(style, new TreeMap<>());
+            this.resourceLocationsByStyleAndLevel.put(style, new TreeMap<>());
         }
 
-        if(!this.resourceLocationsByLevel.get(style).containsKey(level)){
-            this.resourceLocationsByLevel.get(style).put(level,path);
+        if(!this.resourceLocationsByStyleAndLevel.get(style).containsKey(level)){
+            this.resourceLocationsByStyleAndLevel.get(style).put(level,path);
         }
     }
 
     public List<String> getStyles()
     {
-        return new ArrayList<>(this.resourceLocationsByLevel.keySet());
+        return new ArrayList<>(this.resourceLocationsByStyleAndLevel.keySet());
     }
 }
