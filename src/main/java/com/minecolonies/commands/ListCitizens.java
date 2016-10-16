@@ -88,7 +88,7 @@ public class ListCitizens extends AbstractSingleCommand
         final int pageStopIndex = Math.min(CITIZENS_ON_PAGE * page, citizenCount);
 
 
-        List<CitizenData> citizensPage;
+        final List<CitizenData> citizensPage;
 
         if (pageStartIndex < 0 || pageStartIndex >= citizenCount)
         {
@@ -112,7 +112,7 @@ public class ListCitizens extends AbstractSingleCommand
                 sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             }
         }
-        drawPageSwitcher(sender, colonyId, page, citizenCount, halfPage);
+        drawPageSwitcher(sender, page, citizenCount, halfPage);
     }
 
     /**
@@ -122,7 +122,7 @@ public class ListCitizens extends AbstractSingleCommand
      * @param def the default value.
      * @return the argument.
      */
-    private int getIthArgument(String[] args, int i, int def)
+    private static int getIthArgument(String[] args, int i, int def)
     {
         try
         {
@@ -140,7 +140,7 @@ public class ListCitizens extends AbstractSingleCommand
      * @param sender the sender of the command.
      * @return the colonyId.
      */
-    private int getColonyId( @NotNull final ICommandSender sender)
+    private static int getColonyId(@NotNull final ICommandSender sender)
     {
         final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
         if(tempColony != null)
@@ -156,14 +156,13 @@ public class ListCitizens extends AbstractSingleCommand
     }
 
     /**
-     * Draws the page switcher at the bottom
+     * Draws the page switcher at the bottom.
      * @param sender the sender.
-     * @param colonyId the colonyid.
      * @param page the page number.
      * @param count number of citizens.
      * @param halfPage the halfPage.
      */
-    private static void drawPageSwitcher(@NotNull final ICommandSender sender, int colonyId, int page, int count, int halfPage)
+    private static void drawPageSwitcher(@NotNull final ICommandSender sender, int page, int count, int halfPage)
     {
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);
