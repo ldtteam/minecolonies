@@ -2,6 +2,7 @@ package com.minecolonies;
 
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.Schematics;
+import com.minecolonies.commands.MinecoloniesCommand;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
@@ -156,4 +158,12 @@ public class MineColonies
     {
         // Load unimportant resources
     }
+
+    @Mod.EventHandler
+    public void serverLoad(FMLServerStartingEvent event)
+    {
+        // register server commands
+        event.registerServerCommand(new MinecoloniesCommand());
+    }
+
 }

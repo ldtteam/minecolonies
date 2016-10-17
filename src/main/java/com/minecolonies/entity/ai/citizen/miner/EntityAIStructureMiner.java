@@ -6,6 +6,7 @@ import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.SchematicWrapper;
 import com.minecolonies.util.Utils;
@@ -37,7 +38,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Return to chest after 3 stacks
      */
-    private static final int        MAX_BLOCKS_MINED          = 64 * 3;
+    private static final int        MAX_BLOCKS_MINED          = 3*64;
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
@@ -48,6 +49,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private static final int        SAFE_CHECK_RANGE          = 5;
     private static final int        SAFE_CHECK_UPPER_BOUND    = 4;
     private static final int        SAFE_CHECK_LOWER_BOUND    = -7;
+
+    /**
+     * Amount of items to be kept.
+     */
+    private static final int STACK_MAX_SIZE               = 64;
+
     //The current block to mine
     @Nullable
     private BlockPos currentWorkingLocation;
@@ -165,21 +172,31 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     /**
-     * Can be overridden by implementations to specify items useful for the worker.
-     * When the workers inventory is full, he will try to keep these items.
-     * ItemStack amounts are ignored, the first stack found will be taken.
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
      *
-     * @return a list with items nice to have for the worker
+     * @return a list of objects which should be kept.
      */
-    @NotNull
     @Override
-    protected List<ItemStack> itemsNiceToHave()
+    protected Map<ItemStorage, Integer> needXForWorker()
     {
-        return Arrays.asList(new ItemStack(Blocks.LADDER),
-          new ItemStack(Blocks.PLANKS),
-          new ItemStack(Blocks.OAK_FENCE),
-          new ItemStack(Blocks.TORCH),
-          new ItemStack(Blocks.COBBLESTONE));
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
+        final ItemStack stackLadder = new ItemStack(Blocks.LADDER);
+        final ItemStack stackFence = new ItemStack(Blocks.OAK_FENCE);
+        final ItemStack stackTorch = new ItemStack(Blocks.TORCH);
+        final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
+        final ItemStack stackSlab = new ItemStack(Blocks.WOODEN_SLAB);
+        final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
+        
+        keepX.put(new ItemStorage(stackLadder.getItem(), stackLadder.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackFence.getItem(), stackFence.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackTorch.getItem(), stackTorch.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackCobble.getItem(), stackCobble.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackSlab.getItem(), stackSlab.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackPlanks.getItem(), stackPlanks.getItemDamage(), 0, false), STACK_MAX_SIZE);
+
+        return keepX;
     }
 
     @Override
