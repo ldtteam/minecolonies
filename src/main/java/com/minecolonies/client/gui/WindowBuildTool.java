@@ -429,7 +429,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void levelClicked(Button button)
     {
-        int maxLevel = Schematics.getMaxLevelForHut(hutDec.get(hutDecIndex));
+        List<String> styles = getStyles();
+        int maxLevel = Schematics.getMaxLevelForHut(hutDec.get(hutDecIndex),styles.get(styleIndex));
         if (maxLevel > 1)
         {
             level = (level + 1) % maxLevel;
