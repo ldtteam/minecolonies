@@ -34,6 +34,6 @@ public class ColoniesCommand extends AbstractSplitCommand
     @Override
     public String getCommandName()
     {
-        return "mc colonies";
+        return "colonies";
     }
 }
