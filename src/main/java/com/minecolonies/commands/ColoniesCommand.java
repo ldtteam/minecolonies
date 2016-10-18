@@ -33,6 +33,12 @@ public class ColoniesCommand extends AbstractSplitCommand
     }
 
     @Override
+    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
+    {
+        return false;
+    }
+
+    @Override
     public boolean checkPermission(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender)
     {
         return true;
