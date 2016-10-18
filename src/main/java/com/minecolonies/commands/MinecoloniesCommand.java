@@ -1,6 +1,7 @@
 package com.minecolonies.commands;
 
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -15,7 +16,7 @@ import java.util.Map;
  * <p>
  * Manages all sub commands.
  */
-public class MinecoloniesCommand extends AbstractSplitCommand implements ICommand
+public class MinecoloniesCommand extends AbstractSplitCommand
 {
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
@@ -56,9 +57,4 @@ public class MinecoloniesCommand extends AbstractSplitCommand implements IComman
         return subCommands;
     }
 
-    @Override
-    public int compareTo(@NotNull final ICommand o)
-    {
-        return 0;
-    }
 }
