@@ -1,12 +1,13 @@
 package com.minecolonies.commands;
 
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * A command that has children. Is a single one-word command.
  */
-public abstract class AbstractSingleCommand implements ISubCommand
+public abstract class AbstractSingleCommand extends CommandBase implements ISubCommand
 {
 
     private final String[] parents;

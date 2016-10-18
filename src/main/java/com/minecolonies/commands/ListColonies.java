@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -45,6 +46,20 @@ public class ListColonies extends AbstractSingleCommand
     public ListColonies(@NotNull final String... parents)
     {
         super(parents);
+    }
+
+    @NotNull
+    @Override
+    public String getCommandName()
+    {
+        return "list";
+    }
+
+    @NotNull
+    @Override
+    public List<String> getCommandAliases()
+    {
+        return Arrays.asList("list", "ls");
     }
 
     @NotNull
