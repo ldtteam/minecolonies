@@ -73,6 +73,7 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
                       Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER);
 
                     citizen.setLocationAndAngles(spawnPoint.getX() + 0.5, spawnPoint.getY(), spawnPoint.getZ() + 0.5, citizen.rotationYaw, citizen.rotationPitch);
+                    citizen.getNavigator().clearPathEntity();
                 }
             }
         }

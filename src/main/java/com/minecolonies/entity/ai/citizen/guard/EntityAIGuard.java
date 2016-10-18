@@ -7,6 +7,7 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.util.Log;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 
@@ -86,6 +87,8 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
      */
     private static final int MAX_ARROWS_SHOT = 50;
 
+
+
     /**
      * The distance the guard is searching entities in currently.
      */
@@ -125,15 +128,14 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
                 new AITarget(GUARD_SEARCH_TARGET, this::searchTarget),
                 new AITarget(GUARD_GET_TARGET, this::getTarget),
                 new AITarget(GUARD_HUNT_DOWN_TARGET, this::huntDown),
-                new AITarget(GUARD_PATROL, this::patrol)
+                new AITarget(GUARD_PATROL, this::patrol),
+                new AITarget(GUARD_RESTOCK, this::goToBuilding)
                 );
         worker.setSkillModifier(2 * worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
     }
 
-    //todo create restock arrows state, check if has to call him after arrow firing.
     //todo extra hearts per level
-    //todo let guard hunt down better (seems to only follow once)
     /**
      * Can be overridden in implementations.
      * <p>
@@ -148,6 +150,16 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
     private int getReloadTime()
     {
         return BASE_RELOAD_TIME / (worker.getExperienceLevel()+1);
+    }
+
+    private AIState goToBuilding()
+    {
+        if(!walkToBuilding())
+        {
+            arrowsShot = 0;
+            return AIState.START_WORKING;
+        }
+        return AIState.GUARD_RESTOCK;
     }
 
     /**
@@ -166,6 +178,12 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
 
             if(stack == null || stack.getItem() == null)
             {
+                continue;
+            }
+
+            if(stack.stackSize == 0)
+            {
+                worker.getInventoryCitizen().setInventorySlotContents(i, null);
                 continue;
             }
             
@@ -192,13 +210,14 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
             if(worker.getColony().getPermissions().getRank((EntityPlayer) entityList.get(0)) == Permissions.Rank.HOSTILE)
             {
                 targetEntity = (EntityLivingBase) entityList.get(0);
+                worker.getNavigator().clearPathEntity();
                 return AIState.GUARD_HUNT_DOWN_TARGET;
             }
             entityList.remove(0);
             setDelay(BASE_DELAY);
             return AIState.GUARD_GET_TARGET;
         }
-        else if (!worker.getEntitySenses().canSee((EntityLivingBase) entityList.get(0)) || !((EntityLivingBase) entityList.get(0)).isEntityAlive())
+        else if (!worker.getEntitySenses().canSee(entityList.get(0)) || !(entityList.get(0)).isEntityAlive())
         {
             entityList.remove(0);
             setDelay(BASE_DELAY);
@@ -206,9 +225,11 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
         }
         else
         {
+            worker.getNavigator().clearPathEntity();
             targetEntity = (EntityLivingBase) entityList.get(0);
             return AIState.GUARD_HUNT_DOWN_TARGET;
         }
+
     }
 
     /**
@@ -242,6 +263,7 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
             else
             {
                 currentSearchDistance = START_SEARCH_DISTANCE;
+                Log.getLogger().info("Patroll! in searchTarget");
                 return AIState.GUARD_PATROL;
             }
 
@@ -257,7 +279,17 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
     private double getMaxVision()
     {
         BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
-        return MAX_ATTACK_DISTANCE + guardTower.getBonusVision();
+        return (guardTower == null) ? 0 : (MAX_ATTACK_DISTANCE + guardTower.getBonusVision());
+    }
+
+    /**
+     * Getter calculating how many arrows the guard may shoot until restock.
+     * @return the amount.
+     */
+    private int getMaxArrowsShot()
+    {
+        BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
+        return (guardTower == null) ? 0 : (MAX_ARROWS_SHOT + guardTower.getBuildingLevel());
     }
 
     /**
@@ -273,11 +305,18 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
 
         if (targetEntity != null)
         {
-            if(worker.getEntitySenses().canSee(targetEntity) && ! (worker.getDistanceToEntity(targetEntity) > getMaxVision()))
+            if(worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= getMaxVision())
             {
                 worker.resetActiveHand();
                 attackEntityWithRangedAttack(targetEntity, 1);
                 setDelay(getReloadTime());
+                arrowsShot += 1;
+
+                if(arrowsShot >= getMaxArrowsShot())
+                {
+                    return AIState.GUARD_RESTOCK;
+                }
+
                 return AIState.GUARD_HUNT_DOWN_TARGET;
             }
             worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getExperienceLevel()));

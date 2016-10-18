@@ -204,7 +204,12 @@ public enum AIState
     GUARD_HUNT_DOWN_TARGET,
 
     /**
-     * Patrol throught the village.
+     * Patrol through the village.
      */
-    GUARD_PATROL
+    GUARD_PATROL,
+
+    /**
+     * Go back to the hut to "restock".
+     */
+    GUARD_RESTOCK
 }

@@ -5,6 +5,7 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.*;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingFarmer;
+import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobGuard;
@@ -115,6 +116,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private static final double MOVE_MINIMAL = 0.01D;
 
+    /**
+     * Base max health of the citizen.
+     */
+    private static final double BASE_MAX_HEALTH  = 20D;
+
+    /**
+     * Base movement speed of every citizen.
+     */
+    private static final double BASE_MOVEMENT_SPEED = 0.3D;
+
+    /**
+     * Base pathfinding range of the citizen.
+     */
+    private static final int BASE_PATHFINDING_RANGE = 100;
 
     private static Field navigatorField;
     protected Status                   status  = Status.IDLE;
@@ -935,11 +950,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
-        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
+
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
+        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED);
 
         //path finding search range
-        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(100);
+        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(BASE_PATHFINDING_RANGE);
     }
 
     @NotNull

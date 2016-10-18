@@ -6,6 +6,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobGuard;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,16 @@ public class BuildingGuardTower extends AbstractBuildingWorker
      * The max vision bonus multiplier
      */
     private static final int MAX_VISION_BONUS_MULTIPLIER = 3;
+
+    /**
+     * The health multiplier each level after level 4.
+     */
+    private static final int HEALTH_MULTIPLIER = 2;
+
+    /**
+     * Base max health of the guard.
+     */
+    private static final double BASE_MAX_HEALTH = 20D;
 
     /**
      * Vision bonus per level.
@@ -81,6 +92,30 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     }
 
     /**
+     * If no vision multiplier give health bonus.
+     * @return the bonus health.
+     */
+    public int getBonusHealth()
+    {
+        if (getBuildingLevel() > MAX_VISION_BONUS_MULTIPLIER)
+        {
+            return (getBuildingLevel() - MAX_VISION_BONUS_MULTIPLIER) * HEALTH_MULTIPLIER;
+        }
+        return 0;
+    }
+
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        if (this.getWorkerEntity() != null && newLevel > MAX_VISION_BONUS_MULTIPLIER)
+        {
+            this.getWorkerEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
+        }
+
+        super.onUpgradeComplete(newLevel);
+    }
+
+    /**
      * Getter for the bonus vision.
      * @return an integer for the additional range.
      */
@@ -94,10 +129,10 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     }
 
     /**
-     * Create a Baker job.
+     * Create a Guard job.
      *
      * @param citizen the citizen to take the job.
-     * @return The new Baker job.
+     * @return The new Guard job.
      */
     @NotNull
     @Override
