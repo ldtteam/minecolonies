@@ -29,7 +29,7 @@ public class ColoniesCommand extends AbstractSplitCommand
      */
     public ColoniesCommand()
     {
-        super();
+        super(DESC);
     }
 
     @Override
