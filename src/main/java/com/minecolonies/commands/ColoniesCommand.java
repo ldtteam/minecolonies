@@ -5,6 +5,8 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -14,10 +16,11 @@ import java.util.Map;
  */
 public class ColoniesCommand extends AbstractSplitCommand
 {
+    public static final String desc = "colonies";
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put("list", new ListColonies("mc", "colonies", "list"))
+        .put("list", new ListColonies("mc", desc, "list"))
         .build();
 
     /**
@@ -25,7 +28,7 @@ public class ColoniesCommand extends AbstractSplitCommand
      */
     public ColoniesCommand()
     {
-        super("mc", "colonies");
+        super();
     }
 
     @Override
@@ -42,8 +45,15 @@ public class ColoniesCommand extends AbstractSplitCommand
 
     @NotNull
     @Override
+    public List<String> getCommandAliases()
+    {
+        return Arrays.asList("c", "colonies");
+    }
+
+    @NotNull
+    @Override
     public String getCommandName()
     {
-        return "colonies";
+        return desc;
     }
 }
