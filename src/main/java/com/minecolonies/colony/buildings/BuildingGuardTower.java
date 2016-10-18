@@ -6,7 +6,6 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobGuard;
-import com.minecolonies.colony.jobs.JobPlaceholder;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,9 +14,25 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BuildingGuardTower extends AbstractBuildingWorker
 {
-    private static final String GUARD_TOWER          = "TowerGuard";
+    /**
+     * Name description of the guard hat.
+     */
+    private static final String GUARD_TOWER = "TowerGuard";
 
-    private static final int BAKER_HUT_MAX_LEVEL = 3;
+    /**
+     * Max level of the guard hut.
+     */
+    private static final int GUARD_HUT_MAX_LEVEL = 5;
+
+    /**
+     * The max vision bonus multiplier
+     */
+    private static final int MAX_VISION_BONUS_MULTIPLIER = 3;
+
+    /**
+     * Vision bonus per level.
+     */
+    private static final int VISION_BONUS = 5;
 
     /**
      * Constructor for the guardTower building.
@@ -50,7 +65,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     @Override
     public int getMaxBuildingLevel()
     {
-        return BAKER_HUT_MAX_LEVEL;
+        return GUARD_HUT_MAX_LEVEL;
     }
 
     /**
@@ -63,6 +78,19 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     public String getJobName()
     {
         return GUARD_TOWER;
+    }
+
+    /**
+     * Getter for the bonus vision.
+     * @return an integer for the additional range.
+     */
+    public int getBonusVision()
+    {
+        if(getBuildingLevel() <= MAX_VISION_BONUS_MULTIPLIER)
+        {
+            return getBuildingLevel() * VISION_BONUS;
+        }
+        return MAX_VISION_BONUS_MULTIPLIER * VISION_BONUS;
     }
 
     /**

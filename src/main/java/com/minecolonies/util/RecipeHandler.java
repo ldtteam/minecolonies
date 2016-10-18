@@ -47,6 +47,7 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutFarmer, 2), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.STONE_HOE);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutField, 1), " Y ", "X#X", " X ", 'X', Items.STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK);
         GameRegistry.addRecipe(new ItemStack(Blocks.WEB, 1), "X X", " X ", "X X", 'X', Items.STRING);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutGuardTower, 2), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.BOW);
 
         // Disabled for now
         // GameRegistry.addRecipe(new ItemStack(ModBlocks.blockBarrel, 1), "P P", "P P", " S ", 'P', Blocks.planks, 'S', Blocks.wooden_slab);

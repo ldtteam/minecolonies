@@ -201,5 +201,10 @@ public enum AIState
     /**
      * Hunt the target down.
      */
-    GUARD_HUNT_DOWN_TARGET
+    GUARD_HUNT_DOWN_TARGET,
+
+    /**
+     * Patrol throught the village.
+     */
+    GUARD_PATROL
 }
