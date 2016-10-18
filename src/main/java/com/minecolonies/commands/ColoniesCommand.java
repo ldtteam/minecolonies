@@ -1,6 +1,9 @@
 package com.minecolonies.commands;
 
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.server.MinecraftServer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -26,11 +29,18 @@ public class ColoniesCommand extends AbstractSplitCommand
     }
 
     @Override
+    public boolean checkPermission(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender)
+    {
+        return true;
+    }
+
+    @Override
     public Map<String, ISubCommand> getSubCommands()
     {
         return subCommands;
     }
 
+    @NotNull
     @Override
     public String getCommandName()
     {

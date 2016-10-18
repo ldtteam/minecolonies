@@ -27,6 +27,7 @@ public abstract class AbstractSplitCommand extends CommandBase implements ISubCo
      */
     public AbstractSplitCommand(@NotNull String... parents)
     {
+        super();
         this.parents = parents;
     }
 
