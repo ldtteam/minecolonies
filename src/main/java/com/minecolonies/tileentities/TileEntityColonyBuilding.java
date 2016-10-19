@@ -78,14 +78,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         super.update();
 
+        /*
         if (!worldObj.isRemote && colonyId == 0)
         {
-            Log.getLogger().fatal(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
-              worldObj.getWorldInfo().getWorldName(),
-              pos.getX(),
-              pos.getY(),
-              pos.getZ()));
+            //todo: actually do something about it and not spam the server
         }
+        */
     }
 
     @Override
@@ -229,13 +227,12 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
+        /*
         if (colonyId == 0 && colony == null)
         {
-            colony = ColonyManager.getColony(worldObj, this.getPosition());
-            Log.getLogger().fatal(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId; %s colony reference.",
-              worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(),
-              colony == null ? "NO" : "valid"));
+            //todo: actually do something about it and not spam the server
         }
+        */
         compound.setInteger(TAG_COLONY, colonyId);
         return compound;
     }
