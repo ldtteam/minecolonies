@@ -7,6 +7,7 @@ import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
 import com.minecolonies.sounds.FishermanSounds;
 import com.minecolonies.util.InventoryUtils;
@@ -23,6 +24,8 @@ import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -294,28 +297,19 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 
 
     /**
-     * Override this method if you want to keep some items in inventory.
+     * Override this method if you want to keep an amount of items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.
      * But you can use this method to hold some stacks back.
      *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
+     * @return a list of objects which should be kept.
      */
     @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
+    protected Map<ItemStorage, Integer> needXForWorker()
     {
-        return isStackRod(stack);
-    }
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
+        keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
 
-    /**
-     * Checks if a given stack equals a fishingRod.
-     *
-     * @param stack the stack to decide on
-     * @return if the stack matches
-     */
-    private static boolean isStackRod(@Nullable ItemStack stack)
-    {
-        return stack != null && stack.getItem().equals(Items.FISHING_ROD);
+        return keepX;
     }
 
     /**

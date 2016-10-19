@@ -77,7 +77,7 @@ public final class ColonyManager
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER, w);
 
         colony.triggerAchievement(ModAchievements.achievementGetSupply);
-        colony.triggerAchievement(ModAchievements.achievementBuildingTownhall);
+        colony.triggerAchievement(ModAchievements.achievementTownhall);
 
         markDirty();
 
@@ -146,6 +146,34 @@ public final class ColonyManager
         }
 
         return null;
+    }
+
+    /**
+     * Get all colonies in this world.
+     *
+     * @param w World
+     * @return a list of colonies
+     */
+    @NotNull
+    public static List<Colony> getColonies(@NotNull World w)
+    {
+        final List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
+        if (coloniesInWorld == null)
+        {
+            return new ArrayList<>();
+        }
+        return coloniesInWorld;
+    }
+
+    /**
+     * Get all colonies in all worlds.
+     *
+     * @return a list of colonies
+     */
+    @NotNull
+    public static List<Colony> getColonies()
+    {
+        return new ArrayList<>(colonies.values());
     }
 
     /**
