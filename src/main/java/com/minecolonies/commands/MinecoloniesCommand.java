@@ -19,7 +19,7 @@ import java.util.Map;
 public class MinecoloniesCommand extends AbstractSplitCommand
 {
 
-    private static final String DESC = "minecolonies";
+    public static final String DESC = "minecolonies";
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
@@ -32,26 +32,6 @@ public class MinecoloniesCommand extends AbstractSplitCommand
     public MinecoloniesCommand()
     {
         super(DESC);
-    }
-
-    @NotNull
-    @Override
-    public String getCommandName()
-    {
-        return DESC;
-    }
-
-    @NotNull
-    @Override
-    public List<String> getCommandAliases()
-    {
-        return Arrays.asList("mc", "col", "mcol", "mcolonies", "minecol", DESC);
-    }
-
-    @Override
-    public boolean checkPermission(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender)
-    {
-        return true;
     }
 
     @Override

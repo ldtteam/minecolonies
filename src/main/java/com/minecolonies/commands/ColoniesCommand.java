@@ -17,11 +17,11 @@ import java.util.Map;
  */
 public class ColoniesCommand extends AbstractSplitCommand
 {
-    public static final String DESC = "colonies";
+    private static final String DESC = "colonies";
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put("list", new ListColonies("minecolonies", DESC, "list"))
+        .put("list", new ListColonies(MinecoloniesCommand.DESC, ColoniesCommand.DESC, "list"))
         .build();
 
     /**
@@ -39,28 +39,9 @@ public class ColoniesCommand extends AbstractSplitCommand
     }
 
     @Override
-    public boolean checkPermission(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender)
-    {
-        return true;
-    }
-
-    @Override
     public Map<String, ISubCommand> getSubCommands()
     {
         return subCommands;
     }
 
-    @NotNull
-    @Override
-    public List<String> getCommandAliases()
-    {
-        return Arrays.asList("c", DESC);
-    }
-
-    @NotNull
-    @Override
-    public String getCommandName()
-    {
-        return DESC;
-    }
 }

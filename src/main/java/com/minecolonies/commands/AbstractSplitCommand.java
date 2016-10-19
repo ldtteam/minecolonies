@@ -1,6 +1,5 @@
 package com.minecolonies.commands;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -15,7 +14,7 @@ import java.util.Map;
 /**
  * A command that has children. Split-command with various parts.
  */
-public abstract class AbstractSplitCommand extends AbstractSingleCommand implements ISubCommand
+public abstract class AbstractSplitCommand implements ISubCommand
 {
 
     private final String[] parents;
