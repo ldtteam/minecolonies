@@ -72,10 +72,11 @@ public class ColonyInfo extends AbstractSingleCommand
 
         Colony colony = null;
         final IColony tempColony;
-        if(colonyId != -1)
+        if(colonyId >= 0)
         {
             tempColony = ColonyManager.getColony(colonyId);
-        } else
+        }
+        else
         {
             tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
         }
