@@ -135,6 +135,8 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
 
     //todo add lang string
     //todo level 0 hut shouldn't be able to hire (add message)
+    //todo take armour out of chest? if he hasn't
+    //todo wear shield when given.
 
     /**
      * Can be overridden in implementations.
