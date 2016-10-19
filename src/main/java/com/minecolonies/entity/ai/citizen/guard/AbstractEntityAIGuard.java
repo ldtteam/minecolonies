@@ -97,7 +97,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
     /**
      * Goes back to the building and tries to take armour from it when he hasn't in his inventory.
-     * @return
+     * @return the next state to go to.
      */
     protected AIState goToBuilding()
     {
@@ -126,7 +126,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             }
 
             arrowsShot = 0;
-            return AIState.START_WORKING;
+            return AIState.GUARD_SEARCH_TARGET;
         }
         return AIState.GUARD_RESTOCK;
     }
