@@ -87,8 +87,6 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
      */
     private static final int MAX_ARROWS_SHOT = 50;
 
-
-
     /**
      * The distance the guard is searching entities in currently.
      */
@@ -135,7 +133,6 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
         worker.setCanPickUpLoot(true);
     }
 
-    //todo extra hearts per level
     /**
      * Can be overridden in implementations.
      * <p>

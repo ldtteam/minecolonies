@@ -32,7 +32,7 @@ public class JobGuard extends AbstractJob
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        return RenderBipedCitizen.Model.NOBLE;
+        return RenderBipedCitizen.Model.GUARD;
     }
 
     /**

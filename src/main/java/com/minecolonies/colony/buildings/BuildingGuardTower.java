@@ -128,6 +128,20 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         return MAX_VISION_BONUS_MULTIPLIER * VISION_BONUS;
     }
 
+    @Override
+    public void setWorker(final CitizenData citizen)
+    {
+        if(citizen == null && this.getWorkerEntity() != null)
+        {
+            this.getWorkerEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
+        }
+        else if(citizen != null && citizen.getCitizenEntity() != null)
+        {
+            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
+        }
+        super.setWorker(citizen);
+    }
+
     /**
      * Create a Guard job.
      *
