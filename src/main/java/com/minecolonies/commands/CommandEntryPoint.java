@@ -42,18 +42,18 @@ public class CommandEntryPoint extends CommandBase
         return root.getCommandUsage(sender);
     }
 
-    @NotNull
-    @Override
-    public List<String> getCommandAliases()
-    {
-        return Arrays.asList("mc", "col", "mcol", "mcolonies", "minecol", "minecolonies");
-    }
-
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args) throws CommandException
     {
         // We can pass this without stripping as mc does that for us with the alias
         root.execute(server, sender, args);
+    }
+
+    @NotNull
+    @Override
+    public List<String> getCommandAliases()
+    {
+        return Arrays.asList("mc", "col", "mcol", "mcolonies", "minecol", "minecolonies");
     }
 
     @NotNull

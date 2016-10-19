@@ -1,13 +1,8 @@
 package com.minecolonies.commands;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,5 +38,4 @@ public class ColoniesCommand extends AbstractSplitCommand
     {
         return subCommands;
     }
-
 }
