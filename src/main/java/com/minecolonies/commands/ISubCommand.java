@@ -32,7 +32,7 @@ public interface ISubCommand
      * @param args   leftover args stripped from parents.
      * @throws CommandException if something goes wrong (like wrong syntax).
      */
-    void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException;
+    void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args) throws CommandException;
 
     /**
      * Return all possible autocomplete options.

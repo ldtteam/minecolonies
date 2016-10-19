@@ -549,7 +549,7 @@ public class InventoryUtils
 
                     if (itemStack.hasTagCompound())
                     {
-                        stack.setTagCompound((NBTTagCompound) itemStack.getTagCompound().copy());
+                        stack.setTagCompound(itemStack.getTagCompound().copy());
                     }
                 }
 

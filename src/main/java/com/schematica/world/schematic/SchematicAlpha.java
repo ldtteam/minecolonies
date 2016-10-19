@@ -33,6 +33,7 @@ class SchematicAlpha extends SchematicFormat
     private static final String OFFSET_Y = "OffsetY";
     private static final String OFFSET_Z = "OffsetZ";
 
+    @SuppressWarnings("deprecation")
     private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
 
     @NotNull

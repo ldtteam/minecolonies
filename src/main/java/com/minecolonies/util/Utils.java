@@ -368,6 +368,7 @@ public final class Utils
      * @param tool  the tool category
      * @return integer value for mining level &gt;= 0 is okay
      */
+    @SuppressWarnings("deprecation")
     public static int getMiningLevel(@Nullable ItemStack stack, @Nullable String tool)
     {
         if (tool == null)
@@ -379,6 +380,7 @@ public final class Utils
         {
             return -1;
         }
+        //todo: use 'better' version of this thing
         return stack.getItem().getHarvestLevel(stack, tool);
     }
 
