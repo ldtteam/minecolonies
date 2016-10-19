@@ -18,9 +18,12 @@ import java.util.Map;
  */
 public class MinecoloniesCommand extends AbstractSplitCommand
 {
+
+    private static final String DESC = "minecolonies";
+
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put("colonies", new ColoniesCommand())
+        .put("colonies", new ColoniesCommand(DESC))
         .build();
 
     /**
@@ -28,21 +31,21 @@ public class MinecoloniesCommand extends AbstractSplitCommand
      */
     public MinecoloniesCommand()
     {
-        super("mc");
+        super(DESC);
     }
 
     @NotNull
     @Override
     public String getCommandName()
     {
-        return "minecolonies";
+        return DESC;
     }
 
     @NotNull
     @Override
     public List<String> getCommandAliases()
     {
-        return Arrays.asList("mc", "col", "mcol", "mcolonies", "minecol", "minecolonies");
+        return Arrays.asList("mc", "col", "mcol", "mcolonies", "minecol", DESC);
     }
 
     @Override

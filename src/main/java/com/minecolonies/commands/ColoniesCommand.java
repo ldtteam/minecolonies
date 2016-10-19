@@ -21,15 +21,15 @@ public class ColoniesCommand extends AbstractSplitCommand
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put("list", new ListColonies("mc", DESC, "list"))
+        .put("list", new ListColonies("minecolonies", DESC, "list"))
         .build();
 
     /**
      * Initialize this command with it's parents.
      */
-    public ColoniesCommand()
+    public ColoniesCommand(@NotNull final String parent)
     {
-        super(DESC);
+        super(parent, DESC);
     }
 
     @Override

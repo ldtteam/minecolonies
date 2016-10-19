@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * A command that has children. Split-command with various parts.
  */
-public abstract class AbstractSplitCommand extends CommandBase implements ISubCommand
+public abstract class AbstractSplitCommand extends AbstractSingleCommand implements ISubCommand
 {
 
     private final String[] parents;
@@ -69,7 +69,7 @@ public abstract class AbstractSplitCommand extends CommandBase implements ISubCo
             //todo: check if WrongUsageException is better
             throw new CommandException(getCommandUsage(sender));
         }
-        final ISubCommand child = childs.get(args[0]);
+        final AbstractSingleCommand child = (AbstractSingleCommand)childs.get(args[0]);
         final String[] newArgs = new String[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
         child.execute(server, sender, newArgs);
@@ -90,7 +90,7 @@ public abstract class AbstractSplitCommand extends CommandBase implements ISubCo
         {
             return new ArrayList<>(childs.keySet());
         }
-        final ISubCommand child = childs.get(args[0]);
+        final AbstractSingleCommand child = (AbstractSingleCommand)childs.get(args[0]);
         final String[] newArgs = new String[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
         return child.getTabCompletionOptions(server, sender, newArgs, pos);
@@ -105,7 +105,7 @@ public abstract class AbstractSplitCommand extends CommandBase implements ISubCo
         {
             return false;
         }
-        final ISubCommand child = childs.get(args[0]);
+        final AbstractSingleCommand child = (AbstractSingleCommand)childs.get(args[0]);
         final String[] newArgs = new String[args.length - 1];
         System.arraycopy(args, 1, newArgs, 0, newArgs.length);
         return child.isUsernameIndex(newArgs, index - 1);
