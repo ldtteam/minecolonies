@@ -133,6 +133,9 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
         worker.setCanPickUpLoot(true);
     }
 
+    //todo add lang string
+    //todo level 0 hut shouldn't be able to hire (add message)
+
     /**
      * Can be overridden in implementations.
      * <p>
@@ -183,10 +186,10 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
                 worker.getInventoryCitizen().setInventorySlotContents(i, null);
                 continue;
             }
-            
-            if(stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).getEquipmentSlot()) == null)
+
+            if(stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType)== null)
             {
-                worker.setItemStackToSlot(((ItemArmor) stack.getItem()).getEquipmentSlot(), stack);
+                worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
             }
         }
     }
