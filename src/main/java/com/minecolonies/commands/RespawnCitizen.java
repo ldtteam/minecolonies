@@ -21,12 +21,14 @@ import java.util.List;
 public class RespawnCitizen extends AbstractSingleCommand
 {
 
-    private static final String ID_TEXT                = "§2ID: §f";
-    private static final String NAME_TEXT              = "§2 Name: §f";
-    private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
-    private static final String REMOVED_MESSAGE        = "Has been removed";
+    private static final String ID_TEXT                         = "§2ID: §f";
+    private static final String NAME_TEXT                       = "§2 Name: §f";
+    private static final String COORDINATES_TEXT                = "§2Coordinates: §f";
+    private static final String REMOVED_MESSAGE                 = "Has been removed";
     private static final String NO_COLONY_CITIZEN_FOUND_MESSAGE = "No citizen %d found in colony %d.";
-    private static final String COORDINATES_XYZ = "§4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String COORDINATES_XYZ                 = "§4x=§f%s §4y=§f%s §4z=§f%s";
+
+    public static final String DESC                             = "respawn";
 
     /**
      * Initialize this SubCommand with it's parents.
