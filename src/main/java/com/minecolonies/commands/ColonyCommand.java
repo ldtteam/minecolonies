@@ -1,6 +1,7 @@
 package com.minecolonies.commands;
 
 import com.google.common.collect.ImmutableMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -12,18 +13,20 @@ import java.util.Map;
 public class ColonyCommand extends AbstractSplitCommand
 {
 
+    public static final String DESC = "colony";
+
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put("kill", new KillCitizen("mc", "colony", "kill"))
-        .put("respawn", new RespawnCitizen("mc", "colony", "respawn"))
+        .put("kill", new KillCitizen(MinecoloniesCommand.DESC, ColonyCommand.DESC, "kill"))
+        .put("respawn", new RespawnCitizen(MinecoloniesCommand.DESC, ColonyCommand.DESC, "respawn"))
         .build();
 
     /**
      * Initialize this command with it's parents.
      */
-    public ColonyCommand()
+    public ColonyCommand(@NotNull final String parent)
     {
-        super("mc", "colonies");
+        super(parent, ColonyCommand.DESC);
     }
 
     @Override
