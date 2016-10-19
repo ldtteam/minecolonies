@@ -831,7 +831,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         Set<ItemStorage> tempKeep = new HashSet<>(keep.keySet());
         for(ItemStorage tempStack: tempKeep)
         {
-            if(tempStack.getItem() == stack.getItem() && tempStack.getDamageValue() != stack.getItemDamage())
+            if(tempStack != null && tempStack.getItem() == stack.getItem() && tempStack.getDamageValue() != stack.getItemDamage())
             {
                 keep.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, tempStack.ignoreDamageValue()), keep.get(tempStack));
                 break;
