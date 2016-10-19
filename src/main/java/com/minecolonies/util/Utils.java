@@ -1,6 +1,8 @@
 package com.minecolonies.util;
 
+import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
@@ -270,9 +272,10 @@ public final class Utils
      * @param block    Block that makes the sound
      * @param metadata Metadata of the block that makes sound
      */
-    public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata)
+    public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata, EntityCitizen citizen)
     {
-        world.playSound((EntityPlayer) null, pos, block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
+        final SoundType soundType = block.getSoundType(world.getBlockState(pos), world, pos, citizen);
+        world.playSound(null, pos, soundType.getBreakSound(), SoundCategory.BLOCKS, soundType.getVolume(), soundType.getPitch());
     }
 
     /**

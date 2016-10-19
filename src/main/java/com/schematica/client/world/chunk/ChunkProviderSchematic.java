@@ -8,6 +8,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.EmptyChunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +17,7 @@ public class ChunkProviderSchematic extends ChunkProviderClient implements IChun
 {
     private final SchematicWorld world;
     private final Chunk emptyChunk;
-    private final Map<Long, ChunkSchematic> chunks = new ConcurrentHashMap();
+    private final Map<Long, ChunkSchematic> chunks = new ConcurrentHashMap<>();
 
     public ChunkProviderSchematic(final SchematicWorld world)
     {
@@ -57,6 +58,7 @@ public class ChunkProviderSchematic extends ChunkProviderClient implements IChun
         return chunk;
     }
 
+    @Nullable
     @Override
     public Chunk provideChunk(final int x, final int z)
     {

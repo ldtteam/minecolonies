@@ -101,7 +101,7 @@ class SchematicAlpha extends SchematicFormat
                     pos.setPos(x, y, z);
                     try
                     {
-                        final IBlockState blockState = block.getStateFromMeta(meta);
+                        @SuppressWarnings("deprecation") final IBlockState blockState = block.getStateFromMeta(meta);
                         schematic.setBlockState(pos, blockState);
                     }
                     catch (final RuntimeException e)
@@ -118,7 +118,7 @@ class SchematicAlpha extends SchematicFormat
         {
             try
             {
-                final TileEntity tileEntity = NBTHelper.readTileEntityFromCompound((World) null, tileEntitiesList.getCompoundTagAt(i));
+                final TileEntity tileEntity = NBTHelper.readTileEntityFromCompound(null, tileEntitiesList.getCompoundTagAt(i));
                 if (tileEntity != null)
                 {
                     schematic.setTileEntity(tileEntity.getPos(), tileEntity);
