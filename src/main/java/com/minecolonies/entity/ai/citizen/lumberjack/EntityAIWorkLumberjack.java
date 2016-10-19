@@ -9,6 +9,7 @@ import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
+import net.minecraft.block.SoundType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -434,13 +435,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             worker.setHeldItem(saplingSlot);
 
             placeSaplings(saplingSlot, stack, block);
-
-            world.playSound((EntityPlayer) null,
+            final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
+            world.playSound(null,
               this.worker.getPosition(),
-              block.getSoundType().getBreakSound(),
+              soundType.getPlaceSound(),
               SoundCategory.BLOCKS,
-              block.getSoundType().getVolume(),
-              block.getSoundType().getPitch());
+              soundType.getVolume(),
+              soundType.getPitch());
             worker.swingArm(worker.getActiveHand());
         }
 
