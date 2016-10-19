@@ -3,7 +3,6 @@ package com.minecolonies.commands;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.IColony;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -49,65 +48,33 @@ public class RespawnCitizen extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId = -1;
-        int citizenId = -1;
+        int colonyId = getIthArgument(args, 0, -1);
+        int citizenId = getIthArgument(args, 1, -1);
 
-        //todo framework for argument parsing
-        if (args.length != 0)
+        //todo add this in a feature update when we added argument parsing and permission handling.
+        /*if(colonyId == -1)
         {
-            if(args.length >= 2)
-            {
-                try
-                {
-                    colonyId = Integer.parseInt(args[0]);
-                }
-                catch (NumberFormatException e)
-                {
-                    //ignore and keep page 1.
-                }
-            }
-            else
-            {
-                try
-                {
-                    citizenId = Integer.parseInt(args[0]);
-                }
-                catch (NumberFormatException e)
-                {
-                    //ignore and keep page 1.
-                }
-            }
-        }
+            colonyId = getColonyId(sender);
+        }*/
 
-        Colony colony = null;
-        final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
-        if(tempColony != null)
-        {
-            colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
-            colony = colony == null ? ColonyManager.getColony(colonyId) : colony;
-
-            if(colony != null)
-            {
-                colonyId = colony.getID();
-            }
-        }
-
-        if(colony == null || colonyId == -1 || citizenId == -1)
+        //No citizen or citizen defined.
+        if(colonyId == -1 || citizenId == -1)
         {
             sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
             return;
         }
 
+        //Wasn't able to get the citizen from the colony.
+        Colony colony = ColonyManager.getColony(colonyId);
         final CitizenData citizenData = colony.getCitizen(citizenId);
-
         if(citizenData == null)
         {
             sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
             return;
         }
 
+        //Wasn't able to get the entity from the citizenData.
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-
         if(entityCitizen == null)
         {
             sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
@@ -121,6 +88,25 @@ public class RespawnCitizen extends AbstractSingleCommand
 
         entityCitizen.setDead();
 
+    }
+
+    /**
+     * Get the ith argument (An Integer).
+     * @param i the argument from the list you want.
+     * @param args the list of arguments.
+     * @param def the default value.
+     * @return the argument.
+     */
+    private static int getIthArgument(String[] args, int i, int def)
+    {
+        try
+        {
+            return Integer.parseInt(args[i]);
+        }
+        catch (NumberFormatException e)
+        {
+            return def;
+        }
     }
 
     @NotNull
