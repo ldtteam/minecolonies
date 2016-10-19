@@ -759,7 +759,7 @@ public class Colony implements IColony
 
     private void cleanUpBuildings(@NotNull TickEvent.WorldTickEvent event)
     {
-        @Nullable List<AbstractBuilding> removedBuildings = new ArrayList<>();;
+        @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
 
         //Need this list, we may enter he while we add a building in the real world.
         List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
