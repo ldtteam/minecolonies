@@ -391,6 +391,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                    );
     }
 
+    public void searchChestForArmor()
+    {
+
+    }
+
     /**
      * Request an Item without spamming the chat.
      *

@@ -194,8 +194,6 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         return AIState.GUARD_SEARCH_TARGET;
     }
 
-    //todo take armour out of chest? if he hasn't
-
     /**
      * Can be overridden in implementations.
      * <p>

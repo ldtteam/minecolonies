@@ -1,11 +1,13 @@
 package com.minecolonies.entity.ai.citizen.guard;
 
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,8 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
-
-import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * Abstract class which contains all the guard basics let it be range, melee or magic.
@@ -95,15 +95,36 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         super(job);
     }
 
-    private int getReloadTime()
-    {
-        return BASE_RELOAD_TIME / (worker.getExperienceLevel() + 1);
-    }
-
+    /**
+     * Goes back to the building and tries to take armour from it when he hasn't in his inventory.
+     * @return
+     */
     protected AIState goToBuilding()
     {
         if(!walkToBuilding())
         {
+            final AbstractBuildingWorker workBuilding = getOwnBuilding();
+            if(workBuilding != null)
+            {
+                final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
+                for (int i = 0; i < workBuilding.getTileEntity().getSizeInventory(); i++)
+                {
+                    final ItemStack stack = chest.getStackInSlot(i);
+
+                    if (stack == null)
+                    {
+                        continue;
+                    }
+
+                    if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
+                    {
+                        final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
+                        worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
+                        chest.setInventorySlotContents(i, null);
+                    }
+                }
+            }
+
             arrowsShot = 0;
             return AIState.START_WORKING;
         }
