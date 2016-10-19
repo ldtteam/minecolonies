@@ -36,6 +36,16 @@ public class CommandEntryPoint extends CommandBase
         return "minecolonies";
     }
 
+    /**
+     * Only allow OP's execute the commands.
+     * @return the int permission level (3 for OP).
+     */
+    @Override
+    public int getRequiredPermissionLevel()
+    {
+        return 3;
+    }
+
     @NotNull
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)

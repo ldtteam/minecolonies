@@ -30,7 +30,6 @@ public class KillCitizen extends AbstractSingleCommand
     private static final String NO_COLONY_CITIZEN_FOUND_MESSAGE = "No citizen %d found in colony %d.";
     private static final String COORDINATES_XYZ = "§4x=§f%s §4y=§f%s §4z=§f%s";
 
-
     /**
      * Initialize this SubCommand with it's parents.
      *
@@ -54,7 +53,7 @@ public class KillCitizen extends AbstractSingleCommand
         int colonyId = -1;
         int citizenId = -1;
 
-        //todo framework for argument parsing
+        //todo later framework for argument parsing
         if (args.length != 0)
         {
             if(args.length >= 2)
