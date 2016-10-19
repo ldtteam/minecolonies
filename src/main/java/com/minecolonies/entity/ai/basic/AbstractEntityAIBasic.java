@@ -754,31 +754,31 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Checks if an item should be kept and does deposit the rest into his chest.
-     * @param keptX already kept items.
-     * @param toKeep items that should be kept.
+     * @param alreadyKept already kept items.
+     * @param shouldKeep items that should be kept.
      * @param buildingWorker the building of the worker.
      * @param stack the stack being analyzed.
      * @param i the iteration inside the inventory.
      * @return false if should be kept.
      */
-    private boolean shouldKeep(@NotNull Map<ItemStorage, Integer> keptX, @NotNull Map<ItemStorage, Integer> toKeep,
+    private boolean shouldKeep(@NotNull Map<ItemStorage, Integer> alreadyKept, @NotNull Map<ItemStorage, Integer> shouldKeep,
             @NotNull AbstractBuildingWorker buildingWorker, ItemStack stack, int i)
     {
         @Nullable ItemStack returnStack;
         int amountToKeep = 0;
-        if(keptEnough(keptX, toKeep, stack))
+        if(keptEnough(alreadyKept, shouldKeep, stack))
         {
             returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
         }
         else
         {
             final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
-            ItemStack tempStack = handleKeepX(keptX, toKeep, tempStorage);
+            ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
             if(tempStack == null || tempStack.stackSize == 0)
             {
                 return false;
             }
-            amountToKeep = toKeep.get(tempStorage) - tempStack.stackSize;
+            amountToKeep = shouldKeep.get(tempStorage) - tempStack.stackSize;
             returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), tempStack);
         }
         if (returnStack == null)
@@ -793,27 +793,27 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Handle the cases when X items should be kept.
-     * @param keptX already kept items.
-     * @param toKeep to keep items.
+     * @param alreadyKept already kept items.
+     * @param shouldKeep to keep items.
      * @param tempStorage item to analyze.
      * @return null if should be kept entirely, else itemStack with amount which should be dumped.
      */
-    private static ItemStack handleKeepX(@NotNull Map<ItemStorage, Integer> keptX,
-            @NotNull Map<ItemStorage, Integer> toKeep,@NotNull ItemStorage tempStorage)
+    private static ItemStack handleKeepX(@NotNull Map<ItemStorage, Integer> alreadyKept,
+            @NotNull Map<ItemStorage, Integer> shouldKeep,@NotNull ItemStorage tempStorage)
     {
         int amountKept = 0;
-        if(keptX.get(tempStorage) != null)
+        if(alreadyKept.get(tempStorage) != null)
         {
-            amountKept = keptX.remove(tempStorage);
+            amountKept = alreadyKept.remove(tempStorage);
         }
 
-        if (toKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
+        if (shouldKeep.get(tempStorage) >= (tempStorage.getAmount() + amountKept))
         {
-            keptX.put(tempStorage, tempStorage.getAmount() + amountKept);
+            alreadyKept.put(tempStorage, tempStorage.getAmount() + amountKept);
             return null;
         }
-        keptX.put(tempStorage, toKeep.get(tempStorage));
-        int dump = tempStorage.getAmount() + amountKept - toKeep.get(tempStorage);
+        alreadyKept.put(tempStorage, shouldKeep.get(tempStorage));
+        int dump = tempStorage.getAmount() + amountKept - shouldKeep.get(tempStorage);
 
         //Create tempStack with the amount of items that should be dumped.
         return new ItemStack(tempStorage.getItem(), dump, tempStorage.getDamageValue());
@@ -821,29 +821,29 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
     /**
      * Checks if enough items have been marked as to be kept already.
-     * @param kept kept items.
-     * @param keep items to keep.
+     * @param alreadyKept kept items.
+     * @param shouldKeep items to keep.
      * @param stack stack to analyse.
      * @return true if the the item shouldn't be kept.
      */
-    private static boolean keptEnough(@NotNull Map<ItemStorage, Integer> kept, @NotNull Map<ItemStorage, Integer> keep, @NotNull ItemStack stack)
+    private static boolean keptEnough(@NotNull Map<ItemStorage, Integer> alreadyKept, @NotNull Map<ItemStorage, Integer> shouldKeep, @NotNull ItemStack stack)
     {
-        final ArrayList<Map.Entry<ItemStorage, Integer>> tempKeep = new ArrayList<>(keep.entrySet());
+        final ArrayList<Map.Entry<ItemStorage, Integer>> tempKeep = new ArrayList<>(shouldKeep.entrySet());
         for(Map.Entry<ItemStorage, Integer> tempEntry: tempKeep)
         {
-            final ItemStorage tempStack = tempEntry.getKey();
-            if(tempStack != null && tempStack.getItem() == stack.getItem() && tempStack.getDamageValue() != stack.getItemDamage())
+            final ItemStorage tempStorage = tempEntry.getKey();
+            if(tempStorage != null && tempStorage.getItem() == stack.getItem() && tempStorage.getDamageValue() != stack.getItemDamage())
             {
-                keep.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, tempStack.ignoreDamageValue()), tempEntry.getValue());
+                shouldKeep.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, tempStorage.ignoreDamageValue()), tempEntry.getValue());
                 break;
             }
         }
         final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false);
 
         //Check first if the the item shouldn't be kept if it should be kept check if we already kept enough of them.
-        return keep.get(tempStorage) == null
-                 || (kept.get(tempStorage) != null
-                       && kept.get(tempStorage) >= keep.get(tempStorage));
+        return shouldKeep.get(tempStorage) == null
+                 || (alreadyKept.get(tempStorage) != null
+                       && alreadyKept.get(tempStorage) >= shouldKeep.get(tempStorage));
     }
 
     /**
