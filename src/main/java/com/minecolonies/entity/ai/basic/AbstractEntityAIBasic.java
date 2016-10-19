@@ -828,7 +828,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private static boolean keptEnough(@NotNull Map<ItemStorage, Integer> kept, @NotNull Map<ItemStorage, Integer> keep, @NotNull ItemStack stack)
     {
-        Set<ItemStorage> tempKeep = keep.keySet();
+        Set<ItemStorage> tempKeep = new HashSet<>(keep.keySet());
         for(ItemStorage tempStack: tempKeep)
         {
             if(tempStack.getItem() == stack.getItem() && tempStack.getDamageValue() != stack.getItemDamage())
