@@ -828,19 +828,22 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private static boolean keptEnough(@NotNull Map<ItemStorage, Integer> kept, @NotNull Map<ItemStorage, Integer> keep, @NotNull ItemStack stack)
     {
-        Set<ItemStorage> tempKeep = new HashSet<>(keep.keySet());
-        for(ItemStorage tempStack: tempKeep)
+        final ArrayList<Map.Entry<ItemStorage, Integer>> tempKeep = new ArrayList<>(keep.entrySet());
+        for(Map.Entry<ItemStorage, Integer> tempEntry: tempKeep)
         {
+            final ItemStorage tempStack = tempEntry.getKey();
             if(tempStack != null && tempStack.getItem() == stack.getItem() && tempStack.getDamageValue() != stack.getItemDamage())
             {
-                keep.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, tempStack.ignoreDamageValue()), keep.get(tempStack));
+                keep.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, tempStack.ignoreDamageValue()), tempEntry.getValue());
                 break;
             }
         }
         final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false);
 
         //Check first if the the item shouldn't be kept if it should be kept check if we already kept enough of them.
-        return keep.get(tempStorage) == null || (kept.get(tempStorage) != null && kept.get(tempStorage) >= keep.get(tempStorage));
+        return keep.get(tempStorage) == null
+                 || (kept.get(tempStorage) != null
+                       && kept.get(tempStorage) >= keep.get(tempStorage));
     }
 
     /**
