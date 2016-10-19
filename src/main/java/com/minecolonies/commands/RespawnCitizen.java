@@ -48,8 +48,8 @@ public class RespawnCitizen extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId = getIthArgument(args, 0, -1);
-        int citizenId = getIthArgument(args, 1, -1);
+        final int colonyId = getIthArgument(args, 0, -1);
+        final int citizenId = getIthArgument(args, 1, -1);
 
         //todo add this in a feature update when we added argument parsing and permission handling.
         /*if(colonyId == -1)
@@ -65,7 +65,7 @@ public class RespawnCitizen extends AbstractSingleCommand
         }
 
         //Wasn't able to get the citizen from the colony.
-        Colony colony = ColonyManager.getColony(colonyId);
+        final Colony colony = ColonyManager.getColony(colonyId);
         final CitizenData citizenData = colony.getCitizen(citizenId);
         if(citizenData == null)
         {
@@ -87,7 +87,6 @@ public class RespawnCitizen extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
 
         entityCitizen.setDead();
-
     }
 
     /**

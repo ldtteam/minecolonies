@@ -16,6 +16,10 @@ import java.util.List;
  */
 public class CommandEntryPoint extends CommandBase
 {
+    /**
+     * The level required to execute /mc commands.
+     */
+    private static final int OP_PERMISSION_LEVEL = 3;
 
     @NotNull
     private final MinecoloniesCommand root;
@@ -43,7 +47,7 @@ public class CommandEntryPoint extends CommandBase
     @Override
     public int getRequiredPermissionLevel()
     {
-        return 3;
+        return OP_PERMISSION_LEVEL;
     }
 
     @NotNull
