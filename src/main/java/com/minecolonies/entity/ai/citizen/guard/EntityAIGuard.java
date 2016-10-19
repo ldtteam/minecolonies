@@ -31,7 +31,6 @@ import java.util.Map;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
 
-
 /**
  * Handles the AI of the guard entities.
  */
@@ -58,11 +57,6 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
     private static final int BASE_RELOAD_TIME = 100;
 
     /**
-     * Basic delay multiplier which descreases the delay depending on the level.
-     */
-    private static final double BASE_RELOAD_MULTIPLIER = 0.25D;
-
-    /**
      * Base speed of the guard he follows his target.
      */
     private static final int BASE_FOLLOW_SPEED = 1;
@@ -86,6 +80,26 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
      * Max amount the guard can shoot arrows before restocking.
      */
     private static final int MAX_ARROWS_SHOT = 50;
+
+    /**
+     * Normal volume at which sounds are played at.
+     */
+    private static final double BASIC_VOLUME           = 1.0D;
+
+    /**
+     * Y range in which the guard detects other entities.
+     */
+    private static final double HEIGHT_DETECTION_RANGE = 10D;
+
+    /**
+     * Guard has to aim x higher to hit his target.
+     */
+    private static final double AIM_HEIGHT = 3.0D;
+
+    /**
+     * Experience the guard receives each shot arrow.
+     */
+    private static final double XP_EACH_ARROW = 0.2;
 
     /**
      * The distance the guard is searching entities in currently.
@@ -129,12 +143,14 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
                 new AITarget(GUARD_PATROL, this::patrol),
                 new AITarget(GUARD_RESTOCK, this::goToBuilding)
                 );
-        worker.setSkillModifier(2 * worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
-        worker.setCanPickUpLoot(true);
+
+        if(worker.getCitizenData() != null)
+        {
+            worker.setSkillModifier(2 * worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
+            worker.setCanPickUpLoot(true);
+        }
     }
 
-    //todo add lang string
-    //todo level 0 hut shouldn't be able to hire (add message)
     //todo take armour out of chest? if he hasn't
     //todo wear shield when given.
 
@@ -151,7 +167,7 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
 
     private int getReloadTime()
     {
-        return BASE_RELOAD_TIME / (worker.getExperienceLevel()+1);
+        return BASE_RELOAD_TIME / (worker.getExperienceLevel() + 1);
     }
 
     private AIState goToBuilding()
@@ -178,7 +194,7 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
         {
             ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
-            if(stack == null || stack.getItem() == null)
+            if(stack == null)
             {
                 continue;
             }
@@ -209,7 +225,7 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
 
         if(entityList.get(0) instanceof EntityPlayer)
         {
-            if(worker.getColony().getPermissions().getRank((EntityPlayer) entityList.get(0)) == Permissions.Rank.HOSTILE)
+            if(worker.getColony() != null && worker.getColony().getPermissions().getRank((EntityPlayer) entityList.get(0)) == Permissions.Rank.HOSTILE)
             {
                 targetEntity = (EntityLivingBase) entityList.get(0);
                 worker.getNavigator().clearPathEntity();
@@ -240,11 +256,6 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
      */
     private AIState searchTarget()
     {
-        if (worker == null)
-        {
-            return AIState.GUARD_SEARCH_TARGET;
-        }
-
         entityList = this.worker.worldObj.getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(currentSearchDistance));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(currentSearchDistance)));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
@@ -307,7 +318,7 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
 
         if (targetEntity != null)
         {
-            if(worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= getMaxVision())
+            if(worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MAX_ATTACK_DISTANCE)
             {
                 worker.resetActiveHand();
                 attackEntityWithRangedAttack(targetEntity, 1);
@@ -358,6 +369,11 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
      */
     private BlockPos getRandomBuilding()
     {
+        if(worker.getColony() == null)
+        {
+            return worker.getPosition();
+        }
+
         Map<BlockPos, AbstractBuilding> buildingMap = worker.getColony().getBuildings();
         int random = worker.getRandom().nextInt(buildingMap.size());
         return (BlockPos) worker.getColony().getBuildings().keySet().toArray()[random];
@@ -368,10 +384,14 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
     {
         EntityTippedArrow arrowEntity = new EntityTippedArrow(this.worker.worldObj, worker);
         double xVector = entityToAttack.posX - worker.posX;
-        double yVector = entityToAttack.getEntityBoundingBox().minY + (double)(entityToAttack.height / 3.0F) - arrowEntity.posY;
+        double yVector = entityToAttack.getEntityBoundingBox().minY + entityToAttack.height / AIM_HEIGHT - arrowEntity.posY;
         double zVector = entityToAttack.posZ - worker.posZ;
         double distance = (double) MathHelper.sqrt_double(xVector * xVector + zVector * zVector);
-        arrowEntity.setThrowableHeading(xVector, yVector + distance * 0.20000000298023224D, zVector, 1.6F, (float)(14 - this.worker.worldObj.getDifficulty().getDifficultyId() * 4));
+
+        //Lower the variable higher the chance that the arrows hits the target.
+        double chance = 10.0 / (worker.getExperienceLevel()+1); //standard is 6, hard is 2
+
+        arrowEntity.setThrowableHeading(xVector, yVector + distance * 0.20000000298023224D, zVector, 1.6F, (float) chance);
         int powerEntchanment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
         int punchEntchanment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
         DifficultyInstance difficulty = this.worker.worldObj.getDifficultyForLocation(new BlockPos(worker));
@@ -402,7 +422,7 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
             arrowEntity.setPotionEffect(holdItem);
         }
 
-        worker.addExperience(0.1);
+        worker.addExperience(XP_EACH_ARROW);
         worker.faceEntity(entityToAttack, (float)TURN_AROUND, (float)TURN_AROUND);
         worker.getLookHelper().setLookPositionWithEntity(entityToAttack, (float)TURN_AROUND, (float)TURN_AROUND);
 
@@ -415,15 +435,20 @@ public class EntityAIGuard extends AbstractEntityAISkill<JobGuard> implements IR
         worker.moveEntity(goToX, 0, goToZ);
 
         worker.swingArm(EnumHand.MAIN_HAND);
-        worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, 1.0F, 1.0F / (worker.getRNG().nextFloat() * 0.4F + 0.8F));
+        worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) getRandomPitch());
         worker.worldObj.spawnEntityInWorld(arrowEntity);
 
         worker.damageItemInHand(1);
     }
 
-    protected AxisAlignedBB getTargetableArea(double range)
+    private double getRandomPitch()
     {
-        return this.worker.getEntityBoundingBox().expand(range, 4.0D, range);
+        return 1.0D / (worker.getRNG().nextDouble() * 0.4D + 0.8D);
+    }
+
+    private AxisAlignedBB getTargetableArea(double range)
+    {
+        return this.worker.getEntityBoundingBox().expand(range, HEIGHT_DETECTION_RANGE, range);
     }
 
 }

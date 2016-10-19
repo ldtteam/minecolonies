@@ -8,6 +8,7 @@ import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.network.messages.HireFireMessage;
 import com.minecolonies.network.messages.RecallCitizenMessage;
 import com.minecolonies.util.LanguageHandler;
+import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -65,6 +66,11 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      */
     private void hireClicked(@NotNull Button button)
     {
+        if(building.getBuildingLevel() == 0)
+        {
+            LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("com.minecolonies.gui.workerHuts.level0"));
+        }
+
         if (building.getColony().isManualHiring())
         {
             if (building.getWorkerId() == 0)
