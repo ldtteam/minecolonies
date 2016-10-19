@@ -9,7 +9,6 @@ import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
@@ -72,13 +71,13 @@ public class ColonyInfo extends AbstractSingleCommand
 
         Colony colony = null;
         final IColony tempColony;
-        if(colonyId >= 0)
+        if(colonyId == -1)
         {
-            tempColony = ColonyManager.getColony(colonyId);
+            tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
         }
         else
         {
-            tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), sender.getCommandSenderEntity().getUniqueID());
+            tempColony = ColonyManager.getColony(colonyId);
         }
         if(tempColony != null)
         {
