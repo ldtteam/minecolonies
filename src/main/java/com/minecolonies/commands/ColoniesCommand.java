@@ -21,6 +21,8 @@ public class ColoniesCommand extends AbstractSplitCommand
 
     /**
      * Initialize this command with it's parents.
+     *
+     * @param parent the parent commands
      */
     public ColoniesCommand(@NotNull final String parent)
     {

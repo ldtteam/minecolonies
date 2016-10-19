@@ -20,7 +20,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         .build();
 
     /**
-     * Initialize this command with the shortest alias.
+     * Initialize this command with the canon alias.
      */
     public MinecoloniesCommand()
     {

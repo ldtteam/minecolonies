@@ -18,13 +18,14 @@ public class CommandEntryPoint extends CommandBase
 {
 
     @NotNull
-    private MinecoloniesCommand root;
+    private final MinecoloniesCommand root;
 
     /**
      * Create our entry point once.
      */
     public CommandEntryPoint()
     {
+        super();
         root = new MinecoloniesCommand();
     }
 
