@@ -3,7 +3,7 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.entity.ai.citizen.guard.EntityAIGuard;
+import com.minecolonies.entity.ai.citizen.guard.EntityAIRangeGuard;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -42,7 +42,7 @@ public class JobGuard extends AbstractJob
     @Override
     public AbstractAISkeleton generateAI()
     {
-        return new EntityAIGuard(this);
+        return new EntityAIRangeGuard(this);
     }
 
 }
