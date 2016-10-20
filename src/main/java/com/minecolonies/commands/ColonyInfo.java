@@ -3,10 +3,8 @@ package com.minecolonies.commands;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.IColony;
-import com.minecolonies.colony.permissions.Permissions;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -31,7 +29,6 @@ public class ColonyInfo extends AbstractSingleCommand
     private static final String CITIZENS                   = "§2Citizens: §f";
     private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with mayor %s and ID %d not found.";
-    private static final String PLAYER_NOT_FOUND           = "Player %s not found.";
 
     public static final String DESC                        = "info";
 
@@ -66,8 +63,7 @@ public class ColonyInfo extends AbstractSingleCommand
             }
             catch (NumberFormatException e)
             {
-                //todo Find a way to get colony by mayor name
-                UUID tempMayorID = sender.getEntityWorld().getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId();
+                final UUID tempMayorID = sender.getEntityWorld().getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId();
                 mayorID = tempMayorID;
             }
         }
@@ -93,13 +89,14 @@ public class ColonyInfo extends AbstractSingleCommand
             }
         }
 
+        if (colonyId == -1)
+        {
+            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+            return;
+        }
+
         if(colony == null)
         {
-            if (colonyId == -1)
-            {
-                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
-                return;
-            }
             sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, args[0], colonyId)));
             return;
         }

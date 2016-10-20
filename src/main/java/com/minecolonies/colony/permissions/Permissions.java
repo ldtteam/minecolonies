@@ -453,7 +453,7 @@ public class Permissions implements IPermissions
     @Nullable
     public UUID getOwner()
     {
-        for (@NotNull Map.Entry<UUID, Player> entry : players.entrySet())
+        for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
             if (entry.getValue().rank.equals(Rank.OWNER))
             {
@@ -471,7 +471,7 @@ public class Permissions implements IPermissions
     @Nullable
     public String getOwnerName()
     {
-        for (@NotNull Map.Entry<UUID, Player> entry : players.entrySet())
+        for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
             if (entry.getValue().rank.equals(Rank.OWNER))
             {
