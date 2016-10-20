@@ -17,8 +17,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
         .put("colonies", new ColoniesCommand(DESC))
-        .put("colonies", new ColoniesCommand())
-        .put("citizens", new CitizensCommand())
+        .put("citizens", new CitizensCommand(DESC))
         .build();
 
     /**
