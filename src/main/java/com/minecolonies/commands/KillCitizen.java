@@ -28,6 +28,9 @@ public class KillCitizen extends AbstractSingleCommand
     private static final String REMOVED_MESSAGE                 = "Has been removed";
     private static final String NO_COLONY_CITIZEN_FOUND_MESSAGE = "No citizen %d found in colony %d.";
     private static final String COORDINATES_XYZ                 = "§4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String CITIZEN_DATA_NULL               = "Couldn't find citizen client side representation of %d in %d";
+    private static final String ENTITY_CITIZEN_NULL             = "Couldn't find entity of %d in %d";
+
 
     public static final String DESC                             = "kill";
 
@@ -72,7 +75,7 @@ public class KillCitizen extends AbstractSingleCommand
         final CitizenData citizenData = colony.getCitizen(citizenId);
         if(citizenData == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DATA_NULL, citizenId, colonyId)));
             return;
         }
 
@@ -80,7 +83,7 @@ public class KillCitizen extends AbstractSingleCommand
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
         if(entityCitizen == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
+            sender.addChatMessage(new TextComponentString(String.format(ENTITY_CITIZEN_NULL, citizenId, colonyId)));
             return;
         }
 
@@ -92,24 +95,7 @@ public class KillCitizen extends AbstractSingleCommand
         entityCitizen.onDeath(new DamageSource("Console"));
     }
 
-    /**
-     * Get the ith argument (An Integer).
-     * @param i the argument from the list you want.
-     * @param args the list of arguments.
-     * @param def the default value.
-     * @return the argument.
-     */
-    private static int getIthArgument(String[] args, int i, int def)
-    {
-        try
-        {
-            return Integer.parseInt(args[i]);
-        }
-        catch (NumberFormatException e)
-        {
-            return def;
-        }
-    }
+
 
     @NotNull
     @Override
