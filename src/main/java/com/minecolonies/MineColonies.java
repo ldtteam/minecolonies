@@ -2,6 +2,7 @@ package com.minecolonies;
 
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.Schematics;
+import com.minecolonies.commands.CommandEntryPoint;
 import com.minecolonies.commands.MinecoloniesCommand;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.configuration.Configurations;
@@ -163,7 +164,7 @@ public class MineColonies
     public void serverLoad(FMLServerStartingEvent event)
     {
         // register server commands
-        event.registerServerCommand(new MinecoloniesCommand());
+        event.registerServerCommand(new CommandEntryPoint());
     }
 
 }
