@@ -205,7 +205,10 @@ public class Permissions implements IPermissions
             permissions.put(rank, flags);
         }
 
-        ownerName = compound.getString(TAG_OWNER);
+        if(compound.hasKey(TAG_OWNER))
+        {
+            ownerName = compound.getString(TAG_OWNER);
+        }
     }
 
     /**
@@ -247,7 +250,10 @@ public class Permissions implements IPermissions
         }
         compound.setTag(TAG_PERMISSIONS, permissionsTagList);
 
-        compound.setString(TAG_OWNER, ownerName);
+        if(!ownerName.isEmpty())
+        {
+            compound.setString(TAG_OWNER, ownerName);
+        }
     }
 
     @NotNull
