@@ -114,26 +114,7 @@ public class ListCitizens extends AbstractSingleCommand
         }
         drawPageSwitcher(sender, page, citizenCount, halfPage);
     }
-
-    /**
-     * Get the ith argument (An Integer).
-     * @param i the argument from the list you want.
-     * @param args the list of arguments.
-     * @param def the default value.
-     * @return the argument.
-     */
-    private static int getIthArgument(String[] args, int i, int def)
-    {
-        try
-        {
-            return Integer.parseInt(args[i]);
-        }
-        catch (NumberFormatException e)
-        {
-            return def;
-        }
-    }
-
+    
     /**
      * Returns the colony of the owner or if not available colony 1.
      * First tries to get the IColony and then the Colony from the ColonyManager.
