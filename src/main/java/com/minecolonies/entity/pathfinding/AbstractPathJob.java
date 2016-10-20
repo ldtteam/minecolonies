@@ -35,6 +35,13 @@ public abstract class AbstractPathJob implements Callable<Path>
     private static final   int    SHIFT_WEST            = 2;
     private static final   int    SHIFT_NORTH           = 3;
     private static final   int    SHIFT_EAST            = 4;
+    private static final BlockPos BLOCKPOS_IDENTITY = new BlockPos(0, 0, 0);
+    private static final BlockPos BLOCKPOS_UP = new BlockPos(0, 1, 0);
+    private static final BlockPos BLOCKPOS_DOWN = new BlockPos(0, -1, 0);
+    private static final BlockPos BLOCKPOS_NORTH = new BlockPos(0, 0, -1);
+    private static final BlockPos BLOCKPOS_SOUTH = new BlockPos(0, 0, 1);
+    private static final BlockPos BLOCKPOS_EAST = new BlockPos(1, 0, 0);
+    private static final BlockPos BLOCKPOS_WEST = new BlockPos(-1, 0, 0);
     @Nullable
     protected static Set<Node>    lastDebugNodesVisited;
     @Nullable
@@ -422,14 +429,6 @@ public abstract class AbstractPathJob implements Callable<Path>
         return false;
     }
 
-    private static BlockPos BLOCKPOS_IDENTITY = new BlockPos(0, 0, 0);
-    private static BlockPos BLOCKPOS_UP = new BlockPos(0, 1, 0);
-    private static BlockPos BLOCKPOS_DOWN = new BlockPos(0, -1, 0);
-    private static BlockPos BLOCKPOS_NORTH = new BlockPos(0, 0, -1);
-    private static BlockPos BLOCKPOS_SOUTH = new BlockPos(0, 0, 1);
-    private static BlockPos BLOCKPOS_EAST = new BlockPos(1, 0, 0);
-    private static BlockPos BLOCKPOS_WEST = new BlockPos(-1, 0, 0);
-
     private void walkCurrentNode(@NotNull Node currentNode)
     {
         BlockPos dPos = BLOCKPOS_IDENTITY;
@@ -787,7 +786,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         //  Do we have something to stand on in the target space?
         final IBlockState below = world.getBlockState(pos.down());
-        SurfaceType walkability = isWalkableSurface(below);
+        final SurfaceType walkability = isWalkableSurface(below);
         if (walkability == SurfaceType.WALKABLE)
         {
             //  Level path
