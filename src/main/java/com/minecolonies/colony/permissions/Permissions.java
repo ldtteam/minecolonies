@@ -464,6 +464,24 @@ public class Permissions implements IPermissions
     }
 
     /**
+     * Returns the name of the owner of this permission instance.
+     *
+     * @return Name of the owner
+     */
+    @Nullable
+    public String getOwnerName()
+    {
+        for (@NotNull Map.Entry<UUID, Player> entry : players.entrySet())
+        {
+            if (entry.getValue().rank.equals(Rank.OWNER))
+            {
+                return entry.getValue().getName();
+            }
+        }
+        return null;
+    }
+
+    /**
      * Checks if a user is a subscriber
      *
      * @param player {@link EntityPlayer} to check for subscription.
