@@ -49,6 +49,12 @@ public class ColonyInfo extends AbstractSingleCommand
         return super.getCommandUsage(sender) + "";
     }
 
+    @NotNull
+    private UUID getIDOfMayor(@NotNull final ICommandSender sender, @NotNull final String name)
+    {
+        return sender.getEntityWorld().getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(name).getId();
+    }
+
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
@@ -63,7 +69,7 @@ public class ColonyInfo extends AbstractSingleCommand
             }
             catch (NumberFormatException e)
             {
-                final UUID tempMayorID = sender.getEntityWorld().getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId();
+                final UUID tempMayorID = getIDOfMayor(sender, args[0]);
                 mayorID = tempMayorID;
             }
         }
