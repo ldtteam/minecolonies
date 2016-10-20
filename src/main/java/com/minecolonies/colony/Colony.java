@@ -715,12 +715,7 @@ public class Colony implements IColony
                             spawnCitizen(citizen);
                         });
             }
-
-            if((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && !areAllColonyChunksLoaded(event))
-            {
-                Log.getLogger().info("Couldn't clean up all citizens because colonyChunks weren't loaded");
-            }
-
+            
             //  Cleanup Buildings whose Blocks have gone AWOL
             cleanUpBuildings(event);
 
