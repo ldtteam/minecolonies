@@ -42,7 +42,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      */
     public static int getIthArgument(String[] args, int i, int def)
     {
-        if(args.length < i)
+        if(args.length <= i)
         {
             return def;
         }
