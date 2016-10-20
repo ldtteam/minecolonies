@@ -54,7 +54,7 @@ public class Permissions implements IPermissions
     /**
      * The name of the owner.
      */
-    private String ownerName;
+    private String ownerName ="";
     /**
      * Saves the permissions with allowed actions
      *
