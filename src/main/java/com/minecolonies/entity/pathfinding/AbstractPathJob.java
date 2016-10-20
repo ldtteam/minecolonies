@@ -248,23 +248,6 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     /**
-     * Generate a pseudo-unique key for identifying a given node by it's coordinates
-     * Encodes the lowest 12 bits of x,z and all useful bits of y.
-     * This creates unique keys for all blocks within a 4096x256x4096 cube, which is FAR
-     * bigger volume than one should attempt to pathfind within
-     * This version takes independent x,y,z for performance
-     *
-     * @param x,y,z Position to generate key from
-     * @return key for node in map
-     */
-    private static int computeNodeKey(int x, int y, int z)
-    {
-        return ((x & 0xFFF) << 20) |
-                ((y & 0xFF) << 12) |
-                (z & 0xFFF);
-    }
-
-    /**
      * Compute the cost (immediate 'g' value) of moving from the parent space to the new space,
      *
      * @param parent     The parent node being moved from
@@ -684,7 +667,8 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (pos.getY() != newY)
         {
             //  Has this node been visited?
-            nodeKey = computeNodeKey(pos.getX(), newY, pos.getZ());
+            pos = new BlockPos(pos.getX(), newY, pos.getZ());
+            nodeKey = computeNodeKey(pos);
             node = nodesVisited.get(nodeKey);
             if (nodeClosed(node))
             {
