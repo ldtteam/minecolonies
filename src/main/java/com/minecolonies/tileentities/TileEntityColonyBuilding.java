@@ -82,6 +82,20 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (!worldObj.isRemote && colonyId == 0)
         {
             //todo: actually do something about it and not spam the server
+            final Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
+
+            if(tempColony == null)
+            {
+                Log.getLogger().fatal(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
+                        worldObj.getWorldInfo().getWorldName(),
+                        pos.getX(),
+                        pos.getY(),
+                        pos.getZ()));
+            }
+            else
+            {
+                colonyId = tempColony.getID();
+            }
         }
         */
     }

@@ -697,9 +697,9 @@ public class Colony implements IColony
             //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
             //  Consider handing this in an ChunkUnload Event instead?
             citizens.values()
-              .stream()
-              .filter(Colony::isCitizenMissingFromWorld)
-              .forEach(CitizenData::clearCitizenEntity);
+                    .stream()
+                    .filter(Colony::isCitizenMissingFromWorld)
+                    .forEach(CitizenData::clearCitizenEntity);
 
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
@@ -709,11 +709,11 @@ public class Colony implements IColony
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
                 citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null)
-                  .forEach(citizen ->
-                  {
-                      Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
-                      spawnCitizen(citizen);
-                  });
+                        .forEach(citizen ->
+                        {
+                            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
+                            spawnCitizen(citizen);
+                        });
             }
 
             //  Cleanup Buildings whose Blocks have gone AWOL
@@ -759,7 +759,7 @@ public class Colony implements IColony
 
     private void cleanUpBuildings(@NotNull TickEvent.WorldTickEvent event)
     {
-        @Nullable List<AbstractBuilding> removedBuildings = null;
+        @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
 
         //Need this list, we may enter he while we add a building in the real world.
         List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
@@ -770,31 +770,27 @@ public class Colony implements IColony
             if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
-                if (removedBuildings == null)
-                {
-                    removedBuildings = new ArrayList<>();
-                }
                 removedBuildings.add(building);
             }
         }
 
-        if (removedBuildings != null)
-        {
-            removedBuildings.forEach(AbstractBuilding::destroy);
-        }
+        removedBuildings.forEach(AbstractBuilding::destroy);
 
         @NotNull final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
 
         for (@NotNull final Field field : tempFields)
         {
-            @NotNull final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
-            if (scarecrow == null)
+            if (event.world.isBlockLoaded(field.getLocation()))
             {
-                fields.remove(field.getID());
-            }
-            else
-            {
-                field.setInventoryField(scarecrow.getInventoryField());
+                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(field.getID());
+                if (scarecrow == null)
+                {
+                    fields.remove(field.getID());
+                }
+                else
+                {
+                    field.setInventoryField(scarecrow.getInventoryField());
+                }
             }
         }
 
