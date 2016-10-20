@@ -1,5 +1,6 @@
 package com.minecolonies.commands;
 
+import com.blockout.Log;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
@@ -29,6 +30,7 @@ public class RespawnCitizen extends AbstractSingleCommand
     private static final String COORDINATES_XYZ                 = "§4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String CITIZEN_DATA_NULL               = "Couldn't find citizen client side representation of %d in %d";
     private static final String ENTITY_CITIZEN_NULL             = "Couldn't find entity of %d in %d";
+    private static final String COLONY_NULL                     = "Couldn't find colony %d";
 
     public static final String DESC                             = "respawn";
 
@@ -70,6 +72,12 @@ public class RespawnCitizen extends AbstractSingleCommand
 
         //Wasn't able to get the citizen from the colony.
         final Colony colony = ColonyManager.getColony(colonyId);
+        if(colony == null)
+        {
+            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            return;
+        }
+
         final CitizenData citizenData = colony.getCitizen(citizenId);
         if(citizenData == null)
         {
@@ -90,6 +98,7 @@ public class RespawnCitizen extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
         sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
 
+        Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
         entityCitizen.setDead();
     }
 
