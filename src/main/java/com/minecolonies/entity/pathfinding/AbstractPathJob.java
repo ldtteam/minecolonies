@@ -98,10 +98,10 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public AbstractPathJob(World world, @NotNull BlockPos start, @NotNull BlockPos end, int range, PathResult result)
     {
-        int minX = Math.min(start.getX(), end.getX());
-        int minZ = Math.min(start.getZ(), end.getZ());
-        int maxX = Math.max(start.getX(), end.getX());
-        int maxZ = Math.max(start.getZ(), end.getZ());
+        int minX = Math.min(start.getX(), end.getX()) - (range / 2);
+        int minZ = Math.min(start.getZ(), end.getZ()) - (range / 2);
+        int maxX = Math.max(start.getX(), end.getX()) + (range / 2);
+        int maxZ = Math.max(start.getZ(), end.getZ()) + (range / 2);
 
         this.world = new ChunkCache(world, new BlockPos(minX, 0, minZ), new BlockPos(maxX, 256, maxZ), range);
 
@@ -235,6 +235,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * Encodes the lowest 12 bits of x,z and all useful bits of y.
      * This creates unique keys for all blocks within a 4096x256x4096 cube, which is FAR
      * bigger volume than one should attempt to pathfind within
+     * This version takes a BlockPos
      *
      * @param pos BlockPos to generate key from
      * @return key for node in map
@@ -244,6 +245,23 @@ public abstract class AbstractPathJob implements Callable<Path>
         return ((pos.getX() & 0xFFF) << 20) |
                  ((pos.getY() & 0xFF) << 12) |
                  (pos.getZ() & 0xFFF);
+    }
+
+    /**
+     * Generate a pseudo-unique key for identifying a given node by it's coordinates
+     * Encodes the lowest 12 bits of x,z and all useful bits of y.
+     * This creates unique keys for all blocks within a 4096x256x4096 cube, which is FAR
+     * bigger volume than one should attempt to pathfind within
+     * This version takes independent x,y,z for performance
+     *
+     * @param x,y,z Position to generate key from
+     * @return key for node in map
+     */
+    private static int computeNodeKey(int x, int y, int z)
+    {
+        return ((x & 0xFFF) << 20) |
+                ((y & 0xFF) << 12) |
+                (z & 0xFFF);
     }
 
     /**
@@ -342,7 +360,10 @@ public abstract class AbstractPathJob implements Callable<Path>
             totalNodesVisited++;
             currentNode.counterVisited = totalNodesVisited;
 
-            addNodeToDebug(currentNode);
+            if (debugDrawEnabled)
+            {
+                addNodeToDebug(currentNode);
+            }
 
             currentNode.closed = true;
 
@@ -387,11 +408,8 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     private void addNodeToDebug(Node currentNode)
     {
-        if (debugDrawEnabled)
-        {
-            debugNodesNotVisited.remove(currentNode);
-            debugNodesVisited.add(currentNode);
-        }
+        debugNodesNotVisited.remove(currentNode);
+        debugNodesVisited.add(currentNode);
     }
 
     private boolean doDebugSleep()
@@ -421,9 +439,17 @@ public abstract class AbstractPathJob implements Callable<Path>
         return false;
     }
 
+    private static BlockPos BLOCKPOS_IDENTITY = new BlockPos(0, 0, 0);
+    private static BlockPos BLOCKPOS_UP = new BlockPos(0, 1, 0);
+    private static BlockPos BLOCKPOS_DOWN = new BlockPos(0, -1, 0);
+    private static BlockPos BLOCKPOS_NORTH = new BlockPos(0, 0, -1);
+    private static BlockPos BLOCKPOS_SOUTH = new BlockPos(0, 0, 1);
+    private static BlockPos BLOCKPOS_EAST = new BlockPos(1, 0, 0);
+    private static BlockPos BLOCKPOS_WEST = new BlockPos(-1, 0, 0);
+
     private void walkCurrentNode(@NotNull Node currentNode)
     {
-        BlockPos dPos = new BlockPos(0, 0, 0);
+        BlockPos dPos = BLOCKPOS_IDENTITY;
         if (currentNode.parent != null)
         {
             dPos = currentNode.pos.subtract(currentNode.parent.pos);
@@ -432,37 +458,37 @@ public abstract class AbstractPathJob implements Callable<Path>
         //  On a ladder, we can go 1 straight-up
         if (onLadderGoingUp(currentNode, dPos))
         {
-            walk(currentNode, new BlockPos(0, 1, 0));
+            walk(currentNode, BLOCKPOS_UP);
         }
 
         //  We can also go down 1, if the lower block is a ladder
         if (onLadderGoingDown(currentNode, dPos))
         {
-            walk(currentNode, new BlockPos(0, -1, 0));
+            walk(currentNode, BLOCKPOS_DOWN);
         }
 
         // N
         if (dPos.getZ() <= 0)
         {
-            walk(currentNode, new BlockPos(0, 0, -1));
+            walk(currentNode, BLOCKPOS_NORTH);
         }
 
         // E
         if (dPos.getX() >= 0)
         {
-            walk(currentNode, new BlockPos(1, 0, 0));
+            walk(currentNode, BLOCKPOS_EAST);
         }
 
         // S
         if (dPos.getZ() >= 0)
         {
-            walk(currentNode, new BlockPos(0, 0, 1));
+            walk(currentNode, BLOCKPOS_SOUTH);
         }
 
         // W
         if (dPos.getX() <= 0)
         {
-            walk(currentNode, new BlockPos(-1, 0, 0));
+            walk(currentNode, BLOCKPOS_WEST);
         }
     }
 
@@ -533,7 +559,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         node = targetNode;
         while (node.parent != null)
         {
-            addNodeToDebug(node);
+            if (debugDrawEnabled)
+            {
+                addNodeToDebug(node);
+            }
 
             --pathLength;
 
@@ -542,7 +571,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             if (node.isSwimming)
             {
                 //  Not truly necessary but helps prevent them spinning in place at swimming nodes
-                pos.add(0, -1, 0);
+                pos.add(BLOCKPOS_DOWN);
             }
 
             @NotNull PathPointExtended p = new PathPointExtended(pos);
@@ -655,8 +684,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (pos.getY() != newY)
         {
             //  Has this node been visited?
-            pos = new BlockPos(pos.getX(), newY, pos.getZ());
-            nodeKey = computeNodeKey(pos);
+            nodeKey = computeNodeKey(pos.getX(), newY, pos.getZ());
             node = nodesVisited.get(nodeKey);
             if (nodeClosed(node))
             {
@@ -775,12 +803,13 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         //  Do we have something to stand on in the target space?
         final IBlockState below = world.getBlockState(pos.down());
-        if (isWalkableSurface(below) == SurfaceType.WALKABLE)
+        SurfaceType walkability = isWalkableSurface(below);
+        if (walkability == SurfaceType.WALKABLE)
         {
             //  Level path
             return pos.getY();
         }
-        else if(isWalkableSurface(below) == SurfaceType.NOT_PASSABLE)
+        else if (walkability == SurfaceType.NOT_PASSABLE)
         {
             return -1;
         }
