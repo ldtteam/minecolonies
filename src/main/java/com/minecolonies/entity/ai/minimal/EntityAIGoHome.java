@@ -50,7 +50,7 @@ public class EntityAIGoHome extends EntityAIBase
         BlockPos pos = citizen.getHomePosition();
         if (pos == null)
         {
-            Log.getLogger().error("EntityCitizen has null townHall (And no home)");
+            //todo: do something about this instead of spamming console
             return;
         }
 
