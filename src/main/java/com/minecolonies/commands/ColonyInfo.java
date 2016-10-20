@@ -53,7 +53,6 @@ public class ColonyInfo extends AbstractSingleCommand
     {
         int colonyId = -1;
 
-        //todo Find a way to get colony by name
         if (args.length != 0)
         {
             try
@@ -62,8 +61,7 @@ public class ColonyInfo extends AbstractSingleCommand
             }
             catch (NumberFormatException e)
             {
-                //ignore and assume caller's colony
-                //todo get colony by name
+                //todo Find a way to get colony by mayor name
             }
         }
 
