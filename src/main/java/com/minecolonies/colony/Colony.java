@@ -709,11 +709,11 @@ public class Colony implements IColony
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
                 citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null)
-                  .forEach(citizen ->
-                  {
-                      Log.getLogger().warn(String.format("Colony #%d citizen:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
-                      spawnCitizen(citizen);
-                  });
+                        .forEach(citizen ->
+                        {
+                            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
+                            spawnCitizen(citizen);
+                        });
             }
 
             //  Cleanup Buildings whose Blocks have gone AWOL
