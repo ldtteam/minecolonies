@@ -80,7 +80,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (!worldObj.isRemote && colonyId == 0)
         {
-            Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
+            final Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
 
             if(tempColony == null)
             {
