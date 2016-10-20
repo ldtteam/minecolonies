@@ -67,10 +67,7 @@ public class ColonyInfo extends AbstractSingleCommand
             }
             catch (NumberFormatException e)
             {
-                if(!args[0].isEmpty())
-                {
-                    mayorID = getUUIDFromName(sender, args);
-                }
+                mayorID = getUUIDFromName(sender, args);
             }
         }
 
