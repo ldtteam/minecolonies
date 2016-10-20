@@ -57,7 +57,6 @@ public class ColonyInfo extends AbstractSingleCommand
     {
         int colonyId = -1;
         UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
-        final boolean found;
 
         if (args.length != 0)
         {
@@ -87,7 +86,7 @@ public class ColonyInfo extends AbstractSingleCommand
             return;
         }
 
-        Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
+        final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
         if (colony == null)
         {
             sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
