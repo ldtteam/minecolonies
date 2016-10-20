@@ -28,7 +28,7 @@ public class ColonyInfo extends AbstractSingleCommand
     private static final String COORDINATES_XYZ            = "§4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String CITIZENS                   = "§2Citizens: §f";
     private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
-    private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with mayor %s and ID %d not found.";
+    private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
 
     public static final String DESC                        = "info";
 
@@ -49,17 +49,12 @@ public class ColonyInfo extends AbstractSingleCommand
         return super.getCommandUsage(sender) + "";
     }
 
-    @NotNull
-    private UUID getIDOfMayor(@NotNull final ICommandSender sender, @NotNull final String name)
-    {
-        return sender.getEntityWorld().getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(name).getId();
-    }
-
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int colonyId = -1;
         UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
+        final boolean found;
 
         if (args.length != 0)
         {
@@ -69,7 +64,7 @@ public class ColonyInfo extends AbstractSingleCommand
             }
             catch (NumberFormatException e)
             {
-                final UUID tempMayorID = getIDOfMayor(sender, args[0]);
+                final UUID tempMayorID = sender.getEntityWorld().getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId();
                 mayorID = tempMayorID;
             }
         }
@@ -84,26 +79,33 @@ public class ColonyInfo extends AbstractSingleCommand
         {
             tempColony = ColonyManager.getColony(colonyId);
         }
-        if(tempColony != null)
+        if(tempColony == null)
+        {
+            found = false;
+        }
+        else
         {
             colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
-            colony = colony == null ? ColonyManager.getColony(colonyId) : colony;
 
-            if(colony != null)
+            if (colony == null)
             {
+                found = false;
+            }
+            else
+            {
+                found = true;
                 colonyId = colony.getID();
             }
         }
 
-        if (colonyId == -1)
+        if (!found)
         {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
-            return;
-        }
-
-        if(colony == null)
-        {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, args[0], colonyId)));
+            if (colonyId == -1)
+            {
+                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+                return;
+            }
+            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
             return;
         }
 
