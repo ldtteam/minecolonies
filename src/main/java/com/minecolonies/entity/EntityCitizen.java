@@ -76,7 +76,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Number of ticks to heal the citizens
      */
-    private static final int HEAL_CITIZENS_AFTER = 200;
+    private static final int HEAL_CITIZENS_AFTER = 100;
 
     /**
      * Tag's to save data to NBT
@@ -1339,7 +1339,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 continue;
             }
-            stack.damageItem((int)(damage), this);
+            stack.damageItem((int)(damage / 2), this);
 
             if(stack.stackSize < 1)
             {

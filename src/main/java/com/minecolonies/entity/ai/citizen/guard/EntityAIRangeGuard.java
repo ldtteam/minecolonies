@@ -24,7 +24,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     /**
      * Basic delay for the next shot.
      */
-    private static final int BASE_RELOAD_TIME = 100;
+    private static final int BASE_RELOAD_TIME = 60;
 
     /**
      * Base damage which the power enchantments added
@@ -89,7 +89,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     /**
      * Normal volume at which sounds are played at.
      */
-    private static final double BASIC_VOLUME           = 1.0D;
+    private static final double BASIC_VOLUME = 1.0D;
 
     /**
      * Guard has to aim x higher to hit his target.
@@ -126,6 +126,11 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
      * The start search distance of the guard to track/attack entities may get more depending on the level.
      */
     private static final double MAX_ATTACK_DISTANCE = 20.0D;
+
+    /**
+     * Damage per range attack.
+     */
+    private static final int DAMAGE_PER_ATTACK   = 2;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -173,7 +178,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             if(worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MAX_ATTACK_DISTANCE)
             {
                 worker.resetActiveHand();
-                attackEntityWithRangedAttack(targetEntity, 1);
+                attackEntityWithRangedAttack(targetEntity, DAMAGE_PER_ATTACK);
                 setDelay(getReloadTime());
                 arrowsShot += 1;
 
@@ -247,22 +252,22 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
      */
     private void addEffectsToArrow(EntityTippedArrow arrowEntity, double baseDamage)
     {
-        int powerEntchanment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
-        int punchEntchanment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
+        int powerEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
+        int punchEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
 
         DifficultyInstance difficulty = this.worker.worldObj.getDifficultyForLocation(new BlockPos(worker));
         arrowEntity.setDamage((baseDamage * BASE_DAMAGE_MULTIPLIER)
                 + worker.getRandom().nextGaussian() * RANDOM_DAMAGE_MULTPLIER
                 + this.worker.worldObj.getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
 
-        if(powerEntchanment > 0)
+        if(powerEntchantment > 0)
         {
-            arrowEntity.setDamage(arrowEntity.getDamage() + (double)powerEntchanment * BASE_POWER_ENCHANTMENT_DAMAGE + POWER_ENCHANTMENT_DAMAGE_MULTIPLIER);
+            arrowEntity.setDamage(arrowEntity.getDamage() + (double)powerEntchantment * BASE_POWER_ENCHANTMENT_DAMAGE + POWER_ENCHANTMENT_DAMAGE_MULTIPLIER);
         }
 
-        if(punchEntchanment > 0)
+        if(punchEntchantment > 0)
         {
-            arrowEntity.setKnockbackStrength(punchEntchanment);
+            arrowEntity.setKnockbackStrength(punchEntchantment);
         }
 
         boolean onFire = worker.isBurning() && difficulty.func_190083_c() && worker.getRandom().nextBoolean();

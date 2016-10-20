@@ -18,7 +18,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     /**
      * Name description of the guard hat.
      */
-    private static final String GUARD_TOWER = "TowerGuard";
+    private static final String GUARD_TOWER = "GuardTower";
 
     /**
      * Max level of the guard hut.

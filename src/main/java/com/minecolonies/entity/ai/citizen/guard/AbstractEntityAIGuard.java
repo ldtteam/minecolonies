@@ -36,11 +36,6 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     private static final double MAX_ATTACK_DISTANCE = 20.0D;
 
     /**
-     * Basic delay for the next shot.
-     */
-    private static final int BASE_RELOAD_TIME = 100;
-
-    /**
      * Distance the guard starts searching.
      */
     private static final int START_SEARCH_DISTANCE = 5;
@@ -94,7 +89,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     {
         super(job);
     }
-
+    
     /**
      * Goes back to the building and tries to take armour from it when he hasn't in his inventory.
      * @return the next state to go to.
@@ -255,8 +250,6 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
         return (guardTower == null) ? 0 : (MAX_ARROWS_SHOT + guardTower.getBuildingLevel());
     }
-
-
 
     /**
      * Lets the guard patrol inside the colony area searching for mobs.
