@@ -80,23 +80,32 @@ public class ColonyInfo extends AbstractSingleCommand
 
         if(tempColony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+            if (colonyId == -1)
+            {
+                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+            }
+            else
+            {
+                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+            }
             return;
         }
 
         final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+            if (colonyId == -1)
+            {
+                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+            }
+            else
+            {
+                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+            }
             return;
         }
 
         colonyId = colony.getID();
-        if (colonyId == -1)
-        {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
-            return;
-        }
 
         final BlockPos position = colony.getCenter();
         sender.addChatMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
