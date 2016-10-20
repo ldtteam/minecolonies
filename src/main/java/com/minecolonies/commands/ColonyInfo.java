@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static java.util.Collections.emptyList;
-
 /**
  * List all colonies.
  */
@@ -99,7 +97,7 @@ public class ColonyInfo extends AbstractSingleCommand
             sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
             return;
         }
-        
+
         final BlockPos position = colony.getCenter();
         sender.addChatMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
         final String mayor = colony.getPermissions().getOwnerName();
