@@ -1,6 +1,7 @@
 package com.minecolonies.commands;
 
 import com.google.common.collect.ImmutableMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -9,24 +10,22 @@ import java.util.Map;
  * <p>
  * Manages all sub commands.
  */
-public class MinecoloniesCommand extends AbstractSplitCommand
+public class CitizensCommand extends AbstractSplitCommand
 {
-
-    public static final String DESC = "minecolonies";
+    private static final String DESC = "citizens";
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put("colonies", new ColoniesCommand(DESC))
-        .put("colony", new ColonyCommand(DESC))
-        .put("citizens", new CitizensCommand(DESC))
+        .put("list", new ListCitizens("mc", DESC, "list"))
         .build();
 
     /**
-     * Initialize this command with the canon alias.
+     * Initialize this command with it's parents.
+     * @param parent the String of the parent command.
      */
-    public MinecoloniesCommand()
+    public CitizensCommand(@NotNull final String parent)
     {
-        super(DESC);
+        super(parent, DESC);
     }
 
     @Override
