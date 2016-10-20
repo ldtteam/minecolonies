@@ -105,8 +105,6 @@ public class ColonyInfo extends AbstractSingleCommand
             return;
         }
 
-        colonyId = colony.getID();
-
         final BlockPos position = colony.getCenter();
         sender.addChatMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
         final String mayor = colony.getPermissions().getOwnerName();
