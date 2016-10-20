@@ -32,8 +32,10 @@ public class Permissions implements IPermissions
     private static final String              TAG_RANK        = "rank";
     private static final String              TAG_PERMISSIONS = "permissions";
     private static final String              TAG_FLAGS       = "flags";
+    private static final String              TAG_OWNER       = "owner";
+
     @NotNull
-    private static       Map<Rank, RankPair> promotionRanks  = new EnumMap<>(Rank.class);
+    private static Map<Rank, RankPair> promotionRanks  = new EnumMap<>(Rank.class);
     static
     {
         setPromotionRanks(Rank.OFFICER, Rank.OFFICER, Rank.FRIEND);
@@ -49,6 +51,10 @@ public class Permissions implements IPermissions
     private Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
     private boolean            dirty       = false;
 
+    /**
+     * The name of the owner.
+     */
+    private String ownerName;
     /**
      * Saves the permissions with allowed actions
      *
@@ -198,6 +204,8 @@ public class Permissions implements IPermissions
             }
             permissions.put(rank, flags);
         }
+
+        ownerName = compound.getString(TAG_OWNER);
     }
 
     /**
@@ -238,6 +246,8 @@ public class Permissions implements IPermissions
             permissionsTagList.appendTag(permissionsCompound);
         }
         compound.setTag(TAG_PERMISSIONS, permissionsTagList);
+
+        compound.setString(TAG_OWNER, ownerName);
     }
 
     @NotNull
@@ -471,14 +481,17 @@ public class Permissions implements IPermissions
     @Nullable
     public String getOwnerName()
     {
-        for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
+        if(ownerName.isEmpty())
         {
-            if (entry.getValue().rank.equals(Rank.OWNER))
+            for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
             {
-                return entry.getValue().getName();
+                if (entry.getValue().rank.equals(Rank.OWNER))
+                {
+                    return entry.getValue().getName();
+                }
             }
         }
-        return null;
+        return ownerName;
     }
 
     /**

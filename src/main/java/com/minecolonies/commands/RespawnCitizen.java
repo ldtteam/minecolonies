@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,9 +23,7 @@ import java.util.List;
 public class RespawnCitizen extends AbstractSingleCommand
 {
 
-    private static final String ID_TEXT                         = "§2ID: §f";
-    private static final String NAME_TEXT                       = "§2 Name: §f";
-    private static final String COORDINATES_TEXT                = "§2Coordinates: §f";
+    private static final String CITIZEN_DESCRIPTION = "§2ID: §f %d §2 Name: §f %s";
     private static final String REMOVED_MESSAGE                 = "Has been removed";
     private static final String NO_COLONY_CITIZEN_FOUND_MESSAGE = "No citizen %d found in colony %d.";
     private static final String COORDINATES_XYZ                 = "§4x=§f%s §4y=§f%s §4z=§f%s";
@@ -48,7 +47,7 @@ public class RespawnCitizen extends AbstractSingleCommand
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
     {
-        return super.getCommandUsage(sender) + "";
+        return super.getCommandUsage(sender) + "<ColonyId> <CitizenId>";
     }
 
     @Override
@@ -93,9 +92,10 @@ public class RespawnCitizen extends AbstractSingleCommand
             return;
         }
 
-        sender.addChatMessage(new TextComponentString(ID_TEXT + citizenData.getId() + NAME_TEXT + citizenData.getName()));
+        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, entityCitizen.getEntityId(), entityCitizen.getName())));
         final BlockPos position = entityCitizen.getPosition();
-        sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+
         sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
 
         Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
@@ -110,7 +110,7 @@ public class RespawnCitizen extends AbstractSingleCommand
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     @Override

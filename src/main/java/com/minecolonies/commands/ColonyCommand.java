@@ -12,7 +12,6 @@ import java.util.Map;
  */
 public class ColonyCommand extends AbstractSplitCommand
 {
-
     public static final String DESC = "colony";
 
     private final ImmutableMap<String, ISubCommand> subCommands =

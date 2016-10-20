@@ -10,11 +10,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
-
 import javax.annotation.Nullable;
-import java.util.ArrayList;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static java.util.Collections.emptyList;
 
 /**
  * List all colonies.
@@ -47,7 +49,7 @@ public class ColonyInfo extends AbstractSingleCommand
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
     {
-        return super.getCommandUsage(sender) + "";
+        return super.getCommandUsage(sender) + "<ColonyId|OwnerName>";
     }
 
     @Override
@@ -67,7 +69,7 @@ public class ColonyInfo extends AbstractSingleCommand
             {
                 if(!args[0].isEmpty())
                 {
-                    mayorID = getUUIDFromString(sender, args);
+                    mayorID = getUUIDFromName(sender, args);
                 }
             }
         }
@@ -110,7 +112,7 @@ public class ColonyInfo extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
     }
 
-    private static UUID getUUIDFromString(@NotNull final ICommandSender sender, @NotNull final String... args)
+    private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
     {
         final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();
         if(tempServer != null)
@@ -132,7 +134,7 @@ public class ColonyInfo extends AbstractSingleCommand
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     @Override

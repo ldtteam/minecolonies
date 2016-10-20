@@ -24,23 +24,21 @@ import java.util.*;
 public class ListCitizens extends AbstractSingleCommand
 {
 
-    /**
-     * Static final string used to draw.
-     */
-    private static final String ID_TEXT                = "§2ID: §f";
-    private static final String NAME_TEXT              = "§2 Name: §f";
-    private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
-    private static final String COORDINATES_XYZ = "§4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String CITIZEN_DESCRIPTION = "§2ID: §f %d §2 Name: §f %s";
+
+    private static final String COORDINATES_XYZ         = "§2Coordinates: §f §4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String LIST_COMMAND_SUGGESTED  = "/mc citizens list ";
-    private static final String PAGE_TOP_LEFT = "§2   ------------------ page ";
-    private static final String PAGE_TOP_RIGHT = " ------------------";
-    private static final String PAGE_TOP_MIDDLE = " of ";
-    private static final String PREV_PAGE = " <- prev";
-    private static final String NEXT_PAGE = "next -> ";
-    private static final String PAGE_LINE = "§2 ----------------";
-    private static final String PAGE_LINE_DIVIDER = "§2 | ";
-    private static final int    CITIZENS_ON_PAGE        = 9;
+
+    private static final String PAGE_TOP =  "§2   ------------------ page %d of %d ------------------";
+
+    private static final String PREV_PAGE               = " <- prev";
+    private static final String NEXT_PAGE               = "next -> ";
+    private static final String PAGE_LINE               = "§2 ----------------";
+    private static final String PAGE_LINE_DIVIDER       = "§2 | ";
     private static final String NO_COLONY_FOUND_MESSAGE = "No colony found for id: %d.";
+    private static final int    CITIZENS_ON_PAGE        = 9;
+
+    public static final String DESC                     = "list";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -56,7 +54,7 @@ public class ListCitizens extends AbstractSingleCommand
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
     {
-        return super.getCommandUsage(sender) + "";
+        return super.getCommandUsage(sender) + "<colonyId>";
     }
 
     @Override
@@ -99,17 +97,17 @@ public class ListCitizens extends AbstractSingleCommand
             citizensPage = citizens.subList(pageStartIndex, pageStopIndex);
         }
 
-        final ITextComponent headerLine = new TextComponentString(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
+        final ITextComponent headerLine = new TextComponentString(String.format(PAGE_TOP, page, pageCount));
         sender.addChatMessage(headerLine);
 
         for (final CitizenData citizen : citizensPage)
         {
-            sender.addChatMessage(new TextComponentString(ID_TEXT + citizen.getId() + NAME_TEXT + citizen.getName()));
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizen.getId(), citizen.getName())));
 
             if (citizen.getCitizenEntity() != null)
             {
                 final BlockPos position = citizen.getCitizenEntity().getPosition();
-                sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+                sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             }
         }
         drawPageSwitcher(sender, page, citizenCount, halfPage);
@@ -169,7 +167,7 @@ public class ListCitizens extends AbstractSingleCommand
                                                  @NotNull final String[] args,
                                                  @Nullable final BlockPos pos)
     {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     @Override
