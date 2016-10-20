@@ -185,7 +185,7 @@ com.minecolonies.gui.debugScreen.noCloseColony=No close colony!
 com.minecolonies.gui.debugScreen.nextColony=Next colony is %d blocks away (%d required to place a colony)
 com.minecolonies.gui.debugScreen.blocksFromCenter=%d blocks from the center.
 
-com.minecolonies.gui.workerHuts.TowerGuard=Guard Tower
+com.minecolonies.gui.workerHuts.GuardTower=Guard Tower
 com.minecolonies.job.guard.name=GuardTower
 com.minecolonies.job.Guard=Guard
 com.minecolonies.gui.workerHuts.level0=Please construct the hut to hire a worker.
