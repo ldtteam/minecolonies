@@ -138,6 +138,9 @@ public class ColonyInfo extends AbstractSingleCommand
     @Override
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
-        return false;
+        return index == 0
+                && args.length > 0
+                && !args[0].isEmpty()
+                && getIthArgument(args, 0, Integer.MAX_VALUE) == Integer.MAX_VALUE;
     }
 }
