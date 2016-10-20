@@ -20,9 +20,9 @@ public class CitizensCommand extends AbstractSplitCommand
     /**
      * Initialize this command with it's parents.
      */
-    public CitizensCommand()
+    public CitizensCommand(@NotNull final String parent)
     {
-        super("mc", "citizens");
+        super(parent, "citizens");
     }
 
     @Override
