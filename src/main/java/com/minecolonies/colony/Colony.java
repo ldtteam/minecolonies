@@ -715,7 +715,7 @@ public class Colony implements IColony
                             spawnCitizen(citizen);
                         });
             }
-            
+
             //  Cleanup Buildings whose Blocks have gone AWOL
             cleanUpBuildings(event);
 
@@ -810,7 +810,7 @@ public class Colony implements IColony
      *
      * @param data Data to use to spawn citizen
      */
-    public void spawnCitizen(CitizenData data)
+    public synchronized void spawnCitizen(CitizenData data)
     {
         if (!world.isBlockLoaded(center))
         {
