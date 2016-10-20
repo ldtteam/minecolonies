@@ -1,7 +1,6 @@
 package com.minecolonies.entity.ai.minimal;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.util.Log;
 import com.minecolonies.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.math.BlockPos;

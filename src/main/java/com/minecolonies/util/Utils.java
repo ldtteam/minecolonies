@@ -3,7 +3,6 @@ package com.minecolonies.util;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
@@ -271,6 +270,7 @@ public final class Utils
      * @param pos      Coordinates
      * @param block    Block that makes the sound
      * @param metadata Metadata of the block that makes sound
+     * @param citizen  the citizen breaking this block
      */
     public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata, EntityCitizen citizen)
     {

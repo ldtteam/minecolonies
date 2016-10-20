@@ -3,7 +3,6 @@ package com.minecolonies;
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.commands.CommandEntryPoint;
-import com.minecolonies.commands.MinecoloniesCommand;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;

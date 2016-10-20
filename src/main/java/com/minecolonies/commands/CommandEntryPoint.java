@@ -44,7 +44,7 @@ public class CommandEntryPoint extends CommandBase
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         // We can pass this without stripping as mc does that for us with the alias
         root.execute(server, sender, args);

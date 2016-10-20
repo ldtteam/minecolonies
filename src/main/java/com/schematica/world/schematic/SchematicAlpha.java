@@ -15,7 +15,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -102,7 +101,8 @@ class SchematicAlpha extends SchematicFormat
                     pos.setPos(x, y, z);
                     try
                     {
-                        @SuppressWarnings("deprecation") final IBlockState blockState = block.getStateFromMeta(meta);
+                        @SuppressWarnings("deprecation")
+                        final IBlockState blockState = block.getStateFromMeta(meta);
                         schematic.setBlockState(pos, blockState);
                     }
                     catch (final RuntimeException e)

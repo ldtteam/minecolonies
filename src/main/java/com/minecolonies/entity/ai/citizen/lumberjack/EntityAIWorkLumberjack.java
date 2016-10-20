@@ -2,16 +2,15 @@ package com.minecolonies.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
-import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.SoundType;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
