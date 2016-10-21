@@ -32,8 +32,10 @@ public class Permissions implements IPermissions
     private static final String              TAG_RANK        = "rank";
     private static final String              TAG_PERMISSIONS = "permissions";
     private static final String              TAG_FLAGS       = "flags";
+    private static final String              TAG_OWNER       = "owner";
+
     @NotNull
-    private static       Map<Rank, RankPair> promotionRanks  = new EnumMap<>(Rank.class);
+    private static Map<Rank, RankPair> promotionRanks  = new EnumMap<>(Rank.class);
     static
     {
         setPromotionRanks(Rank.OFFICER, Rank.OFFICER, Rank.FRIEND);
@@ -49,6 +51,10 @@ public class Permissions implements IPermissions
     private Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
     private boolean            dirty       = false;
 
+    /**
+     * The name of the owner.
+     */
+    private String ownerName ="";
     /**
      * Saves the permissions with allowed actions
      *
@@ -198,6 +204,11 @@ public class Permissions implements IPermissions
             }
             permissions.put(rank, flags);
         }
+
+        if(compound.hasKey(TAG_OWNER))
+        {
+            ownerName = compound.getString(TAG_OWNER);
+        }
     }
 
     /**
@@ -238,6 +249,11 @@ public class Permissions implements IPermissions
             permissionsTagList.appendTag(permissionsCompound);
         }
         compound.setTag(TAG_PERMISSIONS, permissionsTagList);
+
+        if(!ownerName.isEmpty())
+        {
+            compound.setString(TAG_OWNER, ownerName);
+        }
     }
 
     @NotNull
@@ -453,7 +469,7 @@ public class Permissions implements IPermissions
     @Nullable
     public UUID getOwner()
     {
-        for (@NotNull Map.Entry<UUID, Player> entry : players.entrySet())
+        for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
         {
             if (entry.getValue().rank.equals(Rank.OWNER))
             {
@@ -461,6 +477,27 @@ public class Permissions implements IPermissions
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the name of the owner of this permission instance.
+     *
+     * @return Name of the owner
+     */
+    @Nullable
+    public String getOwnerName()
+    {
+        if(ownerName.isEmpty())
+        {
+            for (@NotNull final Map.Entry<UUID, Player> entry : players.entrySet())
+            {
+                if (entry.getValue().rank.equals(Rank.OWNER))
+                {
+                    return entry.getValue().getName();
+                }
+            }
+        }
+        return ownerName;
     }
 
     /**
