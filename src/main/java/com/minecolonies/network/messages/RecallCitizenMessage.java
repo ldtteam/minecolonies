@@ -61,44 +61,46 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
     @Override
     public IMessage onMessage(@NotNull RecallCitizenMessage message, MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null)
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            @Nullable AbstractBuildingWorker building = colony.getBuilding(message.buildingId, AbstractBuildingWorker.class);
-            if (building != null)
+            Colony colony = ColonyManager.getColony(message.colonyId);
+            if (colony != null)
             {
-                BlockPos loc = building.getLocation();
-
-                @Nullable CitizenData citizenData = building.getWorker();
-
-                if(citizenData != null)
+                @Nullable AbstractBuildingWorker building = colony.getBuilding(message.buildingId, AbstractBuildingWorker.class);
+                if (building != null)
                 {
-                    @Nullable EntityCitizen citizen = building.getWorkerEntity();
-                    //Try to retrieve the citizen.
-                    if(citizen == null)
-                    {
-                        Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
-                        colony.spawnCitizen(citizenData);
-                    }
+                    BlockPos loc = building.getLocation();
 
-                    citizen = citizenData.getCitizenEntity();
-                    if (citizen != null)
-                    {
-                        @Nullable World world = colony.getWorld();
-                        @Nullable BlockPos spawnPoint =
-                                Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER);
+                    @Nullable CitizenData citizenData = building.getWorker();
 
-                        citizen.setLocationAndAngles(
-                                spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
-                                spawnPoint.getY(),
-                                spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-                                citizen.rotationYaw,
-                                citizen.rotationPitch);
+                    if(citizenData != null)
+                    {
+                        @Nullable EntityCitizen citizen = building.getWorkerEntity();
+                        //Try to retrieve the citizen.
+                        if(citizen == null)
+                        {
+                            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
+                            colony.spawnCitizen(citizenData);
+                        }
+
+                        citizen = citizenData.getCitizenEntity();
+                        if (citizen != null)
+                        {
+                            @Nullable World world = colony.getWorld();
+                            @Nullable BlockPos spawnPoint =
+                                    Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER);
+
+                            citizen.setLocationAndAngles(
+                                    spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
+                                    spawnPoint.getY(),
+                                    spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
+                                    citizen.rotationYaw,
+                                    citizen.rotationPitch);
+                        }
                     }
                 }
             }
-        }
-
+        });
         return null;
     }
 }
