@@ -157,6 +157,12 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         }
     }
 
+    @Override
+    protected ItemStack getItemToAttackWith()
+    {
+        return new ItemStack(Items.BOW);
+    }
+
     private int getReloadTime()
     {
         return BASE_RELOAD_TIME / (worker.getExperienceLevel() + 1);
@@ -197,17 +203,6 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
         worker.setAIMoveSpeed(1);
         return AIState.GUARD_SEARCH_TARGET;
-    }
-
-    /**
-     * Can be overridden in implementations.
-     * <p>
-     * Here the AI can check if the fishes or rods have to be re rendered and do it.
-     */
-    @Override
-    protected void updateRenderMetaData()
-    {
-        updateArmor();
     }
 
     @Override

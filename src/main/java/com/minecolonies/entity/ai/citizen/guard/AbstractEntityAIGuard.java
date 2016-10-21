@@ -43,7 +43,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Basic delay after operations.
      */
-    private static final int BASE_DELAY = 10;
+    private static final int BASE_DELAY = 1;
 
     /**
      * Max amount the guard can shoot arrows before restocking.
@@ -89,7 +89,18 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     {
         super(job);
     }
-    
+
+    /**
+     * Can be overridden in implementations.
+     * <p>
+     * Here the AI can check if the armour have to be re rendered and do it.
+     */
+    @Override
+    protected void updateRenderMetaData()
+    {
+        updateArmor();
+    }
+
     /**
      * Goes back to the building and tries to take armour from it when he hasn't in his inventory.
      * @return the next state to go to.
@@ -197,6 +208,12 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     }
 
     /**
+     * Override this to set the Item the Guard should use to attack.
+     * @return an ItemStack with the item.
+     */
+    protected abstract ItemStack getItemToAttackWith();
+
+    /**
      * Searches for the next taget.
      * @return the next AIState.
      */
@@ -206,11 +223,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(currentSearchDistance)));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
 
-        if(checkOrRequestItems(new ItemStack(Items.BOW)))
+        if(checkOrRequestItems(getItemToAttackWith()))
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        worker.setHeldItem(worker.findFirstSlotInInventoryWith(Items.BOW));
+        worker.setHeldItem(worker.findFirstSlotInInventoryWith(getItemToAttackWith().getItem()));
 
         setDelay(BASE_DELAY);
         if(entityList.isEmpty())

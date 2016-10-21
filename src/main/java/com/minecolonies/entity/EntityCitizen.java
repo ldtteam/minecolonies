@@ -517,11 +517,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
                         "tile.blockHutTownHall.messageGuardDead",
                         citizenData.getName());
             }
-            LanguageHandler.sendPlayersLocalizedMessage(
-              colony.getMessageEntityPlayers(),
-              "tile.blockHutTownHall.messageColonistDead",
-              citizenData.getName());
-
+            else
+            {
+                LanguageHandler.sendPlayersLocalizedMessage(
+                        colony.getMessageEntityPlayers(),
+                        "tile.blockHutTownHall.messageColonistDead",
+                        citizenData.getName());
+            }
             colony.removeCitizen(getCitizenData());
         }
         super.onDeath(par1DamageSource);

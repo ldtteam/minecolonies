@@ -10,6 +10,7 @@ import com.minecolonies.util.Log;
 import com.minecolonies.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.init.Blocks;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
