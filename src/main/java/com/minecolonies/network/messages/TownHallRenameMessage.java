@@ -51,15 +51,17 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
     @Override
     public IMessage onMessage(@NotNull TownHallRenameMessage message, MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
-
-        if (colony != null)
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            this.name = (name.length() <= MAX_NAME_LENGTH)? name : name.substring(0, SUBSTRING_LENGTH);
-            colony.setName(message.name);
-            MineColonies.getNetwork().sendToAll(message);
-        }
+            Colony colony = ColonyManager.getColony(message.colonyId);
 
+            if (colony != null)
+            {
+                this.name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
+                colony.setName(message.name);
+                MineColonies.getNetwork().sendToAll(message);
+            }
+        });
         return null;
     }
 }

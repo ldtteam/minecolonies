@@ -121,17 +121,19 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
     @Override
     public IMessage onMessage(@NotNull BuildToolPlaceMessage message, @NotNull MessageContext ctx)
     {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        World world = player.worldObj;
-        if (message.isHut)
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            handleHut(world, player, message.hutDec, message.style, message.rotation, message.pos);
-        }
-        else
-        {
-            handleDecoration(world, player, message.hutDec, message.style, message.rotation, message.pos);
-        }
-
+            EntityPlayer player = ctx.getServerHandler().playerEntity;
+            World world = player.worldObj;
+            if (message.isHut)
+            {
+                handleHut(world, player, message.hutDec, message.style, message.rotation, message.pos);
+            }
+            else
+            {
+                handleDecoration(world, player, message.hutDec, message.style, message.rotation, message.pos);
+            }
+        });
         return null;
     }
 

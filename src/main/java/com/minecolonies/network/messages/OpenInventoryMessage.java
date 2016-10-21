@@ -137,35 +137,36 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
     public IMessage onMessage(@NotNull OpenInventoryMessage message, @NotNull MessageContext ctx)
     {
         EntityPlayer player = ctx.getServerHandler().playerEntity;
-
-        switch (message.inventoryType)
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            case INVENTORY_CITIZEN:
-                @NotNull final InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
-                if (!StringUtils.isNullOrEmpty(message.name))
-                {
-                    citizenInventory.setCustomName(message.name);
-                }
-                player.displayGUIChest(citizenInventory);
-                break;
-            case INVENTORY_CHEST:
-                @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
-                if (!StringUtils.isNullOrEmpty(message.name))
-                {
-                    chest.setCustomName(message.name);
-                }
-                player.displayGUIChest(chest);
-                break;
-            case INVENTORY_FIELD:
-                @NotNull final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
-                if (!StringUtils.isNullOrEmpty(message.name))
-                {
-                    inventoryField.setCustomName(message.name);
-                }
-                player.displayGUIChest(inventoryField);
-                break;
-        }
-
+            switch (message.inventoryType)
+            {
+                case INVENTORY_CITIZEN:
+                    @NotNull final InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
+                    if (!StringUtils.isNullOrEmpty(message.name))
+                    {
+                        citizenInventory.setCustomName(message.name);
+                    }
+                    player.displayGUIChest(citizenInventory);
+                    break;
+                case INVENTORY_CHEST:
+                    @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
+                    if (!StringUtils.isNullOrEmpty(message.name))
+                    {
+                        chest.setCustomName(message.name);
+                    }
+                    player.displayGUIChest(chest);
+                    break;
+                case INVENTORY_FIELD:
+                    @NotNull final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
+                    if (!StringUtils.isNullOrEmpty(message.name))
+                    {
+                        inventoryField.setCustomName(message.name);
+                    }
+                    player.displayGUIChest(inventoryField);
+                    break;
+            }
+        });
         return null;
     }
 

@@ -53,18 +53,21 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
     @Override
     public IMessage onMessage(@NotNull MinerSetLevelMessage message, MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null)
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            @Nullable BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
-            if (building != null)
+            Colony colony = ColonyManager.getColony(message.colonyId);
+            if (colony != null)
             {
-                if (message.level >= 0 && message.level < building.getNumberOfLevels())
+                @Nullable BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
+                if (building != null)
                 {
-                    building.setCurrentLevel(message.level);
+                    if (message.level >= 0 && message.level < building.getNumberOfLevels())
+                    {
+                        building.setCurrentLevel(message.level);
+                    }
                 }
             }
-        }
+        });
         return null;
     }
 }

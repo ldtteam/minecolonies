@@ -84,29 +84,32 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
     @Override
     public IMessage onMessage(@NotNull BuildRequestMessage message, MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony == null)
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            return null;
-        }
+            Colony colony = ColonyManager.getColony(message.colonyId);
+            if (colony == null)
+            {
+                return;
+            }
 
-        AbstractBuilding building = colony.getBuilding(message.buildingId);
-        if (building == null)
-        {
-            return null;
-        }
+            AbstractBuilding building = colony.getBuilding(message.buildingId);
+            if (building == null)
+            {
+                return;
+            }
 
-        switch (message.mode)
-        {
-            case BUILD:
-                building.requestUpgrade();
-                break;
-            case REPAIR:
-                building.requestRepair();
-                break;
-            default:
-                break;
-        }
+            switch (message.mode)
+            {
+                case BUILD:
+                    building.requestUpgrade();
+                    break;
+                case REPAIR:
+                    building.requestRepair();
+                    break;
+                default:
+                    break;
+            }
+        });
 
         return null;
     }

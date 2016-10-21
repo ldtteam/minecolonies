@@ -79,11 +79,14 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
     @Override
     public IMessage onMessage(@NotNull ToggleJobMessage message, MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null)
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            colony.setManualHiring(message.toggle);
-        }
+            Colony colony = ColonyManager.getColony(message.colonyId);
+            if (colony != null)
+            {
+                colony.setManualHiring(message.toggle);
+            }
+        });
         return null;
     }
 }

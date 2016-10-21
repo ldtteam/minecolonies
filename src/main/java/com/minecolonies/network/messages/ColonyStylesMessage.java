@@ -83,7 +83,10 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public IMessage onMessage(@NotNull ColonyStylesMessage message, MessageContext ctx)
     {
-        Schematics.setStyles(message.hutStyleMap, message.decorationStyleMap);
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
+        {
+            Schematics.setStyles(message.hutStyleMap, message.decorationStyleMap);
+        });
         return null;
     }
 }

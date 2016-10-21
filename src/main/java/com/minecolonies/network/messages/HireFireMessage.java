@@ -102,25 +102,28 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
     @Override
     public IMessage onMessage(@NotNull HireFireMessage message, @NotNull MessageContext ctx)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null)
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            Colony colony = ColonyManager.getColony(message.colonyId);
+            if (colony != null)
             {
-                return null;
-            }
+                //Verify player has permission to do edit permissions
+                if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+                {
+                    return;
+                }
 
-            if (message.hire)
-            {
-                CitizenData citizen = colony.getCitizen(message.citizenID);
-                ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
+                if (message.hire)
+                {
+                    CitizenData citizen = colony.getCitizen(message.citizenID);
+                    ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
+                }
+                else
+                {
+                    ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(null);
+                }
             }
-            else
-            {
-                ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(null);
-            }
-        }
+        });
         return null;
     }
 }

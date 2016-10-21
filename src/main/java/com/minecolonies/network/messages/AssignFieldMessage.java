@@ -71,28 +71,31 @@ public class AssignFieldMessage implements IMessage, IMessageHandler<AssignField
     @Override
     public IMessage onMessage(@NotNull AssignFieldMessage message, @NotNull MessageContext ctx)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null)
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            final Colony colony = ColonyManager.getColony(message.colonyId);
+            if (colony != null)
             {
-                return null;
-            }
+                //Verify player has permission to do edit permissions
+                if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+                {
+                    return;
+                }
 
-            @Nullable final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
-            if (building != null)
-            {
-                if (message.assign)
+                @Nullable final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
+                if (building != null)
                 {
-                    building.assignField(message.field);
-                }
-                else
-                {
-                    building.freeField(message.field);
+                    if (message.assign)
+                    {
+                        building.assignField(message.field);
+                    }
+                    else
+                    {
+                        building.freeField(message.field);
+                    }
                 }
             }
-        }
+        });
         return null;
     }
 }

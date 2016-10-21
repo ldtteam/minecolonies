@@ -101,24 +101,27 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
     @Override
     public IMessage onMessage(@NotNull WorkOrderChangeMessage message, @NotNull MessageContext ctx)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            final Colony colony = ColonyManager.getColony(message.colonyId);
+            if (colony != null && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
             {
-                return null;
-            }
+                //Verify player has permission to do edit permissions
+                if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+                {
+                    return;
+                }
 
-            if (message.removeWorkOrder)
-            {
-                colony.getWorkManager().removeWorkOrder(message.workOrderId);
+                if (message.removeWorkOrder)
+                {
+                    colony.getWorkManager().removeWorkOrder(message.workOrderId);
+                }
+                else
+                {
+                    colony.getWorkManager().getWorkOrder(message.workOrderId).setPriority(message.priority);
+                }
             }
-            else
-            {
-                colony.getWorkManager().getWorkOrder(message.workOrderId).setPriority(message.priority);
-            }
-        }
+        });
         return null;
     }
 }

@@ -66,21 +66,24 @@ public class AssignmentModeMessage implements IMessage, IMessageHandler<Assignme
     @Override
     public IMessage onMessage(@NotNull AssignmentModeMessage message, @NotNull MessageContext ctx)
     {
-        final Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null)
+        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
         {
-            //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            final Colony colony = ColonyManager.getColony(message.colonyId);
+            if (colony != null)
             {
-                return null;
-            }
+                //Verify player has permission to do edit permissions
+                if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+                {
+                    return;
+                }
 
-            @Nullable final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
-            if (building != null)
-            {
-                building.setAssignManually(message.assignmentMode);
+                @Nullable final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
+                if (building != null)
+                {
+                    building.setAssignManually(message.assignmentMode);
+                }
             }
-        }
+        });
         return null;
     }
 }
