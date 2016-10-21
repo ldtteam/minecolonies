@@ -95,7 +95,6 @@ public class RecallCitizenMessage implements IMessage, IMessageHandler<RecallCit
                                 citizen.rotationYaw,
                                 citizen.rotationPitch);
                     }
-                    citizen.setLocationAndAngles(spawnPoint.getX() + 0.5, spawnPoint.getY(), spawnPoint.getZ() + 0.5, citizen.rotationYaw, citizen.rotationPitch);
                     citizen.getNavigator().clearPathEntity();
                 }
             }
