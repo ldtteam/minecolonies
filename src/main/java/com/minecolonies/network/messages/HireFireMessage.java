@@ -43,7 +43,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
      */
     public HireFireMessage()
     {
-        //Required for netty.
+        super();
     }
 
     /**
@@ -55,6 +55,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
      */
     public HireFireMessage(@NotNull AbstractBuilding.View building, boolean hire, int citizenID)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.hire = hire;

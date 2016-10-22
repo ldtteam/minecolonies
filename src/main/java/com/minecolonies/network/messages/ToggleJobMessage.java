@@ -27,7 +27,7 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
      */
     public ToggleJobMessage()
     {
-        // Required for netty.
+        super();
     }
 
     /**
@@ -38,6 +38,7 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
      */
     public ToggleJobMessage(@NotNull ColonyView colony, boolean toggle)
     {
+        super();
         this.colonyId = colony.getID();
         this.toggle = toggle;
     }

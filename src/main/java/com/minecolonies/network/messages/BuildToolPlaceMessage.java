@@ -46,7 +46,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     public BuildToolPlaceMessage()
     {
-        // Called using reflection by Forge.
+        super();
     }
 
     /**
@@ -61,6 +61,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     public BuildToolPlaceMessage(String hutDec, String style, BlockPos pos, int rotation, boolean isHut)
     {
+        super();
         this.hutDec = hutDec;
         this.style = style;
         this.pos = pos;

@@ -17,7 +17,13 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
     private BlockPos buildingId;
     private int      level;
 
-    public MinerSetLevelMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public MinerSetLevelMessage()
+    {
+        super();
+    }
 
     /**
      * Creates object for the miner set level message
@@ -27,6 +33,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
      */
     public MinerSetLevelMessage(@NotNull BuildingMiner.View building, int level)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.level = level;

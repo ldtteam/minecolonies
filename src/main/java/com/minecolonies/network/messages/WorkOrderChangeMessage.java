@@ -39,9 +39,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
      */
     public WorkOrderChangeMessage()
     {
-        /*
-         * Intentionally left empty.
-         **/
+        super();
     }
 
     /**
@@ -54,6 +52,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
      */
     public WorkOrderChangeMessage(@NotNull AbstractBuilding.View building, int workOrderId, boolean removeWorkOrder, int priority)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.workOrderId = workOrderId;
         this.removeWorkOrder = removeWorkOrder;

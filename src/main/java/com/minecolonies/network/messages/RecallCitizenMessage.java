@@ -29,7 +29,12 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
     private int      colonyId;
     private BlockPos buildingId;
 
-    public RecallCitizenMessage() {}
+    /**
+     * Empty public constructor.
+     */
+    public RecallCitizenMessage() {
+        super();
+    }
 
     /**
      * Object creation for the recall
@@ -38,6 +43,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
      */
     public RecallCitizenMessage(@NotNull AbstractBuildingWorker.View building)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
     }

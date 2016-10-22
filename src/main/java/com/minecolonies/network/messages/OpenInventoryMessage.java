@@ -47,9 +47,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
      */
     public OpenInventoryMessage()
     {
-        /*
-         * Intentionally left empty.
-         */
+        super();
     }
 
     /**
@@ -59,6 +57,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
      */
     public OpenInventoryMessage(@NotNull CitizenDataView citizen)
     {
+        super();
         inventoryType = InventoryType.INVENTORY_CITIZEN;
         name = citizen.getName();
         this.entityID = citizen.getEntityId();
@@ -71,6 +70,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
      */
     public OpenInventoryMessage(@NotNull AbstractBuilding.View building)
     {
+        super();
         inventoryType = InventoryType.INVENTORY_CHEST;
         name = "";
         tePos = building.getLocation();
@@ -84,6 +84,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
      */
     public OpenInventoryMessage(BlockPos field, int colonyId)
     {
+        super();
         inventoryType = InventoryType.INVENTORY_FIELD;
         name = "field";
         tePos = field;

@@ -44,9 +44,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
      */
     public BuildRequestMessage()
     {
-        /*
-         * Required standard constructor.
-         */
+        super();
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.util.Log;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -19,5 +18,11 @@ public abstract class AbstractMessage<A extends IMessage, B extends IMessage> im
         return null;
     }
 
+    /**
+     * Override this to schedule actions taken in the server thread.
+     *
+     * @param message the original message.
+     * @param player  the player associated.
+     */
     public abstract void messageOnServerThread(final A message, final EntityPlayerMP player);
 }

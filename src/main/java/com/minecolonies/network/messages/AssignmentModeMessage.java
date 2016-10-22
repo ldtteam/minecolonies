@@ -27,9 +27,7 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
      */
     public AssignmentModeMessage()
     {
-        /*
-         * Intentionally left empty.
-         */
+        super();
     }
 
     /**

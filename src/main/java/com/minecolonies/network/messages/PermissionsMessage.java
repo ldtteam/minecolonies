@@ -82,9 +82,12 @@ public class PermissionsMessage
         private Permissions.Rank   rank;
         private Permissions.Action action;
 
+        /**
+         * Empty public constructor.
+         */
         public Permission()
         {
-            //Required
+            super();
         }
 
         /**
@@ -97,6 +100,7 @@ public class PermissionsMessage
          */
         public Permission(@NotNull ColonyView colony, MessageType type, Permissions.Rank rank, Permissions.Action action)
         {
+            super();
             this.colonyID = colony.getID();
             this.type = type;
             this.rank = rank;

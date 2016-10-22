@@ -17,7 +17,12 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
     private int    colonyId;
     private String name;
 
-    public TownHallRenameMessage() {}
+    /**
+     * Empty public constructor.
+     */
+    public TownHallRenameMessage() {
+        super();
+    }
 
     /**
      * Object creation for the town hall rename message
@@ -27,6 +32,7 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
      */
     public TownHallRenameMessage(@NotNull ColonyView colony, String name)
     {
+        super();
         this.colonyId = colony.getID();
         this.name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
     }

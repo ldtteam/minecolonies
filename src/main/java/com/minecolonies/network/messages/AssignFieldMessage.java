@@ -28,9 +28,7 @@ public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMes
      */
     public AssignFieldMessage()
     {
-        /*
-         * Intentionally left empty.
-         */
+        super();
     }
 
     /**
