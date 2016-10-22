@@ -13,9 +13,6 @@ public class Compatibility
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 }
