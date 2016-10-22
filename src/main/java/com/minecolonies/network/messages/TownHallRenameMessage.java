@@ -5,6 +5,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -12,7 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHallRenameMessage, IMessage>
+public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage, IMessage>
 {
     private int    colonyId;
     private String name;
@@ -47,21 +48,15 @@ public class TownHallRenameMessage implements IMessage, IMessageHandler<TownHall
         ByteBufUtils.writeUTF8String(buf, name);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull TownHallRenameMessage message, MessageContext ctx)
+    public void messageOnServerThread(final TownHallRenameMessage message, final EntityPlayerMP player)
     {
-        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
+        final Colony colony = ColonyManager.getColony(message.colonyId);
+        if (colony != null)
         {
-            Colony colony = ColonyManager.getColony(message.colonyId);
-
-            if (colony != null)
-            {
-                this.name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
-                colony.setName(message.name);
-                MineColonies.getNetwork().sendToAll(message);
-            }
-        });
-        return null;
+            message.name = (message.name.length() <= MAX_NAME_LENGTH) ? message.name : message.name.substring(0, SUBSTRING_LENGTH);
+            colony.setName(message.name);
+            MineColonies.getNetwork().sendToAll(message);
+        }
     }
 }

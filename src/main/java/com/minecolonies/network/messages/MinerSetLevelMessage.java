@@ -5,6 +5,7 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -12,7 +13,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetLevelMessage, IMessage>
+public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, IMessage>
 {
     private int      colonyId;
     private BlockPos buildingId;
@@ -49,25 +50,20 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
         buf.writeInt(level);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull MinerSetLevelMessage message, MessageContext ctx)
+    public void messageOnServerThread(final MinerSetLevelMessage message, final EntityPlayerMP player)
     {
-        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
+        Colony colony = ColonyManager.getColony(message.colonyId);
+        if (colony != null)
         {
-            Colony colony = ColonyManager.getColony(message.colonyId);
-            if (colony != null)
+            @Nullable BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
+            if (building != null)
             {
-                @Nullable BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
-                if (building != null)
+                if (message.level >= 0 && message.level < building.getNumberOfLevels())
                 {
-                    if (message.level >= 0 && message.level < building.getNumberOfLevels())
-                    {
-                        building.setCurrentLevel(message.level);
-                    }
+                    building.setCurrentLevel(message.level);
                 }
             }
-        });
-        return null;
+        }
     }
 }

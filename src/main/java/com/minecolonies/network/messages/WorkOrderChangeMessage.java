@@ -5,6 +5,7 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -14,7 +15,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Creates the WorkOrderChangeMessage which is responsible for changes in priority or removal of workOrders.
  */
-public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrderChangeMessage, IMessage>
+public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessage, IMessage>
 {
     /**
      * The Colony ID.
@@ -41,7 +42,7 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
      */
     public WorkOrderChangeMessage()
     {
-        /**
+        /*
          * Intentionally left empty.
          **/
     }
@@ -90,39 +91,27 @@ public class WorkOrderChangeMessage implements IMessage, IMessageHandler<WorkOrd
         buf.writeBoolean(removeWorkOrder);
     }
 
-    /**
-     * Called when a message has been received.
-     *
-     * @param message the message.
-     * @param ctx     the context.
-     * @return possible response, in this case it is null.
-     */
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull WorkOrderChangeMessage message, @NotNull MessageContext ctx)
+    public void messageOnServerThread(final WorkOrderChangeMessage message, final EntityPlayerMP player)
     {
-        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
+        final Colony colony = ColonyManager.getColony(message.colonyId);
+        if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
         {
-            final Colony colony = ColonyManager.getColony(message.colonyId);
-            if (colony != null && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            //Verify player has permission to do edit permissions
+            if (!colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
             {
-                //Verify player has permission to do edit permissions
-                if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
-                {
-                    return;
-                }
-
-                if (message.removeWorkOrder)
-                {
-                    colony.getWorkManager().removeWorkOrder(message.workOrderId);
-                }
-                else
-                {
-                    colony.getWorkManager().getWorkOrder(message.workOrderId).setPriority(message.priority);
-                }
+                return;
             }
-        });
-        return null;
+
+            if (message.removeWorkOrder)
+            {
+                colony.getWorkManager().removeWorkOrder(message.workOrderId);
+            }
+            else
+            {
+                colony.getWorkManager().getWorkOrder(message.workOrderId).setPriority(message.priority);
+            }
+        }
     }
 }
 

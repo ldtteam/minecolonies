@@ -9,6 +9,7 @@ import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message sent to open an inventory.
  */
-public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInventoryMessage, IMessage>
+public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, IMessage>
 {
     /***
      * The inventory name.
@@ -50,7 +51,7 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
      */
     public OpenInventoryMessage()
     {
-        /**
+        /*
          * Intentionally left empty.
          */
     }
@@ -132,42 +133,36 @@ public class OpenInventoryMessage implements IMessage, IMessageHandler<OpenInven
         }
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull OpenInventoryMessage message, @NotNull MessageContext ctx)
+    public void messageOnServerThread(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
-        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
+        switch (message.inventoryType)
         {
-            switch (message.inventoryType)
-            {
-                case INVENTORY_CITIZEN:
-                    @NotNull final InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
-                    if (!StringUtils.isNullOrEmpty(message.name))
-                    {
-                        citizenInventory.setCustomName(message.name);
-                    }
-                    player.displayGUIChest(citizenInventory);
-                    break;
-                case INVENTORY_CHEST:
-                    @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
-                    if (!StringUtils.isNullOrEmpty(message.name))
-                    {
-                        chest.setCustomName(message.name);
-                    }
-                    player.displayGUIChest(chest);
-                    break;
-                case INVENTORY_FIELD:
-                    @NotNull final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
-                    if (!StringUtils.isNullOrEmpty(message.name))
-                    {
-                        inventoryField.setCustomName(message.name);
-                    }
-                    player.displayGUIChest(inventoryField);
-                    break;
-            }
-        });
-        return null;
+            case INVENTORY_CITIZEN:
+                @NotNull final InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
+                if (!StringUtils.isNullOrEmpty(message.name))
+                {
+                    citizenInventory.setCustomName(message.name);
+                }
+                player.displayGUIChest(citizenInventory);
+                break;
+            case INVENTORY_CHEST:
+                @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
+                if (!StringUtils.isNullOrEmpty(message.name))
+                {
+                    chest.setCustomName(message.name);
+                }
+                player.displayGUIChest(chest);
+                break;
+            case INVENTORY_FIELD:
+                @NotNull final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
+                if (!StringUtils.isNullOrEmpty(message.name))
+                {
+                    inventoryField.setCustomName(message.name);
+                }
+                player.displayGUIChest(inventoryField);
+                break;
+        }
     }
 
     /**

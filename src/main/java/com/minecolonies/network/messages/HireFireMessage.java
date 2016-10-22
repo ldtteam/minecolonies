@@ -8,6 +8,7 @@ import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message class which manages the messages hiring or firing of citizens.
  */
-public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessage, IMessage>
+public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
 {
     /**
      * The Colony ID;
@@ -91,39 +92,27 @@ public class HireFireMessage implements IMessage, IMessageHandler<HireFireMessag
         buf.writeInt(citizenID);
     }
 
-    /**
-     * Called when a message has been received.
-     *
-     * @param message the message.
-     * @param ctx     the context.
-     * @return possible response, in this case -&gt; null.
-     */
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull HireFireMessage message, @NotNull MessageContext ctx)
+    public void messageOnServerThread(final HireFireMessage message, final EntityPlayerMP player)
     {
-        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
+        Colony colony = ColonyManager.getColony(message.colonyId);
+        if (colony != null)
         {
-            Colony colony = ColonyManager.getColony(message.colonyId);
-            if (colony != null)
+            //Verify player has permission to do edit permissions
+            if (!colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
             {
-                //Verify player has permission to do edit permissions
-                if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
-                {
-                    return;
-                }
-
-                if (message.hire)
-                {
-                    CitizenData citizen = colony.getCitizen(message.citizenID);
-                    ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
-                }
-                else
-                {
-                    ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(null);
-                }
+                return;
             }
-        });
-        return null;
+
+            if (message.hire)
+            {
+                CitizenData citizen = colony.getCitizen(message.citizenID);
+                ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
+            }
+            else
+            {
+                ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(null);
+            }
+        }
     }
 }

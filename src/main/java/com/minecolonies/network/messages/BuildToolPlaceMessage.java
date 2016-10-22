@@ -13,6 +13,7 @@ import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -30,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Colton
  */
-public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToolPlaceMessage, IMessage>
+public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage, IMessage>
 {
     private String hutDec;
     private String style;
@@ -110,31 +111,18 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         buf.writeBoolean(isHut);
     }
 
-    /**
-     * {@link BuildToolPlaceMessage} handler.
-     *
-     * @param message Packet received.
-     * @param ctx     Contains info about the Client that sent the packet.
-     * @return null - Don't send a response packet.
-     */
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull BuildToolPlaceMessage message, @NotNull MessageContext ctx)
+    public void messageOnServerThread(final BuildToolPlaceMessage message, final EntityPlayerMP player)
     {
-        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
+        World world = player.worldObj;
+        if (message.isHut)
         {
-            EntityPlayer player = ctx.getServerHandler().playerEntity;
-            World world = player.worldObj;
-            if (message.isHut)
-            {
-                handleHut(world, player, message.hutDec, message.style, message.rotation, message.pos);
-            }
-            else
-            {
-                handleDecoration(world, player, message.hutDec, message.style, message.rotation, message.pos);
-            }
-        });
-        return null;
+            handleHut(world, player, message.hutDec, message.style, message.rotation, message.pos);
+        }
+        else
+        {
+            handleDecoration(world, player, message.hutDec, message.style, message.rotation, message.pos);
+        }
     }
 
     /**

@@ -4,6 +4,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message class which manages the message to toggle automatic or manual job allocation.
  */
-public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMessage, IMessage>
+public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage>
 {
     /**
      * The Colony ID;
@@ -68,25 +69,13 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
         buf.writeBoolean(toggle);
     }
 
-    /**
-     * Called when a message has been received.
-     *
-     * @param message the message.
-     * @param ctx     the context.
-     * @return possible response, in this case -&gt; null.
-     */
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull ToggleJobMessage message, MessageContext ctx)
+    public void messageOnServerThread(final ToggleJobMessage message, final EntityPlayerMP player)
     {
-        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
+        Colony colony = ColonyManager.getColony(message.colonyId);
+        if (colony != null)
         {
-            Colony colony = ColonyManager.getColony(message.colonyId);
-            if (colony != null)
-            {
-                colony.setManualHiring(message.toggle);
-            }
-        });
-        return null;
+            colony.setManualHiring(message.toggle);
+        }
     }
 }

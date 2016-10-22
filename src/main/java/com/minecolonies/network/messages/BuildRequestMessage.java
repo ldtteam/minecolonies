@@ -5,6 +5,7 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Colton
  */
-public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
+public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IMessage>
 {
     /**
      * The int mode for a build job.
@@ -80,37 +81,31 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
         buf.writeInt(mode);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull BuildRequestMessage message, MessageContext ctx)
+    public void messageOnServerThread(final BuildRequestMessage message, final EntityPlayerMP player)
     {
-        ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
+        Colony colony = ColonyManager.getColony(message.colonyId);
+        if (colony == null)
         {
-            Colony colony = ColonyManager.getColony(message.colonyId);
-            if (colony == null)
-            {
-                return;
-            }
+            return;
+        }
 
-            AbstractBuilding building = colony.getBuilding(message.buildingId);
-            if (building == null)
-            {
-                return;
-            }
+        AbstractBuilding building = colony.getBuilding(message.buildingId);
+        if (building == null)
+        {
+            return;
+        }
 
-            switch (message.mode)
-            {
-                case BUILD:
-                    building.requestUpgrade();
-                    break;
-                case REPAIR:
-                    building.requestRepair();
-                    break;
-                default:
-                    break;
-            }
-        });
-
-        return null;
+        switch (message.mode)
+        {
+            case BUILD:
+                building.requestUpgrade();
+                break;
+            case REPAIR:
+                building.requestRepair();
+                break;
+            default:
+                break;
+        }
     }
 }
