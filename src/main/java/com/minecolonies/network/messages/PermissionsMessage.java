@@ -8,6 +8,7 @@ import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -64,26 +65,29 @@ public class PermissionsMessage
         public IMessage onMessage(@NotNull View message, MessageContext ctx)
         {
             return ColonyManager.handlePermissionsViewMessage(message.colonyID, message.data);
-        }        @Override
+        }
+
+        @Override
         public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
             buf.writeBytes(data);
         }
-
-
     }
 
-    public static class Permission implements IMessage, IMessageHandler<Permission, IMessage>
+    public static class Permission extends AbstractMessage<Permission, IMessage>
     {
         private int                colonyID;
         private MessageType        type;
         private Permissions.Rank   rank;
         private Permissions.Action action;
 
+        /**
+         * Empty public constructor.
+         */
         public Permission()
         {
-            //Required
+            super();
         }
 
         /**
@@ -96,6 +100,7 @@ public class PermissionsMessage
          */
         public Permission(@NotNull ColonyView colony, MessageType type, Permissions.Rank rank, Permissions.Action action)
         {
+            super();
             this.colonyID = colony.getID();
             this.type = type;
             this.rank = rank;
@@ -103,6 +108,36 @@ public class PermissionsMessage
         }
 
         @Override
+        public void messageOnServerThread(final Permission message, final EntityPlayerMP player)
+        {
+            Colony colony = ColonyManager.getColony(message.colonyID);
+            if (colony == null)
+            {
+                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                return;
+            }
+
+            //Verify player has permission to do edit permissions
+            if (!colony.getPermissions().hasPermission(player, Permissions.Action.EDIT_PERMISSIONS))
+            {
+                return;
+            }
+
+            switch (message.type)
+            {
+                case SET_PERMISSION:
+                    colony.getPermissions().setPermission(message.rank, message.action);
+                    break;
+                case REMOVE_PERMISSION:
+                    colony.getPermissions().removePermission(message.rank, message.action);
+                    break;
+                case TOGGLE_PERMISSION:
+                    colony.getPermissions().togglePermission(message.rank, message.action);
+                    break;
+                default:
+                    Log.getLogger().error(String.format("Invalid MessageType %s", message.type.toString()));
+            }
+        }        @Override
         public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
@@ -120,41 +155,7 @@ public class PermissionsMessage
             action = Permissions.Action.valueOf(ByteBufUtils.readUTF8String(buf));
         }
 
-        @Nullable
-        @Override
-        public IMessage onMessage(@NotNull Permission message, @NotNull MessageContext ctx)
-        {
 
-            Colony colony = ColonyManager.getColony(message.colonyID);
-
-            if (colony == null)
-            {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
-                return null;
-            }
-
-            //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.EDIT_PERMISSIONS))
-            {
-                return null;
-            }
-
-            switch (message.type)
-            {
-                case SET_PERMISSION:
-                    colony.getPermissions().setPermission(message.rank, message.action);
-                    break;
-                case REMOVE_PERMISSION:
-                    colony.getPermissions().removePermission(message.rank, message.action);
-                    break;
-                case TOGGLE_PERMISSION:
-                    colony.getPermissions().togglePermission(message.rank, message.action);
-                    break;
-                default:
-                    Log.getLogger().error(String.format("Invalid MessageType %s", message.type.toString()));
-            }
-            return null;
-        }
     }
 
     /**
@@ -269,24 +270,25 @@ public class PermissionsMessage
         @Override
         public IMessage onMessage(@NotNull ChangePlayerRank message, @NotNull MessageContext ctx)
         {
-
-            Colony colony = ColonyManager.getColony(message.colonyID);
-
-            if (colony == null || colony.getWorld() == null)
+            ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
-                return null;
-            }
+                Colony colony = ColonyManager.getColony(message.colonyID);
 
-            if (message.type == Type.PROMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE))
-            {
-                colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
-            }
-            else if (message.type == Type.DEMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE))
-            {
-                colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
-            }
+                if (colony == null || colony.getWorld() == null)
+                {
+                    Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                    return;
+                }
 
+                if (message.type == Type.PROMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE))
+                {
+                    colony.getPermissions().setPlayerRank(message.playerID, Permissions.getPromotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
+                }
+                else if (message.type == Type.DEMOTE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE))
+                {
+                    colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
+                }
+            });
             return null;
         }
     }
@@ -334,22 +336,23 @@ public class PermissionsMessage
         @Override
         public IMessage onMessage(@NotNull RemovePlayer message, @NotNull MessageContext ctx)
         {
-
-            Colony colony = ColonyManager.getColony(message.colonyID);
-
-            if (colony == null)
+            ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
             {
-                Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
-                return null;
-            }
+                Colony colony = ColonyManager.getColony(message.colonyID);
 
-            Permissions.Player player = colony.getPermissions().getPlayers().get(message.playerID);
-            if ((player.getRank() == Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE)) ||
-                  (player.getRank() != Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE)))
-            {
-                colony.getPermissions().removePlayer(message.playerID);
-            }
+                if (colony == null)
+                {
+                    Log.getLogger().error(String.format(COLONY_DOES_NOT_EXIST, message.colonyID));
+                    return;
+                }
 
+                Permissions.Player player = colony.getPermissions().getPlayers().get(message.playerID);
+                if ((player.getRank() == Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE)) ||
+                      (player.getRank() != Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE)))
+                {
+                    colony.getPermissions().removePlayer(message.playerID);
+                }
+            });
             return null;
         }
     }
