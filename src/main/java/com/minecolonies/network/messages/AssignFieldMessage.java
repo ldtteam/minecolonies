@@ -40,6 +40,7 @@ public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMes
      */
     public AssignFieldMessage(@NotNull BuildingFarmer.View building, boolean assign, BlockPos field)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.assign = assign;

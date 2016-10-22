@@ -55,6 +55,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
      */
     public BuildRequestMessage(@NotNull AbstractBuilding.View building, int mode)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.mode = mode;

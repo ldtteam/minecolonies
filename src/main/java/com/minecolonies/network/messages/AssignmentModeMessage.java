@@ -38,6 +38,7 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
      */
     public AssignmentModeMessage(@NotNull BuildingFarmer.View building, boolean assignmentMode)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.assignmentMode = assignmentMode;
