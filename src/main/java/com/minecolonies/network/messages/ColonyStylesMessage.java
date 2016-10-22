@@ -2,7 +2,6 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Schematics;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -13,7 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
-public class ColonyStylesMessage extends AbstractMessage<ColonyStylesMessage, IMessage>
+public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStylesMessage, IMessage>
 {
     private Map<String, List<String>> hutStyleMap;
     private Map<String, List<String>> decorationStyleMap;
@@ -71,9 +70,20 @@ public class ColonyStylesMessage extends AbstractMessage<ColonyStylesMessage, IM
         return map;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Sets the styles of the huts to the given value in the message
+     *
+     * @param message Message
+     * @param ctx     Context
+     * @return Null
+     */
+    @Nullable
     @Override
-    public void messageOnServerThread(final ColonyStylesMessage message, final EntityPlayerMP player)
+    public IMessage onMessage(@NotNull ColonyStylesMessage message, MessageContext ctx)
     {
         Schematics.setStyles(message.hutStyleMap, message.decorationStyleMap);
+        return null;
     }
 }

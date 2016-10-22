@@ -8,17 +8,14 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage, IMessage>
 {
+    private static final int MAX_NAME_LENGTH  = 25;
+    private static final int SUBSTRING_LENGTH = MAX_NAME_LENGTH - 1;
     private int    colonyId;
     private String name;
-    private static final int MAX_NAME_LENGTH = 25;
-    private static final int SUBSTRING_LENGTH = MAX_NAME_LENGTH - 1;
 
     public TownHallRenameMessage() {}
 
@@ -31,7 +28,7 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
     public TownHallRenameMessage(@NotNull ColonyView colony, String name)
     {
         this.colonyId = colony.getID();
-        this.name = (name.length() <= MAX_NAME_LENGTH)? name : name.substring(0, SUBSTRING_LENGTH);
+        this.name = (name.length() <= MAX_NAME_LENGTH) ? name : name.substring(0, SUBSTRING_LENGTH);
     }
 
     @Override

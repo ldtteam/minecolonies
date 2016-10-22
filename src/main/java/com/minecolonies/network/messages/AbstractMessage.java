@@ -1,5 +1,6 @@
 package com.minecolonies.network.messages;
 
+import com.minecolonies.util.Log;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -11,7 +12,8 @@ public abstract class AbstractMessage<A extends IMessage, B extends IMessage> im
 
     @Nullable
     @Override
-    public B onMessage(final A message, final MessageContext ctx){
+    public B onMessage(final A message, final MessageContext ctx)
+    {
         final EntityPlayerMP player = ctx.getServerHandler().playerEntity;
         player.getServerWorld().addScheduledTask(() -> messageOnServerThread(message, player));
         return null;

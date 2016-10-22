@@ -73,8 +73,6 @@ public class PermissionsMessage
             buf.writeInt(colonyID);
             buf.writeBytes(data);
         }
-
-
     }
 
     public static class Permission extends AbstractMessage<Permission, IMessage>
@@ -103,24 +101,6 @@ public class PermissionsMessage
             this.type = type;
             this.rank = rank;
             this.action = action;
-        }
-
-        @Override
-        public void toBytes(@NotNull ByteBuf buf)
-        {
-            buf.writeInt(colonyID);
-            ByteBufUtils.writeUTF8String(buf, type.name());
-            ByteBufUtils.writeUTF8String(buf, rank.name());
-            ByteBufUtils.writeUTF8String(buf, action.name());
-        }
-
-        @Override
-        public void fromBytes(@NotNull ByteBuf buf)
-        {
-            colonyID = buf.readInt();
-            type = MessageType.valueOf(ByteBufUtils.readUTF8String(buf));
-            rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
-            action = Permissions.Action.valueOf(ByteBufUtils.readUTF8String(buf));
         }
 
         @Override
@@ -153,7 +133,25 @@ public class PermissionsMessage
                 default:
                     Log.getLogger().error(String.format("Invalid MessageType %s", message.type.toString()));
             }
+        }        @Override
+        public void toBytes(@NotNull ByteBuf buf)
+        {
+            buf.writeInt(colonyID);
+            ByteBufUtils.writeUTF8String(buf, type.name());
+            ByteBufUtils.writeUTF8String(buf, rank.name());
+            ByteBufUtils.writeUTF8String(buf, action.name());
         }
+
+        @Override
+        public void fromBytes(@NotNull ByteBuf buf)
+        {
+            colonyID = buf.readInt();
+            type = MessageType.valueOf(ByteBufUtils.readUTF8String(buf));
+            rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
+            action = Permissions.Action.valueOf(ByteBufUtils.readUTF8String(buf));
+        }
+
+
     }
 
     /**
@@ -346,7 +344,7 @@ public class PermissionsMessage
 
                 Permissions.Player player = colony.getPermissions().getPlayers().get(message.playerID);
                 if ((player.getRank() == Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_PROMOTE)) ||
-                        (player.getRank() != Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE)))
+                      (player.getRank() != Permissions.Rank.HOSTILE && colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.CAN_DEMOTE)))
                 {
                     colony.getPermissions().removePlayer(message.playerID);
                 }

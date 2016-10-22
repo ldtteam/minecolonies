@@ -20,8 +20,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,18 +31,15 @@ import org.jetbrains.annotations.Nullable;
  */
 public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage, IMessage>
 {
-    private String hutDec;
-    private String style;
-    private int    rotation;
-
-    private BlockPos pos;
-
-    private boolean isHut;
-
     /**
      * Language key for missing hut message
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
+    private String hutDec;
+    private String style;
+    private int    rotation;
+    private BlockPos pos;
+    private boolean isHut;
 
     /**
      * Empty constructor used when registering the message.

@@ -14,8 +14,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, IMessage>
 {
     private static final double MIDDLE_BLOCK_OFFSET = 0.5D;
-    private int colonyId;
+    private int      colonyId;
     private BlockPos buildingId;
 
     public RecallCitizenMessage() {}
@@ -71,11 +69,11 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
 
                 @Nullable CitizenData citizenData = building.getWorker();
 
-                if(citizenData != null)
+                if (citizenData != null)
                 {
                     @Nullable EntityCitizen citizen = building.getWorkerEntity();
                     //Try to retrieve the citizen.
-                    if(citizen == null)
+                    if (citizen == null)
                     {
                         Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
                         colony.spawnCitizen(citizenData);
