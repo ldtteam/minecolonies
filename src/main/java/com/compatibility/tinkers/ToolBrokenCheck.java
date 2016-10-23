@@ -5,7 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.Nullable;
 
 /**
-  * This class is to store a check to see if a tinker's tool is broken
+  * This class is to store a check to see if a tinker's tool is broken.
   */
 public final class ToolBrokenCheck
 {
