@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 /**
   * This class is to store a check to see if a tinker's tool is broken
   */
-public class ToolBrokenCheck
+public final class ToolBrokenCheck
 {
     private static final String STATS = "Stats";
     private static final String BROKEN = "Broken";

@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 /**
   * This class is to store the methods that call the methods to check for miscellaneous compatibility problems.
   */
-public class Compatibility
+public final class Compatibility
 {
 
     private Compatibility()
