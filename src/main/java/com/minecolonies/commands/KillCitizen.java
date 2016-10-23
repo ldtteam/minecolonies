@@ -100,6 +100,7 @@ public class KillCitizen extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
         sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
 
+        //todo: make this threadsafe
         entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE);
     }
 

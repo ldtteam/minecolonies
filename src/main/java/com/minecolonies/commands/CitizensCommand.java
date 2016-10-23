@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class CitizensCommand extends AbstractSplitCommand
 {
-    private static final String DESC = "citizens";
+    public static final String DESC = "citizens";
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
