@@ -10,7 +10,12 @@ import org.jetbrains.annotations.Nullable;
   */
 public class Compatibility
 {
-    
+
+    private Compatibility()
+    {
+        throw new IllegalAccessError("Utility class");
+    }
+
     /**
       * This method checks to see if STACK is able to mine anything.
       * It goes through all compatibility checks.
@@ -21,15 +26,10 @@ public class Compatibility
       */
     public static boolean checkMiningCompatibility(@Nullable ItemStack stack, @Nullable String tool)
     {
-        if (ToolBrokenCheck.checkTinkersBroken(stack, tool))
+        if (ToolBrokenCheck.checkTinkersBroken(stack))
         {
             return true;
         }
         return false;
-    }
-
-    public Compatibility()
-    {
-        //here for sonar
     }
 }
