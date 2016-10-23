@@ -18,8 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-import static sun.audio.AudioPlayer.player;
-
 public class PermissionsMessage
 {
     private static final String COLONY_DOES_NOT_EXIST = "Colony #%d does not exist.";
@@ -273,17 +271,6 @@ public class PermissionsMessage
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
             type = Type.valueOf(ByteBufUtils.readUTF8String(buf));
-        }
-
-        @Nullable
-        @Override
-        public IMessage onMessage(@NotNull ChangePlayerRank message, @NotNull MessageContext ctx)
-        {
-            ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
-            {
-
-            });
-            return null;
         }
 
         @Override
