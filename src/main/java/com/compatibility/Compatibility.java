@@ -23,12 +23,12 @@ public final class Compatibility
       * @param tool the name of the tool.
       * @return boolean whether the stack can mine or not.
       */
-    public static boolean checkMiningCompatibility(@Nullable ItemStack stack, @Nullable String tool)
+    public static boolean getMiningLevelCompatibility(@Nullable ItemStack stack, @Nullable String tool)
     {
         if (ToolBrokenCheck.checkTinkersBroken(stack))
         {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 }

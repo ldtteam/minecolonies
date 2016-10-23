@@ -377,7 +377,7 @@ public final class Utils
         {
             return -1;
         }
-        if (Compatibility.checkMiningCompatibility(stack, tool))
+        if (!Compatibility.getMiningLevelCompatibility(stack, tool))
         {
             return -1;
         }
