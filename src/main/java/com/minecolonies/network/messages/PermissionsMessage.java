@@ -100,7 +100,7 @@ public class PermissionsMessage
          */
         public Permission(@NotNull ColonyView colony, MessageType type, Permissions.Rank rank, Permissions.Action action)
         {
-
+            super();
             this.colonyID = colony.getID();
             this.type = type;
             this.rank = rank;
@@ -156,8 +156,6 @@ public class PermissionsMessage
             rank = Permissions.Rank.valueOf(ByteBufUtils.readUTF8String(buf));
             action = Permissions.Action.valueOf(ByteBufUtils.readUTF8String(buf));
         }
-
-
     }
 
     /**
@@ -336,17 +334,6 @@ public class PermissionsMessage
         {
             colonyID = buf.readInt();
             playerID = PacketUtils.readUUID(buf);
-        }
-
-        @Nullable
-        @Override
-        public IMessage onMessage(@NotNull RemovePlayer message, @NotNull MessageContext ctx)
-        {
-            ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() ->
-            {
-
-            });
-            return null;
         }
 
         @Override
