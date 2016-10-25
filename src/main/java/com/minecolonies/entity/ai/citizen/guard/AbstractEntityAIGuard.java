@@ -8,13 +8,11 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
@@ -48,7 +46,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Max amount the guard can shoot arrows before restocking.
      */
-    private static final int MAX_ARROWS_SHOT = 50;
+    private static final int MAX_ATTACKS = 50;
 
     /**
      * Y range in which the guard detects other entities.
@@ -76,9 +74,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     private List<Entity> entityList;
 
     /**
-     * Amount of arrows already shot.
+     * Amount of arrows already shot or sword hits dealt.
      */
-    protected int arrowsShot = 0;
+    protected int attacksExecuted = 0;
+
+    private boolean should_dump = false;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -90,6 +90,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         super(job);
     }
 
+
     /**
      * Can be overridden in implementations.
      * <p>
@@ -99,6 +100,17 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     protected void updateRenderMetaData()
     {
         updateArmor();
+    }
+
+    @Override
+    protected boolean wantInventoryDumped()
+    {
+        if(should_dump)
+        {
+            should_dump = false;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -112,6 +124,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             final AbstractBuildingWorker workBuilding = getOwnBuilding();
             if(workBuilding != null)
             {
+                should_dump = true;
                 final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
                 for (int i = 0; i < workBuilding.getTileEntity().getSizeInventory(); i++)
                 {
@@ -131,7 +144,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                 }
             }
 
-            arrowsShot = 0;
+            attacksExecuted = 0;
             return AIState.GUARD_SEARCH_TARGET;
         }
         return AIState.GUARD_RESTOCK;
@@ -239,7 +252,6 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             else
             {
                 currentSearchDistance = START_SEARCH_DISTANCE;
-                Log.getLogger().info("Patroll! in searchTarget");
                 return AIState.GUARD_PATROL;
             }
 
@@ -259,13 +271,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     }
 
     /**
-     * Getter calculating how many arrows the guard may shoot until restock.
+     * Getter calculating how many arrows the guard may shoot or deal sword hits until restock.
      * @return the amount.
      */
-    protected int getMaxArrowsShot()
+    protected int getMaxAttacksUntilRestock()
     {
         BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
-        return (guardTower == null) ? 0 : (MAX_ARROWS_SHOT + guardTower.getBuildingLevel());
+        return (guardTower == null) ? 0 : (MAX_ATTACKS + guardTower.getBuildingLevel());
     }
 
     /**
@@ -295,25 +307,25 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     private BlockPos getRandomBuilding()
     {
-        if(worker.getColony() == null)
+        if(worker.getColony() == null || getOwnBuilding() == null)
         {
             return worker.getPosition();
         }
 
         Map<BlockPos, AbstractBuilding> buildingMap = worker.getColony().getBuildings();
         int random = worker.getRandom().nextInt(buildingMap.size());
-        return (BlockPos) worker.getColony().getBuildings().keySet().toArray()[random];
+
+        AbstractBuilding building = (AbstractBuilding) worker.getColony().getBuildings().values().toArray()[random];
+        if(building instanceof BuildingGuardTower)
+        {
+            return this.getOwnBuilding().getLocation();
+        }
+
+        return building.getLocation();
     }
-
-
 
     private AxisAlignedBB getTargetableArea(double range)
     {
         return this.worker.getEntityBoundingBox().expand(range, HEIGHT_DETECTION_RANGE, range);
     }
-
-
-
-
-
 }

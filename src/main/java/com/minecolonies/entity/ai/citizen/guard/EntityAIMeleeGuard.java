@@ -4,13 +4,11 @@ import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -134,9 +132,9 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
                 worker.resetActiveHand();
                 attackEntity(targetEntity, DAMAGE_PER_ATTACK);
                 setDelay(getReloadTime());
-                arrowsShot += 1;
+                attacksExecuted += 1;
 
-                if(arrowsShot >= getMaxArrowsShot())
+                if(attacksExecuted >= getMaxAttacksUntilRestock())
                 {
                     return AIState.GUARD_RESTOCK;
                 }

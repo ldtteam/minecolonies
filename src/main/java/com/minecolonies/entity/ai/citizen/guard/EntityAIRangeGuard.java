@@ -186,9 +186,9 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
                 worker.resetActiveHand();
                 attackEntityWithRangedAttack(targetEntity, DAMAGE_PER_ATTACK);
                 setDelay(getReloadTime());
-                arrowsShot += 1;
+                attacksExecuted += 1;
 
-                if(arrowsShot >= getMaxArrowsShot())
+                if(attacksExecuted >= getMaxAttacksUntilRestock())
                 {
                     return AIState.GUARD_RESTOCK;
                 }
