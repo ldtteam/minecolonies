@@ -9,6 +9,8 @@ import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -106,6 +108,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean needsPickaxe = false;
 
     /**
+     * This flag tells if we need a weapon, will be set on tool needs.
+     */
+    private boolean needsWeapon = false;
+
+    /**
      * The minimum pickaxe level we need to fulfill the tool request.
      */
     private int needsPickaxeLevel = -1;
@@ -159,6 +166,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           new AITarget(() -> this.needsAxe, this::waitForAxe),
           new AITarget(() -> this.needsHoe, this::waitForHoe),
           new AITarget(() -> this.needsPickaxe, this::waitForPickaxe),
+          new AITarget(() -> this.needsWeapon, this::waitForWeapon),
+
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
@@ -395,11 +404,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                    );
     }
 
-    public void searchChestForArmor()
-    {
-
-    }
-
     /**
      * Request an Item without spamming the chat.
      *
@@ -608,6 +612,22 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Wait for a needed pickaxe.
+     *
+     * @return NEEDS_PICKAXE
+     */
+    @NotNull
+    private AIState waitForWeapon()
+    {
+        if (checkForWeapon())
+        {
+            delay += DELAY_RECHECK;
+            return NEEDS_WEAPON;
+        }
+        return IDLE;
+    }
+
+    /**
      * Ensures that we have a pickaxe available.
      * Will set {@code needsPickaxe} accordingly.
      *
@@ -644,6 +664,39 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Ensures that we have a pickaxe available.
+     * Will set {@code needsPickaxe} accordingly.
+     *
+     * @return true if we have a pickaxe
+     */
+    public boolean checkForWeapon()
+    {
+        //Check for a pickaxe
+        needsWeapon = !InventoryFunctions
+                .matchFirstInInventory(
+                        worker.getInventoryCitizen(),
+                        stack -> stack != null && (stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool),
+                        InventoryFunctions::doNothing
+                );
+
+        delay += DELAY_RECHECK;
+
+        if (needsWeapon)
+        {
+            if (walkToBuilding())
+            {
+                return false;
+            }
+            if (isWeaponInHut())
+            {
+                return true;
+            }
+            requestWithoutSpam(LanguageHandler.format("com.minecolonies.job.guard.needWeapon"));
+        }
+        return needsWeapon;
+    }
+
+    /**
      * Looks for a pickaxe to mine a block of {@code minLevel}.
      * The pickaxe will be taken from the chest.
      * Make sure that the worker stands next the chest to not break immersion.
@@ -663,6 +716,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             Utils.getMiningLevel(stack, Utils.PICKAXE)
           ),
           this::takeItemStackFromChest
+        );
+    }
+
+    /**
+     * Looks for a weapon.
+     * The pickaxe will be taken from the chest.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the sword.
+     *
+     * @return true if a weapon was found
+     */
+    private boolean isWeaponInHut()
+    {
+        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        return buildingWorker != null
+                && InventoryFunctions.matchFirstInInventory(
+                buildingWorker.getTileEntity(),
+                stack -> stack != null && (stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool),
+                this::takeItemStackFromChest
         );
     }
 

@@ -130,7 +130,12 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     /**
      * Damage per range attack.
      */
-    private static final int DAMAGE_PER_ATTACK   = 2;
+    private static final int DAMAGE_PER_ATTACK = 2;
+
+    /**
+     * When target is out of sight, try to move that close to the target.
+     */
+    private static final int MOVE_CLOSE = 3;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -158,9 +163,14 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     }
 
     @Override
-    protected ItemStack getItemToAttackWith()
+    protected AIState searchTarget()
     {
-        return new ItemStack(Items.BOW);
+        if(checkOrRequestItems(new ItemStack(Items.BOW)))
+        {
+            return AIState.GUARD_SEARCH_TARGET;
+        }
+        worker.setHeldItem(worker.findFirstSlotInInventoryWith(Items.BOW));
+        return super.searchTarget();
     }
 
     private int getReloadTime()
@@ -174,7 +184,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
      */
     protected AIState huntDown()
     {
-        if(!targetEntity.isEntityAlive())
+        if(!targetEntity.isEntityAlive() || checkOrRequestItems(new ItemStack(Items.BOW)))
         {
             targetEntity = null;
         }
@@ -196,7 +206,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
                 return AIState.GUARD_HUNT_DOWN_TARGET;
             }
             worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getExperienceLevel()));
-            worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), 3);
+            worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), MOVE_CLOSE);
 
             return AIState.GUARD_SEARCH_TARGET;
         }

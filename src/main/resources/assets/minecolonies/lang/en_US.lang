@@ -200,4 +200,5 @@ com.minecolonies.job.guard.name=GuardTower
 com.minecolonies.job.Guard=Guard
 com.minecolonies.gui.workerHuts.level0=Please construct the hut to hire a worker.
 com.minecolonies.job.guard.name=GuardTower
+com.minecolonies.job.guard.needWeapon=I need a weapon!
 tile.minecolonies.blockHutGuardTower.name=GuardTower

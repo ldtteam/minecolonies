@@ -3,10 +3,12 @@ package com.minecolonies.entity.ai.citizen.guard;
 import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +23,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     /**
      * Basic delay for the next shot.
      */
-    private static final int BASE_RELOAD_TIME = 60;
+    private static final int BASE_RELOAD_TIME = 30;
 
     /**
      * The pitch will be divided by this to calculate it for the arrow sound.
@@ -76,7 +78,12 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     /**
      * Damage per range attack.
      */
-    private static final int DAMAGE_PER_ATTACK   = 2;
+    private static final double DAMAGE_PER_ATTACK = 0.5;
+
+    /**
+     * Chance that a mob is lit on fire when a weapon has the fire aspect enchantment.
+     */
+    private static final int FIRE_CHANCE_MULTIPLIER = 4;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -104,11 +111,32 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     }
 
     @Override
-    protected ItemStack getItemToAttackWith()
+    protected AIState searchTarget()
     {
-        return new ItemStack(Items.IRON_SWORD);
-    }
+        if(checkForWeapon())
+        {
+            return AIState.GUARD_SEARCH_TARGET;
+        }
 
+        for(int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
+        {
+            ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
+
+            if(stack == null)
+            {
+                continue;
+            }
+
+            if(stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool)
+            {
+                worker.setHeldItem(i);
+
+                return super.searchTarget();
+            }
+        }
+
+        return super.searchTarget();
+    }
     private int getReloadTime()
     {
         return BASE_RELOAD_TIME / (worker.getExperienceLevel() + 1);
@@ -120,7 +148,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
      */
     protected AIState huntDown()
     {
-        if(!targetEntity.isEntityAlive())
+        if(!targetEntity.isEntityAlive() || checkForWeapon())
         {
             targetEntity = null;
         }
@@ -130,7 +158,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             if(worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
             {
                 worker.resetActiveHand();
-                attackEntity(targetEntity, DAMAGE_PER_ATTACK);
+                attackEntity(targetEntity, (float)DAMAGE_PER_ATTACK);
                 setDelay(getReloadTime());
                 attacksExecuted += 1;
 
@@ -153,9 +181,26 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
 
     private void attackEntity(@NotNull EntityLivingBase entityToAttack, float baseDamage)
     {
-        //todo add enchantment.
-        targetEntity.attackEntityFrom(new DamageSource(worker.getName()), baseDamage);
+        double damgeToBeDealt = baseDamage;
+
+        ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
+        if(heldItem != null)
+        {
+            if(heldItem.getItem() instanceof ItemSword)
+            {
+                damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
+            }
+            damgeToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, targetEntity.getCreatureAttribute());
+        }
+
+        targetEntity.attackEntityFrom(new DamageSource(worker.getName()), (float)damgeToBeDealt);
         targetEntity.setRevengeTarget(worker);
+
+        int fireAspectModifier = EnchantmentHelper.getFireAspectModifier(worker);
+        if(fireAspectModifier > 0)
+        {
+            targetEntity.setFire(fireAspectModifier * FIRE_CHANCE_MULTIPLIER);
+        }
 
         worker.addExperience(XP_EACH_HIT);
         worker.faceEntity(entityToAttack, (float)TURN_AROUND, (float)TURN_AROUND);

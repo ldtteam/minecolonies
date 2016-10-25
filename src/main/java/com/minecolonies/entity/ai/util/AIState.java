@@ -29,6 +29,7 @@ public enum AIState
     NEEDS_AXE,
     NEEDS_HOE,
     NEEDS_PICKAXE,
+    NEEDS_WEAPON,
     /**
      * Inventory has to be dumped.
      */
