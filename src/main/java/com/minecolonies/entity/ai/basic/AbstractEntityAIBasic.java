@@ -746,28 +746,28 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean dumpOneMoreSlot(@NotNull Predicate<ItemStack> keepIt)
     {
         //Items already kept in the inventory
-        final Map<ItemStorage, Integer> keptX = new HashMap<>();
-        final Map<ItemStorage, Integer> toKeep = this.needXForWorker();
+        final Map<ItemStorage, Integer> alreadyKept = new HashMap<>();
+        final Map<ItemStorage, Integer> shouldKeep = this.needXForWorker();
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
         return buildingWorker != null
                 && (walkToBuilding()
                 || InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(),
-                (i, stack) -> stack != null &&  (keepIt.test(stack) || shouldKeep(keptX, toKeep, buildingWorker, stack, i))));
+                (i, stack) -> !(stack == null || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, i)));
     }
 
     /**
-     * Checks if an item should be kept and does deposit the rest into his chest.
+     * Checks if an item should be kept and deposits the rest into his chest.
      * @param alreadyKept already kept items.
      * @param shouldKeep items that should be kept.
      * @param buildingWorker the building of the worker.
      * @param stack the stack being analyzed.
      * @param i the iteration inside the inventory.
-     * @return false if should be kept.
+     * @return true if should be dumped.
      */
-    private boolean shouldKeep(@NotNull Map<ItemStorage, Integer> alreadyKept, @NotNull Map<ItemStorage, Integer> shouldKeep,
-            @NotNull AbstractBuildingWorker buildingWorker, ItemStack stack, int i)
+    private boolean shouldDumpItem(@NotNull Map<ItemStorage, Integer> alreadyKept, @NotNull Map<ItemStorage, Integer> shouldKeep,
+            @NotNull AbstractBuildingWorker buildingWorker,@NotNull ItemStack stack, int i)
     {
         @Nullable ItemStack returnStack;
         int amountToKeep = 0;
@@ -783,7 +783,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return false;
             }
-            amountToKeep = shouldKeep.get(tempStorage) - tempStack.stackSize;
+            amountToKeep = stack.stackSize - tempStorage.getAmount();
             returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), tempStack);
         }
         if (returnStack == null)

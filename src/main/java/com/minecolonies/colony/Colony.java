@@ -810,7 +810,7 @@ public class Colony implements IColony
      *
      * @param data Data to use to spawn citizen
      */
-    public synchronized void spawnCitizen(CitizenData data)
+    public void spawnCitizen(CitizenData data)
     {
         if (!world.isBlockLoaded(center))
         {

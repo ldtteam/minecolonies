@@ -98,6 +98,7 @@ public class RespawnCitizen extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
 
         Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
+        //todo: make this threadsafe
         entityCitizen.setDead();
     }
 
