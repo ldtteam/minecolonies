@@ -1003,6 +1003,7 @@ public class Colony implements IColony
         @NotNull final Field field = new Field(tileEntity, inventoryPlayer, world, pos);
         field.setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         addField(field);
+        field.calculateSize(world, pos);
         markFieldsDirty();
     }
 

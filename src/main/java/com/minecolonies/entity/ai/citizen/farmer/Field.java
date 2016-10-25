@@ -230,7 +230,7 @@ public class Field extends Container
                                          PLAYER_INVENTORY_HOTBAR_OFFSET
             ));
         }
-        calculateSize(world, location.down());
+        //calculateSize(world, location.down());
     }
 
     /**
