@@ -3,6 +3,7 @@ package com.minecolonies.colony.permissions;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.AchievementUtils;
+import com.minecolonies.util.Log;
 import com.minecolonies.util.Utils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
@@ -185,7 +186,6 @@ public class Permissions implements IPermissions
             Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
 
             GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(id);
-            ;
 
             if (player != null)
             {
@@ -218,7 +218,16 @@ public class Permissions implements IPermissions
         }
         if (compound.hasKey(TAG_OWNER_ID))
         {
-            ownerUUID = UUID.fromString(compound.getString(TAG_OWNER));
+            try
+            {
+                ownerUUID = UUID.fromString(compound.getString(TAG_OWNER_ID));
+            }
+            catch(IllegalArgumentException e)
+            {
+                /**
+                 * Intentionally left empty. Happens when the UUID hasn't been saved yet.
+                 */
+            }
         }
     }
 
