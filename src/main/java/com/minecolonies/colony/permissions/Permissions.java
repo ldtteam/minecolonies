@@ -3,7 +3,6 @@ package com.minecolonies.colony.permissions;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.network.PacketUtils;
 import com.minecolonies.util.AchievementUtils;
-import com.minecolonies.util.Log;
 import com.minecolonies.util.Utils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
