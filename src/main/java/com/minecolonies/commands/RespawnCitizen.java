@@ -22,7 +22,7 @@ import java.util.List;
 public class RespawnCitizen extends AbstractSingleCommand
 {
 
-    private static final String CITIZEN_DESCRIPTION = "§2ID: §f %d §2 Name: §f %s";
+    private static final String CITIZEN_DESCRIPTION             = "§2ID: §f %d §2 Name: §f %s";
     private static final String REMOVED_MESSAGE                 = "Has been removed";
     private static final String NO_COLONY_CITIZEN_FOUND_MESSAGE = "No citizen %d found in colony %d.";
     private static final String COORDINATES_XYZ                 = "§4x=§f%s §4y=§f%s §4z=§f%s";
@@ -30,7 +30,7 @@ public class RespawnCitizen extends AbstractSingleCommand
     private static final String ENTITY_CITIZEN_NULL             = "Couldn't find entity of %d in %d";
     private static final String COLONY_NULL                     = "Couldn't find colony %d";
 
-    public static final String DESC                             = "respawn";
+    public static final String DESC = "respawn";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -62,7 +62,7 @@ public class RespawnCitizen extends AbstractSingleCommand
         }*/
 
         //No citizen or citizen defined.
-        if(colonyId == -1 || citizenId == -1)
+        if (colonyId == -1 || citizenId == -1)
         {
             sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
             return;
@@ -70,14 +70,14 @@ public class RespawnCitizen extends AbstractSingleCommand
 
         //Wasn't able to get the citizen from the colony.
         final Colony colony = ColonyManager.getColony(colonyId);
-        if(colony == null)
+        if (colony == null)
         {
             sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
             return;
         }
 
         final CitizenData citizenData = colony.getCitizen(citizenId);
-        if(citizenData == null)
+        if (citizenData == null)
         {
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DATA_NULL, citizenId, colonyId)));
             return;
@@ -85,7 +85,7 @@ public class RespawnCitizen extends AbstractSingleCommand
 
         //Wasn't able to get the entity from the citizenData.
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-        if(entityCitizen == null)
+        if (entityCitizen == null)
         {
             sender.addChatMessage(new TextComponentString(String.format(ENTITY_CITIZEN_NULL, citizenId, colonyId)));
             return;
@@ -98,8 +98,7 @@ public class RespawnCitizen extends AbstractSingleCommand
         sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
 
         Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
-        //todo: make this threadsafe
-        entityCitizen.setDead();
+        server.addScheduledTask(entityCitizen::setDead);
     }
 
     @NotNull
