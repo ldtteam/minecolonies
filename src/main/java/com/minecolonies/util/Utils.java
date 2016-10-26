@@ -6,6 +6,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -84,6 +86,16 @@ public final class Utils
             }
         }
         return closestCoords;
+    }
+
+    /**
+     * Checks if an item serves as a weapon.
+     * @param stack the stack to analyze.
+     * @return true if it is a tool or sword.
+     */
+    public static boolean doesItemServeAsWeapon(@NotNull ItemStack stack)
+    {
+        return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool;
     }
 
     /**

@@ -9,8 +9,6 @@ import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -675,7 +673,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         needsWeapon = !InventoryFunctions
                 .matchFirstInInventory(
                         worker.getInventoryCitizen(),
-                        stack -> stack != null && (stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool),
+                        stack -> stack != null && Utils.doesItemServeAsWeapon(stack),
                         InventoryFunctions::doNothing
                 );
 
@@ -733,7 +731,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return buildingWorker != null
                 && InventoryFunctions.matchFirstInInventory(
                 buildingWorker.getTileEntity(),
-                stack -> stack != null && (stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool),
+                stack -> stack != null && (Utils.doesItemServeAsWeapon(stack)),
                 this::takeItemStackFromChest
         );
     }

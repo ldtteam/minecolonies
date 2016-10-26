@@ -52,8 +52,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
         /**
          * Intentionally left empty.
          */
-        this.createUnSidedHandler();
-        this.getSingleChestHandler();
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.InventoryUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -117,6 +118,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             if(workBuilding != null)
             {
                 final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
+
                 for (int i = 0; i < workBuilding.getTileEntity().getSizeInventory(); i++)
                 {
                     final ItemStack stack = chest.getStackInSlot(i);
@@ -129,6 +131,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                     if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                     {
                         final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
+
+                        if(emptySlot == -1)
+                        {
+
+                        }
                         worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
                         chest.setInventorySlotContents(i, null);
                     }
@@ -184,7 +191,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
         if(entityList.get(0) instanceof EntityPlayer)
         {
-            if(worker.getColony() != null && worker.getColony().getPermissions().getRank((EntityPlayer) entityList.get(0)) == Permissions.Rank.HOSTILE)
+            if(worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entityList.get(0), Permissions.Action.GUARDS_ATTACK))
             {
                 targetEntity = (EntityLivingBase) entityList.get(0);
                 worker.getNavigator().clearPathEntity();
@@ -288,10 +295,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             return worker.getPosition();
         }
 
-        Map<BlockPos, AbstractBuilding> buildingMap = worker.getColony().getBuildings();
-        int random = worker.getRandom().nextInt(buildingMap.size());
+        AbstractBuilding[] buildingMap = (AbstractBuilding[]) worker.getColony().getBuildings().values().toArray();
 
-        AbstractBuilding building = (AbstractBuilding) worker.getColony().getBuildings().values().toArray()[random];
+        int random = worker.getRandom().nextInt(buildingMap.length);
+
+        AbstractBuilding building = buildingMap[random];
         if(building instanceof BuildingGuardTower)
         {
             return this.getOwnBuilding().getLocation();

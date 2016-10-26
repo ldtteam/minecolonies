@@ -3,6 +3,8 @@ package com.minecolonies.entity.ai.citizen.guard;
 import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.util.InventoryFunctions;
+import com.minecolonies.util.Utils;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.SoundEvents;
@@ -118,25 +120,20 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             return AIState.GUARD_SEARCH_TARGET;
         }
 
-        for(int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
-        {
-            ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
+        InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(), stack -> stack != null && Utils.doesItemServeAsWeapon(stack), this::setHeldItem);
 
-            if(stack == null)
-            {
-                continue;
-            }
-
-            if(stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool)
-            {
-                worker.setHeldItem(i);
-
-                return super.searchTarget();
-            }
-        }
-
-        return super.searchTarget();
+        return AIState.GUARD_SEARCH_TARGET;
     }
+
+    /**
+     * Sets the held item for a worker.
+     * @param slot the slot to set.
+     */
+    private void setHeldItem(int slot)
+    {
+        worker.setHeldItem(slot);
+    }
+
     private int getReloadTime()
     {
         return BASE_RELOAD_TIME / (worker.getExperienceLevel() + 1);
