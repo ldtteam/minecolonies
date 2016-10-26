@@ -10,29 +10,22 @@ import java.util.Map;
  * <p>
  * Manages all sub commands.
  */
-public class ColoniesCommand extends AbstractSplitCommand
+public class CitizensCommand extends AbstractSplitCommand
 {
-    public static final String DESC = "colonies";
+    public static final String DESC = "citizens";
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put("list", new ListColonies(MinecoloniesCommand.DESC, ColoniesCommand.DESC, "list"))
+        .put(ListCitizens.DESC, new ListCitizens(MinecoloniesCommand.DESC, CitizensCommand.DESC, ListCitizens.DESC))
         .build();
 
     /**
      * Initialize this command with it's parents.
-     *
-     * @param parent the parent commands
+     * @param parent the String of the parent command.
      */
-    public ColoniesCommand(@NotNull final String parent)
+    public CitizensCommand(@NotNull final String parent)
     {
         super(parent, DESC);
-    }
-
-    @Override
-    public boolean isUsernameIndex(@NotNull final String[] args, final int index)
-    {
-        return false;
     }
 
     @Override

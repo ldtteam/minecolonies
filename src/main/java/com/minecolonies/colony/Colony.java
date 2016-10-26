@@ -810,7 +810,7 @@ public class Colony implements IColony
      *
      * @param data Data to use to spawn citizen
      */
-    private void spawnCitizen(CitizenData data)
+    public void spawnCitizen(CitizenData data)
     {
         if (!world.isBlockLoaded(center))
         {
@@ -1003,6 +1003,7 @@ public class Colony implements IColony
         @NotNull final Field field = new Field(tileEntity, inventoryPlayer, world, pos);
         field.setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         addField(field);
+        field.calculateSize(world, pos);
         markFieldsDirty();
     }
 

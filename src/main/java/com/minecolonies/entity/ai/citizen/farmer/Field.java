@@ -230,7 +230,6 @@ public class Field extends Container
                                          PLAYER_INVENTORY_HOTBAR_OFFSET
             ));
         }
-        calculateSize(world, location.down());
     }
 
     /**
@@ -355,7 +354,7 @@ public class Field extends Container
      */
     private int searchNextBlock(int blocksChecked, @NotNull BlockPos position, EnumFacing direction, @NotNull World world)
     {
-        if (blocksChecked == getMaxRange() || isNoPartOfField(world, position))
+        if (blocksChecked >= getMaxRange() || isNoPartOfField(world, position))
         {
             return blocksChecked;
         }

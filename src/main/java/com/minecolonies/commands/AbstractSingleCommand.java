@@ -32,4 +32,28 @@ public abstract class AbstractSingleCommand implements ISubCommand
         }
         return sb.toString();
     }
+
+    /**
+     * Get the ith argument (An Integer).
+     * @param i the argument from the list you want.
+     * @param args the list of arguments.
+     * @param def the default value.
+     * @return the argument.
+     */
+    public static int getIthArgument(String[] args, int i, int def)
+    {
+        if(args.length <= i)
+        {
+            return def;
+        }
+
+        try
+        {
+            return Integer.parseInt(args[i]);
+        }
+        catch (NumberFormatException e)
+        {
+            return def;
+        }
+    }
 }
