@@ -1,5 +1,6 @@
 package com.minecolonies.util;
 
+import com.compatibility.Compatibility;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -373,6 +374,10 @@ public final class Utils
             return stack == null ? 0 : 1;
         }
         if (stack == null)
+        {
+            return -1;
+        }
+        if (!Compatibility.getMiningLevelCompatibility(stack, tool))
         {
             return -1;
         }
