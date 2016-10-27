@@ -42,7 +42,7 @@ Os NPCs do Minecolonies podem ser divididos em vários tipos: builder, farmer, f
 
 #### Crafts ####
 
-Os novos objetos que podemos construir através da crafting table são: supply ship, builders hut, citizens hut, miners hut,lumberjack hut, fishermans hut, build tool, scan tool e field. Estes objetos são essencias para por em práticas as funcionalidades de determinados npcs e para gestão da cidade.
+Os novos objetos que podemos construir através da crafting table são: supply ship, builders hut, citizens hut, miners hut,lumberjack hut, fishermans hut, build tool, scan tool e field. Estes objetos são essenciais para pôr em práticas as funcionalidades de determinados npcs e para gestão da cidade.
 
 #### Achievements ####
 
