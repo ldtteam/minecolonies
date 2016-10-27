@@ -19,7 +19,7 @@ Os únicos meios são então os fóruns onde são analisadas críticas e sugest�
 
 Relativamente à modificação MineColonies, não existem grandes problemas relativos à comunicação entre utilizadores e programadores visto que a grande maior parte de sugestões já foram pensadas pelos programadores e já estão implementadas ou estão em numa lista à espera que alguem as comece.
 
-> "Probably 95% of suggestions are things we have already thought about and are on the to-do list." [Pmardle](https://github.com/pmardle)
+> "Probably 95% of suggestions are things we have already thought about and are on the to-do list." - [Pmardle](https://github.com/pmardle)
 
 Assim, são maioritariamente os programadores que regem o futuro da modificação.
 Como neste projeto, é seguida a política “one man one branch”, acaba por não haver muitos dos problemas de comunicação em equipa. No entanto, pode não acontecer o mesmo com os utilizadores. Embora o interesse por parte dos responsáveis em satisfazer os pedidos da comunidade seja enorme, infelizmente, devido à falta de tempo e de programadores, por vezes são negadas algumas sugestões. Entre elas, estão updates a versões antigas da modificação. Por exemplo: o minecraft é regido por versões (sendo bastante popular a 1.7.10), por isso, jogadores que utilizem esta versão do Minecraft têm dificuldade em utilizar a modificação (apenas versões antigas do Minecolonies têm compatibilidade com a versão 1.7.10).
