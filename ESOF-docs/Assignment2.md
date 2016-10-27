@@ -23,26 +23,26 @@ Minecolonies é uma modificação do Minecraft que se baseia na gestão de uma c
 
 ### Requerimentos funcionais ###
 
-## Estruturas ##
+#### Estruturas ####
 
 Para simular o comportamento de uma cidade foram implementados dois tipos de estruturas essenciais: a town hall e o supply ships. O jogo não deve iniciar sem a colocação destas estruturas.
 
-# Town Hall #
+##### Town Hall #####
 
 O town hall representa o centro da área protegida em que se insere a cidade. No início, podemos posicionar a câmara onde quisermos, desde que não incida sobre outra cidade, mas uma vez posicionada não pode ser deslocada para outro sítio. O raio da cidade pode também ser definido.
 Esta estrutura permite obter informações e fazer a gestão de residentes e trabalhadores (npcs), criar nova town hall (nova cidade), reparar, alterar o nome, nomes e permissões de acesso a outros jogadores conforme um rank, modificar o modo de contratação (manual/automático), entre outros.
 
-# Supply Ships #
+##### Supply Ships #####
 
 O Supply ship representa o posto de abastecimento da cidade bem como a primeira casa do jogador. Esta estrutura tem que ser posicionada sob uma grande porção de água e não podem ser colocadas mais estruturas deste tipo no mesmo mundo.
 
-## Npcs ##
+#### Npcs ####
 
 Os NPCs do Minecolonies podem ser divididos em vários tipos: builder, farmer, fisherman, baker, lumberjack, miner, crafter, guard, hunter, blacksmith, stonemason, deliveryman e citizen. Cada NPC dos tipos acima referidos tem um conjunto de características e funcionalidades próprias, desempenhando, cada um, um papel único. O número de NPCs por cidade é ilimitado.
 
-## Crafts ##
+#### Crafts ####
 
-## Achievements ##
+#### Achievements ####
 
 ### Requerimentos não funcionais ###
 
