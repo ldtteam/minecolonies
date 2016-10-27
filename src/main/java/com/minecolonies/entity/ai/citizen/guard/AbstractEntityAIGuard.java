@@ -23,6 +23,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -98,8 +99,10 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     protected AbstractEntityAIGuard(@NotNull final JobGuard job)
     {
         super(job);
-        super.registerTargets(new AITarget(IDLE, () -> START_WORKING),
-                new AITarget(START_WORKING, () -> GUARD_RESTOCK));
+        super.registerTargets(
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, () -> GUARD_RESTOCK)
+        );
     }
 
 
@@ -302,11 +305,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             return worker.getPosition();
         }
 
-        AbstractBuilding[] buildingMap = (AbstractBuilding[]) worker.getColony().getBuildings().values().toArray();
+        Collection<AbstractBuilding> buildingList =  worker.getColony().getBuildings().values();
 
-        int random = worker.getRandom().nextInt(buildingMap.length);
+        Object[] buildingArray = buildingList.toArray();
 
-        AbstractBuilding building = buildingMap[random];
+        int random = worker.getRandom().nextInt(buildingArray.length);
+
+        AbstractBuilding building = (AbstractBuilding) buildingArray[random];
         if(building instanceof BuildingGuardTower)
         {
             return this.getOwnBuilding().getLocation();
