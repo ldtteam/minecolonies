@@ -8,13 +8,30 @@
 
 ## Descrição ##
 
+A engenharia de requerimentos passa por várias fases: levantamento de requerimentos, análise e negociação de requerimentos, especificação de requerimentos e validação de requerimentos. Neste relatório vamo-nos focar no levantamento de requerimentos.
+
 ### Levantamento de requerimentos ###
+
+O principal objetivo do levantamento de requerimentos é a interação com os stakeholders de modo a descobrir os seus requerimentos. Para tal é necessário usar várias técnicas como inquéritos, questionários, observações sociais protótipos, entre outros. No caso do MineColonies, por ser um projeto open source e sem fins lucrativos, os seus contribuidores não estão propriamente interessados na utilização de técnicas mais profissionais para conhecer o seu público alvo. 
+Os únicos meios são então os fóruns onde são analisadas críticas e sugestões deixadas pelos utilizadores, e os pull requests dos contribuidores.
 
 ### Problemas ###
 
+Relativamente à modificação MineColonies, não existem grandes problemas relativos à comunicação entre utilizadores e programadores visto que a grande maior parte de sugestões já foram pensadas pelos programadores e já estão implementadas ou estão em numa lista à espera que alguem as comece.
+
+> "Probably 95% of suggestions are things we have already thought about and are on the to-do list." [Pmardle](https://github.com/pmardle)
+
+Assim, são maioritariamente os programadores que regem o futuro da modificação.
+Como neste projeto, é seguida a política “one man one branch”, acaba por não haver muitos dos problemas de comunicação em equipa. No entanto, pode não acontecer o mesmo com os utilizadores. Embora o interesse por parte dos responsáveis em satisfazer os pedidos da comunidade seja enorme, infelizmente, devido à falta de tempo e de programadores, por vezes são negadas algumas sugestões. Entre elas, estão updates a versões antigas da modificação. Por exemplo: o minecraft é regido por versões (sendo bastante popular a 1.7.10), por isso, jogadores que utilizem esta versão do Minecraft têm dificuldade em utilizar a modificação (apenas versões antigas do Minecolonies têm compatibilidade com a versão 1.7.10).
+
 ### Técnicas ###
 
+A comunicação é feita via fórum pelos utilizadores, de maneira a que todos possam ver as sugestões já feitas, as implementações que estão a ser executadas e as implementações planeadas. Também é utilizado o github na divisão de tarefas, dividindo o trabalho em branches e apenas recebendo o código no repositório principal quando este está a funcionar sem problemas.
+Uma das técnicas usadas pela equipa do Minecolonies é a prototipagem. Como a equipa necessita de ajuda para validar algumas implementações específicas, utilizam um sistema de “patreons”. Um “Patreon” é um utilizador que paga para receber benefícios sobre o jogo. O principal benefício neste jogo é o teste de protótipos lançados pela equipa. Um “Patreon” tem acesso a versões de teste da modificação, o que permite aos contribuidores identificar erros e receber feedbacks com muita antecedência. Desta maneira é possível poupar recursos na correcção de bugs e evitar problemas de implementações mal recebidas pela comunidade.
+
 ### Análise, negociação e validação de requerimentos ###
+
+A decisão do que das próximas implementações é feita em função do que já está feito, do que a modificação necessita e também tendo em conta as opiniões da comunidade. Um exemplo disto será o caso dos guardas. Tendo esta funcionalidade recebido uma grande quantidade de pedidos devido à sua popularidade e necessidade por parte da comunidade, os programadores resolveram desenvolvê-la mais cedo e com várias alterações pedidas pela comunidade.
 
 
 ## Requerimentos específicos e funcionalidades ##
@@ -129,6 +146,9 @@ Os achivements são apenas propriedade do Jogador, sem qualquer relação às re
 
 ## Conclusão ##
 
+Após a investigação feita e o novo conhecimento adquirido relativo à engenharia de requerimentos, podemos dizer que a comunicação é algo fulcral para que um projeto tenha o seu devido sucesso.
+Analisando de uma perspectiva generalista, qualquer tipo de trabalho feito em grupo sofre de problemas idênticos aos identificados neste trabalho e necessita de aplicar várias técnicas para combater esses mesmos. Dito isto, a engenharia de requerimentos e prototipagem não é apenas relativa a informática mas sim a todas as áreas de engenharia e não só; por exemplo, qualquer obra de engenharia civil necessita de uma só visão, uma divisão de tarefas clara e quando existe uma dúvida nunca se deverá assumir o que seja. 
+Relativamente ao caso do minecolonies em específico, a equipa presente não tenha grandes problemas relacionado com este tópico e isto é graças às medidas que todos adotam para que não hajam falhas. A modificação em termos de código segue a política de “one branch one person”, os objetivos estabelecidos são claros, a comunicação é abundante e eficaz e ninguém assume o que seja, pois sabem perfeitamente que um erro detectado no final será muito mais problemático para resolver do que um identificado numa fase mais precoce.
 
 ## Contribuições ##
 
