@@ -44,6 +44,8 @@ Os NPCs do Minecolonies podem ser divididos em vários tipos: builder, farmer, f
 
 #### Achievements ####
 
+A modificação também disponibiliza uma expansão e um melhoramento ao sistema de conquistas implementado no jogo base. Este sistema é uma adição ao vasto leque de novidades que minecolonies traz ao jogo que torna a experiência dos jogadores bastante mais agradável, cobrindo vários tópicos como o inicial de “construir um supply ship” ou o de “criar NPC’s”. Esta funcionalidade apenas serve para melhorar a qualidade de jogo, não tendo nenhuma recompensa para além de ter uma lista de proezas completadas, mas também tem a particularidade de servir de uma espécie de guia interativo para novos jogadores.
+
 ### Requerimentos não funcionais ###
 
 
