@@ -7,9 +7,11 @@ import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
+import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.InventoryUtils;
+import com.minecolonies.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityMob;
@@ -23,6 +25,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+
+import static com.minecolonies.entity.ai.util.AIState.GUARD_RESTOCK;
+import static com.minecolonies.entity.ai.util.AIState.IDLE;
+import static com.minecolonies.entity.ai.util.AIState.START_WORKING;
 
 /**
  * Abstract class which contains all the guard basics let it be range, melee or magic.
@@ -92,6 +98,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     protected AbstractEntityAIGuard(@NotNull final JobGuard job)
     {
         super(job);
+        super.registerTargets(new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, () -> GUARD_RESTOCK));
     }
 
 
@@ -132,16 +140,15 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                     {
                         final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
 
-                        if(emptySlot == -1)
+                        if(emptySlot != -1)
                         {
-
+                            worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
+                            chest.setInventorySlotContents(i, null);
                         }
-                        worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
-                        chest.setInventorySlotContents(i, null);
                     }
-                    else if(!(stack.getItem() instanceof ItemBow || stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool))
+                    else if(!(stack.getItem() instanceof ItemBow || Utils.doesItemServeAsWeapon(stack)))
                     {
-                    //todo dump everything which isn't a weapon
+                        //todo dump everything which isn't a weapon or armor
                     }
                 }
             }

@@ -96,8 +96,6 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, () -> START_WORKING),
-                new AITarget(START_WORKING, () -> GUARD_RESTOCK),
                 new AITarget(GUARD_SEARCH_TARGET, this::searchTarget),
                 new AITarget(GUARD_GET_TARGET, this::getTarget),
                 new AITarget(GUARD_HUNT_DOWN_TARGET, this::huntDown),
@@ -120,18 +118,9 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             return AIState.GUARD_SEARCH_TARGET;
         }
 
-        InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(), stack -> stack != null && Utils.doesItemServeAsWeapon(stack), this::setHeldItem);
+        InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(), stack -> stack != null && Utils.doesItemServeAsWeapon(stack), worker::setHeldItem);
 
         return AIState.GUARD_SEARCH_TARGET;
-    }
-
-    /**
-     * Sets the held item for a worker.
-     * @param slot the slot to set.
-     */
-    private void setHeldItem(int slot)
-    {
-        worker.setHeldItem(slot);
     }
 
     private int getReloadTime()

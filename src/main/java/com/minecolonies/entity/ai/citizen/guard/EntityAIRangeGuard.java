@@ -146,8 +146,6 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, () -> START_WORKING),
-                new AITarget(START_WORKING, () -> GUARD_RESTOCK),
                 new AITarget(GUARD_SEARCH_TARGET, this::searchTarget),
                 new AITarget(GUARD_GET_TARGET, this::getTarget),
                 new AITarget(GUARD_HUNT_DOWN_TARGET, this::huntDown),
