@@ -22,7 +22,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Nullable
     private Entity        closestLivingEntity;
     private float         distanceFromEntity;
-    private Class targetEntityClass;
+    private Class<? extends Entity> targetEntityClass;
 
     /**
      * Constructor.

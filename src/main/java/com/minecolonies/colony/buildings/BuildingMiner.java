@@ -107,7 +107,7 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Defines the material used for the floor of the shaft.
      */
-    private static final IBlockState floorBlock = Blocks.WOODEN_SLAB.getDefaultState().withProperty(Blocks.WOODEN_SLAB.HALF, BlockSlab.EnumBlockHalf.TOP);
+    private static final IBlockState floorBlock = Blocks.WOODEN_SLAB.getDefaultState().withProperty(BlockSlab.HALF, BlockSlab.EnumBlockHalf.TOP);
     /**
      * Defines the material used for the fence of the shaft.
      */
