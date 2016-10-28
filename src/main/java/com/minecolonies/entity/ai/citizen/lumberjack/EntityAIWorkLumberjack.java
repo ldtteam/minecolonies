@@ -155,7 +155,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Positions of all items that have to be collected.
      */
     @Nullable
-    private List<BlockPos>                 items;
+    private List<BlockPos> items;
 
     /**
      * The active pathfinding job used to walk to trees
@@ -498,7 +498,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     //todo: we need to use a different way to get Metadata
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     private void placeSaplings(int saplingSlot, @NotNull ItemStack stack, @NotNull Block block)
     {
         while (!job.tree.getStumpLocations().isEmpty())
@@ -520,7 +520,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     //todo: we need to use a different way to get Metadata
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     /**
      * Checks if this is the correct Sapling. Please stop that @NotNull stuff. You put it where it doesn't belong!!!
      * @param stack incoming stack.
@@ -663,6 +663,23 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    protected Map<ItemStorage, Integer> needXForWorker()
+    {
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
+        final ItemStack stack = new ItemStack(Blocks.SAPLING);
+        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
+
+        return keepX;
+    }
+
+    /**
      * Override this method if you want to keep some items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.
      * But you can use this method to hold some stacks back.
@@ -674,24 +691,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     protected boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return isStackAxe(stack);
-    }
-
-
-    /**
-    * Override this method if you want to keep an amount of items in inventory.
-    * When the inventory is full, everything get's dumped into the building chest.
-    * But you can use this method to hold some stacks back.
-    *
-    * @return a list of objects which should be kept.
-    */
-    @Override
-    protected Map<ItemStorage, Integer> needXForWorker()
-    {
-        final Map<ItemStorage, Integer> keepX = new HashMap<>();
-        final ItemStack stack = new ItemStack(Blocks.SAPLING);
-        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
-
-        return keepX;
     }
 
     /**

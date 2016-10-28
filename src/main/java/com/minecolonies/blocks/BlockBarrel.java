@@ -135,7 +135,7 @@ public class BlockBarrel extends Block
     }
 
     //todo: remove once we no longer need to support this
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {
@@ -154,7 +154,7 @@ public class BlockBarrel extends Block
      * @return true
      */
     //todo: remove once we no longer need to support this
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isOpaqueCube(IBlockState state)
     {

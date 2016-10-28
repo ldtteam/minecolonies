@@ -14,14 +14,13 @@ import net.minecraft.util.math.BlockPos;
 public class EntityAIGoHome extends EntityAIBase
 {
     /**
-     * The citizen.
-     */
-    private EntityCitizen citizen;
-
-    /**
      * Chance to play goHomeSound.
      */
     private static final int CHANCE = 100;
+    /**
+     * The citizen.
+     */
+    private EntityCitizen citizen;
 
     public EntityAIGoHome(EntityCitizen citizen)
     {
@@ -76,7 +75,7 @@ public class EntityAIGoHome extends EntityAIBase
     {
         final int chance = citizen.getRandom().nextInt(CHANCE);
 
-        if(chance <= 1)
+        if (chance <= 1)
         {
             if (citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
             {

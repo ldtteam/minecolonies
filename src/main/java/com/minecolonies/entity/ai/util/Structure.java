@@ -81,7 +81,6 @@ public class Structure
             this.worldMetadata = worldMetadata;
         }
     }
-
     private final Stage            stage;
     /**
      * The internal schematic loaded.
@@ -138,18 +137,18 @@ public class Structure
      */
     @Nullable
     private static SchematicWrapper loadSchematic(
-            @Nullable World targetWorld,
-            @Nullable BlockPos buildingLocation,
-            @Nullable String schematicFileName,
-            int rotation,
-            Stage stageProgress,
-            @Nullable BlockPos blockProgress)
-            throws StructureException
+                                                   @Nullable World targetWorld,
+                                                   @Nullable BlockPos buildingLocation,
+                                                   @Nullable String schematicFileName,
+                                                   int rotation,
+                                                   Stage stageProgress,
+                                                   @Nullable BlockPos blockProgress)
+      throws StructureException
     {
         if (targetWorld == null || buildingLocation == null || schematicFileName == null)
         {
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
-                    targetWorld, buildingLocation, schematicFileName));
+              targetWorld, buildingLocation, schematicFileName));
         }
         @Nullable SchematicWrapper tempSchematic = null;
         //failsafe for faulty schematic files
@@ -206,8 +205,8 @@ public class Structure
         {
             case CLEAR:
                 return advanceBlocks(this.schematic::decrementBlock,
-                        schematicBlock -> schematicBlock.blockPosition.getX() <= 0
-                                || this.targetWorld.isAirBlock(schematicBlock.blockPosition));
+                  schematicBlock -> schematicBlock.blockPosition.getX() <= 0
+                                      || this.targetWorld.isAirBlock(schematicBlock.blockPosition));
             case BUILD:
                 return advanceBlocks(this.schematic::incrementBlock, schematicBlock -> false);
             case DECORATE:
@@ -251,12 +250,12 @@ public class Structure
     public SchematicBlock getCurrentBlock()
     {
         return new SchematicBlock(
-                this.schematic.getBlock(),
-                this.schematic.getBlockPosition(),
-                this.schematic.getBlockState(),
-                this.schematic.getItem(),
-                BlockPosUtil.getBlock(targetWorld, this.schematic.getBlockPosition()),
-                BlockPosUtil.getBlockState(targetWorld, this.schematic.getBlockPosition())
+                                   this.schematic.getBlock(),
+                                   this.schematic.getBlockPosition(),
+                                   this.schematic.getBlockState(),
+                                   this.schematic.getItem(),
+                                   BlockPosUtil.getBlock(targetWorld, this.schematic.getBlockPosition()),
+                                   BlockPosUtil.getBlockState(targetWorld, this.schematic.getBlockPosition())
         );
     }
 
@@ -269,7 +268,7 @@ public class Structure
     private boolean checkBlocksEqual(@NotNull SchematicBlock blocksToTest)
     {
         return blocksToTest.block == blocksToTest.worldBlock
-                && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);
+                 && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);
     }
 
     /**

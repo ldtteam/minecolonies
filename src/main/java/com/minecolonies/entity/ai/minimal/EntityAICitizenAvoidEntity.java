@@ -16,12 +16,12 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * The entity we are attached to
      */
-    private EntityCitizen theEntity;
-    private double        farSpeed;
-    private double        nearSpeed;
+    private EntityCitizen           theEntity;
+    private double                  farSpeed;
+    private double                  nearSpeed;
     @Nullable
-    private Entity        closestLivingEntity;
-    private float         distanceFromEntity;
+    private Entity                  closestLivingEntity;
+    private float                   distanceFromEntity;
     private Class<? extends Entity> targetEntityClass;
 
     /**

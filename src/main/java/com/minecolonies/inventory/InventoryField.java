@@ -290,10 +290,6 @@ public class InventoryField implements IInventory
         {
             this.stackResult[i] = null;
         }
-    }    @Override
-    public boolean hasCustomName()
-    {
-        return true;
     }
 
     /**
@@ -324,6 +320,10 @@ public class InventoryField implements IInventory
         }
 
         compound.setTag(TAG_INVENTORY, nbttaglist);
+    }    @Override
+    public boolean hasCustomName()
+    {
+        return true;
     }
 
     /**
@@ -334,16 +334,16 @@ public class InventoryField implements IInventory
     public void setCustomName(final String customName)
     {
         this.customName = customName;
-    }    @NotNull
+    }
+
+
+
+    @NotNull
     @Override
     public ITextComponent getDisplayName()
     {
         return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
-
-
-
-
 
     /**
      * Get the name of this object. For citizens this returns their name.

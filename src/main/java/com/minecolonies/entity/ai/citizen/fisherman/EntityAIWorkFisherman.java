@@ -119,7 +119,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * Time out fo fish again.
      */
-    private static final int FISHING_TIMEOUT      = 5;
+    private static final int FISHING_TIMEOUT = 5;
 
     /**
      * Chance to play a specific fisherman sound.
@@ -221,7 +221,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void playNeedRodSound()
     {
-        if(worker != null)
+        if (worker != null)
         {
             final SoundEvent needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
             SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), needFishingRod, CHANCE_TO_PLAY_SOUND);
@@ -293,8 +293,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         return worker.hasItemInInventory(Items.FISHING_ROD) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
     }
-
-
 
     /**
      * Override this method if you want to keep an amount of items in inventory.
@@ -478,7 +476,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void playCaughtFishSound()
     {
-        if(worker != null)
+        if (worker != null)
         {
             final SoundEvent iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
             SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), iGotOne, CHANCE_TO_PLAY_SOUND);
@@ -661,5 +659,4 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         return worker;
     }
-
 }

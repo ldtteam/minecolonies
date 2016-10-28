@@ -232,51 +232,6 @@ public class Field extends Container
         }
     }
 
-    /**
-     * Create and load a Field given it's saved NBTTagCompound.
-     *
-     * @param colony   The owning colony.
-     * @param compound The saved data.
-     * @return {@link Field} created from the compound.
-     */
-    @NotNull
-    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
-    {
-        @NotNull final Field field = new Field(colony);
-        field.readFromNBT(compound);
-        return field;
-    }
-
-    /**
-     * Save data to NBT compound.
-     * Writes the {@link #location} value.
-     *
-     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
-     */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
-    {
-        location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
-        taken = compound.getBoolean(TAG_TAKEN);
-        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
-        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
-        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
-        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
-        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
-        inventory = new InventoryField("");
-        inventory.readFromNBT(compound);
-        setOwner(compound.getString(TAG_OWNER));
-    }
-
-    /**
-     * Getter for MAX_RANGE.
-     *
-     * @return the max range.
-     */
-    private static int getMaxRange()
-    {
-        return MAX_RANGE;
-    }
-
     @Override
     protected final Slot addSlotToContainer(final Slot slotToAdd)
     {
@@ -324,6 +279,51 @@ public class Field extends Container
     public Colony getColony()
     {
         return this.colony;
+    }
+
+    /**
+     * Create and load a Field given it's saved NBTTagCompound.
+     *
+     * @param colony   The owning colony.
+     * @param compound The saved data.
+     * @return {@link Field} created from the compound.
+     */
+    @NotNull
+    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
+    {
+        @NotNull final Field field = new Field(colony);
+        field.readFromNBT(compound);
+        return field;
+    }
+
+    /**
+     * Save data to NBT compound.
+     * Writes the {@link #location} value.
+     *
+     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
+     */
+    public void readFromNBT(@NotNull NBTTagCompound compound)
+    {
+        location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+        taken = compound.getBoolean(TAG_TAKEN);
+        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
+        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
+        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
+        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
+        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
+        inventory = new InventoryField("");
+        inventory.readFromNBT(compound);
+        setOwner(compound.getString(TAG_OWNER));
+    }
+
+    /**
+     * Getter for MAX_RANGE.
+     *
+     * @return the max range.
+     */
+    private static int getMaxRange()
+    {
+        return MAX_RANGE;
     }
 
     /**

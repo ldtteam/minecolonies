@@ -37,7 +37,7 @@ public class SchematicRenderCache extends ChunkCache
     @Override
     public IBlockState getBlockState(final BlockPos pos)
     {
-        if(Settings.instance.getSchematicWorld() != null)
+        if (Settings.instance.getSchematicWorld() != null)
         {
             final BlockPos realPos = pos.add(Settings.instance.getSchematicWorld().position);
             final World world = this.minecraft.theWorld;

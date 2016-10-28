@@ -35,9 +35,7 @@ public class PathJobFindTree extends AbstractPathJob
     public static class TreePathResult extends PathResult
     {
         public BlockPos treeLocation;
-    }
-
-    @NotNull
+    }    @NotNull
     @Override
     public TreePathResult getResult()
     {
@@ -97,4 +95,6 @@ public class PathJobFindTree extends AbstractPathJob
     {
         return super.isPassable(block) || block.getMaterial() == Material.LEAVES;
     }
+
+
 }

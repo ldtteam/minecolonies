@@ -172,7 +172,7 @@ public class PathNavigate extends PathNavigateGround
 
             try
             {
-                if(future.get() == null)
+                if (future.get() == null)
                 {
                     future = null;
                     return;
@@ -279,7 +279,6 @@ public class PathNavigate extends PathNavigateGround
         }
     }
 
-
     @Override
     protected void pathFollow()
     {
@@ -287,16 +286,16 @@ public class PathNavigate extends PathNavigateGround
         int curNodeNext = curNode + 1;
         if (curNodeNext < currentPath.getCurrentPathLength())
         {
-            PathPointExtended pEx = (PathPointExtended)currentPath.getPathPointFromIndex(curNode);
-            PathPointExtended pExNext = (PathPointExtended)currentPath.getPathPointFromIndex(curNodeNext);
+            PathPointExtended pEx = (PathPointExtended) currentPath.getPathPointFromIndex(curNode);
+            PathPointExtended pExNext = (PathPointExtended) currentPath.getPathPointFromIndex(curNodeNext);
 
             //  If current node is bottom of a ladder, then stay on this node until
             //  the entity reaches the bottom, otherwise they will try to head out early
             if (pEx.isOnLadder && pEx.ladderFacing == EnumFacing.DOWN &&
-                    !pExNext.isOnLadder)
+                  !pExNext.isOnLadder)
             {
                 Vec3d vec3 = getEntityPosition();
-                if ((vec3.yCoord - (double)pEx.yCoord) < 0.001)
+                if ((vec3.yCoord - (double) pEx.yCoord) < 0.001)
                 {
                     this.currentPath.setCurrentPathIndex(curNodeNext);
                 }

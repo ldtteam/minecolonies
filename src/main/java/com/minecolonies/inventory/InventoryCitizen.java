@@ -358,16 +358,6 @@ public class InventoryCitizen implements IInventory
         }
 
         return NO_SLOT;
-    }    /**
-     * Get the name of this object. For citizens this returns their name.
-     *
-     * @return the name of the inventory.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     /**
@@ -379,6 +369,16 @@ public class InventoryCitizen implements IInventory
     public boolean hasItem(Item itemIn)
     {
         return getInventorySlotContainItem(itemIn) != NO_SLOT;
+    }    /**
+     * Get the name of this object. For citizens this returns their name.
+     *
+     * @return the name of the inventory.
+     */
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     /**
@@ -401,15 +401,6 @@ public class InventoryCitizen implements IInventory
     public boolean isSlotEmpty(int index)
     {
         return getStackInSlot(index) == null;
-    }    /**
-     * Checks if the inventory is named.
-     *
-     * @return true if the inventory has a custom name.
-     */
-    @Override
-    public boolean hasCustomName()
-    {
-        return this.customName != null;
     }
 
     public void createMaterialStore(@NotNull MaterialSystem system)
@@ -424,13 +415,14 @@ public class InventoryCitizen implements IInventory
     {
         return materialStore;
     }    /**
-     * Get the formatted TextComponent that will be used for the sender's username in chat
+     * Checks if the inventory is named.
+     *
+     * @return true if the inventory has a custom name.
      */
-    @NotNull
     @Override
-    public ITextComponent getDisplayName()
+    public boolean hasCustomName()
     {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
+        return this.customName != null;
     }
 
     private void addStackToMaterialStore(@Nullable ItemStack stack)
@@ -484,6 +476,14 @@ public class InventoryCitizen implements IInventory
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
+    }    /**
+     * Get the formatted TextComponent that will be used for the sender's username in chat
+     */
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -761,10 +761,13 @@ public class InventoryCitizen implements IInventory
         compound.setTag(TAG_INVENTORY, nbttaglist);
     }
 
+
+
+
+
+
+
     //-----------------------------Material Handling--------------------------------
-
-
-
 
 
     //todo missing now
@@ -778,6 +781,4 @@ public class InventoryCitizen implements IInventory
 
                     return removed;
     }*/
-
-
 }

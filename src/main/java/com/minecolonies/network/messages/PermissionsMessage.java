@@ -253,9 +253,7 @@ public class PermissionsMessage
         {
             PROMOTE,
             DEMOTE
-        }
-
-        @Override
+        }        @Override
         public void toBytes(@NotNull ByteBuf buf)
         {
             buf.writeInt(colonyID);
@@ -291,6 +289,8 @@ public class PermissionsMessage
                 colony.getPermissions().setPlayerRank(message.playerID, Permissions.getDemotionRank(colony.getPermissions().getRank(message.playerID)), colony.getWorld());
             }
         }
+
+
     }
 
     /**

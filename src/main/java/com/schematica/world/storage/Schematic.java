@@ -22,7 +22,7 @@ public class Schematic implements ISchematic
 {
     private static final ItemStack                              DEFAULT_ICON   = new ItemStack(Blocks.GRASS);
     //todo: check if there is a non-internal way to use the registry
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
     private final short[][][] blocks;
     private final byte[][][]  metadata;
@@ -75,7 +75,7 @@ public class Schematic implements ISchematic
 
     //MINECOLONIES END
 
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     @Override
     public IBlockState getBlockState(@NotNull final BlockPos pos)
     {

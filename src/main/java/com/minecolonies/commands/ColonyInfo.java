@@ -10,8 +10,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
-import javax.annotation.Nullable;
 
+import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +22,7 @@ import java.util.UUID;
 public class ColonyInfo extends AbstractSingleCommand
 {
 
+    public static final  String DESC                       = "info";
     private static final String ID_TEXT                    = "§2ID: §f";
     private static final String NAME_TEXT                  = "§2 Name: §f";
     private static final String MAYOR_TEXT                 = "§2Mayor: §f";
@@ -30,8 +31,6 @@ public class ColonyInfo extends AbstractSingleCommand
     private static final String CITIZENS                   = "§2Citizens: §f";
     private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
-
-    public static final String DESC                        = "info";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -69,7 +68,7 @@ public class ColonyInfo extends AbstractSingleCommand
         }
 
         final IColony tempColony;
-        if(colonyId == -1)
+        if (colonyId == -1)
         {
             tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
         }
@@ -78,7 +77,7 @@ public class ColonyInfo extends AbstractSingleCommand
             tempColony = ColonyManager.getColony(colonyId);
         }
 
-        if(tempColony == null)
+        if (tempColony == null)
         {
             if (colonyId == -1)
             {
@@ -116,7 +115,7 @@ public class ColonyInfo extends AbstractSingleCommand
     private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
     {
         final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();
-        if(tempServer != null)
+        if (tempServer != null)
         {
             final GameProfile profile = tempServer.getPlayerProfileCache().getGameProfileForUsername(args[0]);
             if (profile != null)
@@ -142,8 +141,8 @@ public class ColonyInfo extends AbstractSingleCommand
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
         return index == 0
-                && args.length > 0
-                && !args[0].isEmpty()
-                && getIthArgument(args, 0, Integer.MAX_VALUE) == Integer.MAX_VALUE;
+                 && args.length > 0
+                 && !args[0].isEmpty()
+                 && getIthArgument(args, 0, Integer.MAX_VALUE) == Integer.MAX_VALUE;
     }
 }

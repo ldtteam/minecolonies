@@ -179,7 +179,7 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockCrops)
         {
             ItemStack stack = ((BlockCrops) blockState.getBlock()).getItem(null, null, blockState);
-            if(stack != null)
+            if (stack != null)
             {
                 return stack.getItem();
             }
@@ -193,11 +193,13 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockDoor)
         {
             Item item = blockState.getBlock() == Blocks.IRON_DOOR ? Items.IRON_DOOR :
-                    (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
-                            : (blockState.getBlock() == Blocks.BIRCH_DOOR ? Items.BIRCH_DOOR
-                                    : (blockState.getBlock() == Blocks.JUNGLE_DOOR ? Items.JUNGLE_DOOR
-                                            : (blockState.getBlock() == Blocks.ACACIA_DOOR ? Items.ACACIA_DOOR
-                                                    : (blockState.getBlock() == Blocks.DARK_OAK_DOOR ? Items.DARK_OAK_DOOR : Items.OAK_DOOR)))));
+                                                                                      (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
+                                                                                         : (blockState.getBlock() == Blocks.BIRCH_DOOR ? Items.BIRCH_DOOR
+                                                                                              : (blockState.getBlock() == Blocks.JUNGLE_DOOR ? Items.JUNGLE_DOOR
+                                                                                                   : (blockState.getBlock() == Blocks.ACACIA_DOOR ? Items.ACACIA_DOOR
+                                                                                                        : (blockState.getBlock() == Blocks.DARK_OAK_DOOR
+                                                                                                             ? Items.DARK_OAK_DOOR
+                                                                                                             : Items.OAK_DOOR)))));
 
             return item == null ? Item.getItemFromBlock(blockState.getBlock()) : item;
         }
@@ -264,7 +266,7 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockStem)
         {
             ItemStack stack = ((BlockStem) blockState.getBlock()).getItem(null, null, blockState);
-            if(stack != null)
+            if (stack != null)
             {
                 return stack.getItem();
             }
@@ -275,7 +277,7 @@ public final class BlockUtils
             //Builder won't know how to build double stone slab
             return Item.getItemFromBlock(Blocks.STONE_SLAB);
         }
-        else if(blockState.getBlock() instanceof BlockPurpurSlab)
+        else if (blockState.getBlock() instanceof BlockPurpurSlab)
         {
             return Item.getItemFromBlock(Blocks.PURPUR_SLAB);
         }

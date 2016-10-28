@@ -11,7 +11,7 @@ class QuantityNotFound extends RuntimeException
     public static final long serialVersionUID = -703925360745766939L;
 
     //todo: We need to change registry access
-    @SuppressWarnings ("deprecation")
+    @SuppressWarnings("deprecation")
     /**
      * Create a new Exception fo this type.
      *

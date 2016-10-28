@@ -350,6 +350,7 @@ public final class RotationHelper
     public static class RotationException extends Exception
     {
         public static final long serialVersionUID = 2093580928750972354L;
+
         RotationException(@NotNull final String message, final Object... args)
         {
             super(String.format(message, args));

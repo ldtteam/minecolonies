@@ -10,7 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -39,8 +38,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
-    public static final PropertyDirection FACING = BlockHorizontal.FACING;
-    private static final float             HARDNESS = 10F;
+    public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
+    private static final float             HARDNESS   = 10F;
     private static final float             RESISTANCE = Float.POSITIVE_INFINITY;
     protected int workingRange;
 

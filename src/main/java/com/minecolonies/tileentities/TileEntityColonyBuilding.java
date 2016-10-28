@@ -74,6 +74,13 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
+    public void onChunkUnload()
+    {
+        if (building != null)
+        {
+            building.setTileEntity(null);
+        }
+    }    @Override
     public void update()
     {
         super.update();
@@ -81,19 +88,10 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (!worldObj.isRemote && colonyId == 0)
         {
             final Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
-            if(tempColony != null)
+            if (tempColony != null)
             {
                 colonyId = tempColony.getID();
             }
-        }
-    }
-
-    @Override
-    public void onChunkUnload()
-    {
-        if (building != null)
-        {
-            building.setTileEntity(null);
         }
     }
 
@@ -105,6 +103,30 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public BlockPos getPosition()
     {
         return pos;
+    }
+
+    /**
+     * Returns the colony ID
+     *
+     * @return ID of the colony
+     */
+    public int getColonyId()
+    {
+        return colonyId;
+    }
+
+    /**
+     * Returns the colony of the tile entity
+     *
+     * @return Colony of the tile entity
+     */
+    public Colony getColony()
+    {
+        if (colony == null)
+        {
+            updateColonyReferences();
+        }
+        return colony;
     }
 
     /**
@@ -153,30 +175,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Returns the colony ID
-     *
-     * @return ID of the colony
-     */
-    public int getColonyId()
-    {
-        return colonyId;
-    }
-
-    /**
-     * Returns the colony of the tile entity
-     *
-     * @return Colony of the tile entity
-     */
-    public Colony getColony()
-    {
-        if (colony == null)
-        {
-            updateColonyReferences();
-        }
-        return colony;
-    }
-
-    /**
      * Sets the colony of the tile entity
      *
      * @param c Colony to set in references
@@ -186,18 +184,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
         colony = c;
         colonyId = c.getID();
         markDirty();
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        if (compound.hasKey(TAG_COLONY))
-        {
-            colonyId = compound.getInteger(TAG_COLONY);
-        }
-
-        updateColonyReferences();
     }
 
     /**
@@ -222,7 +208,30 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public void setBuilding(AbstractBuilding b)
     {
         building = b;
+    }    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        if (compound.hasKey(TAG_COLONY))
+        {
+            colonyId = compound.getInteger(TAG_COLONY);
+        }
+
+        updateColonyReferences();
     }
+
+    /**
+     * Returns the view of the building associated with the tile entity
+     *
+     * @return {@link AbstractBuilding.View} the tile entity is associated with
+     */
+    public AbstractBuilding.View getBuildingView()
+    {
+        ColonyView c = ColonyManager.getColonyView(colonyId);
+        return c != null ? c.getBuilding(getPosition()) : null;
+    }
+
+
 
     @NotNull
     @Override
@@ -239,16 +248,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         return compound;
     }
 
-    /**
-     * Returns the view of the building associated with the tile entity
-     *
-     * @return {@link AbstractBuilding.View} the tile entity is associated with
-     */
-    public AbstractBuilding.View getBuildingView()
-    {
-        ColonyView c = ColonyManager.getColonyView(colonyId);
-        return c != null ? c.getBuilding(getPosition()) : null;
-    }
+
 
     @Override
     public boolean isUseableByPlayer(@NotNull EntityPlayer player)

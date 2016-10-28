@@ -350,6 +350,7 @@ public abstract class AbstractJob
 
     /**
      * Override this to let the worker return a bedTimeSound.
+     *
      * @return soundEvent to be played.
      */
     public SoundEvent getBedTimeSound()
@@ -359,6 +360,7 @@ public abstract class AbstractJob
 
     /**
      * Override this to let the worker return a badWeatherSound.
+     *
      * @return soundEvent to be played.
      */
     public SoundEvent getBadWeatherSound()

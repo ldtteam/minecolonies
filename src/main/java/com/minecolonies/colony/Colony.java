@@ -314,6 +314,17 @@ public class Colony implements IColony
         return dimensionId;
     }
 
+    /**
+     * Returns the center of the colony.
+     *
+     * @return Chunk Coordinates of the center of the colony.
+     */
+    @Override
+    public BlockPos getCenter()
+    {
+        return center;
+    }
+
     @Override
     public String getName()
     {
@@ -376,17 +387,6 @@ public class Colony implements IColony
     public boolean hasTownHall()
     {
         return townHall != null;
-    }
-
-    /**
-     * Returns the center of the colony.
-     *
-     * @return Chunk Coordinates of the center of the colony.
-     */
-    @Override
-    public BlockPos getCenter()
-    {
-        return center;
     }
 
     /**
@@ -463,8 +463,8 @@ public class Colony implements IColony
 
         // Add owners
         subscribers.addAll(
-                this.getWorld().getMinecraftServer().getPlayerList().getPlayerList()
-                        .stream()
+          this.getWorld().getMinecraftServer().getPlayerList().getPlayerList()
+            .stream()
             .filter(permissions::isSubscriber)
             .collect(Collectors.toList()));
 
@@ -697,9 +697,9 @@ public class Colony implements IColony
             //  Detect CitizenData whose EntityCitizen no longer exist in world, and clear the mapping
             //  Consider handing this in an ChunkUnload Event instead?
             citizens.values()
-                    .stream()
-                    .filter(Colony::isCitizenMissingFromWorld)
-                    .forEach(CitizenData::clearCitizenEntity);
+              .stream()
+              .filter(Colony::isCitizenMissingFromWorld)
+              .forEach(CitizenData::clearCitizenEntity);
 
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
@@ -709,11 +709,11 @@ public class Colony implements IColony
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
                 citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null)
-                        .forEach(citizen ->
-                        {
-                            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
-                            spawnCitizen(citizen);
-                        });
+                  .forEach(citizen ->
+                  {
+                      Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
+                      spawnCitizen(citizen);
+                  });
             }
 
             //  Cleanup Buildings whose Blocks have gone AWOL

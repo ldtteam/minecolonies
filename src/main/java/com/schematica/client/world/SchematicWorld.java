@@ -21,17 +21,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-
 public class SchematicWorld extends WorldClient
 {
-    private static final WorldSettings WORLD_SETTINGS = new WorldSettings(0, GameType.CREATIVE, false, false, WorldType.FLAT);
-
+    private static final WorldSettings            WORLD_SETTINGS = new WorldSettings(0, GameType.CREATIVE, false, false, WorldType.FLAT);
+    public final         BlockPos.MutableBlockPos position       = new BlockPos.MutableBlockPos();
+    public  boolean   isRendering;
+    public  boolean   isRenderingLayer;
+    public  int       renderingLayer;
     private Schematic schematic;
-
-    public final BlockPos.MutableBlockPos position = new BlockPos.MutableBlockPos();
-    public boolean isRendering;
-    public boolean isRenderingLayer;
-    public int renderingLayer;
 
     public SchematicWorld(final Schematic schematic)
     {
@@ -48,6 +45,53 @@ public class SchematicWorld extends WorldClient
         this.renderingLayer = 0;
     }
 
+    public void initializeTileEntity(final TileEntity tileEntity)
+    {
+        tileEntity.setWorldObj(this);
+        tileEntity.getBlockType();
+        try
+        {
+            tileEntity.invalidate();
+            tileEntity.validate();
+        }
+        catch (final Exception e)
+        {
+            Reference.logger.error("TileEntity validation for {} failed!", tileEntity.getClass(), e);
+        }
+    }
+
+    @Override
+    public Biome getBiome(final BlockPos pos)
+    {
+        return Biomes.JUNGLE;
+    }
+
+    @Override
+    public boolean isAirBlock(final BlockPos pos)
+    {
+        final IBlockState blockState = getBlockState(pos);
+        return blockState.getBlock().isAir(blockState, this, pos);
+    }
+
+    @Override
+    public boolean setBlockState(final BlockPos pos, final IBlockState state, final int flags)
+    {
+        return this.schematic.setBlockState(pos, state);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public int getLightFromNeighborsFor(final EnumSkyBlock type, final BlockPos pos)
+    {
+        return 15;
+    }
+
+    @Override
+    public float getLightBrightness(final BlockPos pos)
+    {
+        return 1.0f;
+    }
+
     @Override
     public IBlockState getBlockState(final BlockPos pos)
     {
@@ -57,12 +101,6 @@ public class SchematicWorld extends WorldClient
         }
 
         return this.schematic.getBlockState(pos);
-    }
-
-    @Override
-    public boolean setBlockState(final BlockPos pos, final IBlockState state, final int flags)
-    {
-        return this.schematic.setBlockState(pos, state);
     }
 
     @Override
@@ -89,19 +127,6 @@ public class SchematicWorld extends WorldClient
         this.schematic.removeTileEntity(pos);
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public int getLightFromNeighborsFor(final EnumSkyBlock type, final BlockPos pos)
-    {
-        return 15;
-    }
-
-    @Override
-    public float getLightBrightness(final BlockPos pos)
-    {
-        return 1.0f;
-    }
-
     @Override
     public boolean isBlockNormalCube(final BlockPos pos, final boolean _default)
     {
@@ -120,8 +145,8 @@ public class SchematicWorld extends WorldClient
     protected void calculateInitialWeather()
     {
         /**
-        * Not needed.
-        */
+         * Not needed.
+         */
     }
 
     @Override
@@ -133,32 +158,21 @@ public class SchematicWorld extends WorldClient
     }
 
     @Override
-    public boolean isAirBlock(final BlockPos pos)
-    {
-        final IBlockState blockState = getBlockState(pos);
-        return blockState.getBlock().isAir(blockState, this, pos);
-    }
-
-    @Override
-    public Biome getBiome(final BlockPos pos)
-    {
-        return Biomes.JUNGLE;
-    }
-
-    public int getWidth()
-    {
-        return this.schematic.getWidth();
-    }
-
-    public int getLength()
-    {
-        return this.schematic.getLength();
-    }
-
-    @Override
     public int getHeight()
     {
         return this.schematic.getHeight();
+    }
+
+    @Override
+    public boolean isSideSolid(final BlockPos pos, final EnumFacing side)
+    {
+        return isSideSolid(pos, side, false);
+    }
+
+    @Override
+    public boolean isSideSolid(final BlockPos pos, final EnumFacing side, final boolean ignored)
+    {
+        return getBlockState(pos).isSideSolid(this, pos, side);
     }
 
     @Override
@@ -174,16 +188,9 @@ public class SchematicWorld extends WorldClient
         return null;
     }
 
-    @Override
-    public boolean isSideSolid(final BlockPos pos, final EnumFacing side)
+    public Schematic getSchematic()
     {
-        return isSideSolid(pos, side, false);
-    }
-
-    @Override
-    public boolean isSideSolid(final BlockPos pos, final EnumFacing side, final boolean ignored)
-    {
-        return getBlockState(pos).isSideSolid(this, pos, side);
+        return this.schematic;
     }
 
     public void setSchematic(final Schematic schematic)
@@ -191,34 +198,14 @@ public class SchematicWorld extends WorldClient
         this.schematic = schematic;
     }
 
-    public Schematic getSchematic()
+    public ItemStack getIcon()
     {
-        return this.schematic;
-    }
-
-    public void initializeTileEntity(final TileEntity tileEntity)
-    {
-        tileEntity.setWorldObj(this);
-        tileEntity.getBlockType();
-        try
-        {
-            tileEntity.invalidate();
-            tileEntity.validate();
-        }
-        catch (final Exception e)
-        {
-            Reference.logger.error("TileEntity validation for {} failed!", tileEntity.getClass(), e);
-        }
+        return this.schematic.getIcon();
     }
 
     public void setIcon(final ItemStack icon)
     {
         this.schematic.setIcon(icon);
-    }
-
-    public ItemStack getIcon()
-    {
-        return this.schematic.getIcon();
     }
 
     public List<TileEntity> getTileEntities()
@@ -231,7 +218,17 @@ public class SchematicWorld extends WorldClient
         final int x = pos.getX();
         final int y = pos.getY();
         final int z = pos.getZ();
-        
+
         return !(x < 0 || y < 0 || z < 0 || x >= getWidth() || y >= getHeight() || z >= getLength());
+    }
+
+    public int getWidth()
+    {
+        return this.schematic.getWidth();
+    }
+
+    public int getLength()
+    {
+        return this.schematic.getLength();
     }
 }

@@ -165,6 +165,21 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return MAX_BUILDING_LEVEL;
     }
 
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            getColony().triggerAchievement(ModAchievements.achievementBuildingFarmer);
+        }
+        if (newLevel >= getMaxBuildingLevel())
+        {
+            getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
+        }
+    }
+
     @NotNull
     @Override
     public String getJobName()
@@ -330,7 +345,8 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 {
                     scarecrow.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
                     getColony().getWorld()
-                      .notifyBlockUpdate(scarecrow.getPos(), getColony().getWorld().getBlockState(scarecrow.getPos()), getColony().getWorld().getBlockState(scarecrow.getPos()), 3);
+                      .notifyBlockUpdate(scarecrow.getPos(), getColony().getWorld().getBlockState(scarecrow.getPos()), getColony().getWorld().getBlockState(scarecrow
+                                                                                                                                                              .getPos()), 3);
                     field.setInventoryField(scarecrow.getInventoryField());
                     if (currentField != null && currentField.getID() == field.getID())
                     {
@@ -410,21 +426,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void setAssignManually(final boolean assignManually)
     {
         this.assignManually = assignManually;
-    }
-
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        if (newLevel == 1)
-        {
-            getColony().triggerAchievement(ModAchievements.achievementBuildingFarmer);
-        }
-        if (newLevel >= getMaxBuildingLevel())
-        {
-            getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
-        }
     }
 
     /**

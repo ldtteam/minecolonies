@@ -516,6 +516,16 @@ public final class SchematicWrapper
     }
 
     /**
+     * Change the current progressPos. Used when loading progress.
+     *
+     * @param localPosition new progressPos.
+     */
+    public void setLocalPosition(@NotNull BlockPos localPosition)
+    {
+        BlockPosUtil.set(this.progressPos, localPosition);
+    }
+
+    /**
      * @return World position.
      */
     public BlockPos getBlockPosition()
@@ -537,16 +547,6 @@ public final class SchematicWrapper
     public BlockPos getOffset()
     {
         return schematicWorld.getOffset();
-    }
-
-    /**
-     * Change the current progressPos. Used when loading progress.
-     *
-     * @param localPosition new progressPos.
-     */
-    public void setLocalPosition(@NotNull BlockPos localPosition)
-    {
-        BlockPosUtil.set(this.progressPos, localPosition);
     }
 
     /**
