@@ -597,6 +597,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             return false;
         }
+        
         BlockCrops crops = (BlockCrops) curBlockState.getBlock();
 
         if (!crops.isMaxAge(curBlockState))
