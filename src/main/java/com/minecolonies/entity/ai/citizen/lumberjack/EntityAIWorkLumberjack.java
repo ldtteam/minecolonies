@@ -497,6 +497,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         return -1;
     }
 
+    //todo: we need to use a different way to get Metadata
+    @SuppressWarnings ("deprecation")
     private void placeSaplings(int saplingSlot, @NotNull ItemStack stack, @NotNull Block block)
     {
         while (!job.tree.getStumpLocations().isEmpty())
@@ -517,6 +519,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
     }
 
+    //todo: we need to use a different way to get Metadata
+    @SuppressWarnings ("deprecation")
     /**
      * Checks if this is the correct Sapling. Please stop that @NotNull stuff. You put it where it doesn't belong!!!
      * @param stack incoming stack.

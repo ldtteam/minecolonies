@@ -7,6 +7,8 @@ import net.minecraftforge.fml.common.registry.GameData;
  */
 class QuantityNotFound extends RuntimeException
 {
+    //todo: We need to change registry access
+    @SuppressWarnings ("deprecation")
     /**
      * Create a new Exception fo this type.
      *

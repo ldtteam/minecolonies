@@ -117,12 +117,16 @@ public class BlockHutField extends BlockContainer
         return state.getValue(FACING).getIndex();
     }
 
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings ("deprecation")
     @Override
     public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
     }
 
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings ("deprecation")
     @Override
     public boolean isFullCube(IBlockState state)
     {
@@ -135,6 +139,8 @@ public class BlockHutField extends BlockContainer
         return false;
     }
 
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings ("deprecation")
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
