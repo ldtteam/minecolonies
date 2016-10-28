@@ -345,7 +345,9 @@ public class Permissions implements IPermissions
     public boolean hasPermission(@NotNull EntityPlayer player, @NotNull Action action)
     {
         return hasPermission(getRank(player), action);
-    }    /**
+    }    
+    
+    /**
      * Returns the rank belonging to the UUID
      *
      * @param id UUID that you want to check rank of
