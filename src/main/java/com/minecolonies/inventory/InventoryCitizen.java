@@ -258,9 +258,9 @@ public class InventoryCitizen implements IInventory
                 {
                     crashreportcategory.addCrashSection("Item name", itemStackIn.getDisplayName());
                 }
-                catch (Throwable throwable)
+                catch (Exception e)
                 {
-                    crashreportcategory.addCrashSectionThrowable("Item name", throwable);
+                    crashreportcategory.addCrashSectionThrowable("Item name", e);
                 }
                 throw new ReportedException(crashreport);
             }
