@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.registry.GameData;
 class QuantityNotFound extends RuntimeException
 {
 
-    static final long serialVersionUID = -703925360745766939L;
+    public static final long serialVersionUID = -703925360745766939L;
 
     //todo: We need to change registry access
     @SuppressWarnings ("deprecation")
