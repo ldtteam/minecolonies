@@ -1,5 +1,6 @@
 package com.minecolonies.entity.ai.citizen.farmer;
 
+import com.compatibility.Compatibility;
 import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.BuildingFarmer;
@@ -11,7 +12,9 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
+import net.minecraft.block.BlockCarrot;
 import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockPotato;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -24,6 +27,9 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.entity.ai.citizen.farmer.Field.FieldStage.*;
 import static com.minecolonies.entity.ai.util.AIState.*;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Farmer AI class
@@ -478,7 +484,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             if (shouldHarvest(position))
             {
                 worker.addExperience(0.5);
-                mineBlock(position.up());
+                if (Compatibility.isPamsInstalled())
+                {
+                    harvestCrop(position.up());
+                }
+                else
+                {
+                    mineBlock(position.up());
+                }
             }
         }
 
@@ -491,7 +504,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
         if (shouldHarvest(position))
         {
-            mineBlock(position.up());
+            if (Compatibility.isPamsInstalled())
+            {
+                harvestCrop(position.up());
+            }
+            else
+            {
+                mineBlock(position.up());
+            }
         }
 
         setDelay(workingDelay);
@@ -567,5 +587,55 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     public EntityCitizen getCitizen()
     {
         return worker;
+    }
+
+    private boolean harvestCrop(final BlockPos position)
+    {
+        IBlockState curBlockState = world.getBlockState(position);
+
+        if (!(curBlockState.getBlock() instanceof IGrowable && curBlockState.getBlock() instanceof BlockCrops))
+        {
+            return false;
+        }
+        BlockCrops crops = (BlockCrops) curBlockState.getBlock();
+
+        if (!crops.isMaxAge(curBlockState))
+        {
+            return false;
+        }
+
+        final ItemStack tool = worker.getHeldItemMainhand();
+
+        //calculate fortune enchantment
+        int fortune = Utils.getFortuneOf(tool);
+
+        final List<ItemStack> drops = crops.getDrops(world, position, curBlockState, fortune);
+
+        final Item seedItem = crops.getItemDropped(curBlockState, world.rand, fortune);
+        if (seedItem != null)
+        {
+            for (Iterator<ItemStack> iterator = drops.iterator(); iterator.hasNext();) {
+                final ItemStack drop = iterator.next();
+
+                // Remove a seed, then break.
+                if (! (drop.getItem() == seedItem) || crops instanceof BlockCarrot || crops instanceof BlockPotato) {
+                    iterator.remove();
+                    break;
+                }
+            }
+        }
+
+        world.setBlockState(position, crops.withAge(0));
+
+        //add the drops to the citizen
+        for (ItemStack item : drops)
+        {
+            InventoryUtils.setStack(worker.getInventoryCitizen(), item);
+        }
+
+        worker.addExperience(0.05);
+        this.incrementActionsDone();
+        return true;
+
     }
 }
