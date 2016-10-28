@@ -324,7 +324,7 @@ public abstract class AbstractJob
      *
      * @return your personal AI instance.
      */
-    public abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
+    protected abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
 
     /**
      * This method can be used to display the current status.
