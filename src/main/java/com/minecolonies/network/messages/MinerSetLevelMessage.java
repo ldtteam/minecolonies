@@ -5,20 +5,25 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetLevelMessage, IMessage>
+public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, IMessage>
 {
     private int      colonyId;
     private BlockPos buildingId;
     private int      level;
 
-    public MinerSetLevelMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public MinerSetLevelMessage()
+    {
+        super();
+    }
 
     /**
      * Creates object for the miner set level message
@@ -28,6 +33,7 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
      */
     public MinerSetLevelMessage(@NotNull BuildingMiner.View building, int level)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.level = level;
@@ -49,9 +55,8 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
         buf.writeInt(level);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull MinerSetLevelMessage message, MessageContext ctx)
+    public void messageOnServerThread(final MinerSetLevelMessage message, final EntityPlayerMP player)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
@@ -65,6 +70,5 @@ public class MinerSetLevelMessage implements IMessage, IMessageHandler<MinerSetL
                 }
             }
         }
-        return null;
     }
 }

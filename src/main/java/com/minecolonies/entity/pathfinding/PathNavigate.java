@@ -5,10 +5,7 @@ import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.pathfinding.Path;
-import net.minecraft.pathfinding.PathFinder;
-import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.pathfinding.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -37,14 +34,12 @@ public class PathNavigate extends PathNavigateGround
     @Nullable
     private PathResult   pathResult;
 
-    private boolean canEnterDoors    = false;
-    private boolean canBreakDoors    = false;
-    private boolean canSwim          = false;
-
     public PathNavigate(@NotNull EntityLiving entity, World world)
     {
         super(entity, world);
         this.entity = entity;
+
+        this.nodeProcessor = new WalkNodeProcessor();
     }
 
     @Nullable
@@ -74,18 +69,13 @@ public class PathNavigate extends PathNavigateGround
         return null;
     }
 
-    @Override
-    protected boolean isDirectPathBetweenPoints(final Vec3d Vec3d, final Vec3d Vec3d1, final int i, final int i1, final int i2)
-    {
-        //we don't use, so it doesn't matter
-        return false;
-    }
-
-    @Override
-    public void setBreakDoors(boolean canBreakDoors)
-    {
-        this.canBreakDoors = canBreakDoors;
-    }
+    //  Re-enable this if path shortcutting becomes a problem; then entities will move more rigidly along world grid
+//    @Override
+//    protected boolean isDirectPathBetweenPoints(final Vec3d Vec3d, final Vec3d Vec3d1, final int i, final int i1, final int i2)
+//    {
+//        //we don't use, so it doesn't matter
+//        return false;
+//    }
 
     public double getSpeed()
     {
@@ -222,7 +212,7 @@ public class PathNavigate extends PathNavigateGround
             {
                 Vec3d vec3 = this.getPath().getPosition(this.entity);
 
-                if (vec3.squareDistanceTo(new Vec3d(entity.posX, vec3.yCoord, entity.posZ)) < 0.1)
+                if (vec3.squareDistanceTo(entity.posX, vec3.yCoord, entity.posZ) < 0.1)
                 {
                     //This way he is less nervous and gets up the ladder
                     double newSpeed = 0.05;
@@ -385,45 +375,8 @@ public class PathNavigate extends PathNavigateGround
           null, speed);
     }
 
-    //We don't use any of these, but they need to be overriden.
-    /*@Override
-    public void setAvoidsWater(boolean avoidsWater)
-    {
-        this.shouldAvoidWater = avoidsWater;
-    }
-
-    @Override
-    public boolean getAvoidsWater()
-    {
-        return shouldAvoidWater;
-    }*/
-
     public boolean isUnableToReachDestination()
     {
         return pathResult != null && pathResult.failedToReachDestination();
-    }
-
-    @Override
-    public void setEnterDoors(boolean canEnterDoors)
-    {
-        this.canEnterDoors = canEnterDoors;
-    }
-
-    @Override
-    public boolean getEnterDoors()
-    {
-        return canEnterDoors;
-    }
-
-    @Override
-    public void setCanSwim(boolean canSwim)
-    {
-        this.canSwim = canSwim;
-    }
-
-    @Override
-    public boolean getCanSwim()
-    {
-        return canSwim;
     }
 }
