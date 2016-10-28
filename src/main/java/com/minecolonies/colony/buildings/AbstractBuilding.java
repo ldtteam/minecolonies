@@ -1,10 +1,7 @@
 package com.minecolonies.colony.buildings;
 
 import com.minecolonies.blocks.*;
-import com.minecolonies.colony.CitizenData;
-import com.minecolonies.colony.Colony;
-import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.*;
 import com.minecolonies.colony.materials.MaterialStore;
 import com.minecolonies.colony.materials.MaterialSystem;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
@@ -489,7 +486,10 @@ public abstract class AbstractBuilding
      *
      * @return Max building level.
      */
-    public abstract int getMaxBuildingLevel();
+    public int getMaxBuildingLevel()
+    {
+        return Schematics.getMaxLevelForHut(this.getSchematicName(), this.getStyle());
+    }
 
     /**
      * Adds work orders to the {@link Colony#workManager}

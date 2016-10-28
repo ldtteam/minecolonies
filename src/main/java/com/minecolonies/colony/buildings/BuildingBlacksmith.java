@@ -26,12 +26,6 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
         return BLACKSMITH;
     }
 
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return 3;
-    }
-
     @NotNull
     @Override
     public String getJobName()

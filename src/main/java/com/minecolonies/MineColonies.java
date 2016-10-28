@@ -106,7 +106,7 @@ public class MineColonies
 
         proxy.registerRenderer();
 
-        Schematics.init();
+        Schematics.init(Configurations.useSchematicsFromFileSystem);
 
         ModAchievements.init();
     }

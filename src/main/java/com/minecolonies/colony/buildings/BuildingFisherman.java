@@ -16,10 +16,6 @@ import org.jetbrains.annotations.NotNull;
 public class BuildingFisherman extends AbstractBuildingWorker
 {
     /**
-     * The maximum upgrade of the building.
-     */
-    private static final int    MAX_BUILDING_LEVEL = 3;
-    /**
      * The job description.
      */
     private static final String FISHERMAN          = "Fisherman";
@@ -45,17 +41,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
     public String getSchematicName()
     {
         return FISHERMAN;
-    }
-
-    /**
-     * Getter of the max building level.
-     *
-     * @return the integer.
-     */
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
     }
 
     /**

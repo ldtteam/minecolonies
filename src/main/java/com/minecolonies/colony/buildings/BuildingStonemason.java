@@ -27,12 +27,6 @@ public class BuildingStonemason extends AbstractBuildingWorker
         return STONEMASON;
     }
 
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return 1;
-    }
-
     @NotNull
     @Override
     public String getJobName()
