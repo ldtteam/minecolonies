@@ -2,9 +2,15 @@
 
 ## Introdução ##
 
+Desde o início de qualquer projeto até à sua conclusão, existem alguns aspetos imprescindíveis para o sucesso e eficácia do mesmo. Uma comunicação clara e objetiva entre qualquer membro associado, é um deles. Num grupo de trabalho, quanto mais depressa houver um entendimento pelos membros do projeto, melhor será a vida do mesmo. Para tal é necessário aplicar conceitos da “engenharia de requerimentos e prototipagem”.
+No âmbito do caso específico do MineColonies, para além da investigação feita , foram feitas questões aos responsáveis sobre os critérios usados pelos membros da equipa  para determinar qual o rumo que o projeto deve seguir.
 
 ## Âmbito / Propósito ##
 
+Engenharia de requerimentos é o processo de estudo de um utilizador de modo a atingir os requisitos de software, ou seja, aos requisitos do programa a ser implementado.
+A engenharia de requerimentos é um processo muito importante no desenvolvimento de um projeto, pois permite a maior eficiência do mesmo, devido à análise requerida do projeto. Esta análise permite a deteção de erros mais cedo, e a sua prevenção.
+Minecolonies tem como propósito de cativar os jogadores de minecraft a encarar o jogo de uma maneira um pouco diferente, tornando-o mais rico e interativo. Ao facilitar o desenvolvimento do mundo do jogador de uma maneira bastante mais rápida face ao jogo base, esta modificação cria uma dinâmica nunca anteriormente vista!
+O âmbito deste trabalho é focar-se na essência desta engenharia, identificando quais os grandes objetivos da boa interpretação do desenvolvimento de projetos em geral, bem como na utilidade das técnicas para obter bom feedback de todas as entidades envolvidas já existentes.
 
 ## Descrição ##
 
