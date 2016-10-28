@@ -61,7 +61,7 @@ public class JobDeliveryman extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<JobDeliveryman> generateAI()
     {
         return new EntityAIWorkDeliveryman(this);
     }

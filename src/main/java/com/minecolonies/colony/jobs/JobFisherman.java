@@ -131,7 +131,7 @@ public class JobFisherman extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<JobFisherman> generateAI()
     {
         return new EntityAIWorkFisherman(this);
     }
