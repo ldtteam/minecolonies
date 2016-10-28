@@ -35,7 +35,9 @@ public class PathJobFindTree extends AbstractPathJob
     public static class TreePathResult extends PathResult
     {
         public BlockPos treeLocation;
-    }    @NotNull
+    }    
+    
+    @NotNull
     @Override
     public TreePathResult getResult()
     {
