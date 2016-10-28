@@ -91,7 +91,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Redirects the fisherman to his building.
+     * Redirects the farmer to his building.
      *
      * @return the next state.
      */
@@ -144,7 +144,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (currentField.needsWork())
         {
-            switch (currentField.getFieldStage())
+        	if(!checkForHoe()&& canGoPlanting(currentField, building)){
+        		return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_HOE;
+        	}
+        	//Gonna coment this out for the time, incase I need it for who knows what
+        	/* switch (currentField.getFieldStage())
             {
                 case EMPTY:
                     if (!checkForHoe())
@@ -162,7 +166,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_HARVEST;
                 default:
                     break;
-            }
+            }*/
         }
         else
         {
@@ -251,6 +255,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
                 worker.damageItemInHand(1);
                 mineBlock(position.up());
+                //after you hoe the block, plant the seed.
+                plantCrop(field.getSeed(), position);  
             }
         }
 
