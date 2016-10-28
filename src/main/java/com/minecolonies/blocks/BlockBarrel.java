@@ -55,6 +55,8 @@ public class BlockBarrel extends Block
         initBlock();
     }
 
+    //todo: register block with new method
+    @SuppressWarnings("deprecation")
     /**
      * initialize the block
      */

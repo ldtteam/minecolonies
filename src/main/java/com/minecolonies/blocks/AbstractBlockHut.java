@@ -181,7 +181,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, new IProperty[] {FACING});
+        return new BlockStateContainer(this, FACING);
     }
 
     // =======================================================================

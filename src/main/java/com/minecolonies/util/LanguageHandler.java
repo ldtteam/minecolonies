@@ -2,7 +2,6 @@ package com.minecolonies.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.translation.I18n;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +65,8 @@ public class LanguageHandler
     public static String getString(String key, String defaultValue)
     {
         //todo: use TextComponentTranslation like mojang wants us to
-        return I18n.translateToLocal(key);
+        //using fully qualified name to remove deprecation warning on import
+        return net.minecraft.util.text.translation.I18n.translateToLocal(key);
     }
 
     /**
