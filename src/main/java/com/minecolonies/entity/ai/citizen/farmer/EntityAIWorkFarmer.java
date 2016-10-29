@@ -22,9 +22,9 @@ import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
 import static com.minecolonies.entity.ai.util.AIState.*;
+
+import java.util.List;
 
 /**
  * Farmer AI class.
@@ -35,14 +35,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     /**
      * The standard delay the farmer should have.
      */
-    private static final int     STANDARD_DELAY      = 20;
+    private static final int     STANDARD_DELAY      = 7;
     /**
      * The bonus the farmer gains each update is level/divider.
      */
     private static final int     DELAY_DIVIDER       = 10;
     /**
-     * The EXP Earned per harvest.
-     */
+      * The EXP Earned per harvest.
+      */
     private static final double  XP_PER_HARVEST      = 0.5;
     /**
      * Changed after finished harvesting in order to dump the inventory.
@@ -138,7 +138,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (currentField.needsWork())
         {
-            if (!checkForHoe() && canGoPlanting(currentField, building))
+            if(!checkForHoe() && canGoPlanting(currentField, building))
             {
                 return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_WORK;
             }
@@ -203,9 +203,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * The main work cycle of the Famer.
-     * This checks each block, harvests, tills, and plants.
-     */
+      * The main work cycle of the Famer.
+      * This checks each block, harvests, tills, and plants.
+      */
     private AIState cycle()
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
@@ -235,6 +235,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             boolean interupt = harvestIfAble(position);
             if (interupt)
             {
+                setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
                 return AIState.FARMER_WORK;
             }
 
@@ -242,6 +243,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             interupt = hoeIfAble(position, field);
             if (interupt)
             {
+                setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
                 return AIState.FARMER_WORK;
             }
 
@@ -266,17 +268,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-<<<<<<< Updated upstream
-     * Checks if we can harvest, and does so if we can.
-     */
-    private void harvestIfAble(final BlockPos position)
-=======
       * Checks if we can harvest, and does so if we can.
       *
       * @return true if we harvested.
       */
     private boolean harvestIfAble(final BlockPos position)
->>>>>>> Stashed changes
     {
         if (shouldHarvest(position))
         {
@@ -287,21 +283,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-<<<<<<< Updated upstream
-     * Checks if we can hoe, and does so if we can.
-     *
-     * @param position the position to check
-     * @param field    the field that we are working with.
-     */
-    private void hoeIfAble(final BlockPos position, final Field field)
-=======
       * Checks if we can hoe, and does so if we can.
       *
       * @param position the position to check
       * @param field the field that we are working with.
       */
     private boolean hoeIfAble(final BlockPos position, final Field field)
->>>>>>> Stashed changes
     {
         if (shouldHoe(position, field))
         {
@@ -313,6 +300,80 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return true;
         }
         return false;
+    }
+
+    /**
+     * Checks if the ground should be hoed and the block above removed.
+     *
+     * @param position the position to check.
+     * @param field    the field close to this position.
+     * @return true if should be hoed.
+     */
+    private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final Field field)
+    {
+        return !field.isNoPartOfField(world, position)
+                 && !BlockUtils.isBlockSeed(world, position.up())
+                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField)
+                 && (world.getBlockState(position).getBlock() == Blocks.DIRT || world.getBlockState(position).getBlock() == Blocks.GRASS);
+    }
+
+    /**
+     * Sets the hoe as held item.
+     */
+    private void equipHoe()
+    {
+        worker.setHeldItem(getHoeSlot());
+    }
+
+    /**
+     * Handles the offset of the field for the farmer.
+     *
+     * @param field the field object.
+     * @return true if successful.
+     */
+    private boolean handleOffset(@NotNull final Field field)
+    {
+        if (workingOffset == null)
+        {
+            workingOffset = new BlockPos(field.getLengthPlusX(), 0, field.getWidthPlusZ());
+        }
+        else
+        {
+            if (workingOffset.getZ() <= -field.getWidthMinusZ() && workingOffset.getX() <= -field.getLengthMinusX())
+            {
+                workingOffset = null;
+                return false;
+            }
+            else if (workingOffset.getX() <= -field.getLengthMinusX())
+            {
+                workingOffset = new BlockPos(field.getLengthPlusX(), 0, workingOffset.getZ() - 1);
+            }
+            else
+            {
+                workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Resets the basic variables of the class.
+     */
+    private void resetVariables()
+    {
+        requestSeeds = true;
+        shouldDumpInventory = true;
+        shouldTryToGetSeed = true;
+    }
+
+    /**
+     * Get's the slot in which the hoe is in.
+     *
+     * @return slot number
+     */
+    private int getHoeSlot()
+    {
+        return InventoryUtils.getFirstSlotContainingTool(getInventory(), Utils.HOE);
     }
 
     /**
@@ -360,16 +421,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Resets the basic variables of the class.
-     */
-    private void resetVariables()
-    {
-        requestSeeds = true;
-        shouldDumpInventory = true;
-        shouldTryToGetSeed = true;
-    }
-
-    /**
      * Terminates the planting process and resets the task.
      *
      * @param buildingFarmer the building of the farmer.
@@ -393,37 +444,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Handles the offset of the field for the farmer.
-     *
-     * @param field the field object.
-     * @return true if successful.
-     */
-    private boolean handleOffset(@NotNull final Field field)
-    {
-        if (workingOffset == null)
-        {
-            workingOffset = new BlockPos(field.getLengthPlusX(), 0, field.getWidthPlusZ());
-        }
-        else
-        {
-            if (workingOffset.getZ() <= -field.getWidthMinusZ() && workingOffset.getX() <= -field.getLengthMinusX())
-            {
-                workingOffset = null;
-                return false;
-            }
-            else if (workingOffset.getX() <= -field.getLengthMinusX())
-            {
-                workingOffset = new BlockPos(field.getLengthPlusX(), 0, workingOffset.getZ() - 1);
-            }
-            else
-            {
-                workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
-            }
-        }
-        return true;
-    }
-
-    /**
      * Checks if the crop should be harvested.
      *
      * @param position the position to check.
@@ -440,78 +460,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
 
         return false;
-    }
-
-    /**
-     * This method allows us to harvest crops and leave the plant there.
-     * Credit goes to RightClickHarvest mod
-     */
-    private boolean harvestCrop(final BlockPos position)
-    {
-        final IBlockState curBlockState = world.getBlockState(position);
-
-        if (!(curBlockState.getBlock() instanceof IGrowable) || !(curBlockState.getBlock() instanceof BlockCrops))
-        {
-            return false;
-        }
-
-        final BlockCrops crops = (BlockCrops) curBlockState.getBlock();
-
-        if (!crops.isMaxAge(curBlockState))
-        {
-            return false;
-        }
-
-        final ItemStack tool = worker.getHeldItemMainhand();
-
-        //calculate fortune enchantment
-        final int fortune = Utils.getFortuneOf(tool);
-
-        final List<ItemStack> drops = crops.getDrops(world, position, curBlockState, fortune);
-
-        world.setBlockState(position, crops.withAge(0));
-
-        //add the drops to the citizen
-        for (final ItemStack item : drops)
-        {
-            InventoryUtils.setStack(worker.getInventoryCitizen(), item);
-        }
-
-        this.incrementActionsDone();
-        return true;
-    }
-
-    /**
-     * Checks if the ground should be hoed and the block above removed.
-     *
-     * @param position the position to check.
-     * @param field    the field close to this position.
-     * @return true if should be hoed.
-     */
-    private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final Field field)
-    {
-        return !field.isNoPartOfField(world, position)
-                 && !BlockUtils.isBlockSeed(world, position.up())
-                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField)
-                 && (world.getBlockState(position).getBlock() == Blocks.DIRT || world.getBlockState(position).getBlock() == Blocks.GRASS);
-    }
-
-    /**
-     * Sets the hoe as held item.
-     */
-    private void equipHoe()
-    {
-        worker.setHeldItem(getHoeSlot());
-    }
-
-    /**
-     * Get's the slot in which the hoe is in.
-     *
-     * @return slot number
-     */
-    private int getHoeSlot()
-    {
-        return InventoryUtils.getFirstSlotContainingTool(getInventory(), Utils.HOE);
     }
 
     /**
@@ -564,5 +512,47 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     public EntityCitizen getCitizen()
     {
         return worker;
+    }
+
+    /**
+      * This method allows us to harvest crops and leave the plant there.
+      * Credit goes to RightClickHarvest mod
+      *
+      * @params position the position of the crop to harvest
+      */
+    private boolean harvestCrop(final BlockPos position)
+    {
+        final IBlockState curBlockState = world.getBlockState(position);
+
+        if (!(curBlockState.getBlock() instanceof IGrowable) || !(curBlockState.getBlock() instanceof BlockCrops))
+        {
+            return false;
+        }
+
+        final BlockCrops crops = (BlockCrops) curBlockState.getBlock();
+
+        if (!crops.isMaxAge(curBlockState))
+        {
+            return false;
+        }
+
+        final ItemStack tool = worker.getHeldItemMainhand();
+
+        //calculate fortune enchantment
+        final int fortune = Utils.getFortuneOf(tool);
+
+        final List<ItemStack> drops = crops.getDrops(world, position, curBlockState, fortune);
+
+        world.setBlockState(position, crops.withAge(0));
+
+        //add the drops to the citizen
+        for (final ItemStack item : drops)
+        {
+            InventoryUtils.setStack(worker.getInventoryCitizen(), item);
+        }
+
+        this.incrementActionsDone();
+        return true;
+
     }
 }
