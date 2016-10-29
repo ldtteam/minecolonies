@@ -22,7 +22,7 @@ O âmbito deste trabalho é focar-se na essência desta engenharia, identificand
 
 A engenharia de requerimentos passa por várias fases: levantamento de requerimentos, análise e negociação de requerimentos, especificação de requerimentos e validação de requerimentos. Neste relatório vamo-nos focar no levantamento de requerimentos.
 
-![alt tag](resources/requirements.png)
+![alt tag](resources/requirements.PNG)
 
 ### Levantamento de requerimentos ###
 
@@ -78,7 +78,7 @@ O *town hall* representa o centro da área protegida em que se insere a cidade. 
 
 Esta estrutura permite obter informações e fazer a gestão de residentes e trabalhadores (*NPC's*), criar nova *town hall* (nova cidade), reparar, alterar o nome, nomes e permissões de acesso a outros jogadores conforme um rank, modificar o modo de contratação (manual/automático), entre outros.
 
-![alt tag](resources/townhall.png)
+![alt tag](resources/townhall.PNG)
 
 ##### Supply Ships #####
 
@@ -94,13 +94,13 @@ Os *NPC's* do **MineColonies** podem ser divididos em vários tipos: *builder, f
 
 Como complemento para o bom funcionamento das ideias a pôr em prática, foram adicionados novos objetos que podemos construir através da *crafting table* do jogo base. Os objetos novos são: *supply ship, builders hut, citizens hut, miners hut,lumberjack hut, fishermans hut, build tool, scan tool* e *field*. Estes objetos são essenciais para pôr em práticas as funcionalidades de determinados *NPC's* e para gestão da cidade.
 
-![alt tag](resources/crafts.png)
+![alt tag](resources/crafts.PNG)
 
 #### Achievements ####
 
 A modificação também disponibiliza uma expansão e um melhoramento ao sistema de conquistas implementado no jogo base. Este sistema é uma adição ao vasto leque de novidades que **Minecolonies** traz ao jogo que torna a experiência dos jogadores bastante mais agradável, cobrindo vários tópicos como o inicial de “construir um supply ship” ou o de “criar NPC’s”. Esta funcionalidade apenas serve para melhorar a qualidade de jogo, não tendo nenhuma recompensa para além de ter uma lista de proezas completadas, mas também tem a particularidade de servir de uma espécie de guia interativo para novos jogadores.
 
-![alt tag](resources/achivements.png)
+![alt tag](resources/achivements.PNG)
 
 ### Requerimentos não funcionais ###
 
@@ -110,7 +110,7 @@ A modificação também disponibiliza uma expansão e um melhoramento ao sistema
 O modelo de casos de uso é uma sequência de transições num sistema visto da perspetiva de um ator.
 Para o projeto **MineColonies**, criamos este modelo de casos de uso que descreve o sistema de manipulação dos objetos pelo ator que é o jogador. Este modelo não tem em consideração as possibilidades do jogo original Minecraft, mas sim as novas funcionalidades implementadas para o **MineColonies**.
 
-![alt tag](resources/useCase.png)
+![alt tag](resources/useCase.PNG)
 
 Como é possível interpretar pela imagem, o jogador é o único ator deste sistema e tem controlo sob todas as ações. De seguida estão apresentadas duas descrições de dois casos de uso.
 
@@ -165,13 +165,13 @@ Como é possível interpretar pela imagem, o jogador é o único ator deste sist
 1. É adicionada a tarefa “Upgrade Building x “ ao NPC do tipo Builder
 2. O NPC evoluí o edifício.
 
-![alt tag](resources/builderhut.png)
+![alt tag](resources/builderhut.PNG)
 
 ## Modelo de domínio ##
 
 O modelo de domínio é um modelo que representa um conjunto de classes conceptuais que descrevem as relações do jogo.
 
-![alt tag](resources/domainModel.png)
+![alt tag](resources/domainModel.PNG)
 
 Como é possível interpretar da imagem, as classes principais são: jogador, citizen(NPC), Block Hut e Building. A classe Inventory é também importante pois é meio de relação entre o *NPC* e o jogador. O jogador pode, por exemplo, colocar materiais que o NPC necessite no seu inventário, e recolher os produtos do *NPC*. 
 
