@@ -114,6 +114,7 @@ Figura 5 - *Exemplo de achivements.*
 
 ### Requerimentos não funcionais ###
 
+Em geral, este projeto, não requer atributos nem funcionalidades específicas, por parte dos clientes, visto que é uma modificação de um jogo já implementado. Desta forma, a ideia do projeto partiu essencialmente da iniciativa dos programadores. No entanto, por ser uma extensão de um jogo, está sujeito a determinadas condições necessárias para garantir a compatibilidade e não comprometer o bom funcionamento do mesmo. Uma dessas condições é a linguagem de programação ter que ser a mesma, neste caso, o java. O desempenho e execução da modificação têm que ser elevadas e para isto, os algoritmos a usar são fundamentais. A escalabilidade também é um fator muito importante para assegurar a implementação de novas features no futuro sem grandes problemas.
 
 ## Diagrama de casos de uso ##
 
