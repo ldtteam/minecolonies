@@ -217,12 +217,25 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (shouldTryToGetSeed)
         {
+            int slot = worker.findFirstSlotInInventoryWith(currentField.getSeed());
+            if (slot != -1)
+            {
+                requestSeeds = false;
+            }
             if (walkToBuilding())
             {
                 return false;
             }
-            isInHut(new ItemStack(currentField.getSeed()));
-            shouldTryToGetSeed = false;
+            if (isInHut(new ItemStack(currentField.getSeed())))
+            {
+                requestSeeds = false;
+            }
+            shouldTryToGetSeed = requestSeeds;
+
+            if (shouldTryToGetSeed)
+            {
+                return false;
+            }
         }
 
         return true;
@@ -277,7 +290,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
             {
                 resetVariables();
-                return AIState.IDLE;
+                buildingFarmer.getCurrentField().setNeedsWork(false);
+                return terminatePlanting(buildingFarmer, field);
             }
         }
 
@@ -529,7 +543,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
 
         resetVariables();
-        return AIState.IDLE;
+        return AIState.PREPARING;
     }
 
     /**
