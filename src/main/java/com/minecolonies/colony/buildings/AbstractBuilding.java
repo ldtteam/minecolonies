@@ -60,7 +60,6 @@ public abstract class AbstractBuilding
         addMapping("Warehouse", BuildingWarehouse.class, BlockHutWarehouse.class);
         addMapping("Fisherman", BuildingFisherman.class, BlockHutFisherman.class);
         addMapping("GuardTower", BuildingGuardTower.class, BlockHutGuardTower.class);
-
     }
 
     private final BlockPos                 location;

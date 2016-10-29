@@ -9,8 +9,6 @@ import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.util.InventoryFunctions;
-import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,18 +16,17 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import static com.minecolonies.entity.ai.util.AIState.GUARD_RESTOCK;
-import static com.minecolonies.entity.ai.util.AIState.IDLE;
-import static com.minecolonies.entity.ai.util.AIState.START_WORKING;
+import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * Abstract class which contains all the guard basics let it be range, melee or magic.
@@ -64,32 +61,27 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Path that close to the patrol target.
      */
-    private static final int PATH_CLOSE                = 3;
-
-    /**
-     * The distance the guard is searching entities in currently.
-     */
-    private int currentSearchDistance = START_SEARCH_DISTANCE;
-
+    private static final int PATH_CLOSE = 3;
     /**
      * The current target.
      */
     protected EntityLivingBase targetEntity;
-
-    /**
-     * Current goTo task.
-     */
-    private BlockPos currentPatrolTarget;
-
-    /**
-     * Containing all close entities.
-     */
-    private List<Entity> entityList;
-
     /**
      * Amount of arrows already shot or sword hits dealt.
      */
     protected int attacksExecuted = 0;
+    /**
+     * The distance the guard is searching entities in currently.
+     */
+    private int currentSearchDistance = START_SEARCH_DISTANCE;
+    /**
+     * Current goTo task.
+     */
+    private BlockPos currentPatrolTarget;
+    /**
+     * Containing all close entities.
+     */
+    private List<Entity> entityList;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -100,11 +92,10 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     {
         super(job);
         super.registerTargets(
-                new AITarget(IDLE, () -> START_WORKING),
-                new AITarget(START_WORKING, () -> GUARD_RESTOCK)
+          new AITarget(IDLE, () -> START_WORKING),
+          new AITarget(START_WORKING, () -> GUARD_RESTOCK)
         );
     }
-
 
     /**
      * Can be overridden in implementations.
@@ -118,15 +109,43 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     }
 
     /**
+     * Updates the equipment. Always take the first item of each type and set it.
+     */
+    protected void updateArmor()
+    {
+        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, null);
+        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, null);
+        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, null);
+        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, null);
+
+        for (int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
+        {
+            ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
+
+            if (stack == null || stack.stackSize == 0)
+            {
+                worker.getInventoryCitizen().setInventorySlotContents(i, null);
+                continue;
+            }
+
+            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
+            {
+                worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
+            }
+        }
+    }
+
+    /**
      * Goes back to the building and tries to take armour from it when he hasn't in his inventory.
+     *
      * @return the next state to go to.
      */
     protected AIState goToBuilding()
     {
-        if(!walkToBuilding())
+        if (!walkToBuilding())
         {
             final AbstractBuildingWorker workBuilding = getOwnBuilding();
-            if(workBuilding != null)
+            if (workBuilding != null)
             {
                 final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
 
@@ -143,13 +162,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                     {
                         final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
 
-                        if(emptySlot != -1)
+                        if (emptySlot != -1)
                         {
                             worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
                             chest.setInventorySlotContents(i, null);
                         }
                     }
-                    else if(!(stack.getItem() instanceof ItemBow || Utils.doesItemServeAsWeapon(stack)))
+                    else if (!(stack.getItem() instanceof ItemBow || Utils.doesItemServeAsWeapon(stack)))
                     {
                         //todo dump everything which isn't a weapon or armor
                     }
@@ -162,46 +181,20 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     }
 
     /**
-     * Updates the equipment. Always take the first item of each type and set it.
-     */
-    protected void updateArmor()
-    {
-        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, null);
-        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, null);
-        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, null);
-        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, null);
-
-        for(int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
-        {
-            ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
-
-            if(stack == null || stack.stackSize == 0)
-            {
-                worker.getInventoryCitizen().setInventorySlotContents(i, null);
-                continue;
-            }
-
-            if(stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType)== null)
-            {
-                worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
-            }
-        }
-    }
-
-    /**
      * Chooses a target from the list.
+     *
      * @return the next state.
      */
     protected AIState getTarget()
     {
-        if(entityList.isEmpty())
+        if (entityList.isEmpty())
         {
             return AIState.GUARD_PATROL;
         }
 
-        if(entityList.get(0) instanceof EntityPlayer)
+        if (entityList.get(0) instanceof EntityPlayer)
         {
-            if(worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entityList.get(0), Permissions.Action.GUARDS_ATTACK))
+            if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entityList.get(0), Permissions.Action.GUARDS_ATTACK))
             {
                 targetEntity = (EntityLivingBase) entityList.get(0);
                 worker.getNavigator().clearPathEntity();
@@ -227,6 +220,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
     /**
      * Searches for the next taget.
+     *
      * @return the next AIState.
      */
     protected AIState searchTarget()
@@ -236,9 +230,9 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
 
         setDelay(BASE_DELAY);
-        if(entityList.isEmpty())
+        if (entityList.isEmpty())
         {
-            if(currentSearchDistance < getMaxVision())
+            if (currentSearchDistance < getMaxVision())
             {
                 currentSearchDistance += START_SEARCH_DISTANCE;
             }
@@ -253,8 +247,14 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         return AIState.GUARD_GET_TARGET;
     }
 
+    private AxisAlignedBB getTargetableArea(double range)
+    {
+        return this.worker.getEntityBoundingBox().expand(range, HEIGHT_DETECTION_RANGE, range);
+    }
+
     /**
      * Getter for the vision or attack distance.
+     *
      * @return the max vision.
      */
     private double getMaxVision()
@@ -265,6 +265,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
     /**
      * Getter calculating how many arrows the guard may shoot or deal sword hits until restock.
+     *
      * @return the amount.
      */
     protected int getMaxAttacksUntilRestock()
@@ -275,18 +276,19 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
     /**
      * Lets the guard patrol inside the colony area searching for mobs.
+     *
      * @return the next state to go.
      */
     protected AIState patrol()
     {
         worker.setAIMoveSpeed(1);
 
-        if(currentPatrolTarget == null)
+        if (currentPatrolTarget == null)
         {
             currentPatrolTarget = getRandomBuilding();
         }
 
-        if(worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
+        if (worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
         {
             currentPatrolTarget = null;
         }
@@ -296,32 +298,28 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
     /**
      * Gets a random building from his colony.
+     *
      * @return a random blockPos.
      */
     private BlockPos getRandomBuilding()
     {
-        if(worker.getColony() == null || getOwnBuilding() == null)
+        if (worker.getColony() == null || getOwnBuilding() == null)
         {
             return worker.getPosition();
         }
 
-        Collection<AbstractBuilding> buildingList =  worker.getColony().getBuildings().values();
+        Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
 
         Object[] buildingArray = buildingList.toArray();
 
         int random = worker.getRandom().nextInt(buildingArray.length);
 
         AbstractBuilding building = (AbstractBuilding) buildingArray[random];
-        if(building instanceof BuildingGuardTower)
+        if (building instanceof BuildingGuardTower)
         {
             return this.getOwnBuilding().getLocation();
         }
 
         return building.getLocation();
-    }
-
-    private AxisAlignedBB getTargetableArea(double range)
-    {
-        return this.worker.getEntityBoundingBox().expand(range, HEIGHT_DETECTION_RANGE, range);
     }
 }

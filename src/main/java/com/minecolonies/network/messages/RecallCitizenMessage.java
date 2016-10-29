@@ -11,7 +11,6 @@ import com.minecolonies.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -95,11 +94,11 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                           Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER);
 
                         citizen.setLocationAndAngles(
-                                spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
-                                spawnPoint.getY(),
-                                spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-                                citizen.rotationYaw,
-                                citizen.rotationPitch);
+                          spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
+                          spawnPoint.getY(),
+                          spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
+                          citizen.rotationYaw,
+                          citizen.rotationPitch);
                         citizen.getNavigator().clearPathEntity();
                     }
                 }

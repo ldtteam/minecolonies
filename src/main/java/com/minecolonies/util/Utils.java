@@ -90,16 +90,6 @@ public final class Utils
     }
 
     /**
-     * Checks if an item serves as a weapon.
-     * @param stack the stack to analyze.
-     * @return true if it is a tool or sword.
-     */
-    public static boolean doesItemServeAsWeapon(@NotNull ItemStack stack)
-    {
-        return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool;
-    }
-
-    /**
      * Checks if the blocks above that point are all of the spezified block types.
      *
      * @param world  the world we check on
@@ -139,6 +129,17 @@ public final class Utils
             }
         }
         return false;
+    }
+
+    /**
+     * Checks if an item serves as a weapon.
+     *
+     * @param stack the stack to analyze.
+     * @return true if it is a tool or sword.
+     */
+    public static boolean doesItemServeAsWeapon(@NotNull ItemStack stack)
+    {
+        return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool;
     }
 
     /**

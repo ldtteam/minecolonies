@@ -38,7 +38,6 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToFemaleModelMap.put(Model.FISHERMAN, new ModelEntityFishermanFemale());
         idToFemaleModelMap.put(Model.ARCHER_GUARD, new ModelBiped());
         idToFemaleModelMap.put(Model.KNIGHT_GUARD, new ModelBiped());
-
     }
     /**
      * Renders model, see {@link RenderBiped}.

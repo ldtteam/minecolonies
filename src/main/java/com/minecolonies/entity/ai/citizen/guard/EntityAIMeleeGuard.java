@@ -10,7 +10,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import org.jetbrains.annotations.NotNull;
@@ -96,14 +95,14 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     {
         super(job);
         super.registerTargets(
-                new AITarget(GUARD_SEARCH_TARGET, this::searchTarget),
-                new AITarget(GUARD_GET_TARGET, this::getTarget),
-                new AITarget(GUARD_HUNT_DOWN_TARGET, this::huntDown),
-                new AITarget(GUARD_PATROL, this::patrol),
-                new AITarget(GUARD_RESTOCK, this::goToBuilding)
+          new AITarget(GUARD_SEARCH_TARGET, this::searchTarget),
+          new AITarget(GUARD_GET_TARGET, this::getTarget),
+          new AITarget(GUARD_HUNT_DOWN_TARGET, this::huntDown),
+          new AITarget(GUARD_PATROL, this::patrol),
+          new AITarget(GUARD_RESTOCK, this::goToBuilding)
         );
 
-        if(worker.getCitizenData() != null)
+        if (worker.getCitizenData() != null)
         {
             worker.setSkillModifier(2 * worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
             worker.setCanPickUpLoot(true);
@@ -113,7 +112,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     @Override
     protected AIState searchTarget()
     {
-        if(checkForWeapon())
+        if (checkForWeapon())
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
@@ -121,32 +120,28 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         return super.searchTarget();
     }
 
-    private int getReloadTime()
-    {
-        return BASE_RELOAD_TIME / (worker.getExperienceLevel() + 1);
-    }
-
     /**
      * Follow the target and kill it.
+     *
      * @return the next AIState.
      */
     protected AIState huntDown()
     {
-        if(!targetEntity.isEntityAlive() || checkForWeapon())
+        if (!targetEntity.isEntityAlive() || checkForWeapon())
         {
             targetEntity = null;
         }
 
         if (targetEntity != null)
         {
-            if(worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
+            if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
             {
                 worker.resetActiveHand();
-                attackEntity(targetEntity, (float)DAMAGE_PER_ATTACK);
+                attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
                 setDelay(getReloadTime());
                 attacksExecuted += 1;
 
-                if(attacksExecuted >= getMaxAttacksUntilRestock())
+                if (attacksExecuted >= getMaxAttacksUntilRestock())
                 {
                     return AIState.GUARD_RESTOCK;
                 }
@@ -168,33 +163,33 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         double damgeToBeDealt = baseDamage;
 
         ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
-        if(heldItem != null)
+        if (heldItem != null)
         {
-            if(heldItem.getItem() instanceof ItemSword)
+            if (heldItem.getItem() instanceof ItemSword)
             {
                 damgeToBeDealt += ((ItemSword) heldItem.getItem()).getDamageVsEntity();
             }
             damgeToBeDealt += EnchantmentHelper.getModifierForCreature(heldItem, targetEntity.getCreatureAttribute());
         }
 
-        targetEntity.attackEntityFrom(new DamageSource(worker.getName()), (float)damgeToBeDealt);
+        targetEntity.attackEntityFrom(new DamageSource(worker.getName()), (float) damgeToBeDealt);
         targetEntity.setRevengeTarget(worker);
 
         int fireAspectModifier = EnchantmentHelper.getFireAspectModifier(worker);
-        if(fireAspectModifier > 0)
+        if (fireAspectModifier > 0)
         {
             targetEntity.setFire(fireAspectModifier * FIRE_CHANCE_MULTIPLIER);
         }
 
         worker.addExperience(XP_EACH_HIT);
-        worker.faceEntity(entityToAttack, (float)TURN_AROUND, (float)TURN_AROUND);
-        worker.getLookHelper().setLookPositionWithEntity(entityToAttack, (float)TURN_AROUND, (float)TURN_AROUND);
+        worker.faceEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
+        worker.getLookHelper().setLookPositionWithEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
 
         double xDiff = targetEntity.posX - worker.posX;
         double zDiff = targetEntity.posZ - worker.posZ;
 
-        double goToX = xDiff > 0? MOVE_MINIMAL : -MOVE_MINIMAL;
-        double goToZ = zDiff > 0? MOVE_MINIMAL : -MOVE_MINIMAL;
+        double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         worker.moveEntity(goToX, 0, goToZ);
 
@@ -202,6 +197,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         worker.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, (float) BASIC_VOLUME, (float) getRandomPitch());
 
         worker.damageItemInHand(1);
+    }
+
+    private int getReloadTime()
+    {
+        return BASE_RELOAD_TIME / (worker.getExperienceLevel() + 1);
     }
 
     private double getRandomPitch()

@@ -79,6 +79,31 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         return GUARD_HUT_MAX_LEVEL;
     }
 
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        if (this.getWorkerEntity() != null && newLevel > MAX_VISION_BONUS_MULTIPLIER)
+        {
+            this.getWorkerEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
+        }
+
+        super.onUpgradeComplete(newLevel);
+    }
+
+    /**
+     * If no vision multiplier give health bonus.
+     *
+     * @return the bonus health.
+     */
+    public int getBonusHealth()
+    {
+        if (getBuildingLevel() > MAX_VISION_BONUS_MULTIPLIER)
+        {
+            return (getBuildingLevel() - MAX_VISION_BONUS_MULTIPLIER) * HEALTH_MULTIPLIER;
+        }
+        return 0;
+    }
+
     /**
      * The name of the baker's job.
      *
@@ -92,57 +117,6 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     }
 
     /**
-     * If no vision multiplier give health bonus.
-     * @return the bonus health.
-     */
-    public int getBonusHealth()
-    {
-        if (getBuildingLevel() > MAX_VISION_BONUS_MULTIPLIER)
-        {
-            return (getBuildingLevel() - MAX_VISION_BONUS_MULTIPLIER) * HEALTH_MULTIPLIER;
-        }
-        return 0;
-    }
-
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        if (this.getWorkerEntity() != null && newLevel > MAX_VISION_BONUS_MULTIPLIER)
-        {
-            this.getWorkerEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
-        }
-
-        super.onUpgradeComplete(newLevel);
-    }
-
-    /**
-     * Getter for the bonus vision.
-     * @return an integer for the additional range.
-     */
-    public int getBonusVision()
-    {
-        if(getBuildingLevel() <= MAX_VISION_BONUS_MULTIPLIER)
-        {
-            return getBuildingLevel() * VISION_BONUS;
-        }
-        return MAX_VISION_BONUS_MULTIPLIER * VISION_BONUS;
-    }
-
-    @Override
-    public void setWorker(final CitizenData citizen)
-    {
-        if(citizen == null && this.getWorkerEntity() != null)
-        {
-            this.getWorkerEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
-        }
-        else if(citizen != null && citizen.getCitizenEntity() != null)
-        {
-            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
-        }
-        super.setWorker(citizen);
-    }
-
-    /**
      * Create a Guard job.
      *
      * @param citizen the citizen to take the job.
@@ -153,6 +127,34 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     public AbstractJob createJob(CitizenData citizen)
     {
         return new JobGuard(citizen);
+    }
+
+    @Override
+    public void setWorker(final CitizenData citizen)
+    {
+        if (citizen == null && this.getWorkerEntity() != null)
+        {
+            this.getWorkerEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
+        }
+        else if (citizen != null && citizen.getCitizenEntity() != null)
+        {
+            citizen.getCitizenEntity().getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH + getBonusHealth());
+        }
+        super.setWorker(citizen);
+    }
+
+    /**
+     * Getter for the bonus vision.
+     *
+     * @return an integer for the additional range.
+     */
+    public int getBonusVision()
+    {
+        if (getBuildingLevel() <= MAX_VISION_BONUS_MULTIPLIER)
+        {
+            return getBuildingLevel() * VISION_BONUS;
+        }
+        return MAX_VISION_BONUS_MULTIPLIER * VISION_BONUS;
     }
 
     /**

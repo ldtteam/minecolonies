@@ -38,7 +38,7 @@ public abstract class AbstractJob
     /**
      * The priority assigned with every main AI job.
      */
-    private static final int    TASK_PRIORITY       = 3;
+    private static final int TASK_PRIORITY = 3;
 
     //  Job and View Class Mapping
     @NotNull
@@ -55,7 +55,6 @@ public abstract class AbstractJob
         addMapping(MAPPING_FARMER, JobFarmer.class);
         addMapping(MAPPING_FISHERMAN, JobFisherman.class);
         addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
-
     }
 
     private final CitizenData citizen;

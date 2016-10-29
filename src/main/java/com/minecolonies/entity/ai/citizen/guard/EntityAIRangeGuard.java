@@ -4,9 +4,12 @@ import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.*;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IRangedAttackMob;
 import net.minecraft.entity.projectile.EntityTippedArrow;
-import net.minecraft.init.*;
+import net.minecraft.init.Enchantments;
+import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -84,7 +87,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     /**
      * Have to aim that bit higher to hit the target.
      */
-    private static final double AIM_SLIGHTLY_HIGHER_MULTIPLIER   = 0.20000000298023224D;
+    private static final double AIM_SLIGHTLY_HIGHER_MULTIPLIER = 0.20000000298023224D;
 
     /**
      * Normal volume at which sounds are played at.
@@ -99,7 +102,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     /**
      * Experience the guard receives each shot arrow.
      */
-    private static final double XP_EACH_ARROW   = 0.2;
+    private static final double XP_EACH_ARROW = 0.2;
 
     /**
      * Used to calculate the chance that an arrow hits, if the worker levels is higher than 15 the chance gets worse again.
@@ -146,14 +149,14 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     {
         super(job);
         super.registerTargets(
-                new AITarget(GUARD_SEARCH_TARGET, this::searchTarget),
-                new AITarget(GUARD_GET_TARGET, this::getTarget),
-                new AITarget(GUARD_HUNT_DOWN_TARGET, this::huntDown),
-                new AITarget(GUARD_PATROL, this::patrol),
-                new AITarget(GUARD_RESTOCK, this::goToBuilding)
+          new AITarget(GUARD_SEARCH_TARGET, this::searchTarget),
+          new AITarget(GUARD_GET_TARGET, this::getTarget),
+          new AITarget(GUARD_HUNT_DOWN_TARGET, this::huntDown),
+          new AITarget(GUARD_PATROL, this::patrol),
+          new AITarget(GUARD_RESTOCK, this::goToBuilding)
         );
 
-        if(worker.getCitizenData() != null)
+        if (worker.getCitizenData() != null)
         {
             worker.setSkillModifier(2 * worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
             worker.setCanPickUpLoot(true);
@@ -163,7 +166,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     protected AIState searchTarget()
     {
-        if(checkOrRequestItems(new ItemStack(Items.BOW)))
+        if (checkOrRequestItems(new ItemStack(Items.BOW)))
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
@@ -171,32 +174,28 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         return super.searchTarget();
     }
 
-    private int getReloadTime()
-    {
-        return BASE_RELOAD_TIME / (worker.getExperienceLevel() + 1);
-    }
-
     /**
      * Follow the target and kill it.
+     *
      * @return the next AIState.
      */
     protected AIState huntDown()
     {
-        if(!targetEntity.isEntityAlive() || checkOrRequestItems(new ItemStack(Items.BOW)))
+        if (!targetEntity.isEntityAlive() || checkOrRequestItems(new ItemStack(Items.BOW)))
         {
             targetEntity = null;
         }
 
         if (targetEntity != null)
         {
-            if(worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MAX_ATTACK_DISTANCE)
+            if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MAX_ATTACK_DISTANCE)
             {
                 worker.resetActiveHand();
                 attackEntityWithRangedAttack(targetEntity, DAMAGE_PER_ATTACK);
                 setDelay(getReloadTime());
                 attacksExecuted += 1;
 
-                if(attacksExecuted >= getMaxAttacksUntilRestock())
+                if (attacksExecuted >= getMaxAttacksUntilRestock())
                 {
                     return AIState.GUARD_RESTOCK;
                 }
@@ -223,21 +222,21 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         double distance = (double) MathHelper.sqrt_double(xVector * xVector + zVector * zVector);
 
         //Lower the variable higher the chance that the arrows hits the target.
-        double chance = HIT_CHANCE_DIVIDER / (worker.getExperienceLevel()+1);
+        double chance = HIT_CHANCE_DIVIDER / (worker.getExperienceLevel() + 1);
 
         arrowEntity.setThrowableHeading(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) chance);
 
         addEffectsToArrow(arrowEntity, baseDamage);
 
         worker.addExperience(XP_EACH_ARROW);
-        worker.faceEntity(entityToAttack, (float)TURN_AROUND, (float)TURN_AROUND);
-        worker.getLookHelper().setLookPositionWithEntity(entityToAttack, (float)TURN_AROUND, (float)TURN_AROUND);
+        worker.faceEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
+        worker.getLookHelper().setLookPositionWithEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
 
         double xDiff = targetEntity.posX - worker.posX;
         double zDiff = targetEntity.posZ - worker.posZ;
 
-        double goToX = xDiff > 0? MOVE_MINIMAL : -MOVE_MINIMAL;
-        double goToZ = zDiff > 0? MOVE_MINIMAL : -MOVE_MINIMAL;
+        double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         worker.moveEntity(goToX, 0, goToZ);
 
@@ -248,10 +247,16 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         worker.damageItemInHand(1);
     }
 
+    private int getReloadTime()
+    {
+        return BASE_RELOAD_TIME / (worker.getExperienceLevel() + 1);
+    }
+
     /**
      * Method used to add potion/enchantment effects to the bow depending on his enchantments etc.
+     *
      * @param arrowEntity the arrow to add these effects to.
-     * @param baseDamage the arrow base damage.
+     * @param baseDamage  the arrow base damage.
      */
     private void addEffectsToArrow(EntityTippedArrow arrowEntity, double baseDamage)
     {
@@ -260,15 +265,15 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
         DifficultyInstance difficulty = this.worker.worldObj.getDifficultyForLocation(new BlockPos(worker));
         arrowEntity.setDamage((baseDamage * BASE_DAMAGE_MULTIPLIER)
-                + worker.getRandom().nextGaussian() * RANDOM_DAMAGE_MULTPLIER
-                + this.worker.worldObj.getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
+                                + worker.getRandom().nextGaussian() * RANDOM_DAMAGE_MULTPLIER
+                                + this.worker.worldObj.getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
 
-        if(powerEntchantment > 0)
+        if (powerEntchantment > 0)
         {
-            arrowEntity.setDamage(arrowEntity.getDamage() + (double)powerEntchantment * BASE_POWER_ENCHANTMENT_DAMAGE + POWER_ENCHANTMENT_DAMAGE_MULTIPLIER);
+            arrowEntity.setDamage(arrowEntity.getDamage() + (double) powerEntchantment * BASE_POWER_ENCHANTMENT_DAMAGE + POWER_ENCHANTMENT_DAMAGE_MULTIPLIER);
         }
 
-        if(punchEntchantment > 0)
+        if (punchEntchantment > 0)
         {
             arrowEntity.setKnockbackStrength(punchEntchantment);
         }
@@ -276,13 +281,13 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         boolean onFire = worker.isBurning() && difficulty.func_190083_c() && worker.getRandom().nextBoolean();
         onFire = onFire || EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.FLAME, worker) > 0;
 
-        if(onFire)
+        if (onFire)
         {
             arrowEntity.setFire(FIRE_EFFECT_CHANCE);
         }
 
         ItemStack holdItem = worker.getHeldItem(EnumHand.OFF_HAND);
-        if(holdItem != null && holdItem.getItem() == Items.TIPPED_ARROW)
+        if (holdItem != null && holdItem.getItem() == Items.TIPPED_ARROW)
         {
             arrowEntity.setPotionEffect(holdItem);
         }

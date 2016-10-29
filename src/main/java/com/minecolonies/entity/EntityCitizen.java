@@ -5,7 +5,6 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.*;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingFarmer;
-import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobGuard;
@@ -25,14 +24,12 @@ import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.ContainerPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
@@ -42,7 +39,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,7 +105,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Chance the citizen will rant about bad weather. 20 ticks per 60 seconds = 5 minutes.
      */
-    private static final int RANT_ABOUT_WEATHER_CHANCE = 20*60*5;
+    private static final int RANT_ABOUT_WEATHER_CHANCE = 20 * 60 * 5;
 
     /**
      * Quantity to be moved to rotate without actually moving.
@@ -119,7 +115,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Base max health of the citizen.
      */
-    private static final double BASE_MAX_HEALTH  = 20D;
+    private static final double BASE_MAX_HEALTH = 20D;
 
     /**
      * Base movement speed of every citizen.
@@ -130,7 +126,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Base pathfinding range of the citizen.
      */
     private static final int BASE_PATHFINDING_RANGE = 100;
-
+    /**
+     * Height of the citizen.
+     */
+    private static final double CITIZEN_HEIGHT = 1.8D;
+    /**
+     * Width of the citizen.
+     */
+    private static final double CITIZEN_WIDTH = 0.6D;
+    /**
+     * Defines how far the citizen will be rendered.
+     */
+    private static final double RENDER_DISTANCE_WEIGHT = 2.0D;
     private static Field navigatorField;
     protected Status                   status  = Status.IDLE;
     private   RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
@@ -153,21 +160,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @NotNull
     private Map<String, Integer> statusMessages = new HashMap<>();
     private PathNavigate newNavigator;
-
-    /**
-     * Height of the citizen.
-     */
-    private static final double CITIZEN_HEIGHT = 1.8D;
-
-    /**
-     * Width of the citizen.
-     */
-    private static final double CITIZEN_WIDTH = 0.6D;
-
-    /**
-     * Defines how far the citizen will be rendered.
-     */
-    private static final double RENDER_DISTANCE_WEIGHT = 2.0D;
 
     /**
      * Citizen constructor.
@@ -234,7 +226,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
 
-        if(this.getColonyJob() == null || !this.getColonyJob().getName().equals("com.minecolonies.job.Guard"))
+        if (this.getColonyJob() == null || !this.getColonyJob().getName().equals("com.minecolonies.job.Guard"))
         {
             this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
         }
@@ -248,6 +240,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
 
         onJobChanged(getColonyJob());
+    }
+
+    public AbstractJob getColonyJob()
+    {
+        return citizenData != null ? citizenData.getJob() : null;
     }
 
     /**
@@ -303,11 +300,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 BlockPosUtil.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
             }
         }
-    }
-
-    public AbstractJob getColonyJob()
-    {
-        return citizenData != null ? citizenData.getJob() : null;
     }
 
     public int getLevel()
@@ -397,10 +389,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
         double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
         double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
-        this.setRotation((float) updateRotation(this.rotationYaw, intendedRotationYaw, 30), (float)updateRotation(this.rotationPitch, intendedRotationPitch, 30));
+        this.setRotation((float) updateRotation(this.rotationYaw, intendedRotationYaw, 30), (float) updateRotation(this.rotationPitch, intendedRotationPitch, 30));
 
-        double goToX = xDifference > 0? MOVE_MINIMAL : -MOVE_MINIMAL;
-        double goToZ = zDifference > 0? MOVE_MINIMAL : -MOVE_MINIMAL;
+        double goToX = xDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
         moveEntity(goToX, 0, goToZ);
@@ -501,6 +493,27 @@ public class EntityCitizen extends EntityAgeable implements INpc
         super.updateFallState(y, onGroundIn, state, pos);
     }
 
+    @Override
+    public boolean attackEntityFrom(@NotNull DamageSource damageSource, float damage)
+    {
+        Entity sourceEntity = damageSource.getEntity();
+        if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
+        {
+            return false;
+        }
+
+        boolean result = super.attackEntityFrom(damageSource, damage);
+
+        if (damageSource.isMagicDamage() || damageSource.isFireDamage())
+        {
+            return result;
+        }
+
+        updateArmorDamage(damage);
+
+        return result;
+    }
+
     /**
      * Called when the mob's health reaches 0.
      *
@@ -514,19 +527,19 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (colony != null)
         {
-            if(getColonyJob() != null && getColonyJob() instanceof JobGuard)
+            if (getColonyJob() != null && getColonyJob() instanceof JobGuard)
             {
                 LanguageHandler.sendPlayersLocalizedMessage(
-                        colony.getMessageEntityPlayers(),
-                        "tile.blockHutTownHall.messageGuardDead",
-                        citizenData.getName());
+                  colony.getMessageEntityPlayers(),
+                  "tile.blockHutTownHall.messageGuardDead",
+                  citizenData.getName());
             }
             else
             {
                 LanguageHandler.sendPlayersLocalizedMessage(
-                        colony.getMessageEntityPlayers(),
-                        "tile.blockHutTownHall.messageColonistDead",
-                        citizenData.getName());
+                  colony.getMessageEntityPlayers(),
+                  "tile.blockHutTownHall.messageColonistDead",
+                  citizenData.getName());
             }
             colony.removeCitizen(getCitizenData());
         }
@@ -583,6 +596,29 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private double getExperiencePoints()
     {
         return citizenData.getExperience();
+    }
+
+    /**
+     * Updates the armour damage after being hit.
+     *
+     * @param damage damage dealt.
+     */
+    private void updateArmorDamage(double damage)
+    {
+        for (ItemStack stack : this.getArmorInventoryList())
+        {
+            if (stack == null || stack.getItem() == null || !(stack.getItem() instanceof ItemArmor))
+            {
+                continue;
+            }
+            stack.damageItem((int) (damage / 2), this);
+
+            if (stack.stackSize < 1)
+            {
+                setItemStackToSlot(getSlotForItemStack(stack), null);
+            }
+            setItemStackToSlot(getSlotForItemStack(stack), stack);
+        }
     }
 
     @Override
@@ -695,15 +731,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         checkHeal();
         super.onLivingUpdate();
-    }
-
-    /**
-     * Getter of the citizens random object.
-     * @return random object.
-     */
-    public Random getRandom()
-    {
-        return rand;
     }
 
     private void updateColonyClient()
@@ -952,6 +979,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
+     * Getter of the citizens random object.
+     *
+     * @return random object.
+     */
+    public Random getRandom()
+    {
+        return rand;
+    }
+
+    /**
      * Applies attributes like health, charisma etc to the citizens.
      */
     @Override
@@ -997,17 +1034,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public boolean isAIDisabled()
     {
         return false;
-    }
-
-    /**
-     * Return this citizens inventory.
-     *
-     * @return the inventory this citizen has.
-     */
-    @NotNull
-    public InventoryCitizen getInventoryCitizen()
-    {
-        return inventory;
     }
 
     /**
@@ -1093,10 +1119,21 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return InventoryUtils.isInventoryFull(getInventoryCitizen());
     }
 
+    /**
+     * Return this citizens inventory.
+     *
+     * @return the inventory this citizen has.
+     */
+    @NotNull
+    public InventoryCitizen getInventoryCitizen()
+    {
+        return inventory;
+    }
+
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
-        if(this.getColonyJob() instanceof JobGuard)
+        if (this.getColonyJob() instanceof JobGuard)
         {
             return DesiredActivity.WORK;
         }
@@ -1326,49 +1363,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
               SoundCategory.BLOCKS,
               block.getSoundType(blockState, worldObj, blockPos, this).getVolume(),
               block.getSoundType(blockState, worldObj, blockPos, this).getPitch());
-        }
-    }
-
-    @Override
-    public boolean attackEntityFrom(@NotNull DamageSource damageSource, float damage)
-    {
-        Entity sourceEntity = damageSource.getEntity();
-        if(sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
-        {
-            return false;
-        }
-
-        boolean result = super.attackEntityFrom(damageSource, damage);
-
-        if(damageSource.isMagicDamage() || damageSource.isFireDamage())
-        {
-            return result;
-        }
-
-        updateArmorDamage(damage);
-
-        return result;
-    }
-
-    /**
-     * Updates the armour damage after being hit.
-     * @param damage damage dealt.
-     */
-    private void updateArmorDamage(double damage)
-    {
-        for(ItemStack stack: this.getArmorInventoryList())
-        {
-            if(stack == null || stack.getItem() == null || ! (stack.getItem() instanceof ItemArmor))
-            {
-                continue;
-            }
-            stack.damageItem((int)(damage / 2), this);
-
-            if(stack.stackSize < 1)
-            {
-                setItemStackToSlot(getSlotForItemStack(stack), null);
-            }
-            setItemStackToSlot(getSlotForItemStack(stack), stack);
         }
     }
 

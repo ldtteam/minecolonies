@@ -14,10 +14,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.plaf.basic.BasicComboBoxUI;
 
 /**
  * Class which handles the tileEntity of our colonyBuildings.
@@ -103,19 +100,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public int getColonyId()
     {
         return colonyId;
-    }    @Override
-    public void update()
-    {
-        super.update();
-
-        if (!worldObj.isRemote && colonyId == 0)
-        {
-            final Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
-            if (tempColony != null)
-            {
-                colonyId = tempColony.getID();
-            }
-        }
     }
 
     /**
@@ -130,6 +114,19 @@ public class TileEntityColonyBuilding extends TileEntityChest
             updateColonyReferences();
         }
         return colony;
+    }    @Override
+    public void update()
+    {
+        super.update();
+
+        if (!worldObj.isRemote && colonyId == 0)
+        {
+            final Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
+            if (tempColony != null)
+            {
+                colonyId = tempColony.getID();
+            }
+        }
     }
 
     /**

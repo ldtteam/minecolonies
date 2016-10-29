@@ -70,7 +70,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     {
         if (building.getColony().isManualHiring())
         {
-            if(building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
+            if (building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
             {
                 LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("com.minecolonies.gui.workerHuts.level0"));
                 return;

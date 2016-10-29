@@ -29,42 +29,45 @@ public class InventoryCitizen implements IInventory
     /**
      * Number of slots in the inventory.
      */
-    private static final int         INVENTORY_SIZE  = 27;
+    private static final int    INVENTORY_SIZE  = 27;
     /**
      * Max size of the stacks.
      */
-    private static final int         MAX_STACK_SIZE  = 64;
+    private static final int    MAX_STACK_SIZE  = 64;
     /**
      * NBT tag to store and retrieve the inventory.
      */
-    private static final String      TAG_INVENTORY   = "Inventory";
+    private static final String TAG_INVENTORY   = "Inventory";
     /**
      * NBT tag to store and retrieve the custom name.
      */
-    private static final String      TAG_CUSTOM_NAME = "CustomName";
+    private static final String TAG_CUSTOM_NAME = "CustomName";
     /**
      * NBT tag to store and retrieve the custom name.
      */
-    private static final String      TAG_ITEMS       = "Items";
+    private static final String TAG_ITEMS       = "Items";
     /**
      * NBT tag to store and retrieve the custom name.
      */
-    private static final String      TAG_SLOT        = "Slot";
+    private static final String TAG_SLOT        = "Slot";
     /**
      * The returned slot if a slot hasn't been found.
      */
-    private static final int         NO_SLOT         = -1;
+    private static final int    NO_SLOT         = -1;
 
     /**
      * The equipment slots.
      */
     private static final EntityEquipmentSlot[] VALID_EQUIPMENT_SLOTS;
-
+    static
+    {
+        VALID_EQUIPMENT_SLOTS = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
+    }
     /**
      * The inventory content.
      */
     @NotNull
-    private              ItemStack[] stacks          = new ItemStack[INVENTORY_SIZE];
+    private ItemStack[] stacks = new ItemStack[INVENTORY_SIZE];
     /**
      * The inventories custom name. In our case the citizens name.
      */
@@ -85,12 +88,6 @@ public class InventoryCitizen implements IInventory
      * The citizen which owns the inventory.
      */
     private EntityCitizen citizen;
-
-    static
-    {
-        VALID_EQUIPMENT_SLOTS = new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
-    }
-
     /**
      * Creates the inventory of the citizen.
      *
@@ -405,7 +402,13 @@ public class InventoryCitizen implements IInventory
         return getStackInSlot(index) == null;
     }
 
-    /**
+    public void createMaterialStore(@NotNull MaterialSystem system)
+    {
+        if (materialStore == null)
+        {
+            materialStore = new MaterialStore(MaterialStore.Type.INVENTORY, system);
+        }
+    }    /**
      * Get the name of this object. For citizens this returns their name.
      *
      * @return the name of the inventory.
@@ -415,14 +418,6 @@ public class InventoryCitizen implements IInventory
     public String getName()
     {
         return this.hasCustomName() ? this.customName : "citizen.inventory";
-    }
-
-    public void createMaterialStore(@NotNull MaterialSystem system)
-    {
-        if (materialStore == null)
-        {
-            materialStore = new MaterialStore(MaterialStore.Type.INVENTORY, system);
-        }
     }
 
     public MaterialStore getMaterialStore()
@@ -495,17 +490,6 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Checks if the inventory is named.
-     *
-     * @return true if the inventory has a custom name.
-     */
-    @Override
-    public boolean hasCustomName()
-    {
-        return this.customName != null;
-    }
-
-    /**
      * Gets the stack of a certain slot.
      *
      * @param index the slot.
@@ -562,6 +546,15 @@ public class InventoryCitizen implements IInventory
         {
             return null;
         }
+    }    /**
+     * Checks if the inventory is named.
+     *
+     * @return true if the inventory has a custom name.
+     */
+    @Override
+    public boolean hasCustomName()
+    {
+        return this.customName != null;
     }
 
     /**
@@ -626,16 +619,6 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Get the formatted TextComponent that will be used for the sender's username in chat
-     */
-    @NotNull
-    @Override
-    public ITextComponent getDisplayName()
-    {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
-    }
-
-    /**
      * For tile entities, ensures the chunk containing the tile entity is saved to disk later - the game won't think it
      * hasn't changed and skip it.
      */
@@ -668,6 +651,14 @@ public class InventoryCitizen implements IInventory
         /*
          * This may be filled in order to specify some custom handling.
          */
+    }    /**
+     * Get the formatted TextComponent that will be used for the sender's username in chat
+     */
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
