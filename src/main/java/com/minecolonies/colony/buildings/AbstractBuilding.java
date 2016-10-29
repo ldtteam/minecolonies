@@ -68,7 +68,7 @@ public abstract class AbstractBuilding
     // Attributes
     private int     buildingLevel = 0;
     private int     rotation      = 0;
-    private String  style         = "classic";
+    private String  style         = "default";
     //  State
     private boolean dirty         = false;
 
@@ -195,8 +195,8 @@ public abstract class AbstractBuilding
         style = compound.getString(TAG_STYLE);
         if ("".equals(style))
         {
-            Log.getLogger().warn("Loaded empty style, setting to classic");
-            style = "classic";
+            Log.getLogger().warn("Loaded empty style, setting to default");
+            style = "default";
         }
 
         if (MaterialSystem.isEnabled)

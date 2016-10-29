@@ -184,7 +184,7 @@ public class BuildingHome extends AbstractBuildingHut
     @Override
     public int getMaxBuildingLevel()
     {
-        return 4;
+        return 5;
     }
 
     /**

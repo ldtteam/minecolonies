@@ -2,9 +2,9 @@ package com.minecolonies.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
-import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
