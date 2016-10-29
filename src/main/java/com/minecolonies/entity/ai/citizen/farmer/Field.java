@@ -77,11 +77,6 @@ public class Field extends Container
     private static final String TAG_WIDTH_MINUS = "width-";
 
     /**
-     * Tag to store the fields stage.
-     */
-    private static final String TAG_STAGE = "stage";
-
-    /**
      * Tag to store the owner.
      */
     private static final String TAG_OWNER = "owner";
@@ -141,11 +136,6 @@ public class Field extends Container
      * Checks if the field needsWork (Hoeig, Seedings, Farming etc).
      */
     private boolean needsWork = false;
-
-    /**
-     * Has the field been planted?
-     */
-    private FieldStage fieldStage = FieldStage.EMPTY;
 
     /**
      * The length to plus x of the field.
@@ -257,7 +247,6 @@ public class Field extends Container
     {
         location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
         taken = compound.getBoolean(TAG_TAKEN);
-        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
         lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
         widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
         lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
@@ -394,7 +383,6 @@ public class Field extends Container
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
         compound.setBoolean(TAG_TAKEN, taken);
-        compound.setInteger(TAG_STAGE, fieldStage.ordinal());
         compound.setInteger(TAG_LENGTH_PLUS, lengthPlusX);
         compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
         compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
@@ -421,26 +409,6 @@ public class Field extends Container
     public void setTaken(boolean taken)
     {
         this.taken = taken;
-    }
-
-    /**
-     * Checks if the field has been planted.
-     *
-     * @return true if there are crops planted.
-     */
-    public FieldStage getFieldStage()
-    {
-        return this.fieldStage;
-    }
-
-    /**
-     * Sets if there are any crops planted.
-     *
-     * @param fieldStage true after planting, false after harvesting.
-     */
-    public void setFieldStage(FieldStage fieldStage)
-    {
-        this.fieldStage = fieldStage;
     }
 
     /**
@@ -592,10 +560,4 @@ public class Field extends Container
      * Describes the stage the field is in.
      * Like if it has been hoed, planted or is empty.
      */
-    public enum FieldStage
-    {
-        EMPTY,
-        HOED,
-        PLANTED
-    }
 }
