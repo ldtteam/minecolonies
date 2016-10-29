@@ -232,10 +232,18 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
 
             // harvest the block if able to.
-            harvestIfAble(position);
+            boolean interupt = harvestIfAble(position);
+            if (interupt)
+            {
+                return AIState.FARMER_WORK;
+            }
 
             // hoe the block if able to.
-            hoeIfAble(position, field);
+            interupt = hoeIfAble(position, field);
+            if (interupt)
+            {
+                return AIState.FARMER_WORK;
+            }
 
             if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
             {
@@ -258,24 +266,42 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
+<<<<<<< Updated upstream
      * Checks if we can harvest, and does so if we can.
      */
     private void harvestIfAble(final BlockPos position)
+=======
+      * Checks if we can harvest, and does so if we can.
+      *
+      * @return true if we harvested.
+      */
+    private boolean harvestIfAble(final BlockPos position)
+>>>>>>> Stashed changes
     {
         if (shouldHarvest(position))
         {
             worker.addExperience(XP_PER_HARVEST);
-            harvestCrop(position.up());
+            return harvestCrop(position.up());
         }
+        return false;
     }
 
     /**
+<<<<<<< Updated upstream
      * Checks if we can hoe, and does so if we can.
      *
      * @param position the position to check
      * @param field    the field that we are working with.
      */
     private void hoeIfAble(final BlockPos position, final Field field)
+=======
+      * Checks if we can hoe, and does so if we can.
+      *
+      * @param position the position to check
+      * @param field the field that we are working with.
+      */
+    private boolean hoeIfAble(final BlockPos position, final Field field)
+>>>>>>> Stashed changes
     {
         if (shouldHoe(position, field))
         {
@@ -284,7 +310,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
             worker.damageItemInHand(1);
             mineBlock(position.up());
+            return true;
         }
+        return false;
     }
 
     /**
