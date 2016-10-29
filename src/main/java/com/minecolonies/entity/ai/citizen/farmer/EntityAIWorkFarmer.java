@@ -42,6 +42,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private static final int     DELAY_DIVIDER       = 10;
     /**
+      * The EXP Earned per harvest.
+      */
+    private static final double  XP_PER_HARVEST      = 0.5;
+    /**
      * Changed after finished harvesting in order to dump the inventory.
      */
     private              boolean shouldDumpInventory = false;
@@ -251,7 +255,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (shouldHarvest(position))
         {
-            worker.addExperience(0.5);
+            worker.addExperience(XP_PER_HARVEST);
             if (Compatibility.isPamsInstalled())
             {
                 harvestCrop(position.up());
@@ -525,7 +529,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         world.setBlockState(position, crops.withAge(0));
 
         //add the drops to the citizen
-        for (ItemStack item : drops)
+        for (final ItemStack item : drops)
         {
             InventoryUtils.setStack(worker.getInventoryCitizen(), item);
         }
