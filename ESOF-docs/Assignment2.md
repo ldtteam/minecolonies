@@ -24,6 +24,8 @@ A engenharia de requerimentos passa por várias fases: levantamento de requerime
 
 ![alt tag](resources/requirements.PNG)
 
+Figura 1 - *Gráfico com a representação das várias fases da enhenharia de requerimentos.*
+
 ### Levantamento de requerimentos ###
 
 O principal objetivo do levantamento de requerimentos é a interação com os *stakeholders* de modo a descobrir os seus requerimentos. Para tal é necessário usar várias técnicas como inquéritos, questionários, observações sociais, protótipos, entre outros. No caso do **MineColonies**, por ser um projeto *open source* e sem fins lucrativos, os seus contribuidores não estão propriamente interessados na utilização de técnicas mais profissionais para conhecer o seu público alvo. 
@@ -80,6 +82,8 @@ Esta estrutura permite obter informações e fazer a gestão de residentes e tra
 
 ![alt tag](resources/townhall.PNG)
 
+Figura 2 - *Representação da janela de interação da estrutura Town Hall.*
+
 ##### Supply Ships #####
 
 O *Supply ship* representa o posto de abastecimento da cidade bem como a primeira casa do jogador. Esta estrutura tem que ser posicionada sob uma grande porção de água e não podem ser colocadas mais estruturas deste tipo no mesmo mundo.
@@ -90,17 +94,23 @@ Os *NPC's* do **MineColonies** podem ser divididos em vários tipos: *builder, f
 
 ![alt tag](resources/Villagers1.png)
 
+Figura 3 - *Visualização dos vários NPC's.* 
+
 #### Crafts ####
 
 Como complemento para o bom funcionamento das ideias a pôr em prática, foram adicionados novos objetos que podemos construir através da *crafting table* do jogo base. Os objetos novos são: *supply ship, builders hut, citizens hut, miners hut,lumberjack hut, fishermans hut, build tool, scan tool* e *field*. Estes objetos são essenciais para pôr em práticas as funcionalidades de determinados *NPC's* e para gestão da cidade.
 
 ![alt tag](resources/crafts.PNG)
 
+Figura 4 - *Crafting table com as diversas combinações para a formação dos novos objetos.*
+
 #### Achievements ####
 
 A modificação também disponibiliza uma expansão e um melhoramento ao sistema de conquistas implementado no jogo base. Este sistema é uma adição ao vasto leque de novidades que **Minecolonies** traz ao jogo que torna a experiência dos jogadores bastante mais agradável, cobrindo vários tópicos como o inicial de “construir um supply ship” ou o de “criar NPC’s”. Esta funcionalidade apenas serve para melhorar a qualidade de jogo, não tendo nenhuma recompensa para além de ter uma lista de proezas completadas, mas também tem a particularidade de servir de uma espécie de guia interativo para novos jogadores.
 
 ![alt tag](resources/achivements.PNG)
+
+Figura 5 - *Exemplo de achivements.*
 
 ### Requerimentos não funcionais ###
 
@@ -111,6 +121,8 @@ O modelo de casos de uso é uma sequência de transições num sistema visto da 
 Para o projeto **MineColonies**, criamos este modelo de casos de uso que descreve o sistema de manipulação dos objetos pelo ator que é o jogador. Este modelo não tem em consideração as possibilidades do jogo original Minecraft, mas sim as novas funcionalidades implementadas para o **MineColonies**.
 
 ![alt tag](resources/useCase.PNG)
+
+Figura 6 - *Diagrama de casos de uso.*
 
 Como é possível interpretar pela imagem, o jogador é o único ator deste sistema e tem controlo sob todas as ações. De seguida estão apresentadas duas descrições de dois casos de uso.
 
@@ -138,6 +150,9 @@ Como é possível interpretar pela imagem, o jogador é o único ator deste sist
 
 1. O NPC avança para a próxima tarefa da lista.
 
+![alt tag](resources/builderhut.PNG)
+
+Figura 7 - *Exemplo da janela de interação do Builder Hut.*
 
 *Nome :* Atualizar um edifício.
 
@@ -165,13 +180,13 @@ Como é possível interpretar pela imagem, o jogador é o único ator deste sist
 1. É adicionada a tarefa “Upgrade Building x “ ao NPC do tipo Builder
 2. O NPC evoluí o edifício.
 
-![alt tag](resources/builderhut.PNG)
-
 ## Modelo de domínio ##
 
 O modelo de domínio é um modelo que representa um conjunto de classes conceptuais que descrevem as relações do jogo.
 
 ![alt tag](resources/domainModel.PNG)
+
+Figura 8 - *Modelo de domínio.*
 
 Como é possível interpretar da imagem, as classes principais são: jogador, citizen(NPC), Block Hut e Building. A classe Inventory é também importante pois é meio de relação entre o *NPC* e o jogador. O jogador pode, por exemplo, colocar materiais que o NPC necessite no seu inventário, e recolher os produtos do *NPC*. 
 
