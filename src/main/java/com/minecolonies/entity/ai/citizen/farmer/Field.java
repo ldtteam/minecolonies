@@ -77,11 +77,6 @@ public class Field extends Container
     private static final String TAG_WIDTH_MINUS = "width-";
 
     /**
-     * Tag to store the fields stage.
-     */
-    private static final String TAG_STAGE = "stage";
-
-    /**
      * Tag to store the owner.
      */
     private static final String TAG_OWNER = "owner";

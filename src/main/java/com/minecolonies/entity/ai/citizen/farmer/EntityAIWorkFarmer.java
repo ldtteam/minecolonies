@@ -53,6 +53,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     @Nullable
     private BlockPos workingOffset;
+
     /**
      * The delay the farmer should have each action: hoeing, planting, harvesting.
      */
@@ -110,7 +111,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     @NotNull
     private AIState prepareForFarming()
     {
-        @Nullable BuildingFarmer building = getOwnBuilding();
+        @Nullable final BuildingFarmer building = getOwnBuilding();
 
         if (building == null || building.getBuildingLevel() < 1)
         {
@@ -137,11 +138,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.IDLE;
         }
 
-        @Nullable Field currentField = building.getCurrentField();
+        @Nullable final Field currentField = building.getCurrentField();
 
         if (currentField.needsWork())
         {
-            if(!checkForHoe() && canGoPlanting(currentField, building)){
+            if(!checkForHoe() && canGoPlanting(currentField, building))
+            {
                 return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_WORK;
             }
         }
@@ -175,7 +177,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param currentField the field to plant.
      * @return true if he is ready.
      */
-    private boolean canGoPlanting(@NotNull Field currentField, @NotNull BuildingFarmer buildingFarmer)
+    private boolean canGoPlanting(@NotNull final Field currentField, @NotNull final BuildingFarmer buildingFarmer)
     {
         if (currentField.getSeed() == null)
         {
@@ -186,7 +188,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (shouldTryToGetSeed)
         {
-            int slot = worker.findFirstSlotInInventoryWith(currentField.getSeed());
+            final int slot = worker.findFirstSlotInInventoryWith(currentField.getSeed());
             if (slot != -1)
             {
                 requestSeeds = false;
@@ -212,17 +214,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
     private AIState cycle()
     {
-        @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
+        @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
         if (buildingFarmer == null || buildingFarmer.getCurrentField() == null  || checkForHoe())
         {
             return AIState.PREPARING;
         }
-        @Nullable Field field = buildingFarmer.getCurrentField();
+        @Nullable final Field field = buildingFarmer.getCurrentField();
 
         if (workingOffset != null)
         {
-            BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
+            final BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
             if (walkToBlock(position.up()))
             {
                 return AIState.FARMER_WORK;
