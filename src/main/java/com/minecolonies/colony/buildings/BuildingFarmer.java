@@ -41,7 +41,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * The maximum building level of the hut.
      */
-    private static final int MAX_BUILDING_LEVEL = 3;
+    private static final int MAX_BUILDING_LEVEL = 2;
 
     /**
      * NBTTag to store the fields.

@@ -185,6 +185,11 @@ public enum AIState
      */
     FARMER_HARVEST,
 
+    /**
+      * Work field.
+      */
+      FARMER_WORK,
+
       /*
 ###Guard###
     */
