@@ -39,7 +39,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     /**
      * The standard delay the farmer should have.
      */
-    private static final int     STANDARD_DELAY      = 5;
+    private static final int     STANDARD_DELAY      = 20;
     /**
      * The bonus the farmer gains each update is level/divider.
      */
@@ -212,14 +212,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return true;
     }
 
+    /**
+      * The main work cycle of the Famer.
+      * This checks each block, harvests, tills, and plants.
+      */
     private AIState cycle()
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
-        if (buildingFarmer == null || buildingFarmer.getCurrentField() == null  || checkForHoe())
-        {
-            return AIState.PREPARING;
-        }
         @Nullable final Field field = buildingFarmer.getCurrentField();
 
         if (workingOffset != null)
@@ -253,6 +253,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return AIState.FARMER_WORK;
     }
 
+    /**
+      * Checks if we can harvest, and does so if we can.
+      */
     private void harvestIfAble(final BlockPos position)
     {
         if (shouldHarvest(position))
@@ -269,6 +272,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
     }
 
+    /**
+      * Checks if we can hoe, and does so if we can.
+      *
+      * @param position the position to check
+      * @param field the field that we are working with.
+      */
     private void hoeIfAble(final BlockPos position, final Field field)
     {
         if (shouldHoe(position, field))
@@ -515,22 +524,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         final int fortune = Utils.getFortuneOf(tool);
 
         final List<ItemStack> drops = crops.getDrops(world, position, curBlockState, fortune);
-
-        final Item seedItem = crops.getItemDropped(curBlockState, world.rand, fortune);
-        if (seedItem != null)
-        {
-            for (final Iterator<ItemStack> iterator = drops.iterator(); iterator.hasNext();)
-            {
-                final ItemStack drop = iterator.next();
-
-                // Remove a seed, then break.
-                if (drop.getItem() != seedItem && !(crops instanceof BlockCarrot) && !(crops instanceof BlockPotato))
-                {
-                    iterator.remove();
-                    break;
-                }
-            }
-        }
 
         world.setBlockState(position, crops.withAge(0));
 
