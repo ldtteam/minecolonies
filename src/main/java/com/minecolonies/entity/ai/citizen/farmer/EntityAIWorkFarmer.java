@@ -159,10 +159,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private void searchAndAddFields()
     {
-        Colony colony = worker.getColony();
+        final Colony colony = worker.getColony();
         if (colony != null)
         {
-            @Nullable Field newField = colony.getFreeField(worker.getName());
+            @Nullable final Field newField = colony.getFreeField(worker.getName());
 
             if (newField != null && getOwnBuilding() != null)
             {
@@ -288,7 +288,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param field    the field close to this position.
      * @return true if should be hoed.
      */
-    private boolean shouldHoe(@NotNull BlockPos position, @NotNull Field field)
+    private boolean shouldHoe(@NotNull final BlockPos position, @NotNull final Field field)
     {
         return !field.isNoPartOfField(world, position)
                  && !BlockUtils.isBlockSeed(world, position.up())
@@ -310,7 +310,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param field the field object.
      * @return true if successful.
      */
-    private boolean handleOffset(@NotNull Field field)
+    private boolean handleOffset(@NotNull final Field field)
     {
         if (workingOffset == null)
         {
@@ -362,9 +362,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param field    the field close to this position.
      * @return true if should be hoed.
      */
-    private boolean shouldPlant(@NotNull BlockPos position, @NotNull Field field)
+    private boolean shouldPlant(@NotNull final BlockPos position, @NotNull final Field field)
     {
-        @Nullable ItemStack itemStack = BlockUtils.getItemStackFromBlockState(world.getBlockState(position.up()));
+        @Nullable final ItemStack itemStack = BlockUtils.getItemStackFromBlockState(world.getBlockState(position.up()));
 
         if (itemStack != null && itemStack.getItem() == field.getSeed())
         {
@@ -383,10 +383,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean plantCrop(Item item, @NotNull BlockPos position)
     {
-        int slot = worker.findFirstSlotInInventoryWith(item);
+        final int slot = worker.findFirstSlotInInventoryWith(item);
         if (slot != -1)
         {
-            @NotNull IPlantable seed = (IPlantable) item;
+            @NotNull final IPlantable seed = (IPlantable) item;
             world.setBlockState(position.up(), seed.getPlant(world, position));
             getInventory().decrStackSize(slot, 1);
             requestSeeds = false;
@@ -407,7 +407,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @return the next state.
      */
     @NotNull
-    private AIState terminatePlanting(@NotNull BuildingFarmer buildingFarmer, @NotNull Field field)
+    private AIState terminatePlanting(@NotNull final BuildingFarmer buildingFarmer, @NotNull final Field field)
     {
         if (requestSeeds)
         {
@@ -428,13 +428,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param position the position to check.
      * @return true if should be hoed.
      */
-    private boolean shouldHarvest(@NotNull BlockPos position)
+    private boolean shouldHarvest(@NotNull final BlockPos position)
     {
-        IBlockState state = world.getBlockState(position.up());
+        final IBlockState state = world.getBlockState(position.up());
 
         if (state.getBlock() instanceof IGrowable && state.getBlock() instanceof BlockCrops)
         {
-            @NotNull BlockCrops block = (BlockCrops) state.getBlock();
+            @NotNull final BlockCrops block = (BlockCrops) state.getBlock();
             return !block.canGrow(world, position.up(), state, false);
         }
 
@@ -477,7 +477,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @return true if the stack should remain in inventory
      */
     @Override
-    protected boolean neededForWorker(@Nullable ItemStack stack)
+    protected boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return stack != null && Utils.isHoe(stack);
     }
@@ -495,14 +495,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
     private boolean harvestCrop(final BlockPos position)
     {
-        IBlockState curBlockState = world.getBlockState(position);
+        final IBlockState curBlockState = world.getBlockState(position);
 
         if (!(curBlockState.getBlock() instanceof IGrowable) || !(curBlockState.getBlock() instanceof BlockCrops))
         {
             return false;
         }
 
-        BlockCrops crops = (BlockCrops) curBlockState.getBlock();
+        final BlockCrops crops = (BlockCrops) curBlockState.getBlock();
 
         if (!crops.isMaxAge(curBlockState))
         {
@@ -512,14 +512,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         final ItemStack tool = worker.getHeldItemMainhand();
 
         //calculate fortune enchantment
-        int fortune = Utils.getFortuneOf(tool);
+        final int fortune = Utils.getFortuneOf(tool);
 
         final List<ItemStack> drops = crops.getDrops(world, position, curBlockState, fortune);
 
         final Item seedItem = crops.getItemDropped(curBlockState, world.rand, fortune);
         if (seedItem != null)
         {
-            for (Iterator<ItemStack> iterator = drops.iterator(); iterator.hasNext();)
+            for (final Iterator<ItemStack> iterator = drops.iterator(); iterator.hasNext();)
             {
                 final ItemStack drop = iterator.next();
 
