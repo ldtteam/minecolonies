@@ -1,6 +1,5 @@
 package com.minecolonies.entity.ai.citizen.farmer;
 
-import com.compatibility.Compatibility;
 import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.BuildingFarmer;
@@ -256,14 +255,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (shouldHarvest(position))
         {
             worker.addExperience(XP_PER_HARVEST);
-            if (Compatibility.isPamsInstalled())
-            {
-                harvestCrop(position.up());
-            }
-            else
-            {
-                mineBlock(position.up());
-            }
+            harvestCrop(position.up());
         }
     }
 
