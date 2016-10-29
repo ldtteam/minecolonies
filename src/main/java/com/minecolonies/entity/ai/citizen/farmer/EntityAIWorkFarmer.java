@@ -384,7 +384,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private boolean plantCrop(Item item, @NotNull BlockPos position)
     {
         final int slot = worker.findFirstSlotInInventoryWith(item);
-        if (slot != -1)
+        if (slot == -1)
+        {
+            return false;
+        }
+        else
         {
             @NotNull final IPlantable seed = (IPlantable) item;
             world.setBlockState(position.up(), seed.getPlant(world, position));
@@ -392,10 +396,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             requestSeeds = false;
             //Flag 1+2 is needed for updates
             return true;
-        }
-        else
-        {
-            return false;
         }
     }
 
