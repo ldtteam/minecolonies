@@ -22,9 +22,9 @@ import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.entity.ai.util.AIState.*;
-
 import java.util.List;
+
+import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
  * Farmer AI class.
