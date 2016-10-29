@@ -210,11 +210,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
-        if (buildingFarmer == null || checkForHoe()) return AIState.PREPARING;
+        if (buildingFarmer == null || checkForHoe())
+        {
+            return AIState.PREPARING;
+        }
 
         @Nullable final Field field = buildingFarmer.getCurrentField();
 
-        if (field == null) return AIState.PREPARING;
+        if (field == null)
+        {
+            return AIState.PREPARING;
+        }
 
         if (workingOffset != null)
         {
