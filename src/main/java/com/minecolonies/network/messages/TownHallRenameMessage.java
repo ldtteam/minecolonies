@@ -20,7 +20,8 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
     /**
      * Empty public constructor.
      */
-    public TownHallRenameMessage() {
+    public TownHallRenameMessage()
+    {
         super();
     }
 

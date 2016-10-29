@@ -62,6 +62,7 @@ public abstract class AbstractBuilding
         addMapping("GuardTower", BuildingGuardTower.class, BlockHutGuardTower.class);
 
     }
+
     private final BlockPos                 location;
     @NotNull
     private final Colony                   colony;
@@ -386,6 +387,16 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Sets the tile entity for the building.
+     *
+     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
+     */
+    public void setTileEntity(TileEntityColonyBuilding te)
+    {
+        tileEntity = te;
+    }
+
+    /**
      * Returns the colony of the building
      *
      * @return {@link com.minecolonies.colony.Colony} of the current object
@@ -394,16 +405,6 @@ public abstract class AbstractBuilding
     public Colony getColony()
     {
         return colony;
-    }
-
-    /**
-     * Sets the tile entity for the building.
-     *
-     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
-     */
-    public void setTileEntity(TileEntityColonyBuilding te)
-    {
-        tileEntity = te;
     }
 
     /**

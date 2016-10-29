@@ -26,7 +26,7 @@ public class JobPlaceholder extends AbstractJob
      */
     @Nullable
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<JobPlaceholder> generateAI()
     {
         return null;
     }

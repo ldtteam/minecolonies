@@ -21,6 +21,7 @@ public class CitizensCommand extends AbstractSplitCommand
 
     /**
      * Initialize this command with it's parents.
+     *
      * @param parent the String of the parent command.
      */
     public CitizensCommand(@NotNull final String parent)

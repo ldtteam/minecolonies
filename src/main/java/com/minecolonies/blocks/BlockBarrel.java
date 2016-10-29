@@ -55,6 +55,8 @@ public class BlockBarrel extends Block
         initBlock();
     }
 
+    //todo: register block with new method
+    @SuppressWarnings("deprecation")
     /**
      * initialize the block
      */
@@ -132,6 +134,8 @@ public class BlockBarrel extends Block
         }
     }
 
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings("deprecation")
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {
@@ -149,6 +153,8 @@ public class BlockBarrel extends Block
      *
      * @return true
      */
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isOpaqueCube(IBlockState state)
     {

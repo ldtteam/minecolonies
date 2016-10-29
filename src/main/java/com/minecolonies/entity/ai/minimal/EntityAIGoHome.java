@@ -1,7 +1,6 @@
 package com.minecolonies.entity.ai.minimal;
 
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.util.Log;
 import com.minecolonies.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.util.math.BlockPos;
@@ -15,14 +14,13 @@ import net.minecraft.util.math.BlockPos;
 public class EntityAIGoHome extends EntityAIBase
 {
     /**
-     * The citizen.
-     */
-    private EntityCitizen citizen;
-
-    /**
      * Chance to play goHomeSound.
      */
     private static final int CHANCE = 100;
+    /**
+     * The citizen.
+     */
+    private EntityCitizen citizen;
 
     public EntityAIGoHome(EntityCitizen citizen)
     {
@@ -50,7 +48,7 @@ public class EntityAIGoHome extends EntityAIBase
         BlockPos pos = citizen.getHomePosition();
         if (pos == null)
         {
-            Log.getLogger().error("EntityCitizen has null townHall (And no home)");
+            //todo: do something about this instead of spamming console
             return;
         }
 
@@ -77,7 +75,7 @@ public class EntityAIGoHome extends EntityAIBase
     {
         final int chance = citizen.getRandom().nextInt(CHANCE);
 
-        if(chance <= 1)
+        if (chance <= 1)
         {
             if (citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
             {

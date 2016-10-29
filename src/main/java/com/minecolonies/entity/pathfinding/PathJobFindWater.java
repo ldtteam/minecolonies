@@ -47,6 +47,11 @@ public class PathJobFindWater extends AbstractPathJob
         public boolean  isEmpty;
     }
 
+    private static double squareDistance(@NotNull BlockPos currentPond, @NotNull BlockPos nextPond)
+    {
+        return currentPond.distanceSq(nextPond.getX(), nextPond.getY(), nextPond.getZ());
+    }
+
     @NotNull
     @Override
     public WaterPathResult getResult() { return (WaterPathResult) super.getResult(); }
@@ -105,11 +110,6 @@ public class PathJobFindWater extends AbstractPathJob
         }
 
         return false;
-    }
-
-    private static double squareDistance(@NotNull BlockPos currentPond, @NotNull BlockPos nextPond)
-    {
-        return currentPond.distanceSq(nextPond.getX(), nextPond.getY(), nextPond.getZ());
     }
 
     private Predicate<BlockPos> generateDistanceFrom(int range, @NotNull BlockPos newpond)

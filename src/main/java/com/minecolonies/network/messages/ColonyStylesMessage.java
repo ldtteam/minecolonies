@@ -26,6 +26,26 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         decorationStyleMap = readStyleMapFromByteBuf(buf);
     }
 
+    @NotNull
+    private static Map<String, List<String>> readStyleMapFromByteBuf(@NotNull ByteBuf buf)
+    {
+        @NotNull Map<String, List<String>> map = new HashMap<>();
+
+        int count = buf.readInt();
+        for (int i = 0; i < count; i++)
+        {
+            @NotNull List<String> styles = new ArrayList<>();
+            int numStyles = buf.readInt();
+            for (int j = 0; j < numStyles; j++)
+            {
+                styles.add(ByteBufUtils.readUTF8String(buf));
+            }
+
+            map.put(ByteBufUtils.readUTF8String(buf), styles);
+        }
+        return map;
+    }
+
     @Override
     public void toBytes(@NotNull ByteBuf buf)
     {
@@ -48,26 +68,6 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
 
             ByteBufUtils.writeUTF8String(buf, object);
         }
-    }
-
-    @NotNull
-    private static Map<String, List<String>> readStyleMapFromByteBuf(@NotNull ByteBuf buf)
-    {
-        @NotNull Map<String, List<String>> map = new HashMap<>();
-
-        int count = buf.readInt();
-        for (int i = 0; i < count; i++)
-        {
-            @NotNull List<String> styles = new ArrayList<>();
-            int numStyles = buf.readInt();
-            for (int j = 0; j < numStyles; j++)
-            {
-                styles.add(ByteBufUtils.readUTF8String(buf));
-            }
-
-            map.put(ByteBufUtils.readUTF8String(buf), styles);
-        }
-        return map;
     }
 
     /**

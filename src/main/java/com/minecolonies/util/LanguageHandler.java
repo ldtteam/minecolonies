@@ -2,7 +2,6 @@ package com.minecolonies.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.translation.I18n;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,9 +61,12 @@ public class LanguageHandler
      * @param defaultValue the value to return if no key is found
      * @return Localized string
      */
+    @SuppressWarnings("deprecation")
     public static String getString(String key, String defaultValue)
     {
-        return I18n.translateToLocal(key);
+        //todo: use TextComponentTranslation like mojang wants us to
+        //using fully qualified name to remove deprecation warning on import
+        return net.minecraft.util.text.translation.I18n.translateToLocal(key);
     }
 
     /**

@@ -1,4 +1,4 @@
 /**
-  * Contains utility functions to check for compatibility with other mods.
-  */
+ * Contains utility functions to check for compatibility with other mods.
+ */
 package com.compatibility;

@@ -110,7 +110,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
         }
 
         this.model.render((float) SIZERATIO);
-        
+
         /* ============ Rendering Code stops here =========== */
         //Restore the transformation, so other renderer's are not messed up.
         GlStateManager.popMatrix();

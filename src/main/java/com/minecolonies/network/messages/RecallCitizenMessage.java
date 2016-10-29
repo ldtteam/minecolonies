@@ -33,7 +33,8 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
     /**
      * Empty public constructor.
      */
-    public RecallCitizenMessage() {
+    public RecallCitizenMessage()
+    {
         super();
     }
 

@@ -155,7 +155,7 @@ public final class BlockPosUtil
         if (result < 0)
         {
             throw new IllegalStateException("max-sqrt is to high! Failure to catch overflow with "
-                    + xDiff + " | " + yDiff + " | " + zDiff);
+                                              + xDiff + " | " + yDiff + " | " + zDiff);
         }
         return result;
     }
@@ -176,7 +176,7 @@ public final class BlockPosUtil
         if (result < 0)
         {
             throw new IllegalStateException("max-sqrt is to high! Failure to catch overflow with "
-                    + xDiff + " | " + zDiff);
+                                              + xDiff + " | " + zDiff);
         }
         return result;
     }

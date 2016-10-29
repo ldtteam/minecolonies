@@ -104,7 +104,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Divide experience by a factor to ensure more levels fit in an int.
      */
-    private static final int EXP_DIVIDER               = 10;
+    private static final int EXP_DIVIDER = 10;
 
     /**
      * Chance the citizen will rant about bad weather. 20 ticks per 60 seconds = 5 minutes.
@@ -177,13 +177,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public EntityCitizen(World world)
     {
         super(world);
-        setSize((float)CITIZEN_WIDTH, (float)CITIZEN_HEIGHT);
+        setSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
         this.enablePersistence();
         this.setAlwaysRenderNameTag(Configurations.alwaysRenderNameTag);
         this.inventory = new InventoryCitizen("Minecolonies Inventory", false, this);
         this.newNavigator = new PathNavigate(this, world);
         updateNavigatorField();
-        if(world.isRemote)
+        if (world.isRemote)
         {
             setRenderDistanceWeight(RENDER_DISTANCE_WEIGHT);
         }
@@ -192,7 +192,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         initTasks();
     }
-    
+
     /**
      *
      */
@@ -252,6 +252,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Defines job changes and state changes of the citizen.
+     *
      * @param job the set job.
      */
     public void onJobChanged(@Nullable AbstractJob job)
@@ -297,7 +298,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (job != null)
         {
             job.addTasks(this.tasks);
-            if (ticksExisted > 0  && getWorkBuilding() != null)
+            if (ticksExisted > 0 && getWorkBuilding() != null)
             {
                 BlockPosUtil.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
             }
@@ -493,7 +494,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
             int pz = MathHelper.floor_double(posZ);
 
             this.onGround =
-              worldObj.getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(worldObj.getBlockState(new BlockPos(px, py, pz)), worldObj, new BlockPos(px, py, pz), this);
+              worldObj.getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(worldObj.getBlockState(new BlockPos(px, py, pz)), worldObj, new BlockPos(px, py, pz),
+                this);
         }
 
         super.updateFallState(y, onGroundIn, state, pos);
@@ -676,11 +678,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
-            if(worldObj.isDaytime() && !worldObj.isRaining())
+            if (worldObj.isDaytime() && !worldObj.isRaining())
             {
                 SoundUtils.playRandomSound(worldObj, this);
             }
-            else if(worldObj.isRaining() && 1 >=rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && this.getColonyJob() != null)
+            else if (worldObj.isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && this.getColonyJob() != null)
             {
                 SoundUtils.playSoundAtCitizenWithChance(worldObj, this.getPosition(), this.getColonyJob().getBadWeatherSound(), 1);
             }
@@ -882,7 +884,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Assigns a citizen to a colony.
-     * @param c the colony.
+     *
+     * @param c    the colony.
      * @param data the data of the new citizen.
      */
     public void setColony(@Nullable Colony c, @Nullable CitizenData data)
@@ -931,6 +934,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Getter of the dataview, the clientside representation of the citizen.
+     *
      * @return the view.
      */
     private CitizenDataView getCitizenDataView()
@@ -968,7 +972,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         return newNavigator;
     }
-    
+
     /**
      * Drop the equipment for this entity.
      */
@@ -1008,6 +1012,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Handles the dropping of items from the entity.
+     *
      * @param itemstack to drop.
      * @return the dropped item.
      */
@@ -1018,6 +1023,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Getter of the resource location of the texture.
+     *
      * @return location of the texture.
      */
     public ResourceLocation getTexture()
@@ -1027,6 +1033,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Getter which checks if the citizen is female.
+     *
      * @return true if female.
      */
     public boolean isFemale()
@@ -1129,6 +1136,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Returns the first slot in the inventory with a specific item.
+     *
      * @param targetItem the item.
      * @return the slot.
      */
@@ -1139,6 +1147,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Returns the first slot in the inventory with a specific block.
+     *
      * @param block the block.
      * @return the slot.
      */
@@ -1149,6 +1158,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Returns the amount of a certain block in the inventory.
+     *
      * @param block the block.
      * @return the quantity.
      */
@@ -1159,6 +1169,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Returns the amount of a certain item in the inventory.
+     *
      * @param targetItem the block.
      * @return the quantity.
      */
@@ -1169,6 +1180,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Checks if citizen has a certain block in the inventory.
+     *
      * @param block the block.
      * @return true if so.
      */
@@ -1179,6 +1191,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Checks if citizen has a certain item in the inventory.
+     *
      * @param item the item.
      * @return true if so.
      */
@@ -1189,6 +1202,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Citizen will try to pick up a certain item.
+     *
      * @param entityItem the item he wants to pickup.
      */
     private void tryPickupEntityItem(@NotNull EntityItem entityItem)
@@ -1207,7 +1221,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 this.worldObj.playSound((EntityPlayer) null,
                   this.getPosition(),
-                        SoundEvents.ENTITY_ITEM_PICKUP,
+                  SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
                   0.2F,
                   (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
@@ -1307,11 +1321,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
             worldObj.playSound((EntityPlayer) null,
-                    blockPos,
-                    block.getSoundType(blockState, worldObj, blockPos, this).getBreakSound(),
-                    SoundCategory.BLOCKS,
-                    block.getSoundType(blockState, worldObj, blockPos, this).getVolume(),
-                    block.getSoundType(blockState, worldObj, blockPos, this).getPitch());
+              blockPos,
+              block.getSoundType(blockState, worldObj, blockPos, this).getBreakSound(),
+              SoundCategory.BLOCKS,
+              block.getSoundType(blockState, worldObj, blockPos, this).getVolume(),
+              block.getSoundType(blockState, worldObj, blockPos, this).getPitch());
         }
     }
 

@@ -316,7 +316,7 @@ public abstract class AbstractJob
      */
     public void addTasks(@NotNull EntityAITasks tasks)
     {
-        AbstractAISkeleton aiTask = generateAI();
+        AbstractAISkeleton<? extends AbstractJob> aiTask = generateAI();
         if (aiTask != null)
         {
             tasks.addTask(TASK_PRIORITY, aiTask);
@@ -328,7 +328,7 @@ public abstract class AbstractJob
      *
      * @return your personal AI instance.
      */
-    public abstract AbstractAISkeleton generateAI();
+    protected abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
 
     /**
      * This method can be used to display the current status.
@@ -354,6 +354,7 @@ public abstract class AbstractJob
 
     /**
      * Override this to let the worker return a bedTimeSound.
+     *
      * @return soundEvent to be played.
      */
     public SoundEvent getBedTimeSound()
@@ -363,6 +364,7 @@ public abstract class AbstractJob
 
     /**
      * Override this to let the worker return a badWeatherSound.
+     *
      * @return soundEvent to be played.
      */
     public SoundEvent getBadWeatherSound()

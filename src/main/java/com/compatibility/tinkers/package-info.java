@@ -1,4 +1,4 @@
 /**
-  * Contains compatibility functions and classes for Tinker's Construct.
-  */
+ * Contains compatibility functions and classes for Tinker's Construct.
+ */
 package com.compatibility.tinkers;

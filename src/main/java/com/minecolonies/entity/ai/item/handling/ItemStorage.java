@@ -30,9 +30,10 @@ public class ItemStorage
 
     /**
      * Creates an instance of the storage.
-     * @param item the item.
-     * @param damageValue it's damage value.
-     * @param amount optional amount.
+     *
+     * @param item              the item.
+     * @param damageValue       it's damage value.
+     * @param amount            optional amount.
      * @param ignoreDamageValue should the damage value be ignored?
      */
     public ItemStorage(@NotNull Item item, int damageValue, int amount, boolean ignoreDamageValue)
@@ -44,26 +45,8 @@ public class ItemStorage
     }
 
     /**
-     * Getter for the item.
-     * @return the item.
-     */
-    @NotNull
-    public Item getItem()
-    {
-        return item;
-    }
-
-    /**
-     * Getter for the damage value.
-     * @return the damage value.
-     */
-    public int getDamageValue()
-    {
-        return damageValue;
-    }
-
-    /**
      * Getter for the quantity.
+     *
      * @return the amount.
      */
     public int getAmount()
@@ -73,11 +56,18 @@ public class ItemStorage
 
     /**
      * Getter for the ignoreDamageValue.
+     *
      * @return true if should ignore.
      */
     public boolean ignoreDamageValue()
     {
         return ignoreDamageValue;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return 31 * getItem().hashCode() + getDamageValue();
     }
 
     @Override
@@ -98,9 +88,24 @@ public class ItemStorage
         return getItem().equals(that.getItem()) && (this.ignoreDamageValue || that.getDamageValue() == this.getDamageValue());
     }
 
-    @Override
-    public int hashCode()
+    /**
+     * Getter for the damage value.
+     *
+     * @return the damage value.
+     */
+    public int getDamageValue()
     {
-        return 31 * getItem().hashCode() + getDamageValue();
+        return damageValue;
+    }
+
+    /**
+     * Getter for the item.
+     *
+     * @return the item.
+     */
+    @NotNull
+    public Item getItem()
+    {
+        return item;
     }
 }

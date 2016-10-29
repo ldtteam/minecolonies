@@ -40,16 +40,6 @@ public class CommandEntryPoint extends CommandBase
         return "minecolonies";
     }
 
-    /**
-     * Only allow OP's execute the commands.
-     * @return the int permission level (3 for OP).
-     */
-    @Override
-    public int getRequiredPermissionLevel()
-    {
-        return OP_PERMISSION_LEVEL;
-    }
-
     @NotNull
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
@@ -62,6 +52,17 @@ public class CommandEntryPoint extends CommandBase
     {
         // We can pass this without stripping as mc does that for us with the alias
         root.execute(server, sender, args);
+    }
+
+    /**
+     * Only allow OP's execute the commands.
+     *
+     * @return the int permission level (3 for OP).
+     */
+    @Override
+    public int getRequiredPermissionLevel()
+    {
+        return OP_PERMISSION_LEVEL;
     }
 
     @NotNull

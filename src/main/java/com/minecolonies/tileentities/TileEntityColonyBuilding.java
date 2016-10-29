@@ -77,30 +77,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public void update()
-    {
-        super.update();
-
-        if (!worldObj.isRemote && colonyId == 0)
-        {
-            final Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
-
-            if(tempColony == null)
-            {
-                Log.getLogger().fatal(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId",
-                        worldObj.getWorldInfo().getWorldName(),
-                        pos.getX(),
-                        pos.getY(),
-                        pos.getZ()));
-            }
-            else
-            {
-                colonyId = tempColony.getID();
-            }
-        }
-    }
-
-    @Override
     public void onChunkUnload()
     {
         if (building != null)
@@ -117,6 +93,43 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public BlockPos getPosition()
     {
         return pos;
+    }
+
+    /**
+     * Returns the colony ID
+     *
+     * @return ID of the colony
+     */
+    public int getColonyId()
+    {
+        return colonyId;
+    }    @Override
+    public void update()
+    {
+        super.update();
+
+        if (!worldObj.isRemote && colonyId == 0)
+        {
+            final Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
+            if (tempColony != null)
+            {
+                colonyId = tempColony.getID();
+            }
+        }
+    }
+
+    /**
+     * Returns the colony of the tile entity
+     *
+     * @return Colony of the tile entity
+     */
+    public Colony getColony()
+    {
+        if (colony == null)
+        {
+            updateColonyReferences();
+        }
+        return colony;
     }
 
     /**
@@ -165,30 +178,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Returns the colony ID
-     *
-     * @return ID of the colony
-     */
-    public int getColonyId()
-    {
-        return colonyId;
-    }
-
-    /**
-     * Returns the colony of the tile entity
-     *
-     * @return Colony of the tile entity
-     */
-    public Colony getColony()
-    {
-        if (colony == null)
-        {
-            updateColonyReferences();
-        }
-        return colony;
-    }
-
-    /**
      * Sets the colony of the tile entity
      *
      * @param c Colony to set in references
@@ -198,18 +187,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
         colony = c;
         colonyId = c.getID();
         markDirty();
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        if (compound.hasKey(TAG_COLONY))
-        {
-            colonyId = compound.getInteger(TAG_COLONY);
-        }
-
-        updateColonyReferences();
     }
 
     /**
@@ -236,22 +213,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
         building = b;
     }
 
-    @NotNull
-    @Override
-    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound)
-    {
-        super.writeToNBT(compound);
-        if (colonyId == 0 && colony == null)
-        {
-            colony = ColonyManager.getColony(worldObj, this.getPosition());
-            Log.getLogger().fatal(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] has no colonyId; %s colony reference.",
-              worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(),
-              colony == null ? "NO" : "valid"));
-        }
-        compound.setInteger(TAG_COLONY, colonyId);
-        return compound;
-    }
-
     /**
      * Returns the view of the building associated with the tile entity
      *
@@ -261,6 +222,35 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         ColonyView c = ColonyManager.getColonyView(colonyId);
         return c != null ? c.getBuilding(getPosition()) : null;
+    }
+
+
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        if (compound.hasKey(TAG_COLONY))
+        {
+            colonyId = compound.getInteger(TAG_COLONY);
+        }
+
+        updateColonyReferences();
+    }
+
+    @NotNull
+    @Override
+    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        /*
+        if (colonyId == 0 && colony == null)
+        {
+            //todo: actually do something about it and not spam the server
+        }
+        */
+        compound.setInteger(TAG_COLONY, colonyId);
+        return compound;
     }
 
     @Override

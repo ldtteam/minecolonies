@@ -16,21 +16,11 @@ public final class CitizenSounds
     private static final int PHRASE_CHANCE = 50;
 
     /**
-     * Private constructor to hide the implicit public one.
-     */
-    private CitizenSounds()
-    {
-        /*
-         * Intentionally left empty.
-         */
-    }
-    /**
      * The citizen sound events for the females.
      */
     public static final class Female
     {
         public static final SoundEvent say = ModSoundEvents.getSoundID("mob.citizen.female.say");
-
 
         /**
          * Private constructor to hide the implicit public one.
@@ -62,14 +52,25 @@ public final class CitizenSounds
     }
 
     /**
+     * Private constructor to hide the implicit public one.
+     */
+    private CitizenSounds()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+
+    /**
      * Plays citizen sounds.
-     * @param worldIn the world to play the sound in.
+     *
+     * @param worldIn  the world to play the sound in.
      * @param position the position to play the sound at.
      * @param isFemale the gender.
      */
     public static void playCitizenSounds(World worldIn, BlockPos position, boolean isFemale)
     {
-        if(isFemale)
+        if (isFemale)
         {
             SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Female.say, PHRASE_CHANCE);
         }
@@ -78,5 +79,4 @@ public final class CitizenSounds
             SoundUtils.playSoundAtCitizenWithChance(worldIn, position, Male.say, PHRASE_CHANCE);
         }
     }
-
 }

@@ -39,13 +39,13 @@ public class EventHandler
      * Event when the debug screen is opened.
      * Event gets called by displayed text on the screen, we only need it when f3 is clicked.
      *
-     *  @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
+     * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
      */
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onDebugOverlay(RenderGameOverlayEvent.Text event)
     {
-        if(FMLCommonHandler.instance().getEffectiveSide().isClient())
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient())
         {
             final Minecraft mc = Minecraft.getMinecraft();
             if (mc.gameSettings.showDebugInfo)
@@ -66,12 +66,13 @@ public class EventHandler
                     }
 
                     event.getLeft().add(LanguageHandler.format("com.minecolonies.gui.debugScreen.nextColony",
-                            (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), minDistance));
+                      (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), minDistance));
                     return;
                 }
 
                 event.getLeft().add(colony.getName() + " : "
-                        + LanguageHandler.format("com.minecolonies.gui.debugScreen.blocksFromCenter", (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
+                                      + LanguageHandler.format("com.minecolonies.gui.debugScreen.blocksFromCenter",
+                  (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
             }
         }
     }
@@ -115,34 +116,34 @@ public class EventHandler
     @SubscribeEvent
     public void onPlayerInteract(@NotNull PlayerInteractEvent.RightClickBlock event)
     {
-            EntityPlayer player = event.getEntityPlayer();
-            World world = event.getWorld();
+        EntityPlayer player = event.getEntityPlayer();
+        World world = event.getWorld();
 
-            //Only execute for the main hand our colony events.
-            if(event.getHand() == EnumHand.MAIN_HAND && !(event.getWorld().isRemote))
+        //Only execute for the main hand our colony events.
+        if (event.getHand() == EnumHand.MAIN_HAND && !(event.getWorld().isRemote))
+        {
+            if (playerRightClickInteract(player, world, event.getPos()) &&
+                  // this was the simple way of doing it, minecraft calls onBlockActivated
+                  // and uses that return value, but I didn't want to call it twice
+                  world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
             {
-                if (playerRightClickInteract(player, world, event.getPos()) &&
-                        // this was the simple way of doing it, minecraft calls onBlockActivated
-                        // and uses that return value, but I didn't want to call it twice
-                        world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
+                IColony colony = ColonyManager.getIColony(world, event.getPos());
+                if (colony != null &&
+                      !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
                 {
-                    IColony colony = ColonyManager.getIColony(world, event.getPos());
-                    if (colony != null &&
-                            !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
-                    {
-                        event.setCanceled(true);
-                    }
-
-                    return;
+                    event.setCanceled(true);
                 }
 
-                if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)
-                {
-                    return;
-                }
-
-                handleEventCancellation(event, player);
+                return;
             }
+
+            if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)
+            {
+                return;
+            }
+
+            handleEventCancellation(event, player);
+        }
     }
 
     private static boolean playerRightClickInteract(@NotNull EntityPlayer player, World world, BlockPos pos)
@@ -257,7 +258,7 @@ public class EventHandler
             if (closestColony.hasTownHall() || !closestColony.getPermissions().isColonyMember(player))
             {
                 Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
-                        + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
+                                       + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
                 //Placing in a colony which already has a town hall
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
                 return false;
@@ -276,7 +277,7 @@ public class EventHandler
         if (closestColony.getDistanceSquared(pos) <= MathUtils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
         {
             Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
-                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
+                                   + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
             //Placing too close to an existing colony
             LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
             return false;

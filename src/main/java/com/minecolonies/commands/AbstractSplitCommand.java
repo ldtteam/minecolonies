@@ -59,7 +59,7 @@ public abstract class AbstractSplitCommand implements ISubCommand
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String[] args) throws CommandException
+    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         final Map<String, ISubCommand> childs = getSubCommands();
         if (args.length == 0

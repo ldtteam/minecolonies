@@ -29,7 +29,6 @@ public enum AIState
     NEEDS_AXE,
     NEEDS_HOE,
     NEEDS_PICKAXE,
-    NEEDS_WEAPON,
     /**
      * Inventory has to be dumped.
      */
@@ -188,7 +187,7 @@ public enum AIState
     /**
       * Work field.
       */
-      FARMER_WORK,
+    FARMER_WORK,
 
       /*
 ###Guard###
