@@ -56,7 +56,7 @@ public class JobGuard extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<? extends AbstractJob> generateAI()
     {
         if (task == GuardJob.KNIGHT)
         {
