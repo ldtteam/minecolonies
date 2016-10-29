@@ -12,9 +12,7 @@ import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.InventoryUtils;
 import com.minecolonies.util.Utils;
-import net.minecraft.block.BlockCarrot;
 import net.minecraft.block.BlockCrops;
-import net.minecraft.block.BlockPotato;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -27,11 +25,10 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
- * Farmer AI class
+ * Farmer AI class.
  * Created: December 20, 2014
  */
 public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
@@ -48,16 +45,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * Changed after finished harvesting in order to dump the inventory.
      */
     private              boolean shouldDumpInventory = false;
+
     /**
      * The offset to work at relative to the scarecrow.
      */
     @Nullable
     private BlockPos workingOffset;
-
-    /**
-     * The delay the farmer should have each action: hoeing, planting, harvesting.
-     */
-    private int workingDelay = STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER;
 
     /**
      * Defines if the farmer should request seeds for the current field.
@@ -193,23 +186,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 requestSeeds = false;
             }
-            if (walkToBuilding())
+            if (!walkToBuilding())
             {
-                return false;
-            }
-            if (isInHut(new ItemStack(currentField.getSeed())))
-            {
-                requestSeeds = false;
-            }
-            shouldTryToGetSeed = requestSeeds;
-
-            if (shouldTryToGetSeed)
-            {
-                return false;
+                if (isInHut(new ItemStack(currentField.getSeed())))
+                {
+                    requestSeeds = false;
+                }
+                shouldTryToGetSeed = requestSeeds;
             }
         }
 
-        return true;
+        return !shouldTryToGetSeed;
     }
 
     /**
@@ -225,13 +212,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (workingOffset != null)
         {
             final BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
+            // Still moving to the block
             if (walkToBlock(position.up()))
             {
                 return AIState.FARMER_WORK;
             }
 
+            // harvest the block if able to.
             harvestIfAble(position);
 
+            // hoe the block if able to.
             hoeIfAble(position, field);
 
             if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
@@ -249,7 +239,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.IDLE;
         }
 
-        setDelay(workingDelay);
+        // Set the delay based off the standard - level / divider. This was workingDelay
+        setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
         return AIState.FARMER_WORK;
     }
 
@@ -502,6 +493,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return worker;
     }
 
+    /**
+      * This method allows us to harvest crops and leave the plant there.
+      * Credit goes to RightClickHarvest mod
+      *
+      * @params position the position of the crop to harvest
+      */
     private boolean harvestCrop(final BlockPos position)
     {
         final IBlockState curBlockState = world.getBlockState(position);
