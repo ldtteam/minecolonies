@@ -745,15 +745,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
             {
-                loadSchematic("classic/minerX4");
+                loadSchematic("default/minerX4");
             }
             if (mineNode.getStyle() == Node.NodeType.BEND)
             {
-                loadSchematic("classic/minerX2Right");
+                loadSchematic("default/minerX2Right");
             }
             if (mineNode.getStyle() == Node.NodeType.TUNNEL)
             {
-                loadSchematic("classic/minerX2Top");
+                loadSchematic("default/minerX2Top");
             }
 
             if (job.getSchematic() != null)

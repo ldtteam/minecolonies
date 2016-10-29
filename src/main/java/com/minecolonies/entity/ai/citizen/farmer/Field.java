@@ -77,11 +77,6 @@ public class Field extends Container
     private static final String TAG_WIDTH_MINUS = "width-";
 
     /**
-     * Tag to store the fields stage.
-     */
-    private static final String TAG_STAGE = "stage";
-
-    /**
      * Tag to store the owner.
      */
     private static final String TAG_OWNER = "owner";
@@ -141,11 +136,6 @@ public class Field extends Container
      * Checks if the field needsWork (Hoeig, Seedings, Farming etc).
      */
     private boolean needsWork = false;
-
-    /**
-     * Has the field been planted?
-     */
-    private FieldStage fieldStage = FieldStage.EMPTY;
 
     /**
      * The length to plus x of the field.
@@ -232,6 +222,50 @@ public class Field extends Container
         }
     }
 
+    /**
+     * Create and load a Field given it's saved NBTTagCompound.
+     *
+     * @param colony   The owning colony.
+     * @param compound The saved data.
+     * @return {@link Field} created from the compound.
+     */
+    @NotNull
+    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
+    {
+        @NotNull final Field field = new Field(colony);
+        field.readFromNBT(compound);
+        return field;
+    }
+
+    /**
+     * Save data to NBT compound.
+     * Writes the {@link #location} value.
+     *
+     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
+     */
+    public void readFromNBT(@NotNull NBTTagCompound compound)
+    {
+        location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+        taken = compound.getBoolean(TAG_TAKEN);
+        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
+        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
+        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
+        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
+        inventory = new InventoryField("");
+        inventory.readFromNBT(compound);
+        setOwner(compound.getString(TAG_OWNER));
+    }
+
+    /**
+     * Getter for MAX_RANGE.
+     *
+     * @return the max range.
+     */
+    private static int getMaxRange()
+    {
+        return MAX_RANGE;
+    }
+
     @Override
     protected final Slot addSlotToContainer(final Slot slotToAdd)
     {
@@ -279,51 +313,6 @@ public class Field extends Container
     public Colony getColony()
     {
         return this.colony;
-    }
-
-    /**
-     * Create and load a Field given it's saved NBTTagCompound.
-     *
-     * @param colony   The owning colony.
-     * @param compound The saved data.
-     * @return {@link Field} created from the compound.
-     */
-    @NotNull
-    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
-    {
-        @NotNull final Field field = new Field(colony);
-        field.readFromNBT(compound);
-        return field;
-    }
-
-    /**
-     * Save data to NBT compound.
-     * Writes the {@link #location} value.
-     *
-     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
-     */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
-    {
-        location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
-        taken = compound.getBoolean(TAG_TAKEN);
-        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
-        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
-        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
-        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
-        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
-        inventory = new InventoryField("");
-        inventory.readFromNBT(compound);
-        setOwner(compound.getString(TAG_OWNER));
-    }
-
-    /**
-     * Getter for MAX_RANGE.
-     *
-     * @return the max range.
-     */
-    private static int getMaxRange()
-    {
-        return MAX_RANGE;
     }
 
     /**
@@ -394,7 +383,6 @@ public class Field extends Container
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
         compound.setBoolean(TAG_TAKEN, taken);
-        compound.setInteger(TAG_STAGE, fieldStage.ordinal());
         compound.setInteger(TAG_LENGTH_PLUS, lengthPlusX);
         compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
         compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
@@ -421,26 +409,6 @@ public class Field extends Container
     public void setTaken(boolean taken)
     {
         this.taken = taken;
-    }
-
-    /**
-     * Checks if the field has been planted.
-     *
-     * @return true if there are crops planted.
-     */
-    public FieldStage getFieldStage()
-    {
-        return this.fieldStage;
-    }
-
-    /**
-     * Sets if there are any crops planted.
-     *
-     * @param fieldStage true after planting, false after harvesting.
-     */
-    public void setFieldStage(FieldStage fieldStage)
-    {
-        this.fieldStage = fieldStage;
     }
 
     /**
@@ -588,14 +556,4 @@ public class Field extends Container
         this.inventory.setCustomName(customName);
     }
 
-    /**
-     * Describes the stage the field is in.
-     * Like if it has been hoed, planted or is empty.
-     */
-    public enum FieldStage
-    {
-        EMPTY,
-        HOED,
-        PLANTED
-    }
 }

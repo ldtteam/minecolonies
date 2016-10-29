@@ -146,12 +146,6 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public int getMaxBuildingLevel()
-    {
-        return 4;
-    }
-
-    @Override
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
@@ -185,6 +179,12 @@ public class BuildingHome extends AbstractBuildingHut
     {
         super.setBuildingLevel(level);
         getColony().calculateMaxCitizens();
+    }
+
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return 5;
     }
 
     /**
