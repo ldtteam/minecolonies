@@ -89,6 +89,16 @@ public class ItemStorage
     }
 
     /**
+     * Getter for the damage value.
+     *
+     * @return the damage value.
+     */
+    public int getDamageValue()
+    {
+        return damageValue;
+    }
+
+    /**
      * Getter for the item.
      *
      * @return the item.
@@ -97,15 +107,5 @@ public class ItemStorage
     public Item getItem()
     {
         return item;
-    }
-
-    /**
-     * Getter for the damage value.
-     *
-     * @return the damage value.
-     */
-    public int getDamageValue()
-    {
-        return damageValue;
     }
 }

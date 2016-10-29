@@ -75,11 +75,6 @@ public class ChunkProviderSchematic extends ChunkProviderClient implements IChun
         return getLoadedChunk(x, z);
     }
 
-    private boolean chunkExists(final int x, final int z)
-    {
-        return x >= 0 && z >= 0 && x < this.world.getWidth() && z < this.world.getLength();
-    }
-
     @Override
     public boolean unloadQueuedChunks()
     {
@@ -91,6 +86,11 @@ public class ChunkProviderSchematic extends ChunkProviderClient implements IChun
     public String makeString()
     {
         return "SchematicChunkCache";
+    }
+
+    private boolean chunkExists(final int x, final int z)
+    {
+        return x >= 0 && z >= 0 && x < this.world.getWidth() && z < this.world.getLength();
     }
 }
 

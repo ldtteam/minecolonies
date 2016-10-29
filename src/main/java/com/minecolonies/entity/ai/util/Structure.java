@@ -81,6 +81,7 @@ public class Structure
             this.worldMetadata = worldMetadata;
         }
     }
+
     private final Stage            stage;
     /**
      * The internal schematic loaded.

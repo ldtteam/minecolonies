@@ -320,10 +320,6 @@ public class InventoryField implements IInventory
         }
 
         compound.setTag(TAG_INVENTORY, nbttaglist);
-    }    @Override
-    public boolean hasCustomName()
-    {
-        return true;
     }
 
     /**
@@ -334,6 +330,10 @@ public class InventoryField implements IInventory
     public void setCustomName(final String customName)
     {
         this.customName = customName;
+    }    @Override
+    public boolean hasCustomName()
+    {
+        return true;
     }
 
 

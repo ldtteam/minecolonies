@@ -369,16 +369,6 @@ public class InventoryCitizen implements IInventory
     public boolean hasItem(Item itemIn)
     {
         return getInventorySlotContainItem(itemIn) != NO_SLOT;
-    }    /**
-     * Get the name of this object. For citizens this returns their name.
-     *
-     * @return the name of the inventory.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     /**
@@ -390,6 +380,16 @@ public class InventoryCitizen implements IInventory
     public int getHeldItemSlot()
     {
         return heldItem;
+    }    /**
+     * Get the name of this object. For citizens this returns their name.
+     *
+     * @return the name of the inventory.
+     */
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     /**
@@ -414,15 +414,6 @@ public class InventoryCitizen implements IInventory
     public MaterialStore getMaterialStore()
     {
         return materialStore;
-    }    /**
-     * Checks if the inventory is named.
-     *
-     * @return true if the inventory has a custom name.
-     */
-    @Override
-    public boolean hasCustomName()
-    {
-        return this.customName != null;
     }
 
     private void addStackToMaterialStore(@Nullable ItemStack stack)
@@ -449,6 +440,15 @@ public class InventoryCitizen implements IInventory
         {
             materialStore.removeMaterial(stack.getItem(), stack.stackSize);
         }
+    }    /**
+     * Checks if the inventory is named.
+     *
+     * @return true if the inventory has a custom name.
+     */
+    @Override
+    public boolean hasCustomName()
+    {
+        return this.customName != null;
     }
 
     /**
@@ -476,14 +476,6 @@ public class InventoryCitizen implements IInventory
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
-    }    /**
-     * Get the formatted TextComponent that will be used for the sender's username in chat
-     */
-    @NotNull
-    @Override
-    public ITextComponent getDisplayName()
-    {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -554,6 +546,14 @@ public class InventoryCitizen implements IInventory
         {
             return null;
         }
+    }    /**
+     * Get the formatted TextComponent that will be used for the sender's username in chat
+     */
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
     }
 
     /**
@@ -760,6 +760,7 @@ public class InventoryCitizen implements IInventory
 
         compound.setTag(TAG_INVENTORY, nbttaglist);
     }
+
 
 
 

@@ -54,5 +54,4 @@ public class BlockHutTownHall extends AbstractBlockHut
     {
         return false;
     }
-
 }

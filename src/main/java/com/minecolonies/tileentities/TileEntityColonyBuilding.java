@@ -80,6 +80,16 @@ public class TileEntityColonyBuilding extends TileEntityChest
         {
             building.setTileEntity(null);
         }
+    }
+
+    /**
+     * Returns the position of the tile entity
+     *
+     * @return Block Coordinates of the tile entity
+     */
+    public BlockPos getPosition()
+    {
+        return pos;
     }    @Override
     public void update()
     {
@@ -93,16 +103,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 colonyId = tempColony.getID();
             }
         }
-    }
-
-    /**
-     * Returns the position of the tile entity
-     *
-     * @return Block Coordinates of the tile entity
-     */
-    public BlockPos getPosition()
-    {
-        return pos;
     }
 
     /**
@@ -208,16 +208,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public void setBuilding(AbstractBuilding b)
     {
         building = b;
-    }    @Override
-    public void readFromNBT(NBTTagCompound compound)
-    {
-        super.readFromNBT(compound);
-        if (compound.hasKey(TAG_COLONY))
-        {
-            colonyId = compound.getInteger(TAG_COLONY);
-        }
-
-        updateColonyReferences();
     }
 
     /**
@@ -229,6 +219,18 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         ColonyView c = ColonyManager.getColonyView(colonyId);
         return c != null ? c.getBuilding(getPosition()) : null;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        if (compound.hasKey(TAG_COLONY))
+        {
+            colonyId = compound.getInteger(TAG_COLONY);
+        }
+
+        updateColonyReferences();
     }
 
 
@@ -247,8 +249,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
         compound.setInteger(TAG_COLONY, colonyId);
         return compound;
     }
-
-
 
     @Override
     public boolean isUseableByPlayer(@NotNull EntityPlayer player)
