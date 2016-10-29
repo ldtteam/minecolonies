@@ -96,7 +96,7 @@ public class JobLumberjack extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<JobLumberjack> generateAI()
     {
         return new EntityAIWorkLumberjack(this);
     }

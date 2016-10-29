@@ -38,7 +38,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Return to chest after 3 stacks
      */
-    private static final int        MAX_BLOCKS_MINED          = 3*64;
+    private static final int        MAX_BLOCKS_MINED          = 3 * 64;
     /*
     Blocks that will be ignored while building shaft/node walls and are certainly safe.
      */
@@ -53,7 +53,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     /**
      * Amount of items to be kept.
      */
-    private static final int STACK_MAX_SIZE               = 64;
+    private static final int STACK_MAX_SIZE = 64;
 
     //The current block to mine
     @Nullable
@@ -188,7 +188,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
         final ItemStack stackSlab = new ItemStack(Blocks.WOODEN_SLAB);
         final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
-        
+
         keepX.put(new ItemStorage(stackLadder.getItem(), stackLadder.getItemDamage(), 0, false), STACK_MAX_SIZE);
         keepX.put(new ItemStorage(stackFence.getItem(), stackFence.getItemDamage(), 0, false), STACK_MAX_SIZE);
         keepX.put(new ItemStorage(stackTorch.getItem(), stackTorch.getItemDamage(), 0, false), STACK_MAX_SIZE);

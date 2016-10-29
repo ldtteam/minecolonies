@@ -52,12 +52,6 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void registerSounds()
-    {
-        ModSoundEvents.registerSounds();
-    }
-
-    @Override
     public boolean isClient()
     {
         return false;
@@ -97,6 +91,12 @@ public class CommonProxy implements IProxy
 
     @Override
     public void registerEntityRendering() {}
+
+    @Override
+    public void registerSounds()
+    {
+        ModSoundEvents.registerSounds();
+    }
 
     @Override
     public void registerTileEntityRendering() {}

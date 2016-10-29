@@ -35,11 +35,11 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * Language key for missing hut message
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
-    private String hutDec;
-    private String style;
-    private int    rotation;
+    private String   hutDec;
+    private String   style;
+    private int      rotation;
     private BlockPos pos;
-    private boolean isHut;
+    private boolean  isHut;
 
     /**
      * Empty constructor used when registering the message.

@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -549,7 +548,7 @@ public class InventoryUtils
 
                     if (itemStack.hasTagCompound())
                     {
-                        stack.setTagCompound((NBTTagCompound) itemStack.getTagCompound().copy());
+                        stack.setTagCompound(itemStack.getTagCompound().copy());
                     }
                 }
 

@@ -73,28 +73,28 @@ public final class RenderSchematic extends RenderGlobal
     private final Profiler      profiler;
     private final RenderManager renderManager;
     private final Set<RenderOverlay>       overlaysToUpdate        = Sets.newLinkedHashSet();
-    private ChunkRenderDispatcher    renderDispatcher        = null;
-    private OverlayRenderDispatcher  renderDispatcherOverlay = null;
     private final BlockPos.MutableBlockPos tmp                     = new BlockPos.MutableBlockPos();
+    private       ChunkRenderDispatcher    renderDispatcher        = null;
+    private       OverlayRenderDispatcher  renderDispatcherOverlay = null;
     @Nullable
     private SchematicWorld world;
     @NotNull
-    private Set<RenderChunk>                      chunksToUpdate = Sets.newLinkedHashSet();
+    private Set<RenderChunk>                      chunksToUpdate         = Sets.newLinkedHashSet();
     @NotNull
-    private List<ContainerLocalRenderInformation> renderInfos    = Lists.newArrayListWithCapacity(CHUNKS);
+    private List<ContainerLocalRenderInformation> renderInfos            = Lists.newArrayListWithCapacity(CHUNKS);
     @Nullable
-    private ViewFrustumOverlay viewFrustum = null;
-    private double frustumUpdatePosX      = Double.MIN_VALUE;
-    private double frustumUpdatePosY      = Double.MIN_VALUE;
-    private double frustumUpdatePosZ      = Double.MIN_VALUE;
-    private int    frustumUpdatePosChunkX = Integer.MIN_VALUE;
-    private int    frustumUpdatePosChunkY = Integer.MIN_VALUE;
-    private int    frustumUpdatePosChunkZ = Integer.MIN_VALUE;
-    private double lastViewEntityX        = Double.MIN_VALUE;
-    private double lastViewEntityY        = Double.MIN_VALUE;
-    private double lastViewEntityZ        = Double.MIN_VALUE;
-    private double lastViewEntityPitch    = Double.MIN_VALUE;
-    private double lastViewEntityYaw      = Double.MIN_VALUE;
+    private ViewFrustumOverlay                    viewFrustum            = null;
+    private double                                frustumUpdatePosX      = Double.MIN_VALUE;
+    private double                                frustumUpdatePosY      = Double.MIN_VALUE;
+    private double                                frustumUpdatePosZ      = Double.MIN_VALUE;
+    private int                                   frustumUpdatePosChunkX = Integer.MIN_VALUE;
+    private int                                   frustumUpdatePosChunkY = Integer.MIN_VALUE;
+    private int                                   frustumUpdatePosChunkZ = Integer.MIN_VALUE;
+    private double                                lastViewEntityX        = Double.MIN_VALUE;
+    private double                                lastViewEntityY        = Double.MIN_VALUE;
+    private double                                lastViewEntityZ        = Double.MIN_VALUE;
+    private double                                lastViewEntityPitch    = Double.MIN_VALUE;
+    private double                                lastViewEntityYaw      = Double.MIN_VALUE;
     private AbstractSchematicChunkRenderContainer renderContainer;
     private int renderDistanceChunks = -1;
     private int countEntitiesTotal;
@@ -406,12 +406,6 @@ public final class RenderSchematic extends RenderGlobal
     }
 
     @Override
-    protected Vector3f getViewVector(final Entity entity, final double partialTicks)
-    {
-        return super.getViewVector(entity, partialTicks);
-    }
-
-    @Override
     public void setupTerrain(final Entity viewEntity, final double partialTicks, @NotNull final ICamera camera, final int frameCount, final boolean playerSpectator)
     {
         if (ConfigurationHandler.renderDistance != this.renderDistanceChunks || this.vboEnabled != OpenGlHelper.useVbo())
@@ -584,6 +578,12 @@ public final class RenderSchematic extends RenderGlobal
         this.chunksToUpdate.addAll(set);
         this.overlaysToUpdate.addAll(set1);
         this.profiler.endSection();
+    }
+
+    @Override
+    protected Vector3f getViewVector(final Entity entity, final double partialTicks)
+    {
+        return super.getViewVector(entity, partialTicks);
     }
 
     @Override
@@ -825,9 +825,23 @@ public final class RenderSchematic extends RenderGlobal
     }
 
     @Override
+    public boolean hasNoChunkUpdates()
+    {
+        return this.chunksToUpdate.isEmpty() && this.renderDispatcher.hasChunkUpdates();
+    }
+
+    @Override
     public void setDisplayListEntitiesDirty()
     {
         this.displayListEntitiesDirty = true;
+    }
+
+    @Override
+    public void updateTileEntities(final Collection<TileEntity> tileEntitiesToRemove, final Collection<TileEntity> tileEntitiesToAdd)
+    {
+        /**
+         * Not needed.
+         */
     }
 
     private void markBlocksForUpdate(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2, boolean flag)
@@ -846,21 +860,6 @@ public final class RenderSchematic extends RenderGlobal
           z2 - position.getZ(),
           flag);
     }
-
-    @Override
-    public boolean hasNoChunkUpdates()
-    {
-        return this.chunksToUpdate.isEmpty() && this.renderDispatcher.hasChunkUpdates();
-    }
-
-    @Override
-    public void updateTileEntities(final Collection<TileEntity> tileEntitiesToRemove, final Collection<TileEntity> tileEntitiesToAdd)
-    {
-        /**
-         * Not needed.
-         */
-    }
-
 
     /**
      * Render the schematic and colored overlay.
@@ -915,33 +914,6 @@ public final class RenderSchematic extends RenderGlobal
         }
     }
 
-    private void renderOverlay(@NotNull final SchematicWorld schematic)
-    {
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-
-        @Nullable final GeometryTessellator tessellator = GeometryTessellator.getInstance();
-        tessellator.setTranslation(-this.mc.thePlayer.posX, -this.mc.thePlayer.posY, -this.mc.thePlayer.posZ);
-        tessellator.setDelta(ConfigurationHandler.blockDelta);
-
-        tessellator.beginLines();
-        this.tmp.setPos(schematic.position.getX() + schematic.getWidth() - 1,
-          schematic.position.getY() + schematic.getHeight() - 1,
-          schematic.position.getZ() + schematic.getLength() - 1);
-        tessellator.drawCuboid(schematic.position, this.tmp, GeometryMasks.Line.ALL, 0x7FBF00BF);
-        tessellator.draw();
-
-        GlStateManager.depthMask(false);
-        this.renderContainer.renderOverlay();
-        GlStateManager.depthMask(true);
-
-        GL11.glDisable(GL11.GL_LINE_SMOOTH);
-        GlStateManager.disableBlend();
-        GlStateManager.enableTexture2D();
-    }
-
     private void renderWorld(final float partialTicks, final long finishTimeNano)
     {
         GlStateManager.enableCull();
@@ -972,10 +944,10 @@ public final class RenderSchematic extends RenderGlobal
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        renderBlockLayer(BlockRenderLayer.SOLID, (double)partialTicks, PASS, entity);
-        renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, (double)partialTicks, PASS, entity);
+        renderBlockLayer(BlockRenderLayer.SOLID, (double) partialTicks, PASS, entity);
+        renderBlockLayer(BlockRenderLayer.CUTOUT_MIPPED, (double) partialTicks, PASS, entity);
         this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
-        renderBlockLayer(BlockRenderLayer.CUTOUT, (double)partialTicks, PASS, entity);
+        renderBlockLayer(BlockRenderLayer.CUTOUT, (double) partialTicks, PASS, entity);
         this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).restoreLastBlurMipmap();
         GlStateManager.disableBlend();
         GlStateManager.shadeModel(GL11.GL_FLAT);
@@ -1005,7 +977,7 @@ public final class RenderSchematic extends RenderGlobal
         this.profiler.endStartSection("translucent");
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        renderBlockLayer(BlockRenderLayer.TRANSLUCENT, (double)partialTicks, PASS, entity);
+        renderBlockLayer(BlockRenderLayer.TRANSLUCENT, (double) partialTicks, PASS, entity);
         GlStateManager.disableBlend();
         GlStateManager.popMatrix();
         GlStateManager.depthMask(true);
@@ -1131,6 +1103,33 @@ public final class RenderSchematic extends RenderGlobal
         double largest = (nd2 > nd1) ? nd2 : nd1;
 
         return diff <= largest * DOUBLE_EPSILON;
+    }
+
+    private void renderOverlay(@NotNull final SchematicWorld schematic)
+    {
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+
+        @Nullable final GeometryTessellator tessellator = GeometryTessellator.getInstance();
+        tessellator.setTranslation(-this.mc.thePlayer.posX, -this.mc.thePlayer.posY, -this.mc.thePlayer.posZ);
+        tessellator.setDelta(ConfigurationHandler.blockDelta);
+
+        tessellator.beginLines();
+        this.tmp.setPos(schematic.position.getX() + schematic.getWidth() - 1,
+          schematic.position.getY() + schematic.getHeight() - 1,
+          schematic.position.getZ() + schematic.getLength() - 1);
+        tessellator.drawCuboid(schematic.position, this.tmp, GeometryMasks.Line.ALL, 0x7FBF00BF);
+        tessellator.draw();
+
+        GlStateManager.depthMask(false);
+        this.renderContainer.renderOverlay();
+        GlStateManager.depthMask(true);
+
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        GlStateManager.disableBlend();
+        GlStateManager.enableTexture2D();
     }
 
     public void refresh()

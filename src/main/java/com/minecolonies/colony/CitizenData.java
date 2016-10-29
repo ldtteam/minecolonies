@@ -607,6 +607,16 @@ public class CitizenData
     }
 
     /**
+     * Sets the level of the citizen.
+     *
+     * @param lvl the new level for the citizen.
+     */
+    public void setLevel(int lvl)
+    {
+        this.level = lvl;
+    }
+
+    /**
      * Returns the experience of the citizen.
      *
      * @return experience of the citizen.
@@ -664,15 +674,5 @@ public class CitizenData
     public int getDexterity()
     {
         return dexterity;
-    }
-
-    /**
-     * Sets the level of the citizen.
-     *
-     * @param lvl the new level for the citizen.
-     */
-    public void setLevel(int lvl)
-    {
-        this.level = lvl;
     }
 }

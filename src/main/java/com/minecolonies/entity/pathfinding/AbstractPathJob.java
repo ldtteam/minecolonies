@@ -27,21 +27,21 @@ import java.util.concurrent.Callable;
 public abstract class AbstractPathJob implements Callable<Path>
 {
     //  Debug Output
-    protected static final int    DEBUG_VERBOSITY_NONE  = 0;
-    protected static final int    DEBUG_VERBOSITY_BASIC = 1;
-    protected static final int    DEBUG_VERBOSITY_FULL  = 2;
-    protected static final Object debugNodeMonitor      = new Object();
-    private static final   int    SHIFT_SOUTH           = 1;
-    private static final   int    SHIFT_WEST            = 2;
-    private static final   int    SHIFT_NORTH           = 3;
-    private static final   int    SHIFT_EAST            = 4;
-    private static final BlockPos BLOCKPOS_IDENTITY = new BlockPos(0, 0, 0);
-    private static final BlockPos BLOCKPOS_UP = new BlockPos(0, 1, 0);
-    private static final BlockPos BLOCKPOS_DOWN = new BlockPos(0, -1, 0);
-    private static final BlockPos BLOCKPOS_NORTH = new BlockPos(0, 0, -1);
-    private static final BlockPos BLOCKPOS_SOUTH = new BlockPos(0, 0, 1);
-    private static final BlockPos BLOCKPOS_EAST = new BlockPos(1, 0, 0);
-    private static final BlockPos BLOCKPOS_WEST = new BlockPos(-1, 0, 0);
+    protected static final int      DEBUG_VERBOSITY_NONE  = 0;
+    protected static final int      DEBUG_VERBOSITY_BASIC = 1;
+    protected static final int      DEBUG_VERBOSITY_FULL  = 2;
+    protected static final Object   debugNodeMonitor      = new Object();
+    private static final   int      SHIFT_SOUTH           = 1;
+    private static final   int      SHIFT_WEST            = 2;
+    private static final   int      SHIFT_NORTH           = 3;
+    private static final   int      SHIFT_EAST            = 4;
+    private static final   BlockPos BLOCKPOS_IDENTITY     = new BlockPos(0, 0, 0);
+    private static final   BlockPos BLOCKPOS_UP           = new BlockPos(0, 1, 0);
+    private static final   BlockPos BLOCKPOS_DOWN         = new BlockPos(0, -1, 0);
+    private static final   BlockPos BLOCKPOS_NORTH        = new BlockPos(0, 0, -1);
+    private static final   BlockPos BLOCKPOS_SOUTH        = new BlockPos(0, 0, 1);
+    private static final   BlockPos BLOCKPOS_EAST         = new BlockPos(1, 0, 0);
+    private static final   BlockPos BLOCKPOS_WEST         = new BlockPos(-1, 0, 0);
     @Nullable
     protected static Set<Node>    lastDebugNodesVisited;
     @Nullable
@@ -71,16 +71,6 @@ public abstract class AbstractPathJob implements Callable<Path>
     private       boolean            allowJumpPointSearchTypeWalk = false;
     private       int                totalNodesAdded              = 0;
     private       int                totalNodesVisited            = 0;
-
-    /**
-     * Check if we can walk on a surface, drop into, or neither.
-     */
-    private enum SurfaceType
-    {
-        WALKABLE,
-        DROPABLE,
-        NOT_PASSABLE
-    }
 
     /**
      * AbstractPathJob constructor
@@ -360,7 +350,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             if (Configurations.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
             {
                 Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
-                        currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.cost, currentNode.score));
+                  currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.cost, currentNode.score));
             }
 
             if (isAtDestination(currentNode))
@@ -831,7 +821,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (isWalkableSurface(below) == SurfaceType.WALKABLE)
         {
             //  Level path
-            return pos.getY()-1;
+            return pos.getY() - 1;
         }
 
         return -1;
@@ -938,15 +928,15 @@ public abstract class AbstractPathJob implements Callable<Path>
     protected SurfaceType isWalkableSurface(@NotNull IBlockState blockState)
     {
         final Block block = blockState.getBlock();
-        if(block instanceof BlockFence
-                || block instanceof BlockFenceGate
-                || block instanceof BlockWall
-                || block instanceof BlockHutField)
+        if (block instanceof BlockFence
+              || block instanceof BlockFenceGate
+              || block instanceof BlockWall
+              || block instanceof BlockHutField)
         {
             return SurfaceType.NOT_PASSABLE;
         }
 
-        if(blockState.getMaterial().isSolid())
+        if (blockState.getMaterial().isSolid())
         {
             return SurfaceType.WALKABLE;
         }
@@ -973,6 +963,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     /**
      * Getter for the allowSwimming.
+     *
      * @return true if is allowed.
      */
     protected boolean isAllowedSwimming()
@@ -982,10 +973,21 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     /**
      * Setter for the allowSwimming.
+     *
      * @param allowSwimming the value to set.
      */
     protected void setAllowedSwimming(boolean allowSwimming)
     {
         this.allowSwimming = allowSwimming;
+    }
+
+    /**
+     * Check if we can walk on a surface, drop into, or neither.
+     */
+    private enum SurfaceType
+    {
+        WALKABLE,
+        DROPABLE,
+        NOT_PASSABLE
     }
 }

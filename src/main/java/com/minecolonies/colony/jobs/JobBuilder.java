@@ -98,7 +98,7 @@ public class JobBuilder extends AbstractJob
 
     @NotNull
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<JobBuilder> generateAI()
     {
         return new EntityAIStructureBuilder(this);
     }

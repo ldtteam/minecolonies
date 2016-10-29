@@ -44,25 +44,30 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Hit a block every x ticks when mining.
      */
-    private static final int HIT_EVERY_X_TICKS  = 5;
-
+    private static final int             HIT_EVERY_X_TICKS       = 5;
+    /**
+     * The list of all items and their quantity that were requested by the worker.
+     * Warning: This list does not change, if you need to see what is currently missing,
+     * look at @see #itemsCurrentlyNeeded for things the miner needs.
+     * <p>
+     * Will be cleared on restart, be aware!
+     */
+    @NotNull
+    private final        List<ItemStack> itemsNeeded             = new ArrayList<>();
     /**
      * The block the ai is currently working at or wants to work.
      */
     @Nullable
-    protected BlockPos currentWorkingLocation = null;
-
+    protected            BlockPos        currentWorkingLocation  = null;
     /**
      * The block the ai is currently standing at or wants to stand.
      */
     @Nullable
-    protected BlockPos currentStandingLocation = null;
-
+    protected            BlockPos        currentStandingLocation = null;
     /**
      * The time in ticks until the next action is made.
      */
-    private int delay = 0;
-
+    private              int             delay                   = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -73,22 +78,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Will be cleared on restart, be aware!
      */
     @NotNull
-    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
-
-    /**
-     * The list of all items and their quantity that were requested by the worker.
-     * Warning: This list does not change, if you need to see what is currently missing,
-     * look at @see #itemsCurrentlyNeeded for things the miner needs.
-     * <p>
-     * Will be cleared on restart, be aware!
-     */
-    @NotNull
-    private final List<ItemStack> itemsNeeded = new ArrayList<>();
-
+    private              List<ItemStack> itemsCurrentlyNeeded    = new ArrayList<>();
     /**
      * This flag tells if we need a shovel, will be set on tool needs.
      */
-    private boolean needsShovel = false;
+    private              boolean         needsShovel             = false;
 
     /**
      * This flag tells if we need an axe, will be set on tool needs.
@@ -280,7 +274,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (delay > 0)
         {
             if (currentStandingLocation != null
-                    && !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
+                  && !worker.isWorkerAtSiteWithMove(currentStandingLocation, DEFAULT_RANGE_FOR_DELAY))
             {
                 //Don't decrease delay as we are just walking...
                 return true;
@@ -386,13 +380,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         @Nullable final AbstractBuildingWorker buildingMiner = getOwnBuilding();
         return buildingMiner != null
-                && is != null
-                && InventoryFunctions
-                   .matchFirstInInventory(
-                     buildingMiner.getTileEntity(),
-                     stack -> stack != null && is.isItemEqual(stack),
-                     this::takeItemStackFromChest
-                   );
+                 && is != null
+                 && InventoryFunctions
+                      .matchFirstInInventory(
+                        buildingMiner.getTileEntity(),
+                        stack -> stack != null && is.isItemEqual(stack),
+                        this::takeItemStackFromChest
+                      );
     }
 
     /**
@@ -497,11 +491,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean checkForTool(@NotNull String tool)
     {
         final boolean needsTool = !InventoryFunctions
-                               .matchFirstInInventory(
-                                 worker.getInventoryCitizen(),
-                                 stack -> Utils.isTool(stack, tool),
-                                 InventoryFunctions::doNothing
-                               );
+                                     .matchFirstInInventory(
+                                       worker.getInventoryCitizen(),
+                                       stack -> Utils.isTool(stack, tool),
+                                       InventoryFunctions::doNothing
+                                     );
         if (!needsTool)
         {
             return false;
@@ -747,26 +741,40 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
         return buildingWorker != null
-                && (walkToBuilding()
-                || InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(),
-                (i, stack) -> !(stack == null || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, i)));
+                 && (walkToBuilding()
+                       || InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(),
+          (i, stack) -> !(stack == null || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, i)));
+    }
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    protected Map<ItemStorage, Integer> needXForWorker()
+    {
+        return new HashMap<>();
     }
 
     /**
      * Checks if an item should be kept and deposits the rest into his chest.
-     * @param alreadyKept already kept items.
-     * @param shouldKeep items that should be kept.
+     *
+     * @param alreadyKept    already kept items.
+     * @param shouldKeep     items that should be kept.
      * @param buildingWorker the building of the worker.
-     * @param stack the stack being analyzed.
-     * @param i the iteration inside the inventory.
+     * @param stack          the stack being analyzed.
+     * @param i              the iteration inside the inventory.
      * @return true if should be dumped.
      */
-    private boolean shouldDumpItem(@NotNull Map<ItemStorage, Integer> alreadyKept, @NotNull Map<ItemStorage, Integer> shouldKeep,
-            @NotNull AbstractBuildingWorker buildingWorker,@NotNull ItemStack stack, int i)
+    private boolean shouldDumpItem(
+                                    @NotNull Map<ItemStorage, Integer> alreadyKept, @NotNull Map<ItemStorage, Integer> shouldKeep,
+                                    @NotNull AbstractBuildingWorker buildingWorker, @NotNull ItemStack stack, int i)
     {
         @Nullable ItemStack returnStack;
         int amountToKeep = 0;
-        if(keptEnough(alreadyKept, shouldKeep, stack))
+        if (keptEnough(alreadyKept, shouldKeep, stack))
         {
             returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), stack);
         }
@@ -774,7 +782,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
             ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
-            if(tempStack == null || tempStack.stackSize == 0)
+            if (tempStack == null || tempStack.stackSize == 0)
             {
                 return false;
             }
@@ -792,17 +800,47 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Checks if enough items have been marked as to be kept already.
+     *
+     * @param alreadyKept kept items.
+     * @param shouldKeep  items to keep.
+     * @param stack       stack to analyse.
+     * @return true if the the item shouldn't be kept.
+     */
+    private static boolean keptEnough(@NotNull Map<ItemStorage, Integer> alreadyKept, @NotNull Map<ItemStorage, Integer> shouldKeep, @NotNull ItemStack stack)
+    {
+        final ArrayList<Map.Entry<ItemStorage, Integer>> tempKeep = new ArrayList<>(shouldKeep.entrySet());
+        for (Map.Entry<ItemStorage, Integer> tempEntry : tempKeep)
+        {
+            final ItemStorage tempStorage = tempEntry.getKey();
+            if (tempStorage != null && tempStorage.getItem() == stack.getItem() && tempStorage.getDamageValue() != stack.getItemDamage())
+            {
+                shouldKeep.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, tempStorage.ignoreDamageValue()), tempEntry.getValue());
+                break;
+            }
+        }
+        final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false);
+
+        //Check first if the the item shouldn't be kept if it should be kept check if we already kept enough of them.
+        return shouldKeep.get(tempStorage) == null
+                 || (alreadyKept.get(tempStorage) != null
+                       && alreadyKept.get(tempStorage) >= shouldKeep.get(tempStorage));
+    }
+
+    /**
      * Handle the cases when X items should be kept.
+     *
      * @param alreadyKept already kept items.
-     * @param shouldKeep to keep items.
+     * @param shouldKeep  to keep items.
      * @param tempStorage item to analyze.
      * @return null if should be kept entirely, else itemStack with amount which should be dumped.
      */
-    private static ItemStack handleKeepX(@NotNull Map<ItemStorage, Integer> alreadyKept,
-            @NotNull Map<ItemStorage, Integer> shouldKeep,@NotNull ItemStorage tempStorage)
+    private static ItemStack handleKeepX(
+                                          @NotNull Map<ItemStorage, Integer> alreadyKept,
+                                          @NotNull Map<ItemStorage, Integer> shouldKeep, @NotNull ItemStorage tempStorage)
     {
         int amountKept = 0;
-        if(alreadyKept.get(tempStorage) != null)
+        if (alreadyKept.get(tempStorage) != null)
         {
             amountKept = alreadyKept.remove(tempStorage);
         }
@@ -817,33 +855,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         //Create tempStack with the amount of items that should be dumped.
         return new ItemStack(tempStorage.getItem(), dump, tempStorage.getDamageValue());
-    }
-
-    /**
-     * Checks if enough items have been marked as to be kept already.
-     * @param alreadyKept kept items.
-     * @param shouldKeep items to keep.
-     * @param stack stack to analyse.
-     * @return true if the the item shouldn't be kept.
-     */
-    private static boolean keptEnough(@NotNull Map<ItemStorage, Integer> alreadyKept, @NotNull Map<ItemStorage, Integer> shouldKeep, @NotNull ItemStack stack)
-    {
-        final ArrayList<Map.Entry<ItemStorage, Integer>> tempKeep = new ArrayList<>(shouldKeep.entrySet());
-        for(Map.Entry<ItemStorage, Integer> tempEntry: tempKeep)
-        {
-            final ItemStorage tempStorage = tempEntry.getKey();
-            if(tempStorage != null && tempStorage.getItem() == stack.getItem() && tempStorage.getDamageValue() != stack.getItemDamage())
-            {
-                shouldKeep.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, tempStorage.ignoreDamageValue()), tempEntry.getValue());
-                break;
-            }
-        }
-        final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false);
-
-        //Check first if the the item shouldn't be kept if it should be kept check if we already kept enough of them.
-        return shouldKeep.get(tempStorage) == null
-                 || (alreadyKept.get(tempStorage) != null
-                       && alreadyKept.get(tempStorage) >= shouldKeep.get(tempStorage));
     }
 
     /**
@@ -907,18 +918,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return false;
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    protected Map<ItemStorage, Integer> needXForWorker()
-    {
-        return new HashMap<>();
     }
 
     /**
@@ -1051,5 +1050,4 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         actionsDone++;
     }
-
 }

@@ -114,7 +114,7 @@ public final class ServerUtils
      * @return The {@link EntityPlayer} reference.
      */
     @Nullable
-    public static EntityPlayer getPlayerFromPermPlayer(@NotNull Permissions.Player player,@NotNull World world)
+    public static EntityPlayer getPlayerFromPermPlayer(@NotNull Permissions.Player player, @NotNull World world)
     {
         return ServerUtils.getPlayerFromUUID(player.getID(), world);
     }
@@ -128,7 +128,7 @@ public final class ServerUtils
      * @return The player the player if found or null
      */
     @Nullable
-    public static EntityPlayer getPlayerFromUUID(@Nullable UUID uuid,@NotNull World world)
+    public static EntityPlayer getPlayerFromUUID(@Nullable UUID uuid, @NotNull World world)
     {
         if (uuid == null)
         {

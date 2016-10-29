@@ -131,9 +131,39 @@ public class JobFisherman extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<JobFisherman> generateAI()
     {
         return new EntityAIWorkFisherman(this);
+    }
+
+    /**
+     * Override this to let the worker return a bedTimeSound.
+     *
+     * @return soundEvent to be played.
+     */
+    @Override
+    public SoundEvent getBedTimeSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? FishermanSounds.Female.offToBed : FishermanSounds.Male.offToBed;
+        }
+        return null;
+    }
+
+    /**
+     * Override this to let the worker return a badWeatherSound.
+     *
+     * @return soundEvent to be played.
+     */
+    @Override
+    public SoundEvent getBadWeatherSound()
+    {
+        if (getCitizen() != null)
+        {
+            return getCitizen().isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
+        }
+        return null;
     }
 
     /**
@@ -185,35 +215,6 @@ public class JobFisherman extends AbstractJob
     public void removeFromPonds(BlockPos pond)
     {
         this.ponds.remove(pond);
-    }
-
-
-    /**
-     * Override this to let the worker return a bedTimeSound.
-     * @return soundEvent to be played.
-     */
-    @Override
-    public SoundEvent getBedTimeSound()
-    {
-        if(getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? FishermanSounds.Female.offToBed : FishermanSounds.Male.offToBed;
-        }
-        return null;
-    }
-
-    /**
-     * Override this to let the worker return a badWeatherSound.
-     * @return soundEvent to be played.
-     */
-    @Override
-    public SoundEvent getBadWeatherSound()
-    {
-        if(getCitizen() != null)
-        {
-            return getCitizen().isFemale() ? FishermanSounds.Female.badWeather : FishermanSounds.Male.badWeather;
-        }
-        return null;
     }
 }
 

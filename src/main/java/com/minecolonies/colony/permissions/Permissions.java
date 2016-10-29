@@ -44,6 +44,7 @@ public class Permissions implements IPermissions
         setPromotionRanks(Rank.NEUTRAL, Rank.FRIEND, Rank.HOSTILE);
         setPromotionRanks(Rank.HOSTILE, Rank.NEUTRAL, Rank.HOSTILE);
     }
+
     @NotNull
     private final Colony colony;
     @NotNull
@@ -221,7 +222,7 @@ public class Permissions implements IPermissions
             {
                 ownerUUID = UUID.fromString(compound.getString(TAG_OWNER_ID));
             }
-            catch(IllegalArgumentException e)
+            catch (IllegalArgumentException e)
             {
                 /**
                  * Intentionally left empty. Happens when the UUID hasn't been saved yet.
@@ -334,20 +335,6 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Returns the rank belonging to the UUID
-     *
-     * @param id UUID that you want to check rank of
-     * @return Rank of the UUID
-     */
-    @NotNull
-    @Override
-    public Rank getRank(UUID id)
-    {
-        Player player = players.get(id);
-        return player != null ? player.rank : Rank.NEUTRAL;
-    }
-
-    /**
      * Checks if the player has the permission of an action
      *
      * @param player {@link EntityPlayer} player
@@ -389,6 +376,20 @@ public class Permissions implements IPermissions
     }
 
     /**
+     * Returns the rank belonging to the UUID
+     *
+     * @param id UUID that you want to check rank of
+     * @return Rank of the UUID
+     */
+    @NotNull
+    @Override
+    public Rank getRank(UUID id)
+    {
+        Player player = players.get(id);
+        return player != null ? player.rank : Rank.NEUTRAL;
+    }
+
+    /**
      * Toggle permission for a specific rank
      *
      * @param rank   Rank to toggle permission
@@ -398,12 +399,6 @@ public class Permissions implements IPermissions
     {
         permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
         markDirty();
-    }
-
-    @Override
-    public boolean isColonyMember(@NotNull EntityPlayer player)
-    {
-        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -489,6 +484,25 @@ public class Permissions implements IPermissions
     }
 
     /**
+     * Returns the owner of this permission instance.
+     *
+     * @return UUID of the owner
+     */
+    @Nullable
+    public UUID getOwner()
+    {
+        if (ownerUUID == null)
+        {
+            final Map.Entry<UUID, Player> owner = getOwnerEntry();
+            if (owner != null)
+            {
+                ownerUUID = owner.getKey();
+            }
+        }
+        return ownerUUID;
+    }
+
+    /**
      * Compute the owner of a colony.
      * <p>
      * Can be quite expensive in colonies with many players.
@@ -508,23 +522,10 @@ public class Permissions implements IPermissions
         return null;
     }
 
-    /**
-     * Returns the owner of this permission instance.
-     *
-     * @return UUID of the owner
-     */
-    @Nullable
-    public UUID getOwner()
+    @Override
+    public boolean isColonyMember(@NotNull EntityPlayer player)
     {
-        if (ownerUUID == null)
-        {
-            final Map.Entry<UUID, Player> owner = getOwnerEntry();
-            if (owner != null)
-            {
-                ownerUUID = owner.getKey();
-            }
-        }
-        return ownerUUID;
+        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -804,12 +805,6 @@ public class Permissions implements IPermissions
             return false;
         }
 
-        @NotNull
-        public Rank getRank(@NotNull EntityPlayer player)
-        {
-            return getRank(player.getUniqueID());
-        }
-
         public boolean removePermission(Rank rank, @NotNull Action action)
         {
             int flags = permissions.get(rank);
@@ -851,6 +846,12 @@ public class Permissions implements IPermissions
                 int flags = buf.readInt();
                 permissions.put(rank, flags);
             }
+        }
+
+        @NotNull
+        public Rank getRank(@NotNull EntityPlayer player)
+        {
+            return getRank(player.getUniqueID());
         }
 
         @NotNull

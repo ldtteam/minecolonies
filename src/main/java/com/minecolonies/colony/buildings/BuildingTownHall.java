@@ -29,19 +29,6 @@ public class BuildingTownHall extends AbstractBuildingHut
         return 2;
     }
 
-    public static class View extends AbstractBuildingHut.View
-    {
-        public View(ColonyView c, BlockPos l)
-        {
-            super(c, l);
-        }
-
-        @NotNull
-        public com.blockout.views.Window getWindow()
-        {
-            return new WindowTownHall(this);
-        }
-    }
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
@@ -54,6 +41,20 @@ public class BuildingTownHall extends AbstractBuildingHut
         if (newLevel >= this.getMaxBuildingLevel())
         {
             this.getColony().triggerAchievement(ModAchievements.achievementUpgradeTownhallMax);
+        }
+    }
+
+    public static class View extends AbstractBuildingHut.View
+    {
+        public View(ColonyView c, BlockPos l)
+        {
+            super(c, l);
+        }
+
+        @NotNull
+        public com.blockout.views.Window getWindow()
+        {
+            return new WindowTownHall(this);
         }
     }
 }
