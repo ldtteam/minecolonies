@@ -330,13 +330,13 @@ public class InventoryField implements IInventory
     public void setCustomName(final String customName)
     {
         this.customName = customName;
-    }    @Override
+    }
+
+    @Override
     public boolean hasCustomName()
     {
         return true;
     }
-
-
 
     @NotNull
     @Override

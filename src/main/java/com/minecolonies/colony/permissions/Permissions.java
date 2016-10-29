@@ -357,18 +357,6 @@ public class Permissions implements IPermissions
     public Rank getRank(@NotNull EntityPlayer player)
     {
         return getRank(player.getGameProfile().getId());
-    }    /**
-     * Returns the rank belonging to the UUID
-     *
-     * @param id UUID that you want to check rank of
-     * @return Rank of the UUID
-     */
-    @NotNull
-    @Override
-    public Rank getRank(UUID id)
-    {
-        Player player = players.get(id);
-        return player != null ? player.rank : Rank.NEUTRAL;
     }
 
     /**
@@ -385,6 +373,20 @@ public class Permissions implements IPermissions
             permissions.put(rank, Utils.unsetFlag(flags, action.flag));
             markDirty();
         }
+    }
+
+    /**
+     * Returns the rank belonging to the UUID
+     *
+     * @param id UUID that you want to check rank of
+     * @return Rank of the UUID
+     */
+    @NotNull
+    @Override
+    public Rank getRank(UUID id)
+    {
+        Player player = players.get(id);
+        return player != null ? player.rank : Rank.NEUTRAL;
     }
 
     /**
@@ -479,10 +481,6 @@ public class Permissions implements IPermissions
         }
 
         return false;
-    }    @Override
-    public boolean isColonyMember(@NotNull EntityPlayer player)
-    {
-        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -522,6 +520,12 @@ public class Permissions implements IPermissions
             }
         }
         return null;
+    }
+
+    @Override
+    public boolean isColonyMember(@NotNull EntityPlayer player)
+    {
+        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -815,10 +819,6 @@ public class Permissions implements IPermissions
         public void togglePermission(Rank rank, @NotNull Action action)
         {
             permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
-        }        @NotNull
-        public Rank getRank(@NotNull EntityPlayer player)
-        {
-            return getRank(player.getUniqueID());
         }
 
         public void deserialize(@NotNull ByteBuf buf)
@@ -848,7 +848,11 @@ public class Permissions implements IPermissions
             }
         }
 
-
+        @NotNull
+        public Rank getRank(@NotNull EntityPlayer player)
+        {
+            return getRank(player.getUniqueID());
+        }
 
         @NotNull
         @Override
@@ -870,8 +874,4 @@ public class Permissions implements IPermissions
             return players.containsKey(player.getUniqueID());
         }
     }
-
-
-
-
 }

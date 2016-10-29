@@ -90,6 +90,16 @@ public class TileEntityColonyBuilding extends TileEntityChest
     public BlockPos getPosition()
     {
         return pos;
+    }
+
+    /**
+     * Returns the colony ID
+     *
+     * @return ID of the colony
+     */
+    public int getColonyId()
+    {
+        return colonyId;
     }    @Override
     public void update()
     {
@@ -103,16 +113,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 colonyId = tempColony.getID();
             }
         }
-    }
-
-    /**
-     * Returns the colony ID
-     *
-     * @return ID of the colony
-     */
-    public int getColonyId()
-    {
-        return colonyId;
     }
 
     /**
@@ -221,6 +221,8 @@ public class TileEntityColonyBuilding extends TileEntityChest
         return c != null ? c.getBuilding(getPosition()) : null;
     }
 
+
+
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {
@@ -232,8 +234,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         updateColonyReferences();
     }
-
-
 
     @NotNull
     @Override
