@@ -256,7 +256,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 worker.damageItemInHand(1);
                 mineBlock(position.up());
                 //after you hoe the block, plant the seed.
-                plantCrop(field.getSeed(), position);  
+                plantCrop(field.getSeed(), position);
             }
         }
 
@@ -599,11 +599,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         IBlockState curBlockState = world.getBlockState(position);
 
-        if (!(curBlockState.getBlock() instanceof IGrowable && curBlockState.getBlock() instanceof BlockCrops))
+        if (!(curBlockState.getBlock() instanceof IGrowable) || !(curBlockState.getBlock() instanceof BlockCrops))
         {
             return false;
         }
-        
+
         BlockCrops crops = (BlockCrops) curBlockState.getBlock();
 
         if (!crops.isMaxAge(curBlockState))
@@ -621,11 +621,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         final Item seedItem = crops.getItemDropped(curBlockState, world.rand, fortune);
         if (seedItem != null)
         {
-            for (Iterator<ItemStack> iterator = drops.iterator(); iterator.hasNext();) {
+            for (Iterator<ItemStack> iterator = drops.iterator(); iterator.hasNext())
+            {
                 final ItemStack drop = iterator.next();
 
                 // Remove a seed, then break.
-                if (! (drop.getItem() == seedItem) || crops instanceof BlockCarrot || crops instanceof BlockPotato) {
+                if (drop.getItem() != seedItem && !(crops instanceof BlockCarrot) && !(crops instanceof BlockPotato))
+                {
                     iterator.remove();
                     break;
                 }
