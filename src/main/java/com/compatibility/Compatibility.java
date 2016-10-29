@@ -34,6 +34,6 @@ public final class Compatibility
 
     public static boolean isPamsInstalled()
     {
-        return true;
+        return false;
     }
 }

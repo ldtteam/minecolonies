@@ -596,6 +596,7 @@ public class Field extends Container
     {
         EMPTY,
         HOED,
-        PLANTED
+        PLANTED,
+        WORKED
     }
 }

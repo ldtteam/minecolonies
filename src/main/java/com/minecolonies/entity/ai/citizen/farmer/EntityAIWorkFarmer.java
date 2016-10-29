@@ -84,7 +84,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
           new AITarget(PREPARING, this::prepareForFarming),
           new AITarget(FARMER_HOE, this::hoe),
           new AITarget(FARMER_PLANT, this::plant),
-          new AITarget(FARMER_HARVEST, this::harvest)
+          new AITarget(FARMER_HARVEST, this::harvest),
+          new AITarget(FARMER_WORK, this::cycle)
         );
         worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
@@ -164,6 +165,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     break;
                 case PLANTED:
                     return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_HARVEST;
+                case WORKED:
+                    if (canGoPlanting(currentField, building))
+                    {
+                        return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_WORK;
+                    }
+                break;
+
                 default:
                     break;
             }
@@ -220,6 +228,70 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return true;
     }
 
+    private AIState cycle()
+    {
+        @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
+
+        if (buildingFarmer == null || buildingFarmer.getCurrentField() == null)
+        {
+            return AIState.PREPARING;
+        }
+
+        @Nullable Field field = buildingFarmer.getCurrentField();
+
+        if (field == null  || checkForHoe())
+        {
+            return AIState.PREPARING;
+        }
+
+        if (workingOffset != null)
+        {
+            BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
+            if (walkToBlock(position.up()))
+            {
+                return AIState.FARMER_WORK;
+            }
+
+            if (shouldHarvest(position))
+            {
+                worker.addExperience(0.5);
+                if (Compatibility.isPamsInstalled())
+                {
+                    harvestCrop(position.up());
+                }
+                else
+                {
+                    mineBlock(position.up());
+                }
+            }
+
+            if (shouldHoe(position, field))
+            {
+                equipHoe();
+                worker.swingArm(worker.getActiveHand());
+                world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
+                worker.damageItemInHand(1);
+                mineBlock(position.up());
+            }
+
+            if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
+            {
+                resetVariables();
+                return AIState.IDLE;
+            }
+        }
+
+        if (!handleOffset(field))
+        {
+            resetVariables();
+            buildingFarmer.getCurrentField().setNeedsWork(false);
+            return AIState.IDLE;
+        }
+
+        setDelay(workingDelay);
+        return AIState.FARMER_WORK;
+    }
+
     /**
      * Executes the hoeing of the field.
      *
@@ -255,8 +327,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
                 worker.damageItemInHand(1);
                 mineBlock(position.up());
-                //after you hoe the block, plant the seed.
-                plantCrop(field.getSeed(), position);
             }
         }
 
@@ -264,7 +334,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             resetVariables();
             buildingFarmer.getCurrentField().setNeedsWork(true);
-            buildingFarmer.getCurrentField().setFieldStage(HOED);
+            buildingFarmer.getCurrentField().setFieldStage(WORKED);
             return AIState.IDLE;
         }
         BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
@@ -456,7 +526,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         else
         {
             buildingFarmer.getCurrentField().setNeedsWork(false);
-            buildingFarmer.getCurrentField().setFieldStage(PLANTED);
         }
 
         resetVariables();
@@ -487,18 +556,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 return AIState.FARMER_HARVEST;
             }
 
-            if (shouldHarvest(position))
-            {
-                worker.addExperience(0.5);
-                if (Compatibility.isPamsInstalled())
-                {
-                    harvestCrop(position.up());
-                }
-                else
-                {
-                    mineBlock(position.up());
-                }
-            }
+
         }
 
         if (!handleOffset(field))
