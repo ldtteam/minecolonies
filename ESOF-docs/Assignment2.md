@@ -203,10 +203,10 @@ Relativamente ao caso do **MineColonies**, chegamos à conclusão que a equipa n
 
 ## Contribuições ##
 
-* [Inês Gomes](https://github.com/inesgomes) (up201405778@fe.up.pt)
+* [Inês Gomes](https://github.com/inesgomes) (up201405778@fe.up.pt) - 25% - horas: 9
 
-* [Catarina Ramos](https://github.com/catramos96) (up201406219@fe.up.pt)
+* [Catarina Ramos](https://github.com/catramos96) (up201406219@fe.up.pt) - 25% - horas: 9
 
-* [Mário Fernandes](https://github.com/MarioFernandes73) (up201201705@fe.up.pt) 
+* [Mário Fernandes](https://github.com/MarioFernandes73) (up201201705@fe.up.pt) - 25% - horas: 9
 
-* [Manuel Curral](https://github.com/Camolas)  (up201202445@fe.up.pt)
+* [Manuel Curral](https://github.com/Camolas)  (up201202445@fe.up.pt) - 25% - horas: 9
