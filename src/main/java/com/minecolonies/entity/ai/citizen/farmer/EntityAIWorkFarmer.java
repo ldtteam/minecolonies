@@ -25,7 +25,6 @@ import net.minecraftforge.common.IPlantable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.minecolonies.entity.ai.citizen.farmer.Field.FieldStage.*;
 import static com.minecolonies.entity.ai.util.AIState.*;
 
 import java.util.Iterator;
@@ -82,9 +81,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
           new AITarget(IDLE, () -> START_WORKING),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
           new AITarget(PREPARING, this::prepareForFarming),
-          new AITarget(FARMER_HOE, this::hoe),
-          new AITarget(FARMER_PLANT, this::plant),
-          new AITarget(FARMER_HARVEST, this::harvest),
           new AITarget(FARMER_WORK, this::cycle)
         );
         worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
@@ -145,9 +141,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (currentField.needsWork())
         {
-        	if(!checkForHoe()&& canGoPlanting(currentField, building)){
-        		return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_WORK;
-        	}
+            if(!checkForHoe() && canGoPlanting(currentField, building)){
+                return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_WORK;
+            }
         }
         else
         {
@@ -217,7 +213,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private AIState cycle()
     {
         @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
-       
+
         if (buildingFarmer == null || buildingFarmer.getCurrentField() == null  || checkForHoe())
         {
             return AIState.PREPARING;
@@ -232,27 +228,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 return AIState.FARMER_WORK;
             }
 
-            if (shouldHarvest(position))
-            {
-                worker.addExperience(0.5);
-                if (Compatibility.isPamsInstalled())
-                {
-                    harvestCrop(position.up());
-                }
-                else
-                {
-                    mineBlock(position.up());
-                }
-            }
+            harvestIfAble(position);
 
-            if (shouldHoe(position, field))
-            {
-                equipHoe();
-                worker.swingArm(worker.getActiveHand());
-                world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
-                worker.damageItemInHand(1);
-                mineBlock(position.up());
-            }
+            hoeIfAble(position, field);
 
             if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
             {
@@ -273,59 +251,32 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return AIState.FARMER_WORK;
     }
 
-    /**
-     * Executes the hoeing of the field.
-     *
-     * @return the next state.
-     */
-    @NotNull
-    private AIState hoe()
+    private void harvestIfAble(final BlockPos position)
     {
-        @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
-
-        if (buildingFarmer == null || buildingFarmer.getCurrentField() == null)
+        if (shouldHarvest(position))
         {
-            return AIState.PREPARING;
-        }
-        @Nullable Field field = getOwnBuilding().getCurrentField();
-
-        if (workingOffset != null)
-        {
-            BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
-            if (walkToBlock(position.up()))
+            worker.addExperience(0.5);
+            if (Compatibility.isPamsInstalled())
             {
-                return AIState.FARMER_HOE;
+                harvestCrop(position.up());
             }
-
-            if (shouldHoe(position, field))
+            else
             {
-                if (checkForHoe())
-                {
-                    return AIState.PREPARING;
-                }
-                equipHoe();
-                worker.swingArm(worker.getActiveHand());
-                world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
-                worker.damageItemInHand(1);
                 mineBlock(position.up());
             }
         }
+    }
 
-        if (!handleOffset(field))
-        {
-            resetVariables();
-            buildingFarmer.getCurrentField().setNeedsWork(true);
-            buildingFarmer.getCurrentField().setFieldStage(WORKED);
-            return AIState.IDLE;
-        }
-        BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
+    private void hoeIfAble(final BlockPos position, final Field field)
+    {
         if (shouldHoe(position, field))
         {
+            equipHoe();
+            worker.swingArm(worker.getActiveHand());
+            world.setBlockState(position, Blocks.FARMLAND.getDefaultState());
+            worker.damageItemInHand(1);
             mineBlock(position.up());
         }
-
-        setDelay(workingDelay);
-        return AIState.FARMER_HOE;
     }
 
     /**
@@ -403,50 +354,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Executes the planting of the field.
-     *
-     * @return the next state.
-     */
-    @NotNull
-    private AIState plant()
-    {
-        @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
-
-        if (buildingFarmer == null || buildingFarmer.getCurrentField() == null)
-        {
-            return AIState.PREPARING;
-        }
-        @Nullable Field field = getOwnBuilding().getCurrentField();
-
-        if (workingOffset != null)
-        {
-            BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
-            if (walkToBlock(position.up()))
-            {
-                return AIState.FARMER_PLANT;
-            }
-
-            if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position) && !requestSeeds)
-            {
-                workingOffset = null;
-                resetVariables();
-                buildingFarmer.getCurrentField().setNeedsWork(false);
-                buildingFarmer.getCurrentField().setFieldStage(PLANTED);
-                return AIState.IDLE;
-            }
-        }
-
-        if (!handleOffset(field))
-        {
-            return terminatePlanting(buildingFarmer, field);
-        }
-
-        setDelay(workingDelay);
-
-        return AIState.FARMER_PLANT;
-    }
-
-    /**
      * Checks if the ground should be planted.
      *
      * @param position the position to check.
@@ -511,56 +418,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         resetVariables();
         return AIState.PREPARING;
-    }
-
-    /**
-     * Executes the harvesting of the field.
-     *
-     * @return the next state.
-     */
-    @NotNull
-    private AIState harvest()
-    {
-        @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
-
-        if (buildingFarmer == null || buildingFarmer.getCurrentField() == null)
-        {
-            return AIState.PREPARING;
-        }
-        @Nullable Field field = getOwnBuilding().getCurrentField();
-
-        if (workingOffset != null)
-        {
-            BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
-            if (walkToBlock(position.up()))
-            {
-                return AIState.FARMER_HARVEST;
-            }
-
-
-        }
-
-        if (!handleOffset(field))
-        {
-            buildingFarmer.getCurrentField().setNeedsWork(false);
-            buildingFarmer.getCurrentField().setFieldStage(EMPTY);
-            return AIState.IDLE;
-        }
-        BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
-        if (shouldHarvest(position))
-        {
-            if (Compatibility.isPamsInstalled())
-            {
-                harvestCrop(position.up());
-            }
-            else
-            {
-                mineBlock(position.up());
-            }
-        }
-
-        setDelay(workingDelay);
-        return AIState.FARMER_HARVEST;
     }
 
     /**
@@ -681,7 +538,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             InventoryUtils.setStack(worker.getInventoryCitizen(), item);
         }
 
-        worker.addExperience(0.05);
         this.incrementActionsDone();
         return true;
 
