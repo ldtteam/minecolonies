@@ -35,7 +35,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     /**
      * The standard delay the farmer should have.
      */
-    private static final int     STANDARD_DELAY      = 7;
+    private static final int     STANDARD_DELAY      = 20;
     /**
      * The bonus the farmer gains each update is level/divider.
      */
@@ -277,7 +277,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (shouldHarvest(position))
         {
             worker.addExperience(XP_PER_HARVEST);
-            return harvestCrop(position.up());
+            return mineBlock(position.up());
+            //return harvestCrop(position.up());
         }
         return false;
     }
