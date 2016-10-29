@@ -145,36 +145,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (currentField.needsWork())
         {
-        	/*if(!checkForHoe()&& canGoPlanting(currentField, building)){
-        		return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_HOE;
-        	}*/
-        	//Gonna coment this out for the time, incase I need it for who knows what
-        	switch (currentField.getFieldStage())
-            {
-                case EMPTY:
-                    if (!checkForHoe())
-                    {
-                        return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_HOE;
-                    }
-                    break;
-                case HOED:
-                    if (canGoPlanting(currentField, building))
-                    {
-                        return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_PLANT;
-                    }
-                    break;
-                case PLANTED:
-                    return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_HARVEST;
-                case WORKED:
-                    if (canGoPlanting(currentField, building))
-                    {
-                        return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_WORK;
-                    }
-                break;
-
-                default:
-                    break;
-            }
+        	if(!checkForHoe()&& canGoPlanting(currentField, building)){
+        		return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_WORK;
+        	}
         }
         else
         {
@@ -244,18 +217,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private AIState cycle()
     {
         @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
-
-        if (buildingFarmer == null || buildingFarmer.getCurrentField() == null)
+       
+        if (buildingFarmer == null || buildingFarmer.getCurrentField() == null  || checkForHoe())
         {
             return AIState.PREPARING;
         }
-
         @Nullable Field field = buildingFarmer.getCurrentField();
-
-        if (field == null  || checkForHoe())
-        {
-            return AIState.PREPARING;
-        }
 
         if (workingOffset != null)
         {
@@ -657,7 +624,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Returns the fisherman's worker instance. Called from outside this class.
+     * Returns the farmer's worker instance. Called from outside this class.
      *
      * @return citizen object
      */
