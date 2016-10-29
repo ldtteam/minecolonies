@@ -144,11 +144,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (currentField.needsWork())
         {
-        	if(!checkForHoe()&& canGoPlanting(currentField, building)){
+        	/*if(!checkForHoe()&& canGoPlanting(currentField, building)){
         		return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_HOE;
-        	}
+        	}*/
         	//Gonna coment this out for the time, incase I need it for who knows what
-        	/* switch (currentField.getFieldStage())
+        	switch (currentField.getFieldStage())
             {
                 case EMPTY:
                     if (!checkForHoe())
@@ -166,7 +166,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                     return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_HARVEST;
                 default:
                     break;
-            }*/
+            }
         }
         else
         {
@@ -621,7 +621,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         final Item seedItem = crops.getItemDropped(curBlockState, world.rand, fortune);
         if (seedItem != null)
         {
-            for (Iterator<ItemStack> iterator = drops.iterator(); iterator.hasNext())
+            for (Iterator<ItemStack> iterator = drops.iterator(); iterator.hasNext();)
             {
                 final ItemStack drop = iterator.next();
 
