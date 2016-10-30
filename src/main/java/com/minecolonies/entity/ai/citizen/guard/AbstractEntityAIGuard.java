@@ -333,6 +333,10 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         return building.getLocation();
     }
 
+    /**
+     * Getter for the patrol distance the guard currently has.
+     * @return the distance in whole numbers.
+     */
     private int getPatrolDistance()
     {
         return this.getOwnBuilding().getBuildingLevel() * PATROL_DISTANCE;
