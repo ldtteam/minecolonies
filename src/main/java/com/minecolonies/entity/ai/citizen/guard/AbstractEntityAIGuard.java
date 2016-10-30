@@ -9,6 +9,8 @@ import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.MathUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -61,7 +63,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Path that close to the patrol target.
      */
-    private static final int PATH_CLOSE = 3;
+    private static final int PATH_CLOSE      = 3;
+
+    /**
+     * Worker gets this distance times building level away from his building to patrol.
+     */
+    private static final int PATROL_DISTANCE = 20;
+
     /**
      * The current target.
      */
@@ -315,11 +323,18 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         int random = worker.getRandom().nextInt(buildingArray.length);
 
         AbstractBuilding building = (AbstractBuilding) buildingArray[random];
-        if (building instanceof BuildingGuardTower)
+
+        if (building instanceof BuildingGuardTower
+                || BlockPosUtil.getDistance2D(building.getLocation(), this.getOwnBuilding().getLocation()) > getPatrolDistance())
         {
             return this.getOwnBuilding().getLocation();
         }
 
         return building.getLocation();
+    }
+
+    private int getPatrolDistance()
+    {
+        return this.getOwnBuilding().getBuildingLevel() * PATROL_DISTANCE;
     }
 }
