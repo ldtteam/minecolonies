@@ -41,8 +41,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private static final int     DELAY_DIVIDER       = 10;
     /**
-      * The EXP Earned per harvest.
-      */
+     * The EXP Earned per harvest.
+     */
     private static final double  XP_PER_HARVEST      = 0.5;
     /**
      * Changed after finished harvesting in order to dump the inventory.
@@ -138,7 +138,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (currentField.needsWork())
         {
-            if(!checkForHoe() && canGoPlanting(currentField, building))
+            if (!checkForHoe() && canGoPlanting(currentField, building))
             {
                 return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_WORK;
             }
@@ -517,7 +517,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
     /**
       * This method allows us to harvest crops and leave the plant there.
-      * Credit goes to RightClickHarvest mod
+      * Credit goes to RightClickHarvest mod.
       *
       * @params position the position of the crop to harvest
       */
