@@ -82,6 +82,11 @@ public class Field extends Container
     private static final String TAG_OWNER = "owner";
 
     /**
+     * Tag to store if initialized or not.
+     */
+     private static final String TAG_INITIALIZED = "initialized";
+
+    /**
      * Amount of rows in the player inventory.
      */
     private static final int PLAYER_INVENTORY_ROWS = 3;
@@ -308,6 +313,7 @@ public class Field extends Container
         inventory = new InventoryField("");
         inventory.readFromNBT(compound);
         setOwner(compound.getString(TAG_OWNER));
+        initialized = compound.getBoolean(TAG_INITIALIZED);
     }
 
     /**
@@ -394,6 +400,7 @@ public class Field extends Container
         compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
         inventory.writeToNBT(compound);
         compound.setString(TAG_OWNER, owner);
+        compound.setBoolean(TAG_INITIALIZED, initialized);
     }
 
     /**

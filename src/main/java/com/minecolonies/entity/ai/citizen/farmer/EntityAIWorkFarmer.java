@@ -311,6 +311,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             if (blockState.getBlock() instanceof IGrowable || blockState.getBlock() instanceof BlockCrops)
             {
                 mineBlock(position.up());
+                setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
                 return AIState.FARMER_INITIALIZE;
             }
 
@@ -322,7 +323,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         {
             resetVariables();
             buildingFarmer.getCurrentField().setInitialized(true);
-            buildingFarmer.getCurrentField().setNeedsWork(false);
             return AIState.IDLE;
         }
 
