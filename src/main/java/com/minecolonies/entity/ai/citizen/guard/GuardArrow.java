@@ -50,7 +50,7 @@ public class GuardArrow extends EntityTippedArrow
     public void readEntityFromNBT(final NBTTagCompound compound)
     {
         super.readEntityFromNBT(compound);
-        int colonyID = compound.getInteger(TAG_COLONY);
+        final int colonyID = compound.getInteger(TAG_COLONY);
         colony = ColonyManager.getColony(colonyID);
     }
 
