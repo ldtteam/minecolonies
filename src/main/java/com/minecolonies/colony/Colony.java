@@ -55,6 +55,7 @@ public class Colony implements IColony
     private static final String TAG_MANUAL_HIRING              = "manualHiring";
     //private int autoHostile = 0;//Off
     private static final String TAG_FIELDS                     = "fields";
+    private static final String TAG_MOB_KILLS                  = "mobKills";
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -90,6 +91,7 @@ public class Colony implements IColony
     private Map<Integer, CitizenData>       citizens     = new HashMap<>();
     private int                             topCitizenId = 0;
     private int                             maxCitizens  = Configurations.maxCitizens;
+    private int                             killedMobs   = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -148,6 +150,7 @@ public class Colony implements IColony
 
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
+        killedMobs = compound.getInteger(TAG_MOB_KILLS);
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -255,6 +258,8 @@ public class Colony implements IColony
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
+        compound.setInteger(TAG_MOB_KILLS, killedMobs);
+
         // Permissions
         permissions.savePermissions(compound);
 
@@ -349,6 +354,47 @@ public class Colony implements IColony
     private void markDirty()
     {
         isDirty = true;
+    }
+
+    /**
+     * Increment the mobs killed by this colony.
+     * <p>
+     * Will award achievements for mobs killed.
+     */
+    public void incrementMobsKilled()
+    {
+        killedMobs++;
+        final int mobKills = this.getKilledMobs();
+        if (mobKills >= 1)
+        {
+            this.triggerAchievement(ModAchievements.achievementKillOneMob);
+        }
+        if (mobKills >= 25)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill25Mobs);
+        }
+        if (mobKills >= 100)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill100Mobs);
+        }
+        if (mobKills >= 500)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill500Mobs);
+        }
+        if (mobKills >= 1000)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
+        }
+    }
+
+    /**
+     * get the amount of killed mobs.
+     *
+     * @return amount of mobs killed
+     */
+    public int getKilledMobs()
+    {
+        return killedMobs;
     }
 
     @NotNull

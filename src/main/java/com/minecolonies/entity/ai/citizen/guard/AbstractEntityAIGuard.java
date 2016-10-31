@@ -1,5 +1,8 @@
 package com.minecolonies.entity.ai.citizen.guard;
 
+import com.blockout.Log;
+import com.minecolonies.achievements.ModAchievements;
+import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingGuardTower;
@@ -328,6 +331,17 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         }
 
         return building.getLocation();
+    }
+
+    /**
+     * Called when a guard killed an entity.
+     *
+     * @param killedEntity the entity being killed.
+     */
+    protected void onKilledEntity(EntityLivingBase killedEntity)
+    {
+        Colony colony = this.getOwnBuilding().getColony();
+        colony.incrementMobsKilled();
     }
 
     /**

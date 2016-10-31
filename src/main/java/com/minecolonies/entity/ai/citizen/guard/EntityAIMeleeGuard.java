@@ -1,5 +1,6 @@
 package com.minecolonies.entity.ai.citizen.guard;
 
+import com.blockout.Log;
 import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
@@ -182,6 +183,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         }
 
         worker.addExperience(XP_EACH_HIT);
+        if (targetEntity.getHealth() <= 0.0F)
+        {
+            this.onKilledEntity(targetEntity);
+        }
+
         worker.faceEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
         worker.getLookHelper().setLookPositionWithEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
 

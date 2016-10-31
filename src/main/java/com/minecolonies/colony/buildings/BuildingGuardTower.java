@@ -1,5 +1,6 @@
 package com.minecolonies.colony.buildings;
 
+import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
@@ -88,6 +89,15 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         }
 
         super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementBuildingGuard);
+        }
+        if (newLevel >= this.getMaxBuildingLevel())
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementUpgradeGuardMax);
+        }
     }
 
     /**
