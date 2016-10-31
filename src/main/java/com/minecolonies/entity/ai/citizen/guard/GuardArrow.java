@@ -17,11 +17,22 @@ public class GuardArrow extends EntityTippedArrow
     private static final String TAG_COLONY = "colony";
     private Colony colony;
 
+    /**
+     * Constructor for forge.
+     *
+     * @param worldin the world this is in.
+     */
     public GuardArrow(final World worldin)
     {
         super(worldin);
     }
 
+    /**
+     * Create a new Arrow.
+     *
+     * @param worldIn the world this is shot in.
+     * @param shooter the guard shooting
+     */
     public GuardArrow(final World worldIn, final EntityCitizen shooter)
     {
         super(worldIn, shooter);
@@ -47,7 +58,7 @@ public class GuardArrow extends EntityTippedArrow
     protected void arrowHit(final EntityLivingBase targetEntity)
     {
         super.arrowHit(targetEntity);
-        Log.getLogger().info("Arrow hit "+targetEntity+" with "+targetEntity.getHealth());
+        Log.getLogger().info("Arrow hit " + targetEntity + " with " + targetEntity.getHealth());
         if (targetEntity.getHealth() <= 0.0F)
         {
             colony.incrementMobsKilled();

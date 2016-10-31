@@ -49,13 +49,18 @@ public class Colony implements IColony
     private static final String TAG_MAX_CITIZENS               = "maxCitizens";
     private static final String TAG_BUILDINGS                  = "buildings";
     private static final String TAG_CITIZENS                   = "citizens";
-    private static final String TAG_ACHIEVEMENT                = "achievement";
-    private static final String TAG_ACHIEVEMENT_LIST           = "achievementlist";
-    private static final String TAG_WORK                       = "work";
-    private static final String TAG_MANUAL_HIRING              = "manualHiring";
+    private static final String TAG_ACHIEVEMENT            = "achievement";
+    private static final String TAG_ACHIEVEMENT_LIST       = "achievementlist";
+    private static final String TAG_WORK                   = "work";
+    private static final String TAG_MANUAL_HIRING          = "manualHiring";
     //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS                     = "fields";
-    private static final String TAG_MOB_KILLS                  = "mobKills";
+    private static final String TAG_FIELDS                 = "fields";
+    private static final String TAG_MOB_KILLS              = "mobKills";
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST = 1;
+    private static final int    NUM_MOBS_ACHIEVEMENT_SECOND = 25;
+    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD = 100;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH = 500;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH = 1000;
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -365,23 +370,23 @@ public class Colony implements IColony
     {
         killedMobs++;
         final int mobKills = this.getKilledMobs();
-        if (mobKills >= 1)
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementKillOneMob);
         }
-        if (mobKills >= 25)
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementKill25Mobs);
         }
-        if (mobKills >= 100)
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementKill100Mobs);
         }
-        if (mobKills >= 500)
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementKill500Mobs);
         }
-        if (mobKills >= 1000)
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
         }

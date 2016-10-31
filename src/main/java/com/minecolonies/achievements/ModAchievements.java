@@ -149,27 +149,27 @@ public final class ModAchievements
                                                                                                achievementBuildingGuard).registerStat();
 
     /**
-     * Kill one mob
+     * Kill one mob.
      */
     public static final Achievement achievementKillOneMob = new MineColoniesAchievement("guard.mobkill.one", 2, 8, Items.BONE, achievementBuildingGuard).registerStat();
 
     /**
-     * Kill 25 mobs
+     * Kill 25 mobs.
      */
     public static final Achievement achievementKill25Mobs = new MineColoniesAchievement("guard.mobkill.25", 4, 8, Items.ROTTEN_FLESH, achievementKillOneMob).registerStat();
 
     /**
-     * Kill 100 mobs
+     * Kill 100 mobs.
      */
     public static final Achievement achievementKill100Mobs = new MineColoniesAchievement("guard.mobkill.100", 6, 8, Items.GUNPOWDER, achievementKill25Mobs).registerStat();
 
     /**
-     * Kill 500 mobs
+     * Kill 500 mobs.
      */
     public static final Achievement achievementKill500Mobs = new MineColoniesAchievement("guard.mobkill.500", 8, 8, Items.ENDER_PEARL, achievementKill100Mobs).registerStat();
 
     /**
-     * Kill 1000 mobs
+     * Kill 1000 mobs.
      */
     public static final Achievement achievementKill1000Mobs = new MineColoniesAchievement("guard.mobkill.1000", 10, 8, Items.ENDER_EYE, achievementKill500Mobs).registerStat();
 

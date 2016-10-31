@@ -1,7 +1,5 @@
 package com.minecolonies.entity.ai.citizen.guard;
 
-import com.blockout.Log;
-import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
@@ -338,9 +336,9 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      *
      * @param killedEntity the entity being killed.
      */
-    protected void onKilledEntity(EntityLivingBase killedEntity)
+    protected void onKilledEntity(final EntityLivingBase killedEntity)
     {
-        Colony colony = this.getOwnBuilding().getColony();
+        final Colony colony = this.getOwnBuilding().getColony();
         colony.incrementMobsKilled();
     }
 

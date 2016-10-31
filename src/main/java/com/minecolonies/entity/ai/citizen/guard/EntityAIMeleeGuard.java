@@ -1,6 +1,5 @@
 package com.minecolonies.entity.ai.citizen.guard;
 
-import com.blockout.Log;
 import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
