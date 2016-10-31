@@ -125,19 +125,23 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Base pathfinding range of the citizen.
      */
-    private static final int BASE_PATHFINDING_RANGE = 100;
+    private static final int BASE_PATHFINDING_RANGE    = 100;
     /**
      * Height of the citizen.
      */
-    private static final double CITIZEN_HEIGHT = 1.8D;
+    private static final double CITIZEN_HEIGHT         = 1.8D;
     /**
      * Width of the citizen.
      */
-    private static final double CITIZEN_WIDTH = 0.6D;
+    private static final double CITIZEN_WIDTH          = 0.6D;
     /**
      * Defines how far the citizen will be rendered.
      */
     private static final double RENDER_DISTANCE_WEIGHT = 2.0D;
+    /**
+     * Building level at which the workers work even if it is raining.
+     */
+    private static final int BONUS_BUILDING_LEVEL      = 5;
     private static Field navigatorField;
     protected Status                   status  = Status.IDLE;
     private   RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
@@ -1133,7 +1137,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
-        if (this.getColonyJob() instanceof JobGuard)
+        if (shouldWorkWhileRaining())
         {
             return DesiredActivity.WORK;
         }
@@ -1150,6 +1154,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             return DesiredActivity.WORK;
         }
+    }
+
+    /**
+     * Checks if the citizen should work even when it rains.
+     * @return true if his building level is bigger than 5 or if he is a guard
+     */
+    private boolean shouldWorkWhileRaining()
+    {
+        return this.getWorkBuilding() != null
+                && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL || this.getColonyJob() instanceof JobGuard);
     }
 
     /**
