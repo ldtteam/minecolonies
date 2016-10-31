@@ -188,4 +188,9 @@ public enum AIState
      * Work field.
      */
     FARMER_WORK,
+
+    /**
+     * initialize field.
+     */
+    FARMER_INITIALIZE,
 }

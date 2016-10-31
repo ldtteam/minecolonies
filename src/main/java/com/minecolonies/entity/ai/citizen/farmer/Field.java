@@ -138,6 +138,11 @@ public class Field extends Container
     private boolean needsWork = false;
 
     /**
+     * Is the field new or recently reseeded?
+     */
+    private boolean initialized = false;
+
+    /**
      * The length to plus x of the field.
      */
     private int lengthPlusX;
@@ -429,6 +434,26 @@ public class Field extends Container
     public void setNeedsWork(boolean needsWork)
     {
         this.needsWork = needsWork;
+    }
+
+    /**
+     * Checks if the field is initialized.
+     *
+     * @return true if so.
+     */
+    public boolean isInitialized()
+    {
+        return this.initialized;
+    }
+
+    /**
+     * Sets that the field has been initialized.
+     *
+     * @param initialized true if so.
+     */
+    public void setInitialized(boolean initialized)
+    {
+        this.initialized = initialized;
     }
 
     /**
