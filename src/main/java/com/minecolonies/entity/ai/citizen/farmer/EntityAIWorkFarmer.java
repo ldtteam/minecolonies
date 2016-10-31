@@ -45,6 +45,18 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
       */
     private static final double  XP_PER_HARVEST      = 0.5;
     /**
+     * How long to wait after looking to decide what to do.
+     */
+    private static final int     LOOK_WAIT           = 200;
+    /**
+     * How long to wait after a cycle to run another.
+     */
+    private static final int     CYCLE_WAIT          = 2400;
+    /**
+     * How long to cut from CYCLE_WAIT per field.
+     */
+    private static final int     FIELD_COMP          = 240;
+    /**
      * Changed after finished harvesting in order to dump the inventory.
      */
     private              boolean shouldDumpInventory = false;
@@ -79,6 +91,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
           new AITarget(PREPARING, this::prepareForFarming),
           new AITarget(FARMER_INITIALIZE, this::initialize),
+          new AITarget(FARMER_OBSERVE, this::lookAtField),
           new AITarget(FARMER_WORK, this::cycle)
         );
         worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
@@ -132,6 +145,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (building.getCurrentField() == null && building.getFieldToWorkOn() == null)
         {
             building.resetFields();
+            walkToBuilding();
+            setDelay(CYCLE_WAIT - (building.getFarmerFields().size()*FIELD_COMP));
             return AIState.IDLE;
         }
 
@@ -139,13 +154,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (currentField.needsWork())
         {
-            if (!currentField.isInitialized())
+            if (currentField.isInitialized())
+            {
+                walkToBlock(currentField.getLocation());
+                return AIState.FARMER_OBSERVE;
+            }
+            else if (canGoPlanting(currentField, building) && !checkForHoe())
             {
                 return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_INITIALIZE;
-            }
-            if (!checkForHoe() && canGoPlanting(currentField, building))
-            {
-                return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_WORK;
             }
         }
         else
@@ -242,32 +258,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
 
             // harvest the block if able to.
-            boolean interupt = harvestIfAble(position);
-            if (interupt)
+            if (harvestIfAble(position))
             {
                 setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
-                return AIState.FARMER_WORK;
-            }
-
-            // hoe the block if able to.
-            interupt = hoeIfAble(position, field);
-            if (interupt)
-            {
-                setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
-                return AIState.FARMER_WORK;
-            }
-
-            if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
-            {
-                resetVariables();
-                return AIState.PREPARING;
             }
         }
 
-        if (!handleOffset(field))
+        if (!handleOffsetHarvest(field))
         {
             resetVariables();
-            buildingFarmer.getCurrentField().setNeedsWork(false);
+            shouldDumpInventory = true;
+            field.setNeedsWork(false);
             return AIState.IDLE;
         }
 
@@ -316,19 +317,97 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
 
             // hoe the block if able to.
-            hoeIfAble(position, field);
+            if (hoeIfAble(position, field))
+            {
+                setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
+                return AIState.FARMER_INITIALIZE;
+            }
+
+            if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position))
+            {
+                resetVariables();
+                return AIState.PREPARING;
+            }
         }
 
         if (!handleOffset(field))
         {
             resetVariables();
-            buildingFarmer.getCurrentField().setInitialized(true);
+            shouldDumpInventory = true;
+            field.setInitialized(true);
+            field.setNeedsWork(false);
             return AIState.IDLE;
         }
 
         // Set the delay based off the standard - level / divider. This was workingDelay
         setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
         return AIState.FARMER_INITIALIZE;
+    }
+
+    /**
+      * Farmer looks at field to see if it's harvestable.
+      * Checks to see if there are any harvestable crops,
+      * if so go to FARMER_WORK, if not, set needs work to false and go to IDLE.
+      */
+    private AIState lookAtField()
+    {
+        @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
+
+        if (buildingFarmer == null)
+        {
+            return AIState.PREPARING;
+        }
+
+        @Nullable final Field field = buildingFarmer.getCurrentField();
+
+        if (field == null)
+        {
+            return AIState.PREPARING;
+        }
+
+        setDelay(LOOK_WAIT);
+        if (handleOffsetHarvest(field))
+        {
+            return AIState.FARMER_WORK;
+        }
+        else
+        {
+            if (containsPlants(field))
+            {
+                field.setNeedsWork(false);
+                return AIState.PREPARING;
+            }
+            else
+            {
+                field.setInitialized(false);
+                return AIState.PREPARING;
+            }
+        }
+    }
+
+    /**
+     * Checks to see if field contains plants.
+     *
+     * @param field the field to check.
+     * @return Boolean if there were plants found.
+     */
+    private boolean containsPlants(final Field field)
+    {
+        BlockPos position;
+        IBlockState blockState;
+
+        while (handleOffset(field))
+        {
+            // Check to see if the block is a plant, and if it is, break it.
+            position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
+            blockState = world.getBlockState(position.up());
+
+            if (blockState.getBlock() instanceof IGrowable || blockState.getBlock() instanceof BlockCrops)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -421,12 +500,47 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
+     * Handles the offset of the field for the farmer.
+     * Skips to the next harvestable crop, returns true if one was found.
+     *
+     * @param field the field object.
+     * @return true if a harvestable crop was found.
+     */
+    private boolean handleOffsetHarvest(@NotNull final Field field)
+    {
+        if (workingOffset == null)
+        {
+            workingOffset = new BlockPos(field.getLengthPlusX(), 0, field.getWidthPlusZ());
+        }
+
+        BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
+
+        while (!shouldHarvest(position))
+        {
+            if (workingOffset.getZ() <= -field.getWidthMinusZ() && workingOffset.getX() <= -field.getLengthMinusX())
+            {
+                workingOffset = null;
+                return false;
+            }
+            else if (workingOffset.getX() <= -field.getLengthMinusX())
+            {
+                workingOffset = new BlockPos(field.getLengthPlusX(), 0, workingOffset.getZ() - 1);
+            }
+            else
+            {
+                workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
+            }
+            position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
+        }
+        return true;
+    }
+
+    /**
      * Resets the basic variables of the class.
      */
     private void resetVariables()
     {
         requestSeeds = true;
-        shouldDumpInventory = true;
         shouldTryToGetSeed = true;
     }
 
@@ -556,8 +670,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-      * This method allows us to harvest crops and leave the plant there.
-      * Credit goes to RightClickHarvest mod
+      * This method allows us to harvest crops and turn the block beneath to dirt.
       *
       * @params position the position of the crop to harvest
       */
@@ -584,13 +697,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         final List<ItemStack> drops = crops.getDrops(world, position, curBlockState, fortune);
 
-        world.setBlockState(position, crops.withAge(0));
+        world.setBlockToAir(position);
 
         //add the drops to the citizen
         for (final ItemStack item : drops)
         {
             InventoryUtils.setStack(worker.getInventoryCitizen(), item);
         }
+
+        //set the block below to dirt.
+        world.setBlockState(position.down(), Blocks.DIRT.getDefaultState());
 
         this.incrementActionsDone();
         return true;
