@@ -7,7 +7,6 @@ import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -55,14 +54,6 @@ public class InventoryCitizen implements IInventory
      */
     private static final int    NO_SLOT         = -1;
 
-    /**
-     * The equipment slots.
-     */
-    private static final EntityEquipmentSlot[] VALID_EQUIPMENT_SLOTS;
-    static
-    {
-        VALID_EQUIPMENT_SLOTS = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
-    }
     /**
      * The inventory content.
      */
@@ -546,7 +537,9 @@ public class InventoryCitizen implements IInventory
         {
             return null;
         }
-    }    /**
+    }
+
+    /**
      * Checks if the inventory is named.
      *
      * @return true if the inventory has a custom name.
@@ -651,7 +644,9 @@ public class InventoryCitizen implements IInventory
         /*
          * This may be filled in order to specify some custom handling.
          */
-    }    /**
+    }
+
+    /**
      * Get the formatted TextComponent that will be used for the sender's username in chat
      */
     @NotNull

@@ -162,7 +162,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     {
         double damgeToBeDealt = baseDamage;
 
-        ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
+        final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem != null)
         {
             if (heldItem.getItem() instanceof ItemSword)
@@ -175,7 +175,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         targetEntity.attackEntityFrom(new DamageSource(worker.getName()), (float) damgeToBeDealt);
         targetEntity.setRevengeTarget(worker);
 
-        int fireAspectModifier = EnchantmentHelper.getFireAspectModifier(worker);
+        final int fireAspectModifier = EnchantmentHelper.getFireAspectModifier(worker);
         if (fireAspectModifier > 0)
         {
             targetEntity.setFire(fireAspectModifier * FIRE_CHANCE_MULTIPLIER);
@@ -185,11 +185,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         worker.faceEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
         worker.getLookHelper().setLookPositionWithEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
 
-        double xDiff = targetEntity.posX - worker.posX;
-        double zDiff = targetEntity.posZ - worker.posZ;
+        final double xDiff = targetEntity.posX - worker.posX;
+        final double zDiff = targetEntity.posZ - worker.posZ;
 
-        double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-        double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         worker.moveEntity(goToX, 0, goToZ);
 

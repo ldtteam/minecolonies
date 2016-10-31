@@ -26,7 +26,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     private static final int GUARD_HUT_MAX_LEVEL = 5;
 
     /**
-     * The max vision bonus multiplier
+     * The max vision bonus multiplier.
      */
     private static final int MAX_VISION_BONUS_MULTIPLIER = 3;
 
@@ -179,6 +179,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
          * @return A BlockOut window.
          */
         @NotNull
+        @Override
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, GUARD_TOWER);

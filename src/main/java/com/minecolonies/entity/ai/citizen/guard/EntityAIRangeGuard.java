@@ -30,7 +30,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     private static final int BASE_RELOAD_TIME = 60;
 
     /**
-     * Base damage which the power enchantments added
+     * Base damage which the power enchantments added.
      */
     private static final double BASE_POWER_ENCHANTMENT_DAMAGE = 0.5D;
 
@@ -215,14 +215,14 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     public void attackEntityWithRangedAttack(@NotNull EntityLivingBase entityToAttack, float baseDamage)
     {
-        EntityTippedArrow arrowEntity = new EntityTippedArrow(this.worker.worldObj, worker);
-        double xVector = entityToAttack.posX - worker.posX;
-        double yVector = entityToAttack.getEntityBoundingBox().minY + entityToAttack.height / AIM_HEIGHT - arrowEntity.posY;
-        double zVector = entityToAttack.posZ - worker.posZ;
-        double distance = (double) MathHelper.sqrt_double(xVector * xVector + zVector * zVector);
+        final EntityTippedArrow arrowEntity = new EntityTippedArrow(this.worker.worldObj, worker);
+        final double xVector = entityToAttack.posX - worker.posX;
+        final double yVector = entityToAttack.getEntityBoundingBox().minY + entityToAttack.height / AIM_HEIGHT - arrowEntity.posY;
+        final double zVector = entityToAttack.posZ - worker.posZ;
+        final double distance = (double) MathHelper.sqrt_double(xVector * xVector + zVector * zVector);
 
         //Lower the variable higher the chance that the arrows hits the target.
-        double chance = HIT_CHANCE_DIVIDER / (worker.getExperienceLevel() + 1);
+        final double chance = HIT_CHANCE_DIVIDER / (worker.getExperienceLevel() + 1);
 
         arrowEntity.setThrowableHeading(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) chance);
 
@@ -232,11 +232,11 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         worker.faceEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
         worker.getLookHelper().setLookPositionWithEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
 
-        double xDiff = targetEntity.posX - worker.posX;
-        double zDiff = targetEntity.posZ - worker.posZ;
+        final double xDiff = targetEntity.posX - worker.posX;
+        final double zDiff = targetEntity.posZ - worker.posZ;
 
-        double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-        double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         worker.moveEntity(goToX, 0, goToZ);
 
@@ -260,10 +260,10 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
      */
     private void addEffectsToArrow(EntityTippedArrow arrowEntity, double baseDamage)
     {
-        int powerEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
-        int punchEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
+        final int powerEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
+        final int punchEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
 
-        DifficultyInstance difficulty = this.worker.worldObj.getDifficultyForLocation(new BlockPos(worker));
+        final DifficultyInstance difficulty = this.worker.worldObj.getDifficultyForLocation(new BlockPos(worker));
         arrowEntity.setDamage((baseDamage * BASE_DAMAGE_MULTIPLIER)
                                 + worker.getRandom().nextGaussian() * RANDOM_DAMAGE_MULTPLIER
                                 + this.worker.worldObj.getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
@@ -286,7 +286,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             arrowEntity.setFire(FIRE_EFFECT_CHANCE);
         }
 
-        ItemStack holdItem = worker.getHeldItem(EnumHand.OFF_HAND);
+        final ItemStack holdItem = worker.getHeldItem(EnumHand.OFF_HAND);
         if (holdItem != null && holdItem.getItem() == Items.TIPPED_ARROW)
         {
             arrowEntity.setPotionEffect(holdItem);

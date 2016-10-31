@@ -10,7 +10,6 @@ import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.MathUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -128,7 +127,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
         for (int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
         {
-            ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
+            final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
             if (stack == null || stack.stackSize == 0)
             {
@@ -316,13 +315,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             return worker.getPosition();
         }
 
-        Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
+        final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
+        final Object[] buildingArray = buildingList.toArray();
 
-        Object[] buildingArray = buildingList.toArray();
-
-        int random = worker.getRandom().nextInt(buildingArray.length);
-
-        AbstractBuilding building = (AbstractBuilding) buildingArray[random];
+        final int random = worker.getRandom().nextInt(buildingArray.length);
+        final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
 
         if (building instanceof BuildingGuardTower
                 || BlockPosUtil.getDistance2D(building.getLocation(), this.getOwnBuilding().getLocation()) > getPatrolDistance())
