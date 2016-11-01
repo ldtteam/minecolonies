@@ -192,7 +192,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
      */
     private boolean canBuildHut(int builderLevel, @NotNull CitizenData citizen, @NotNull Colony colony)
     {
-        return builderLevel >= upgradeLevel || builderLevel == 2
+        return builderLevel >= upgradeLevel || builderLevel == 5
                  || citizen.getWorkBuilding().getID().equals(buildingLocation)
                  || isLocationTownhall(colony, buildingLocation);
     }
