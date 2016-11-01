@@ -3,6 +3,7 @@ package com.minecolonies.achievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
+import net.minecraft.init.Items;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
 
@@ -136,6 +137,45 @@ public final class ModAchievements
     public static final Achievement achievementUpgradeFarmerMax = new MineColoniesAchievement("upgrade.farmer.max", 2, 6, ModBlocks.blockHutFarmer,
                                                                                                achievementBuildingFarmer).registerStat();
 
+    /**
+     * Upgrade a guard to lv 1.
+     */
+    public static final Achievement achievementBuildingGuard   = new MineColoniesAchievement("upgrade.guard.first", 0, 7, ModBlocks.blockHutGuardTower,
+                                                                                               achievementTownhall).registerStat();
+    /**
+     * Max out a guard.
+     */
+    public static final Achievement achievementUpgradeGuardMax = new MineColoniesAchievement("upgrade.guard.max", 2, 7, ModBlocks.blockHutGuardTower,
+                                                                                               achievementBuildingGuard).registerStat();
+
+    /**
+     * Kill one mob.
+     */
+    public static final Achievement achievementKillOneMob = new MineColoniesAchievement("guard.mobkill.one", 2, 8, Items.BONE, achievementBuildingGuard).registerStat();
+
+    /**
+     * Kill 25 mobs.
+     */
+    public static final Achievement achievementKill25Mobs = new MineColoniesAchievement("guard.mobkill.25", 4, 8, Items.ROTTEN_FLESH, achievementKillOneMob).registerStat();
+
+    /**
+     * Kill 100 mobs.
+     */
+    public static final Achievement achievementKill100Mobs = new MineColoniesAchievement("guard.mobkill.100", 6, 8, Items.GUNPOWDER, achievementKill25Mobs).registerStat();
+
+    /**
+     * Kill 500 mobs.
+     */
+    public static final Achievement achievementKill500Mobs = new MineColoniesAchievement("guard.mobkill.500", 8, 8, Items.ENDER_PEARL, achievementKill100Mobs).registerStat();
+
+    /**
+     * Kill 1000 mobs.
+     */
+    public static final Achievement achievementKill1000Mobs = new MineColoniesAchievement("guard.mobkill.1000", 10, 8, Items.ENDER_EYE, achievementKill500Mobs).registerStat();
+
+
+
+
     // Sizes
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_SETTLEMENT} citizens.
@@ -185,7 +225,16 @@ public final class ModAchievements
                                                                                                         achievementUpgradeFisherMax,
                                                                                                         achievementSizeMetropolis,
                                                                                                         achievementBuildingFarmer,
-                                                                                                        achievementUpgradeFarmerMax
+                                                                                                        achievementUpgradeFarmerMax,
+                                                                                                        achievementBuildingGuard,
+                                                                                                        achievementUpgradeGuardMax,
+                                                                                                        achievementKillOneMob,
+                                                                                                        achievementKill25Mobs,
+                                                                                                        achievementKill100Mobs,
+                                                                                                        achievementKill500Mobs,
+                                                                                                        achievementKill1000Mobs
+
+
     );
 
     /**

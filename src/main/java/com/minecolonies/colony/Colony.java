@@ -49,12 +49,18 @@ public class Colony implements IColony
     private static final String TAG_MAX_CITIZENS               = "maxCitizens";
     private static final String TAG_BUILDINGS                  = "buildings";
     private static final String TAG_CITIZENS                   = "citizens";
-    private static final String TAG_ACHIEVEMENT                = "achievement";
-    private static final String TAG_ACHIEVEMENT_LIST           = "achievementlist";
-    private static final String TAG_WORK                       = "work";
-    private static final String TAG_MANUAL_HIRING              = "manualHiring";
+    private static final String TAG_ACHIEVEMENT            = "achievement";
+    private static final String TAG_ACHIEVEMENT_LIST       = "achievementlist";
+    private static final String TAG_WORK                   = "work";
+    private static final String TAG_MANUAL_HIRING          = "manualHiring";
     //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS                     = "fields";
+    private static final String TAG_FIELDS                 = "fields";
+    private static final String TAG_MOB_KILLS              = "mobKills";
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST = 1;
+    private static final int    NUM_MOBS_ACHIEVEMENT_SECOND = 25;
+    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD = 100;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH = 500;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH = 1000;
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -90,6 +96,7 @@ public class Colony implements IColony
     private Map<Integer, CitizenData>       citizens     = new HashMap<>();
     private int                             topCitizenId = 0;
     private int                             maxCitizens  = Configurations.maxCitizens;
+    private int                             killedMobs   = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -148,6 +155,7 @@ public class Colony implements IColony
 
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
+        killedMobs = compound.getInteger(TAG_MOB_KILLS);
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -255,6 +263,8 @@ public class Colony implements IColony
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
+        compound.setInteger(TAG_MOB_KILLS, killedMobs);
+
         // Permissions
         permissions.savePermissions(compound);
 
@@ -349,6 +359,47 @@ public class Colony implements IColony
     private void markDirty()
     {
         isDirty = true;
+    }
+
+    /**
+     * Increment the mobs killed by this colony.
+     * <p>
+     * Will award achievements for mobs killed.
+     */
+    public void incrementMobsKilled()
+    {
+        killedMobs++;
+        final int mobKills = this.getKilledMobs();
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementKillOneMob);
+        }
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill25Mobs);
+        }
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill100Mobs);
+        }
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill500Mobs);
+        }
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
+        }
+    }
+
+    /**
+     * get the amount of killed mobs.
+     *
+     * @return amount of mobs killed
+     */
+    public int getKilledMobs()
+    {
+        return killedMobs;
     }
 
     @NotNull
