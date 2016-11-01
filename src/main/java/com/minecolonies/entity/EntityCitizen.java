@@ -1137,7 +1137,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
-        if (shouldWorkWhileRaining())
+        if (this.getColonyJob() instanceof JobGuard)
         {
             return DesiredActivity.WORK;
         }
@@ -1146,7 +1146,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             return DesiredActivity.SLEEP;
         }
-        else if (worldObj.isRaining())
+        else if (worldObj.isRaining() && !shouldWorkWhileRaining())
         {
             return DesiredActivity.IDLE;
         }
@@ -1158,12 +1158,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Checks if the citizen should work even when it rains.
-     * @return true if his building level is bigger than 5 or if he is a guard
+     * @return true if his building level is bigger than 5
      */
     private boolean shouldWorkWhileRaining()
     {
-        return this.getWorkBuilding() != null
-                && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL || this.getColonyJob() instanceof JobGuard);
+        return this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL);
     }
 
     /**
