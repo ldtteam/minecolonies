@@ -47,7 +47,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     /**
      * How long to wait after looking to decide what to do.
      */
-    private static final int     LOOK_WAIT           = 200;
+    private static final int     LOOK_WAIT           = 100;
     /**
      * How long to wait after a cycle to run another.
      */
@@ -236,17 +236,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
-        if (buildingFarmer == null || checkForHoe())
+        if (buildingFarmer == null || checkForHoe() || buildingFarmer.getCurrentField() == null)
         {
             return AIState.PREPARING;
         }
 
         @Nullable final Field field = buildingFarmer.getCurrentField();
-
-        if (field == null)
-        {
-            return AIState.PREPARING;
-        }
 
         if (workingOffset != null)
         {
@@ -271,9 +266,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             field.setNeedsWork(false);
             return AIState.IDLE;
         }
-
-        // Set the delay based off the standard - level / divider. This was workingDelay
-        setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
         return AIState.FARMER_WORK;
     }
 
@@ -285,17 +277,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
-        if (buildingFarmer == null || checkForHoe())
+        if (buildingFarmer == null || checkForHoe() || buildingFarmer.getCurrentField() == null)
         {
             return AIState.PREPARING;
         }
 
         @Nullable final Field field = buildingFarmer.getCurrentField();
-
-        if (field == null)
-        {
-            return AIState.PREPARING;
-        }
 
         if (workingOffset != null)
         {
@@ -339,8 +326,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.IDLE;
         }
 
-        // Set the delay based off the standard - level / divider. This was workingDelay
-        setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
         return AIState.FARMER_INITIALIZE;
     }
 
@@ -353,17 +338,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
 
-        if (buildingFarmer == null)
+        if (buildingFarmer == null || checkForHoe() || buildingFarmer.getCurrentField() == null)
         {
             return AIState.PREPARING;
         }
 
         @Nullable final Field field = buildingFarmer.getCurrentField();
-
-        if (field == null)
-        {
-            return AIState.PREPARING;
-        }
 
         setDelay(LOOK_WAIT);
         if (handleOffsetHarvest(field))
@@ -478,18 +458,35 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (workingOffset == null)
         {
-            workingOffset = new BlockPos(field.getLengthPlusX(), 0, field.getWidthPlusZ());
+            workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
         }
         else
         {
-            if (workingOffset.getZ() <= -field.getWidthMinusZ() && workingOffset.getX() <= -field.getLengthMinusX())
+            final int absZ = Math.abs(workingOffset.getZ());
+            if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() >= field.getLengthPlusX())
             {
                 workingOffset = null;
                 return false;
             }
-            else if (workingOffset.getX() <= -field.getLengthMinusX())
+            else if (
+                        (
+                            //If we're checking an even row
+                            ((field.getLengthPlusX() - absZ) % 2 == 0)
+                            && workingOffset.getX() >= field.getLengthPlusX()
+                        )
+                        ||
+                        (
+                            //If we're checking an odd row
+                            ((field.getLengthPlusX() - absZ) % 2 == 1)
+                            && workingOffset.getX() <= -field.getLengthMinusX()
+                        )
+                    )
             {
-                workingOffset = new BlockPos(field.getLengthPlusX(), 0, workingOffset.getZ() - 1);
+                workingOffset = new BlockPos(workingOffset.getX(), 0, workingOffset.getZ() + 1);
+            }
+            else if ((field.getLengthPlusX() - absZ) % 2 == 0)
+            {
+                workingOffset = new BlockPos(workingOffset.getX() + 1, 0, workingOffset.getZ());
             }
             else
             {
@@ -510,26 +507,44 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (workingOffset == null)
         {
-            workingOffset = new BlockPos(field.getLengthPlusX(), 0, field.getWidthPlusZ());
+            workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
         }
 
+        int absZ = Math.abs(workingOffset.getZ());
         BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
 
         while (!shouldHarvest(position))
         {
-            if (workingOffset.getZ() <= -field.getWidthMinusZ() && workingOffset.getX() <= -field.getLengthMinusX())
+            if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() >= field.getLengthPlusX())
             {
                 workingOffset = null;
                 return false;
             }
-            else if (workingOffset.getX() <= -field.getLengthMinusX())
+            else if (
+                        (
+                            //If we're checking an even row
+                            ((field.getLengthPlusX() - absZ) % 2 == 0)
+                            && workingOffset.getX() >= field.getLengthPlusX()
+                        )
+                        ||
+                        (
+                            //If we're checking an odd row
+                            ((field.getLengthPlusX() - absZ) % 2 == 1)
+                            && workingOffset.getX() <= -field.getLengthMinusX()
+                        )
+                    )
             {
-                workingOffset = new BlockPos(field.getLengthPlusX(), 0, workingOffset.getZ() - 1);
+                workingOffset = new BlockPos(workingOffset.getX(), 0, workingOffset.getZ() + 1);
+            }
+            else if ((field.getLengthPlusX() - absZ) % 2 == 0)
+            {
+                workingOffset = new BlockPos(workingOffset.getX() + 1, 0, workingOffset.getZ());
             }
             else
             {
                 workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
             }
+            absZ = Math.abs(workingOffset.getZ());
             position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
         }
         return true;
