@@ -215,7 +215,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     public void attackEntityWithRangedAttack(@NotNull EntityLivingBase entityToAttack, float baseDamage)
     {
-        final EntityTippedArrow arrowEntity = new EntityTippedArrow(this.worker.worldObj, worker);
+        final EntityTippedArrow arrowEntity = new GuardArrow(this.worker.worldObj, worker);
         final double xVector = entityToAttack.posX - worker.posX;
         final double yVector = entityToAttack.getEntityBoundingBox().minY + entityToAttack.height / AIM_HEIGHT - arrowEntity.posY;
         final double zVector = entityToAttack.posZ - worker.posZ;
