@@ -2,8 +2,6 @@ package com.minecolonies.colony;
 
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.blocks.AbstractBlockHut;
-import com.minecolonies.blocks.BlockHutBaker;
-import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -101,26 +99,43 @@ public final class ColonyManager
      */
     public static void deleteColony(int id)
     {
-        final Colony colony = getColony(id);
-        colonies.remove(id);
-        coloniesByWorld.get(colony.getDimension()).remove(colony);
-        final Set<World> colonyWorlds = new HashSet<>();
-        for (CitizenData citizenData : colony.getCitizens().values())
+        try
         {
-            World world = citizenData.getCitizenEntity().getEntityWorld();
-            citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
-            colonyWorlds.add(world);
-        }
-        for (AbstractBuilding building : colony.getBuildings().values())
-        {
-            final BlockPos location = building.getLocation();
-            building.destroy();
-            for (World world : colonyWorlds)
+            final Colony colony = getColony(id);
+            Log.getLogger().info("Deleting colony " + id);
+            colonies.remove(id);
+            coloniesByWorld.get(colony.getDimension()).remove(colony);
+            final Set<World> colonyWorlds = new HashSet<>();
+            Log.getLogger().info("Removing citizens for " + id);
+            for (CitizenData citizenData : new ArrayList<>(colony.getCitizens().values()))
             {
-                if(world.getBlockState(location).getBlock() instanceof AbstractBlockHut){
-                    world.setBlockToAir(location);
+                Log.getLogger().info("Kill Citizen " + citizenData.getName());
+                World world = citizenData.getCitizenEntity().getEntityWorld();
+                citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
+                colonyWorlds.add(world);
+            }
+            Log.getLogger().info("Removing buildings for " + id);
+            for (AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
+            {
+
+                final BlockPos location = building.getLocation();
+                Log.getLogger().info("Delete Building at " + location);
+                building.destroy();
+                for (World world : colonyWorlds)
+                {
+                    Log.getLogger().info("Try out World " + world.getProviderName());
+                    if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
+                    {
+                        Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
+                        world.setBlockToAir(location);
+                    }
                 }
             }
+            Log.getLogger().info("Done with " + id);
+        }
+        catch (RuntimeException e)
+        {
+            Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
         }
     }
 
