@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * List all colonies.
  */
-public class RespawnCitizen extends AbstractSingleCommand
+public class RespawnCitizenCommand extends AbstractSingleCommand
 {
 
     public static final  String DESC                            = "respawn";
@@ -36,7 +36,7 @@ public class RespawnCitizen extends AbstractSingleCommand
      *
      * @param parents an array of all the parents.
      */
-    public RespawnCitizen(@NotNull final String... parents)
+    public RespawnCitizenCommand(@NotNull final String... parents)
     {
         super(parents);
     }

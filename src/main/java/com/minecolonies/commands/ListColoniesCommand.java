@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * List all colonies.
  */
-public class ListColonies extends AbstractSingleCommand
+public class ListColoniesCommand extends AbstractSingleCommand
 {
 
     private static final String ID_TEXT                = "§2ID: §f";
@@ -42,7 +42,7 @@ public class ListColonies extends AbstractSingleCommand
      *
      * @param parents an array of all the parents.
      */
-    public ListColonies(@NotNull final String... parents)
+    public ListColoniesCommand(@NotNull final String... parents)
     {
         super(parents);
     }
