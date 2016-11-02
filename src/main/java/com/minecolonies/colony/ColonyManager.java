@@ -1,6 +1,9 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.achievements.ModAchievements;
+import com.minecolonies.blocks.AbstractBlockHut;
+import com.minecolonies.blocks.BlockHutBaker;
+import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -13,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -44,6 +48,10 @@ public final class ColonyManager
     // Used to trigger loading/unloading colonies
     private static int     numWorldsLoaded;
     private static boolean saveNeeded;
+    /**
+     * The damage source used to kill citizens.
+     */
+    private static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
 
     private ColonyManager()
     {
@@ -84,6 +92,36 @@ public final class ColonyManager
         Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
         return colony;
+    }
+
+    /**
+     * Delete a colony and kill all citizens/purge all buildings.
+     *
+     * @param id the colonies id
+     */
+    public static void deleteColony(int id)
+    {
+        final Colony colony = getColony(id);
+        colonies.remove(id);
+        coloniesByWorld.get(colony.getDimension()).remove(colony);
+        final Set<World> colonyWorlds = new HashSet<>();
+        for (CitizenData citizenData : colony.getCitizens().values())
+        {
+            World world = citizenData.getCitizenEntity().getEntityWorld();
+            citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
+            colonyWorlds.add(world);
+        }
+        for (AbstractBuilding building : colony.getBuildings().values())
+        {
+            final BlockPos location = building.getLocation();
+            building.destroy();
+            for (World world : colonyWorlds)
+            {
+                if(world.getBlockState(location).getBlock() instanceof AbstractBlockHut){
+                    world.setBlockToAir(location);
+                }
+            }
+        }
     }
 
     /**

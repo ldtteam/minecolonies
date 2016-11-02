@@ -19,6 +19,7 @@ public class ColonyCommand extends AbstractSplitCommand
         .put(KillCitizenCommand.DESC, new KillCitizenCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, KillCitizenCommand.DESC))
         .put(RespawnCitizenCommand.DESC, new RespawnCitizenCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, RespawnCitizenCommand.DESC))
         .put(ShowColonyInfoCommand.DESC, new ShowColonyInfoCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, ShowColonyInfoCommand.DESC))
+        .put(DeleteColonyCommand.DESC, new DeleteColonyCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, DeleteColonyCommand.DESC))
         .build();
 
     /**
