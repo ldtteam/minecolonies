@@ -237,7 +237,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             job.setSchematic(new SchematicWrapper(world, workOrder.getSchematicName()));
         }
-        catch (IllegalStateException e)
+        catch (RuntimeException e)
         {
             Log.getLogger().warn(String.format("Schematic: (%s) does not exist - removing build request", workOrder.getSchematicName()), e);
             job.setSchematic(null);

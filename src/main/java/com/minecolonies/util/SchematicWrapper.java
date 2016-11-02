@@ -127,7 +127,7 @@ public final class SchematicWrapper
      * @param res the location to pull the stream from
      * @return a stream from this location
      */
-    private static InputStream getStream(@NotNull ResourceLocation res)
+    public static InputStream getStream(@NotNull ResourceLocation res)
     {
         try
         {
