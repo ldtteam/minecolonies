@@ -3,6 +3,7 @@ package com.minecolonies.colony.workorders;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
@@ -27,7 +28,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private static final String TAG_SCHEMATIC_NAME    = "schematicName";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
 
-    private static final String DEFAULT_STYLE = "default";
+    private static final String DEFAULT_STYLE  = "default";
 
     protected BlockPos buildingLocation;
     protected int      buildingRotation;
@@ -210,8 +211,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
      */
     private boolean canBuildHut(int builderLevel, @NotNull CitizenData citizen, @NotNull Colony colony)
     {
-        return builderLevel >= upgradeLevel || builderLevel == 5
-                 || citizen.getWorkBuilding().getID().equals(buildingLocation)
+        return builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
+                 || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))
                  || isLocationTownhall(colony, buildingLocation);
     }
 
@@ -237,9 +238,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
         }
     }
 
-    private boolean isLocationTownhall(@NotNull Colony colony, BlockPos buildingLocation)
+    private static boolean isLocationTownhall(@NotNull Colony colony, BlockPos buildingLocation)
     {
-        return colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation);
+        return colony.hasTownHall() && colony.getTownHall() != null && colony.getTownHall().getID().equals(buildingLocation);
     }
 
     /**

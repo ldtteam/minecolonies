@@ -212,17 +212,17 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             setDelay(BASE_DELAY);
             return AIState.GUARD_GET_TARGET;
         }
-        else if (!worker.getEntitySenses().canSee(entityList.get(0)) || !(entityList.get(0)).isEntityAlive())
-        {
-            entityList.remove(0);
-            setDelay(BASE_DELAY);
-            return AIState.GUARD_GET_TARGET;
-        }
-        else
+        else if (worker.getEntitySenses().canSee(entityList.get(0)) && (entityList.get(0)).isEntityAlive())
         {
             worker.getNavigator().clearPathEntity();
             targetEntity = (EntityLivingBase) entityList.get(0);
             return AIState.GUARD_HUNT_DOWN_TARGET;
+        }
+        else
+        {
+            entityList.remove(0);
+            setDelay(BASE_DELAY);
+            return AIState.GUARD_GET_TARGET;
         }
     }
 
@@ -267,7 +267,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     private double getMaxVision()
     {
-        BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
+        final BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
         return (guardTower == null) ? 0 : (MAX_ATTACK_DISTANCE + guardTower.getBonusVision());
     }
 
@@ -278,7 +278,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     protected int getMaxAttacksUntilRestock()
     {
-        BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
+        final BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
         return (guardTower == null) ? 0 : (MAX_ATTACKS + guardTower.getBuildingLevel());
     }
 

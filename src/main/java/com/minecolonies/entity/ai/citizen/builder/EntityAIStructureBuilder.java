@@ -362,7 +362,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         WorkOrderBuild wo = job.getWorkOrder();
 
-        if(job.getSchematic() == null){
+        if(job.getSchematic() == null)
+        {
             //fix for bad schematics
             job.complete();
         }
@@ -423,7 +424,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState requestMaterials()
     {
-        if(job.getSchematic() == null){
+        if(job.getSchematic() == null)
+        {
             //fix for bad schematics
             job.complete();
         }
@@ -484,7 +486,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState structureStep()
     {
-        if(job.getSchematic() == null){
+        if(job.getSchematic() == null)
+        {
             //fix for bad schematics
             job.complete();
         }
@@ -542,7 +545,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState decorationStep()
     {
-        if(job.getSchematic() == null){
+        if(job.getSchematic() == null)
+        {
             //fix for bad schematics
             job.complete();
         }
@@ -808,7 +812,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @NotNull
     private AIState completeBuild()
     {
-        if(job.getSchematic() == null){
+        if(job.getSchematic() == null)
+        {
             //fix for bad schematics
             job.complete();
         }

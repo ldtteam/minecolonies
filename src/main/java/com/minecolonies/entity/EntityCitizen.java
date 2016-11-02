@@ -230,7 +230,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
 
-        if (this.getColonyJob() == null || !this.getColonyJob().getName().equals("com.minecolonies.job.Guard"))
+        if (this.getColonyJob() == null || !"com.minecolonies.job.Guard".equals(this.getColonyJob().getName()))
         {
             this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
         }
@@ -386,17 +386,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        double xDifference = block.getX() - this.posX;
-        double zDifference = block.getZ() - this.posZ;
-        double yDifference = block.getY() - (this.posY + (double) this.getEyeHeight());
+        final double xDifference = block.getX() - this.posX;
+        final double zDifference = block.getZ() - this.posZ;
+        final double yDifference = block.getY() - (this.posY + (double) this.getEyeHeight());
 
-        double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
-        double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
-        double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
+        final double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
+        final double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
+        final double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
         this.setRotation((float) updateRotation(this.rotationYaw, intendedRotationYaw, 30), (float) updateRotation(this.rotationPitch, intendedRotationPitch, 30));
 
-        double goToX = xDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
-        double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        final double goToX = xDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
         moveEntity(goToX, 0, goToZ);
@@ -509,13 +509,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public boolean attackEntityFrom(@NotNull DamageSource damageSource, float damage)
     {
-        Entity sourceEntity = damageSource.getEntity();
+        final Entity sourceEntity = damageSource.getEntity();
         if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
         {
             return false;
         }
 
-        boolean result = super.attackEntityFrom(damageSource, damage);
+        final boolean result = super.attackEntityFrom(damageSource, damage);
 
         if (damageSource.isMagicDamage() || damageSource.isFireDamage())
         {
@@ -540,7 +540,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (colony != null)
         {
-            if (getColonyJob() != null && getColonyJob() instanceof JobGuard)
+            if (getColonyJob() instanceof JobGuard)
             {
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
@@ -618,7 +618,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void updateArmorDamage(double damage)
     {
-        for (ItemStack stack : this.getArmorInventoryList())
+        for (final ItemStack stack : this.getArmorInventoryList())
         {
             if (stack == null || stack.getItem() == null || !(stack.getItem() instanceof ItemArmor))
             {

@@ -399,7 +399,9 @@ public class InventoryCitizen implements IInventory
         {
             materialStore = new MaterialStore(MaterialStore.Type.INVENTORY, system);
         }
-    }    /**
+    }
+
+    /**
      * Get the name of this object. For citizens this returns their name.
      *
      * @return the name of the inventory.

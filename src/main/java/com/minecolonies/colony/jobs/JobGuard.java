@@ -41,7 +41,7 @@ public class JobGuard extends AbstractJob
     @Override
     public RenderBipedCitizen.Model getModel()
     {
-        int chance = new Random().nextInt(GUARD_CHANCE);
+        final int chance = new Random().nextInt(GUARD_CHANCE);
         if (chance == 1)
         {
             task = GuardJob.KNIGHT;
@@ -52,7 +52,7 @@ public class JobGuard extends AbstractJob
     }
 
     /**
-     * Override to add Job-specific AI tasks to the given EntityAITask list
+     * Override to add Job-specific AI tasks to the given EntityAITask list.
      */
     @NotNull
     @Override

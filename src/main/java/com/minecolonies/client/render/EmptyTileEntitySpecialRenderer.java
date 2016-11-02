@@ -30,12 +30,8 @@ public class EmptyTileEntitySpecialRenderer extends TileEntitySpecialRenderer<Ti
     @Override
     public void renderTileEntityAt(TileEntityColonyBuilding tileEntity, double x, double y, double z, float partialTicks, int destroyStage)
     {
-        if(tileEntity.getBuilding() instanceof BuildingTownHall)
-        {
-            String text = "Blablablah";
-            FontRenderer fontRenderer = this.getFontRenderer();
-
-            fontRenderer.drawString(text, 10, fontRenderer.FONT_HEIGHT, 0xFFFF00FF);
-        }
+        /*
+         * Intentionally left empty.
+         */
     }
 }
