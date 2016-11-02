@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * List all colonies.
  */
-public class ListCitizens extends AbstractSingleCommand
+public class ListCitizensCommand extends AbstractSingleCommand
 {
 
     public static final  String DESC                    = "list";
@@ -43,7 +43,7 @@ public class ListCitizens extends AbstractSingleCommand
      *
      * @param parents an array of all the parents.
      */
-    public ListCitizens(@NotNull final String... parents)
+    public ListCitizensCommand(@NotNull final String... parents)
     {
         super(parents);
     }

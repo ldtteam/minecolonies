@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * List all colonies.
  */
-public class KillCitizen extends AbstractSingleCommand
+public class KillCitizenCommand extends AbstractSingleCommand
 {
 
     public static final  String       DESC                            = "kill";
@@ -40,7 +40,7 @@ public class KillCitizen extends AbstractSingleCommand
      *
      * @param parents an array of all the parents.
      */
-    public KillCitizen(@NotNull final String... parents)
+    public KillCitizenCommand(@NotNull final String... parents)
     {
         super(parents);
     }

@@ -19,7 +19,7 @@ import java.util.UUID;
 /**
  * List all colonies.
  */
-public class ColonyInfo extends AbstractSingleCommand
+public class ShowColonyInfoCommand extends AbstractSingleCommand
 {
 
     public static final  String DESC                       = "info";
@@ -37,7 +37,7 @@ public class ColonyInfo extends AbstractSingleCommand
      *
      * @param parents an array of all the parents.
      */
-    public ColonyInfo(@NotNull final String... parents)
+    public ShowColonyInfoCommand(@NotNull final String... parents)
     {
         super(parents);
     }
