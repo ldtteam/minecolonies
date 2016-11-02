@@ -140,7 +140,7 @@ public class Field extends Container
     /**
      * Checks if the field needsWork (Hoeig, Seedings, Farming etc).
      */
-    private boolean needsWork = false;
+    private boolean needsWork = true;
 
     /**
      * Is the field new or recently reseeded?
