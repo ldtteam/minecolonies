@@ -1,7 +1,14 @@
 package com.minecolonies.client.render;
 
+import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+
+import java.util.List;
 
 /**
  * Renderer for a normal tile entity (Nothing special with rendering).
@@ -23,6 +30,12 @@ public class EmptyTileEntitySpecialRenderer extends TileEntitySpecialRenderer<Ti
     @Override
     public void renderTileEntityAt(TileEntityColonyBuilding tileEntity, double x, double y, double z, float partialTicks, int destroyStage)
     {
+        if(tileEntity.getBuilding() instanceof BuildingTownHall)
+        {
+            String text = "Blablablah";
+            FontRenderer fontRenderer = this.getFontRenderer();
 
+            fontRenderer.drawString(text, 10, fontRenderer.FONT_HEIGHT, 0xFFFF00FF);
+        }
     }
 }
