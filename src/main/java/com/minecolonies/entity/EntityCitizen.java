@@ -434,7 +434,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         for (@NotNull EntityXPOrb orb : getXPOrbsOnGrid())
         {
-            addExperience(orb.getXpValue());
+            addExperience(orb.getXpValue()/2);
             orb.setDead();
         }
     }
