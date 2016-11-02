@@ -1,6 +1,5 @@
 package com.minecolonies.commands;
 
-import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.IColony;
 import com.mojang.authlib.GameProfile;
@@ -23,12 +22,6 @@ public class DeleteColonyCommand extends AbstractSingleCommand
 {
 
     public static final  String DESC                       = "delete";
-    private static final String ID_TEXT                    = "§2ID: §f";
-    private static final String NAME_TEXT                  = "§2 Name: §f";
-    private static final String MAYOR_TEXT                 = "§2Mayor: §f";
-    private static final String COORDINATES_TEXT           = "§2Coordinates: §f";
-    private static final String COORDINATES_XYZ            = "§4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String CITIZENS                   = "§2Citizens: §f";
     private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
 
