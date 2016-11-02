@@ -505,46 +505,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean handleOffsetHarvest(@NotNull final Field field)
     {
-        if (workingOffset == null)
-        {
-            workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
-        }
-
-        int absZ = Math.abs(workingOffset.getZ());
+        handleOffset(field);
+        
         BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
-
+        
         while (!shouldHarvest(position))
         {
-            if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() >= field.getLengthPlusX())
+            if (!handleOffset(field))
             {
-                workingOffset = null;
                 return false;
             }
-            else if (
-                        (
-                            //If we're checking an even row
-                            ((field.getLengthPlusX() - absZ) % 2 == 0)
-                            && workingOffset.getX() >= field.getLengthPlusX()
-                        )
-                        ||
-                        (
-                            //If we're checking an odd row
-                            ((field.getLengthPlusX() - absZ) % 2 == 1)
-                            && workingOffset.getX() <= -field.getLengthMinusX()
-                        )
-                    )
-            {
-                workingOffset = new BlockPos(workingOffset.getX(), 0, workingOffset.getZ() + 1);
-            }
-            else if ((field.getLengthPlusX() - absZ) % 2 == 0)
-            {
-                workingOffset = new BlockPos(workingOffset.getX() + 1, 0, workingOffset.getZ());
-            }
-            else
-            {
-                workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
-            }
-            absZ = Math.abs(workingOffset.getZ());
             position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
         }
         return true;
