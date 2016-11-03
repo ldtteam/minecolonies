@@ -78,6 +78,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private boolean shouldTryToGetSeed = true;
 
     /**
+     * Variables used in handleOffset
+     */
+    private int totalDis;
+    private int dist;
+    private boolean horizontal;
+
+    /**
      * Constructor for the Farmer.
      * Defines the tasks the Farmer executes.
      *
@@ -166,7 +173,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             else if (containsPlants(currentField))
             {
                 currentField.setInitialized(true);
-                return AIState.FARMER_OBSERVE;
+                currentField.setNeedsWork(false);
             }
         }
         else
@@ -221,6 +228,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 if (isInHut(seeds))
                 {
                     requestSeeds = false;
+                    isInHut(seeds);
                 }
                 shouldTryToGetSeed = requestSeeds;
                 if (requestSeeds)
@@ -463,17 +471,15 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (workingOffset == null)
         {
-            workingOffset = new BlockPos(1, 0,0);
+            workingOffset = new BlockPos(0, 0,0);
             totalDis = 1;
             dist = 0;
+            horizontal = true;
         }
         else
         {
-            final int absZ = Math.abs(workingOffset.getZ());
-            if (Math.abs(workingOffset.getZ()) >= field.getWidthPlusZ() && Math.abs(workingOffset.getX()) >= field.getLengthPlusX())
+            if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() <= -field.getLengthMinusX())
             {
-                System.out.println(field.getWidthPlusZ());
-                System.out.println(field.getLengthPlusX());
                 workingOffset = null;
                 return false;
             }
@@ -481,24 +487,24 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 if (totalDis == dist)
                 {
-                 horizontal = !horizontal;
-                 dist = 0;
-                 if (horizontal)
-                 {
-                    totalDis++; 
-                 }
+                    horizontal = !horizontal;
+                    dist = 0;
+                    if (horizontal)
+                    {
+                        totalDis++;
+                    }
                 }
-                if (horizontal){
+                if (horizontal)
+                {
                     workingOffset = new BlockPos(workingOffset.getX(),0,workingOffset.getZ()-Math.pow(-1,totalDis));
-                   
                 }
                 else
                 {
                     workingOffset = new BlockPos(workingOffset.getX()-Math.pow(-1,totalDis),0,workingOffset.getZ());
                 }
-                 dist++;
+                dist++;
             }
-    
+
             /*
             else if (
                         (
@@ -537,7 +543,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean handleOffsetHarvest(@NotNull final Field field)
     {
-        handleOffset(field);
+        if (workingOffset == null)
+        {
+            handleOffset(field);
+        }
 
         BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
 
