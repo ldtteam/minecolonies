@@ -469,7 +469,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
         double localXp = xp * skillModifier / EXP_DIVIDER;
         final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
-        final double bonusXp = workBuildingLevel*(1+citizenHutLevel) / Math.log(this.getExperienceLevel());
+        final double bonusXp = workBuildingLevel*(1+citizenHutLevel) / Math.log(this.getExperienceLevel() + 2);
 
         localXp = localXp * bonusXp;
         if (localXp > maxValue)
