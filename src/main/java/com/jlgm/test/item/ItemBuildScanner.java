@@ -20,7 +20,8 @@ import net.minecraft.world.gen.structure.template.PlacementSettings;
 public class ItemBuildScanner extends Item{
 	
 	@Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    {
 		if(!playerIn.isSneaking()){
 			TESTMain.instance.firstPos = pos;
 			playerIn.addChatMessage(new TextComponentString("First pos set at X:" + pos.getX() + ", Y:" + pos.getY() + 1 + ", Z:" + pos.getZ()));

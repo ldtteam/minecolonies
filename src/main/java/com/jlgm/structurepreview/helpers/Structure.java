@@ -44,99 +44,111 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 
-public class Structure{
-	
-	private Template structure;
-    private final Minecraft mc;
-    private PlacementSettings settings;
-	
-    private final int colorA = 255;
-    private final int colorR = 255;
-    private final int colorG = 255;
-    private final int colorB = 255;
-    private float brightness = 0.9F;
-    
-	public Structure(@Nullable World world, String structureName, PlacementSettings settings){
-		World worldObj = world;
-		if(worldObj == null)
-			worldObj = Minecraft.getMinecraft().getIntegratedServer().getServer().worldServerForDimension(Minecraft.getMinecraft().thePlayer.dimension);
-		WorldServer worldserver = (WorldServer)worldObj;
-		MinecraftServer minecraftserver = worldObj.getMinecraftServer();
-		TemplateManager templatemanager = worldserver.getStructureTemplateManager();
-		this.structure = templatemanager.func_189942_b(minecraftserver, new ResourceLocation(structureName));
-		this.settings = settings;
-		this.mc = Minecraft.getMinecraft();
-	}
-	
-	public boolean doesExist(){
-		return structure == null ? false : true;
-	}
-	
-	public Template.BlockInfo[] getBlockInfo(){
+public class Structure
+{
+
+    private       Template          structure;
+    private final Minecraft         mc;
+    private       PlacementSettings settings;
+
+    private final int   colorA     = 255;
+    private final int   colorR     = 255;
+    private final int   colorG     = 255;
+    private final int   colorB     = 255;
+    private       float brightness = 0.9F;
+
+    public Structure(@Nullable World world, String structureName, PlacementSettings settings)
+    {
+        World worldObj = world;
+        if (worldObj == null)
+            worldObj = Minecraft.getMinecraft().getIntegratedServer().getServer().worldServerForDimension(Minecraft.getMinecraft().thePlayer.dimension);
+        WorldServer worldserver = (WorldServer) worldObj;
+        MinecraftServer minecraftserver = worldObj.getMinecraftServer();
+        TemplateManager templatemanager = worldserver.getStructureTemplateManager();
+        this.structure = templatemanager.func_189942_b(minecraftserver, new ResourceLocation(structureName));
+        this.settings = settings;
+        this.mc = Minecraft.getMinecraft();
+    }
+
+    public boolean doesExist()
+    {
+        return structure == null ? false : true;
+    }
+
+    public Template.BlockInfo[] getBlockInfo()
+    {
         Template.BlockInfo[] blockList = new Template.BlockInfo[structure.blocks.size()];
         blockList = structure.blocks.toArray(blockList);
         return blockList;
-	}
-	
-	public Template.BlockInfo[] getBlockInfoWithSettings(PlacementSettings settings){
+    }
+
+    public Template.BlockInfo[] getBlockInfoWithSettings(PlacementSettings settings)
+    {
         Template.BlockInfo[] blockList = new Template.BlockInfo[structure.blocks.size()];
         blockList = structure.blocks.toArray(blockList);
-        
-        for(int i = 0; i < blockList.length; i++){
-        	IBlockState finalState = blockList[i].blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());
-        	BlockPos finalPos = Template.transformedBlockPos(settings, blockList[i].pos);
-        	Template.BlockInfo finalInfo = new Template.BlockInfo(finalPos, finalState, blockList[i].tileentityData);
-        	blockList[i] = finalInfo;
+
+        for (int i = 0; i < blockList.length; i++)
+        {
+            IBlockState finalState = blockList[i].blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());
+            BlockPos finalPos = Template.transformedBlockPos(settings, blockList[i].pos);
+            Template.BlockInfo finalInfo = new Template.BlockInfo(finalPos, finalState, blockList[i].tileentityData);
+            blockList[i] = finalInfo;
         }
         return blockList;
-	}
-	
-	public Entity[] getEntityInfo(World world, BlockPos pos){
+    }
+
+    public Entity[] getEntityInfo(World world, BlockPos pos)
+    {
         Template.EntityInfo[] entityInfoList = new Template.EntityInfo[structure.entities.size()];
-        entityInfoList = structure.entities.toArray(entityInfoList);
-        
+        entityInfoList = structure.blocks.toArray(entityInfoList);
+
         Entity[] entityList = null;
-        
-        for(int i = 0; i < entityInfoList.length; i++){
-        	Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
-        	Vec3d entityVec = entityInfoList[i].pos.add(new Vec3d(pos));
-        	finalEntity.setPosition(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord);
+
+        for (int i = 0; i < entityInfoList.length; i++)
+        {
+            Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
+            Vec3d entityVec = entityInfoList[i].pos.add(new Vec3d(pos));
+            finalEntity.setPosition(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord);
         }
-        
+
         return entityList;
-	}
-	
-	public Entity[] getEntityInfoWithSettings(World world, BlockPos pos, PlacementSettings settings){
+    }
+
+    public Entity[] getEntityInfoWithSettings(World world, BlockPos pos, PlacementSettings settings)
+    {
         Template.EntityInfo[] entityInfoList = new Template.EntityInfo[structure.entities.size()];
         entityInfoList = structure.entities.toArray(entityInfoList);
-        
+
         Entity[] entityList = new Entity[entityInfoList.length];
-        
-        for(int i = 0; i < entityInfoList.length; i++){
-        	Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
-        	Vec3d entityVec = this.transformedVec3d(settings, entityInfoList[i].pos).add(new Vec3d(pos));
+
+        for (int i = 0; i < entityInfoList.length; i++)
+        {
+            Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
+            Vec3d entityVec = this.transformedVec3d(settings, entityInfoList[i].pos).add(new Vec3d(pos));
             finalEntity.prevRotationYaw = finalEntity.getMirroredYaw(settings.getMirror()) - 90;
             float f = finalEntity.getMirroredYaw(settings.getMirror());
             f = f + (finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
             finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, f, finalEntity.rotationPitch);
-        	entityList[i] = finalEntity;
+            entityList[i] = finalEntity;
         }
-        
+
         return entityList;
-	}
-	
-	public BlockPos getSize(Rotation rotation){
-		return this.structure.transformedSize(rotation);
-	}
-	
-	public void setPlacementSettings(PlacementSettings settings){
-		this.settings = settings;
-	}
-	
+    }
+
+    public BlockPos getSize(Rotation rotation)
+    {
+        return this.structure.transformedSize(rotation);
+    }
+
+    public void setPlacementSettings(PlacementSettings settings)
+    {
+        this.settings = settings;
+    }
+
     private static Vec3d transformedVec3d(PlacementSettings settings, Vec3d vec)
     {
-    	Mirror mirrorIn = settings.getMirror();
-    	Rotation rotationIn = settings.getRotation();
+        Mirror mirrorIn = settings.getMirror();
+        Rotation rotationIn = settings.getRotation();
         double d0 = vec.xCoord;
         double d1 = vec.yCoord;
         double d2 = vec.zCoord;
@@ -166,29 +178,33 @@ public class Structure{
                 return flag ? new Vec3d(d0, d1, d2) : vec;
         }
     }
-    
-    public void renderStructure(BlockPos startingPos, final World clientWorld, final EntityPlayer player, final float partialTicks){
-    	Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
-    	Entity[] entityList = this.getEntityInfoWithSettings(clientWorld, startingPos, this.settings);
-    	
-        for(int progress = 0; progress < blockList.length; progress++){
-			Block block = blockList[progress].blockState.getBlock();
-			IBlockState iblockstate = blockList[progress].blockState;
-			BlockPos blockpos = blockList[progress].pos.add(startingPos);
-			IBlockState iblockextendedstate = block.getExtendedState(iblockstate, clientWorld, blockpos);
-			IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
-			TileEntity tileentity = null;
-			if(block.hasTileEntity(iblockstate)){
-				tileentity = block.createTileEntity(clientWorld, iblockstate);
-				tileentity.readFromNBT(blockList[progress].tileentityData);
-			}
-        	ModelHolder models = new ModelHolder(blockpos, iblockstate, iblockextendedstate, tileentity, ibakedmodel);
-        	this.getQuads(models, models.quads);
-        	this.renderGhost(clientWorld, models, player, partialTicks);
+
+    public void renderStructure(BlockPos startingPos, final World clientWorld, final EntityPlayer player, final float partialTicks)
+    {
+        Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
+        Entity[] entityList = this.getEntityInfoWithSettings(clientWorld, startingPos, this.settings);
+
+        for (int progress = 0; progress < blockList.length; progress++)
+        {
+            Block block = blockList[progress].blockState.getBlock();
+            IBlockState iblockstate = blockList[progress].blockState;
+            BlockPos blockpos = blockList[progress].pos.add(startingPos);
+            IBlockState iblockextendedstate = block.getExtendedState(iblockstate, clientWorld, blockpos);
+            IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
+            TileEntity tileentity = null;
+            if (block.hasTileEntity(iblockstate))
+            {
+                tileentity = block.createTileEntity(clientWorld, iblockstate);
+                tileentity.readFromNBT(blockList[progress].tileentityData);
+            }
+            ModelHolder models = new ModelHolder(blockpos, iblockstate, iblockextendedstate, tileentity, ibakedmodel);
+            this.getQuads(models, models.quads);
+            this.renderGhost(clientWorld, models, player, partialTicks);
         }
-        
-        for(int i = 0; i < entityList.length; i++){
-        	Minecraft.getMinecraft().getRenderManager().renderEntityStatic(entityList[i], 0.0F, true);
+
+        for (int i = 0; i < entityList.length; i++)
+        {
+            Minecraft.getMinecraft().getRenderManager().renderEntityStatic(entityList[i], 0.0F, true);
         }
     }
 
@@ -198,7 +214,7 @@ public class Structure{
 
         IBlockState actualState = holder.actualState;
         Block block = actualState.getBlock();
-        
+
         if (actualState.getRenderType() == EnumBlockRenderType.MODEL)
         {
             BlockRenderLayer originalLayer = MinecraftForgeClient.getRenderLayer();
@@ -228,13 +244,18 @@ public class Structure{
             if (te.shouldRenderInPass(pass))
             {
                 TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
-                terd.func_190056_a(fakeWorld, Minecraft.getMinecraft().renderEngine, Minecraft.getMinecraft().fontRendererObj, new FakeEntity(fakeWorld), (RayTraceResult) null, 0.0F);
+                terd.func_190056_a(fakeWorld,
+                        Minecraft.getMinecraft().renderEngine,
+                        Minecraft.getMinecraft().fontRendererObj,
+                        new FakeEntity(fakeWorld),
+                        (RayTraceResult) null,
+                        0.0F);
                 GL11.glPushMatrix();
-                	terd.renderEngine = Minecraft.getMinecraft().renderEngine;
-                	terd.preDrawBatch();
-                	GL11.glColor4f((float) (this.colorR / 255), (float) (this.colorG / 255), (float) (this.colorB / 255), (this.colorA / 255));
-	                terd.renderTileEntity(te, partialTicks, -1);
-	                terd.drawBatch(pass);
+                terd.renderEngine = Minecraft.getMinecraft().renderEngine;
+                terd.preDrawBatch();
+                GL11.glColor4f((float) (this.colorR / 255), (float) (this.colorG / 255), (float) (this.colorB / 255), (this.colorA / 255));
+                terd.renderTileEntity(te, partialTicks, -1);
+                terd.drawBatch(pass);
                 GL11.glPopMatrix();
             }
         }
@@ -265,7 +286,7 @@ public class Structure{
 
         GlStateManager.color(1f, 1f, 1f, 1f);
 
-        int alpha = ((int)(1.0F * 0xFF)) << 24;
+        int alpha = ((int) (1.0F * 0xFF)) << 24;
 
         GlStateManager.enableBlend();
         GlStateManager.enableTexture2D();
@@ -339,7 +360,7 @@ public class Structure{
             int B = (this.colorB) & 0x000000FF;
             int finalColor = 0x00000000 | A | R | G | B;
             LightUtil.renderQuadColor(buffer, quad, color);
-            
+
             tessellator.draw();
         }
     }

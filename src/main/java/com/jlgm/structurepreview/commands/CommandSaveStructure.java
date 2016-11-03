@@ -21,81 +21,100 @@ import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.gen.structure.template.TemplateManager;
 
-public class CommandSaveStructure implements ICommand {
-	
-	private final List aliases;
-	
-	public CommandSaveStructure(){
-		aliases = new ArrayList();
-		aliases.add("structure");
-		aliases.add("struct");
-	}
-	
-	@Override
-	public int compareTo(ICommand arg0) {
-		return 0;
-	}
+public class CommandSaveStructure implements ICommand
+{
 
-	@Override
-	public String getCommandName() {
-		return "structure";
-	}
+    private final List aliases;
 
-	@Override
-	public String getCommandUsage(ICommandSender sender) {
-		return "structure <text>";
-	}
+    public CommandSaveStructure()
+    {
+        aliases = new ArrayList();
+        aliases.add("structure");
+        aliases.add("struct");
+    }
 
-	@Override
-	public List<String> getCommandAliases() {
-		return this.aliases;
-	}
+    @Override
+    public int compareTo(ICommand arg0)
+    {
+        return 0;
+    }
 
-	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		if(args.length != 0){
-			BlockPos firstPos = TESTMain.instance.firstPos;
-			BlockPos secondPos = TESTMain.instance.secondPos;
-			if(!(firstPos == null || secondPos == null)){
-				
-		        BlockPos blockpos = new BlockPos(Math.min(firstPos.getX(), secondPos.getX()), Math.min(firstPos.getY(), secondPos.getY()), Math.min(firstPos.getZ(), secondPos.getZ()));
-		        BlockPos blockpos1 = new BlockPos(Math.max(firstPos.getX(), secondPos.getX()), Math.max(firstPos.getY(), secondPos.getY()), Math.max(firstPos.getZ(), secondPos.getZ()));
-				BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
-				
-	            WorldServer worldserver = (WorldServer)sender.getEntityWorld();
-	            MinecraftServer minecraftserver = server;
-	            TemplateManager templatemanager = worldserver.getStructureTemplateManager();
-	            Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(args[0]));
-	            template.takeBlocksFromWorld(sender.getEntityWorld(), blockpos, size, true, Blocks.field_189881_dj);
-	            template.setAuthor(sender.getName());
-	            templatemanager.writeTemplate(minecraftserver, new ResourceLocation(args[0]));
-	            sender.addChatMessage(new TextComponentString("Structure scanned! " + firstPos.subtract(secondPos)));
-	            
-	            Structure structure = new Structure(null, args[0], new PlacementSettings().setRotation(StructPrevMath.getRotationFromYaw()).setMirror(Mirror.NONE));
-	            System.out.println(args[0] + " " + structure.getBlockInfo().length);
-			}else{
-				sender.addChatMessage(new TextComponentString("Select a range using the build scanner tool."));
-			}
-		}else{
-			sender.addChatMessage(new TextComponentString("Invalid argument."));
-		}
-	}
+    @Override
+    public String getCommandName()
+    {
+        return "structure";
+    }
 
-	@Override
-	public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-		return true;
-	}
+    @Override
+    public String getCommandUsage(ICommandSender sender)
+    {
+        return "structure <text>";
+    }
 
-	@Override
-	public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args,
-			BlockPos pos) {
-		return null;
-	}
+    @Override
+    public List<String> getCommandAliases()
+    {
+        return this.aliases;
+    }
 
-	@Override
-	public boolean isUsernameIndex(String[] args, int index) {
-		return false;
-	}
+    @Override
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    {
+        if (args.length != 0)
+        {
+            BlockPos firstPos = TESTMain.instance.firstPos;
+            BlockPos secondPos = TESTMain.instance.secondPos;
+            if (!(firstPos == null || secondPos == null))
+            {
+
+                BlockPos blockpos =
+                        new BlockPos(Math.min(firstPos.getX(), secondPos.getX()), Math.min(firstPos.getY(), secondPos.getY()), Math.min(firstPos.getZ(), secondPos.getZ()));
+                BlockPos blockpos1 =
+                        new BlockPos(Math.max(firstPos.getX(), secondPos.getX()), Math.max(firstPos.getY(), secondPos.getY()), Math.max(firstPos.getZ(), secondPos.getZ()));
+                BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
+
+                WorldServer worldserver = (WorldServer) sender.getEntityWorld();
+                MinecraftServer minecraftserver = server;
+                TemplateManager templatemanager = worldserver.getStructureTemplateManager();
+                Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(args[0]));
+                template.takeBlocksFromWorld(sender.getEntityWorld(), blockpos, size, true, Blocks.STRUCTURE_VOID);
+                template.setAuthor(sender.getName());
+                templatemanager.writeTemplate(minecraftserver, new ResourceLocation(args[0]));
+                sender.addChatMessage(new TextComponentString("Structure scanned! " + firstPos.subtract(secondPos)));
+
+                Structure structure = new Structure(null, args[0], new PlacementSettings().setRotation(StructPrevMath.getRotationFromYaw()).setMirror(Mirror.NONE));
+                System.out.println(args[0] + " " + structure.getBlockInfo().length);
+            }
+            else
+            {
+                sender.addChatMessage(new TextComponentString("Select a range using the build scanner tool."));
+            }
+        }
+        else
+        {
+            sender.addChatMessage(new TextComponentString("Invalid argument."));
+        }
+    }
+
+    @Override
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
+    {
+        return true;
+    }
+
+    @Override
+    public List<String> getTabCompletionOptions(
+            MinecraftServer server, ICommandSender sender, String[] args,
+            BlockPos pos)
+    {
+        return null;
+    }
+
+    @Override
+    public boolean isUsernameIndex(String[] args, int index)
+    {
+        return false;
+    }
 
 	
 	/*Load structure
