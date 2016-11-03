@@ -452,10 +452,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         worker.setHeldItem(getHoeSlot());
     }
-    
-    private int dist = 0;
-    private boolean horizontal = false;
-    private int totalDis = 1;
 
     /**
      * Handles the offset of the field for the farmer.
@@ -467,90 +463,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (workingOffset == null)
         {
-            workingOffset = new BlockPos(1, 0,0);
-            totalDis = 1;
-            dist = 0;
+            workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
         }
         else
         {
             final int absZ = Math.abs(workingOffset.getZ());
-            if (Math.abs(workingOffset.getZ()) >= field.getWidthPlusZ() && Math.abs(workingOffset.getX()) >= field.getLengthPlusX())
-            {
-                System.out.println(field.getWidthPlusZ());
-                System.out.println(field.getLengthPlusX());
-                workingOffset = null;
-                return false;
-            }
-            else
-            {
-                if (totalDis == dist)
-                {
-                 horizontal = !horizontal;
-                 dist = 0;
-                 if (horizontal)
-                 {
-                    totalDis++; 
-                 }
-                }
-                if (horizontal){
-                    workingOffset = new BlockPos(workingOffset.getX(),0,workingOffset.getZ()-Math.pow(-1,totalDis));
-                   
-                }
-                else
-                {
-                    workingOffset = new BlockPos(workingOffset.getX()-Math.pow(-1,totalDis),0,workingOffset.getZ());
-                }
-                 dist++;
-            }
-    
-            /*
-            else if (
-                        (
-                            //If we're checking an even row
-                            ((field.getLengthPlusX() - absZ) % 2 == 0)
-                            && workingOffset.getX() >= field.getLengthPlusX()
-                        )
-                        ||
-                        (
-                            //If we're checking an odd row
-                            ((field.getLengthPlusX() - absZ) % 2 == 1)
-                            && workingOffset.getX() <= -field.getLengthMinusX()
-                        )
-                    )
-            {
-                workingOffset = new BlockPos(workingOffset.getX(), 0, workingOffset.getZ() + 1);
-            }
-            else if ((field.getLengthPlusX() - absZ) % 2 == 0)
-            {
-                workingOffset = new BlockPos(workingOffset.getX() + 1, 0, workingOffset.getZ());
-            }
-            else
-            {
-                workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
-            }*/
-        }
-        return true;
-    }
-
-    /**
-     * Handles the offset of the field for the farmer.
-     * Skips to the next harvestable crop, returns true if one was found.
-     *
-     * @param field the field object.
-     * @return true if a harvestable crop was found.
-     */
-    private boolean handleOffsetHarvest(@NotNull final Field field)
-    {
-        if (workingOffset == null)
-        {
-            workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
-        }
-
-        int absZ = Math.abs(workingOffset.getZ());
-        BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
-
-        while (!shouldHarvest(position))
-        {
             if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() >= field.getLengthPlusX())
             {
                 workingOffset = null;
@@ -580,7 +497,29 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
             }
-            absZ = Math.abs(workingOffset.getZ());
+        }
+        return true;
+    }
+
+    /**
+     * Handles the offset of the field for the farmer.
+     * Skips to the next harvestable crop, returns true if one was found.
+     *
+     * @param field the field object.
+     * @return true if a harvestable crop was found.
+     */
+    private boolean handleOffsetHarvest(@NotNull final Field field)
+    {
+        handleOffset(field);
+
+        BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
+
+        while (!shouldHarvest(position))
+        {
+            if (!handleOffset(field))
+            {
+                return false;
+            }
             position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
         }
         return true;
