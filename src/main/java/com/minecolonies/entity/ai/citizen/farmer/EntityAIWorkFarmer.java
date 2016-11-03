@@ -452,6 +452,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         worker.setHeldItem(getHoeSlot());
     }
+    
+    private int dist = 0;
+    private boolean horizontal = false;
+    private int totalDis = 1;
 
     /**
      * Handles the offset of the field for the farmer.
@@ -463,16 +467,43 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (workingOffset == null)
         {
-            workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
+            workingOffset = new BlockPos(1, 0,0);
+            totalDis = 1;
+            dist = 0;
         }
         else
         {
             final int absZ = Math.abs(workingOffset.getZ());
-            if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() >= field.getLengthPlusX())
+            if (Math.abs(workingOffset.getZ()) >= field.getWidthPlusZ() && Math.abs(workingOffset.getX()) >= field.getLengthPlusX())
             {
+                System.out.println(field.getWidthPlusZ());
+                System.out.println(field.getLengthPlusX());
                 workingOffset = null;
                 return false;
             }
+            else
+            {
+                if (totalDis == dist)
+                {
+                 horizontal = !horizontal;
+                 dist = 0;
+                 if (horizontal)
+                 {
+                    totalDis++; 
+                 }
+                }
+                if (horizontal){
+                    workingOffset = new BlockPos(workingOffset.getX(),0,workingOffset.getZ()-Math.pow(-1,totalDis));
+                   
+                }
+                else
+                {
+                    workingOffset = new BlockPos(workingOffset.getX()-Math.pow(-1,totalDis),0,workingOffset.getZ());
+                }
+                 dist++;
+            }
+    
+            /*
             else if (
                         (
                             //If we're checking an even row
@@ -496,7 +527,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             else
             {
                 workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
-            }
+            }*/
         }
         return true;
     }
