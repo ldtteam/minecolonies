@@ -2,7 +2,7 @@
 
 SOLDER_DIR="solder"
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ([ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [[ $TRAVIS_BRANCH == release* ]]); then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ([ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [[ $TRAVIS_BRANCH == release* ]] || [[ $TRAVIS_BRANCH == feature* ]]); then
     mkdir $SOLDER_DIR
     mv ./build/libs/*univ*.jar $SOLDER_DIR
     cd $SOLDER_DIR
