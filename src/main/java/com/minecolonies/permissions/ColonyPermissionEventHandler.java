@@ -206,7 +206,7 @@ public class ColonyPermissionEventHandler
             if (colony.getPermissions().isColonyMember(playerIn))
             {
                 final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
-                if (rank.ordinal() >= Permissions.Rank.NEUTRAL.ordinal())
+                if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
                 {
                     return true;
                 }
