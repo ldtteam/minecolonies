@@ -3,23 +3,14 @@ package com.jlgm.structurepreview.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.jlgm.structurepreview.helpers.StructPrevMath;
-import com.jlgm.structurepreview.helpers.Structure;
-import com.jlgm.test.main.TESTMain;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
+
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
-import net.minecraft.world.gen.structure.template.Template;
-import net.minecraft.world.gen.structure.template.TemplateManager;
+
 
 public class CommandSaveStructure implements ICommand
 {
@@ -62,7 +53,7 @@ public class CommandSaveStructure implements ICommand
     {
         if (args.length != 0)
         {
-            BlockPos firstPos = TESTMain.instance.firstPos;
+            /*BlockPos firstPos = TESTMain.instance.firstPos;
             BlockPos secondPos = TESTMain.instance.secondPos;
             if (!(firstPos == null || secondPos == null))
             {
@@ -88,7 +79,7 @@ public class CommandSaveStructure implements ICommand
             else
             {
                 sender.addChatMessage(new TextComponentString("Select a range using the build scanner tool."));
-            }
+            }*/
         }
         else
         {
