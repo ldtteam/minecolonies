@@ -5,10 +5,13 @@ import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
+import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
+import com.minecolonies.sounds.FishermanSounds;
 import com.minecolonies.util.InventoryUtils;
+import com.minecolonies.util.SoundUtils;
 import com.minecolonies.util.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -17,9 +20,12 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -96,26 +102,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private static final int SEARCH_RANGE = 50;
 
     /**
-     * The volume in percent which shall be played for the entity sounds
-     */
-    private static final float VOLUME = 0.5F;
-
-    /**
-     * The upper limit for the frequency of the played sounds
-     */
-    private static final double FREQUENCY_UPPER_LIMIT_DIVIDER = 1.2D;
-
-    /**
-     * The lower limit for the frequency of the played sounds
-     */
-    private static final double FREQUENCY_LOWER_LIMIT_DIVIDER = 0.8D;
-
-    /**
-     * The frequency should be around this value
-     */
-    private static final double FREQUENCY_BOUND_VALUE = 0.4D;
-
-    /**
      * The percentage of times where the fisherman will check out a new pond.
      */
     private static final double CHANCE_NEW_POND = 0.05D;
@@ -130,7 +116,15 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private static final int DEXTERITY_MULTIPLIER = 1;
 
+    /**
+     * Time out fo fish again.
+     */
     private static final int FISHING_TIMEOUT = 5;
+
+    /**
+     * Chance to play a specific fisherman sound.
+     */
+    private static final int CHANCE_TO_PLAY_SOUND = 20;
 
     /**
      * The number of executed adjusts of the fisherman's rotation.
@@ -212,6 +206,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         if (checkOrRequestItems(new ItemStack(Items.FISHING_ROD)))
         {
+            playNeedRodSound();
             return getState();
         }
         if (job.getWater() == null)
@@ -219,6 +214,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return FISHERMAN_SEARCHING_WATER;
         }
         return FISHERMAN_WALKING_TO_WATER;
+    }
+
+    /**
+     * Plays a sound when the fisherman needs a rod.
+     */
+    private void playNeedRodSound()
+    {
+        if (worker != null)
+        {
+            final SoundEvent needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
+            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), needFishingRod, CHANCE_TO_PLAY_SOUND);
+        }
     }
 
     /**
@@ -288,28 +295,19 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Override this method if you want to keep some items in inventory.
+     * Override this method if you want to keep an amount of items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.
      * But you can use this method to hold some stacks back.
      *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
+     * @return a list of objects which should be kept.
      */
     @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
+    protected Map<ItemStorage, Integer> needXForWorker()
     {
-        return isStackRod(stack);
-    }
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
+        keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
 
-    /**
-     * Checks if a given stack equals a fishingRod.
-     *
-     * @param stack the stack to decide on
-     * @return if the stack matches
-     */
-    private static boolean isStackRod(@Nullable ItemStack stack)
-    {
-        return stack != null && stack.getItem().equals(Items.FISHING_ROD);
+        return keepX;
     }
 
     /**
@@ -461,6 +459,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
+            playCaughtFishSound();
             if (random.nextDouble() < CHANCE_NEW_POND)
             {
                 job.setWater(null);
@@ -470,6 +469,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
 
         return throwOrRetrieveHook();
+    }
+
+    /**
+     * Plays a sound with a chance when a fish has been caught.
+     */
+    private void playCaughtFishSound()
+    {
+        if (worker != null)
+        {
+            final SoundEvent iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
+            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), iGotOne, CHANCE_TO_PLAY_SOUND);
+        }
     }
 
     /**

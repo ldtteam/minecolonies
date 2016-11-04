@@ -696,7 +696,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if (block instanceof BlockDoor)
         {
-            if(blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+            if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
             {
                 ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), block, false);
             }

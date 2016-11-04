@@ -32,70 +32,74 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * The NBT Tag to store the floorBlock
      */
-    private static final String  TAG_FLOOR_BLOCK    = "floorBlock";
+    private static final String TAG_FLOOR_BLOCK    = "floorBlock";
     /**
      * The NBT Tag to store the fenceBlock
      */
-    private static final String  TAG_FENCE_BLOCK    = "fenceBlock";
+    private static final String TAG_FENCE_BLOCK    = "fenceBlock";
     /**
      * The NBT Tag to store the starting level of the shaft.
      */
-    private static final String  TAG_STARTING_LEVEL = "startingLevelShaft";
+    private static final String TAG_STARTING_LEVEL = "startingLevelShaft";
     /**
      * The NBT Tag to store list of levels.
      */
-    private static final String  TAG_LEVELS         = "levels";
+    private static final String TAG_LEVELS         = "levels";
     /**
      * The NBT Tag to store if the shaft has been cleared.
      */
-    private static final String  TAG_CLEARED        = "clearedShaft";
+    private static final String TAG_CLEARED        = "clearedShaft";
     /**
      * The NBT Tag to store the location of the shaft.
      */
-    private static final String  TAG_SLOCATION      = "shaftLocation";
+    private static final String TAG_SLOCATION      = "shaftLocation";
     /**
      * The NBT Tag to store the vector-x of the shaft
      */
-    private static final String  TAG_VECTORX        = "vectorx";
+    private static final String TAG_VECTORX        = "vectorx";
     /**
      * The NBT Tag to store the vector-z of the shaft
      */
-    private static final String  TAG_VECTORZ        = "vectorz";
+    private static final String TAG_VECTORZ        = "vectorz";
     /**
      * The NBT Tag to store the location of the cobblestone at the shaft.
      */
-    private static final String  TAG_CLOCATION      = "cobblelocation";
+    private static final String TAG_CLOCATION      = "cobblelocation";
     /**
      * The NBT Tag to store the active node the miner is working on.
      */
-    private static final String  TAG_ACTIVE         = "activeNodeint";
+    private static final String TAG_ACTIVE         = "activeNodeint";
     /**
      * The NBT Tag to store the current level the miner is working in.
      */
-    private static final String  TAG_CURRENT_LEVEL  = "currentLevel";
+    private static final String TAG_CURRENT_LEVEL  = "currentLevel";
     /**
      * The NBT Tag to store the starting node.
      */
-    private static final String  TAG_SN             = "StartingNode";
+    private static final String TAG_SN             = "StartingNode";
     /**
      * The NBT Tag to store the location of the ladder.
      */
-    private static final String  TAG_LLOCATION      = "ladderlocation";
+    private static final String TAG_LLOCATION      = "ladderlocation";
     /**
      * The NBT Tag to store if a ladder has been found yet.
      */
-    private static final String  TAG_LADDER         = "found_ladder";
+    private static final String TAG_LADDER         = "found_ladder";
 
-    private static final String TAG_SHAFT_BLOCK     = "shaftBlock";
+    private static final String TAG_SHAFT_BLOCK = "shaftBlock";
 
     /**
      * The maximum upgrade of the building.
      */
-    private static final int         MAX_BUILDING_LEVEL = 3;
+    private static final int         MAX_BUILDING_LEVEL = 1;
     /**
      * The job description.
      */
     private static final String      MINER              = "Miner";
+    /**
+     * Defines the material used for the floor of the shaft.
+     */
+    private static final IBlockState floorBlock         = Blocks.WOODEN_SLAB.getDefaultState().withProperty(BlockSlab.HALF, BlockSlab.EnumBlockHalf.TOP);
     /**
      * True if shaft is at bottom limit
      */
@@ -104,10 +108,6 @@ public class BuildingMiner extends AbstractBuildingWorker
      * Defines the material used for the structure of the horizontal shaft.
      */
     private              Block       shaftBlock         = Blocks.PLANKS;
-    /**
-     * Defines the material used for the floor of the shaft.
-     */
-    private static final IBlockState floorBlock = Blocks.WOODEN_SLAB.getDefaultState().withProperty(Blocks.WOODEN_SLAB.HALF, BlockSlab.EnumBlockHalf.TOP);
     /**
      * Defines the material used for the fence of the shaft.
      */
@@ -182,6 +182,17 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
+     * Getter of the max building level.
+     *
+     * @return the integer.
+     */
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return MAX_BUILDING_LEVEL;
+    }
+
+    /**
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -197,17 +208,6 @@ public class BuildingMiner extends AbstractBuildingWorker
         {
             this.getColony().triggerAchievement(ModAchievements.achievementUpgradeMinerMax);
         }
-    }
-
-    /**
-     * Getter of the max building level.
-     *
-     * @return the integer.
-     */
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
     }
 
     /**

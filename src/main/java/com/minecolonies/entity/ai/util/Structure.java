@@ -27,6 +27,8 @@ public class Structure
      */
     public static final class StructureException extends Exception
     {
+        public static final long serialVersionUID = 8632728763984762837L;
+
         /**
          * Create this exception to throw a previously catched one.
          *

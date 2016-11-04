@@ -60,6 +60,7 @@ public abstract class AbstractBuilding
         addMapping("Warehouse", BuildingWarehouse.class, BlockHutWarehouse.class);
         addMapping("Fisherman", BuildingFisherman.class, BlockHutFisherman.class);
     }
+
     private final BlockPos                 location;
     @NotNull
     private final Colony                   colony;
@@ -68,7 +69,7 @@ public abstract class AbstractBuilding
     // Attributes
     private int     buildingLevel = 0;
     private int     rotation      = 0;
-    private String  style         = "classic";
+    private String  style         = "default";
     //  State
     private boolean dirty         = false;
 
@@ -195,8 +196,8 @@ public abstract class AbstractBuilding
         style = compound.getString(TAG_STYLE);
         if ("".equals(style))
         {
-            Log.getLogger().warn("Loaded empty style, setting to classic");
-            style = "classic";
+            Log.getLogger().warn("Loaded empty style, setting to default");
+            style = "default";
         }
 
         if (MaterialSystem.isEnabled)
@@ -384,6 +385,16 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Sets the tile entity for the building.
+     *
+     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
+     */
+    public void setTileEntity(TileEntityColonyBuilding te)
+    {
+        tileEntity = te;
+    }
+
+    /**
      * Returns the colony of the building
      *
      * @return {@link com.minecolonies.colony.Colony} of the current object
@@ -392,16 +403,6 @@ public abstract class AbstractBuilding
     public Colony getColony()
     {
         return colony;
-    }
-
-    /**
-     * Sets the tile entity for the building.
-     *
-     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
-     */
-    public void setTileEntity(TileEntityColonyBuilding te)
-    {
-        tileEntity = te;
     }
 
     /**

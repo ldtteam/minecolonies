@@ -319,6 +319,17 @@ public class Colony implements IColony
         return dimensionId;
     }
 
+    /**
+     * Returns the center of the colony.
+     *
+     * @return Chunk Coordinates of the center of the colony.
+     */
+    @Override
+    public BlockPos getCenter()
+    {
+        return center;
+    }
+
     @Override
     public String getName()
     {
@@ -381,17 +392,6 @@ public class Colony implements IColony
     public boolean hasTownHall()
     {
         return townHall != null;
-    }
-
-    /**
-     * Returns the center of the colony.
-     *
-     * @return Chunk Coordinates of the center of the colony.
-     */
-    @Override
-    public BlockPos getCenter()
-    {
-        return center;
     }
 
     /**
@@ -468,8 +468,8 @@ public class Colony implements IColony
 
         // Add owners
         subscribers.addAll(
-                this.getWorld().getMinecraftServer().getPlayerList().getPlayerList()
-                        .stream()
+          this.getWorld().getMinecraftServer().getPlayerList().getPlayerList()
+            .stream()
             .filter(permissions::isSubscriber)
             .collect(Collectors.toList()));
 
@@ -764,7 +764,7 @@ public class Colony implements IColony
 
     private void cleanUpBuildings(@NotNull TickEvent.WorldTickEvent event)
     {
-        @Nullable List<AbstractBuilding> removedBuildings = null;
+        @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
 
         //Need this list, we may enter he while we add a building in the real world.
         List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
@@ -775,31 +775,27 @@ public class Colony implements IColony
             if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
-                if (removedBuildings == null)
-                {
-                    removedBuildings = new ArrayList<>();
-                }
                 removedBuildings.add(building);
             }
         }
 
-        if (removedBuildings != null)
-        {
-            removedBuildings.forEach(AbstractBuilding::destroy);
-        }
+        removedBuildings.forEach(AbstractBuilding::destroy);
 
         @NotNull final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
 
         for (@NotNull final Field field : tempFields)
         {
-            @NotNull final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
-            if (scarecrow == null)
+            if (event.world.isBlockLoaded(field.getLocation()))
             {
-                fields.remove(field.getID());
-            }
-            else
-            {
-                field.setInventoryField(scarecrow.getInventoryField());
+                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(field.getID());
+                if (scarecrow == null)
+                {
+                    fields.remove(field.getID());
+                }
+                else
+                {
+                    field.setInventoryField(scarecrow.getInventoryField());
+                }
             }
         }
 
@@ -819,7 +815,7 @@ public class Colony implements IColony
      *
      * @param data Data to use to spawn citizen
      */
-    private void spawnCitizen(CitizenData data)
+    public void spawnCitizen(CitizenData data)
     {
         if (!world.isBlockLoaded(center))
         {
@@ -1012,6 +1008,7 @@ public class Colony implements IColony
         @NotNull final Field field = new Field(tileEntity, inventoryPlayer, world, pos);
         field.setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         addField(field);
+        field.calculateSize(world, pos);
         markFieldsDirty();
     }
 

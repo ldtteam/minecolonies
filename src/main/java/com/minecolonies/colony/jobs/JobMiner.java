@@ -50,7 +50,7 @@ public class JobMiner extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<JobMiner> generateAI()
     {
         return new EntityAIStructureMiner(this);
     }

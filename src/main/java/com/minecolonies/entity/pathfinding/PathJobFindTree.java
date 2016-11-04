@@ -1,7 +1,8 @@
 package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.ai.citizen.lumberjack.Tree;
-import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -92,8 +93,8 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected boolean isPassable(@NotNull Block block, BlockPos pos)
+    protected boolean isPassable(@NotNull IBlockState block)
     {
-        return super.isPassable(block, pos) || block.isLeaves(world.getBlockState(pos), world, pos);
+        return super.isPassable(block) || block.getMaterial() == Material.LEAVES;
     }
 }
