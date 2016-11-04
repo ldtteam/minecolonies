@@ -149,10 +149,14 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerContainerEvent.Open event)
     {
-        if (this.colony.isCoordInColony(event.getEntity().getEntityWorld(), event.getEntity().getPosition())
-              && !this.colony.getPermissions().isColonyMember(event.getEntityPlayer()))
+        if (this.colony.isCoordInColony(event.getEntity().getEntityWorld(), event.getEntity().getPosition()))
         {
-            cancelEvent(event);
+            Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
+
+            if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
+            {
+                cancelEvent(event);
+            }
         }
     }
 
@@ -169,7 +173,7 @@ public class ColonyPermissionEventHandler
         {
             Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 
-            if (rank.ordinal() < Permissions.Rank.NEUTRAL.ordinal())
+            if (rank.ordinal() > Permissions.Rank.NEUTRAL.ordinal())
             {
                 /*
                     this will delete the item entirely:
