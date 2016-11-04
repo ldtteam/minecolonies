@@ -5,19 +5,20 @@ import com.minecolonies.util.InventoryUtils;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * One bit of knowledge from the crafting system.
  */
-public class Knowledge
+public final class Knowledge
 {
-    @NotNull
-    private final IRecipe         recipe;
     @NotNull
     private final List<ItemStack> requirements;
     @NotNull
@@ -44,14 +45,23 @@ public class Knowledge
         {
             throw new KnowledgeCreationException("Recipe did output null!");
         }
-        return new Knowledge(recipe, InventoryUtils.getInventoryAsList(craftingGrid), recipeOutput);
+        return new Knowledge(InventoryUtils.getInventoryAsList(craftingGrid), recipeOutput);
     }
 
-    private Knowledge(@NotNull final IRecipe recipe, @NotNull final List<ItemStack> requirements, @NotNull final ItemStack output)
+    private Knowledge(@NotNull final List<ItemStack> requirements, @NotNull final ItemStack output)
     {
-        this.recipe = recipe;
         this.requirements = requirements;
         this.output = output;
+    }
+
+    public void readFromNBT(@NotNull NBTTagCompound compound)
+    {
+
+    }
+
+    public void writeToNBT(@NotNull NBTTagCompound compound)
+    {
+
     }
 
     @Override
@@ -66,13 +76,14 @@ public class Knowledge
             return false;
         }
         final Knowledge knowledge = (Knowledge) o;
-        return Objects.equal(recipe, knowledge.recipe);
+        return Objects.equal(requirements, knowledge.requirements) &&
+                 Objects.equal(output, knowledge.output);
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hashCode(recipe);
+        return Objects.hashCode(output);
     }
 
     @Override
@@ -83,5 +94,17 @@ public class Knowledge
                  .add("requirements", requirements)
                  .add("output", output)
                  .toString();
+    }
+
+    public NBTTagCompound serializeNBT()
+    {
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setTag("recipe", this.recipe.);
+        return null;
+    }
+
+    public void deserializeNBT(final NBTTagCompound nbt)
+    {
+
     }
 }
