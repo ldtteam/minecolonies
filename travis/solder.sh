@@ -2,7 +2,19 @@
 
 SOLDER_DIR="solder"
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ([ "$TRAVIS_BRANCH" = "develop" ] || [ "$TRAVIS_BRANCH" = "master" ] || [[ $TRAVIS_BRANCH == release* ]]); then
+beginswith() { case $2 in "$1"*) true;; *) false;; esac; }
+beginswith() { case $1 in "$2"*) true;; *) false;; esac; }
+checkresult() { if [ $? = 0 ]; then echo TRUE; else echo FALSE; fi; }
+
+any() {
+    test=$1; shift
+    for i in "$@"; do
+        $test "$i" && return
+    done
+}
+
+
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ( any "beginswith $TRAVIS_BRANCH" develop master release feature ); then
     mkdir $SOLDER_DIR
     mv ./build/libs/*univ*.jar $SOLDER_DIR
     cd $SOLDER_DIR
