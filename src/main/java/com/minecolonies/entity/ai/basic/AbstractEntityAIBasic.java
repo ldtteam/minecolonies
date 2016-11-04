@@ -45,6 +45,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Hit a block every x ticks when mining.
      */
     private static final int             HIT_EVERY_X_TICKS       = 5;
+    public static final int EXCEPTION_TIMEOUT = 100;
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -171,6 +172,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  */
           new AITarget(this::inventoryNeedsDump, INVENTORY_FULL)
         );
+    }
+
+    @Override
+    protected void onException(final RuntimeException e)
+    {
+        Log.getLogger().info("Pausing Entity for 5 Seconds");
+        this.setDelay(EXCEPTION_TIMEOUT);
     }
 
     /**

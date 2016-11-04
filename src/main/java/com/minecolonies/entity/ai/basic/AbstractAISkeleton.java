@@ -169,9 +169,20 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         catch (RuntimeException e)
         {
             Log.getLogger().warn("Condition check for target " + target + " threw an exception:", e);
+            this.onException(e);
             return false;
         }
         return applyTarget(target);
+    }
+
+    /**
+     * Handle an exception higher up.
+     *
+     * @param e The exception to be handled
+     */
+    protected void onException(RuntimeException e)
+    {
+
     }
 
     /**
@@ -193,6 +204,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         catch (RuntimeException e)
         {
             Log.getLogger().warn("Action for target " + target + " threw an exception:", e);
+            this.onException(e);
             return false;
         }
         if (newState != null)
