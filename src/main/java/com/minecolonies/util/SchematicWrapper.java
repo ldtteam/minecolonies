@@ -303,14 +303,14 @@ public final class SchematicWrapper
         MinecraftServer minecraftserver = world.getMinecraftServer();
         TemplateManager templatemanager = worldserver.getStructureTemplateManager();
 
-        String fileName = getScanDirectory(world).getAbsolutePath() + LanguageHandler.format("item.scepterSteel.scanFormat", "/scans/", System.currentTimeMillis());
+        String fileName = "/../../../" + "minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", Long.toString(System.currentTimeMillis()));
         Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
-
         if (templatemanager.writeTemplate(minecraftserver, new ResourceLocation(fileName)))
         {
-            return LanguageHandler.format("item.scepterSteel.scanSuccess", fileName);
+            return LanguageHandler.format("item.scepterSteel.scanSuccess", "minecolonies/scans/"
+                    + LanguageHandler.format("item.scepterSteel.scanFormat", "", Long.toString(System.currentTimeMillis())));
         }
         return LanguageHandler.format("item.scepterSteel.scanFailure");
     }

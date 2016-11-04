@@ -74,7 +74,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public void openBuildToolWindow(@Nullable BlockPos pos)
     {
-        if (pos == null && Settings.instance.getActiveSchematic() == null)
+        if (pos == null && Settings.instance.getActiveStructure() == null)
         {
             return;
         }

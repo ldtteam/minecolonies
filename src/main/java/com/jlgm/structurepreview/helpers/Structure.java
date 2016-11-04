@@ -210,7 +210,7 @@ public class Structure
 
     private void renderGhost(final World world, ModelHolder holder, final EntityPlayer player, final float partialTicks)
     {
-        boolean existingModel = this.mc.theWorld.isAirBlock(holder.pos) == false;
+        boolean existingModel = !this.mc.theWorld.isAirBlock(holder.pos);
 
         IBlockState actualState = holder.actualState;
         Block block = actualState.getBlock();

@@ -1,16 +1,18 @@
 package com.minecolonies.items;
 
+import com.jlgm.structurepreview.helpers.StructPrevMath;
+import com.jlgm.structurepreview.helpers.Structure;
 import com.minecolonies.MineColonies;
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.creativetab.ModCreativeTabs;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.PlacementSettings;
 import org.jetbrains.annotations.NotNull;
 
 public class ItemBuildTool extends AbstractItemMinecolonies

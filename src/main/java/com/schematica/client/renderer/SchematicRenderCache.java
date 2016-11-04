@@ -39,10 +39,10 @@ public class SchematicRenderCache extends ChunkCache
     {
         if(Settings.instance.getSchematicWorld() != null)
         {
-            final BlockPos realPos = pos.add(Settings.instance.getSchematicWorld().position);
+            //final BlockPos realPos = pos.add(Settings.instance.getSchematicWorld().position);
             final World world = this.minecraft.theWorld;
 
-            if (!world.isAirBlock(realPos))
+            //if (!world.isAirBlock(realPos))
             {
                 return Blocks.AIR.getDefaultState();
             }

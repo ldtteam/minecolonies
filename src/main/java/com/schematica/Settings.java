@@ -1,9 +1,7 @@
 package com.schematica;
 
-import com.minecolonies.util.BlockPosUtil;
-import com.schematica.client.renderer.RenderSchematic;
-import com.schematica.client.world.SchematicWorld;
-import com.schematica.world.storage.Schematic;
+import com.jlgm.structurepreview.helpers.Structure;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,11 +18,12 @@ public final class Settings
     private final       BlockPos.MutableBlockPos offset    = new BlockPos.MutableBlockPos();
     private             boolean                  inHutMode = true;
     @Nullable
-    private             SchematicWorld           schematic = null;
+    private             Structure                structure = null;
     private             int                      rotation  = 0;
     private             String                   hutDec    = "";
     private             String                   style     = "";
     private             int                      level     = 0;
+    public             BlockPos                 pos = null;
 
     private boolean isPendingReset = false;
 
@@ -39,41 +38,40 @@ public final class Settings
      */
     public void moveTo(BlockPos pos)
     {
-        if (this.schematic == null)
+        if (this.structure == null)
         {
             return;
         }
 
-        BlockPosUtil.set(offset, pos.subtract(schematic.getSchematic().getOffset()));
-        BlockPosUtil.set(schematic.position, offset);
+        //BlockPosUtil.set(offset, pos.subtract(schematic.getSchematic().getOffset()));
+        //BlockPosUtil.set(schematic.position, offset);
     }
 
     /**
      * @return The schematic we are currently rendering.
      */
     @Nullable
-    public Schematic getActiveSchematic()
+    public Structure getActiveStructure()
     {
-        return this.schematic == null ? null : this.schematic.getSchematic();
+        return this.structure == null ? null : this.structure;
     }
 
     /**
-     * Set a schematic to render.
+     * Set a structure to render.
      *
-     * @param schematic schematic to render.
+     * @param structure structure to render.
      */
-    public void setActiveSchematic(Schematic schematic)
+    public void setActiveSchematic(Structure structure)
     {
-        if (schematic != null)
+        if (structure != null)
         {
-            this.schematic = new SchematicWorld(schematic);
+            this.structure = structure;
 
-            RenderSchematic.INSTANCE.setWorldAndLoadRenderers(this.schematic);
-            this.schematic.isRendering = true;
+            structure.renderStructure(this.pos, Minecraft.getMinecraft().theWorld, Minecraft.getMinecraft().thePlayer, 0);
         }
         else
         {
-            reset();
+            //reset();
         }
     }
 
@@ -82,8 +80,7 @@ public final class Settings
      */
     public void reset()
     {
-        schematic = null;
-        RenderSchematic.INSTANCE.setWorldAndLoadRenderers(null);
+        structure = null;
 
         isPendingReset = false;
     }
@@ -91,9 +88,10 @@ public final class Settings
     /**
      * @return The schematic world we are currently rendering. null if not currently rendering anything.
      */
-    public SchematicWorld getSchematicWorld()
+    //todo
+    public Structure getSchematicWorld()
     {
-        return schematic;
+        return structure;
     }
 
     /**

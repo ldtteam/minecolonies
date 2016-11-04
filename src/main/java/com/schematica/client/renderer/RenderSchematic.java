@@ -874,14 +874,14 @@ public final class RenderSchematic extends RenderGlobal
         if (player != null)
         {
             this.profiler.startSection("schematica");
-            final boolean isRenderingSchematic = Settings.instance.getActiveSchematic() != null && Settings.instance.getSchematicWorld().isRendering;
+            //final boolean isRenderingSchematic = Settings.instance.getActiveStructure() != null && Settings.instance.getSchematicWorld().isRendering;
 
             this.profiler.startSection("schematic");
-            if (isRenderingSchematic)
+            //if (isRenderingSchematic)
             {
                 GlStateManager.pushMatrix();
-                renderSchematic(Settings.instance.getSchematicWorld(), event.getPartialTicks());
-                renderSchematic(Settings.instance.getSchematicWorld(), event.getPartialTicks());
+                //renderSchematic(Settings.instance.getSchematicWorld(), event.getPartialTicks());
+                //renderSchematic(Settings.instance.getSchematicWorld(), event.getPartialTicks());
                 GlStateManager.popMatrix();
             }
 

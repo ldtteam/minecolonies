@@ -25,7 +25,7 @@ public class WorldHandler
     {
         if (event.getWorld().isRemote && !(event.getWorld() instanceof SchematicWorld))
         {
-            RenderSchematic.INSTANCE.setWorldAndLoadRenderers(Settings.instance.getSchematicWorld());
+            //RenderSchematic.INSTANCE.setWorldAndLoadRenderers(Settings.instance.getSchematicWorld());
             addWorldAccess(event.getWorld(), RenderSchematic.INSTANCE);
         }
     }

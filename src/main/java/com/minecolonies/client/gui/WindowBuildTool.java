@@ -1,6 +1,8 @@
 package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
+import com.jlgm.structurepreview.helpers.StructPrevMath;
+import com.jlgm.structurepreview.helpers.Structure;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;
@@ -11,17 +13,19 @@ import com.minecolonies.util.SchematicWrapper;
 import com.schematica.Settings;
 import com.schematica.client.renderer.RenderSchematic;
 import com.schematica.client.util.RotationHelper;
-import com.schematica.world.storage.Schematic;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.gen.structure.template.PlacementSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -168,11 +172,17 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     public WindowBuildTool(@Nullable BlockPos pos)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
+        Settings.instance.pos = pos;
 
-        @Nullable Schematic schematic = Settings.instance.getActiveSchematic();
-        if (schematic != null)
+        Structure structure = new Structure(null, "endcity/ship", new PlacementSettings().setRotation(StructPrevMath.getRotationFromYaw()).setMirror(Mirror.NONE));
+
+        Settings.instance.setActiveSchematic(structure);
+
+        //@Nullable Structure structure = Settings.instance.getActiveStructure();
+
+        if (structure != null)
         {
-            BlockPosUtil.set(this.pos, Settings.instance.getOffset().add(schematic.getOffset()));
+            //BlockPosUtil.set(this.pos, Settings.instance.getOffset().add(structure.getOffset()));
             rotation = Settings.instance.getRotation();
             level = Settings.instance.getLevel();
         }
@@ -227,7 +237,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     @Override
     public void onClosed()
     {
-        if (Settings.instance.getActiveSchematic() != null)
+        if (Settings.instance.getActiveStructure() != null)
         {
             Settings.instance.setSchematicInfo(
               findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel(),
@@ -273,7 +283,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
         else
         {
-            if (Settings.instance.getActiveSchematic() != null)
+            if (Settings.instance.getActiveStructure() != null)
             {
                 hutDecIndex = Math.max(0, hutDec.indexOf(Settings.instance.getHutDec()));
                 styleIndex = Math.max(0, getStyles().indexOf(Settings.instance.getStyle()));
@@ -287,7 +297,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             buttonStyle.setVisible(true);
             buttonStyle.setLabel(getStyles().get(styleIndex));
 
-            if (Settings.instance.getActiveSchematic() == null)
+            if (Settings.instance.getActiveStructure() == null)
             {
                 rotation = 0;
                 level = 0;
@@ -369,21 +379,21 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         @NotNull SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
 
-        Settings.instance.setActiveSchematic(schematic.getSchematic());
+        //Settings.instance.setActiveSchematic(schematic.getSchematic());
 
         Settings.instance.moveTo(this.pos);
 
         //Catch up on rotations, makes it so going up a level or changing style doesn't reset rotation.
         if (this.rotation == ROTATE_LEFT)
         {
-            RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
+            //RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
         }
         else
         {
             //Runs 0, 1, or 2 times.
             for (int times = 0; times < rotation; times++)
             {
-                RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
+                //RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
             }
         }
     }
@@ -559,7 +569,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private void rotateRightClicked(Button button)
     {
         rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
-        RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
+        //RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
         updatePosition();
     }
 
@@ -571,7 +581,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private void rotateLeftClicked(Button button)
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
-        RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
+        //RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
         updatePosition();
     }
 }

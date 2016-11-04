@@ -65,7 +65,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
         {
             @NotNull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
             @NotNull BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
-            if (worldIn.isRemote)
+            if (!worldIn.isRemote)
             {
                 String result = SchematicWrapper.saveSchematic(worldIn, pos1, pos2);
                 LanguageHandler.sendPlayerMessage(playerIn, result);
