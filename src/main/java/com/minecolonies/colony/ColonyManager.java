@@ -310,7 +310,7 @@ public final class ColonyManager
      * @param pos coordinates
      * @return Colony closest to coordinates
      */
-    private static Colony getClosestColony(@NotNull World w, @NotNull BlockPos pos)
+    public static Colony getClosestColony(@NotNull World w, @NotNull BlockPos pos)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
         if (coloniesInWorld == null)

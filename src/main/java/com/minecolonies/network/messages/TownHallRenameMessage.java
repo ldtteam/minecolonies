@@ -4,6 +4,8 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -58,6 +60,11 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
+            //Verify player has permission to change this huts settings
+            if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+            {
+                return;
+            }
             message.name = (message.name.length() <= MAX_NAME_LENGTH) ? message.name : message.name.substring(0, SUBSTRING_LENGTH);
             colony.setName(message.name);
             MineColonies.getNetwork().sendToAll(message);

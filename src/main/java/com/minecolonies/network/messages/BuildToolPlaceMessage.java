@@ -139,6 +139,11 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             return;
         }
 
+        if (!ColonyManager.getClosestColony(world, buildPos).getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+        {
+            return;
+        }
+
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
 
         if (player.inventory.hasItemStack(new ItemStack(block)))

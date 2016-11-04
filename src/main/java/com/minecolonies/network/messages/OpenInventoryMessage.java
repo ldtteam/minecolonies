@@ -1,10 +1,11 @@
 package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.CitizenDataView;
+import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.entity.EntityCitizen;
-import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.inventory.InventoryField;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
@@ -15,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Message sent to open an inventory.
@@ -136,30 +138,63 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         switch (message.inventoryType)
         {
             case INVENTORY_CITIZEN:
-                @NotNull final InventoryCitizen citizenInventory = ((EntityCitizen) player.worldObj.getEntityByID(message.entityID)).getInventoryCitizen();
-                if (!StringUtils.isNullOrEmpty(message.name))
-                {
-                    citizenInventory.setCustomName(message.name);
-                }
-                player.displayGUIChest(citizenInventory);
+                doCitizenInventory(message, player);
                 break;
             case INVENTORY_CHEST:
-                @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
-                if (!StringUtils.isNullOrEmpty(message.name))
-                {
-                    chest.setCustomName(message.name);
-                }
-                player.displayGUIChest(chest);
+                doHutInventory(message, player);
                 break;
             case INVENTORY_FIELD:
-                @NotNull final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
-                if (!StringUtils.isNullOrEmpty(message.name))
-                {
-                    inventoryField.setCustomName(message.name);
-                }
-                player.displayGUIChest(inventoryField);
+                doFieldInventory(message, player);
                 break;
+            default:
+            break;
         }
+    }
+
+    private void doFieldInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
+    {
+        if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
+        {
+            @NotNull final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
+            if (!StringUtils.isNullOrEmpty(message.name))
+            {
+                inventoryField.setCustomName(message.name);
+            }
+            player.displayGUIChest(inventoryField);
+        }
+    }
+
+    private void doHutInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
+    {
+
+        if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
+        {
+            @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
+            if (!StringUtils.isNullOrEmpty(message.name))
+            {
+                chest.setCustomName(message.name);
+            }
+            player.displayGUIChest(chest);
+        }
+    }
+
+    private void doCitizenInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
+    {
+        @Nullable final EntityCitizen citizen = (EntityCitizen) player.worldObj.getEntityByID(message.entityID);
+        if (checkPermissions(citizen.getColony(), player))
+        {
+            if (!StringUtils.isNullOrEmpty(message.name))
+            {
+                citizen.getInventoryCitizen().setCustomName(message.name);
+            }
+            player.displayGUIChest(citizen.getInventoryCitizen());
+        }
+    }
+
+    private boolean checkPermissions(final Colony colony, final EntityPlayerMP player)
+    {
+        //Verify player has permission to change this huts settings
+        return colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS);
     }
 
     /**
