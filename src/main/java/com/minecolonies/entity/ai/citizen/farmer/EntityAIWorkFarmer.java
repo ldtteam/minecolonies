@@ -103,6 +103,12 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         );
         worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
+        @Nullable final BuildingFarmer building = getOwnBuilding();
+
+        if (building != null && building.getBuildingLevel() > 0)
+        {
+            building.resetFields();
+        }
     }
 
     /**
@@ -170,7 +176,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             {
                 return walkToBlock(currentField.getLocation()) ? AIState.PREPARING : AIState.FARMER_INITIALIZE;
             }
-            else if (containsPlants(currentField))
+            else if (containsPlants(currentField) && !walkToBuilding() && !canGoPlanting(currentField, building))
             {
                 currentField.setInitialized(true);
                 currentField.setNeedsWork(false);
@@ -309,11 +315,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             // Check to see if the block is a plant, and if it is, break it.
             final IBlockState blockState = world.getBlockState(position.up());
 
-            if (blockState.getBlock() instanceof IGrowable || blockState.getBlock() instanceof BlockCrops)
+            if (blockState.getBlock() instanceof IGrowable)
             {
-                mineBlock(position.up());
-                setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
-                return AIState.FARMER_INITIALIZE;
+                if (!(blockState.getBlock() instanceof BlockCrops) || ((BlockCrops)blockState.getBlock()).getItem(world, position.up(), blockState) != new ItemStack(field.getSeed()))
+                {
+                    mineBlock(position.up());
+                    setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
+                    return AIState.FARMER_INITIALIZE;
+                }
             }
 
             // hoe the block if able to.
@@ -395,7 +404,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
             blockState = world.getBlockState(position.up());
 
-            if (blockState.getBlock() instanceof IGrowable || blockState.getBlock() instanceof BlockCrops)
+            if (blockState.getBlock() instanceof BlockCrops)
             {
                 return true;
             }
@@ -505,7 +514,20 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 dist++;
             }
 
-            /*
+        /*
+        //This is the zigzag method, This is here for future reference.
+        if (workingOffset == null)
+        {
+            workingOffset = new BlockPos(-field.getLengthMinusX(), 0, -field.getWidthMinusZ());
+        }
+        else
+        {
+            final int absZ = Math.abs(workingOffset.getZ());
+            if (workingOffset.getZ() >= field.getWidthPlusZ() && workingOffset.getX() >= field.getLengthPlusX())
+            {
+                workingOffset = null;
+                return false;
+            }
             else if (
                         (
                             //If we're checking an even row
@@ -529,7 +551,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             else
             {
                 workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
-            }*/
+            }
+        }*/
         }
         return true;
     }
