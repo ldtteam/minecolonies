@@ -191,7 +191,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private boolean checkPermissions(final Colony colony, final EntityPlayerMP player)
+    private static boolean checkPermissions(final Colony colony, final EntityPlayerMP player)
     {
         //Verify player has permission to change this huts settings
         return colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS);

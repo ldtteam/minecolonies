@@ -86,8 +86,8 @@ public class ColonyPermissionEventHandler
     {
 
         final World eventWorld = event.getWorld();
-        Predicate<BlockPos> getBlocksInColony = pos -> colony.isCoordInColony(eventWorld, pos);
-        Predicate<Entity> getEntitiesInColony = entity -> colony.isCoordInColony(entity.getEntityWorld(), entity.getPosition());
+        final Predicate<BlockPos> getBlocksInColony = pos -> colony.isCoordInColony(eventWorld, pos);
+        final Predicate<Entity> getEntitiesInColony = entity -> colony.isCoordInColony(entity.getEntityWorld(), entity.getPosition());
         // if block is in colony -> remove from list
         final List<BlockPos> blocksToRemove = event.getAffectedBlocks().stream()
                                                 .filter(getBlocksInColony)
@@ -133,8 +133,8 @@ public class ColonyPermissionEventHandler
         {
             final Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
             // Huts
-            if (block instanceof AbstractBlockHut &&
-                  !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_HUTS))
+            if (block instanceof AbstractBlockHut
+                  && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_HUTS))
             {
                 cancelEvent(event);
             }
@@ -151,7 +151,7 @@ public class ColonyPermissionEventHandler
     {
         if (this.colony.isCoordInColony(event.getEntity().getEntityWorld(), event.getEntity().getPosition()))
         {
-            Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
+            final Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
 
             if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
             {
@@ -171,7 +171,7 @@ public class ColonyPermissionEventHandler
         final EntityPlayer playerIn = event.getPlayer();
         if (colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
         {
-            Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
+            final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 
             if (rank.ordinal() > Permissions.Rank.NEUTRAL.ordinal())
             {
@@ -187,7 +187,7 @@ public class ColonyPermissionEventHandler
     }
 
     /**
-     * Template
+     * Template.
      */
     public void on()
     {
@@ -207,22 +207,17 @@ public class ColonyPermissionEventHandler
     {
         if (colony.isCoordInColony(worldIn, posIn))
         {
-            if (colony.getPermissions().isColonyMember(playerIn))
+            if (!colony.getPermissions().isColonyMember(playerIn))
             {
-                final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
-                if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
-                {
-                    return true;
-                }
-                if (blockState.getBlock() instanceof AbstractBlockHut)
-                {
-                    if (rank.ordinal() >= Permissions.Rank.OFFICER.ordinal())
-                    {
-                        return true;
-                    }
-                }
+                return true;
             }
-            else
+            final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
+            if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
+            {
+                return true;
+            }
+            if (blockState.getBlock() instanceof AbstractBlockHut
+                  && rank.ordinal() >= Permissions.Rank.OFFICER.ordinal())
             {
                 return true;
             }
