@@ -151,11 +151,11 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private void doFieldInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
+    private static void doFieldInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
-            @NotNull final InventoryField inventoryField = ColonyManager.getColony(colonyId).getField(message.tePos).getInventoryField();
+            @NotNull final InventoryField inventoryField = ColonyManager.getColony(message.colonyId).getField(message.tePos).getInventoryField();
             if (!StringUtils.isNullOrEmpty(message.name))
             {
                 inventoryField.setCustomName(message.name);
@@ -164,7 +164,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private void doHutInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
+    private static void doHutInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
 
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
@@ -178,7 +178,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
         }
     }
 
-    private void doCitizenInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
+    private static void doCitizenInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
         @Nullable final EntityCitizen citizen = (EntityCitizen) player.worldObj.getEntityByID(message.entityID);
         if (checkPermissions(citizen.getColony(), player))
