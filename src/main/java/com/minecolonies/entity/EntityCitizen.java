@@ -100,7 +100,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Divide experience by a factor to ensure more levels fit in an int.
      */
-    private static final int EXP_DIVIDER = 100;
+    private static final double EXP_DIVIDER = 100.0;
 
     /**
      * Chance the citizen will rant about bad weather. 20 ticks per 60 seconds = 5 minutes.
@@ -483,7 +483,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             citizenData.increaseLevel();
         }
-
+        this.updateLevel();
         citizenData.markDirty();
     }
 
@@ -569,7 +569,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (!this.worldObj.isRemote && this.recentlyHit > 0 && this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot"))
         {
-            experience = (int) (citizenData.getLevel() * 100 + this.getExperiencePoints());
+            experience = (int) (this.getExperiencePoints());
 
             while (experience > 0)
             {

@@ -35,11 +35,12 @@ public final class ExperienceUtils
         final double lastLvlExp = getXPNeededForNextLevel(level) - thisLvlExp;
         final double currentExp = experience - lastLvlExp;
 
-        return PERCENT_MULTIPLIER
-                 - ((thisLvlExp
-                       - currentExp)
-                      / thisLvlExp)
-                     * PERCENT_MULTIPLIER;
+        return Math.min(PERCENT_MULTIPLIER,
+          PERCENT_MULTIPLIER
+            - ((thisLvlExp
+                  - currentExp)
+                 / thisLvlExp)
+                * PERCENT_MULTIPLIER);
     }
 
     /**
