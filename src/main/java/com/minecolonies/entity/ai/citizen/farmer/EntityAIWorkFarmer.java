@@ -24,8 +24,6 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
 
-import java.util.List;
-
 /**
  * Farmer AI class.
  * Created: December 20, 2014
@@ -37,12 +35,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private static final int     STANDARD_DELAY      = 40;
     /**
+     * The smallest delay the farmer should have.
+     */
+    private static final int     SMALLEST_DELAY      = 5;
+    /**
      * The bonus the farmer gains each update is level/divider.
      */
     private static final double     DELAY_DIVIDER       = 1;
     /**
-      * The EXP Earned per harvest.
-      */
+     * The EXP Earned per harvest.
+     */
     private static final double  XP_PER_HARVEST      = 0.5;
     /**
      * How long to wait after looking to decide what to do.
@@ -70,7 +72,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     private boolean shouldTryToGetSeed = true;
 
     /**
-     * Variables used in handleOffset
+     * Variables used in handleOffset.
      */
     private int totalDis;
     private int dist;
@@ -299,14 +301,15 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             // Check to see if the block is a plant, and if it is, break it.
             final IBlockState blockState = world.getBlockState(position.up());
 
-            if (blockState.getBlock() instanceof IGrowable)
+            if (blockState.getBlock() instanceof IGrowable
+                && (
+                    !(blockState.getBlock() instanceof BlockCrops)
+                    || ((BlockCrops)blockState.getBlock()).getItem(world, position.up(), blockState) != new ItemStack(field.getSeed()))
+                )
             {
-                if (!(blockState.getBlock() instanceof BlockCrops) || ((BlockCrops)blockState.getBlock()).getItem(world, position.up(), blockState) != new ItemStack(field.getSeed()))
-                {
-                    mineBlock(position.up());
-                    setDelay(getLevelDelay());
-                    return AIState.FARMER_INITIALIZE;
-                }
+                mineBlock(position.up());
+                setDelay(getLevelDelay());
+                return AIState.FARMER_INITIALIZE;
             }
 
             // hoe the block if able to.
@@ -710,6 +713,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     @Override
     protected int getLevelDelay()
     {
-        return (int)Math.max(5, STANDARD_DELAY-(this.worker.getLevel()*DELAY_DIVIDER));
+        return (int)Math.max(SMALLEST_DELAY, STANDARD_DELAY-(this.worker.getLevel()*DELAY_DIVIDER));
     }
 }
