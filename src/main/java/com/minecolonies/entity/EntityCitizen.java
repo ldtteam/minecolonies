@@ -100,7 +100,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Divide experience by a factor to ensure more levels fit in an int.
      */
-    private static final int EXP_DIVIDER = 10;
+    private static final int EXP_DIVIDER = 100;
 
     /**
      * Chance the citizen will rant about bad weather. 20 ticks per 60 seconds = 5 minutes.
@@ -125,7 +125,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Base pathfinding range of the citizen.
      */
-    private static final int BASE_PATHFINDING_RANGE    = 100;
+    private static final int    BASE_PATHFINDING_RANGE = 100;
     /**
      * Height of the citizen.
      */
@@ -141,7 +141,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Building level at which the workers work even if it is raining.
      */
-    private static final int BONUS_BUILDING_LEVEL      = 5;
+    private static final int    BONUS_BUILDING_LEVEL   = 5;
     private static Field navigatorField;
     protected Status                   status  = Status.IDLE;
     private   RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
@@ -434,7 +434,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         for (@NotNull EntityXPOrb orb : getXPOrbsOnGrid())
         {
-            addExperience(orb.getXpValue()/2);
+            addExperience(orb.getXpValue() / 2);
             orb.setDead();
         }
     }
@@ -461,7 +461,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public void addExperience(double xp)
     {
         final double citizenHutLevel = getHomeBuilding() == null ? 0 : getHomeBuilding().getBuildingLevel();
-        if(Math.pow(2.0, citizenHutLevel + 1.0) >= this.getExperienceLevel())
+        final double citizenHutMaxLevel = getHomeBuilding() == null ? 1 : getHomeBuilding().getMaxBuildingLevel();
+        if (citizenHutLevel < citizenHutMaxLevel
+              && Math.pow(2.0, citizenHutLevel + 1.0) < this.getExperienceLevel())
         {
             return;
         }
@@ -469,8 +471,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
         double localXp = xp * skillModifier / EXP_DIVIDER;
         final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
-        final double bonusXp = workBuildingLevel*(1+citizenHutLevel) / Math.log(this.getExperienceLevel() + 2);
-
+        final double bonusXp = workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2);
         localXp = localXp * bonusXp;
         if (localXp > maxValue)
         {
@@ -1167,6 +1168,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Checks if the citizen should work even when it rains.
+     *
      * @return true if his building level is bigger than 5
      */
     private boolean shouldWorkWhileRaining()
