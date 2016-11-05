@@ -1,5 +1,6 @@
 package com.minecolonies.proxy;
 
+import com.jlgm.structurepreview.event.RenderEventHandler;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.client.gui.WindowBuildTool;
 import com.minecolonies.client.gui.WindowCitizen;
@@ -42,6 +43,7 @@ public class ClientProxy extends CommonProxy
     {
         super.registerEvents();
 
+        MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
 
         //Schematica

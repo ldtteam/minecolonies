@@ -1,9 +1,7 @@
 package com.schematica.client.renderer;
 
-import com.schematica.Settings;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
@@ -37,14 +35,14 @@ public class SchematicRenderCache extends ChunkCache
     @Override
     public IBlockState getBlockState(final BlockPos pos)
     {
-        if(Settings.instance.getSchematicWorld() != null)
+        //if(Settings.instance.getSchematicWorld() != null)
         {
             //final BlockPos realPos = pos.add(Settings.instance.getSchematicWorld().position);
             final World world = this.minecraft.theWorld;
 
             //if (!world.isAirBlock(realPos))
             {
-                return Blocks.AIR.getDefaultState();
+                //return Blocks.AIR.getDefaultState();
             }
         }
         return super.getBlockState(pos);

@@ -1,5 +1,6 @@
 package com.minecolonies.client.gui;
 
+import com.blockout.Log;
 import com.blockout.controls.Button;
 import com.jlgm.structurepreview.helpers.StructPrevMath;
 import com.jlgm.structurepreview.helpers.Structure;
@@ -7,17 +8,14 @@ import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Schematics;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
-import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.SchematicWrapper;
 import com.schematica.Settings;
-import com.schematica.client.renderer.RenderSchematic;
-import com.schematica.client.util.RotationHelper;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -148,7 +145,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * Current position the hut/decoration is rendered at.
      */
     @NotNull
-    private BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(0, 0, 0);
+    private BlockPos pos = new BlockPos(0, 0, 0);
 
     /**
      * Current rotation of the hut/decoration.
@@ -172,13 +169,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     public WindowBuildTool(@Nullable BlockPos pos)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
-        Settings.instance.pos = pos;
 
-        Structure structure = new Structure(null, "endcity/ship", new PlacementSettings().setRotation(StructPrevMath.getRotationFromYaw()).setMirror(Mirror.NONE));
-
-        Settings.instance.setActiveSchematic(structure);
-
-        //@Nullable Structure structure = Settings.instance.getActiveStructure();
+        @Nullable Structure structure = Settings.instance.getActiveStructure();
 
         if (structure != null)
         {
@@ -188,9 +180,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
         else if (pos != null)
         {
-            BlockPosUtil.set(this.pos, pos);
+            structure = new Structure(null, "endcity/ship", new PlacementSettings().setRotation(StructPrevMath.getRotationFromYaw()).setMirror(Mirror.NONE));
+            Settings.instance.setActiveSchematic(structure);
+            this.pos = pos;
+            Settings.instance.pos = pos;
+            Settings.instance.setRotation(0);
         }
-
 
         registerButton(BUTTON_TYPE_ID, this::placementModeClicked);
         registerButton(BUTTON_HUT_DEC_ID, this::hutDecClicked);
@@ -279,7 +274,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
               Settings.instance.isInHutMode() ? "com.minecolonies.gui.buildtool.nohut" : "com.minecolonies.gui.buildtool.nodecoration"));
             buttonHutDec.setEnabled(false);
 
-            Settings.instance.setActiveSchematic(null);
+            //todo after setting up huts
+            //Settings.instance.setActiveSchematic(null);
         }
         else
         {
@@ -493,17 +489,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveLeftClicked(Button button)
     {
-        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
-        updatePosition();
-    }
-
-    /**
-     * Update position of the schematic
-     */
-    private void updatePosition()
-    {
-        Settings.instance.moveTo(pos);
-        RenderSchematic.INSTANCE.refresh();
+        Settings.instance.moveTo(pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
     }
 
     /**
@@ -513,8 +499,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveRightClicked(Button button)
     {
-        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
-        updatePosition();
+        Settings.instance.moveTo(pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
     }
 
     /**
@@ -524,8 +509,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveForwardClicked(Button button)
     {
-        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing()));
-        updatePosition();
+        Settings.instance.moveTo(pos.offset(this.mc.thePlayer.getHorizontalFacing()));
     }
 
     /**
@@ -535,8 +519,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveBackClicked(Button button)
     {
-        BlockPosUtil.set(pos, pos.offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
-        updatePosition();
+        Settings.instance.moveTo(pos.offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
     }
 
     /**
@@ -546,8 +529,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveUpClicked(Button button)
     {
-        BlockPosUtil.set(pos, pos.up());
-        updatePosition();
+        Settings.instance.moveTo(pos.up());
     }
 
     /**
@@ -557,8 +539,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveDownClicked(Button button)
     {
-        BlockPosUtil.set(pos, pos.down());
-        updatePosition();
+        Settings.instance.moveTo(pos.down());
     }
 
     /**
@@ -569,8 +550,33 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private void rotateRightClicked(Button button)
     {
         rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
-        //RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
-        updatePosition();
+        updateRotation(rotation);
+    }
+
+    /**
+     * Updates the rotation of the structure depending on the input.
+     * @param rotation the rotation to be set.
+     */
+    private void updateRotation(final int rotation)
+    {
+        PlacementSettings settings = new PlacementSettings();
+        switch (rotation)
+        {
+            case 1:
+                settings.setRotation(Rotation.CLOCKWISE_90);
+                break;
+            case 2:
+                settings.setRotation(Rotation.CLOCKWISE_180);
+                break;
+            case 3:
+                settings.setRotation(Rotation.COUNTERCLOCKWISE_90);
+                break;
+            default:
+                settings.setRotation(Rotation.NONE);
+
+        }
+        Settings.instance.setRotation(rotation);
+        Settings.instance.getActiveStructure().setPlacementSettings(settings);
     }
 
     /**
@@ -581,7 +587,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private void rotateLeftClicked(Button button)
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
-        //RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
-        updatePosition();
+        updateRotation(rotation);
     }
 }

@@ -149,18 +149,18 @@ public class Structure
     {
         Mirror mirrorIn = settings.getMirror();
         Rotation rotationIn = settings.getRotation();
-        double d0 = vec.xCoord;
-        double d1 = vec.yCoord;
-        double d2 = vec.zCoord;
+        double xCoord = vec.xCoord;
+        double yCoord = vec.yCoord;
+        double zCoord = vec.zCoord;
         boolean flag = true;
 
         switch (mirrorIn)
         {
             case LEFT_RIGHT:
-                d2 = 1.0D - d2;
+                zCoord = 1.0D - zCoord;
                 break;
             case FRONT_BACK:
-                d0 = 1.0D - d0;
+                xCoord = 1.0D - xCoord;
                 break;
             default:
                 flag = false;
@@ -169,13 +169,13 @@ public class Structure
         switch (rotationIn)
         {
             case COUNTERCLOCKWISE_90:
-                return new Vec3d(d2, d1, 1.0D - d0);
+                return new Vec3d(zCoord, yCoord, 1.0D - xCoord);
             case CLOCKWISE_90:
-                return new Vec3d(1.0D - d2, d1, d0);
+                return new Vec3d(1.0D - zCoord, yCoord, xCoord);
             case CLOCKWISE_180:
-                return new Vec3d(1.0D - d0, d1, 1.0D - d2);
+                return new Vec3d(1.0D - xCoord, yCoord, 1.0D - zCoord);
             default:
-                return flag ? new Vec3d(d0, d1, d2) : vec;
+                return flag ? new Vec3d(xCoord, yCoord, zCoord) : vec;
         }
     }
 

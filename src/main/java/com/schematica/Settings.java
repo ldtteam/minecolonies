@@ -1,7 +1,6 @@
 package com.schematica;
 
 import com.jlgm.structurepreview.helpers.Structure;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,9 +41,7 @@ public final class Settings
         {
             return;
         }
-
-        //BlockPosUtil.set(offset, pos.subtract(schematic.getSchematic().getOffset()));
-        //BlockPosUtil.set(schematic.position, offset);
+        this.pos = this.pos.add(pos);
     }
 
     /**
@@ -66,12 +63,10 @@ public final class Settings
         if (structure != null)
         {
             this.structure = structure;
-
-            structure.renderStructure(this.pos, Minecraft.getMinecraft().theWorld, Minecraft.getMinecraft().thePlayer, 0);
         }
         else
         {
-            //reset();
+            reset();
         }
     }
 
@@ -81,17 +76,7 @@ public final class Settings
     public void reset()
     {
         structure = null;
-
         isPendingReset = false;
-    }
-
-    /**
-     * @return The schematic world we are currently rendering. null if not currently rendering anything.
-     */
-    //todo
-    public Structure getSchematicWorld()
-    {
-        return structure;
     }
 
     /**
@@ -181,5 +166,14 @@ public final class Settings
     public BlockPos getOffset()
     {
         return offset.toImmutable();
+    }
+
+    /**
+     * Sets the rotation.
+     * @param rotation the rotation to set.
+     */
+    public void setRotation(final int rotation)
+    {
+        this.rotation = rotation;
     }
 }
