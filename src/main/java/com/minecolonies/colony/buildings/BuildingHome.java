@@ -76,8 +76,10 @@ public class BuildingHome extends AbstractBuildingHut
     @Override
     public void onDestroyed()
     {
-        residents.stream().filter(citizen -> citizen != null).forEach(citizen -> citizen.setHomeBuilding(null));
-
+        residents.stream()
+          .filter(citizen -> citizen != null)
+          .forEach(citizen -> citizen.setHomeBuilding(null));
+        residents.clear();
         super.onDestroyed();
     }
 
@@ -122,8 +124,9 @@ public class BuildingHome extends AbstractBuildingHut
         {
             // Move the citizen to a better hut
             if (citizen.getHomeBuilding() != null &&
-                  citizen.getHomeBuilding().getBuildingLevel() < getBuildingLevel())
+                  citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
             {
+                // The citizen can move to this hut to improve conditions
                 citizen.getHomeBuilding().removeCitizen(citizen);
             }
             if (citizen.getHomeBuilding() == null)
