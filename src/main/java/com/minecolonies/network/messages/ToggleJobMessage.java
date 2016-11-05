@@ -3,17 +3,16 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.permissions.Permissions;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Message class which manages the message to toggle automatic or manual job allocation.
  */
-public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMessage, IMessage>
+public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage>
 {
     /**
      * The Colony ID;
@@ -29,7 +28,7 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
      */
     public ToggleJobMessage()
     {
-        // Required for netty.
+        super();
     }
 
     /**
@@ -40,6 +39,7 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
      */
     public ToggleJobMessage(@NotNull ColonyView colony, boolean toggle)
     {
+        super();
         this.colonyId = colony.getID();
         this.toggle = toggle;
     }
@@ -68,22 +68,20 @@ public class ToggleJobMessage implements IMessage, IMessageHandler<ToggleJobMess
         buf.writeBoolean(toggle);
     }
 
-    /**
-     * Called when a message has been received.
-     *
-     * @param message the message.
-     * @param ctx     the context.
-     * @return possible response, in this case -&gt; null.
-     */
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull ToggleJobMessage message, MessageContext ctx)
+    public void messageOnServerThread(final ToggleJobMessage message, final EntityPlayerMP player)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
+
+            //Verify player has permission to change this huts settings
+            if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+            {
+                return;
+            }
+
             colony.setManualHiring(message.toggle);
         }
-        return null;
     }
 }

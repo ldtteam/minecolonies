@@ -1,5 +1,6 @@
 package com.minecolonies.entity.ai.minimal;
 
+import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -16,13 +17,13 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     /**
      * The entity we are attached to
      */
-    private EntityCitizen theEntity;
-    private double        farSpeed;
-    private double        nearSpeed;
+    private EntityCitizen           theEntity;
+    private double                  farSpeed;
+    private double                  nearSpeed;
     @Nullable
-    private Entity        closestLivingEntity;
-    private float         distanceFromEntity;
-    private Class         targetEntityClass;
+    private Entity                  closestLivingEntity;
+    private float                   distanceFromEntity;
+    private Class<? extends Entity> targetEntityClass;
 
     /**
      * Constructor.
@@ -33,7 +34,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      * @param farSpeed           how fast we should move when we are far away.
      * @param nearSpeed          how fast we should move when we are close.
      */
-    public EntityAICitizenAvoidEntity(EntityCitizen entity, Class targetEntityClass, float distanceFromEntity, double farSpeed, double nearSpeed)
+    public EntityAICitizenAvoidEntity(EntityCitizen entity, Class<? extends Entity> targetEntityClass, float distanceFromEntity, double farSpeed, double nearSpeed)
     {
         this.theEntity = entity;
         this.targetEntityClass = targetEntityClass;
@@ -50,7 +51,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     public boolean shouldExecute()
     {
         closestLivingEntity = getClosestToAvoid();
-        return closestLivingEntity != null;
+        return closestLivingEntity != null && !(theEntity.getColonyJob() instanceof JobGuard);
     }
 
     /**

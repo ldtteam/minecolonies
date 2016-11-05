@@ -18,7 +18,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     /**
      * The maximum upgrade of the building.
      */
-    private static final int    MAX_BUILDING_LEVEL = 2;
+    public static final int    MAX_BUILDING_LEVEL = 5;
     /**
      * The job description.
      */
@@ -48,6 +48,17 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * Getter of the max building level.
+     *
+     * @return the integer.
+     */
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return MAX_BUILDING_LEVEL;
+    }
+
+    /**
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -63,17 +74,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             this.getColony().triggerAchievement(ModAchievements.achievementUpgradeBuilderMax);
         }
-    }
-
-    /**
-     * Getter of the max building level.
-     *
-     * @return the integer.
-     */
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
     }
 
     /**

@@ -11,7 +11,6 @@ import com.minecolonies.util.LanguageHandler;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -36,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 import static net.minecraft.util.EnumFacing.NORTH;
 import static net.minecraft.util.EnumFacing.fromAngle;
+
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
@@ -44,7 +44,7 @@ public class BlockHutField extends BlockContainer
     /**
      * The position it faces.
      */
-    public static final PropertyDirection FACING = BlockHorizontal.FACING;
+    public static final  PropertyDirection FACING           = BlockHorizontal.FACING;
     /**
      * Hardness of the block.
      */
@@ -117,12 +117,8 @@ public class BlockHutField extends BlockContainer
         return state.getValue(FACING).getIndex();
     }
 
-    @Override
-    public boolean isOpaqueCube(final IBlockState state)
-    {
-        return false;
-    }
-
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings("deprecation")
     @Override
     public boolean isFullCube(IBlockState state)
     {
@@ -135,6 +131,8 @@ public class BlockHutField extends BlockContainer
         return false;
     }
 
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
@@ -144,6 +142,14 @@ public class BlockHutField extends BlockContainer
                                   (float) END_COLLISION,
                                   (float) HEIGHT_COLLISION,
                                   (float) END_COLLISION);
+    }
+
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean isOpaqueCube(final IBlockState state)
+    {
+        return false;
     }
 
     @NotNull
@@ -217,7 +223,7 @@ public class BlockHutField extends BlockContainer
     @Override
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, new IProperty[] {FACING});
+        return new BlockStateContainer(this, FACING);
     }
 
     @Override
@@ -235,6 +241,4 @@ public class BlockHutField extends BlockContainer
     // =======================================================================
     // ===================== END of Rendering & Meta-Data ====================
     // =======================================================================
-
-
 }

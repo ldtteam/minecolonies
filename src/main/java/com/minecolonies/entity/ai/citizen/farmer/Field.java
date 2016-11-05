@@ -18,6 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -214,10 +215,10 @@ public class Field extends Container
             for (int j = 0; j < PLAYER_INVENTORY_COLUMNS; j++)
             {
                 addSlotToContainer(new Slot(
-                                             playerInventory,
-                                             j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
-                                             PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                                             PLAYER_INVENTORY_INITIAL_Y_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH
+                        playerInventory,
+                        j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
+                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -225,57 +226,11 @@ public class Field extends Container
         for (i = 0; i < PLAYER_INVENTORY_COLUMNS; i++)
         {
             addSlotToContainer(new Slot(
-                                         playerInventory, i,
-                                         PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                                         PLAYER_INVENTORY_HOTBAR_OFFSET
+                    playerInventory, i,
+                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                    PLAYER_INVENTORY_HOTBAR_OFFSET
             ));
         }
-        calculateSize(world, location.down());
-    }
-
-    /**
-     * Create and load a Field given it's saved NBTTagCompound.
-     *
-     * @param colony   The owning colony.
-     * @param compound The saved data.
-     * @return {@link Field} created from the compound.
-     */
-    @NotNull
-    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
-    {
-        @NotNull final Field field = new Field(colony);
-        field.readFromNBT(compound);
-        return field;
-    }
-
-    /**
-     * Save data to NBT compound.
-     * Writes the {@link #location} value.
-     *
-     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
-     */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
-    {
-        location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
-        taken = compound.getBoolean(TAG_TAKEN);
-        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
-        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
-        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
-        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
-        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
-        inventory = new InventoryField("");
-        inventory.readFromNBT(compound);
-        setOwner(compound.getString(TAG_OWNER));
-    }
-
-    /**
-     * Getter for MAX_RANGE.
-     *
-     * @return the max range.
-     */
-    private static int getMaxRange()
-    {
-        return MAX_RANGE;
     }
 
     @Override
@@ -328,6 +283,51 @@ public class Field extends Container
     }
 
     /**
+     * Create and load a Field given it's saved NBTTagCompound.
+     *
+     * @param colony   The owning colony.
+     * @param compound The saved data.
+     * @return {@link Field} created from the compound.
+     */
+    @NotNull
+    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
+    {
+        @NotNull final Field field = new Field(colony);
+        field.readFromNBT(compound);
+        return field;
+    }
+
+    /**
+     * Save data to NBT compound.
+     * Writes the {@link #location} value.
+     *
+     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
+     */
+    public void readFromNBT(@NotNull NBTTagCompound compound)
+    {
+        location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+        taken = compound.getBoolean(TAG_TAKEN);
+        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
+        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
+        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
+        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
+        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
+        inventory = new InventoryField("");
+        inventory.readFromNBT(compound);
+        setOwner(compound.getString(TAG_OWNER));
+    }
+
+    /**
+     * Getter for MAX_RANGE.
+     *
+     * @return the max range.
+     */
+    private static int getMaxRange()
+    {
+        return MAX_RANGE;
+    }
+
+    /**
      * Calculates recursively the length of the field until a certain point.
      * <p>
      * This mutates the field!
@@ -355,7 +355,7 @@ public class Field extends Container
      */
     private int searchNextBlock(int blocksChecked, @NotNull BlockPos position, EnumFacing direction, @NotNull World world)
     {
-        if (blocksChecked == getMaxRange() || isNoPartOfField(world, position))
+        if (blocksChecked >= getMaxRange() || isNoPartOfField(world, position))
         {
             return blocksChecked;
         }

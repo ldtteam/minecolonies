@@ -237,7 +237,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             job.setSchematic(new SchematicWrapper(world, workOrder.getSchematicName()));
         }
-        catch (IllegalStateException e)
+        catch (RuntimeException e)
         {
             Log.getLogger().warn(String.format("Schematic: (%s) does not exist - removing build request", workOrder.getSchematicName()), e);
             job.setSchematic(null);
@@ -362,6 +362,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         WorkOrderBuild wo = job.getWorkOrder();
 
+        if(job.getSchematic() == null)
+        {
+            //fix for bad schematics
+            job.complete();
+        }
+
         if (wo.isCleared())
         {
             return AIState.BUILDER_STRUCTURE_STEP;
@@ -418,6 +424,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState requestMaterials()
     {
+        if(job.getSchematic() == null)
+        {
+            //fix for bad schematics
+            job.complete();
+        }
+
         //todo as soon as material handling has been implemented this should be set to work!
         //We need to deal with materials
         if (!Configurations.builderInfiniteResources)
@@ -474,6 +486,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState structureStep()
     {
+        if(job.getSchematic() == null)
+        {
+            //fix for bad schematics
+            job.complete();
+        }
         if (!goToConstructionSite())
         {
             return this.getState();
@@ -528,6 +545,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState decorationStep()
     {
+        if(job.getSchematic() == null)
+        {
+            //fix for bad schematics
+            job.complete();
+        }
         if (!goToConstructionSite())
         {
             return this.getState();
@@ -696,7 +718,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if (block instanceof BlockDoor)
         {
-            if(blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+            if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
             {
                 ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), block, false);
             }
@@ -790,6 +812,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @NotNull
     private AIState completeBuild()
     {
+        if(job.getSchematic() == null)
+        {
+            //fix for bad schematics
+            job.complete();
+        }
         job.getSchematic().getEntities().forEach(this::spawnEntity);
 
         String schematicName = job.getSchematic().getName();

@@ -15,7 +15,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
 import net.minecraftforge.fml.common.registry.GameData;
@@ -33,6 +32,7 @@ class SchematicAlpha extends SchematicFormat
     private static final String OFFSET_Y = "OffsetY";
     private static final String OFFSET_Z = "OffsetZ";
 
+    @SuppressWarnings("deprecation")
     private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
 
     @NotNull
@@ -101,6 +101,7 @@ class SchematicAlpha extends SchematicFormat
                     pos.setPos(x, y, z);
                     try
                     {
+                        @SuppressWarnings("deprecation")
                         final IBlockState blockState = block.getStateFromMeta(meta);
                         schematic.setBlockState(pos, blockState);
                     }
@@ -118,7 +119,7 @@ class SchematicAlpha extends SchematicFormat
         {
             try
             {
-                final TileEntity tileEntity = NBTHelper.readTileEntityFromCompound((World) null, tileEntitiesList.getCompoundTagAt(i));
+                final TileEntity tileEntity = NBTHelper.readTileEntityFromCompound(null, tileEntitiesList.getCompoundTagAt(i));
                 if (tileEntity != null)
                 {
                     schematic.setTileEntity(tileEntity.getPos(), tileEntity);

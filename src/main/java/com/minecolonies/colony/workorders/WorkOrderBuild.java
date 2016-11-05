@@ -3,10 +3,15 @@ package com.minecolonies.colony.workorders;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
+import com.minecolonies.util.Log;
+import com.minecolonies.util.SchematicWrapper;
+import com.schematica.world.schematic.SchematicFormat;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +27,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private static final String TAG_IS_CLEARED        = "cleared";
     private static final String TAG_SCHEMATIC_NAME    = "schematicName";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
+
+    private static final String DEFAULT_STYLE  = "default";
 
     protected BlockPos buildingLocation;
     protected int      buildingRotation;
@@ -51,9 +58,21 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.buildingLocation = building.getID();
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
-        this.schematicName = building.getStyle() + '/' + this.getUpgradeName();
         this.buildingRotation = building.getRotation();
         this.cleared = level > 1;
+
+        try
+        {
+            SchematicFormat.readFromStream(
+                    SchematicWrapper.getStream(
+                            new ResourceLocation("minecolonies:schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".schematic")));
+            this.schematicName = building.getStyle() + '/' + this.getUpgradeName();
+        }
+        catch (RuntimeException e)
+        {
+            Log.getLogger().warn(String.format("Schematic in Style (%s) does not exist - switching to default", building.getStyle()));
+            this.schematicName = DEFAULT_STYLE + '/' + this.getUpgradeName();
+        }
     }
 
     /**
@@ -192,8 +211,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
      */
     private boolean canBuildHut(int builderLevel, @NotNull CitizenData citizen, @NotNull Colony colony)
     {
-        return builderLevel >= upgradeLevel || builderLevel == 2
-                 || citizen.getWorkBuilding().getID().equals(buildingLocation)
+        return builderLevel >= upgradeLevel || builderLevel == BuildingBuilder.MAX_BUILDING_LEVEL
+                 || (citizen.getWorkBuilding() != null && citizen.getWorkBuilding().getID().equals(buildingLocation))
                  || isLocationTownhall(colony, buildingLocation);
     }
 
@@ -219,9 +238,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
         }
     }
 
-    private boolean isLocationTownhall(@NotNull Colony colony, BlockPos buildingLocation)
+    private static boolean isLocationTownhall(@NotNull Colony colony, BlockPos buildingLocation)
     {
-        return colony.hasTownHall() && colony.getTownHall().getID().equals(buildingLocation);
+        return colony.hasTownHall() && colony.getTownHall() != null && colony.getTownHall().getID().equals(buildingLocation);
     }
 
     /**

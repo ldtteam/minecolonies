@@ -1,10 +1,14 @@
 package com.minecolonies.util;
 
+import com.compatibility.Compatibility;
+import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.SoundType;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -125,6 +129,17 @@ public final class Utils
             }
         }
         return false;
+    }
+
+    /**
+     * Checks if an item serves as a weapon.
+     *
+     * @param stack the stack to analyze.
+     * @return true if it is a tool or sword.
+     */
+    public static boolean doesItemServeAsWeapon(@NotNull ItemStack stack)
+    {
+        return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool;
     }
 
     /**
@@ -269,10 +284,12 @@ public final class Utils
      * @param pos      Coordinates
      * @param block    Block that makes the sound
      * @param metadata Metadata of the block that makes sound
+     * @param citizen  the citizen breaking this block
      */
-    public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata)
+    public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata, EntityCitizen citizen)
     {
-        world.playSound((EntityPlayer) null, pos, block.getSoundType().getBreakSound(), SoundCategory.BLOCKS, block.getSoundType().getVolume(), block.getSoundType().getPitch());
+        final SoundType soundType = block.getSoundType(world.getBlockState(pos), world, pos, citizen);
+        world.playSound(null, pos, soundType.getBreakSound(), SoundCategory.BLOCKS, soundType.getVolume(), soundType.getPitch());
     }
 
     /**
@@ -365,6 +382,7 @@ public final class Utils
      * @param tool  the tool category
      * @return integer value for mining level &gt;= 0 is okay
      */
+    @SuppressWarnings("deprecation")
     public static int getMiningLevel(@Nullable ItemStack stack, @Nullable String tool)
     {
         if (tool == null)
@@ -376,6 +394,11 @@ public final class Utils
         {
             return -1;
         }
+        if (!Compatibility.getMiningLevelCompatibility(stack, tool))
+        {
+            return -1;
+        }
+        //todo: use 'better' version of this thing
         return stack.getItem().getHarvestLevel(stack, tool);
     }
 

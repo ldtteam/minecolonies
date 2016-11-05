@@ -8,6 +8,7 @@ import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.inventory.GuiHandler;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.sounds.ModSoundEvents;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import net.minecraft.nbt.NBTTagCompound;
@@ -90,6 +91,12 @@ public class CommonProxy implements IProxy
 
     @Override
     public void registerEntityRendering() {}
+
+    @Override
+    public void registerSounds()
+    {
+        ModSoundEvents.registerSounds();
+    }
 
     @Override
     public void registerTileEntityRendering() {}

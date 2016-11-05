@@ -45,7 +45,7 @@ public class Tree
     /**
      * Tag to store the topLog to NBT.
      */
-    private static final String TAG_TOP_LOG   = "topLog";
+    private static final String TAG_TOP_LOG = "topLog";
 
     /**
      * Number of leaves necessary for a tree to be recognized.
@@ -99,6 +99,7 @@ public class Tree
     /**
      * Creates a new tree Object for the lumberjack.
      * Since the same type of variant of the block old log or new log do not match we have to separate them.
+     *
      * @param world The world where the tree is in.
      * @param log   the position of the found log.
      */
@@ -107,11 +108,11 @@ public class Tree
         Block block = BlockPosUtil.getBlock(world, log);
         if (block.isWood(world, log))
         {
-            if(block instanceof BlockOldLog)
+            if (block instanceof BlockOldLog)
             {
                 variant = world.getBlockState(log).getValue(BlockOldLog.VARIANT);
             }
-            else if(block instanceof BlockNewLog)
+            else if (block instanceof BlockNewLog)
             {
                 variant = world.getBlockState(log).getValue(BlockNewLog.VARIANT);
             }
@@ -129,39 +130,6 @@ public class Tree
             checkTree(world, topLog);
             stumpLocations = new ArrayList<>();
             woodBlocks.clear();
-        }
-    }
-
-    /**
-     * Checks if the found log is part of a tree.
-     *
-     * @param world  The world the tree is in.
-     * @param topLog The most upper log of the tree.
-     */
-    private void checkTree(@NotNull World world, @NotNull BlockPos topLog)
-    {
-        if (!world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ())).getMaterial().isSolid())
-        {
-            return;
-        }
-        int leafCount = 0;
-        for (int x = -1; x <= 1; x++)
-        {
-            for (int z = -1; z <= 1; z++)
-            {
-                for (int y = -1; y <= 1; y++)
-                {
-                    if (world.getBlockState(new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z)).getMaterial().equals(Material.LEAVES))
-                    {
-                        leafCount++;
-                        if (leafCount >= NUMBER_OF_LEAVES)
-                        {
-                            isTree = true;
-                            return;
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -196,27 +164,27 @@ public class Tree
      *
      * @param world The world the log is in.
      * @param log   the log to add.
-     *
      * @return a tuple containing, first: bottom log and second: top log.
      */
     @NotNull
-    private static Tuple<BlockPos, BlockPos> getBottomAndTopLog(@NotNull IBlockAccess world, @NotNull BlockPos log, @NotNull LinkedList<BlockPos> woodenBlocks, BlockPos bottomLog,
-            BlockPos topLog)
+    private static Tuple<BlockPos, BlockPos> getBottomAndTopLog(
+                                                                 @NotNull IBlockAccess world, @NotNull BlockPos log, @NotNull LinkedList<BlockPos> woodenBlocks, BlockPos bottomLog,
+                                                                 BlockPos topLog)
     {
-        BlockPos bottom = bottomLog == null ? log  : bottomLog;
+        BlockPos bottom = bottomLog == null ? log : bottomLog;
         BlockPos top = topLog == null ? log : topLog;
 
-        if(woodenBlocks.size() >= MAX_TREE_SIZE)
+        if (woodenBlocks.size() >= MAX_TREE_SIZE)
         {
             return new Tuple<>(bottom, top);
         }
 
-        if(log.getY() < bottom.getY())
+        if (log.getY() < bottom.getY())
         {
             bottom = log;
         }
 
-        if(log.getY() > top.getY())
+        if (log.getY() > top.getY())
         {
             top = log;
         }
@@ -295,6 +263,39 @@ public class Tree
     }
 
     /**
+     * Checks if the found log is part of a tree.
+     *
+     * @param world  The world the tree is in.
+     * @param topLog The most upper log of the tree.
+     */
+    private void checkTree(@NotNull World world, @NotNull BlockPos topLog)
+    {
+        if (!world.getBlockState(new BlockPos(location.getX(), location.getY() - 1, location.getZ())).getMaterial().isSolid())
+        {
+            return;
+        }
+        int leafCount = 0;
+        for (int x = -1; x <= 1; x++)
+        {
+            for (int z = -1; z <= 1; z++)
+            {
+                for (int y = -1; y <= 1; y++)
+                {
+                    if (world.getBlockState(new BlockPos(topLog.getX() + x, topLog.getY() + y, topLog.getZ() + z)).getMaterial().equals(Material.LEAVES))
+                    {
+                        leafCount++;
+                        if (leafCount >= NUMBER_OF_LEAVES)
+                        {
+                            isTree = true;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Searches all logs that belong to the tree.
      *
      * @param world The world where the blocks are in.
@@ -334,17 +335,17 @@ public class Tree
      */
     private void addAndSearch(@NotNull World world, @NotNull BlockPos log)
     {
-        if(woodBlocks.size() >= MAX_TREE_SIZE)
+        if (woodBlocks.size() >= MAX_TREE_SIZE)
         {
             return;
         }
 
-        if(log.getY() < location.getY())
+        if (log.getY() < location.getY())
         {
             location = log;
         }
 
-        if(log.getY() > topLog.getY())
+        if (log.getY() > topLog.getY())
         {
             topLog = log;
         }
@@ -501,6 +502,5 @@ public class Tree
         compound.setTag(TAG_STUMPS, stumps);
 
         BlockPosUtil.writeToNBT(compound, TAG_TOP_LOG, topLog);
-
     }
 }

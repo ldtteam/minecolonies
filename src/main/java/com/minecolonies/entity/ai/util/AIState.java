@@ -29,6 +29,7 @@ public enum AIState
     NEEDS_AXE,
     NEEDS_HOE,
     NEEDS_PICKAXE,
+    NEEDS_WEAPON,
     /**
      * Inventory has to be dumped.
      */
@@ -183,4 +184,38 @@ public enum AIState
      * Harvest the crops.
      */
     FARMER_HARVEST,
+
+    /**
+     * Work field.
+     */
+    FARMER_WORK,
+
+      /*
+###Guard###
+    */
+
+    /**
+     * Let the guard search for targets.
+     */
+    GUARD_SEARCH_TARGET,
+
+    /**
+     * Choose a target.
+     */
+    GUARD_GET_TARGET,
+
+    /**
+     * Hunt the target down.
+     */
+    GUARD_HUNT_DOWN_TARGET,
+
+    /**
+     * Patrol through the village.
+     */
+    GUARD_PATROL,
+
+    /**
+     * Go back to the hut to "restock".
+     */
+    GUARD_RESTOCK
 }

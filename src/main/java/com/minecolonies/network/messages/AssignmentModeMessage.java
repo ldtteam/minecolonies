@@ -6,17 +6,16 @@ import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Message to change the assignmentMode of the fields of the farmer.
  */
-public class AssignmentModeMessage implements IMessage, IMessageHandler<AssignmentModeMessage, IMessage>
+public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage, IMessage>
 {
 
     private int      colonyId;
@@ -28,9 +27,7 @@ public class AssignmentModeMessage implements IMessage, IMessageHandler<Assignme
      */
     public AssignmentModeMessage()
     {
-        /**
-         * Intentionally left empty.
-         */
+        super();
     }
 
     /**
@@ -41,6 +38,7 @@ public class AssignmentModeMessage implements IMessage, IMessageHandler<Assignme
      */
     public AssignmentModeMessage(@NotNull BuildingFarmer.View building, boolean assignmentMode)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.assignmentMode = assignmentMode;
@@ -62,17 +60,16 @@ public class AssignmentModeMessage implements IMessage, IMessageHandler<Assignme
         buf.writeBoolean(assignmentMode);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull AssignmentModeMessage message, @NotNull MessageContext ctx)
+    public void messageOnServerThread(final AssignmentModeMessage message, final EntityPlayerMP player)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
-            //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(ctx.getServerHandler().playerEntity, Permissions.Action.ACCESS_HUTS))
+            //Verify player has permission to change this huts settings
+            if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
             {
-                return null;
+                return;
             }
 
             @Nullable final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
@@ -81,6 +78,5 @@ public class AssignmentModeMessage implements IMessage, IMessageHandler<Assignme
                 building.setAssignManually(message.assignmentMode);
             }
         }
-        return null;
     }
 }

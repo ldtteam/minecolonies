@@ -132,7 +132,7 @@ public final class SchematicWrapper
      * @param res the location to pull the stream from
      * @return a stream from this location
      */
-    private static InputStream getStream(@NotNull ResourceLocation res)
+    public static InputStream getStream(@NotNull ResourceLocation res)
     {
         try
         {
@@ -531,6 +531,16 @@ public final class SchematicWrapper
     }
 
     /**
+     * Change the current progressPos. Used when loading progress.
+     *
+     * @param localPosition new progressPos.
+     */
+    public void setLocalPosition(@NotNull BlockPos localPosition)
+    {
+        BlockPosUtil.set(this.progressPos, localPosition);
+    }
+
+    /**
      * @return World position.
      */
     public BlockPos getBlockPosition()
@@ -552,16 +562,6 @@ public final class SchematicWrapper
     public BlockPos getOffset()
     {
         return schematicWorld.getOffset();
-    }
-
-    /**
-     * Change the current progressPos. Used when loading progress.
-     *
-     * @param localPosition new progressPos.
-     */
-    public void setLocalPosition(@NotNull BlockPos localPosition)
-    {
-        BlockPosUtil.set(this.progressPos, localPosition);
     }
 
     /**

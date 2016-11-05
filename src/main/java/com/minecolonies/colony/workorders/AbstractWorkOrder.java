@@ -33,6 +33,7 @@ public abstract class AbstractWorkOrder
         addMapping("build", WorkOrderBuild.class);
         addMapping("decoration", WorkOrderBuildDecoration.class);
     }
+
     protected int id;
     private   int claimedBy;
     private   int priority;
