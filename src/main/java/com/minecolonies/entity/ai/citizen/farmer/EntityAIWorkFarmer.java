@@ -35,11 +35,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     /**
      * The standard delay the farmer should have.
      */
-    private static final int     STANDARD_DELAY      = 7;
+    private static final int     STANDARD_DELAY      = 40;
     /**
      * The bonus the farmer gains each update is level/divider.
      */
-    private static final int     DELAY_DIVIDER       = 10;
+    private static final double     DELAY_DIVIDER       = 1;
     /**
       * The EXP Earned per harvest.
       */
@@ -48,14 +48,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * How long to wait after looking to decide what to do.
      */
     private static final int     LOOK_WAIT           = 100;
-    /**
-     * How long to wait after a cycle to run another.
-     */
-    private static final int     CYCLE_WAIT          = 2400;
-    /**
-     * How long to cut from CYCLE_WAIT per field.
-     */
-    private static final int     FIELD_COMP          = 240;
     /**
      * Changed after finished harvesting in order to dump the inventory.
      */
@@ -103,12 +95,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         );
         worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
         worker.setCanPickUpLoot(true);
-        @Nullable final BuildingFarmer building = getOwnBuilding();
-
-        if (building != null && building.getBuildingLevel() > 0)
-        {
-            building.resetFields();
-        }
     }
 
     /**
@@ -158,8 +144,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (building.getCurrentField() == null && building.getFieldToWorkOn() == null)
         {
             building.resetFields();
-            walkToBuilding();
-            setDelay(CYCLE_WAIT - (building.getFarmerFields().size()*FIELD_COMP));
             return AIState.IDLE;
         }
 
@@ -274,7 +258,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             // harvest the block if able to.
             if (harvestIfAble(position))
             {
-                setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
+                setDelay(getLevelDelay());
             }
         }
 
@@ -320,7 +304,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 if (!(blockState.getBlock() instanceof BlockCrops) || ((BlockCrops)blockState.getBlock()).getItem(world, position.up(), blockState) != new ItemStack(field.getSeed()))
                 {
                     mineBlock(position.up());
-                    setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
+                    setDelay(getLevelDelay());
                     return AIState.FARMER_INITIALIZE;
                 }
             }
@@ -328,7 +312,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             // hoe the block if able to.
             if (hoeIfAble(position, field))
             {
-                setDelay(STANDARD_DELAY - this.worker.getLevel() / DELAY_DIVIDER);
+                setDelay(getLevelDelay());
                 return AIState.FARMER_INITIALIZE;
             }
 
@@ -348,6 +332,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             return AIState.IDLE;
         }
 
+        setDelay(getLevelDelay());
         return AIState.FARMER_INITIALIZE;
     }
 
@@ -422,7 +407,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         if (shouldHarvest(position))
         {
             worker.addExperience(XP_PER_HARVEST);
-            return harvestCrop(position.up());
+            if(mineBlock(position.up()))
+            {
+                world.setBlockState(position, Blocks.DIRT.getDefaultState());
+                return true;
+            }
         }
         return false;
     }
@@ -718,47 +707,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return worker;
     }
 
-    /**
-      * This method allows us to harvest crops and turn the block beneath to dirt.
-      *
-      * @params position the position of the crop to harvest
-      */
-    private boolean harvestCrop(final BlockPos position)
+    @Override
+    protected int getLevelDelay()
     {
-        final IBlockState curBlockState = world.getBlockState(position);
-
-        if (!(curBlockState.getBlock() instanceof IGrowable) || !(curBlockState.getBlock() instanceof BlockCrops))
-        {
-            return false;
-        }
-
-        final BlockCrops crops = (BlockCrops) curBlockState.getBlock();
-
-        if (!crops.isMaxAge(curBlockState))
-        {
-            return false;
-        }
-
-        final ItemStack tool = worker.getHeldItemMainhand();
-
-        //calculate fortune enchantment
-        final int fortune = Utils.getFortuneOf(tool);
-
-        final List<ItemStack> drops = crops.getDrops(world, position, curBlockState, fortune);
-
-        world.setBlockToAir(position);
-
-        //add the drops to the citizen
-        for (final ItemStack item : drops)
-        {
-            InventoryUtils.setStack(worker.getInventoryCitizen(), item);
-        }
-
-        //set the block below to dirt.
-        world.setBlockState(position.down(), Blocks.DIRT.getDefaultState());
-
-        this.incrementActionsDone();
-        return true;
-
+        return (int)Math.max(5, STANDARD_DELAY-(this.worker.getLevel()*DELAY_DIVIDER));
     }
 }
