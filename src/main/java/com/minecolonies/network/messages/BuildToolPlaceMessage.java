@@ -2,7 +2,7 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.Schematics;
+import com.minecolonies.colony.Structures;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
@@ -133,13 +133,13 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     private static void handleHut(@NotNull World world, @NotNull EntityPlayer player, String hut, String style, int rotation, @NotNull BlockPos buildPos)
     {
-        if (Schematics.getStylesForHut(hut) == null)
+        if (Structures.getStylesForHut(hut) == null)
         {
             Log.getLogger().error("No record of hut: " + hut);
             return;
         }
-
-        if (!ColonyManager.getClosestColony(world, buildPos).getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+        Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
+        if (tempColony != null && !tempColony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
         {
             return;
         }
@@ -199,7 +199,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     private static void handleDecoration(@NotNull World world, @NotNull EntityPlayer player, String decoration, String style, int rotation, @NotNull BlockPos buildPos)
     {
-        if (Schematics.getStylesForDecoration(decoration) == null)
+        if (Structures.getStylesForDecoration(decoration) == null)
         {
             Log.getLogger().error("No record of decoration: " + decoration);
             return;

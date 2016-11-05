@@ -1,9 +1,16 @@
 package com.jlgm.structurepreview.helpers;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
+import com.blockout.Log;
+import com.minecolonies.lib.Constants;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
 
 import com.jlgm.structurepreview.fake.FakeEntity;
@@ -30,62 +37,99 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
-import net.minecraft.world.gen.structure.template.TemplateManager;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.pipeline.LightUtil;
 
+/**
+ * Structure class, used to store, create, get structures.
+ */
 public class Structure
 {
+    /**
+     * Rotation by 90 degree.
+     */
+    private static final double  NINETY_DEGREE = 90D;
+    /**
+     * Template of the structure.
+     */
+    private Template          template;
+    private Minecraft         mc;
+    private PlacementSettings settings;
 
-    private       Template          structure;
-    private final Minecraft         mc;
-    private       PlacementSettings settings;
+    private static final int   COLOR_A    = 255;
+    private static final int   COLOR_R    = 255;
+    private static final int   COLOR_G    = 255;
+    private static final int   COLOR_B    = 255;
 
-    private final int   colorA     = 255;
-    private final int   colorR     = 255;
-    private final int   colorG     = 255;
-    private final int   colorB     = 255;
-    private       float brightness = 0.9F;
-
+    /**
+     * Constuctor of Structure, tries to create a new structure.
+     * @param world with world.
+     * @param structureName name of the structure (at stored location).
+     * @param settings it's settings.
+     */
     public Structure(@Nullable World world, String structureName, PlacementSettings settings)
     {
-        World worldObj = world;
-        if (worldObj == null)
-            worldObj = Minecraft.getMinecraft().getIntegratedServer().getServer().worldServerForDimension(Minecraft.getMinecraft().thePlayer.dimension);
-        WorldServer worldserver = (WorldServer) worldObj;
-        MinecraftServer minecraftserver = worldObj.getMinecraftServer();
-        TemplateManager templatemanager = worldserver.getStructureTemplateManager();
-        this.structure = templatemanager.func_189942_b(minecraftserver, new ResourceLocation(structureName));
-        this.settings = settings;
-        this.mc = Minecraft.getMinecraft();
+        InputStream inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
+
+        if(world == null || world.isRemote)
+        {
+            this.settings = settings;
+            this.mc = Minecraft.getMinecraft();
+        }
+        if (inputstream == null)
+        {
+            return;
+        }
+
+        try
+        {
+            this.template = readTemplateFromStream(inputstream);
+        }
+        catch (IOException e)
+        {
+            Log.getLogger().warn(String.format("Failed to load template %s", structureName), e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(inputstream);
+        }
+    }
+
+    /**
+     * reads a template from an inputstream
+     */
+    private static Template readTemplateFromStream(InputStream stream) throws IOException
+    {
+        NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(stream);
+        Template template = new Template();
+        template.read(nbttagcompound);
+        return template;
     }
 
     public boolean doesExist()
     {
-        return structure == null ? false : true;
+        return template == null ? false : true;
     }
 
     public Template.BlockInfo[] getBlockInfo()
     {
-        Template.BlockInfo[] blockList = new Template.BlockInfo[structure.blocks.size()];
-        blockList = structure.blocks.toArray(blockList);
+        Template.BlockInfo[] blockList = new Template.BlockInfo[template.blocks.size()];
+        blockList = template.blocks.toArray(blockList);
         return blockList;
     }
 
     public Template.BlockInfo[] getBlockInfoWithSettings(PlacementSettings settings)
     {
-        Template.BlockInfo[] blockList = new Template.BlockInfo[structure.blocks.size()];
-        blockList = structure.blocks.toArray(blockList);
+        Template.BlockInfo[] blockList = new Template.BlockInfo[template.blocks.size()];
+        blockList = template.blocks.toArray(blockList);
 
         for (int i = 0; i < blockList.length; i++)
         {
@@ -99,8 +143,8 @@ public class Structure
 
     public Entity[] getEntityInfo(World world, BlockPos pos)
     {
-        Template.EntityInfo[] entityInfoList = new Template.EntityInfo[structure.entities.size()];
-        entityInfoList = structure.blocks.toArray(entityInfoList);
+        Template.EntityInfo[] entityInfoList = new Template.EntityInfo[template.entities.size()];
+        entityInfoList = template.blocks.toArray(entityInfoList);
 
         Entity[] entityList = null;
 
@@ -116,19 +160,22 @@ public class Structure
 
     public Entity[] getEntityInfoWithSettings(World world, BlockPos pos, PlacementSettings settings)
     {
-        Template.EntityInfo[] entityInfoList = new Template.EntityInfo[structure.entities.size()];
-        entityInfoList = structure.entities.toArray(entityInfoList);
+        Template.EntityInfo[] entityInfoList = new Template.EntityInfo[template.entities.size()];
+        entityInfoList = template.entities.toArray(entityInfoList);
 
         Entity[] entityList = new Entity[entityInfoList.length];
 
         for (int i = 0; i < entityInfoList.length; i++)
         {
             Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
-            Vec3d entityVec = this.transformedVec3d(settings, entityInfoList[i].pos).add(new Vec3d(pos));
-            finalEntity.prevRotationYaw = finalEntity.getMirroredYaw(settings.getMirror()) - 90;
-            float f = finalEntity.getMirroredYaw(settings.getMirror());
-            f = f + (finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
-            finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, f, finalEntity.rotationPitch);
+            Vec3d entityVec = Structure.transformedVec3d(settings, entityInfoList[i].pos).add(new Vec3d(pos));
+
+            if(finalEntity != null)
+            {
+                finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREE);
+                double rotation = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double)finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
+                finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, (float) rotation, finalEntity.rotationPitch);
+            }
             entityList[i] = finalEntity;
         }
 
@@ -137,7 +184,7 @@ public class Structure
 
     public BlockPos getSize(Rotation rotation)
     {
-        return this.structure.transformedSize(rotation);
+        return this.template.transformedSize(rotation);
     }
 
     public void setPlacementSettings(PlacementSettings settings)
@@ -184,27 +231,27 @@ public class Structure
         Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
         Entity[] entityList = this.getEntityInfoWithSettings(clientWorld, startingPos, this.settings);
 
-        for (int progress = 0; progress < blockList.length; progress++)
+        for (final Template.BlockInfo aBlockList : blockList)
         {
-            Block block = blockList[progress].blockState.getBlock();
-            IBlockState iblockstate = blockList[progress].blockState;
-            BlockPos blockpos = blockList[progress].pos.add(startingPos);
-            IBlockState iblockextendedstate = block.getExtendedState(iblockstate, clientWorld, blockpos);
+            Block block = aBlockList.blockState.getBlock();
+            IBlockState iblockstate = aBlockList.blockState;
+            BlockPos blockpos = aBlockList.pos.add(startingPos);
+            IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, blockpos);
             IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
             TileEntity tileentity = null;
             if (block.hasTileEntity(iblockstate))
             {
                 tileentity = block.createTileEntity(clientWorld, iblockstate);
-                tileentity.readFromNBT(blockList[progress].tileentityData);
+                tileentity.readFromNBT(aBlockList.tileentityData);
             }
-            ModelHolder models = new ModelHolder(blockpos, iblockstate, iblockextendedstate, tileentity, ibakedmodel);
+            ModelHolder models = new ModelHolder(blockpos, iblockstate, iBlockExtendedState, tileentity, ibakedmodel);
             this.getQuads(models, models.quads);
             this.renderGhost(clientWorld, models, player, partialTicks);
         }
 
-        for (int i = 0; i < entityList.length; i++)
+        for (final Entity anEntityList : entityList)
         {
-            Minecraft.getMinecraft().getRenderManager().renderEntityStatic(entityList[i], 0.0F, true);
+            Minecraft.getMinecraft().getRenderManager().renderEntityStatic(anEntityList, 0.0F, true);
         }
     }
 
@@ -253,7 +300,7 @@ public class Structure
                 GL11.glPushMatrix();
                 terd.renderEngine = Minecraft.getMinecraft().renderEngine;
                 terd.preDrawBatch();
-                GL11.glColor4f((float) (this.colorR / 255), (float) (this.colorG / 255), (float) (this.colorB / 255), (this.colorA / 255));
+                GL11.glColor4f((float) (this.COLOR_R / COLOR_R), (float) (this.COLOR_G / COLOR_G), (float) (this.COLOR_B / COLOR_B), (this.COLOR_A / COLOR_A));
                 terd.renderTileEntity(te, partialTicks, -1);
                 terd.drawBatch(pass);
                 GL11.glPopMatrix();
@@ -266,7 +313,6 @@ public class Structure
         double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
         double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
         double dz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
-        float brightness = this.brightness;
         BlockPos pos = holder.pos;
 
         GlStateManager.pushMatrix();
@@ -353,12 +399,8 @@ public class Structure
         {
             buffer.begin(GL11.GL_QUADS, quad.getFormat());
 
-            final int color = quad.hasTintIndex() ? this.getTint(world, actualState, pos, alpha, quad.getTintIndex()) : alpha | 0xffffff;
-            int A = (this.colorA << 24) & 0xFF000000;
-            int R = (this.colorR << 16) & 0x00FF0000;
-            int G = (this.colorG << 8) & 0x0000FF00;
-            int B = (this.colorB) & 0x000000FF;
-            int finalColor = 0x00000000 | A | R | G | B;
+            final int color = quad.hasTintIndex() ? this.getTint(world, actualState, pos, alpha, quad.getTintIndex()) : (alpha | 0xffffff);
+
             LightUtil.renderQuadColor(buffer, quad, color);
 
             tessellator.draw();

@@ -1,15 +1,12 @@
 package com.minecolonies.client.gui;
 
-import com.blockout.Log;
 import com.blockout.controls.Button;
-import com.jlgm.structurepreview.helpers.StructPrevMath;
 import com.jlgm.structurepreview.helpers.Structure;
 import com.minecolonies.MineColonies;
-import com.minecolonies.colony.Schematics;
+import com.minecolonies.colony.Structures;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.SchematicWrapper;
 import com.schematica.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -180,8 +177,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
         else if (pos != null)
         {
-            structure = new Structure(null, "endcity/ship", new PlacementSettings().setRotation(StructPrevMath.getRotationFromYaw()).setMirror(Mirror.NONE));
-            Settings.instance.setActiveSchematic(structure);
             this.pos = pos;
             Settings.instance.pos = pos;
             Settings.instance.setRotation(0);
@@ -246,7 +241,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.decoration"));
 
-        hutDec.addAll(Schematics.getDecorations());
+        hutDec.addAll(Structures.getDecorations());
 
         setupButtons();
     }
@@ -258,8 +253,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         InventoryPlayer inventory = this.mc.thePlayer.inventory;
 
         //Add possible hutDec (has item) to list, if it has a schematic, and player has the block
-        hutDec.addAll(Schematics.getHuts().stream()
-                        .filter(hut -> inventoryHasHut(inventory, hut) && Schematics.getStylesForHut(hut) != null)
+        hutDec.addAll(Structures.getHuts().stream()
+                        .filter(hut -> inventoryHasHut(inventory, hut) && Structures.getStylesForHut(hut) != null)
                         .collect(Collectors.toList()));
 
         setupButtons();
@@ -273,9 +268,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             buttonHutDec.setLabel(LanguageHandler.getString(
               Settings.instance.isInHutMode() ? "com.minecolonies.gui.buildtool.nohut" : "com.minecolonies.gui.buildtool.nodecoration"));
             buttonHutDec.setEnabled(false);
-
-            //todo after setting up huts
-            //Settings.instance.setActiveSchematic(null);
+            Settings.instance.setActiveSchematic(null);
         }
         else
         {
@@ -284,6 +277,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 hutDecIndex = Math.max(0, hutDec.indexOf(Settings.instance.getHutDec()));
                 styleIndex = Math.max(0, getStyles().indexOf(Settings.instance.getStyle()));
             }
+            //todo add setting up active structure here with decorations
 
             Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
             buttonHutDec.setLabel(hutDec.get(hutDecIndex));
@@ -346,9 +340,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         button.setLabel(hutDec.get(hutDecIndex));
         findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyles().get(styleIndex));
 
-        //TODO: Should we reset rotation here? Do we want rotation to be reset when switching hut types.
-        rotation = 0;
-        level = 0;
         changeSchematic();
     }
 
@@ -356,11 +347,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if (Settings.instance.isInHutMode())
         {
-            return Schematics.getStylesForHut(hutDec.get(hutDecIndex));
+            return Structures.getStylesForHut(hutDec.get(hutDecIndex));
         }
         else
         {
-            return Schematics.getStylesForDecoration(hutDec.get(hutDecIndex));
+            return Structures.getStylesForDecoration(hutDec.get(hutDecIndex));
         }
     }
 
@@ -373,25 +364,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
         String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-        @NotNull SchematicWrapper schematic = new SchematicWrapper(this.mc.theWorld, labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""));
+        Structure structure = new Structure(null,
+                labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""),
+                new PlacementSettings().setMirror(Mirror.NONE));
+        updateRotation(this.rotation);
 
-        //Settings.instance.setActiveSchematic(schematic.getSchematic());
+        Settings.instance.setActiveSchematic(structure);
 
-        Settings.instance.moveTo(this.pos);
-
-        //Catch up on rotations, makes it so going up a level or changing style doesn't reset rotation.
-        if (this.rotation == ROTATE_LEFT)
-        {
-            //RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.DOWN, true);
-        }
-        else
-        {
-            //Runs 0, 1, or 2 times.
-            for (int times = 0; times < rotation; times++)
-            {
-                //RotationHelper.rotate(Settings.instance.getSchematicWorld(), EnumFacing.UP, true);
-            }
-        }
     }
 
     /*
@@ -426,7 +405,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void levelClicked(Button button)
     {
-        int maxLevel = Schematics.getMaxLevelForHut(hutDec.get(hutDecIndex));
+        int maxLevel = Structures.getMaxLevelForHut(hutDec.get(hutDecIndex));
         if (maxLevel > 1)
         {
             level = (level + 1) % maxLevel;
@@ -576,7 +555,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         }
         Settings.instance.setRotation(rotation);
-        Settings.instance.getActiveStructure().setPlacementSettings(settings);
+
+        if(Settings.instance.getActiveStructure() != null)
+        {
+            Settings.instance.getActiveStructure().setPlacementSettings(settings);
+        }
     }
 
     /**

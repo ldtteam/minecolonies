@@ -8,7 +8,7 @@ import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.Log;
-import com.minecolonies.util.SchematicWrapper;
+import com.minecolonies.util.StructureWrapper;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
@@ -939,7 +939,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         buildStructure = false;
         try
         {
-            job.setSchematic(new SchematicWrapper(world, name));
+            job.setSchematic(new StructureWrapper(world, name));
         }
         catch (IllegalStateException e)
         {

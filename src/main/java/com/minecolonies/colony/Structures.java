@@ -18,7 +18,7 @@ import java.util.stream.Stream;
  * Created by chris on 10/19/15.
  * Schematic class
  */
-public final class Schematics
+public final class Structures
 {
     private static final String                    NULL_STYLE            = "schematics";
     private static final String                    SCHEMATIC_EXTENSION   = ".schematic";
@@ -32,9 +32,9 @@ public final class Schematics
     private static       Map<String, List<String>> decorationStyleMap    = new HashMap<>();
 
     /**
-     * Private constructor so Schematics objects can't be made.
+     * Private constructor so Structures objects can't be made.
      */
-    private Schematics()
+    private Structures()
     {
         //Hide implicit public constructor.
     }
@@ -99,7 +99,7 @@ public final class Schematics
 
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
-                    String filename = path.getFileName().toString().split("\\.schematic")[0];
+                    String filename = path.getFileName().toString().split("\\.nbt")[0];
                     String hut = filename.split("\\d+")[0];
 
                     if (isSchematicHut(hut))
@@ -219,7 +219,7 @@ public final class Schematics
     @SideOnly(Side.CLIENT)
     public static void setStyles(Map<String, List<String>> hutStyleMap, Map<String, List<String>> decorationStyleMap)
     {
-        Schematics.hutStyleMap = hutStyleMap;
-        Schematics.decorationStyleMap = decorationStyleMap;
+        Structures.hutStyleMap = hutStyleMap;
+        Structures.decorationStyleMap = decorationStyleMap;
     }
 }

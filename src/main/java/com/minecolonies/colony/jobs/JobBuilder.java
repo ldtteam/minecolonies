@@ -7,7 +7,7 @@ import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.SchematicWrapper;
+import com.minecolonies.util.StructureWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -21,7 +21,7 @@ public class JobBuilder extends AbstractJob
     private static final String TAG_POSITION   = "position";
     private static final String TAG_PROGRESS   = "progress";
     private static final String TAG_STAGE      = "stage";
-    protected SchematicWrapper schematic;
+    protected StructureWrapper schematic;
     //TODO save some of this in building
     private   int              workOrderId;
     private   String           schematicName;
@@ -128,7 +128,7 @@ public class JobBuilder extends AbstractJob
      *
      * @return Schematic loaded by the Job
      */
-    public SchematicWrapper getSchematic()
+    public StructureWrapper getSchematic()
     {
         return schematic;
     }
@@ -136,9 +136,9 @@ public class JobBuilder extends AbstractJob
     /**
      * Set the schematic of builder's job.
      *
-     * @param schematic {@link SchematicWrapper} object
+     * @param schematic {@link StructureWrapper} object
      */
-    public void setSchematic(SchematicWrapper schematic)
+    public void setSchematic(StructureWrapper schematic)
     {
         this.schematic = schematic;
     }
