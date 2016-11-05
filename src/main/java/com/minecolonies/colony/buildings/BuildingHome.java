@@ -109,17 +109,23 @@ public class BuildingHome extends AbstractBuildingHut
     @Override
     public int getMaxInhabitants()
     {
-        return 2;
+        return getBuildingLevel();
     }
 
     /**
      * Looks for a homeless citizen to add to the current building. Calls
      * {@link #addResident(CitizenData)}
      */
-    public void addHomelessCitizens()
+    private void addHomelessCitizens()
     {
         for (@NotNull CitizenData citizen : getColony().getCitizens().values())
         {
+            // Move the citizen to a better hut
+            if (citizen.getHomeBuilding() != null &&
+                  citizen.getHomeBuilding().getBuildingLevel() < getBuildingLevel())
+            {
+                citizen.getHomeBuilding().removeCitizen(citizen);
+            }
             if (citizen.getHomeBuilding() == null)
             {
                 addResident(citizen);

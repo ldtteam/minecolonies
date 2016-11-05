@@ -1114,7 +1114,7 @@ public class Colony implements IColony
      */
     public void calculateMaxCitizens()
     {
-        int newMaxCitizens = Configurations.maxCitizens;
+        int newMaxCitizens = 0;
 
         for (AbstractBuilding b : buildings.values())
         {
@@ -1124,7 +1124,8 @@ public class Colony implements IColony
                 newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
             }
         }
-
+        // Have at least the minimum amount of citizens
+        newMaxCitizens = Math.max(Configurations.maxCitizens, newMaxCitizens);
         if (maxCitizens != newMaxCitizens)
         {
             maxCitizens = newMaxCitizens;
