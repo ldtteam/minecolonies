@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 
 /**
  * Created by chris on 10/19/15.
- * Schematic class
+ * StructureProxy class
  */
 public final class Structures
 {
@@ -75,7 +75,7 @@ public final class Structures
         }
         catch (@NotNull IOException | URISyntaxException e)
         {
-            Log.getLogger().error("Error loading Schematic directory. Things will break!", e);
+            Log.getLogger().error("Error loading StructureProxy directory. Things will break!", e);
         }
     }
 

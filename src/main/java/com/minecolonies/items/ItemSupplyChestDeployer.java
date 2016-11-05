@@ -240,16 +240,16 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         switch (direction)
         {
             case SOUTH://North 2
-                StructureWrapper.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-11, -2, 5), 3);
+                StructureWrapper.loadAndPlaceSchematicWithRotation(world, "SupplyShip", pos.add(-11, -2, 5), 3);
                 break;
             case NORTH://South 3
-                StructureWrapper.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-20, -2, -21), 1);
+                StructureWrapper.loadAndPlaceSchematicWithRotation(world, "SupplyShip", pos.add(-20, -2, -21), 1);
                 break;
             case EAST://West 4
-                StructureWrapper.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(5, -2, -20), 2);
+                StructureWrapper.loadAndPlaceSchematicWithRotation(world, "SupplyShip", pos.add(5, -2, -20), 2);
                 break;
             case WEST://East 5
-                StructureWrapper.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-21, -2, -11), 0);
+                StructureWrapper.loadAndPlaceSchematicWithRotation(world, "SupplyShip", pos.add(-21, -2, -11), 0);
                 break;
             default:
                 break;

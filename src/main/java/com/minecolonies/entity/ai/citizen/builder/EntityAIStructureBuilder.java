@@ -239,7 +239,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         catch (RuntimeException e)
         {
-            Log.getLogger().warn(String.format("Schematic: (%s) does not exist - removing build request", workOrder.getStructureName()), e);
+            Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", workOrder.getStructureName()), e);
             job.setSchematic(null);
             return;
         }
@@ -518,7 +518,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (block == null)
         {
             @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            Log.getLogger().error(String.format("Schematic has null block at %s - local(%s)", coordinates, local));
+            Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", coordinates, local));
             findNextBlockSolid();
             return this.getState();
         }
@@ -575,7 +575,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (block == null)
         {
             @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            Log.getLogger().error(String.format("Schematic has null block at %s- local(%s)", coords, local));
+            Log.getLogger().error(String.format("StructureProxy has null block at %s- local(%s)", coords, local));
             findNextBlockNonSolid();
             return this.getState();
         }

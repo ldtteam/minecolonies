@@ -5,12 +5,13 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.colony.jobs.JobBuilder;
+import com.minecolonies.lib.Constants;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.StructureWrapper;
-import com.schematica.world.schematic.SchematicFormat;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -61,18 +62,13 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.buildingRotation = building.getRotation();
         this.cleared = level > 1;
 
-        try
+        if(MinecraftServer.class.getResourceAsStream("minecolonies:schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".nbt") == null)
         {
-            SchematicFormat.readFromStream(
-                    StructureWrapper.getStream(
-                            new ResourceLocation("minecolonies:schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".nbt")));
-            this.structureName = building.getStyle() + '/' + this.getUpgradeName();
-        }
-        catch (RuntimeException e)
-        {
-            Log.getLogger().warn(String.format("Schematic in Style (%s) does not exist - switching to default", building.getStyle()));
+            Log.getLogger().warn(String.format("StructureProxy in Style (%s) does not exist - switching to default", building.getStyle()));
             this.structureName = DEFAULT_STYLE + '/' + this.getUpgradeName();
+            return;
         }
+        this.structureName = building.getStyle() + '/' + this.getUpgradeName();
     }
 
     /**

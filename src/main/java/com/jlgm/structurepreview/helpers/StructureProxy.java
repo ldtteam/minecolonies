@@ -1,7 +1,6 @@
-package com.schematica.world.storage;
+package com.jlgm.structurepreview.helpers;
 
 import com.minecolonies.util.BlockPosUtil;
-import com.schematica.api.ISchematic;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -9,23 +8,27 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.common.registry.FMLControlledNamespacedRegistry;
-import net.minecraftforge.fml.common.registry.GameData;
+import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.PlacementSettings;
+import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Schematic implements ISchematic
+/**
+ * Proxy class translating the structures method to something we can use.
+ */
+public class StructureProxy
 {
     private static final ItemStack                              DEFAULT_ICON   = new ItemStack(Blocks.GRASS);
-    //todo: check if there is a non-internal way to use the registry
-    @SuppressWarnings("deprecation")
-    private static final FMLControlledNamespacedRegistry<Block> BLOCK_REGISTRY = GameData.getBlockRegistry();
-    private final short[][][] blocks;
-    private final byte[][][]  metadata;
+    private final Structure structure;
+    private final Block[][][] blocks;
+    private final IBlockState[][][]  metadata;
     private final List<TileEntity> tileEntities = new ArrayList<>();
     private final List<Entity>     entities     = new ArrayList<>();
     private final int       width;
@@ -33,18 +36,31 @@ public class Schematic implements ISchematic
     private final int       length;
     private       ItemStack icon;
     private       BlockPos  offset;
-
-    public Schematic(final ItemStack icon, final int width, final int height, final int length)
+    
+    /**
+     * @param worldObj the world.
+     * @param name the string where the structure is saved at.
+     */
+    public StructureProxy(final World worldObj, final String name)
     {
-        this.icon = icon;
-        this.blocks = new short[width][height][length];
-        this.metadata = new byte[width][height][length];
+        this.structure = new Structure(worldObj, name, new PlacementSettings());
+        BlockPos size = structure.getSize(Rotation.NONE);
 
-        this.width = width;
-        this.height = height;
-        this.length = length;
+        this.width = size.getX();
+        this.height = size.getY();
+        this.length = size.getZ();
 
         offset = new BlockPos(0, 0, 0);
+
+        this.blocks = new Block[width][height][length];
+        this.metadata = new IBlockState[width][height][length];
+
+        for(Template.BlockInfo info: structure.getBlockInfo())
+        {
+            BlockPos tempPos = info.pos;
+            blocks[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info.blockState.getBlock();
+            metadata[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info.blockState;
+        }
     }
 
     //MINECOLONIES START
@@ -76,49 +92,16 @@ public class Schematic implements ISchematic
     //MINECOLONIES END
 
     @SuppressWarnings("deprecation")
-    @Override
     public IBlockState getBlockState(@NotNull final BlockPos pos)
     {
-        if (isInvalid(pos))
-        {
-            return Blocks.AIR.getDefaultState();
-        }
-
-        final int x = pos.getX();
-        final int y = pos.getY();
-        final int z = pos.getZ();
-        final Block block = BLOCK_REGISTRY.getObjectById(this.blocks[x][y][z]);
-
-        //todo: be aware of deprecation and possible removal
-        return block.getStateFromMeta(this.metadata[x][y][z]);
+        return metadata[pos.getX()][pos.getY()][pos.getZ()];
     }
 
-    @Override
-    public boolean setBlockState(final BlockPos pos, final IBlockState blockState)
-    {
-        if (isInvalid(pos))
-        {
-            return false;
-        }
-
-        final Block block = blockState.getBlock();
-        final int id = BLOCK_REGISTRY.getId(block);
-        if (id == -1)
-        {
-            return false;
-        }
-
-        final int meta = block.getMetaFromState(blockState);
-        final int x = pos.getX();
-        final int y = pos.getY();
-        final int z = pos.getZ();
-
-        this.blocks[x][y][z] = (short) id;
-        this.metadata[x][y][z] = (byte) meta;
-        return true;
-    }
-
-    @Override
+    /**
+     * return a tileEntity at a certain position.
+     * @param pos the position.
+     * @return the tileEntity.
+     */
     public TileEntity getTileEntity(final BlockPos pos)
     {
         for (final TileEntity tileEntity : this.tileEntities)
@@ -132,13 +115,20 @@ public class Schematic implements ISchematic
         return null;
     }
 
-    @Override
+    /**
+     * Return a list of tileEntities.
+     * @return list of them.
+     */
     public List<TileEntity> getTileEntities()
     {
         return this.tileEntities;
     }
 
-    @Override
+    /**
+     * Sets tileEntities.
+     * @param pos at position.
+     * @param tileEntity the entity to set.
+     */
     public void setTileEntity(final BlockPos pos, final TileEntity tileEntity)
     {
         if (isInvalid(pos))
@@ -154,7 +144,10 @@ public class Schematic implements ISchematic
         }
     }
 
-    @Override
+    /**
+     * Removes a tileEntity at a position.
+     * @param pos the position to remove it at.
+     */
     public void removeTileEntity(final BlockPos pos)
     {
         final Iterator<TileEntity> iterator = this.tileEntities.iterator();
@@ -169,14 +162,20 @@ public class Schematic implements ISchematic
         }
     }
 
+    /**
+     * Return all entities.
+     * @return the list of entities.
+     */
     @NotNull
-    @Override
     public List<Entity> getEntities()
     {
         return this.entities;
     }
 
-    @Override
+    /**
+     * Add an entitiy.
+     * @param entity the entity to add.
+     */
     public void addEntity(final Entity entity)
     {
         if (entity == null || entity.getUniqueID() == null || entity instanceof EntityPlayer)
@@ -195,7 +194,10 @@ public class Schematic implements ISchematic
         this.entities.add(entity);
     }
 
-    @Override
+    /**
+     * Remove a certain entitiy.
+     * @param entity that should be removed.
+     */
     public void removeEntity(final Entity entity)
     {
         if (entity == null || entity.getUniqueID() == null)
@@ -214,43 +216,38 @@ public class Schematic implements ISchematic
         }
     }
 
-    @Override
-    public ItemStack getIcon()
-    {
-        return this.icon;
-    }
-
-    @Override
-    public void setIcon(final ItemStack icon)
-    {
-        if (icon != null)
-        {
-            this.icon = icon;
-        }
-        else
-        {
-            this.icon = DEFAULT_ICON.copy();
-        }
-    }
-
-    @Override
+    /**
+     * Getter of the width.
+     * @return the width.
+     */
     public int getWidth()
     {
         return this.width;
     }
 
-    @Override
+    /**
+     * Getter of the length.
+     * @return the length
+     */
     public int getLength()
     {
         return this.length;
     }
 
-    @Override
+    /**
+     * Getter of the height.
+     * @return the height
+     */
     public int getHeight()
     {
         return this.height;
     }
 
+    /**
+     * Checks if a position is inside the structure.
+     * @param pos the position.
+     * @return true if so.
+     */
     private boolean isInvalid(final BlockPos pos)
     {
         final int x = pos.getX();
@@ -258,5 +255,35 @@ public class Schematic implements ISchematic
         final int z = pos.getZ();
 
         return (x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.length);
+    }
+
+    /**
+     * Rotate the structure depending on the direction it's facing.
+     * @param facing directions its facing.
+     */
+    public void rotate(final EnumFacing facing)
+    {
+        structure.setPlacementSettings(new PlacementSettings().setRotation(StructureProxy.getRotationFromFacing(facing)));
+    }
+
+    /**
+     * Calculates the rotation from facing.
+     * @param facing the facing.
+     * @return the rotation.
+     */
+    private static Rotation getRotationFromFacing(final EnumFacing facing)
+    {
+        switch(facing)
+        {
+            case NORTH:
+                return Rotation.CLOCKWISE_180;
+            case SOUTH:
+                return Rotation.NONE;
+            case WEST:
+                return Rotation.CLOCKWISE_90;
+            case EAST:
+                return Rotation.COUNTERCLOCKWISE_90;
+        }
+        return Rotation.NONE;
     }
 }

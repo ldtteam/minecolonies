@@ -943,7 +943,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         catch (IllegalStateException e)
         {
-            Log.getLogger().warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
+            Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
             job.setSchematic(null);
         }
     }
@@ -995,7 +995,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         if (block == null)
         {
             @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            Log.getLogger().error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            Log.getLogger().error(String.format("StructureProxy has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockNonSolid();
             return false;
         }
@@ -1048,7 +1048,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         if (block == null)
         {
             @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            Log.getLogger().error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            Log.getLogger().error(String.format("StructureProxy has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
             return false;
         }

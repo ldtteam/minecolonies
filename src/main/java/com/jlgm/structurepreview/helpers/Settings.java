@@ -1,6 +1,5 @@
-package com.schematica;
+package com.jlgm.structurepreview.helpers;
 
-import com.jlgm.structurepreview.helpers.Structure;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

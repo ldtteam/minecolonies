@@ -85,7 +85,7 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Does this job have a loaded Schematic?
+     * Does this job have a loaded StructureProxy?
      * <p>
      * if a schematic is not null there exists a location for it
      *
@@ -124,9 +124,9 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Get the Schematic loaded by the Job.
+     * Get the StructureProxy loaded by the Job.
      *
-     * @return Schematic loaded by the Job
+     * @return StructureProxy loaded by the Job
      */
     public StructureWrapper getSchematic()
     {

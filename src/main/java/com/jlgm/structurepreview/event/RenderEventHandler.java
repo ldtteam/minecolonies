@@ -1,6 +1,6 @@
 package com.jlgm.structurepreview.event;
 
-import com.schematica.Settings;
+import com.jlgm.structurepreview.helpers.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;

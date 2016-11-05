@@ -23,7 +23,7 @@ import java.util.function.Supplier;
 public class Structure
 {
     /**
-     * This exception get's thrown when a Schematic file could not be loaded.
+     * This exception get's thrown when a StructureProxy file could not be loaded.
      */
     public static final class StructureException extends Exception
     {
@@ -193,7 +193,7 @@ public class Structure
     }
 
     /**
-     * Advance one block in the Schematic.
+     * Advance one block in the StructureProxy.
      * <p>
      * Will skip blocks not relevant.
      *

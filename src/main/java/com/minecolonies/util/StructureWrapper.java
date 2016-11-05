@@ -1,11 +1,9 @@
 package com.minecolonies.util;
 
-import com.jlgm.structurepreview.helpers.Structure;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
-import com.schematica.client.util.RotationHelper;
-import com.schematica.world.storage.Schematic;
+import com.jlgm.structurepreview.helpers.StructureProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
@@ -18,11 +16,9 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.gen.structure.template.TemplateManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -56,29 +52,29 @@ public final class StructureWrapper
     /**
      * The minecraft world this schematic is displayed in.
      */
-    private World     world;
+    private World          world;
     /**
      * The schematic world this schematic comes from.
      */
-    private Structure structure;
+    private StructureProxy structure;
     /**
      * The anchor position this schematic will be
      * placed on in the minecraft world.
      */
-    private BlockPos  position;
+    private BlockPos       position;
     /**
      * The name this schematic has.
      */
-    private String    name;
+    private String         name;
 
     /**
-     * Create a new Schematic.
+     * Create a new StructureProxy.
      *
      * @param worldObj       the world to show it in
      * @param structure the SchematicWorld it comes from
      * @param name           the name this schematic has
      */
-    private StructureWrapper(World worldObj, Structure structure, String name)
+    private StructureWrapper(World worldObj, StructureProxy structure, String name)
     {
         world = worldObj;
         this.structure = structure;
@@ -105,7 +101,7 @@ public final class StructureWrapper
      */
     private StructureWrapper(World worldObj, @NotNull ResourceLocation res, String name)
     {
-        this(worldObj, new Structure(worldObj, name, new PlacementSettings()), name);
+        this(worldObj, new StructureProxy(worldObj, name), name);
     }
 
     /**
@@ -200,16 +196,14 @@ public final class StructureWrapper
         setLocalPosition(pos);
 
         @NotNull List<BlockPos> delayedBlocks = new ArrayList<>();
-        BlockPos size = structure.getSize(Rotation.NONE);
-        //todo get rotation.
 
-        //structure.getBlockInfo()[0].pos
+            //structure.getBlockInfo()[0].pos
 
-        for (int j = 0; j < size.getY(); j++)
+        for (int j = 0; j < structure.getHeight(); j++)
         {
-            for (int k = 0; k < size.getX(); k++)
+            for (int k = 0; k < structure.getLength(); k++)
             {
-                for (int i = 0; i < size.getZ(); i++)
+                for (int i = 0; i < structure.getWidth(); i++)
                 {
                     @NotNull BlockPos localPos = new BlockPos(i, j, k);
                     IBlockState localState = this.structure.getBlockState(localPos);
@@ -253,14 +247,7 @@ public final class StructureWrapper
 
     private void rotate(@NotNull EnumFacing facing)
     {
-        try
-        {
-            structure = RotationHelper.rotate(structure, facing, true);
-        }
-        catch (RotationHelper.RotationException e)
-        {
-            Log.getLogger().debug(e);
-        }
+        structure.rotate(facing);
     }
 
     private void placeBlock(IBlockState localState, @NotNull Block localBlock, @NotNull BlockPos worldPos)
@@ -694,9 +681,9 @@ public final class StructureWrapper
     }
 
     /**
-     * @return The Schematic that houses all the info about what is stored in a schematic.
+     * @return The StructureProxy that houses all the info about what is stored in a schematic.
      */
-    public Schematic getSchematic()
+    public StructureProxy getSchematic()
     {
         return structure;
     }

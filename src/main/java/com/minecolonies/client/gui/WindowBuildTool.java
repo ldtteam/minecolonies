@@ -7,7 +7,7 @@ import com.minecolonies.colony.Structures;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
-import com.schematica.Settings;
+import com.jlgm.structurepreview.helpers.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
@@ -277,7 +277,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 hutDecIndex = Math.max(0, hutDec.indexOf(Settings.instance.getHutDec()));
                 styleIndex = Math.max(0, getStyles().indexOf(Settings.instance.getStyle()));
             }
-            //todo add setting up active structure here with decorations
 
             Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
             buttonHutDec.setLabel(hutDec.get(hutDecIndex));

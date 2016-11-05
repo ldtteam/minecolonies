@@ -15,10 +15,8 @@ import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.schematica.Settings;
-import com.schematica.client.renderer.RenderSchematic;
-import com.schematica.handler.client.TickHandler;
-import com.schematica.handler.client.WorldHandler;
+import com.jlgm.structurepreview.helpers.Settings;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -45,11 +43,6 @@ public class ClientProxy extends CommonProxy
 
         MinecraftForge.EVENT_BUS.register(new RenderEventHandler());
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
-
-        //Schematica
-        MinecraftForge.EVENT_BUS.register(RenderSchematic.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(TickHandler.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(new WorldHandler());
     }
 
     @Override
