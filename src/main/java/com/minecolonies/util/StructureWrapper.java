@@ -285,7 +285,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while (doesSchematicBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
+        while (doesStructureBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -325,7 +325,7 @@ public final class StructureWrapper
      *
      * @return true if the schematic block equals the world block.
      */
-    public boolean doesSchematicBlockEqualWorldBlock()
+    public boolean doesStructureBlockEqualWorldBlock()
     {
         IBlockState schematicBlockState = structure.getBlockState(this.getLocalPosition());
         Block schematicBlock = schematicBlockState.getBlock();
@@ -425,7 +425,7 @@ public final class StructureWrapper
             }
         }
         //Check for air blocks and if blocks below the hut are different from the structure
-        while ((worldBlockAir() || doesSchematicBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((worldBlockAir() || doesStructureBlockEqualWorldBlock()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -482,7 +482,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((doesSchematicBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((doesStructureBlockEqualWorldBlock() || isBlockNonSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }
@@ -508,7 +508,7 @@ public final class StructureWrapper
                 return false;
             }
         }
-        while ((doesSchematicBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
+        while ((doesStructureBlockEqualWorldBlock() || isBlockSolid()) && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
     }

@@ -75,12 +75,12 @@ public class JobMiner extends AbstractJob
         addItemNeeded(stack);
     }
 
-    public StructureWrapper getSchematic()
+    public StructureWrapper getStructure()
     {
         return schematic;
     }
 
-    public void setSchematic(StructureWrapper schematic)
+    public void setStructure(StructureWrapper schematic)
     {
         this.schematic = schematic;
     }

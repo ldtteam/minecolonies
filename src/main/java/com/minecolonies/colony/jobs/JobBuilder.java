@@ -73,7 +73,7 @@ public class JobBuilder extends AbstractJob
         {
             compound.setInteger(TAG_WORK_ORDER, workOrderId);
 
-            if (hasSchematic())
+            if (hasStructure())
             {
                 @NotNull final NBTTagCompound schematicTag = new NBTTagCompound();
                 schematicTag.setString(TAG_NAME, schematic.getName());
@@ -91,7 +91,7 @@ public class JobBuilder extends AbstractJob
      *
      * @return true if there is a loaded schematic for this Job
      */
-    public boolean hasSchematic()
+    public boolean hasStructure()
     {
         return schematic != null;
     }
@@ -128,7 +128,7 @@ public class JobBuilder extends AbstractJob
      *
      * @return StructureProxy loaded by the Job
      */
-    public StructureWrapper getSchematic()
+    public StructureWrapper getStructure()
     {
         return schematic;
     }
@@ -138,7 +138,7 @@ public class JobBuilder extends AbstractJob
      *
      * @param schematic {@link StructureWrapper} object
      */
-    public void setSchematic(StructureWrapper schematic)
+    public void setStructure(StructureWrapper schematic)
     {
         this.schematic = schematic;
     }
@@ -170,7 +170,7 @@ public class JobBuilder extends AbstractJob
 
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
-        setSchematic(null);
+        setStructure(null);
     }
 
     /**
