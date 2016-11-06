@@ -335,6 +335,7 @@ public class StructureProxy
         minX = Math.abs(minX);
         minY = Math.abs(minY);
         minZ = Math.abs(minZ);
+        boolean foundHut = false;
 
         for(Template.BlockInfo info: structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
         {
@@ -348,9 +349,33 @@ public class StructureProxy
 
             if(info.blockState.getBlock() instanceof AbstractBlockHut)
             {
+                foundHut = true;
                 offset = info.pos.add(minX, minY, minZ);
             }
         }
+
+        if(!foundHut)
+        {
+            if(offset == null)
+            {
+                if (Settings.instance.getRotation() == 1)
+                {
+                    size = new BlockPos(-size.getX(), size.getY(), size.getZ());
+                }
+                if (Settings.instance.getRotation() == 2)
+                {
+                    size = new BlockPos(-size.getX(), size.getY(), -size.getZ());
+                }
+                if (Settings.instance.getRotation() == 3)
+                {
+                    size = new BlockPos(size.getX(), size.getY(), -size.getZ());
+                }
+                offset = new BlockPos(size.getX() / 2, 0, size.getZ() / 2);
+            }
+        }
+
+
+
     }
 
 }
