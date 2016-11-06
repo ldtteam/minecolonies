@@ -252,8 +252,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         else if(colony != null)
         {
-            job.getStructure().rotate(colony.getBuilding(workOrder.getBuildingLocation()).getRotation());
-
             IBlockState blockState = world.getBlockState(pos);
             if(blockState.getBlock() instanceof AbstractBlockHut)
             {
