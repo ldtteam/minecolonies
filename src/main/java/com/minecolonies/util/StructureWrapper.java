@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Interface for using the Schematica codebase
+ * Interface for using the structure codebase
  *
  * @author Colton
  */
@@ -43,24 +43,24 @@ public final class StructureWrapper
     private static final BlockPos                 NULL_POS            = new BlockPos(-1, -1, -1);
 
     /**
-     * The SchematicWorld position we are at. Defaulted to NULL_POS.
+     * The Structure position we are at. Defaulted to NULL_POS.
      */
     private final        BlockPos.MutableBlockPos progressPos         = new BlockPos.MutableBlockPos(-1, -1, -1);
     /**
-     * The minecraft world this schematic is displayed in.
+     * The minecraft world this struture is displayed in.
      */
     private World          world;
     /**
-     * The schematic world this schematic comes from.
+     * The structure this structure comes from.
      */
     private StructureProxy structure;
     /**
-     * The anchor position this schematic will be
+     * The anchor position this structure will be
      * placed on in the minecraft world.
      */
     private BlockPos       position;
     /**
-     * The name this schematic has.
+     * The name this structure has.
      */
     private String         name;
 
@@ -68,8 +68,8 @@ public final class StructureWrapper
      * Create a new StructureProxy.
      *
      * @param worldObj       the world to show it in
-     * @param structure the SchematicWorld it comes from
-     * @param name           the name this schematic has
+     * @param structure the structure it comes from
+     * @param name           the name this structure has
      */
     private StructureWrapper(World worldObj, StructureProxy structure, String name)
     {
@@ -90,15 +90,15 @@ public final class StructureWrapper
     }
 
     /**
-     * Generate a resource location from a schematics name.
+     * Generate a resource location from a structures name.
      *
-     * @param name the schematics name
-     * @return the resource location pointing towards the schematic
+     * @param name the structures name
+     * @return the resource location pointing towards the structure
      */
     @NotNull
     private static ResourceLocation getResourceLocation(@NotNull String name)
     {
-        return new ResourceLocation("minecolonies:schematics/" + name + ".schematic");
+        return new ResourceLocation("minecolonies:schematics/" + name + ".nbt");
     }
 
     /**
@@ -127,34 +127,34 @@ public final class StructureWrapper
     }
 
     /**
-     * Load a schematic into this world
+     * Load a structure into this world
      * and place it in the right position and rotation.
      *
      * @param worldObj  the world to load it in
-     * @param name      the schematics name
+     * @param name      the structures name
      * @param pos       coordinates
      * @param rotations number of times rotated
      */
-    public static void loadAndPlaceSchematicWithRotation(World worldObj, @NotNull String name, @NotNull BlockPos pos, int rotations)
+    public static void loadAndPlaceStructureWithRotation(World worldObj, @NotNull String name, @NotNull BlockPos pos, int rotations)
     {
         try
         {
             @NotNull StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
             structureWrapper.rotate(rotations);
-            structureWrapper.placeSchematic(pos);
+            structureWrapper.placeStructure(pos);
         }
         catch (IllegalStateException e)
         {
-            Log.getLogger().warn("Could not load schematic!", e);
+            Log.getLogger().warn("Could not load structure!", e);
         }
     }
 
     /**
-     * Place a schematic into the world.
+     * Place a structure into the world.
      *
      * @param pos coordinates
      */
-    private void placeSchematic(@NotNull BlockPos pos)
+    private void placeStructure(@NotNull BlockPos pos)
     {
         setLocalPosition(pos);
 
@@ -209,7 +209,7 @@ public final class StructureWrapper
     }
 
     /**
-     * Rotates the schematic x times.
+     * Rotates the structure x times.
      * @param times times to rotate.
      */
     public void rotate(int times)
@@ -231,7 +231,7 @@ public final class StructureWrapper
     }
 
     /**
-     * Scan the schematic and save it to the disk.
+     * Scan the structure and save it to the disk.
      *
      * @param world Current world.
      * @param from  First corner.
@@ -321,17 +321,17 @@ public final class StructureWrapper
     }
 
     /**
-     * Checks if the block in the world is the same as what is in the schematic.
+     * Checks if the block in the world is the same as what is in the structure.
      *
-     * @return true if the schematic block equals the world block.
+     * @return true if the structure block equals the world block.
      */
     public boolean doesStructureBlockEqualWorldBlock()
     {
-        IBlockState schematicBlockState = structure.getBlockState(this.getLocalPosition());
-        Block schematicBlock = schematicBlockState.getBlock();
+        IBlockState structureBlockState = structure.getBlockState(this.getLocalPosition());
+        Block structureBlock = structureBlockState.getBlock();
 
         //All worldBlocks are equal the substitution block
-        if (schematicBlock == ModBlocks.blockSubstitution)
+        if (structureBlock == ModBlocks.blockSubstitution)
         {
             return true;
         }
@@ -342,18 +342,18 @@ public final class StructureWrapper
 
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
-        if (schematicBlock instanceof BlockDoor || schematicBlock == Blocks.FLOWER_POT)
+        if (structureBlock instanceof BlockDoor || structureBlock == Blocks.FLOWER_POT)
         {
-            return schematicBlock == worldBlockState.getBlock();
+            return structureBlock == worldBlockState.getBlock();
         }
-        else if (schematicBlock instanceof BlockStairs && schematicBlockState == worldBlockState)
+        else if (structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
         {
             return true;
         }
 
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
         return worldPos.getY() <= 0
-                 || schematicBlockState == worldBlockState;
+                 || structureBlockState == worldBlockState;
     }
 
     /**
@@ -392,7 +392,7 @@ public final class StructureWrapper
     }
 
     /**
-     * @return Min world position for the schematic.
+     * @return Min world position for the structure.
      */
     public BlockPos getOffsetPosition()
     {
@@ -400,7 +400,7 @@ public final class StructureWrapper
     }
 
     /**
-     * @return Where the hut (or any offset) is in the schematic.
+     * @return Where the hut (or any offset) is in the structure.
      */
     public BlockPos getOffset()
     {
@@ -436,7 +436,7 @@ public final class StructureWrapper
     }
 
     /**
-     * Calculate the current block in the schematic
+     * Calculate the current block in the structure
      *
      * @return the current block or null if not initialized
      */
@@ -569,7 +569,7 @@ public final class StructureWrapper
     }
 
     /**
-     * @return A list of all the entities in the schematic.
+     * @return A list of all the entities in the structure.
      */
     @NotNull
     public List<Entity> getEntities()
@@ -578,9 +578,9 @@ public final class StructureWrapper
     }
 
     /**
-     * Base position of the schematic.
+     * Base position of the structure.
      *
-     * @return BlockPos representing where the schematic is.
+     * @return BlockPos representing where the structure is.
      */
     public BlockPos getPosition()
     {
@@ -594,7 +594,7 @@ public final class StructureWrapper
     /**
      * Set the position, used when loading.
      *
-     * @param position Where the schematic is in the world.
+     * @param position Where the structure is in the world.
      */
     public void setPosition(BlockPos position)
     {
@@ -602,7 +602,7 @@ public final class StructureWrapper
     }
 
     /**
-     * Calculate the item needed to place the current block in the schematic
+     * Calculate the item needed to place the current block in the structure
      *
      * @return an item or null if not initialized
      */
@@ -620,7 +620,7 @@ public final class StructureWrapper
     }
 
     /**
-     * @return The name of the schematic.
+     * @return The name of the structure.
      */
     public String getName()
     {
@@ -628,7 +628,7 @@ public final class StructureWrapper
     }
 
     /**
-     * @return The height of the schematic.
+     * @return The height of the structure.
      */
     public int getHeight()
     {
@@ -636,7 +636,7 @@ public final class StructureWrapper
     }
 
     /**
-     * @return The width of the schematic.
+     * @return The width of the structure.
      */
     public int getWidth()
     {
@@ -644,7 +644,7 @@ public final class StructureWrapper
     }
 
     /**
-     * @return The length of the schematic.
+     * @return The length of the structure.
      */
     public int getLength()
     {
@@ -652,9 +652,9 @@ public final class StructureWrapper
     }
 
     /**
-     * @return The StructureProxy that houses all the info about what is stored in a schematic.
+     * @return The StructureProxy that houses all the info about what is stored in a structure.
      */
-    public StructureProxy getSchematic()
+    public StructureProxy structure()
     {
         return structure;
     }

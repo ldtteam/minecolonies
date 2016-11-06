@@ -80,18 +80,28 @@ public class StructureProxy
         }
     }
 
-    //MINECOLONIES START
-
+    /**
+     * Getter of the offset.
+     * @return the blockPos of the offset.
+     */
     public BlockPos getOffset()
     {
         return offset;
     }
 
+    /**
+     * Setter of the offset.
+     * @param pos the new offset.
+     */
     public void setOffset(BlockPos pos)
     {
         offset = pos;
     }
 
+    /**
+     * Getter of the type of the structure.
+     * @return true if so.
+     */
     public String getType()
     {
         if (hasOffset())
@@ -101,14 +111,20 @@ public class StructureProxy
         return "Decoration";
     }
 
+    /**
+     * Checks if the structure has an offset.
+     * @return true if so.
+     */
     private boolean hasOffset()
     {
         return !BlockPosUtil.isEqual(offset, 0, 0, 0);
     }
 
-    //MINECOLONIES END
-
-    @SuppressWarnings("deprecation")
+    /**
+     * Getter of the IBlockState at a certain position.
+     * @param pos the position.
+     * @return the blockState.
+     */
     public IBlockState getBlockState(@NotNull final BlockPos pos)
     {
         return metadata[pos.getX()][pos.getY()][pos.getZ()];
@@ -165,7 +181,7 @@ public class StructureProxy
      * Removes a tileEntity at a position.
      * @param pos the position to remove it at.
      */
-    public void removeTileEntity(final BlockPos pos)
+    private void removeTileEntity(final BlockPos pos)
     {
         final Iterator<TileEntity> iterator = this.tileEntities.iterator();
 
@@ -195,7 +211,7 @@ public class StructureProxy
      */
     public void addEntity(final Entity entity)
     {
-        if (entity == null || entity.getUniqueID() == null || entity instanceof EntityPlayer)
+        if (entity == null || entity instanceof EntityPlayer)
         {
             return;
         }
@@ -217,7 +233,7 @@ public class StructureProxy
      */
     public void removeEntity(final Entity entity)
     {
-        if (entity == null || entity.getUniqueID() == null)
+        if (entity == null)
         {
             return;
         }
@@ -297,7 +313,7 @@ public class StructureProxy
         }
         structure.setPlacementSettings(new PlacementSettings().setRotation(rotation));
 
-        BlockPos size = structure.getSize(rotation);
+        final BlockPos size = structure.getSize(rotation);
 
         this.width = size.getX();
         this.height = size.getY();
@@ -310,12 +326,12 @@ public class StructureProxy
         int minY = 0;
         int minZ = 0;
 
-        for(Template.BlockInfo info: structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
+        for(final Template.BlockInfo info: structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
         {
-            BlockPos tempPos = info.pos;
-            int x = tempPos.getX();
-            int y = tempPos.getY();
-            int z = tempPos.getZ();
+            final BlockPos tempPos = info.pos;
+            final int x = tempPos.getX();
+            final int y = tempPos.getY();
+            final int z = tempPos.getZ();
             if(x < minX)
             {
                 minX = x;
@@ -353,29 +369,31 @@ public class StructureProxy
                 offset = info.pos.add(minX, minY, minZ);
             }
         }
-
-        if(!foundHut)
-        {
-            if(offset == null)
-            {
-                if (Settings.instance.getRotation() == 1)
-                {
-                    size = new BlockPos(-size.getX(), size.getY(), size.getZ());
-                }
-                if (Settings.instance.getRotation() == 2)
-                {
-                    size = new BlockPos(-size.getX(), size.getY(), -size.getZ());
-                }
-                if (Settings.instance.getRotation() == 3)
-                {
-                    size = new BlockPos(size.getX(), size.getY(), -size.getZ());
-                }
-                offset = new BlockPos(size.getX() / 2, 0, size.getZ() / 2);
-            }
-        }
-
-
-
+        updateOffSetIfDecoration(foundHut);
     }
 
+    /**
+     * Updates the offset if the structure is a decoration.
+     * @param foundHut if false update.
+     */
+    private void updateOffSetIfDecoration(boolean foundHut)
+    {
+        if(!foundHut)
+        {
+            BlockPos tempSize = new BlockPos(0, 0, 0);
+            if (Settings.instance.getRotation() == 1)
+            {
+                tempSize = new BlockPos(-tempSize.getX(), tempSize.getY(), tempSize.getZ());
+            }
+            if (Settings.instance.getRotation() == 2)
+            {
+                tempSize = new BlockPos(-tempSize.getX(), tempSize.getY(), -tempSize.getZ());
+            }
+            if (Settings.instance.getRotation() == 3)
+            {
+                tempSize = new BlockPos(tempSize.getX(), tempSize.getY(), -tempSize.getZ());
+            }
+            offset = new BlockPos(tempSize.getX() / 2, 0, tempSize.getZ() / 2);
+        }
+    }
 }
