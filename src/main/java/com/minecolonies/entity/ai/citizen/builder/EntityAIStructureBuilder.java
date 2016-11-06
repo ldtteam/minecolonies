@@ -249,6 +249,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if(colony != null)
         {
             job.getSchematic().rotate(colony.getBuilding(workOrder.getBuildingLocation()).getRotation());
+            //todo get valid rotation
         }
         job.getSchematic().setPosition(pos);
         workOrder.setCleared(false);
