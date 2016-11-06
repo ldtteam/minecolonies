@@ -1,4 +1,4 @@
-package com.jlgm.structurepreview.helpers;
+package com.structures.helpers;
 
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.util.BlockPosUtil;
@@ -291,12 +291,27 @@ public class StructureProxy
         this.blocks = new Block[width][height][length];
         this.metadata = new IBlockState[width][height][length];
 
+        BlockPos currentPos = new BlockPos(0, 0, 0);
+
         for(Template.BlockInfo info: structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
         {
-            BlockPos tempPos = info.pos;
-            int x = Math.abs(tempPos.getX());
-            int y = Math.abs(tempPos.getY());
-            int z = Math.abs(tempPos.getZ());
+            if(currentPos.getX() >= this.width && currentPos.getZ() >= this.length)
+            {
+                currentPos = new BlockPos(0, currentPos.getY()+1, 0);
+            }
+            if(currentPos.getX() >= this.width)
+            {
+                currentPos = new BlockPos(0, currentPos.getY(), currentPos.getZ()+1);
+            }
+            else if(currentPos.getZ() >= this.length)
+            {
+                currentPos = new BlockPos(currentPos.getX()+1, currentPos.getY(), 0);
+            }
+
+
+            int x = Math.abs(currentPos.getX());
+            int y = Math.abs(currentPos.getY());
+            int z = Math.abs(currentPos.getZ());
 
             this.blocks[x][y][z] = info.blockState.getBlock();
             this.metadata[x][y][z] = info.blockState;

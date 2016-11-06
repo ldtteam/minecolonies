@@ -1,4 +1,4 @@
-package com.jlgm.structurepreview.helpers;
+package com.structures.helpers;
 
 import com.minecolonies.blocks.AbstractBlockHut;
 import net.minecraft.util.math.BlockPos;

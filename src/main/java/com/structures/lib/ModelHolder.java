@@ -1,4 +1,4 @@
-package com.jlgm.structurepreview.lib;
+package com.structures.lib;
 /**
  * Class based on the work by Maruohon
  * https://github.com/maruohon/placementpreview

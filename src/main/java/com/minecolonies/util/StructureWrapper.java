@@ -3,7 +3,7 @@ package com.minecolonies.util;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
-import com.jlgm.structurepreview.helpers.StructureProxy;
+import com.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;

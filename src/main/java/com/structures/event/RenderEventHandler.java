@@ -1,7 +1,7 @@
-package com.jlgm.structurepreview.event;
+package com.structures.event;
 
-import com.jlgm.structurepreview.helpers.Settings;
-import com.jlgm.structurepreview.helpers.Structure;
+import com.structures.helpers.Structure;
+import com.structures.helpers.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;

@@ -1,4 +1,4 @@
-package com.jlgm.structurepreview.helpers;
+package com.structures.helpers;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,15 +8,15 @@ import javax.annotation.Nullable;
 
 import com.blockout.Log;
 import com.minecolonies.lib.Constants;
+import com.structures.fake.FakeEntity;
+import com.structures.lib.ModelHolder;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
-import com.jlgm.structurepreview.fake.FakeEntity;
-import com.jlgm.structurepreview.fake.FakeWorld;
-import com.jlgm.structurepreview.lib.ModelHolder;
+import com.structures.fake.FakeWorld;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;

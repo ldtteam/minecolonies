@@ -1,14 +1,13 @@
 package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
-import com.jlgm.structurepreview.event.RenderEventHandler;
-import com.jlgm.structurepreview.helpers.Structure;
+import com.structures.helpers.Structure;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Structures;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
-import com.jlgm.structurepreview.helpers.Settings;
+import com.structures.helpers.Settings;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;

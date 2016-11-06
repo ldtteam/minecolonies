@@ -1,6 +1,6 @@
 package com.minecolonies.proxy;
 
-import com.jlgm.structurepreview.event.RenderEventHandler;
+import com.structures.event.RenderEventHandler;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.client.gui.WindowBuildTool;
 import com.minecolonies.client.gui.WindowCitizen;
@@ -15,7 +15,7 @@ import com.minecolonies.event.ClientEventHandler;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import com.jlgm.structurepreview.helpers.Settings;
+import com.structures.helpers.Settings;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemModelMesher;

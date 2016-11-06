@@ -1,4 +1,4 @@
-package com.jlgm.structurepreview.fake;
+package com.structures.fake;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;

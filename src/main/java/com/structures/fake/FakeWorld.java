@@ -1,4 +1,4 @@
-package com.jlgm.structurepreview.fake;
+package com.structures.fake;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
