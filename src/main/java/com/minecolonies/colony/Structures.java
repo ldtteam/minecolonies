@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 public final class Structures
 {
     private static final String                    NULL_STYLE            = "schematics";
-    private static final String                    SCHEMATIC_EXTENSION   = ".schematic";
+    private static final String                    SCHEMATIC_EXTENSION   = ".nbt";
     private static final String                    SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
     //Hut, Styles
     private static       Map<String, List<String>> hutStyleMap           = new HashMap<>();
