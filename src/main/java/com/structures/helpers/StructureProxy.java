@@ -46,8 +46,6 @@ public class StructureProxy
         this.height = size.getY();
         this.length = size.getZ();
 
-        offset = new BlockPos(0, 0, 0);
-
         this.blocks = new Block[width][height][length];
         this.metadata = new IBlockState[width][height][length];
 
@@ -63,6 +61,23 @@ public class StructureProxy
             }
         }
 
+        if(offset == null)
+        {
+            if (Settings.instance.getRotation() == 1)
+            {
+                size = new BlockPos(-size.getX(), size.getY(), size.getZ());
+            }
+            if (Settings.instance.getRotation() == 2)
+            {
+                size = new BlockPos(-size.getX(), size.getY(), -size.getZ());
+            }
+            if (Settings.instance.getRotation() == 3)
+            {
+                size = new BlockPos(size.getX(), size.getY(), -size.getZ());
+            }
+            offset = new BlockPos(size.getX() / 2, 0, size.getZ() / 2);
+
+        }
     }
 
     //MINECOLONIES START

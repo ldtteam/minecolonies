@@ -259,8 +259,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
             //todo get valid rotation
         }
-
-
         job.getStructure().setPosition(pos);
         workOrder.setCleared(false);
     }
