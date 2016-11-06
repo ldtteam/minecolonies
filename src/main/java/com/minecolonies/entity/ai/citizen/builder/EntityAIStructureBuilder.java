@@ -2,6 +2,7 @@ package com.minecolonies.entity.ai.citizen.builder;
 
 import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.ModBlocks;
+import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
@@ -244,7 +245,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return;
         }
 
-        job.getSchematic().rotate(workOrder.getRotation());
+        Colony colony = worker.getColony();
+        if(colony != null)
+        {
+            job.getSchematic().rotate(colony.getBuilding(workOrder.getBuildingLocation()).getRotation());
+        }
         job.getSchematic().setPosition(pos);
         workOrder.setCleared(false);
     }

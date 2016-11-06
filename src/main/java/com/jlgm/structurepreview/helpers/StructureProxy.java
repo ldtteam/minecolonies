@@ -1,14 +1,12 @@
 package com.jlgm.structurepreview.helpers;
 
+import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -25,16 +23,14 @@ import java.util.List;
  */
 public class StructureProxy
 {
-    private static final ItemStack                              DEFAULT_ICON   = new ItemStack(Blocks.GRASS);
     private final Structure structure;
-    private final Block[][][] blocks;
-    private final IBlockState[][][]  metadata;
+    private  Block[][][] blocks;
+    private  IBlockState[][][]  metadata;
     private final List<TileEntity> tileEntities = new ArrayList<>();
     private final List<Entity>     entities     = new ArrayList<>();
-    private final int       width;
-    private final int       height;
-    private final int       length;
-    private       ItemStack icon;
+    private  int       width;
+    private  int       height;
+    private  int       length;
     private       BlockPos  offset;
     
     /**
@@ -60,7 +56,13 @@ public class StructureProxy
             BlockPos tempPos = info.pos;
             blocks[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info.blockState.getBlock();
             metadata[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info.blockState;
+
+            if(info.blockState.getBlock() instanceof AbstractBlockHut)
+            {
+                offset = info.pos;
+            }
         }
+
     }
 
     //MINECOLONIES START
@@ -259,31 +261,51 @@ public class StructureProxy
 
     /**
      * Rotate the structure depending on the direction it's facing.
-     * @param facing directions its facing.
+     * @param times times to rotate.
      */
-    public void rotate(final EnumFacing facing)
+    public void rotate(final int times)
     {
-        structure.setPlacementSettings(new PlacementSettings().setRotation(StructureProxy.getRotationFromFacing(facing)));
+        Rotation rotation;
+        switch (times)
+        {
+            case 1:
+                rotation = Rotation.CLOCKWISE_90;
+                break;
+            case 2:
+                rotation = Rotation.CLOCKWISE_180;
+                break;
+            case 3:
+                rotation = Rotation.COUNTERCLOCKWISE_90;
+                break;
+            default:
+                rotation = Rotation.NONE;
+        }
+        structure.setPlacementSettings(new PlacementSettings().setRotation(rotation));
+
+        BlockPos size = structure.getSize(rotation);
+
+        this.width = size.getX();
+        this.height = size.getY();
+        this.length = size.getZ();
+
+        this.blocks = new Block[width][height][length];
+        this.metadata = new IBlockState[width][height][length];
+
+        for(Template.BlockInfo info: structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
+        {
+            BlockPos tempPos = info.pos;
+            int x = Math.abs(tempPos.getX());
+            int y = Math.abs(tempPos.getY());
+            int z = Math.abs(tempPos.getZ());
+
+            this.blocks[x][y][z] = info.blockState.getBlock();
+            this.metadata[x][y][z] = info.blockState;
+
+            if(info.blockState.getBlock() instanceof AbstractBlockHut)
+            {
+                offset = info.pos;
+            }
+        }
     }
 
-    /**
-     * Calculates the rotation from facing.
-     * @param facing the facing.
-     * @return the rotation.
-     */
-    private static Rotation getRotationFromFacing(final EnumFacing facing)
-    {
-        switch(facing)
-        {
-            case NORTH:
-                return Rotation.CLOCKWISE_180;
-            case SOUTH:
-                return Rotation.NONE;
-            case WEST:
-                return Rotation.CLOCKWISE_90;
-            case EAST:
-                return Rotation.COUNTERCLOCKWISE_90;
-        }
-        return Rotation.NONE;
-    }
 }

@@ -11,6 +11,7 @@ import com.minecolonies.lib.Constants;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import com.jlgm.structurepreview.fake.FakeEntity;
@@ -226,7 +227,14 @@ public class Structure
         }
     }
 
-    public void renderStructure(BlockPos startingPos, final World clientWorld, final EntityPlayer player, final float partialTicks)
+    /**
+     * Renders the structure.
+     * @param startingPos the start pos to render.
+     * @param clientWorld the world of the client.
+     * @param player the player object.
+     * @param partialTicks the partial ticks.
+     */
+    public void renderStructure(@NotNull BlockPos startingPos, @NotNull final World clientWorld, @NotNull final EntityPlayer player, final float partialTicks)
     {
         Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
         Entity[] entityList = this.getEntityInfoWithSettings(clientWorld, startingPos, this.settings);

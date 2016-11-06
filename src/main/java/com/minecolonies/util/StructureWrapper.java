@@ -14,7 +14,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -42,8 +41,6 @@ public final class StructureWrapper
      * The position we use as our uninitialized value.
      */
     private static final BlockPos                 NULL_POS            = new BlockPos(-1, -1, -1);
-    private static final int                      NUMBER_OF_ROTATIONS = 4;
-    private static final int                      REVERSE_ROTATION    = 3;
 
     /**
      * The SchematicWorld position we are at. Defaulted to NULL_POS.
@@ -82,24 +79,12 @@ public final class StructureWrapper
     }
 
     /**
-     * Load a schematic into this world.
+     * Load a structure into this world.
      *
      * @param worldObj the world to load in
-     * @param name     the schematics name
+     * @param name     the structure name
      */
-    public StructureWrapper(World worldObj, @NotNull String name)
-    {
-        this(worldObj, getResourceLocation(name), name);
-    }
-
-    /**
-     * Load a schematic into this world.
-     *
-     * @param worldObj the world to load in
-     * @param res      the resource location of this schematic
-     * @param name     the schematics name
-     */
-    private StructureWrapper(World worldObj, @NotNull ResourceLocation res, String name)
+    public StructureWrapper(World worldObj, String name)
     {
         this(worldObj, new StructureProxy(worldObj, name), name);
     }
@@ -154,35 +139,13 @@ public final class StructureWrapper
     {
         try
         {
-            @NotNull StructureWrapper schematic = new StructureWrapper(worldObj, name);
-            schematic.rotate(rotations);
-            schematic.placeSchematic(pos);
+            @NotNull StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
+            structureWrapper.rotate(rotations);
+            structureWrapper.placeSchematic(pos);
         }
         catch (IllegalStateException e)
         {
             Log.getLogger().warn("Could not load schematic!", e);
-        }
-    }
-
-    /**
-     * Rotate this schematic.
-     *
-     * @param times how many times to rotate the schematic.
-     */
-    public void rotate(int times)
-    {
-        if (times % NUMBER_OF_ROTATIONS == REVERSE_ROTATION)
-        {
-            //reverse rotate
-            rotate(EnumFacing.DOWN);
-        }
-        else
-        {
-            for (int i = 0; i < times; i++)
-            {
-                //normal rotate
-                rotate(EnumFacing.UP);
-            }
         }
     }
 
@@ -245,9 +208,13 @@ public final class StructureWrapper
         }
     }
 
-    private void rotate(@NotNull EnumFacing facing)
+    /**
+     * Rotates the schematic x times.
+     * @param times times to rotate.
+     */
+    public void rotate(int times)
     {
-        structure.rotate(facing);
+        structure.rotate(times);
     }
 
     private void placeBlock(IBlockState localState, @NotNull Block localBlock, @NotNull BlockPos worldPos)
@@ -617,6 +584,10 @@ public final class StructureWrapper
      */
     public BlockPos getPosition()
     {
+        if(position == null)
+        {
+            return new BlockPos(0,0,0);
+        }
         return position;
     }
 

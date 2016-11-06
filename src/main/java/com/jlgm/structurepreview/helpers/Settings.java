@@ -1,6 +1,9 @@
 package com.jlgm.structurepreview.helpers;
 
+import com.minecolonies.blocks.AbstractBlockHut;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.gen.structure.template.PlacementSettings;
+import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -159,12 +162,25 @@ public final class Settings
     }
 
     /**
-     * @return offset
+     * Calculates the offset regarding the blockHut.
+     * @param settings depending on the rotation.
+     * @return the offset a blockPos.
      */
     @NotNull
-    public BlockPos getOffset()
+    public BlockPos getOffset(PlacementSettings settings)
     {
-        return offset.toImmutable();
+        if(structure != null)
+        {
+            for (Template.BlockInfo info : structure.getBlockInfoWithSettings(settings))
+            {
+                if (info.blockState.getBlock() instanceof AbstractBlockHut)
+                {
+                    offset.setPos(info.pos);
+                    return info.pos;
+                }
+            }
+        }
+        return new BlockPos(0,0,0);
     }
 
     /**

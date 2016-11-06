@@ -1,6 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
+import com.jlgm.structurepreview.event.RenderEventHandler;
 import com.jlgm.structurepreview.helpers.Structure;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Structures;
@@ -511,7 +512,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveUpClicked(Button button)
     {
-        Settings.instance.moveTo(pos.up());
+        Settings.instance.moveTo(new BlockPos(0, 1, 0));
     }
 
     /**
@@ -521,7 +522,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveDownClicked(Button button)
     {
-        Settings.instance.moveTo(pos.down());
+        Settings.instance.moveTo(new BlockPos(0, -1, 0));
     }
 
     /**
