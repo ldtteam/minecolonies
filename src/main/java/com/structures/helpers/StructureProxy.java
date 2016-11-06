@@ -291,34 +291,49 @@ public class StructureProxy
         this.blocks = new Block[width][height][length];
         this.metadata = new IBlockState[width][height][length];
 
-        BlockPos currentPos = new BlockPos(0, 0, 0);
+        int minX = 0;
+        int minY = 0;
+        int minZ = 0;
 
         for(Template.BlockInfo info: structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
         {
-            if(currentPos.getX() >= this.width && currentPos.getZ() >= this.length)
+            BlockPos tempPos = info.pos;
+            int x = tempPos.getX();
+            int y = tempPos.getY();
+            int z = tempPos.getZ();
+            if(x < minX)
             {
-                currentPos = new BlockPos(0, currentPos.getY()+1, 0);
-            }
-            if(currentPos.getX() >= this.width)
-            {
-                currentPos = new BlockPos(0, currentPos.getY(), currentPos.getZ()+1);
-            }
-            else if(currentPos.getZ() >= this.length)
-            {
-                currentPos = new BlockPos(currentPos.getX()+1, currentPos.getY(), 0);
+                minX = x;
             }
 
+            if(y < minY)
+            {
+                minY = y;
+            }
 
-            int x = Math.abs(currentPos.getX());
-            int y = Math.abs(currentPos.getY());
-            int z = Math.abs(currentPos.getZ());
+            if(z < minZ)
+            {
+                minZ = z;
+            }
+        }
+
+        minX = Math.abs(minX);
+        minY = Math.abs(minY);
+        minZ = Math.abs(minZ);
+
+        for(Template.BlockInfo info: structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
+        {
+            BlockPos tempPos = info.pos;
+            int x = tempPos.getX() + minX;
+            int y = tempPos.getY() + minY;
+            int z = tempPos.getZ() + minZ;
 
             this.blocks[x][y][z] = info.blockState.getBlock();
             this.metadata[x][y][z] = info.blockState;
 
             if(info.blockState.getBlock() instanceof AbstractBlockHut)
             {
-                offset = info.pos;
+                offset = info.pos.add(minX, minY, minZ);
             }
         }
     }
