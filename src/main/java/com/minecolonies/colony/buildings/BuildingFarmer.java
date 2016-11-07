@@ -108,6 +108,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public void addFarmerFields(Field field)
     {
+        field.calculateSize(getColony().getWorld(), field.getLocation().down());
         farmerFields.add(field);
     }
 
@@ -561,4 +562,3 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
     }
 }
-

@@ -190,6 +190,16 @@ public enum AIState
      */
     FARMER_WORK,
 
+    /**
+     * Initialize field.
+     */
+    FARMER_INITIALIZE,
+
+    /**
+     * Looks at the field.
+     */
+    FARMER_OBSERVE,
+
       /*
 ###Guard###
     */
