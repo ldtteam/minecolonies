@@ -226,7 +226,7 @@ public class Permissions implements IPermissions
             }
             catch (IllegalArgumentException e)
             {
-                /**
+                /*
                  * Intentionally left empty. Happens when the UUID hasn't been saved yet.
                  */
             }
@@ -308,7 +308,8 @@ public class Permissions implements IPermissions
      */
     public boolean hasPermission(Rank rank, @NotNull Action action)
     {
-        return Utils.testFlag(permissions.get(rank), action.flag);
+        return rank == Rank.OWNER
+                 || Utils.testFlag(permissions.get(rank), action.flag);
     }
 
     public Set<Player> getPlayersByRank(Rank rank)
@@ -792,7 +793,8 @@ public class Permissions implements IPermissions
 
         public boolean hasPermission(Rank rank, @NotNull Action action)
         {
-            return Utils.testFlag(permissions.get(rank), action.flag);
+            return rank == Rank.OWNER
+                     || Utils.testFlag(permissions.get(rank), action.flag);
         }
 
         public boolean setPermission(Rank rank, @NotNull Action action)
