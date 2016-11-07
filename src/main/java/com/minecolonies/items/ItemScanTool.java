@@ -3,7 +3,7 @@ package com.minecolonies.items;
 import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.SchematicWrapper;
+import com.minecolonies.util.StructureWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -65,9 +65,9 @@ public class ItemScanTool extends AbstractItemMinecolonies
         {
             @NotNull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
             @NotNull BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
-            if (worldIn.isRemote)
+            if (!worldIn.isRemote)
             {
-                String result = SchematicWrapper.saveSchematic(worldIn, pos1, pos2);
+                String result = StructureWrapper.saveStructure(worldIn, pos1, pos2);
                 LanguageHandler.sendPlayerMessage(playerIn, result);
             }
             compound.removeTag("pos1");

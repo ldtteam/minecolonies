@@ -26,7 +26,7 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
      */
     public WorkOrderBuildDecoration(String decoration, String style, int rotation, BlockPos location)
     {
-        this.schematicName = style + '/' + decoration;
+        this.structureName = style + '/' + decoration;
         this.buildingRotation = rotation;
         this.buildingLocation = location;
         this.cleared = false;
@@ -41,6 +41,6 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
     @Override
     protected String getValue()
     {
-        return schematicName;
+        return structureName;
     }
 }

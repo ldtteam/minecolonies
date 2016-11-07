@@ -5,6 +5,7 @@ import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.layers.LayerBipedArmor;
 import net.minecraft.util.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -35,6 +36,8 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         idToFemaleModelMap.put(Model.LUMBERJACK, new ModelEntityLumberjackFemale());
         idToFemaleModelMap.put(Model.FARMER, new ModelEntityFarmerFemale());
         idToFemaleModelMap.put(Model.FISHERMAN, new ModelEntityFishermanFemale());
+        idToFemaleModelMap.put(Model.ARCHER_GUARD, new ModelBiped());
+        idToFemaleModelMap.put(Model.KNIGHT_GUARD, new ModelBiped());
     }
     /**
      * Renders model, see {@link RenderBiped}.
@@ -44,6 +47,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     public RenderBipedCitizen(RenderManager renderManagerIn)
     {
         super(renderManagerIn, defaultModelMale, 0.5F);
+        this.addLayer(new LayerBipedArmor(this));
     }
 
     @Override
@@ -84,7 +88,9 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         // Lumberjack: 4 male, 1 female
         LUMBERJACK("Lumberjack", 1),
         FARMER("Farmer", 1),
-        FISHERMAN("Fisherman", 1);
+        FISHERMAN("Fisherman", 1),
+        ARCHER_GUARD("Archer", 1),
+        KNIGHT_GUARD("Knight", 1);
 
         /**
          * String describing the citizen.

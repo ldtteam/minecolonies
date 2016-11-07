@@ -8,7 +8,7 @@ import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.Log;
-import com.minecolonies.util.SchematicWrapper;
+import com.minecolonies.util.StructureWrapper;
 import com.minecolonies.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
@@ -504,7 +504,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
         int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
         int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
-        //TODO: Really ugly building code, change to schematics
+        //TODO: Really ugly building code, change to structures
 
         //make area around it safe
         for (int x = -SAFE_CHECK_RANGE + xOffset; x <= SAFE_CHECK_RANGE + xOffset; x++)
@@ -740,25 +740,25 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private void mineNodeFromStand(@NotNull Node mineNode, @NotNull BlockPos standingPosition, int direction)
     {
-        //Preload schematics
-        if (job.getSchematic() == null)
+        //Preload structures
+        if (job.getStructure() == null)
         {
             if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
             {
-                loadSchematic("default/minerX4");
+                loadStructure("miner/minerX4");
             }
             if (mineNode.getStyle() == Node.NodeType.BEND)
             {
-                loadSchematic("default/minerX2Right");
+                loadStructure("miner/minerX2Right");
             }
             if (mineNode.getStyle() == Node.NodeType.TUNNEL)
             {
-                loadSchematic("default/minerX2Top");
+                loadStructure("miner/minerX2Top");
             }
 
-            if (job.getSchematic() != null)
+            if (job.getStructure() != null)
             {
-                job.getSchematic().setPosition(new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
+                job.getStructure().setPosition(new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
 
                 int rotateTimes = 2;
                 if (direction == 3)
@@ -774,7 +774,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                     rotateTimes = 1;
                 }
 
-                job.getSchematic().rotate(rotateTimes);
+                job.getStructure().rotate(rotateTimes);
             }
         }
 
@@ -899,7 +899,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     {
         if (mineNode.getStyle() == Node.NodeType.CROSSROAD || mineNode.getStyle() == Node.NodeType.BEND || mineNode.getStyle() == Node.NodeType.TUNNEL)
         {
-            return executeSchematicPlacement();
+            return executeStructurePlacement();
         }
         if (mineNode.getStyle() == Node.NodeType.LADDER_BACK)
         {
@@ -912,43 +912,43 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private boolean requestBlock()
     {
-        while (job.getSchematic().findNextBlock())
+        while (job.getStructure().findNextBlock())
         {
-            @Nullable Block block = job.getSchematic().getBlock();
+            @Nullable Block block = job.getStructure().getBlock();
 
-            if (job.getSchematic().doesSchematicBlockEqualWorldBlock() || block == Blocks.STONE || block == Blocks.AIR)
+            if (job.getStructure().doesStructureBlockEqualWorldBlock() || block == Blocks.STONE || block == Blocks.AIR)
             {
                 continue;
             }
 
             if (checkOrRequestItems(new ItemStack(block)))
             {
-                job.getSchematic().reset();
+                job.getStructure().reset();
                 return false;
             }
         }
-        job.getSchematic().reset();
+        job.getStructure().reset();
         requestedBlock = true;
         buildStructure = false;
         return true;
     }
 
-    private void loadSchematic(@NotNull String name)
+    private void loadStructure(@NotNull String name)
     {
         requestedBlock = false;
         buildStructure = false;
         try
         {
-            job.setSchematic(new SchematicWrapper(world, name));
+            job.setStructure(new StructureWrapper(world, name));
         }
         catch (IllegalStateException e)
         {
-            Log.getLogger().warn(String.format("Schematic: (%s) does not exist - removing build request", name), e);
-            job.setSchematic(null);
+            Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
+            job.setStructure(null);
         }
     }
 
-    private boolean executeSchematicPlacement()
+    private boolean executeStructurePlacement()
     {
         if (!requestedBlock && !requestBlock())
         {
@@ -965,26 +965,26 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private boolean buildDecoration()
     {
-        if (job.getSchematic().getBlock() == null
-              || job.getSchematic().doesSchematicBlockEqualWorldBlock()
-              || (job.getSchematic().getBlock() != null && job.getSchematic()
+        if (job.getStructure().getBlock() == null
+              || job.getStructure().doesStructureBlockEqualWorldBlock()
+              || (job.getStructure().getBlock() != null && job.getStructure()
                                                              .getBlockState()
                                                              .getMaterial()
                                                              .isSolid())
-              || job.getSchematic().getBlock() == Blocks.AIR)
+              || job.getStructure().getBlock() == Blocks.AIR)
         {
             return !findNextBlockNonSolid();
         }
 
-        if (!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
+        if (!worker.isWorkerAtSiteWithMove(job.getStructure().getPosition(), 3))
         {
             return false;
         }
 
-        @Nullable Block block = job.getSchematic().getBlock();
-        @Nullable IBlockState metadata = job.getSchematic().getBlockState();
+        @Nullable Block block = job.getStructure().getBlock();
+        @Nullable IBlockState metadata = job.getStructure().getBlockState();
 
-        BlockPos coordinates = job.getSchematic().getBlockPosition();
+        BlockPos coordinates = job.getStructure().getBlockPosition();
         int x = coordinates.getX();
         int y = coordinates.getY();
         int z = coordinates.getZ();
@@ -994,8 +994,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //should never happen
         if (block == null)
         {
-            @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            Log.getLogger().error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            @NotNull BlockPos local = job.getStructure().getLocalPosition();
+            Log.getLogger().error(String.format("StructureProxy has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockNonSolid();
             return false;
         }
@@ -1017,27 +1017,27 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return false;
         }
 
-        job.setSchematic(null);
+        job.setStructure(null);
         return true;
     }
 
     private boolean buildStructure()
     {
-        if (job.getSchematic().getBlock() == null || job.getSchematic().doesSchematicBlockEqualWorldBlock() || (!job.getSchematic().getBlockState().getMaterial().isSolid()
-                                                                                                                  && job.getSchematic().getBlock() != Blocks.AIR))
+        if (job.getStructure().getBlock() == null || job.getStructure().doesStructureBlockEqualWorldBlock() || (!job.getStructure().getBlockState().getMaterial().isSolid()
+                                                                                                                  && job.getStructure().getBlock() != Blocks.AIR))
         {
             return !findNextBlockSolid();
         }
 
-        if (!worker.isWorkerAtSiteWithMove(job.getSchematic().getPosition(), 3))
+        if (!worker.isWorkerAtSiteWithMove(job.getStructure().getPosition(), 3))
         {
             return false;
         }
 
-        @Nullable Block block = job.getSchematic().getBlock();
-        @Nullable IBlockState metadata = job.getSchematic().getBlockState();
+        @Nullable Block block = job.getStructure().getBlock();
+        @Nullable IBlockState metadata = job.getStructure().getBlockState();
 
-        BlockPos coordinates = job.getSchematic().getBlockPosition();
+        BlockPos coordinates = job.getStructure().getBlockPosition();
         int x = coordinates.getX();
         int y = coordinates.getY();
         int z = coordinates.getZ();
@@ -1047,15 +1047,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //should never happen
         if (block == null)
         {
-            @NotNull BlockPos local = job.getSchematic().getLocalPosition();
-            Log.getLogger().error(String.format("Schematic has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
+            @NotNull BlockPos local = job.getStructure().getLocalPosition();
+            Log.getLogger().error(String.format("StructureProxy has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
             return false;
         }
 
         //don't overwrite huts or bedrock, nor place huts
         if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK ||
-              block instanceof AbstractBlockHut || job.getSchematic().getBlock() == Blocks.STONE)
+              block instanceof AbstractBlockHut || job.getStructure().getBlock() == Blocks.STONE)
         {
             findNextBlockSolid();
             return false;
@@ -1068,24 +1068,25 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             setBlockFromInventory(new BlockPos(x, y, z), block, metadata);
         }
 
+
         if (findNextBlockSolid())
         {
             worker.swingArm(worker.getActiveHand());
             return false;
         }
-        job.getSchematic().reset();
+        job.getStructure().reset();
         buildStructure = true;
         return true;
     }
 
     private boolean findNextBlockNonSolid()
     {
-        //method returns false if there is no next block (schematic finished)
-        if (!job.getSchematic().findNextBlockNonSolid())
+        //method returns false if there is no next block (structures finished)
+        if (!job.getStructure().findNextBlockNonSolid())
         {
-            job.getSchematic().incrementBlock();
-            job.getSchematic().reset();
-            job.setSchematic(null);
+            job.getStructure().incrementBlock();
+            job.getStructure().reset();
+            job.setStructure(null);
             return false;
         }
         return true;
@@ -1093,11 +1094,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private boolean findNextBlockSolid()
     {
-        //method returns false if there is no next block (schematic finished)
-        if (!job.getSchematic().findNextBlockSolid())
+        //method returns false if there is no next block (structures finished)
+        if (!job.getStructure().findNextBlockSolid())
         {
-            job.getSchematic().incrementBlock();
-            job.getSchematic().reset();
+            job.getStructure().incrementBlock();
+            job.getStructure().reset();
             buildStructure = true;
             return false;
         }

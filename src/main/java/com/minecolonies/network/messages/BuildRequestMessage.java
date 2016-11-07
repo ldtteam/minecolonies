@@ -3,6 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -90,6 +91,12 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
         if (building == null)
         {
             return;
+        }
+
+        //Verify player has permission to change this huts settings
+        //if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+        {
+            //return;
         }
 
         switch (message.mode)

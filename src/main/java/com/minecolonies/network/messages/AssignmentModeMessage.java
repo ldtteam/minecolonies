@@ -66,8 +66,8 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
-            //Verify player has permission to do edit permissions
-            if (!colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+            //Verify player has permission to change this huts settings
+            if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
             {
                 return;
             }
