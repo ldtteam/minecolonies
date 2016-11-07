@@ -305,7 +305,7 @@ public abstract class AbstractBuilding
     /**
      * Children must return the name of their schematic.
      *
-     * @return Schematic name.
+     * @return StructureProxy name.
      */
     public abstract String getSchematicName();
 

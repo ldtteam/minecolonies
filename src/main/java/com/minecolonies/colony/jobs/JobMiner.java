@@ -4,7 +4,7 @@ import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.miner.EntityAIStructureMiner;
-import com.minecolonies.util.SchematicWrapper;
+import com.minecolonies.util.StructureWrapper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class JobMiner extends AbstractJob
 {
-    protected SchematicWrapper schematic;
+    protected StructureWrapper schematic;
 
     public JobMiner(CitizenData entity)
     {
@@ -75,12 +75,12 @@ public class JobMiner extends AbstractJob
         addItemNeeded(stack);
     }
 
-    public SchematicWrapper getSchematic()
+    public StructureWrapper getStructure()
     {
         return schematic;
     }
 
-    public void setSchematic(SchematicWrapper schematic)
+    public void setStructure(StructureWrapper schematic)
     {
         this.schematic = schematic;
     }

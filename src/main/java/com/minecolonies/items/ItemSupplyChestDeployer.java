@@ -7,7 +7,7 @@ import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
-import com.minecolonies.util.SchematicWrapper;
+import com.minecolonies.util.StructureWrapper;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -240,16 +240,16 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         switch (direction)
         {
             case SOUTH://North 2
-                SchematicWrapper.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-11, -2, 5), 3);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, "SupplyShip", pos.add(-11, -2, 5), 3);
                 break;
             case NORTH://South 3
-                SchematicWrapper.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-20, -2, -21), 1);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, "SupplyShip", pos.add(-20, -2, -21), 1);
                 break;
             case EAST://West 4
-                SchematicWrapper.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(5, -2, -20), 2);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, "SupplyShip", pos.add(5, -2, -20), 2);
                 break;
             case WEST://East 5
-                SchematicWrapper.loadAndPlaceSchematicWithRotation(world, "supplyShip", pos.add(-21, -2, -11), 0);
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, "SupplyShip", pos.add(-21, -2, -11), 0);
                 break;
             default:
                 break;
