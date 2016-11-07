@@ -16,9 +16,10 @@ public class ColonyCommand extends AbstractSplitCommand
 
     private final ImmutableMap<String, ISubCommand> subCommands =
       new ImmutableMap.Builder<String, ISubCommand>()
-        .put(KillCitizen.DESC, new KillCitizen(MinecoloniesCommand.DESC, ColonyCommand.DESC, KillCitizen.DESC))
-        .put(RespawnCitizen.DESC, new RespawnCitizen(MinecoloniesCommand.DESC, ColonyCommand.DESC, RespawnCitizen.DESC))
-        .put(ColonyInfo.DESC, new ColonyInfo(MinecoloniesCommand.DESC, ColonyCommand.DESC, ColonyInfo.DESC))
+        .put(KillCitizenCommand.DESC, new KillCitizenCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, KillCitizenCommand.DESC))
+        .put(RespawnCitizenCommand.DESC, new RespawnCitizenCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, RespawnCitizenCommand.DESC))
+        .put(ShowColonyInfoCommand.DESC, new ShowColonyInfoCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, ShowColonyInfoCommand.DESC))
+        .put(DeleteColonyCommand.DESC, new DeleteColonyCommand(MinecoloniesCommand.DESC, ColonyCommand.DESC, DeleteColonyCommand.DESC))
         .build();
 
     /**

@@ -3,6 +3,7 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.ColonyView;
+import com.minecolonies.colony.permissions.Permissions;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -73,6 +74,13 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
+
+            //Verify player has permission to change this huts settings
+            if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+            {
+                return;
+            }
+
             colony.setManualHiring(message.toggle);
         }
     }

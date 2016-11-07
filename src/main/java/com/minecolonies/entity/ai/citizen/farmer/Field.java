@@ -18,6 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -75,6 +76,11 @@ public class Field extends Container
      * Tag to store the fields negative width.
      */
     private static final String TAG_WIDTH_MINUS = "width-";
+
+    /**
+     * Tag to store the fields stage.
+     */
+    private static final String TAG_STAGE = "stage";
 
     /**
      * Tag to store the owner.
@@ -136,6 +142,11 @@ public class Field extends Container
      * Checks if the field needsWork (Hoeig, Seedings, Farming etc).
      */
     private boolean needsWork = false;
+
+    /**
+     * Has the field been planted?
+     */
+    private FieldStage fieldStage = FieldStage.EMPTY;
 
     /**
      * The length to plus x of the field.
@@ -204,10 +215,10 @@ public class Field extends Container
             for (int j = 0; j < PLAYER_INVENTORY_COLUMNS; j++)
             {
                 addSlotToContainer(new Slot(
-                                             playerInventory,
-                                             j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
-                                             PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                                             PLAYER_INVENTORY_INITIAL_Y_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH
+                        playerInventory,
+                        j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
+                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -215,9 +226,9 @@ public class Field extends Container
         for (i = 0; i < PLAYER_INVENTORY_COLUMNS; i++)
         {
             addSlotToContainer(new Slot(
-                                         playerInventory, i,
-                                         PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                                         PLAYER_INVENTORY_HOTBAR_OFFSET
+                    playerInventory, i,
+                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                    PLAYER_INVENTORY_HOTBAR_OFFSET
             ));
         }
     }
@@ -296,6 +307,7 @@ public class Field extends Container
     {
         location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
         taken = compound.getBoolean(TAG_TAKEN);
+        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
         lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
         widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
         lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
@@ -383,6 +395,7 @@ public class Field extends Container
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
         compound.setBoolean(TAG_TAKEN, taken);
+        compound.setInteger(TAG_STAGE, fieldStage.ordinal());
         compound.setInteger(TAG_LENGTH_PLUS, lengthPlusX);
         compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
         compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
@@ -409,6 +422,26 @@ public class Field extends Container
     public void setTaken(boolean taken)
     {
         this.taken = taken;
+    }
+
+    /**
+     * Checks if the field has been planted.
+     *
+     * @return true if there are crops planted.
+     */
+    public FieldStage getFieldStage()
+    {
+        return this.fieldStage;
+    }
+
+    /**
+     * Sets if there are any crops planted.
+     *
+     * @param fieldStage true after planting, false after harvesting.
+     */
+    public void setFieldStage(FieldStage fieldStage)
+    {
+        this.fieldStage = fieldStage;
     }
 
     /**
@@ -554,5 +587,16 @@ public class Field extends Container
     public void setCustomName(final String customName)
     {
         this.inventory.setCustomName(customName);
+    }
+
+    /**
+     * Describes the stage the field is in.
+     * Like if it has been hoed, planted or is empty.
+     */
+    public enum FieldStage
+    {
+        EMPTY,
+        HOED,
+        PLANTED
     }
 }

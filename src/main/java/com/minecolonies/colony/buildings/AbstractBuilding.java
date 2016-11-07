@@ -59,6 +59,7 @@ public abstract class AbstractBuilding
         addMapping("TownHall", BuildingTownHall.class, BlockHutTownHall.class);
         addMapping("Warehouse", BuildingWarehouse.class, BlockHutWarehouse.class);
         addMapping("Fisherman", BuildingFisherman.class, BlockHutFisherman.class);
+        addMapping("GuardTower", BuildingGuardTower.class, BlockHutGuardTower.class);
     }
 
     private final BlockPos                 location;
@@ -304,7 +305,7 @@ public abstract class AbstractBuilding
     /**
      * Children must return the name of their schematic.
      *
-     * @return Schematic name.
+     * @return StructureProxy name.
      */
     public abstract String getSchematicName();
 

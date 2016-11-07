@@ -45,6 +45,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Hit a block every x ticks when mining.
      */
     private static final int             HIT_EVERY_X_TICKS       = 5;
+    public static final int EXCEPTION_TIMEOUT = 100;
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -100,6 +101,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private boolean needsPickaxe = false;
 
     /**
+     * This flag tells if we need a weapon, will be set on tool needs.
+     */
+    private boolean needsWeapon = false;
+
+    /**
      * The minimum pickaxe level we need to fulfill the tool request.
      */
     private int needsPickaxeLevel = -1;
@@ -153,6 +159,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
           new AITarget(() -> this.needsAxe, this::waitForAxe),
           new AITarget(() -> this.needsHoe, this::waitForHoe),
           new AITarget(() -> this.needsPickaxe, this::waitForPickaxe),
+          new AITarget(() -> this.needsWeapon, this::waitForWeapon),
+
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
@@ -164,6 +172,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  */
           new AITarget(this::inventoryNeedsDump, INVENTORY_FULL)
         );
+    }
+
+    @Override
+    protected void onException(final RuntimeException e)
+    {
+        Log.getLogger().info("Pausing Entity for 5 Seconds");
+        this.setDelay(EXCEPTION_TIMEOUT);
     }
 
     /**
@@ -651,6 +666,74 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             minlevel,
             Utils.getMiningLevel(stack, Utils.PICKAXE)
           ),
+          this::takeItemStackFromChest
+        );
+    }
+
+    /**
+     * Wait for a needed pickaxe.
+     *
+     * @return NEEDS_PICKAXE
+     */
+    @NotNull
+    private AIState waitForWeapon()
+    {
+        if (checkForWeapon())
+        {
+            delay += DELAY_RECHECK;
+            return NEEDS_WEAPON;
+        }
+        return IDLE;
+    }
+
+    /**
+     * Ensures that we have a pickaxe available.
+     * Will set {@code needsPickaxe} accordingly.
+     *
+     * @return true if we have a pickaxe
+     */
+    public boolean checkForWeapon()
+    {
+        //Check for a pickaxe
+        needsWeapon = !InventoryFunctions
+                         .matchFirstInInventory(
+                           worker.getInventoryCitizen(),
+                           stack -> stack != null && Utils.doesItemServeAsWeapon(stack),
+                           InventoryFunctions::doNothing
+                         );
+
+        delay += DELAY_RECHECK;
+
+        if (needsWeapon)
+        {
+            if (walkToBuilding())
+            {
+                return false;
+            }
+            if (isWeaponInHut())
+            {
+                return true;
+            }
+            requestWithoutSpam(LanguageHandler.format("com.minecolonies.job.guard.needWeapon"));
+        }
+        return needsWeapon;
+    }
+
+    /**
+     * Looks for a weapon.
+     * The pickaxe will be taken from the chest.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the sword.
+     *
+     * @return true if a weapon was found
+     */
+    private boolean isWeaponInHut()
+    {
+        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        return buildingWorker != null
+                 && InventoryFunctions.matchFirstInInventory(
+          buildingWorker.getTileEntity(),
+          stack -> stack != null && (Utils.doesItemServeAsWeapon(stack)),
           this::takeItemStackFromChest
         );
     }

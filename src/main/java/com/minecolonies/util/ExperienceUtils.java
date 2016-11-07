@@ -8,12 +8,12 @@ public final class ExperienceUtils
     /**
      * The number to calculate the experienceLevel of the citizen.
      */
-    private static final double EXPERIENCE_MULTIPLIER = 10D;
+    private static final double EXPERIENCE_MULTIPLIER = 1D;
 
     /**
      * The number to create a percentage from another number (ex. 100*0.25 = 25).
      */
-    private static final int PERCENT_MULTIPLIER = 100;
+    private static final double PERCENT_MULTIPLIER = 100D;
 
     /**
      * Private constructor to hide the public one.
@@ -31,11 +31,16 @@ public final class ExperienceUtils
      */
     public static double getPercentOfLevelCompleted(double experience, int level)
     {
-        return PERCENT_MULTIPLIER
-                 - ((getXPNeededForNextLevel(level)
-                       - experience)
-                      / getXPNeededForNextLevel(level))
-                     * PERCENT_MULTIPLIER;
+        final double thisLvlExp = getXPNeededForOnlyLevel(level);
+        final double lastLvlExp = getXPNeededForNextLevel(level) - thisLvlExp;
+        final double currentExp = experience - lastLvlExp;
+
+        return Math.min(PERCENT_MULTIPLIER,
+          PERCENT_MULTIPLIER
+            - ((thisLvlExp
+                  - currentExp)
+                 / thisLvlExp)
+                * PERCENT_MULTIPLIER);
     }
 
     /**
@@ -49,5 +54,21 @@ public final class ExperienceUtils
         return EXPERIENCE_MULTIPLIER
                  * (currentLevel + 1)
                  * (currentLevel + 1);
+    }
+
+    /**
+     * Calculates the xp needed for the next level.
+     *
+     * @param currentLevel the currentLevel of the citizen
+     * @return the xp in int
+     */
+    private static double getXPNeededForOnlyLevel(int currentLevel)
+    {
+        if (currentLevel == 0)
+        {
+            return getXPNeededForNextLevel(currentLevel);
+        }
+        return getXPNeededForNextLevel(currentLevel)
+                 - getXPNeededForNextLevel(currentLevel - 1);
     }
 }

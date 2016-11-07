@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -82,7 +83,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     protected final boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
         IBlockState curBlockState = world.getBlockState(blockToMine);
-        Block curBlock = curBlockState.getBlock();
+        @Nullable Block curBlock = curBlockState.getBlock();
         if (curBlock == null
               || curBlock.equals(Blocks.AIR)
               || BlockUtils.shouldNeverBeMessedWith(curBlock))
@@ -175,7 +176,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         {
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
-        return (int) ((DELAY_MODIFIER * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
+        return (int) ((DELAY_MODIFIER
+                         * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
                         * (double) world.getBlockState(pos).getBlockHardness(world, pos)
                         / (double) (worker.getHeldItemMainhand().getItem()
                                       .getStrVsBlock(worker.getHeldItemMainhand(),

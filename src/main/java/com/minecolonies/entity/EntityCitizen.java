@@ -7,6 +7,7 @@ import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingFarmer;
 import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.jobs.AbstractJob;
+import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.minimal.*;
@@ -27,6 +28,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -70,7 +72,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Number of ticks to heal the citizens
      */
-    private static final int HEAL_CITIZENS_AFTER = 200;
+    private static final int HEAL_CITIZENS_AFTER = 100;
 
     /**
      * Tag's to save data to NBT
@@ -98,24 +100,48 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Divide experience by a factor to ensure more levels fit in an int.
      */
-    private static final int EXP_DIVIDER = 10;
+    private static final double EXP_DIVIDER = 100.0;
 
     /**
      * Chance the citizen will rant about bad weather. 20 ticks per 60 seconds = 5 minutes.
      */
-    private static final int    RANT_ABOUT_WEATHER_CHANCE = 20 * 60 * 5;
+    private static final int RANT_ABOUT_WEATHER_CHANCE = 20 * 60 * 5;
+
+    /**
+     * Quantity to be moved to rotate without actually moving.
+     */
+    private static final double MOVE_MINIMAL = 0.01D;
+
+    /**
+     * Base max health of the citizen.
+     */
+    private static final double BASE_MAX_HEALTH = 20D;
+
+    /**
+     * Base movement speed of every citizen.
+     */
+    private static final double BASE_MOVEMENT_SPEED = 0.3D;
+
+    /**
+     * Base pathfinding range of the citizen.
+     */
+    private static final int    BASE_PATHFINDING_RANGE = 100;
     /**
      * Height of the citizen.
      */
-    private static final double CITIZEN_HEIGHT            = 1.8D;
+    private static final double CITIZEN_HEIGHT         = 1.8D;
     /**
      * Width of the citizen.
      */
-    private static final double CITIZEN_WIDTH             = 0.6D;
+    private static final double CITIZEN_WIDTH          = 0.6D;
     /**
      * Defines how far the citizen will be rendered.
      */
-    private static final double RENDER_DISTANCE_WEIGHT    = 2.0D;
+    private static final double RENDER_DISTANCE_WEIGHT = 2.0D;
+    /**
+     * Building level at which the workers work even if it is raining.
+     */
+    private static final int    BONUS_BUILDING_LEVEL   = 5;
     private static Field navigatorField;
     protected Status                   status  = Status.IDLE;
     private   RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
@@ -203,7 +229,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private void initTasks()
     {
         this.tasks.addTask(0, new EntityAISwimming(this));
-        this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
+
+        if (this.getColonyJob() == null || !"com.minecolonies.job.Guard".equals(this.getColonyJob().getName()))
+        {
+            this.tasks.addTask(1, new EntityAICitizenAvoidEntity(this, EntityMob.class, 8.0F, 0.6D, 1.6D));
+        }
         this.tasks.addTask(2, new EntityAIGoHome(this));
         this.tasks.addTask(3, new EntityAISleep(this));
         this.tasks.addTask(4, new EntityAIOpenDoor(this, true));
@@ -214,6 +244,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
         this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityLiving.class, 6.0F));
 
         onJobChanged(getColonyJob());
+    }
+
+    public AbstractJob getColonyJob()
+    {
+        return citizenData != null ? citizenData.getJob() : null;
     }
 
     /**
@@ -269,11 +304,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 BlockPosUtil.tryMoveLivingToXYZ(this, getWorkBuilding().getLocation());
             }
         }
-    }
-
-    public AbstractJob getColonyJob()
-    {
-        return citizenData != null ? citizenData.getJob() : null;
     }
 
     public int getLevel()
@@ -345,7 +375,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Change the citizens Rotation to look at said block
+     * Change the citizens Rotation to look at said block.
      *
      * @param block the block he should look at
      */
@@ -356,14 +386,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        double xDifference = block.getX() - this.posX;
-        double zDifference = block.getZ() - this.posZ;
-        double yDifference = block.getY() - (this.posY + (double) this.getEyeHeight());
+        final double xDifference = block.getX() - this.posX;
+        final double zDifference = block.getZ() - this.posZ;
+        final double yDifference = block.getY() - (this.posY + (double) this.getEyeHeight());
 
-        double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
-        double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
-        double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
-        this.setRotation((float) this.updateRotation(this.rotationYaw, intendedRotationYaw, 30), (float) this.updateRotation(this.rotationPitch, intendedRotationPitch, 30));
+        final double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
+        final double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
+        final double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
+        this.setRotation((float) updateRotation(this.rotationYaw, intendedRotationYaw, 30), (float) updateRotation(this.rotationPitch, intendedRotationPitch, 30));
+
+        final double goToX = xDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+        final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
+
+        //Have to move the entity minimally into the direction to render his new rotation.
+        moveEntity(goToX, 0, goToZ);
     }
 
     /**
@@ -374,7 +410,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param maxIncrement     the 'movement speed'
      * @return a rotation value he should move
      */
-    private double updateRotation(double currentRotation, double intendedRotation, double maxIncrement)
+    private static double updateRotation(double currentRotation, double intendedRotation, double maxIncrement)
     {
         double wrappedAngle = MathHelper.wrapDegrees(intendedRotation - currentRotation);
 
@@ -398,7 +434,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         for (@NotNull EntityXPOrb orb : getXPOrbsOnGrid())
         {
-            addExperience(orb.getXpValue());
+            addExperience(orb.getXpValue() / 2);
             orb.setDead();
         }
     }
@@ -424,9 +460,19 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void addExperience(double xp)
     {
-        double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
+        final double citizenHutLevel = getHomeBuilding() == null ? 0 : getHomeBuilding().getBuildingLevel();
+        final double citizenHutMaxLevel = getHomeBuilding() == null ? 1 : getHomeBuilding().getMaxBuildingLevel();
+        if (citizenHutLevel < citizenHutMaxLevel
+              && Math.pow(2.0, citizenHutLevel + 1.0) < this.getExperienceLevel())
+        {
+            return;
+        }
 
+        final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
         double localXp = xp * skillModifier / EXP_DIVIDER;
+        final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
+        final double bonusXp = workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2);
+        localXp = localXp * bonusXp;
         if (localXp > maxValue)
         {
             localXp = maxValue;
@@ -437,7 +483,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             citizenData.increaseLevel();
         }
-
+        this.updateLevel();
         citizenData.markDirty();
     }
 
@@ -461,6 +507,27 @@ public class EntityCitizen extends EntityAgeable implements INpc
         super.updateFallState(y, onGroundIn, state, pos);
     }
 
+    @Override
+    public boolean attackEntityFrom(@NotNull DamageSource damageSource, float damage)
+    {
+        final Entity sourceEntity = damageSource.getEntity();
+        if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
+        {
+            return false;
+        }
+
+        final boolean result = super.attackEntityFrom(damageSource, damage);
+
+        if (damageSource.isMagicDamage() || damageSource.isFireDamage())
+        {
+            return result;
+        }
+
+        updateArmorDamage(damage);
+
+        return result;
+    }
+
     /**
      * Called when the mob's health reaches 0.
      *
@@ -474,11 +541,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (colony != null)
         {
-            LanguageHandler.sendPlayersLocalizedMessage(
-              colony.getMessageEntityPlayers(),
-              "tile.blockHutTownHall.messageColonistDead",
-              citizenData.getName());
-
+            if (getColonyJob() instanceof JobGuard)
+            {
+                LanguageHandler.sendPlayersLocalizedMessage(
+                  colony.getMessageEntityPlayers(),
+                  "tile.blockHutTownHall.messageGuardDead",
+                  citizenData.getName());
+            }
+            else
+            {
+                LanguageHandler.sendPlayersLocalizedMessage(
+                  colony.getMessageEntityPlayers(),
+                  "tile.blockHutTownHall.messageColonistDead",
+                  citizenData.getName());
+            }
             colony.removeCitizen(getCitizenData());
         }
         super.onDeath(par1DamageSource);
@@ -493,7 +569,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (!this.worldObj.isRemote && this.recentlyHit > 0 && this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot"))
         {
-            experience = (int) (citizenData.getLevel() * 100 + this.getExperiencePoints());
+            experience = (int) (this.getExperiencePoints());
 
             while (experience > 0)
             {
@@ -534,6 +610,29 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private double getExperiencePoints()
     {
         return citizenData.getExperience();
+    }
+
+    /**
+     * Updates the armour damage after being hit.
+     *
+     * @param damage damage dealt.
+     */
+    private void updateArmorDamage(double damage)
+    {
+        for (final ItemStack stack : this.getArmorInventoryList())
+        {
+            if (stack == null || stack.getItem() == null || !(stack.getItem() instanceof ItemArmor))
+            {
+                continue;
+            }
+            stack.damageItem((int) (damage / 2), this);
+
+            if (stack.stackSize < 1)
+            {
+                setItemStackToSlot(getSlotForItemStack(stack), null);
+            }
+            setItemStackToSlot(getSlotForItemStack(stack), stack);
+        }
     }
 
     @Override
@@ -910,11 +1009,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
-        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
+
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(BASE_MAX_HEALTH);
+        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(BASE_MOVEMENT_SPEED);
 
         //path finding search range
-        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(100);
+        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(BASE_PATHFINDING_RANGE);
     }
 
     @NotNull
@@ -1047,11 +1147,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @NotNull
     public DesiredActivity getDesiredActivity()
     {
+        if (this.getColonyJob() instanceof JobGuard)
+        {
+            return DesiredActivity.WORK;
+        }
+
         if (!worldObj.isDaytime())
         {
             return DesiredActivity.SLEEP;
         }
-        else if (worldObj.isRaining())
+        else if (worldObj.isRaining() && !shouldWorkWhileRaining())
         {
             return DesiredActivity.IDLE;
         }
@@ -1059,6 +1164,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             return DesiredActivity.WORK;
         }
+    }
+
+    /**
+     * Checks if the citizen should work even when it rains.
+     *
+     * @return true if his building level is bigger than 5
+     */
+    private boolean shouldWorkWhileRaining()
+    {
+        return this.getWorkBuilding() != null && (this.getWorkBuilding().getBuildingLevel() >= BONUS_BUILDING_LEVEL);
     }
 
     /**

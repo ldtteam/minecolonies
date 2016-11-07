@@ -33,10 +33,12 @@ public abstract class AbstractJob
     private static final String MAPPING_LUMBERJACK  = "Lumberjack";
     private static final String MAPPING_FARMER      = "Farmer";
     private static final String MAPPING_FISHERMAN   = "Fisherman";
+    private static final String MAPPING_TOWER_GUARD = "GuardTower";
+
     /**
      * The priority assigned with every main AI job.
      */
-    private static final int    TASK_PRIORITY       = 3;
+    private static final int TASK_PRIORITY = 3;
 
     //  Job and View Class Mapping
     @NotNull
@@ -52,6 +54,7 @@ public abstract class AbstractJob
         addMapping(MAPPING_LUMBERJACK, JobLumberjack.class);
         addMapping(MAPPING_FARMER, JobFarmer.class);
         addMapping(MAPPING_FISHERMAN, JobFisherman.class);
+        addMapping(MAPPING_TOWER_GUARD, JobGuard.class);
     }
 
     private final CitizenData citizen;
@@ -324,7 +327,7 @@ public abstract class AbstractJob
      *
      * @return your personal AI instance.
      */
-    protected abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
+    public abstract AbstractAISkeleton<? extends AbstractJob> generateAI();
 
     /**
      * This method can be used to display the current status.

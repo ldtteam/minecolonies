@@ -54,4 +54,11 @@ public interface IColony
      * @return whether or not the colony has a town hall.
      */
     boolean hasTownHall();
+
+    /**
+     * returns this colonies unique id.
+     *
+     * @return an int representing the id.
+     */
+    int getID();
 }

@@ -1,6 +1,7 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.achievements.ModAchievements;
+import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -13,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -44,6 +46,10 @@ public final class ColonyManager
     // Used to trigger loading/unloading colonies
     private static int     numWorldsLoaded;
     private static boolean saveNeeded;
+    /**
+     * The damage source used to kill citizens.
+     */
+    private static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
 
     private ColonyManager()
     {
@@ -84,6 +90,53 @@ public final class ColonyManager
         Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
         return colony;
+    }
+
+    /**
+     * Delete a colony and kill all citizens/purge all buildings.
+     *
+     * @param id the colonies id
+     */
+    public static void deleteColony(int id)
+    {
+        try
+        {
+            final Colony colony = getColony(id);
+            Log.getLogger().info("Deleting colony " + id);
+            colonies.remove(id);
+            coloniesByWorld.get(colony.getDimension()).remove(colony);
+            final Set<World> colonyWorlds = new HashSet<>();
+            Log.getLogger().info("Removing citizens for " + id);
+            for (final CitizenData citizenData : new ArrayList<>(colony.getCitizens().values()))
+            {
+                Log.getLogger().info("Kill Citizen " + citizenData.getName());
+                World world = citizenData.getCitizenEntity().getEntityWorld();
+                citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
+                colonyWorlds.add(world);
+            }
+            Log.getLogger().info("Removing buildings for " + id);
+            for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
+            {
+
+                final BlockPos location = building.getLocation();
+                Log.getLogger().info("Delete Building at " + location);
+                building.destroy();
+                for (final World world : colonyWorlds)
+                {
+                    Log.getLogger().info("Try out World " + world.getProviderName());
+                    if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
+                    {
+                        Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
+                        world.setBlockToAir(location);
+                    }
+                }
+            }
+            Log.getLogger().info("Done with " + id);
+        }
+        catch (RuntimeException e)
+        {
+            Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
+        }
     }
 
     /**
@@ -310,7 +363,7 @@ public final class ColonyManager
      * @param pos coordinates
      * @return Colony closest to coordinates
      */
-    private static Colony getClosestColony(@NotNull World w, @NotNull BlockPos pos)
+    public static Colony getClosestColony(@NotNull World w, @NotNull BlockPos pos)
     {
         List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
         if (coloniesInWorld == null)
