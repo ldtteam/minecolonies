@@ -24,8 +24,8 @@ import org.jetbrains.annotations.Nullable;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
 
- /**
- * Farmer AI class
+/**
+ * Farmer AI class.
  * Created: December 20, 2014
  */
 public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
@@ -61,15 +61,15 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     @Nullable
     private BlockPos workingOffset;
 
-     /**
-      * Defines if the farmer should request seeds for the current field.
-      */
-     private boolean requestSeeds = true;
+    /**
+     * Defines if the farmer should request seeds for the current field.
+     */
+    private boolean requestSeeds = true;
 
-     /**
-      * Defines if the farmer should try to get the seeds from his chest.
-      */
-     private boolean shouldTryToGetSeed = true;
+    /**
+     * Defines if the farmer should try to get the seeds from his chest.
+     */
+    private boolean shouldTryToGetSeed = true;
 
     /**
      * Variables used in handleOffset.
@@ -99,57 +99,57 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         worker.setCanPickUpLoot(true);
     }
 
-     /**
-      * Redirects the fisherman to his building.
-      *
-      * @return the next state.
-      */
-     private AIState startWorkingAtOwnBuilding()
-     {
-         if (walkToBuilding())
-         {
-             return getState();
-         }
-         return PREPARING;
-     }
+    /**
+     * Redirects the farmer to his building.
+     *
+     * @return the next state.
+     */
+    private AIState startWorkingAtOwnBuilding()
+    {
+        if (walkToBuilding())
+        {
+            return getState();
+        }
+        return PREPARING;
+    }
 
-     /**
-      * Prepares the farmer for farming.
-      * Also requests the tools and checks if the farmer has sufficient fields.
-      *
-      * @return the next AIState
-      */
-     @NotNull
-     private AIState prepareForFarming()
-     {
-         @Nullable BuildingFarmer building = getOwnBuilding();
+    /**
+     * Prepares the farmer for farming.
+     * Also requests the tools and checks if the farmer has sufficient fields.
+     *
+     * @return the next AIState
+     */
+    @NotNull
+    private AIState prepareForFarming()
+    {
+        @Nullable final BuildingFarmer building = getOwnBuilding();
 
-         if (building == null || building.getBuildingLevel() < 1)
-         {
-             return AIState.PREPARING;
-         }
+        if (building == null || building.getBuildingLevel() < 1)
+        {
+            return AIState.PREPARING;
+        }
 
-         building.syncWithColony(world);
+        building.syncWithColony(world);
 
-         if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !building.assignManually())
-         {
-             searchAndAddFields();
-         }
+        if (building.getFarmerFields().size() < getOwnBuilding().getBuildingLevel() && !building.assignManually())
+        {
+            searchAndAddFields();
+        }
 
-         if (building.hasNoFields())
-         {
-             chatSpamFilter.talkWithoutSpam("entity.farmer.noFreeFields");
-             return AIState.PREPARING;
-         }
+        if (building.hasNoFields())
+        {
+            chatSpamFilter.talkWithoutSpam("entity.farmer.noFreeFields");
+            return AIState.PREPARING;
+        }
 
-         //If the farmer has no currentField and there is no field which needs work, check fields.
-         if (building.getCurrentField() == null && building.getFieldToWorkOn() == null)
-         {
-             building.resetFields();
-             return AIState.IDLE;
-         }
+        //If the farmer has no currentField and there is no field which needs work, check fields.
+        if (building.getCurrentField() == null && building.getFieldToWorkOn() == null)
+        {
+            building.resetFields();
+            return AIState.IDLE;
+        }
 
-         @Nullable Field currentField = building.getCurrentField();
+        @Nullable final Field currentField = building.getCurrentField();
 
         if (currentField.needsWork())
         {
@@ -175,37 +175,37 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return AIState.PREPARING;
     }
 
-     /**
-      * Searches and adds a field that has not been taken yet for the farmer and then adds it to the list.
-      */
-     private void searchAndAddFields()
-     {
-         Colony colony = worker.getColony();
-         if (colony != null)
-         {
-             @Nullable Field newField = colony.getFreeField(worker.getName());
+    /**
+     * Searches and adds a field that has not been taken yet for the farmer and then adds it to the list.
+     */
+    private void searchAndAddFields()
+    {
+        final Colony colony = worker.getColony();
+        if (colony != null)
+        {
+            @Nullable final Field newField = colony.getFreeField(worker.getName());
 
-             if (newField != null && getOwnBuilding() != null)
-             {
-                 getOwnBuilding().addFarmerFields(newField);
-             }
-         }
-     }
+            if (newField != null && getOwnBuilding() != null)
+            {
+                getOwnBuilding().addFarmerFields(newField);
+            }
+        }
+    }
 
-     /**
-      * Checks if the farmer is ready to plant.
-      *
-      * @param currentField the field to plant.
-      * @return true if he is ready.
-      */
-     private boolean canGoPlanting(@NotNull Field currentField, @NotNull BuildingFarmer buildingFarmer)
-     {
-         if (currentField.getSeed() == null)
-         {
-             chatSpamFilter.talkWithoutSpam("entity.farmer.noSeedSet");
-             buildingFarmer.setCurrentField(null);
-             return false;
-         }
+    /**
+     * Checks if the farmer is ready to plant.
+     *
+     * @param currentField the field to plant.
+     * @return true if he is ready.
+     */
+    private boolean canGoPlanting(@NotNull final Field currentField, @NotNull final BuildingFarmer buildingFarmer)
+    {
+        if (currentField.getSeed() == null)
+        {
+            chatSpamFilter.talkWithoutSpam("entity.farmer.noSeedSet");
+            buildingFarmer.setCurrentField(null);
+            return false;
+        }
 
         if (shouldTryToGetSeed)
         {
@@ -230,13 +230,13 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             }
         }
 
-         return true;
-     }
+        return !shouldTryToGetSeed;
+    }
 
     /**
-      * The main work cycle of the Famer.
-      * This checks each block, harvests, tills, and plants.
-      */
+     * The main work cycle of the Famer.
+     * This checks each block, harvests, tills, and plants.
+     */
     private AIState cycle()
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
@@ -275,9 +275,9 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-      * This (re)initializes a field.
-      * Checks the block above to see if it is a plant, if so, breaks it. Then tills.
-      */
+     * This (re)initializes a field.
+     * Checks the block above to see if it is a plant, if so, breaks it. Then tills.
+     */
     private AIState initialize()
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
@@ -302,10 +302,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             final IBlockState blockState = world.getBlockState(position.up());
 
             if (blockState.getBlock() instanceof IGrowable
-                && (
-                    !(blockState.getBlock() instanceof BlockCrops)
-                    || ((BlockCrops)blockState.getBlock()).getItem(world, position.up(), blockState) != new ItemStack(field.getSeed()))
-                )
+                  && (
+                       !(blockState.getBlock() instanceof BlockCrops)
+                         || ((BlockCrops)blockState.getBlock()).getItem(world, position.up(), blockState) != new ItemStack(field.getSeed()))
+              )
             {
                 mineBlock(position.up());
                 setDelay(getLevelDelay());
@@ -340,10 +340,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-      * Farmer looks at field to see if it's harvestable.
-      * Checks to see if there are any harvestable crops,
-      * if so go to FARMER_WORK, if not, set needs work to false and go to IDLE.
-      */
+     * Farmer looks at field to see if it's harvestable.
+     * Checks to see if there are any harvestable crops,
+     * if so go to FARMER_WORK, if not, set needs work to false and go to IDLE.
+     */
     private AIState lookAtField()
     {
         @Nullable final BuildingFarmer buildingFarmer = getOwnBuilding();
@@ -401,10 +401,10 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-      * Checks if we can harvest, and does so if we can.
-      *
-      * @return true if we harvested.
-      */
+     * Checks if we can harvest, and does so if we can.
+     *
+     * @return true if we harvested.
+     */
     private boolean harvestIfAble(final BlockPos position)
     {
         if (shouldHarvest(position))
@@ -420,11 +420,11 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-      * Checks if we can hoe, and does so if we can.
-      *
-      * @param position the position to check
-      * @param field the field that we are working with.
-      */
+     * Checks if we can hoe, and does so if we can.
+     *
+     * @param position the position to check
+     * @param field the field that we are working with.
+     */
     private boolean hoeIfAble(final BlockPos position, final Field field)
     {
         if (shouldHoe(position, field))
@@ -595,160 +595,25 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return InventoryUtils.getFirstSlotContainingTool(getInventory(), Utils.HOE);
     }
 
-         if (!handleOffset(field))
-         {
-             resetVariables();
-             buildingFarmer.getCurrentField().setNeedsWork(true);
-             buildingFarmer.getCurrentField().setFieldStage(HOED);
-             return AIState.IDLE;
-         }
-         BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
-         if (shouldHoe(position, field))
-         {
-             mineBlock(position.up());
-         }
+    /**
+     * Checks if the ground should be planted.
+     *
+     * @param position the position to check.
+     * @param field    the field close to this position.
+     * @return true if should be hoed.
+     */
+    private boolean shouldPlant(@NotNull final BlockPos position, @NotNull final Field field)
+    {
+        @Nullable final ItemStack itemStack = BlockUtils.getItemStackFromBlockState(world.getBlockState(position.up()));
 
-         setDelay(workingDelay);
-         return AIState.FARMER_HOE;
-     }
+        if (itemStack != null && itemStack.getItem() == field.getSeed())
+        {
+            requestSeeds = false;
+        }
 
-     /**
-      * Checks if the ground should be hoed and the block above removed.
-      *
-      * @param position the position to check.
-      * @param field    the field close to this position.
-      * @return true if should be hoed.
-      */
-     private boolean shouldHoe(@NotNull BlockPos position, @NotNull Field field)
-     {
-         return !field.isNoPartOfField(world, position)
-                 && !BlockUtils.isBlockSeed(world, position.up())
-                 && !(world.getBlockState(position).getBlock() instanceof BlockHutField)
-                 && (world.getBlockState(position).getBlock() == Blocks.DIRT || world.getBlockState(position).getBlock() == Blocks.GRASS);
-     }
-
-     /**
-      * Sets the hoe as held item.
-      */
-     private void equipHoe()
-     {
-         worker.setHeldItem(getHoeSlot());
-     }
-
-     /**
-      * Handles the offset of the field for the farmer.
-      *
-      * @param field the field object.
-      * @return true if successful.
-      */
-     private boolean handleOffset(@NotNull Field field)
-     {
-         if (workingOffset == null)
-         {
-             workingOffset = new BlockPos(field.getLengthPlusX(), 0, field.getWidthPlusZ());
-         }
-         else
-         {
-             if (workingOffset.getZ() <= -field.getWidthMinusZ() && workingOffset.getX() <= -field.getLengthMinusX())
-             {
-                 workingOffset = null;
-                 return false;
-             }
-             else if (workingOffset.getX() <= -field.getLengthMinusX())
-             {
-                 workingOffset = new BlockPos(field.getLengthPlusX(), 0, workingOffset.getZ() - 1);
-             }
-             else
-             {
-                 workingOffset = new BlockPos(workingOffset.getX() - 1, 0, workingOffset.getZ());
-             }
-         }
-         return true;
-     }
-
-     /**
-      * Resets the basic variables of the class.
-      */
-     private void resetVariables()
-     {
-         requestSeeds = true;
-         shouldDumpInventory = true;
-         shouldTryToGetSeed = true;
-     }
-
-     /**
-      * Get's the slot in which the hoe is in.
-      *
-      * @return slot number
-      */
-     private int getHoeSlot()
-     {
-         return InventoryUtils.getFirstSlotContainingTool(getInventory(), Utils.HOE);
-     }
-
-     /**
-      * Executes the planting of the field.
-      *
-      * @return the next state.
-      */
-     @NotNull
-     private AIState plant()
-     {
-         @Nullable BuildingFarmer buildingFarmer = getOwnBuilding();
-
-         if (buildingFarmer == null || buildingFarmer.getCurrentField() == null)
-         {
-             return AIState.PREPARING;
-         }
-         @Nullable Field field = getOwnBuilding().getCurrentField();
-
-         if (workingOffset != null)
-         {
-             BlockPos position = field.getLocation().down().south(workingOffset.getZ()).east(workingOffset.getX());
-             if (walkToBlock(position.up()))
-             {
-                 return AIState.FARMER_PLANT;
-             }
-
-             if (shouldPlant(position, field) && !plantCrop(field.getSeed(), position) && !requestSeeds)
-             {
-                 workingOffset = null;
-                 resetVariables();
-                 buildingFarmer.getCurrentField().setNeedsWork(false);
-                 buildingFarmer.getCurrentField().setFieldStage(PLANTED);
-                 return AIState.IDLE;
-             }
-         }
-
-         if (!handleOffset(field))
-         {
-             return terminatePlanting(buildingFarmer, field);
-         }
-
-         setDelay(workingDelay);
-
-         return AIState.FARMER_PLANT;
-     }
-
-     /**
-      * Checks if the ground should be planted.
-      *
-      * @param position the position to check.
-      * @param field    the field close to this position.
-      * @return true if should be hoed.
-      */
-     private boolean shouldPlant(@NotNull BlockPos position, @NotNull Field field)
-     {
-         @Nullable ItemStack itemStack = BlockUtils.getItemStackFromBlockState(world.getBlockState(position.up()));
-
-         if (itemStack != null && itemStack.getItem() == field.getSeed())
-         {
-             requestSeeds = false;
-         }
-
-         return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof BlockCrops)
+        return !field.isNoPartOfField(world, position) && !(world.getBlockState(position.up()).getBlock() instanceof BlockCrops)
                  && !(world.getBlockState(position).getBlock() instanceof BlockHutField) && world.getBlockState(position).getBlock() == Blocks.FARMLAND;
-     }
+    }
 
     /**
      * Plants the crop at a given location.
@@ -784,14 +649,14 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         final IBlockState state = world.getBlockState(position.up());
 
-         if (state.getBlock() instanceof IGrowable && state.getBlock() instanceof BlockCrops)
-         {
-             @NotNull BlockCrops block = (BlockCrops) state.getBlock();
-             return !block.canGrow(world, position.up(), state, false);
-         }
+        if (state.getBlock() instanceof IGrowable && state.getBlock() instanceof BlockCrops)
+        {
+            @NotNull final BlockCrops block = (BlockCrops) state.getBlock();
+            return !block.canGrow(world, position.up(), state, false);
+        }
 
-         return false;
-     }
+        return false;
+    }
 
     /**
      * Called to check when the InventoryShouldBeDumped.
@@ -809,30 +674,30 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         return false;
     }
 
-     /**
-      * Returns the farmer's work building.
-      *
-      * @return building instance
-      */
-     @Override
-     protected BuildingFarmer getOwnBuilding()
-     {
-         return (BuildingFarmer) worker.getWorkBuilding();
-     }
+    /**
+     * Returns the farmer's work building.
+     *
+     * @return building instance
+     */
+    @Override
+    protected BuildingFarmer getOwnBuilding()
+    {
+        return (BuildingFarmer) worker.getWorkBuilding();
+    }
 
-     /**
-      * Override this method if you want to keep some items in inventory.
-      * When the inventory is full, everything get's dumped into the building chest.
-      * But you can use this method to hold some stacks back.
-      *
-      * @param stack the stack to decide on
-      * @return true if the stack should remain in inventory
-      */
-     @Override
-     protected boolean neededForWorker(@Nullable ItemStack stack)
-     {
-         return stack != null && Utils.isHoe(stack);
-     }
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
+    @Override
+    protected boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return stack != null && Utils.isHoe(stack);
+    }
 
     /**
      * Returns the farmer's worker instance. Called from outside this class.
