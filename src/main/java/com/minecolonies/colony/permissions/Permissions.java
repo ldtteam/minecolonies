@@ -308,7 +308,7 @@ public class Permissions implements IPermissions
      */
     public boolean hasPermission(Rank rank, @NotNull Action action)
     {
-        return rank == Rank.OWNER
+        return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
                  || Utils.testFlag(permissions.get(rank), action.flag);
     }
 
@@ -793,7 +793,7 @@ public class Permissions implements IPermissions
 
         public boolean hasPermission(Rank rank, @NotNull Action action)
         {
-            return rank == Rank.OWNER
+            return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
                      || Utils.testFlag(permissions.get(rank), action.flag);
         }
 
