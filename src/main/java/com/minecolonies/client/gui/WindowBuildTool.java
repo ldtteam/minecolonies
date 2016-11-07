@@ -366,10 +366,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         Structure structure = new Structure(null,
                 labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""),
                 new PlacementSettings().setMirror(Mirror.NONE));
-        updateRotation(this.rotation);
-
         Settings.instance.setActiveSchematic(structure);
-
     }
 
     /*

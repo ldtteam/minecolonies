@@ -150,9 +150,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 //we tried to update the colony it is still missing... so we...
                 if (worldObj == null || worldObj.isRemote)
                 {
-                    Log.getLogger()
-                      .warn(String.format("TileEntityColonyBuilding at :[%d,%d,%d] had no colony.  It could be a previewed building.",
-                        pos.getX(), pos.getY(), pos.getZ()));
+                    /*
+                     * It's most probably previewed building, please don't spam it here.
+                     */
                 }
                 else
                 {
