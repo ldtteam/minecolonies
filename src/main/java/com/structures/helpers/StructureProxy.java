@@ -61,23 +61,7 @@ public class StructureProxy
             }
         }
 
-        if(offset == null)
-        {
-            if (Settings.instance.getRotation() == 1)
-            {
-                size = new BlockPos(-size.getX(), size.getY(), size.getZ());
-            }
-            if (Settings.instance.getRotation() == 2)
-            {
-                size = new BlockPos(-size.getX(), size.getY(), -size.getZ());
-            }
-            if (Settings.instance.getRotation() == 3)
-            {
-                size = new BlockPos(size.getX(), size.getY(), -size.getZ());
-            }
-            offset = new BlockPos(size.getX() / 2, 0, size.getZ() / 2);
-
-        }
+          //updateOffSetIfDecoration(offset != null, size);
     }
 
     /**
@@ -369,29 +353,29 @@ public class StructureProxy
                 offset = info.pos.add(minX, minY, minZ);
             }
         }
-        updateOffSetIfDecoration(foundHut);
+        updateOffSetIfDecoration(foundHut, size);
     }
 
     /**
      * Updates the offset if the structure is a decoration.
      * @param foundHut if false update.
      */
-    private void updateOffSetIfDecoration(boolean foundHut)
+    private void updateOffSetIfDecoration(boolean foundHut, BlockPos size)
     {
         if(!foundHut)
         {
-            BlockPos tempSize = new BlockPos(0, 0, 0);
+            BlockPos tempSize = size;
             if (Settings.instance.getRotation() == 1)
             {
-                tempSize = new BlockPos(-tempSize.getX(), tempSize.getY(), tempSize.getZ());
+                tempSize = new BlockPos(-size.getX(), size.getY(), size.getZ());
             }
-            if (Settings.instance.getRotation() == 2)
+            else if (Settings.instance.getRotation() == 2)
             {
-                tempSize = new BlockPos(-tempSize.getX(), tempSize.getY(), -tempSize.getZ());
+                tempSize = new BlockPos(-size.getX(), size.getY(), -size.getZ());
             }
-            if (Settings.instance.getRotation() == 3)
+            else if (Settings.instance.getRotation() == 3)
             {
-                tempSize = new BlockPos(tempSize.getX(), tempSize.getY(), -tempSize.getZ());
+                tempSize = new BlockPos(size.getX(), size.getY(), -size.getZ());
             }
             offset = new BlockPos(tempSize.getX() / 2, 0, tempSize.getZ() / 2);
         }
