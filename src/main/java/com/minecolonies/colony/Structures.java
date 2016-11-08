@@ -20,7 +20,16 @@ import java.util.stream.Stream;
  */
 public final class Structures
 {
+    /**
+     * Ignore the styles from the generic folder.
+     */
     private static final String                    NULL_STYLE            = "schematics";
+
+    /**
+     * Ignore the styles from the miner folder.
+     */
+    private static final String                    MINER_STYLE            = "miner";
+
     private static final String                    SCHEMATIC_EXTENSION   = ".nbt";
     private static final String                    SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
     //Hut, Styles
@@ -92,7 +101,7 @@ public final class Structures
                 String style = path.getParent().getFileName().toString();
 
                 //Don't treat generic schematics as decorations or huts - ex: supply ship
-                if (NULL_STYLE.equals(style))
+                if (NULL_STYLE.equals(style) || MINER_STYLE.equals(style))
                 {
                     continue;
                 }

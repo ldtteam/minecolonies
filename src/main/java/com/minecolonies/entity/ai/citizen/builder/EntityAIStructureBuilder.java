@@ -752,11 +752,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
             {
                 //pos.offset(facing) will get the other part of the bed
+                world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
                 world.setBlockState(pos.offset(facing), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
             }
             else
             {
-                world.setBlockState(pos.offset(facing), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
+                return true;
             }
         }
         else if (block instanceof BlockDoublePlant)
@@ -778,6 +779,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             {
                 world.setBlockState(pos, blockState, 0x03);
             }
+        }
+
+        //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
+        if(isBlockFree(block, block.getMetaFromState(blockState)))
+        {
+            return true;
         }
 
         @Nullable ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
