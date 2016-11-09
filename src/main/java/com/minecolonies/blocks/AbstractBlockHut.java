@@ -18,9 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -136,6 +134,19 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
+    }
+
+    //We unfortunately have to implement these two, to rotate our blocks in the structures.
+    @Override
+    public IBlockState withRotation(final IBlockState state, final Rotation rot)
+    {
+        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    @Override
+    public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
+    {
+        return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
     }
 
     /**
