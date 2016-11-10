@@ -8,6 +8,7 @@ import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
@@ -138,20 +139,21 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             Log.getLogger().error("No record of hut: " + hut);
             return;
         }
+
         Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
-        //if (tempColony != null && !tempColony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+        if (tempColony != null && !tempColony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
         {
-          //  return;
+                return;
         }
 
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
 
-        if (player.inventory.hasItemStack(new ItemStack(block)))
+        if (block != null && player.inventory.hasItemStack(new ItemStack(block)))
         {
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
                 world.destroyBlock(buildPos, true);
-                world.setBlockState(buildPos, block.getDefaultState());
+                world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
                 block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);
 
                 player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);

@@ -1,5 +1,6 @@
 package com.structures.event;
 
+import com.minecolonies.util.BlockUtils;
 import com.structures.helpers.Structure;
 import com.structures.helpers.Settings;
 import net.minecraft.client.Minecraft;
@@ -25,7 +26,7 @@ public class RenderEventHandler
         Structure structure = Settings.instance.getActiveStructure();
         if (structure != null)
         {
-            BlockPos size = structure.getSize(getRotation(Settings.instance.getRotation()));
+            BlockPos size = structure.getSize(BlockUtils.getRotation(Settings.instance.getRotation()));
             BlockPos position = Settings.instance.pos;
 
             if (Settings.instance.getRotation() == 1)
@@ -40,7 +41,7 @@ public class RenderEventHandler
             {
                 size = new BlockPos(size.getX(), size.getY(), -size.getZ());
             }
-            BlockPos offset = Settings.instance.getOffset(new PlacementSettings().setRotation(getRotation(Settings.instance.getRotation())));
+            BlockPos offset = Settings.instance.getOffset(new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
 
             if(offset.equals(new BlockPos(0,0,0)))
             {
@@ -51,27 +52,6 @@ public class RenderEventHandler
                 position = position.subtract(offset);
             }
             structure.renderStructure(position, Minecraft.getMinecraft().theWorld, Minecraft.getMinecraft().thePlayer, event.getPartialTicks());
-        }
-    }
-
-    /**
-     * Updates the rotation of the structure depending on the input.
-     *
-     * @param rotation the rotation to be set.
-     * @return returns the Rotation object.
-     */
-    private static Rotation getRotation(final int rotation)
-    {
-        switch (rotation)
-        {
-            case 1:
-                return Rotation.CLOCKWISE_90;
-            case 2:
-                return Rotation.CLOCKWISE_180;
-            case 3:
-                return Rotation.COUNTERCLOCKWISE_90;
-            default:
-                return Rotation.NONE;
         }
     }
 }
