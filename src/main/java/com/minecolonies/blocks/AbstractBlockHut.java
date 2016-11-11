@@ -157,14 +157,16 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     //We unfortunately have to implement these two, to rotate our blocks in the structures.
+    @NotNull
     @Override
-    public IBlockState withRotation(final IBlockState state, final Rotation rot)
+    public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
     {
         return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
 
+    @NotNull
     @Override
-    public IBlockState withMirror(final IBlockState state, final Mirror mirrorIn)
+    public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
     {
         return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
     }
