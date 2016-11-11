@@ -83,7 +83,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Time in ticks to wait before placing a sapling.
      * Is used to collect falling saplings from the ground.
      */
-    private static final int MAX_WAITING_TIME = 500;
+    private static final int MAX_WAITING_TIME = 100;
 
     /**
      * Sets the amount of saplings the lumberjack should keep.

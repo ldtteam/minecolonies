@@ -1,6 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
+import com.minecolonies.util.BlockUtils;
 import com.structures.helpers.Structure;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Structures;
@@ -364,7 +365,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         Structure structure = new Structure(null,
                 labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""),
-                new PlacementSettings().setMirror(Mirror.NONE));
+                new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
         Settings.instance.setActiveSchematic(structure);
 
         if(Settings.instance.pos == null)

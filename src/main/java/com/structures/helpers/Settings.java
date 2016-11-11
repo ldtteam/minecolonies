@@ -77,10 +77,8 @@ public final class Settings
      */
     public void reset()
     {
-        setInHutMode(true);
         structure = null;
         isPendingReset = false;
-        pos = null;
         offset.setPos(0,0,0);
         rotation = 0;
     }

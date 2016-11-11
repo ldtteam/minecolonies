@@ -13,6 +13,7 @@ import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.*;
 import net.minecraft.block.*;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
@@ -257,7 +258,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 IBlockState blockState = world.getBlockState(pos);
                 if (blockState.getBlock() instanceof AbstractBlockHut)
                 {
-                    job.getStructure().rotate(blockState.getValue(AbstractBlockHut.FACING).ordinal());
+                    job.getStructure().rotate(getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING)));
                 }
             }
             else
@@ -267,6 +268,22 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         job.getStructure().setPosition(pos);
         workOrder.setCleared(false);
+    }
+
+
+    private int getRotationFromFacing(EnumFacing facing)
+    {
+        switch (facing)
+        {
+            case SOUTH:
+                return 2;
+            case EAST:
+                return 1;
+            case WEST:
+                return 3;
+            default:
+                return 0;
+        }
     }
 
     private boolean incrementBlock()

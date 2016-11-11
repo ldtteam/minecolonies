@@ -20,4 +20,5 @@ public class BlockHutFisherman extends AbstractBlockHut
     {
         return "blockHutFisherman";
     }
+
 }
