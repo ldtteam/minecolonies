@@ -48,10 +48,4 @@ public class BlockHutTownHall extends AbstractBlockHut
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
-
-    @Override
-    public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
-    {
-        return false;
-    }
 }
