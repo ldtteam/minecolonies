@@ -82,12 +82,31 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return new TileEntityColonyBuilding();
     }
 
+    /**
+     * Convert the given metadata into a BlockState for this Block
+     */
+    @NotNull
     @Override
-    public int getMetaFromState(@NotNull IBlockState state)
+    public IBlockState getStateFromMeta(int meta)
+    {
+        EnumFacing enumfacing = EnumFacing.getFront(meta);
+
+        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
+        {
+            enumfacing = EnumFacing.NORTH;
+        }
+
+        return this.getDefaultState().withProperty(FACING, enumfacing);
+    }
+
+    /**
+     * Convert the BlockState into the correct metadata value
+     */
+    @Override
+    public int getMetaFromState(IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
-
 
     // =======================================================================
     // ======================= Rendering & IBlockState =======================
@@ -129,7 +148,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
         return true;
     }
-
+    
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nullable EntityLivingBase placer)
     {
