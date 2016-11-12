@@ -97,6 +97,9 @@ public class Permissions implements IPermissions
         permissions.put(Rank.HOSTILE, 0);
         this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
 
+        //Add new additional Permissions inside this method.
+        updateNewPermissions();
+
         this.colony = colony;
     }
 
@@ -195,6 +198,7 @@ public class Permissions implements IPermissions
             }
         }
 
+
         //Permissions
         NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < permissionsTagList.tagCount(); ++i)
@@ -214,6 +218,8 @@ public class Permissions implements IPermissions
             permissions.put(rank, flags);
         }
 
+        updateNewPermissions();
+
         if (compound.hasKey(TAG_OWNER))
         {
             ownerName = compound.getString(TAG_OWNER);
@@ -231,6 +237,15 @@ public class Permissions implements IPermissions
                  */
             }
         }
+    }
+
+    /**
+     * This method should be used to update new permissions added to the game which old colonies probably don't have yet.
+     */
+    private void updateNewPermissions()
+    {
+        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
+        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
     }
 
     /**

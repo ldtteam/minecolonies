@@ -247,7 +247,7 @@ public class Structure
             IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, blockpos);
             IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
             TileEntity tileentity = null;
-            if (block.hasTileEntity(iblockstate))
+            if (block.hasTileEntity(iblockstate) && aBlockList.tileentityData != null)
             {
                 tileentity = block.createTileEntity(clientWorld, iblockstate);
                 tileentity.readFromNBT(aBlockList.tileentityData);
