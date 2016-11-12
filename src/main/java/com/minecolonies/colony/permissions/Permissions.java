@@ -78,7 +78,6 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.CAN_DEMOTE);
         this.setPermission(Rank.OWNER, Action.SEND_MESSAGES);
         this.setPermission(Rank.OWNER, Action.EDIT_PERMISSIONS);
-        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
         //Officer
         permissions.put(Rank.OFFICER, 0);
         this.setPermission(Rank.OFFICER, Action.ACCESS_HUTS);
@@ -87,7 +86,6 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.CAN_PROMOTE);
         this.setPermission(Rank.OFFICER, Action.CAN_DEMOTE);
         this.setPermission(Rank.OFFICER, Action.SEND_MESSAGES);
-        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
         //Friend
         permissions.put(Rank.FRIEND, 0);
         this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
@@ -96,6 +94,9 @@ public class Permissions implements IPermissions
         //Hostile
         permissions.put(Rank.HOSTILE, 0);
         this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
+
+        //Add additional Permissions inside this method.
+        updateNewPermissions();
 
         this.colony = colony;
     }
@@ -195,7 +196,7 @@ public class Permissions implements IPermissions
             }
         }
 
-        /*
+
         //Permissions
         NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < permissionsTagList.tagCount(); ++i)
@@ -213,35 +214,9 @@ public class Permissions implements IPermissions
                 flags = Utils.setFlag(flags, Action.valueOf(flag).flag);
             }
             permissions.put(rank, flags);
-        }*/
+        }
 
-        //Owner
-        permissions.put(Rank.OWNER, 0);
-        this.setPermission(Rank.OWNER, Action.ACCESS_HUTS);
-        this.setPermission(Rank.OWNER, Action.PLACE_HUTS);
-        this.setPermission(Rank.OWNER, Action.BREAK_HUTS);
-        this.setPermission(Rank.OWNER, Action.CAN_PROMOTE);
-        this.setPermission(Rank.OWNER, Action.CAN_DEMOTE);
-        this.setPermission(Rank.OWNER, Action.SEND_MESSAGES);
-        this.setPermission(Rank.OWNER, Action.EDIT_PERMISSIONS);
-        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
-        //Officer
-        permissions.put(Rank.OFFICER, 0);
-        this.setPermission(Rank.OFFICER, Action.ACCESS_HUTS);
-        this.setPermission(Rank.OFFICER, Action.PLACE_HUTS);
-        this.setPermission(Rank.OFFICER, Action.BREAK_HUTS);
-        this.setPermission(Rank.OFFICER, Action.CAN_PROMOTE);
-        this.setPermission(Rank.OFFICER, Action.CAN_DEMOTE);
-        this.setPermission(Rank.OFFICER, Action.SEND_MESSAGES);
-        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
-        //Friend
-        permissions.put(Rank.FRIEND, 0);
-        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
-        //Neutral
-        permissions.put(Rank.NEUTRAL, 0);
-        //Hostile
-        permissions.put(Rank.HOSTILE, 0);
-        this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
+        updateNewPermissions();
 
         if (compound.hasKey(TAG_OWNER))
         {
@@ -260,6 +235,15 @@ public class Permissions implements IPermissions
                  */
             }
         }
+    }
+
+    /**
+     * This method should be used to update new permissions added to the game which old colonies probably don't have yet.
+     */
+    private void updateNewPermissions()
+    {
+        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
+        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
     }
 
     /**
