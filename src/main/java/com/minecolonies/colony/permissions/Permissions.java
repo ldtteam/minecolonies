@@ -78,6 +78,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.CAN_DEMOTE);
         this.setPermission(Rank.OWNER, Action.SEND_MESSAGES);
         this.setPermission(Rank.OWNER, Action.EDIT_PERMISSIONS);
+        this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
         //Officer
         permissions.put(Rank.OFFICER, 0);
         this.setPermission(Rank.OFFICER, Action.ACCESS_HUTS);
@@ -86,6 +87,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.CAN_PROMOTE);
         this.setPermission(Rank.OFFICER, Action.CAN_DEMOTE);
         this.setPermission(Rank.OFFICER, Action.SEND_MESSAGES);
+        this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
         //Friend
         permissions.put(Rank.FRIEND, 0);
         this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
@@ -95,7 +97,7 @@ public class Permissions implements IPermissions
         permissions.put(Rank.HOSTILE, 0);
         this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
 
-        //Add additional Permissions inside this method.
+        //Add new additional Permissions inside this method.
         updateNewPermissions();
 
         this.colony = colony;
