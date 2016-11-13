@@ -118,24 +118,15 @@ public class PathNavigate extends PathNavigateGround
         {
             return pathResult;
         }
-        if (destination != null)
-        {
-            long distance2D = destination == null ? -1 : BlockPosUtil.getDistance2D(destination, new BlockPos(newX, newY, newZ));
-            Log.getLogger()
-              .info(String.format("[%b && %b && %b && %b && %b (%d)]",
-                pathResult != null,
-                !noPath(),
-                (pathResult != null && pathResult.isInProgress()),
-                destination != null,
-                (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ)),
-                distance2D));
-        }
 
 
         final Vec3d moveVector = getEntityPosition().addVector(newX, newY, newZ).subtract(getEntityPosition());
         final double moveLength = moveVector.lengthVector();
         if(moveLength >= MAX_PATHING_LENGTH){
-            moveVector.scale(PATHING_INTERMEDIARY_LENGTH /moveLength);
+            final Vec3d newMove = moveVector.scale(PATHING_INTERMEDIARY_LENGTH / moveLength);
+            newX = MathHelper.floor_double(newMove.xCoord);
+            newY = MathHelper.floor_double(newMove.yCoord);
+            newZ = MathHelper.floor_double(newMove.zCoord);
         }
 
         @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
