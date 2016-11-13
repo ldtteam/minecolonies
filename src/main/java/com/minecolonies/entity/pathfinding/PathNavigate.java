@@ -112,16 +112,25 @@ public class PathNavigate extends PathNavigateGround
         if (destination != null
               && BlockPosUtil.isEqual(destination, newX, newY, newZ))
         {
+            if(!noPath()){
+                Log.getLogger()
+                  .info(String.format("yes [%b && %b && %b && %b && %b]",
+                    pathResult != null,
+                    !noPath(),
+                    (pathResult != null && pathResult.isInProgress()),
+                    destination != null,
+                    (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))));
+            }
             return pathResult;
         }
-
         Log.getLogger()
-          .info(String.format("[%b && %b && %b && %b && %b]",
+          .info(String.format("no  [%b && %b && %b && %b && %b]",
             pathResult != null,
             !noPath(),
             (pathResult != null && pathResult.isInProgress()),
             destination != null,
             (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))));
+
 
         @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
         @NotNull BlockPos dest = new BlockPos(newX, newY, newZ);
