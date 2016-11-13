@@ -123,11 +123,11 @@ public class PathNavigate extends PathNavigateGround
         }
 
 
-        final Vec3d moveVector = getEntityPosition().subtract(newX, newY, newZ);
+        final Vec3d moveVector = getEntityPosition().subtractReverse(new Vec3d(newX, newY, newZ));
         final double moveLength = moveVector.lengthVector();
         if (moveLength >= MAX_PATHING_LENGTH && !this.isUnableToReachDestination())
         {
-            final Vec3d newMove = moveVector.scale(PATHING_INTERMEDIARY_LENGTH / -moveLength).add(getEntityPosition());
+            final Vec3d newMove = moveVector.scale(PATHING_INTERMEDIARY_LENGTH / moveLength).add(getEntityPosition());
             originalDestination = new BlockPos(newX, newY, newZ);
             newX = MathHelper.floor_double(newMove.xCoord);
             newY = MathHelper.floor_double(newMove.yCoord);
