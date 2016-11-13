@@ -437,7 +437,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), range))
         {
             //only walk to the block, work=null
-            workOnBlock(null, stand, 1);
+            workOnBlock(null, stand, DELAY_RECHECK);
             return true;
         }
         return false;
