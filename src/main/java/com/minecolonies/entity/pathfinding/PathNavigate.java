@@ -112,7 +112,7 @@ public class PathNavigate extends PathNavigateGround
         if (destination != null
               && BlockPosUtil.isEqual(destination, newX, newY, newZ))
         {
-            if(!noPath()){
+            if(noPath()){
                 Log.getLogger()
                   .info(String.format("yes [%b && %b && %b && %b && %b]",
                     pathResult != null,
