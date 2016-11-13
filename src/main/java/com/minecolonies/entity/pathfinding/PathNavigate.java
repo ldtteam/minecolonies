@@ -109,31 +109,23 @@ public class PathNavigate extends PathNavigateGround
         int newZ = MathHelper.floor_double(z);
 
 
-        long distance2D = destination == null ? -1 : BlockPosUtil.getDistance2D(destination, new BlockPos(newX, newY, newZ));
-
         if (destination != null
               && BlockPosUtil.isEqual(destination, newX, newY, newZ))
         {
-            if(noPath()){
-                Log.getLogger()
-                  .info(String.format("yes [%b && %b && %b && %b && %b] (%d)",
-                    pathResult != null,
-                    !noPath(),
-                    (pathResult != null && pathResult.isInProgress()),
-                    destination != null,
-                    (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ)),
-                  distance2D));
-            }
             return pathResult;
         }
-        Log.getLogger()
-          .info(String.format("no  [%b && %b && %b && %b && %b (%d)]",
-            pathResult != null,
-            !noPath(),
-            (pathResult != null && pathResult.isInProgress()),
-            destination != null,
-            (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ)),
-            distance2D));
+        if (destination != null)
+        {
+            long distance2D = destination == null ? -1 : BlockPosUtil.getDistance2D(destination, new BlockPos(newX, newY, newZ));
+            Log.getLogger()
+              .info(String.format("[%b && %b && %b && %b && %b (%d)]",
+                pathResult != null,
+                !noPath(),
+                (pathResult != null && pathResult.isInProgress()),
+                destination != null,
+                (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ)),
+                distance2D));
+        }
 
 
         @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
