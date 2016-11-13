@@ -109,17 +109,20 @@ public class PathNavigate extends PathNavigateGround
         int newZ = MathHelper.floor_double(z);
 
 
+        long distance2D = destination == null ? -1 : BlockPosUtil.getDistance2D(destination, new BlockPos(newX, newY, newZ));
+
         if (destination != null
               && BlockPosUtil.isEqual(destination, newX, newY, newZ))
         {
             if(noPath()){
                 Log.getLogger()
-                  .info(String.format("yes [%b && %b && %b && %b && %b]",
+                  .info(String.format("yes [%b && %b && %b && %b && %b] (%d)",
                     pathResult != null,
                     !noPath(),
                     (pathResult != null && pathResult.isInProgress()),
                     destination != null,
-                    (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))));
+                    (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))),
+                  distance2D);
             }
             return pathResult;
         }
@@ -129,7 +132,8 @@ public class PathNavigate extends PathNavigateGround
             !noPath(),
             (pathResult != null && pathResult.isInProgress()),
             destination != null,
-            (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))));
+            (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))),
+            distance2D);
 
 
         @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
