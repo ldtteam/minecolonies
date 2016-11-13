@@ -115,7 +115,9 @@ public class PathNavigate extends PathNavigateGround
         if ((destination != null
                && BlockPosUtil.isEqual(destination, newX, newY, newZ))
               || (originalDestination != null
-                    && BlockPosUtil.isEqual(originalDestination, newX, newY, newZ)))
+                    && BlockPosUtil.isEqual(originalDestination, newX, newY, newZ)
+                    && pathResult != null
+                    && pathResult.isInProgress()))
         {
             return pathResult;
         }
