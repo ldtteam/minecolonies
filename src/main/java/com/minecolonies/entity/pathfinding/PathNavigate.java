@@ -23,14 +23,15 @@ import java.util.concurrent.Future;
  */
 public class PathNavigate extends PathNavigateGround
 {
-    public static final double MAX_PATHING_LENGTH = 36.0;
+    public static final double MAX_PATHING_LENGTH          = 36.0;
     public static final double PATHING_INTERMEDIARY_LENGTH = 16.0;
     //  Parent class private members
     private EntityLiving entity;
     private double       walkSpeed;
-
     @Nullable
     private BlockPos     destination;
+    @Nullable
+    private BlockPos     originalDestination;
     @Nullable
     private Future<Path> future;
     @Nullable
@@ -103,8 +104,6 @@ public class PathNavigate extends PathNavigateGround
         return tryMoveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
 
-
-
     @Nullable
     public PathResult moveToXYZ(double x, double y, double z, double speed)
     {
@@ -113,8 +112,10 @@ public class PathNavigate extends PathNavigateGround
         int newZ = MathHelper.floor_double(z);
 
 
-        if (destination != null
-              && BlockPosUtil.isEqual(destination, newX, newY, newZ))
+        if ((destination != null
+               && BlockPosUtil.isEqual(destination, newX, newY, newZ))
+              || (originalDestination != null
+                    && BlockPosUtil.isEqual(originalDestination, newX, newY, newZ)))
         {
             return pathResult;
         }
@@ -122,7 +123,8 @@ public class PathNavigate extends PathNavigateGround
 
         final Vec3d moveVector = getEntityPosition().addVector(newX, newY, newZ).subtract(getEntityPosition());
         final double moveLength = moveVector.lengthVector();
-        if(moveLength >= MAX_PATHING_LENGTH){
+        if (moveLength >= MAX_PATHING_LENGTH)
+        {
             final Vec3d newMove = moveVector.scale(PATHING_INTERMEDIARY_LENGTH / moveLength).add(getEntityPosition());
             newX = MathHelper.floor_double(newMove.xCoord);
             newY = MathHelper.floor_double(newMove.yCoord);
