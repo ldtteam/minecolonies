@@ -121,19 +121,19 @@ public class PathNavigate extends PathNavigateGround
                     !noPath(),
                     (pathResult != null && pathResult.isInProgress()),
                     destination != null,
-                    (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))),
-                  distance2D);
+                    (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ)),
+                  distance2D));
             }
             return pathResult;
         }
         Log.getLogger()
-          .info(String.format("no  [%b && %b && %b && %b && %b]",
+          .info(String.format("no  [%b && %b && %b && %b && %b (%d)]",
             pathResult != null,
             !noPath(),
             (pathResult != null && pathResult.isInProgress()),
             destination != null,
-            (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))),
-            distance2D);
+            (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ)),
+            distance2D));
 
 
         @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
