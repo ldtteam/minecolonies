@@ -108,9 +108,9 @@ public class PathNavigate extends PathNavigateGround
         int newY = (int) y;
         int newZ = MathHelper.floor_double(z);
 
-        if (!noPath() &&
-              destination != null &&
-              BlockPosUtil.isEqual(destination, newX, newY, newZ))
+        if (!noPath() ||
+              (destination != null &&
+                 BlockPosUtil.isEqual(destination, newX, newY, newZ)))
         {
             return pathResult;
         }
