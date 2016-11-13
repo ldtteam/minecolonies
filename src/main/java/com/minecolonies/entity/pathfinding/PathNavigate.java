@@ -23,6 +23,8 @@ import java.util.concurrent.Future;
  */
 public class PathNavigate extends PathNavigateGround
 {
+    public static final double MAX_PATHING_LENGTH = 36.0;
+    public static final double PATHING_INTERMEDIARY_LENGTH = 16.0;
     //  Parent class private members
     private EntityLiving entity;
     private double       walkSpeed;
@@ -101,6 +103,8 @@ public class PathNavigate extends PathNavigateGround
         return tryMoveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
 
+
+
     @Nullable
     public PathResult moveToXYZ(double x, double y, double z, double speed)
     {
@@ -127,6 +131,12 @@ public class PathNavigate extends PathNavigateGround
                 distance2D));
         }
 
+
+        final Vec3d moveVector = getEntityPosition().addVector(newX, newY, newZ).subtract(getEntityPosition());
+        final double moveLength = moveVector.lengthVector();
+        if(moveLength >= MAX_PATHING_LENGTH){
+            moveVector.scale(PATHING_INTERMEDIARY_LENGTH /moveLength);
+        }
 
         @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
         @NotNull BlockPos dest = new BlockPos(newX, newY, newZ);
