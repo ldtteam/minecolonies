@@ -108,6 +108,13 @@ public class PathNavigate extends PathNavigateGround
         int newY = (int) y;
         int newZ = MathHelper.floor_double(z);
 
+
+        if (destination != null
+              && BlockPosUtil.isEqual(destination, newX, newY, newZ))
+        {
+            return pathResult;
+        }
+
         Log.getLogger()
           .info(String.format("[%b && %b && %b && %b && %b]",
             pathResult != null,
@@ -115,15 +122,6 @@ public class PathNavigate extends PathNavigateGround
             (pathResult != null && pathResult.isInProgress()),
             destination != null,
             (destination != null && BlockPosUtil.isEqual(destination, newX, newY, newZ))));
-
-        if (pathResult != null
-              && !noPath()
-              && pathResult.isInProgress()
-              && destination != null
-              && BlockPosUtil.isEqual(destination, newX, newY, newZ))
-        {
-            return pathResult;
-        }
 
         @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
         @NotNull BlockPos dest = new BlockPos(newX, newY, newZ);
