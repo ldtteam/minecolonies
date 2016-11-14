@@ -5,6 +5,7 @@ import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.entity.pathfinding.WalkToProxy;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.util.*;
 import net.minecraft.block.Block;
@@ -119,6 +120,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * A counter to dump the inventory after x actions.
      */
     private int actionsDone = 0;
+
+    private WalkToProxy proxy;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -434,9 +437,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     protected final boolean walkToBlock(@NotNull final BlockPos stand, final int range)
     {
-        if (!EntityUtils.isWorkerAtSite(worker, stand.getX(), stand.getY(), stand.getZ(), range))
+        if(proxy == null)
         {
-            //only walk to the block, work=null
+            proxy = new WalkToProxy(worker);
+        }
+        if(proxy.walkToBlock(stand, range))
+        {
             workOnBlock(null, stand, DELAY_RECHECK);
             return true;
         }

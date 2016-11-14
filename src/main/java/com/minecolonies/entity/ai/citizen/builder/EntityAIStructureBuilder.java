@@ -313,7 +313,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             workFrom = getWorkingPosition();
         }
 
-        return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
+        return walkToBlock(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
     }
 
     /**

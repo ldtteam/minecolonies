@@ -296,7 +296,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             currentPatrolTarget = getRandomBuilding();
         }
 
-        if (worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
+        if (walkToBlock(currentPatrolTarget, PATH_CLOSE))
         {
             currentPatrolTarget = null;
         }
