@@ -24,7 +24,7 @@ public final class Settings
     private             String                   hutDec    = "";
     private             String                   style     = "";
     private             int                      level     = 0;
-    public             BlockPos                 pos = null;
+    public             BlockPos                  pos = null;
 
     private boolean isPendingReset = false;
 
@@ -79,6 +79,8 @@ public final class Settings
     {
         structure = null;
         isPendingReset = false;
+        offset.setPos(0,0,0);
+        rotation = 0;
     }
 
     /**

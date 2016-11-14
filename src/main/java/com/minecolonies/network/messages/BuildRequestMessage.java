@@ -94,9 +94,9 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
         }
 
         //Verify player has permission to change this huts settings
-        //if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+        if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
         {
-            //return;
+            return;
         }
 
         switch (message.mode)

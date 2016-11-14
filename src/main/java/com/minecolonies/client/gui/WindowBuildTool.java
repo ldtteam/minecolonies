@@ -1,6 +1,7 @@
 package com.minecolonies.client.gui;
 
 import com.blockout.controls.Button;
+import com.minecolonies.util.BlockUtils;
 import com.structures.helpers.Structure;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Structures;
@@ -20,6 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -171,7 +173,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         if (structure != null)
         {
-            //BlockPosUtil.set(this.pos, Settings.instance.getOffset().add(structure.getOffset()));
             rotation = Settings.instance.getRotation();
             level = Settings.instance.getLevel();
         }
@@ -285,7 +286,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             Button buttonStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
             buttonStyle.setVisible(true);
             buttonStyle.setLabel(getStyles().get(styleIndex));
-
             if (Settings.instance.getActiveStructure() == null)
             {
                 rotation = 0;
@@ -365,8 +365,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         Structure structure = new Structure(null,
                 labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""),
-                new PlacementSettings().setMirror(Mirror.NONE));
+                new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
         Settings.instance.setActiveSchematic(structure);
+
+        if(Settings.instance.pos == null)
+        {
+            Settings.instance.pos = this.pos;
+        }
     }
 
     /*
@@ -446,7 +451,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             LanguageHandler.sendPlayerLocalizedMessage(this.mc.thePlayer, WindowBuildTool.NO_HUT_IN_INVENTORY);
         }
 
-        Settings.instance.setActiveSchematic(null);
+        Settings.instance.reset();
         close();
     }
 
@@ -457,7 +462,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void cancelClicked(Button button)
     {
-        Settings.instance.setActiveSchematic(null);
+        Settings.instance.reset();
         close();
     }
 
@@ -468,7 +473,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveLeftClicked(Button button)
     {
-        Settings.instance.moveTo(pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
+        Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
     }
 
     /**
@@ -478,7 +483,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveRightClicked(Button button)
     {
-        Settings.instance.moveTo(pos.offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
+        Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
     }
 
     /**
@@ -488,7 +493,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveForwardClicked(Button button)
     {
-        Settings.instance.moveTo(pos.offset(this.mc.thePlayer.getHorizontalFacing()));
+        Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing()));
     }
 
     /**
@@ -498,7 +503,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveBackClicked(Button button)
     {
-        Settings.instance.moveTo(pos.offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
+        Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
     }
 
     /**

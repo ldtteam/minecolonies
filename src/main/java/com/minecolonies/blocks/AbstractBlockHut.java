@@ -18,10 +18,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -83,12 +82,31 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return new TileEntityColonyBuilding();
     }
 
+    /**
+     * Convert the given metadata into a BlockState for this Block
+     */
+    @NotNull
     @Override
-    public int getMetaFromState(@NotNull IBlockState state)
+    public IBlockState getStateFromMeta(int meta)
+    {
+        EnumFacing enumfacing = EnumFacing.getFront(meta);
+
+        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
+        {
+            enumfacing = EnumFacing.NORTH;
+        }
+
+        return this.getDefaultState().withProperty(FACING, enumfacing);
+    }
+
+    /**
+     * Convert the BlockState into the correct metadata value
+     */
+    @Override
+    public int getMetaFromState(IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
-
 
     // =======================================================================
     // ======================= Rendering & IBlockState =======================
@@ -130,12 +148,27 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
         return true;
     }
-
+    
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nullable EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
+    }
+
+    //We unfortunately have to implement these two, to rotate our blocks in the structures.
+    @NotNull
+    @Override
+    public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
+    {
+        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    @NotNull
+    @Override
+    public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
+    {
+        return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
     }
 
     /**
@@ -174,6 +207,30 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
                 colony.addNewBuilding(hut);
             }
         }
+    }
+
+    @Override
+    public boolean isFullCube(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isFullBlock(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
+    {
+        return false;
     }
 
     @NotNull

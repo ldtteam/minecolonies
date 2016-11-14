@@ -407,7 +407,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         {
             return 30;
         }
-        else if (this.getBuildingLevel() == 3)
+        else if (this.getBuildingLevel() >= 3)
         {
             return 5;
         }
