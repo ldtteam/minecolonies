@@ -198,7 +198,6 @@ public class Permissions implements IPermissions
             }
         }
 
-
         //Permissions
         NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < permissionsTagList.tagCount(); ++i)
@@ -235,6 +234,17 @@ public class Permissions implements IPermissions
                 /*
                  * Intentionally left empty. Happens when the UUID hasn't been saved yet.
                  */
+            }
+        }
+
+        final Map.Entry<UUID, Player> owner = getOwnerEntry();
+        if(owner == null && ownerUUID != null)
+        {
+            GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(ownerUUID);
+
+            if(player != null)
+            {
+                players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
             }
         }
     }
