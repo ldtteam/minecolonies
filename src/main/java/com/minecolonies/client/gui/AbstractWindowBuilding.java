@@ -85,7 +85,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
 
         if (building.getBuildingLevel() == 0)
         {
-            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.build"));
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.build") + " " + building.getBuildingLevel());
             findPaneByID(BUTTON_REPAIR).disable();
         }
         else if (building.isBuildingMaxLevel())

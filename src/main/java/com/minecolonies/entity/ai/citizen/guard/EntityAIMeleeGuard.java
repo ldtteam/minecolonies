@@ -104,7 +104,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
 
         if (worker.getCitizenData() != null)
         {
-            worker.setSkillModifier(2 * worker.getCitizenData().getIntelligence() + worker.getCitizenData().getStrength());
+            worker.setSkillModifier(2 * worker.getCitizenData().getStrength() + worker.getCitizenData().getEndurance());
             worker.setCanPickUpLoot(true);
         }
     }
@@ -130,31 +130,27 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
         if (!targetEntity.isEntityAlive() || checkForWeapon())
         {
             targetEntity = null;
+            worker.setAIMoveSpeed((float) 1.0D);
+            return AIState.GUARD_GATHERING;
         }
 
-        if (targetEntity != null)
+        if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
         {
-            if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
+            worker.resetActiveHand();
+            attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
+            setDelay(getReloadTime());
+            attacksExecuted += 1;
+
+            if (attacksExecuted >= getMaxAttacksUntilRestock())
             {
-                worker.resetActiveHand();
-                attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
-                setDelay(getReloadTime());
-                attacksExecuted += 1;
-
-                if (attacksExecuted >= getMaxAttacksUntilRestock())
-                {
-                    return AIState.GUARD_RESTOCK;
-                }
-
-                return AIState.GUARD_HUNT_DOWN_TARGET;
+                return AIState.GUARD_RESTOCK;
             }
-            worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getExperienceLevel()));
-            worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), (int) MIN_ATTACK_DISTANCE);
 
-            return AIState.GUARD_SEARCH_TARGET;
+            return AIState.GUARD_HUNT_DOWN_TARGET;
         }
+        worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getExperienceLevel()));
+        worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), (int) MIN_ATTACK_DISTANCE);
 
-        worker.setAIMoveSpeed(1);
         return AIState.GUARD_SEARCH_TARGET;
     }
 
