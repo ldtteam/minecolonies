@@ -121,6 +121,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private int actionsDone = 0;
 
+    /**
+     * Walk to proxy.
+     */
     private WalkToProxy proxy;
 
     /**

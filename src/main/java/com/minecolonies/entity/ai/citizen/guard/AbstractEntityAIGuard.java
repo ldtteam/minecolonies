@@ -152,6 +152,9 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     {
         if (!walkToBuilding())
         {
+            return AIState.GUARD_RESTOCK;
+        }
+
             final AbstractBuildingWorker workBuilding = getOwnBuilding();
             if (workBuilding != null)
             {
@@ -184,8 +187,6 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             }
             attacksExecuted = 0;
             return AIState.GUARD_SEARCH_TARGET;
-        }
-        return AIState.GUARD_RESTOCK;
     }
 
     /**
@@ -236,6 +237,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         entityList = this.worker.worldObj.getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(currentSearchDistance));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(currentSearchDistance)));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
+
+        if(targetEntity != null && targetEntity.isEntityAlive() && worker.getEntitySenses().canSee(targetEntity))
+        {
+            return AIState.GUARD_HUNT_DOWN_TARGET;
+        }
 
         setDelay(BASE_DELAY);
         if (entityList.isEmpty())

@@ -3,6 +3,7 @@ package com.minecolonies.entity.ai.minimal;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -17,15 +18,30 @@ public class EntityAIGoHome extends EntityAIBase
      * Chance to play goHomeSound.
      */
     private static final int CHANCE = 100;
+
+    /**
+     * Damage source if has to kill citizen.
+     */
+    private static final DamageSource CLEANUP_DAMAGE = new DamageSource("CleanUpTask");
+
     /**
      * The citizen.
      */
     private EntityCitizen citizen;
 
+    /**
+     * Constructor for the task, creates task.
+     * @param citizen the citizen to assign to this task.
+     */
     public EntityAIGoHome(EntityCitizen citizen)
     {
-        setMutexBits(1);
         this.citizen = citizen;
+    }
+
+    @Override
+    public void setMutexBits(final int mutexBitsIn)
+    {
+        super.setMutexBits(1);
     }
 
     @Override
@@ -48,22 +64,20 @@ public class EntityAIGoHome extends EntityAIBase
         BlockPos pos = citizen.getHomePosition();
         if (pos == null)
         {
-            //todo: do something about this instead of spamming console
+            //If he has no homePosition strangely then try to  move to the colony.
+            if(citizen.getColony() != null)
+            {
+                citizen.isWorkerAtSiteWithMove(citizen.getColony().getCenter(), 2);
+            }
+            else
+            {
+                //If the citizen has no colony as well, remove the citizen.
+                citizen.onDeath(CLEANUP_DAMAGE);
+            }
             return;
         }
 
         playGoHomeSounds();
-
-        if (citizen.getWorkBuilding() != null)
-        {
-            /*
-            Temp fix for pathfinding in the night.
-            Citizens can't find a path home.
-             */
-            final BlockPos workBuilding = citizen.getWorkBuilding().getLocation();
-            citizen.isWorkerAtSiteWithMove(workBuilding, 2);
-            return;
-        }
 
         citizen.isWorkerAtSiteWithMove(pos, 2);
     }
