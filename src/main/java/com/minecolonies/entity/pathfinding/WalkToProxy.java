@@ -70,7 +70,7 @@ public class WalkToProxy
             }
             else
             {
-                return EntityUtils.isWorkerAtSite(worker, target.getX(), target.getY(), target.getZ(), range + 1);
+                return !EntityUtils.isWorkerAtSite(worker, target.getX(), target.getY(), target.getZ(), range);
             }
         }
 
@@ -91,7 +91,7 @@ public class WalkToProxy
             if (!EntityUtils.isWorkerAtSiteWithMove(worker, proxyPoint.getX(), proxyPoint.getY(), proxyPoint.getZ(), range))
             {
                 //only walk to the block
-                return false;
+                return true;
             }
         }
         else
@@ -99,7 +99,7 @@ public class WalkToProxy
             if (!EntityUtils.isWorkerAtSiteWithMove(worker, target.getX(), target.getY(), target.getZ(), range))
             {
                 //only walk to the block
-                return true;
+                return false;
             }
         }
 
