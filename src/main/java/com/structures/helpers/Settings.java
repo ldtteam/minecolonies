@@ -54,6 +54,7 @@ public final class Settings
     {
         if(structure != null && structure.isTemplateNull())
         {
+
             this.structure = null;
         }
         return this.structure == null ? null : this.structure;

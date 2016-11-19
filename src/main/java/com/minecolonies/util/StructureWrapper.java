@@ -1,8 +1,10 @@
 package com.minecolonies.util;
 
+import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.network.messages.SaveScanMessage;
 import com.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
@@ -10,8 +12,11 @@ import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -20,15 +25,12 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.gen.structure.template.TemplateManager;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -238,9 +240,9 @@ public final class StructureWrapper
      * @param world Current world.
      * @param from  First corner.
      * @param to    Second corner.
-     * @return Message to display to the player.
+     * @param player causing this action.
      */
-    public static String saveStructure(@Nullable World world, @Nullable BlockPos from, @Nullable BlockPos to)
+    public static void saveStructure(@Nullable World world, @Nullable BlockPos from, @Nullable BlockPos to, @NotNull EntityPlayer player)
     {
         if (world == null || from == null || to == null)
         {
@@ -257,36 +259,14 @@ public final class StructureWrapper
         MinecraftServer minecraftserver = world.getMinecraftServer();
         TemplateManager templatemanager = worldserver.getStructureTemplateManager();
 
-        File theDir = new File("minecolonies");
-
-        // if the directory does not exist, create it
-        if (!theDir.exists())
-        {
-            try
-            {
-                if(!theDir.mkdir())
-                {
-                    return LanguageHandler.format("item.scepterSteel.scanFailure");
-                }
-            }
-            catch(SecurityException e)
-            {
-                Log.getLogger().warn("Scan failed because of: ", e);
-                return LanguageHandler.format("item.scepterSteel.scanFailure");
-            }
-        }
-        createScanDirectory(world);
         String currentMillis = Long.toString(System.currentTimeMillis());
-        String fileName = "/../../../" + "minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis);
+        String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis + ".nbt");
+
         Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
-        if (templatemanager.writeTemplate(minecraftserver, new ResourceLocation(fileName)))
-        {
-            return LanguageHandler.format("item.scepterSteel.scanSuccess", "minecolonies/scans/"
-                    + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis));
-        }
-        return LanguageHandler.format("item.scepterSteel.scanFailure");
+
+        MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), fileName), (EntityPlayerMP) player);
     }
 
     /**
@@ -475,7 +455,7 @@ public final class StructureWrapper
      * Creates the scan directories for the scanTool.
      * @param world the worldIn.
      */
-    private static void createScanDirectory(@NotNull World world)
+    public static void createScanDirectory(@NotNull World world)
     {
         File minecolonies;
         if (world.isRemote)

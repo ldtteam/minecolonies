@@ -11,6 +11,7 @@ import com.structures.fake.FakeEntity;
 import com.structures.lib.ModelHolder;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
@@ -79,12 +80,28 @@ public class Structure
     {
         InputStream inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
 
+        if(world == null || world.isRemote)
+        {
+            this.settings = settings;
+            this.mc = Minecraft.getMinecraft();
+        }
+
         //Might be at a different location!
         if(inputstream == null)
         {
             try
             {
-                 inputstream = new FileInputStream(new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/").getPath() + "/" + structureName + ".nbt");
+                File decorationFolder;
+
+                if(FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+                {
+                    decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
+                }
+                else
+                {
+                    decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory(), "minecolonies/");
+                }
+                inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
             }
             catch (FileNotFoundException e)
             {
@@ -92,11 +109,6 @@ public class Structure
             }
         }
 
-        if(world == null || world.isRemote)
-        {
-            this.settings = settings;
-            this.mc = Minecraft.getMinecraft();
-        }
         if (inputstream == null)
         {
             return;
