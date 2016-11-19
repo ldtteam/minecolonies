@@ -190,6 +190,16 @@ public enum AIState
      */
     FARMER_WORK,
 
+    /**
+     * Initialize field.
+     */
+    FARMER_INITIALIZE,
+
+    /**
+     * Looks at the field.
+     */
+    FARMER_OBSERVE,
+
       /*
 ###Guard###
     */
@@ -217,5 +227,10 @@ public enum AIState
     /**
      * Go back to the hut to "restock".
      */
-    GUARD_RESTOCK
+    GUARD_RESTOCK,
+
+    /**
+     * Gather dropped items after kill.
+     */
+    GUARD_GATHERING
 }

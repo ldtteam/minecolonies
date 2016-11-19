@@ -20,11 +20,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.template.Template;
 import net.minecraft.world.gen.structure.template.TemplateManager;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -255,8 +257,26 @@ public final class StructureWrapper
         MinecraftServer minecraftserver = world.getMinecraftServer();
         TemplateManager templatemanager = worldserver.getStructureTemplateManager();
 
-        String currentMillis = Long.toString(System.currentTimeMillis());
+        File theDir = new File("minecolonies");
 
+        // if the directory does not exist, create it
+        if (!theDir.exists())
+        {
+            try
+            {
+                if(!theDir.mkdir())
+                {
+                    return LanguageHandler.format("item.scepterSteel.scanFailure");
+                }
+            }
+            catch(SecurityException e)
+            {
+                Log.getLogger().warn("Scan failed because of: ", e);
+                return LanguageHandler.format("item.scepterSteel.scanFailure");
+            }
+        }
+        createScanDirectory(world);
+        String currentMillis = Long.toString(System.currentTimeMillis());
         String fileName = "/../../../" + "minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis);
         Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
@@ -449,6 +469,47 @@ public final class StructureWrapper
             return null;
         }
         return state.getBlock();
+    }
+
+    /**
+     * Creates the scan directories for the scanTool.
+     * @param world the worldIn.
+     */
+    private static void createScanDirectory(@NotNull World world)
+    {
+        File minecolonies;
+        if (world.isRemote)
+        {
+            minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
+        }
+        else
+        {
+            MinecraftServer server = world.getMinecraftServer();
+            if(server != null)
+            {
+                minecolonies = server.getFile("minecolonies/");
+            }
+            else
+            {
+                return;
+            }
+        }
+        checkDirectory(minecolonies);
+
+        @NotNull File scans = new File(minecolonies, "scans/");
+        checkDirectory(scans);
+    }
+
+    /**
+     * Checks if directory exists, else creates it.
+     * @param directory the directory to check.
+     */
+    private static void checkDirectory(@NotNull File directory)
+    {
+        if (!directory.exists() && !directory.mkdirs())
+        {
+            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
+        }
     }
 
     /**
