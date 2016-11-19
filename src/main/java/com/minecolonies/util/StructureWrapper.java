@@ -277,8 +277,7 @@ public final class StructureWrapper
         }
         createScanDirectory(world);
         String currentMillis = Long.toString(System.currentTimeMillis());
-        String goBack = File.pathSeparator + ".." + File.pathSeparator + ".." + File.pathSeparator + ".." + File.pathSeparator + ".." + File.pathSeparator;
-        String fileName = goBack + "minecolonies + " + File.pathSeparator + "scans" + File.pathSeparator + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis);
+        String fileName = "/../../../" + "minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis);
         Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
