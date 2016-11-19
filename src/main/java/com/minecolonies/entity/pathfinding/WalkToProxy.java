@@ -238,21 +238,21 @@ public class WalkToProxy
             return target;
         }
 
-        double shortestDistance = Double.MAX_VALUE;
+        double weight = Double.MAX_VALUE;
         BlockPos proxyPoint = null;
 
         //todo might've to overwork this. In some moments he doesn't choose the correct path.
         for(BlockPos building: worker.getColony().getBuildings().keySet())
         {
-            double distanceToProxyPoint = position.distanceSq(building.getX(), position.getY(), building.getZ());
-            if(distanceToProxyPoint < shortestDistance
+            double currentWeight = position.distanceSq(building.getX(), position.getY(), building.getZ())* position.distanceSq(building.getX(), position.getY(), building.getZ()) + building.distanceSq(target.getX(), target.getY(), target.getZ());
+            if(currentWeight < weight
                     && building.distanceSq(target.getX(), target.getY(), target.getZ()) < distanceToPath
-                    && distanceToProxyPoint > MIN_DISTANCE
-                    && distanceToProxyPoint < distanceToPath
+                    && currentWeight > MIN_DISTANCE
+                    && currentWeight < distanceToPath
                     && !proxyList.contains(proxyPoint))
             {
                 proxyPoint = building;
-                shortestDistance = distanceToProxyPoint;
+                weight = currentWeight;
             }
         }
 
