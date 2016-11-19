@@ -3,13 +3,18 @@ package com.minecolonies.colony;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.util.Log;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
@@ -81,6 +86,23 @@ public final class Structures
                 basePath = Paths.get(uri);
                 loadStyleMaps(basePath);
             }
+
+            File decorationFolder;
+
+            if(FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+            {
+                 decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/decorations");
+            }
+            else
+            {
+                decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory(), "minecolonies/decorations");
+            }
+
+            if(!decorationFolder.exists() && !decorationFolder.mkdirs())
+            {
+                Log.getLogger().warn("Failed to create directories for dynamic decorations.");
+            }
+            loadStyleMaps(decorationFolder.toPath());
         }
         catch (@NotNull IOException | URISyntaxException e)
         {
@@ -88,7 +110,7 @@ public final class Structures
         }
     }
 
-    private static void loadStyleMaps(Path basePath) throws IOException
+    public static void loadStyleMaps(Path basePath) throws IOException
     {
         try (Stream<Path> walk = Files.walk(basePath))
         {

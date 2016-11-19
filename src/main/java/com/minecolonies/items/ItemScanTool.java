@@ -67,8 +67,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
             @NotNull BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
             if (!worldIn.isRemote)
             {
-                String result = StructureWrapper.saveStructure(worldIn, pos1, pos2);
-                LanguageHandler.sendPlayerMessage(playerIn, result);
+                StructureWrapper.saveStructure(worldIn, pos1, pos2, playerIn);
             }
             compound.removeTag("pos1");
             compound.removeTag("pos2");
