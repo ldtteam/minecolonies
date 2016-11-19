@@ -102,7 +102,8 @@ public class WalkToProxy
             currentProxy = fillProxyList(target, distanceToPath);
         }
 
-        double distanceToNextProxy = worker.getPosition().distanceSq(currentProxy.getX(), currentProxy.getY(), currentProxy.getZ());
+        double distanceToNextProxy = worker.getPosition().distanceSq(currentProxy.getX(), worker.getPosition().getY(), currentProxy.getZ());
+        Log.getLogger().info(distanceToNextProxy);
         if (distanceToNextProxy < MIN_DISTANCE)
         {
             if(proxyList.isEmpty())
@@ -162,9 +163,6 @@ public class WalkToProxy
         Log.getLogger().info("First target :" + proxyPoint);
         return proxyPoint;
     }
-
-
-
 
     /**
      * Returns a proxy point to the goal for the miner especially.
@@ -241,14 +239,14 @@ public class WalkToProxy
         double weight = Double.MAX_VALUE;
         BlockPos proxyPoint = null;
 
-        //todo might've to overwork this. In some moments he doesn't choose the correct path.
         for(BlockPos building: worker.getColony().getBuildings().keySet())
         {
-            double currentWeight = position.distanceSq(building.getX(), position.getY(), building.getZ())* position.distanceSq(building.getX(), position.getY(), building.getZ()) + building.distanceSq(target.getX(), target.getY(), target.getZ());
+            double simpleDistance = position.distanceSq(building.getX(), position.getY(), building.getZ());
+            double currentWeight = simpleDistance*simpleDistance + building.getDistance(target.getX(), target.getY(), target.getZ());
             if(currentWeight < weight
                     && building.distanceSq(target.getX(), target.getY(), target.getZ()) < distanceToPath
-                    && currentWeight > MIN_DISTANCE
-                    && currentWeight < distanceToPath
+                    && simpleDistance > MIN_DISTANCE
+                    && simpleDistance < distanceToPath
                     && !proxyList.contains(proxyPoint))
             {
                 proxyPoint = building;
