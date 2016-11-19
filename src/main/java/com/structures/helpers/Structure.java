@@ -1,7 +1,6 @@
 package com.structures.helpers;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -80,6 +79,19 @@ public class Structure
     {
         InputStream inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
 
+        //Might be at a different location!
+        if(inputstream == null)
+        {
+            try
+            {
+                 inputstream = new FileInputStream(new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/").getPath() + "/" + structureName + ".nbt");
+            }
+            catch (FileNotFoundException e)
+            {
+                Log.getLogger().warn("Couldn't find any structure with this name anywhere", e);
+            }
+        }
+
         if(world == null || world.isRemote)
         {
             this.settings = settings;
@@ -113,6 +125,11 @@ public class Structure
         Template template = new Template();
         template.read(nbttagcompound);
         return template;
+    }
+
+    public boolean isTemplateNull()
+    {
+        return template == null;
     }
 
     public boolean doesExist()
