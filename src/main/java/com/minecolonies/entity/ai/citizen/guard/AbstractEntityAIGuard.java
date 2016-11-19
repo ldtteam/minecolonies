@@ -63,7 +63,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Path that close to the patrol target.
      */
-    private static final int PATH_CLOSE      = 3;
+    private static final int PATH_CLOSE      = 2;
 
     /**
      * Worker gets this distance times building level away from his building to patrol.
@@ -150,7 +150,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     protected AIState goToBuilding()
     {
-        if (!walkToBuilding())
+        if (walkToBuilding())
         {
             return AIState.GUARD_RESTOCK;
         }

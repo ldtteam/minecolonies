@@ -71,7 +71,7 @@ public class WalkToProxy
         if (onMove)
         {
             return EntityUtils.isWorkerAtSiteWithMove(worker, target.getX(), target.getY(), target.getZ(), range)
-                    || EntityUtils.isWorkerAtSite(worker, target.getX(), target.getY(), target.getZ(), range + 2);
+                    || EntityUtils.isWorkerAtSite(worker, target.getX(), target.getY(), target.getZ(), range + 1);
         }
         else
         {
@@ -103,7 +103,6 @@ public class WalkToProxy
         }
 
         double distanceToNextProxy = worker.getPosition().distanceSq(currentProxy.getX(), worker.getPosition().getY(), currentProxy.getZ());
-        Log.getLogger().info(distanceToNextProxy);
         if (distanceToNextProxy < MIN_DISTANCE)
         {
             if(proxyList.isEmpty())
