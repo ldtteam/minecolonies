@@ -29,19 +29,14 @@ As ideias base deste modelo são a reusabilidade de código e separação de con
 <a name="logical"/>
 ## Logical View ##
 
+A vista lógica consiste num conjunto de ideias que servem de suporte para a elaboração de um sistema de software que encontre uma solução adequada ao problema detectado. O objetivo desta vista é responsável por transmitir como o sistema de software se encontra estruturalmente organizado a nível de comunicação, computacional e comportamental. Este diagrama  é responsável por representar as abstrações principais (objetos, classes ou packages),  bem como as relações que existem entre elas.
+
 ![alt tag](resources/Diagrama de Lógica.png)
 
 Figura 3 - *Diagrama que representa a logical view do projeto MineColonies*
 
-A "logical view"  encontra-se integrada na primeira etapa das "software architecture views", que consiste num conjunto de design de ideias que servem de suporte para a elaboração de um sistema de software que encontre uma solução adequada ao problema detectado. A missão dela consiste em transmitir à maneira como o sistema de software se encontra estruturalmente organizado a nível de comunicação, computacional e comportamental.
-
-No projecto do Minecolonies optou-se por representar esta vista através de um diagrama UML de caixas ou packages em que se mostram os componentes do sistema encadeados e os conectores que interligam uns aos outros entre si.
-O projecto por nós escolhido é constituído por packages que chegam a 1 ou 2 camadas de packages. Porventura ocorre a excepção com o package relacionado com os actores do jogo tem uma cadeia de 4 packages que estão representados pelos símbolos de nesting sendo o entity o package "Base" (mais exterior) culminando esta herança de packages nas personagens do jogo: "Builder, Deliveryman,Farmer,Fisherman,Lumberjack" e "Miner".
-
-Desta forma, optasse por dar mais ênfase as classes envolvente com o jogo propriamente dito e a sua lógica (componentes funcionais do modo de jogo) que são o entity e o colonies.
-O diagrama aqui apresentado resulta dessa simplificação das dependências entre os packages, onde ocultou-se associações de packages menos relevantes para tornar o diagrama mais objectivo e familiar, devido a complexidade do sistema que estamos a lidar.
-
-O "package Client" (utilizador) associa-se diretamente com o "Colony"  (ambiente do jogo) , com o "Entity" (agentes do jogo) e camadas subsequentes da generalizada, bem como os serviços "Network" de rede e o "Lib" (variedade de constantes).
+O projeto MineColonies é geralmente composto por packages com uma ou duas camadas, mas como se pode observar no diagrama existem alguns elementos que estão para além da quarta camada (por exemplo, Citizen).
+Na representação desta vista decidiu-se ocultar alguns packages menos relevantes devido à quantidade excessiva de informação, que para além de tornar o diagrama confuso, iria reduzir lhe consideravelmente a utilidade. Desta forma, optamos por dar mais ênfase às componentes funcionais do modo de jogo que são o entity e o colonies.
 
 <a name="development"/>
 ## Development View ##
@@ -58,6 +53,8 @@ Dentro da componente *Data*, a componente *Colony*, que define a colónia e a su
 
 <a name="deployment"/>
 ## Deployment View ##
+
+Uma vista de processo mostra em run-time a interação entre processos do sistema. MineColonies é uma modificação de Minecraft, e como tal os seus processos estão essencialmente relacionados com inicialização do jogo e o paralelismo de guardar/aceder estruturas de dados enquanto o utilizador joga. Estes processos são descritos no diagrama de atividades seguinte.
 
 ![alt tag](resources/Diagrama de Deployment.png)
 
