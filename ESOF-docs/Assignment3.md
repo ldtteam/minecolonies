@@ -18,6 +18,19 @@ Dentro da componente Data, a componente Colony, que define a colónia e a sua ge
 
 ## Deployment View ##
 
+![alt tag](resources/Diagrama de Deployment.png)
+
+De acordo com o diagrama, é possível observar que existem 3 elementos obrigatórios para a utilização do MineColonies: um computador, um sistema operativo compatível e uma versão do jogo Minecraft com a modificação MineColonies instalada. O computador deverá obedecer aos seguintes requisitos mínimos:
+
+CPU: Intel Pentium D or AMD Athlon 64 (K8) 2.6 GHz
+RAM: 2GB
+GPU (Integrated): Intel HD Graphics or AMD (formerly ATI) Radeon HD Graphics with OpenGL 2.1
+GPU (Discrete): Nvidia GeForce 9600 GT or AMD Radeon HD 2400 with OpenGL 3.1
+HDD: At least 200MB for Game Core and Other Files
+Java 6 Release 45
+
+O sistema operativo terá de ter o jogo minecraft instalado que por sua vez terá de ter a modificação minecolonies. Esta modificação depende bastante da versão do minecraft no computador do utilizador por razões de compatibilidade.
+
 ## Process View ##
 
 ## Contribuições ##
