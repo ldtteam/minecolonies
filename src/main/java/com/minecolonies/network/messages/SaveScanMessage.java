@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -65,8 +66,8 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
     @Override
     public IMessage onMessage(@NotNull SaveScanMessage message, MessageContext ctx)
     {
-        File file = new File(Minecraft.getMinecraft().mcDataDir, message.storeLocation);
-        StructureWrapper.createScanDirectory(Minecraft.getMinecraft().theWorld);
+        File file = new File(FMLClientHandler.instance().getClient().mcDataDir, message.storeLocation);
+        StructureWrapper.createScanDirectory(FMLClientHandler.instance().getClient().theWorld);
 
         try(OutputStream outputstream = new FileOutputStream(file))
         {
@@ -74,11 +75,11 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
         }
         catch (Exception e)
         {
-            LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("item.scepterSteel.scanFailure"));
+            LanguageHandler.sendPlayerLocalizedMessage(FMLClientHandler.instance().getClient().thePlayer, LanguageHandler.format("item.scepterSteel.scanFailure"));
             return null;
         }
 
-        LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("item.scepterSteel.scanSuccess",message.storeLocation));
+        LanguageHandler.sendPlayerLocalizedMessage(FMLClientHandler.instance().getClient().thePlayer, LanguageHandler.format("item.scepterSteel.scanSuccess",message.storeLocation));
         return null;
     }
 }
