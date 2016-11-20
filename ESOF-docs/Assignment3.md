@@ -37,6 +37,7 @@ A vista lógica consiste num conjunto de ideias que servem de suporte para a ela
 Figura 3 - *Diagrama que representa a logical view do projeto MineColonies*
 
 O projeto MineColonies é geralmente composto por packages com uma ou duas camadas, mas como se pode observar no diagrama existem alguns elementos que estão para além da quarta camada (por exemplo, Citizen).
+
 Na representação desta vista decidiu-se ocultar alguns packages menos relevantes devido à quantidade excessiva de informação, que para além de tornar o diagrama confuso, iria reduzir lhe consideravelmente a utilidade. Desta forma, optamos por dar mais ênfase às componentes funcionais do modo de jogo que são o entity e o colonies.
 
 <a name="development"/>
