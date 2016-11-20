@@ -828,7 +828,7 @@ public class Colony implements IColony
         }
 
         Random rand = new Random();
-        if(rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1)
+        if(rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && wayPoints.size() > 0)
         {
             Object[] entries = wayPoints.entrySet().toArray();
             int stopAt = rand.nextInt(entries.length);

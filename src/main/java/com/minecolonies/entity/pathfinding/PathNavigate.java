@@ -5,6 +5,7 @@ import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -122,6 +123,10 @@ public class PathNavigate extends PathNavigateGround
             return pathResult;
         }
 
+        if(worldObj.getBlockState(new BlockPos(newX, newY, newZ)).getBlock() == Blocks.GRAVEL)
+        {
+            speed *= 2;
+        }
 
         final Vec3d moveVector = getEntityPosition().subtractReverse(new Vec3d(newX, newY, newZ));
         final double moveLength = moveVector.lengthVector();

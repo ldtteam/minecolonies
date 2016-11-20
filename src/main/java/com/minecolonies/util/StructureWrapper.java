@@ -407,47 +407,6 @@ public final class StructureWrapper
     }
 
     /**
-     * Creates the scan directories for the scanTool.
-     * @param world the worldIn.
-     */
-    private static void createScanDirectory(@NotNull World world)
-    {
-        File minecolonies;
-        if (world.isRemote)
-        {
-            minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
-        }
-        else
-        {
-            MinecraftServer server = world.getMinecraftServer();
-            if(server != null)
-            {
-                minecolonies = server.getFile("minecolonies/");
-            }
-            else
-            {
-                return;
-            }
-        }
-        checkDirectory(minecolonies);
-
-        @NotNull File scans = new File(minecolonies, "scans/");
-        checkDirectory(scans);
-    }
-
-    /**
-     * Checks if directory exists, else creates it.
-     * @param directory the directory to check.
-     */
-    private static void checkDirectory(@NotNull File directory)
-    {
-        if (!directory.exists() && !directory.mkdirs())
-        {
-            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
-        }
-    }
-
-    /**
      * Gets the block state for the current local block.
      *
      * @return Current local block state.

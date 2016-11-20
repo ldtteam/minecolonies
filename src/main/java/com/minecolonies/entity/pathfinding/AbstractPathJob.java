@@ -7,6 +7,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.EnumFacing;
@@ -252,7 +253,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param isSwimming true is the current node would require the citizen to swim.
      * @return cost to move from the parent to the new position
      */
-    protected static double computeCost(Node parent, @NotNull BlockPos dPos, boolean isSwimming)
+    protected static double computeCost(Node parent, @NotNull BlockPos dPos, boolean isSwimming, boolean onPath)
     {
         double cost = 1D;
 
@@ -260,6 +261,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             //  Tax the cost for jumping, dropping (warning: also taxes stairs)
             cost *= 1.1D;
+        }
+
+        if(onPath)
+        {
+            cost /= 1.1D;
         }
 
         if (isSwimming)
@@ -668,9 +674,10 @@ public abstract class AbstractPathJob implements Callable<Path>
 
 
         boolean isSwimming = calculateSwimming(world, pos, node);
-
+        Block block = world.getBlockState(pos).getBlock();
+        boolean onRoad = block == Blocks.GRAVEL || block == Blocks.STONEBRICK;
         //  Cost may have changed due to a jump up or drop
-        double stepCost = computeCost(parent, dPos, isSwimming);
+        double stepCost = computeCost(parent, dPos, isSwimming, onRoad);
         double heuristic = computeHeuristic(pos);
         double cost = parent.cost + stepCost;
         double score = cost + heuristic;
