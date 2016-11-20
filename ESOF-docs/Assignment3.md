@@ -20,7 +20,7 @@ Este padrão caracteriza-se pela separação da representação, interação e d
 
 Analisando a imagem seguinte é possível observar as três partes lógicas do programa *View* (blockout), *Model* (minecolonies) e *Controller* (schematica). 
 
-![alt tag](resources/partesLogicas.png)
+![alt tag](resources/partesLogicas.PNG)
 
 Figura 2 - *Demonstração do modelo MVC no projeto MineColonies*
 
@@ -29,7 +29,7 @@ As ideias base deste modelo são a reusabilidade de código e separação de con
 <a name="logical"/>
 ## Logical View ##
 
-![alt tag](resources/Diagrama de Lógica.PNG)
+![alt tag](resources/Diagrama de Lógica.png)
 
 Figura 3 - *Diagrama que representa a logical view do projeto MineColonies*
 
