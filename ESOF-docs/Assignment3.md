@@ -31,6 +31,7 @@ As ideias base deste modelo são a reusabilidade de código e separação de con
 
 A vista lógica consiste num conjunto de ideias que servem de suporte para a elaboração de um sistema de software que encontre uma solução adequada ao problema detectado. O objetivo desta vista é responsável por transmitir como o sistema de software se encontra estruturalmente organizado a nível de comunicação, computacional e comportamental. Este diagrama  é responsável por representar as abstrações principais (objetos, classes ou packages),  bem como as relações que existem entre elas.
 
+
 ![alt tag](resources/Diagrama de Lógica.png)
 
 Figura 3 - *Diagrama que representa a logical view do projeto MineColonies*
