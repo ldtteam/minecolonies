@@ -11,22 +11,23 @@ import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.Utils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
 
@@ -43,7 +44,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Distance the guard starts searching.
      */
-    private static final int START_SEARCH_DISTANCE = 5;
+    protected static final int START_SEARCH_DISTANCE = 5;
 
     /**
      * Basic delay after operations.
@@ -71,6 +72,35 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     private static final int PATROL_DISTANCE = 20;
 
     /**
+     * Horizontal range in which the guard picks up items
+     */
+    private static final double RANGE_HORIZONTAL_PICKUP = 20.0D;
+    /**
+     * Vertical range in which the guard picks up items
+     */
+    private static final double RANGE_VERTICAL_PICKUP   = 2.0D;
+
+    /**
+     * Amount of ticks after which the guard stops trying to gather and tries to get onto another task.
+     */
+    private static final int   STUCK_WAIT_TICKS        = 20;
+
+    /**
+     * The amount of time to wait while walking to items
+     */
+    private static final int   WAIT_WHILE_WALKING      = 5;
+
+    /**
+     * The range in which the guard picks up items.
+     */
+    private static final int ITEM_PICKUP_RANGE = 3;
+
+    /**
+     * Checks if the guard should dump its inventory.
+     */
+    private static final int DUMP_AFTER_ACTIONS = 10;
+
+    /**
      * The current target.
      */
     protected EntityLivingBase targetEntity;
@@ -81,7 +111,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * The distance the guard is searching entities in currently.
      */
-    private int currentSearchDistance = START_SEARCH_DISTANCE;
+    protected int currentSearchDistance = START_SEARCH_DISTANCE;
     /**
      * Current goTo task.
      */
@@ -90,6 +120,23 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      * Containing all close entities.
      */
     private List<Entity> entityList;
+
+    /**
+     * Positions of all items that have to be collected.
+     */
+    @Nullable
+    private List<BlockPos> items;
+
+    /**
+     * Number of ticks the guard is standing still
+     */
+    private              int   stillTicks              = 0;
+
+    /**
+     * Used to store the path index
+     * to check if the guard is still walking
+     */
+    private              int   previousIndex           = 0;
 
     /**
      * Sets up some important skeleton stuff for every ai.
@@ -101,7 +148,8 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         super(job);
         super.registerTargets(
           new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, () -> GUARD_RESTOCK)
+          new AITarget(START_WORKING, () -> GUARD_RESTOCK),
+          new AITarget(GUARD_GATHERING, this::gathering)
         );
     }
 
@@ -179,14 +227,16 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                             chest.setInventorySlotContents(i, null);
                         }
                     }
-                    else if (!(stack.getItem() instanceof ItemBow || Utils.doesItemServeAsWeapon(stack)))
-                    {
-                        //todo dump everything which isn't a weapon or armor
-                    }
                 }
             }
             attacksExecuted = 0;
             return AIState.GUARD_SEARCH_TARGET;
+    }
+
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return DUMP_AFTER_ACTIONS;
     }
 
     /**
@@ -201,30 +251,36 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             return AIState.GUARD_PATROL;
         }
 
-        if (entityList.get(0) instanceof EntityPlayer)
+        Entity entity = entityList.get(0);
+
+        BlockPos buildingLocation = getOwnBuilding().getLocation();
+
+        //Only attack entities in max patrol distance.
+        if (BlockPosUtil.getDistance2D(entity.getPosition(), buildingLocation) < getPatrolDistance())
         {
-            if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entityList.get(0), Permissions.Action.GUARDS_ATTACK))
+            if (entity instanceof EntityPlayer)
             {
-                targetEntity = (EntityLivingBase) entityList.get(0);
+                if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entity, Permissions.Action.GUARDS_ATTACK))
+                {
+                    targetEntity = (EntityLivingBase) entity;
+                    worker.getNavigator().clearPathEntity();
+                    return AIState.GUARD_HUNT_DOWN_TARGET;
+                }
+                entityList.remove(0);
+                setDelay(BASE_DELAY);
+                return AIState.GUARD_GET_TARGET;
+            }
+            else if (worker.getEntitySenses().canSee(entity) && (entityList.get(0)).isEntityAlive())
+            {
                 worker.getNavigator().clearPathEntity();
+                targetEntity = (EntityLivingBase) entity;
                 return AIState.GUARD_HUNT_DOWN_TARGET;
             }
-            entityList.remove(0);
-            setDelay(BASE_DELAY);
-            return AIState.GUARD_GET_TARGET;
         }
-        else if (worker.getEntitySenses().canSee(entityList.get(0)) && (entityList.get(0)).isEntityAlive())
-        {
-            worker.getNavigator().clearPathEntity();
-            targetEntity = (EntityLivingBase) entityList.get(0);
-            return AIState.GUARD_HUNT_DOWN_TARGET;
-        }
-        else
-        {
-            entityList.remove(0);
-            setDelay(BASE_DELAY);
-            return AIState.GUARD_GET_TARGET;
-        }
+
+        entityList.remove(0);
+        setDelay(BASE_DELAY);
+        return AIState.GUARD_GET_TARGET;
     }
 
     /**
@@ -346,6 +402,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     {
         final Colony colony = this.getOwnBuilding().getColony();
         colony.incrementMobsKilled();
+        incrementActionsDone();
     }
 
     /**
@@ -355,5 +412,110 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     private int getPatrolDistance()
     {
         return this.getOwnBuilding().getBuildingLevel() * PATROL_DISTANCE;
+    }
+
+    /**
+     * Checks if the guard found items on the ground,
+     * if yes collect them, if not search for them.
+     *
+     * @return GUARD_GATHERING as long as gathering takes.
+     */
+    private AIState gathering()
+    {
+        if (items == null)
+        {
+            searchForItems();
+        }
+        if (!items.isEmpty())
+        {
+            gatherItems();
+            return getState();
+        }
+        items = null;
+        return GUARD_PATROL;
+    }
+
+    @Override
+    protected boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return stack != null
+                && (stack.getItem() instanceof ItemArmor
+                || stack.getItem() instanceof ItemTool
+                || stack.getItem() instanceof ItemSword
+                || stack.getItem() instanceof ItemBow);
+    }
+
+    /**
+     * Search for all items around the Guard.
+     * and store them in the items list
+     */
+    private void searchForItems()
+    {
+        items = new ArrayList<>();
+
+        items = world.getEntitiesWithinAABB(EntityItem.class, worker.getEntityBoundingBox().expand(RANGE_HORIZONTAL_PICKUP, RANGE_VERTICAL_PICKUP, RANGE_HORIZONTAL_PICKUP))
+                .stream()
+                .filter(item -> item != null && !item.isDead)
+                .map(BlockPosUtil::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Collect one item by walking to it
+     */
+    private void gatherItems()
+    {
+        worker.setCanPickUpLoot(true);
+        if (worker.getNavigator().noPath())
+        {
+            BlockPos pos = getAndRemoveClosestItem();
+            worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);
+            return;
+        }
+        if (worker.getNavigator().getPath() == null)
+        {
+            setDelay(WAIT_WHILE_WALKING);
+            return;
+        }
+
+        int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
+        //We moved a bit, not stuck
+        if (currentIndex != previousIndex)
+        {
+            stillTicks = 0;
+            previousIndex = currentIndex;
+            return;
+        }
+
+        stillTicks++;
+        //Stuck for too long
+        if (stillTicks > STUCK_WAIT_TICKS)
+        {
+            //Skip this item
+            worker.getNavigator().clearPathEntity();
+        }
+    }
+
+    /**
+     * Find the closest item and remove it from the list.
+     *
+     * @return the closest item
+     */
+    private BlockPos getAndRemoveClosestItem()
+    {
+        int index = 0;
+        double distance = Double.MAX_VALUE;
+
+        for (int i = 0; i < items.size(); i++)
+        {
+            double tempDistance = items.get(i).distanceSq(worker.getPosition());
+            if (tempDistance < distance)
+            {
+                index = i;
+                distance = tempDistance;
+            }
+        }
+
+        return items.remove(index);
     }
 }

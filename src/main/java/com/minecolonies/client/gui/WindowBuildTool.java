@@ -1,5 +1,6 @@
 package com.minecolonies.client.gui;
 
+import com.blockout.Log;
 import com.blockout.controls.Button;
 import com.minecolonies.util.BlockUtils;
 import com.structures.helpers.Structure;
@@ -10,6 +11,7 @@ import com.minecolonies.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.util.LanguageHandler;
 import com.structures.helpers.Settings;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Mirror;
@@ -19,6 +21,8 @@ import net.minecraft.world.gen.structure.template.PlacementSettings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -344,6 +348,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private List<String> getStyles()
     {
+        try
+        {
+            Structures.loadStyleMaps(new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/decorations").toPath());
+        }
+        catch (IOException e)
+        {
+            Log.getLogger().warn("No additional files found", e);
+        }
+
         if (Settings.instance.isInHutMode())
         {
             return Structures.getStylesForHut(hutDec.get(hutDecIndex));

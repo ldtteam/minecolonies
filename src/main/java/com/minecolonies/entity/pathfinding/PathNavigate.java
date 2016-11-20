@@ -23,12 +23,15 @@ import java.util.concurrent.Future;
  */
 public class PathNavigate extends PathNavigateGround
 {
+    public static final double MAX_PATHING_LENGTH          = 36.0;
+    public static final double PATHING_INTERMEDIARY_LENGTH = 16.0;
     //  Parent class private members
     private EntityLiving entity;
     private double       walkSpeed;
-
     @Nullable
     private BlockPos     destination;
+    @Nullable
+    private BlockPos     originalDestination;
     @Nullable
     private Future<Path> future;
     @Nullable
@@ -109,10 +112,26 @@ public class PathNavigate extends PathNavigateGround
         int newZ = MathHelper.floor_double(z);
 
 
-        if (destination != null
-              && BlockPosUtil.isEqual(destination, newX, newY, newZ))
+        if ((destination != null
+               && BlockPosUtil.isEqual(destination, newX, newY, newZ))
+              || (originalDestination != null
+                    && BlockPosUtil.isEqual(originalDestination, newX, newY, newZ)
+                    && pathResult != null
+                    && pathResult.isInProgress()))
         {
             return pathResult;
+        }
+
+
+        final Vec3d moveVector = getEntityPosition().subtractReverse(new Vec3d(newX, newY, newZ));
+        final double moveLength = moveVector.lengthVector();
+        if (moveLength >= MAX_PATHING_LENGTH && !this.isUnableToReachDestination())
+        {
+            final Vec3d newMove = moveVector.scale(PATHING_INTERMEDIARY_LENGTH / moveLength).add(getEntityPosition());
+            originalDestination = new BlockPos(newX, newY, newZ);
+            newX = MathHelper.floor_double(newMove.xCoord);
+            newY = MathHelper.floor_double(newMove.yCoord);
+            newZ = MathHelper.floor_double(newMove.zCoord);
         }
 
         @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);

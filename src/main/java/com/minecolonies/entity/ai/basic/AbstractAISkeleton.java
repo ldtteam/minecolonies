@@ -224,4 +224,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     {
         return state;
     }
+
+    protected int getLevelDelay()
+    {
+        return 10;
+    }
 }

@@ -52,6 +52,11 @@ public final class Settings
     @Nullable
     public Structure getActiveStructure()
     {
+        if(structure != null && structure.isTemplateNull())
+        {
+
+            this.structure = null;
+        }
         return this.structure == null ? null : this.structure;
     }
 
