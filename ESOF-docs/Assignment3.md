@@ -16,7 +16,7 @@ O projecto por nós escolhido é constituído por packages que chegam a 1 ou 2 c
 Desta forma, optasse por dar mais ênfase as classes envolvente com o jogo propriamente dito e a sua lógica (componentes funcionais do modo de jogo) que são o entity e o colonies.
 O diagrama aqui apresentado resulta dessa simplificação das dependências entre os packages, onde ocultou-se associações de packages menos relevantes para tornar o diagrama mais objectivo e familiar, devido a complexidade do sistema que estamos a lidar.
 
-O "package Client" (utilizador) associa-se diretamente com o "Colony"  (ambiente do jogo) , com o "Entity" (agentes do jogo) e camadas subsequentes da generalizada, bem como os serviços "Network" de rede e o "Lib" (variedade constantes).
+O "package Client" (utilizador) associa-se diretamente com o "Colony"  (ambiente do jogo) , com o "Entity" (agentes do jogo) e camadas subsequentes da generalizada, bem como os serviços "Network" de rede e o "Lib" (variedade de constantes).
 
 ## Development View ##
 
