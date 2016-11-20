@@ -17,12 +17,15 @@ import com.minecolonies.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
@@ -55,19 +58,26 @@ public class Colony implements IColony
     private static final String TAG_ACHIEVEMENT_LIST       = "achievementlist";
     private static final String TAG_WORK                   = "work";
     private static final String TAG_MANUAL_HIRING          = "manualHiring";
+    private static final String TAG_WAYPOINT               = "waypoints";
+    private static final String TAG_BLOCK                  = "blockState";
+
     //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS                 = "fields";
-    private static final String TAG_MOB_KILLS              = "mobKills";
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST = 1;
+    private static final String TAG_FIELDS                  = "fields";
+    private static final String TAG_MOB_KILLS               = "mobKills";
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST  = 1;
     private static final int    NUM_MOBS_ACHIEVEMENT_SECOND = 25;
-    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD = 100;
+    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD  = 100;
     private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH = 500;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH = 1000;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH  = 1000;
+    private static final int    CHECK_WAYPOINT_EVERY = 100;
     private final int id;
     //  General Attributes
     private final int dimensionId;
     //  Buildings
     private final Map<BlockPos, Field> fields = new HashMap<>();
+    //Additional Waypoints.
+    private final Map<BlockPos, IBlockState> wayPoints = new HashMap<>();
+
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
@@ -214,6 +224,16 @@ public class Colony implements IColony
 
         //  Workload
         workManager.readFromNBT(compound.getCompoundTag(TAG_WORK));
+
+
+        // Waypoints
+        final NBTTagList wayPointTagList = compound.getTagList(TAG_WAYPOINT, NBT.TAG_COMPOUND);
+        for (int i = 0; i < wayPointTagList.tagCount(); ++i)
+        {
+            final BlockPos pos = BlockPosUtil.readFromNBTTagList(wayPointTagList, i);
+            final IBlockState state = NBTUtil.readBlockState(wayPointTagList.getCompoundTagAt(i));
+            wayPoints.put(pos, state);
+        }
     }
 
     /**
@@ -317,6 +337,19 @@ public class Colony implements IColony
         @NotNull final NBTTagCompound workManagerCompound = new NBTTagCompound();
         workManager.writeToNBT(workManagerCompound);
         compound.setTag(TAG_WORK, workManagerCompound);
+
+        // Waypoints
+        @NotNull final NBTTagList wayPointTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<BlockPos, IBlockState> entry : wayPoints.entrySet())
+        {
+            @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
+
+            BlockPosUtil.writeToNBT(wayPointCompound, TAG_WAYPOINT, entry.getKey());
+            NBTUtil.writeBlockState(wayPointCompound, entry.getValue());
+
+            wayPointTagList.appendTag(wayPointCompound);
+        }
+        compound.setTag(TAG_WAYPOINT, wayPointTagList);
     }
 
     /**
@@ -792,6 +825,24 @@ public class Colony implements IColony
         for (@NotNull AbstractBuilding building : buildings.values())
         {
             building.onWorldTick(event);
+        }
+
+        Random rand = new Random();
+        if(rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1)
+        {
+            Object[] entries = wayPoints.entrySet().toArray();
+            int stopAt = rand.nextInt(entries.length);
+            Object obj = entries[stopAt];
+
+            if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof IBlockState)
+            {
+                @NotNull  BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
+                @NotNull IBlockState value = (IBlockState) ((Map.Entry) obj).getValue();
+                if (world != null && world.getBlockState(key).getBlock() != (value.getBlock()))
+                {
+                    wayPoints.remove(key);
+                }
+            }
         }
 
         workManager.onWorldTick(event);
@@ -1347,5 +1398,28 @@ public class Colony implements IColony
     {
         this.markFieldsDirty();
         fields.remove(pos);
+    }
+
+    /**
+     * Adds a waypoint to the colony.
+     * @param point the waypoint to add.
+     * @param block the block at the waypoint.
+     */
+    public void addWayPoint(final BlockPos point, IBlockState block)
+    {
+        wayPoints.put(point, block);
+    }
+
+    /**
+     * Returns a list of all wayPoints of the colony.
+     * @return list of wayPoints
+     */
+    public List<BlockPos> getWayPoints()
+    {
+        List<BlockPos> tempWayPoints = new ArrayList<>();
+        tempWayPoints.addAll(wayPoints.keySet());
+        tempWayPoints.addAll(getBuildings().keySet());
+
+        return tempWayPoints;
     }
 }

@@ -59,20 +59,26 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * The standard range the builder should reach until his target.
      */
-    private static final int      STANDARD_WORKING_RANGE        = 5;
+    private static final int      STANDARD_WORKING_RANGE = 5;
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int      MIN_WORKING_RANGE             = 7;
+    private static final int      MIN_WORKING_RANGE      = 7;
     /**
      * After how many actions should the builder dump his inventory.
      */
-    private static final int      ACTIONS_UNTIL_DUMP            = 1024;
+    private static final int      ACTIONS_UNTIL_DUMP     = 1024;
+
+    /**
+     * String which shows if something is a waypoint.
+     */
+    private static final CharSequence WAYPOINT_STRING    = "waypoint";
+
     /**
      * Position where the Builders constructs from.
      */
     @Nullable
-    private              BlockPos workFrom                      = null;
+    private              BlockPos workFrom               = null;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -382,6 +388,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @NotNull
     private BlockPos getFloor(@NotNull BlockPos position)
     {
+        if(position.getY() < 0 || position.getY() > 255)
+        {
+            return getFloor(new BlockPos(position.getX(), 70, position.getZ()));
+        }
+
         //If the position is floating in Air go downwards
         if (!EntityUtils.solidOrLiquid(world, position))
         {
@@ -885,6 +896,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                       worker.getColony().getID(),
                       worker.getCitizenData().getId(),
                       wo.getBuildingLocation()));
+                }
+            }
+            else
+            {
+                if(structureName.contains(WAYPOINT_STRING))
+                {
+                    worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
                 }
             }
             job.complete();

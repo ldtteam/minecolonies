@@ -238,7 +238,8 @@ public class WalkToProxy
         double weight = Double.MAX_VALUE;
         BlockPos proxyPoint = null;
 
-        for(BlockPos building: worker.getColony().getBuildings().keySet())
+
+        for(BlockPos building: worker.getColony().getWayPoints())
         {
             double simpleDistance = position.distanceSq(building.getX(), position.getY(), building.getZ());
             double currentWeight = simpleDistance*simpleDistance + building.getDistance(target.getX(), target.getY(), target.getZ());
