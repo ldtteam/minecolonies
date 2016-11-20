@@ -1,10 +1,7 @@
 package com.minecolonies.util;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.configuration.Configurations;
-import com.minecolonies.lib.Constants;
-import com.minecolonies.network.messages.SaveScanMessage;
 import com.structures.helpers.StructureProxy;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
@@ -12,19 +9,15 @@ import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.gen.structure.template.Template;
-import net.minecraft.world.gen.structure.template.TemplateManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
@@ -235,41 +228,6 @@ public final class StructureWrapper
     }
 
     /**
-     * Scan the structure and save it to the disk.
-     *
-     * @param world Current world.
-     * @param from  First corner.
-     * @param to    Second corner.
-     * @param player causing this action.
-     */
-    public static void saveStructure(@Nullable World world, @Nullable BlockPos from, @Nullable BlockPos to, @NotNull EntityPlayer player)
-    {
-        if (world == null || from == null || to == null)
-        {
-            throw new IllegalArgumentException("Invalid method call, arguments can't be null. Contact a developer.");
-        }
-
-        BlockPos blockpos =
-                new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
-        BlockPos blockpos1 =
-                new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
-        BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
-
-        WorldServer worldserver = (WorldServer) world;
-        MinecraftServer minecraftserver = world.getMinecraftServer();
-        TemplateManager templatemanager = worldserver.getStructureTemplateManager();
-
-        String currentMillis = Long.toString(System.currentTimeMillis());
-        String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis + ".nbt");
-
-        Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
-        template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
-        template.setAuthor(Constants.MOD_ID);
-
-        MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), fileName), (EntityPlayerMP) player);
-    }
-
-    /**
      * Find the next block that doesn't already exist in the world.
      *
      * @return true if a new block is found and false if there is no next block.
@@ -288,6 +246,26 @@ public final class StructureWrapper
         while (doesStructureBlockEqualWorldBlock() && count < Configurations.maxBlocksCheckedByBuilder);
 
         return true;
+    }
+
+    public static void handleSaveScanMessage(NBTTagCompound nbttagcompound, String storeLocation)
+    {
+        File file = new File(Minecraft.getMinecraft().mcDataDir, storeLocation);
+        StructureWrapper.createScanDirectory(Minecraft.getMinecraft().theWorld);
+
+        try (OutputStream outputstream = new FileOutputStream(file))
+        {
+            CompressedStreamTools.writeCompressed(nbttagcompound, outputstream);
+        }
+        catch (Exception e)
+        {
+            LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("item.scepterSteel.scanFailure"));
+            return;
+        }
+
+        LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer,
+                LanguageHandler.format("item.scepterSteel.scanSuccess", storeLocation));
+
     }
 
     /**
