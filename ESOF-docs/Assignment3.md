@@ -43,6 +43,12 @@ Na representação desta vista decidiu-se ocultar alguns packages menos relevant
 <a name="development"/>
 ## Development View ##
 
+Uma vista de implementação mostra como é feita a divisão do software em componentes e as várias dependências entre cada um. Um componente pode ser caracterizado como:
+
+> "A component represents a modular part of a system that encapsulates its contents and whose manifestation is replaceable within its environment" - UML Superstructure Specification, v2.1.1, p. 148
+
+Cada componente pode ainda ser subdividido em outros componentes mais pequenos.
+
 ![alt tag](resources/Diagrama de Componentes.png)
 
 Figura 4 - *Diagrama que representa a development view do projeto MineColonies*
@@ -90,6 +96,8 @@ Como se pode observar, após a inicialização do jogo, são executados os segui
 * *ColonyManager* : processo muito importante, com lado servidor e cliente, que tem como principal objetivo fornecer uma residência permanente para estruturas de dados e sistemas que gerem a colónia, removendo dependências do **Minecraft**, e de entidades a serem carregadas. 
 
 Todos estes processos permitem então que se inicie o processo *Menu* do **Minecraft**, que permite jogar, ou sair do jogo, finalizando o diagrama de atividade. Os processos de inicialização e o processo onde decorre o jogo ocorrem em paralelo, pois o jogo precisa de todos os processo da inicialização para correr.
+
+## Bibliografia ##
 
 ## Contribuições ##
 
