@@ -140,6 +140,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
             setDelay(getReloadTime());
             attacksExecuted += 1;
+            currentSearchDistance = START_SEARCH_DISTANCE;
 
             if (attacksExecuted >= getMaxAttacksUntilRestock())
             {

@@ -44,7 +44,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Distance the guard starts searching.
      */
-    private static final int START_SEARCH_DISTANCE = 5;
+    protected static final int START_SEARCH_DISTANCE = 5;
 
     /**
      * Basic delay after operations.
@@ -111,7 +111,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * The distance the guard is searching entities in currently.
      */
-    private int currentSearchDistance = START_SEARCH_DISTANCE;
+    protected int currentSearchDistance = START_SEARCH_DISTANCE;
     /**
      * Current goTo task.
      */
@@ -250,30 +250,36 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             return AIState.GUARD_PATROL;
         }
 
-        if (entityList.get(0) instanceof EntityPlayer)
+        Entity entity = entityList.get(0);
+
+        BlockPos buildingLocation = getOwnBuilding().getLocation();
+
+        //Only attack entities in max patrol distance.
+        if (BlockPosUtil.getDistance2D(entity.getPosition(), buildingLocation) < getPatrolDistance())
         {
-            if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entityList.get(0), Permissions.Action.GUARDS_ATTACK))
+            if (entity instanceof EntityPlayer)
             {
-                targetEntity = (EntityLivingBase) entityList.get(0);
+                if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entity, Permissions.Action.GUARDS_ATTACK))
+                {
+                    targetEntity = (EntityLivingBase) entity;
+                    worker.getNavigator().clearPathEntity();
+                    return AIState.GUARD_HUNT_DOWN_TARGET;
+                }
+                entityList.remove(0);
+                setDelay(BASE_DELAY);
+                return AIState.GUARD_GET_TARGET;
+            }
+            else if (worker.getEntitySenses().canSee(entity) && (entityList.get(0)).isEntityAlive())
+            {
                 worker.getNavigator().clearPathEntity();
+                targetEntity = (EntityLivingBase) entity;
                 return AIState.GUARD_HUNT_DOWN_TARGET;
             }
-            entityList.remove(0);
-            setDelay(BASE_DELAY);
-            return AIState.GUARD_GET_TARGET;
         }
-        else if (worker.getEntitySenses().canSee(entityList.get(0)) && (entityList.get(0)).isEntityAlive())
-        {
-            worker.getNavigator().clearPathEntity();
-            targetEntity = (EntityLivingBase) entityList.get(0);
-            return AIState.GUARD_HUNT_DOWN_TARGET;
-        }
-        else
-        {
-            entityList.remove(0);
-            setDelay(BASE_DELAY);
-            return AIState.GUARD_GET_TARGET;
-        }
+
+        entityList.remove(0);
+        setDelay(BASE_DELAY);
+        return AIState.GUARD_GET_TARGET;
     }
 
     /**
