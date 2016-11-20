@@ -8,6 +8,8 @@
 
 ## Development View ##
 
+![alt tag](resources/Diagrama de Componentes.png)
+
 ## Deployment View ##
 
 ## Process View ##
