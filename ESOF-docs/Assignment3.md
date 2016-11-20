@@ -10,7 +10,9 @@ Um dos principais conceitos adjacentes à arquitetura de software é o design. N
 
 As arquiteturas de software também podem seguir padrões. Um padrão de desenho é um meio de representação, partilha e reutilização de conhecimento que descreve uma solução provada para um problema recorrente num dado contexto. Baseado neste conceito, um padrão arquitetural é um padrão estilizado de boas práticas de design arquitetural provadas em diferentes ambientes. Existem vários padrões arquiteturais diferentes, cada um com uma solução, contexto e problema diferentes. Para o **MineColonies** o padrão mais adequado é o padrão MVC. 
 
-![alt tag]()
+![alt tag](resources/mvc.png)
+
+Figura 1 - *Esquema que exemplifica o modelo Model-View-Controller com as relações entre as partes lógicas*
 
 Este padrão caracteriza-se pela separação da representação, interação e da aplicação, estruturando o sistema em três partes lógicas que interagem entre elas. *Model* consiste nos dados da aplicação, lógica e funções. *View* é a parte lógica encarregue da saída da representação dos dados. *Controller* é a parte que recebe a entrada, convertendo-a em comandos para o modelo ou visão. O padrão MVC adequa-se a este projeto pois já era usado pelo jogo **Minecraft**, e sendo o **MineColonies** uma modificação, deve seguir o mesmo padrão.
 
@@ -18,14 +20,18 @@ Este padrão caracteriza-se pela separação da representação, interação e d
 
 Analisando a imagem seguinte é possível observar as três partes lógicas do programa *View* (blockout), *Model* (minecolonies) e *Controller* (schematica). 
 
-![alt tag]()
+![alt tag](resources/partesLogicas.png)
+
+Figura 2 - *Demonstração do modelo MVC no projeto MineColonies*
 
 As ideias base deste modelo são a reusabilidade de código e separação de conceitos. O padrão reúne ainda inúmeras vantagens como, permitir que os dados e a sua representação mudem independentemente, suporta a apresentação de dados de diferentes maneiras, e ainda permite que alterações de dados sejam visíveis em todas as partes. No entanto pode ter a desvantagem de sobrecarga do código quando existem modelos pequenos. Neste caso esta desvantagem não se aplica, devido à grande escala do projeto.
 
 <a name="logical"/>
 ## Logical View ##
 
-![alt tag](resources/Diagrama de Lógica.png)
+![alt tag](resources/Diagrama de Lógica.PNG)
+
+Figura 3 - *Diagrama que representa a logical view do projeto MineColonies*
 
 A "logical view"  encontra-se integrada na primeira etapa das "software architecture views", que consiste num conjunto de design de ideias que servem de suporte para a elaboração de um sistema de software que encontre uma solução adequada ao problema detectado. A missão dela consiste em transmitir à maneira como o sistema de software se encontra estruturalmente organizado a nível de comunicação, computacional e comportamental.
 
@@ -42,6 +48,8 @@ O "package Client" (utilizador) associa-se diretamente com o "Colony"  (ambiente
 
 ![alt tag](resources/Diagrama de Componentes.png)
 
+Figura 4 - *Diagrama que representa a development view do projeto MineColonies*
+
 Sendo o **MineColonies** uma modificação de um outro jogo (**Minecraft**), existem muitas funcionalidades base que terão que ser reutilizadas e outras alteradas de forma a conseguir enquadrar as novas funcionalidades. Por esta razão, no *Development View*, a componente *Game Modification Minecolonies* depende da componente *Game Base Minecraft*.
 
 Dentro da componente *Game Modification Minecolonies*, a componente *Manager* faz o tratamento, tanto da parte do cliente, como da parte do servidor, da informação recebida/enviada através da componente de *Network*, que trata das ligações cliente-servidor via proxy. A informação é tratada conforme o disponibilizado pela componente *Data*. Esta última, caracteriza toda a nova informação implementada pela modificação e que, por sua vez, depende de *Items* que define os novos itens inseridos no jogo. Temos ainda a componente *Achievements* que representa os novos tipo de objetivos alcançados pelo jogador. Esta componente depende da informação na componente *Data*.
@@ -52,6 +60,8 @@ Dentro da componente *Data*, a componente *Colony*, que define a colónia e a su
 ## Deployment View ##
 
 ![alt tag](resources/Diagrama de Deployment.png)
+
+Figura 5 - *Diagrama que representa a deployment view do projeto MineColonies*
 
 De acordo com o diagrama, é possível observar que existem três elementos obrigatórios para a utilização do **MineColonies**: um computador, um sistema operativo compatível e uma versão do jogo **Minecraft** com a modificação **MineColonies** instalada. O computador deverá obedecer aos seguintes requisitos mínimos:
 
@@ -69,7 +79,9 @@ O sistema operativo terá de ter o jogo **Minecraft** instalado que por sua vez 
 
 Uma vista de processo mostra em *run-time* a interação entre processos do sistema. **MineColonies** é uma modificação de **Minecraft**, e como tal os seus processos estão essencialmente relacionados com inicialização do jogo e o paralelismo de guardar/aceder estruturas de dados enquanto o utilizador joga. Estes processos são descritos no diagrama de atividades seguinte.
 
-![alt tag]()
+![alt tag](resources/processView.PNG)
+
+Figura 6 - *Diagrama que representa a process view do projeto MineColonies*
 
 Como se pode observar, após a inicialização do jogo, são executados os seguintes processos:
 
