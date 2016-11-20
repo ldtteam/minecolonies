@@ -6,6 +6,8 @@
 
 ## Logical View ##
 
+![alt tag](resources/Diagrama de Lógica.png)
+
 ## Development View ##
 
 ![alt tag](resources/Diagrama de Componentes.png)
