@@ -1,5 +1,7 @@
 package com.minecolonies.network.messages;
 
+import com.minecolonies.items.ItemScanTool;
+import com.minecolonies.util.ClientStructureWrapper;
 import com.minecolonies.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
@@ -58,7 +60,7 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
     @Override
     public IMessage onMessage(@NotNull SaveScanMessage message, MessageContext ctx)
     {
-        StructureWrapper.handleSaveScanMessage(message.nbttagcompound, message.storeLocation);
+        ClientStructureWrapper.handleSaveScanMessage(message.nbttagcompound, message.storeLocation);
         return null;
     }
 }

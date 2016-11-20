@@ -11,9 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -248,26 +245,6 @@ public final class StructureWrapper
         return true;
     }
 
-    public static void handleSaveScanMessage(NBTTagCompound nbttagcompound, String storeLocation)
-    {
-        File file = new File(Minecraft.getMinecraft().mcDataDir, storeLocation);
-        StructureWrapper.createScanDirectory(Minecraft.getMinecraft().theWorld);
-
-        try (OutputStream outputstream = new FileOutputStream(file))
-        {
-            CompressedStreamTools.writeCompressed(nbttagcompound, outputstream);
-        }
-        catch (Exception e)
-        {
-            LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("item.scepterSteel.scanFailure"));
-            return;
-        }
-
-        LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer,
-                LanguageHandler.format("item.scepterSteel.scanSuccess", storeLocation));
-
-    }
-
     /**
      * Increment progressPos.
      *
@@ -427,47 +404,6 @@ public final class StructureWrapper
             return null;
         }
         return state.getBlock();
-    }
-
-    /**
-     * Creates the scan directories for the scanTool.
-     * @param world the worldIn.
-     */
-    public static void createScanDirectory(@NotNull World world)
-    {
-        File minecolonies;
-        if (world.isRemote)
-        {
-            minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
-        }
-        else
-        {
-            MinecraftServer server = world.getMinecraftServer();
-            if(server != null)
-            {
-                minecolonies = server.getFile("minecolonies/");
-            }
-            else
-            {
-                return;
-            }
-        }
-        checkDirectory(minecolonies);
-
-        @NotNull File scans = new File(minecolonies, "scans/");
-        checkDirectory(scans);
-    }
-
-    /**
-     * Checks if directory exists, else creates it.
-     * @param directory the directory to check.
-     */
-    private static void checkDirectory(@NotNull File directory)
-    {
-        if (!directory.exists() && !directory.mkdirs())
-        {
-            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
-        }
     }
 
     /**

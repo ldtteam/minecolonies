@@ -6,7 +6,6 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.SaveScanMessage;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
-import com.minecolonies.util.StructureWrapper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
@@ -25,8 +24,14 @@ import net.minecraft.world.gen.structure.template.TemplateManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Item used to scan structures.
+ */
 public class ItemScanTool extends AbstractItemMinecolonies
 {
+    /**
+     * Creates instance of item.
+     */
     public ItemScanTool()
     {
         super("scepterSteel");
@@ -35,6 +40,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
         setMaxStackSize(1);
     }
 
+    @NotNull
     @Override
     public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
@@ -94,7 +100,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
      * @param to    Second corner.
      * @param player causing this action.
      */
-    public static void saveStructure(@Nullable World world, @Nullable BlockPos from, @Nullable BlockPos to, @NotNull EntityPlayer player)
+    private static void saveStructure(@Nullable World world, @Nullable BlockPos from, @Nullable BlockPos to, @NotNull EntityPlayer player)
     {
         if (world == null || from == null || to == null)
         {
@@ -120,5 +126,4 @@ public class ItemScanTool extends AbstractItemMinecolonies
 
         MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), fileName), (EntityPlayerMP) player);
     }
-
 }
