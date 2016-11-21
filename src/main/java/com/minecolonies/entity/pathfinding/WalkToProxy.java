@@ -5,6 +5,7 @@ import com.minecolonies.colony.buildings.BuildingMiner;
 import com.minecolonies.colony.jobs.JobMiner;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.citizen.miner.Level;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.EntityUtils;
 import com.minecolonies.util.Log;
 import net.minecraft.util.math.BlockPos;
@@ -20,7 +21,7 @@ public class WalkToProxy
     /**
      * The distance the worker can path directly without the proxy.
      */
-    private static final int MIN_RANGE_FOR_DIRECT_PATH = 400;
+    private static final int MIN_RANGE_FOR_DIRECT_PATH = 20;
 
     /**
      * The worker entity associated with the proxy.
@@ -35,7 +36,7 @@ public class WalkToProxy
     /**
      * The min distance a worker has to have to a proxy.
      */
-    private static final int MIN_DISTANCE = 25;
+    private static final int MIN_DISTANCE = 5;
 
     private ArrayList<BlockPos> proxyList = new ArrayList<>();
 
@@ -86,9 +87,10 @@ public class WalkToProxy
      * @param onMove worker on move or not?
      * @return true if arrived.
      */
+    //todo waypoints not loading on restart
     public boolean walkToBlock(@NotNull BlockPos target, int range, boolean onMove)
     {
-        double distanceToPath = worker.getPosition().distanceSq(target.getX(), target.getY(), target.getZ());
+        double distanceToPath = BlockPosUtil.getDistance(worker.getPosition(), target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
@@ -102,8 +104,12 @@ public class WalkToProxy
             currentProxy = fillProxyList(target, distanceToPath);
         }
 
-        double distanceToNextProxy = worker.getPosition().distanceSq(currentProxy.getX(), worker.getPosition().getY(), currentProxy.getZ());
-        if (distanceToNextProxy < MIN_DISTANCE)
+        double distanceToProxy = BlockPosUtil.getDistance2D(worker.getPosition(), currentProxy);
+        double distanceToNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistance2D(worker.getPosition(), target)
+                        : BlockPosUtil.getDistance2D(worker.getPosition(), proxyList.get(0));
+        double distanceProxyNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistance2D(currentProxy, target)
+                : BlockPosUtil.getDistance2D(currentProxy, proxyList.get(0));
+        if (distanceToProxy < MIN_DISTANCE || distanceToNextProxy < distanceProxyNextProxy)
         {
             if(proxyList.isEmpty())
             {
@@ -206,7 +212,7 @@ public class WalkToProxy
                 BlockPos newProxy;
 
                 //First calculate way to miner building.
-                newProxy = getProxy(buildingPos, worker.getPosition(), worker.getPosition().distanceSq(buildingPos.getX(), buildingPos.getY(), buildingPos.getZ()));
+                newProxy = getProxy(buildingPos, worker.getPosition(), BlockPosUtil.getDistance(worker.getPosition(), buildingPos));
 
                 //Then add the ladder position as the latest node.
                 proxyList.add(new BlockPos(ladderPos.getX(), level.getDepth(), ladderPos.getZ()));
@@ -242,10 +248,10 @@ public class WalkToProxy
 
         for(BlockPos building: worker.getColony().getWayPoints())
         {
-            double simpleDistance = position.distanceSq(building.getX(), position.getY(), building.getZ());
-            double currentWeight = simpleDistance*simpleDistance + building.getDistance(target.getX(), target.getY(), target.getZ());
+            double simpleDistance = BlockPosUtil.getDistance(position, building);
+            double currentWeight = simpleDistance*simpleDistance + BlockPosUtil.getDistance(building, target);
             if(currentWeight < weight
-                    && building.distanceSq(target.getX(), target.getY(), target.getZ()) < distanceToPath
+                    && BlockPosUtil.getDistance2D(building, target) < distanceToPath
                     && simpleDistance > MIN_DISTANCE
                     && simpleDistance < distanceToPath
                     && !proxyList.contains(proxyPoint))

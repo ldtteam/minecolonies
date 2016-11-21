@@ -153,6 +153,23 @@ public final class BlockPosUtil
         return xDiff + zDiff;
     }
 
+
+    /**
+     * Simple two dimensional distance between two points..
+     *
+     * @param block1 position one.
+     * @param block2 position two.
+     * @return squared distance.
+     */
+    public static long getDistance(@NotNull BlockPos block1, @NotNull BlockPos block2)
+    {
+        final long xDiff = (long) block1.getX() - block2.getX();
+        final long yDiff = (long) block1.getY() - block2.getY();
+        final long zDiff = (long) block1.getZ() - block2.getZ();
+
+        return xDiff + yDiff + zDiff;
+    }
+
     /**
      * Squared distance between two BlockPos.
      *
