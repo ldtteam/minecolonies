@@ -13,7 +13,6 @@ import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.*;
 import net.minecraft.block.*;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
@@ -247,13 +246,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         Colony colony = worker.getColony();
-        if(workOrder instanceof WorkOrderBuildDecoration)
+        if (workOrder instanceof WorkOrderBuildDecoration)
         {
             job.getStructure().rotate(workOrder.getRotation());
         }
-        else if(colony != null)
+        else if (colony != null)
         {
-            if(workOrder.getRotation() == 0)
+            if (workOrder.getRotation() == 0)
             {
                 IBlockState blockState = world.getBlockState(pos);
                 if (blockState.getBlock() instanceof AbstractBlockHut)
@@ -269,7 +268,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         job.getStructure().setPosition(pos);
         workOrder.setCleared(false);
     }
-
 
     private int getRotationFromFacing(EnumFacing facing)
     {
@@ -382,24 +380,46 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @NotNull
     private BlockPos getFloor(@NotNull BlockPos position)
     {
+        final BlockPos floor = getFloor(position, 0);
+        if (floor == null)
+        {
+            return position;
+        }
+        return floor;
+    }
+
+    /**
+     * Calculates the floor level
+     *
+     * @param position input position
+     * @param depth    the iteration depth
+     * @return returns BlockPos position with air above
+     */
+    @Nullable
+    private BlockPos getFloor(@NotNull BlockPos position, int depth)
+    {
+        if (depth > 50)
+        {
+            return null;
+        }
         //If the position is floating in Air go downwards
         if (!EntityUtils.solidOrLiquid(world, position))
         {
-            return getFloor(position.down());
+            return getFloor(position.down(), depth + 1);
         }
         //If there is no air above the block go upwards
         if (!EntityUtils.solidOrLiquid(world, position.up()))
         {
             return position;
         }
-        return getFloor(position.up());
+        return getFloor(position.up(), depth + 1);
     }
 
     private AIState clearStep()
     {
         WorkOrderBuild wo = job.getWorkOrder();
 
-        if(job.getStructure() == null)
+        if (job.getStructure() == null)
         {
             //fix for bad structures
             job.complete();
@@ -461,7 +481,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState requestMaterials()
     {
-        if(job.getStructure() == null)
+        if (job.getStructure() == null)
         {
             //fix for bad structures
             job.complete();
@@ -523,7 +543,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState structureStep()
     {
-        if(job.getStructure() == null)
+        if (job.getStructure() == null)
         {
             //fix for bad structures
             job.complete();
@@ -582,7 +602,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
     private AIState decorationStep()
     {
-        if(job.getStructure() == null)
+        if (job.getStructure() == null)
         {
             //fix for bad structures
             job.complete();
@@ -799,7 +819,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
-        if(isBlockFree(block, block.getMetaFromState(blockState)))
+        if (isBlockFree(block, block.getMetaFromState(blockState)))
         {
             return true;
         }
@@ -856,7 +876,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @NotNull
     private AIState completeBuild()
     {
-        if(job.getStructure() == null)
+        if (job.getStructure() == null)
         {
             //fix for bad structures
             job.complete();
