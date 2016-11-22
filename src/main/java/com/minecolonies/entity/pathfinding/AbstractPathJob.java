@@ -2,6 +2,7 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
@@ -674,8 +675,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
 
         boolean isSwimming = calculateSwimming(world, pos, node);
-        Block block = world.getBlockState(pos).getBlock();
-        boolean onRoad = block == Blocks.GRAVEL || block == Blocks.STONEBRICK;
+        boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos).getBlock());
         //  Cost may have changed due to a jump up or drop
         double stepCost = computeCost(parent, dPos, isSwimming, onRoad);
         double heuristic = computeHeuristic(pos);

@@ -230,8 +230,9 @@ public class Colony implements IColony
         final NBTTagList wayPointTagList = compound.getTagList(TAG_WAYPOINT, NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.tagCount(); ++i)
         {
-            final BlockPos pos = BlockPosUtil.readFromNBTTagList(wayPointTagList, i);
-            final IBlockState state = NBTUtil.readBlockState(wayPointTagList.getCompoundTagAt(i));
+            NBTTagCompound blockAtPos = wayPointTagList.getCompoundTagAt(i);
+            final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, TAG_WAYPOINT);
+            final IBlockState state = NBTUtil.readBlockState(blockAtPos);
             wayPoints.put(pos, state);
         }
     }
@@ -343,7 +344,6 @@ public class Colony implements IColony
         for (@NotNull final Map.Entry<BlockPos, IBlockState> entry : wayPoints.entrySet())
         {
             @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
-
             BlockPosUtil.writeToNBT(wayPointCompound, TAG_WAYPOINT, entry.getKey());
             NBTUtil.writeBlockState(wayPointCompound, entry.getValue());
 

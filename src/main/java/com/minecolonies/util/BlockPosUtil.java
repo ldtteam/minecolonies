@@ -150,7 +150,7 @@ public final class BlockPosUtil
         final long xDiff = (long) block1.getX() - block2.getX();
         final long zDiff = (long) block1.getZ() - block2.getZ();
 
-        return xDiff + zDiff;
+        return Math.abs(xDiff + zDiff);
     }
 
 
@@ -167,7 +167,7 @@ public final class BlockPosUtil
         final long yDiff = (long) block1.getY() - block2.getY();
         final long zDiff = (long) block1.getZ() - block2.getZ();
 
-        return xDiff + yDiff + zDiff;
+        return Math.abs(xDiff + yDiff + zDiff);
     }
 
     /**

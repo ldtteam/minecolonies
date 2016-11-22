@@ -2,6 +2,7 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -123,9 +124,9 @@ public class PathNavigate extends PathNavigateGround
             return pathResult;
         }
 
-        if(worldObj.getBlockState(new BlockPos(newX, newY, newZ)).getBlock() == Blocks.GRAVEL)
+        if(BlockUtils.isPathBlock(worldObj.getBlockState(new BlockPos(newX, newY, newZ)).getBlock()))
         {
-            speed *= 2;
+            speed *= 1.2;
         }
 
         final Vec3d moveVector = getEntityPosition().subtractReverse(new Vec3d(newX, newY, newZ));
