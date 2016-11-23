@@ -87,7 +87,6 @@ public class WalkToProxy
      * @param onMove worker on move or not?
      * @return true if arrived.
      */
-    //todo waypoints not loading on restart
     public boolean walkToBlock(@NotNull BlockPos target, int range, boolean onMove)
     {
         double distanceToPath = BlockPosUtil.getDistance(worker.getPosition(), target);

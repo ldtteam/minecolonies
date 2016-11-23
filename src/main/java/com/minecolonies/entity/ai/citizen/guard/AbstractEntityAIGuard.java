@@ -203,34 +203,34 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             return AIState.GUARD_RESTOCK;
         }
 
-            final AbstractBuildingWorker workBuilding = getOwnBuilding();
-            if (workBuilding != null)
+        final AbstractBuildingWorker workBuilding = getOwnBuilding();
+        if (workBuilding != null)
+        {
+            final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
+
+            for (int i = 0; i < workBuilding.getTileEntity().getSizeInventory(); i++)
             {
-                final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
+                final ItemStack stack = chest.getStackInSlot(i);
 
-                for (int i = 0; i < workBuilding.getTileEntity().getSizeInventory(); i++)
+                if (stack == null)
                 {
-                    final ItemStack stack = chest.getStackInSlot(i);
+                    continue;
+                }
 
-                    if (stack == null)
+                if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
+                {
+                    final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
+
+                    if (emptySlot != -1)
                     {
-                        continue;
-                    }
-
-                    if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
-                    {
-                        final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
-
-                        if (emptySlot != -1)
-                        {
-                            worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
-                            chest.setInventorySlotContents(i, null);
-                        }
+                        worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
+                        chest.setInventorySlotContents(i, null);
                     }
                 }
             }
-            attacksExecuted = 0;
-            return AIState.GUARD_SEARCH_TARGET;
+        }
+        attacksExecuted = 0;
+        return AIState.GUARD_SEARCH_TARGET;
     }
 
     @Override
@@ -250,7 +250,6 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         {
             return AIState.GUARD_PATROL;
         }
-
         Entity entity = entityList.get(0);
 
         BlockPos buildingLocation = getOwnBuilding().getLocation();
@@ -403,6 +402,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         final Colony colony = this.getOwnBuilding().getColony();
         colony.incrementMobsKilled();
         incrementActionsDone();
+        worker.getNavigator().clearPathEntity();
     }
 
     /**
