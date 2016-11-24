@@ -93,7 +93,7 @@ public class WalkToProxy
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
-            currentProxy = null;
+            currentProxy = target;
             proxyList = new ArrayList<>();
             return takeTheDirectPath(target, range, onMove);
         }
