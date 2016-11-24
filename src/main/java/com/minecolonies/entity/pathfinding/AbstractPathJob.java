@@ -266,7 +266,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if(onPath)
         {
-            cost /= 0.9D;
+            cost *= 0.75D;
         }
 
         if (isSwimming)

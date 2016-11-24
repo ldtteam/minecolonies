@@ -124,11 +124,6 @@ public class PathNavigate extends PathNavigateGround
             return pathResult;
         }
 
-        if(BlockUtils.isPathBlock(worldObj.getBlockState(new BlockPos(newX, newY, newZ)).getBlock()))
-        {
-            speed *= 1.4;
-        }
-
         final Vec3d moveVector = getEntityPosition().subtractReverse(new Vec3d(newX, newY, newZ));
         final double moveLength = moveVector.lengthVector();
         if (moveLength >= MAX_PATHING_LENGTH && !this.isUnableToReachDestination())
@@ -294,6 +289,17 @@ public class PathNavigate extends PathNavigateGround
                 }
 
                 this.entity.getMoveHelper().setMoveTo(Vec3d.xCoord, Vec3d.yCoord, Vec3d.zCoord, walkSpeed);
+            }
+            else
+            {
+                if(BlockUtils.isPathBlock(worldObj.getBlockState(entity.getPosition().down()).getBlock()))
+                {
+                    speed = 1.3;
+                }
+                else
+                {
+                    speed = 1.0;
+                }
             }
         }
 
