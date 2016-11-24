@@ -126,7 +126,7 @@ public class PathNavigate extends PathNavigateGround
 
         if(BlockUtils.isPathBlock(worldObj.getBlockState(new BlockPos(newX, newY, newZ)).getBlock()))
         {
-            speed *= 1.2;
+            speed *= 1.4;
         }
 
         final Vec3d moveVector = getEntityPosition().subtractReverse(new Vec3d(newX, newY, newZ));
