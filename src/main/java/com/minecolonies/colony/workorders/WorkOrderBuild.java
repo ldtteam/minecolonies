@@ -62,7 +62,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.buildingRotation = building.getRotation();
         this.cleared = level > 1;
 
-        if(MinecraftServer.class.getResourceAsStream("minecolonies:schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".nbt") == null)
+        if(MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".nbt") == null)
         {
             Log.getLogger().warn(String.format("StructureProxy in Style (%s) does not exist - switching to default", building.getStyle()));
             this.structureName = DEFAULT_STYLE + '/' + this.getUpgradeName();
