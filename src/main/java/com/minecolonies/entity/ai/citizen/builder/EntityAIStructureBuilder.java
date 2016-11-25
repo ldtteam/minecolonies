@@ -251,6 +251,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
         job.getStructure().setPosition(pos);
         workOrder.setCleared(false);
+        workOrder.setRequested(false);
     }
 
     private int getRotationFromFacing(EnumFacing facing)
@@ -472,7 +473,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
 
         //We need to deal with materials
-        if (!Configurations.builderInfiniteResources)
+        if (!Configurations.builderInfiniteResources && !job.getWorkOrder().isRequested())
         {
             while (job.getStructure().findNextBlock())
             {
@@ -486,7 +487,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
 
                 if (blockState != null
-                      && blockState != Blocks.AIR
+                      && blockState.getBlock() != Blocks.AIR
                       && worldBlock != Blocks.BEDROCK
                       && !(worldBlock instanceof AbstractBlockHut)
                       && !isBlockFree(blockState.getBlock(), 0))
@@ -511,6 +512,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             job.getStructure().reset();
             incrementBlock();
         }
+
+        job.getWorkOrder().setRequested(true);
         return AIState.BUILDER_STRUCTURE_STEP;
     }
 

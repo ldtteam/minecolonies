@@ -1412,7 +1412,9 @@ public class Colony implements IColony
 
     /**
      * Returns a list of all wayPoints of the colony.
-     * @return list of wayPoints
+     * @param position start position.
+     * @param target end position.
+     * @return list of wayPoints.
      */
     @NotNull
     public List<BlockPos> getWayPoints(@NotNull BlockPos position,@NotNull BlockPos target)
