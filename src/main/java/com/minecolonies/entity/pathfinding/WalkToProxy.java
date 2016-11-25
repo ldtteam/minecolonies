@@ -21,7 +21,7 @@ public class WalkToProxy
     /**
      * The distance the worker can path directly without the proxy.
      */
-    private static final int MIN_RANGE_FOR_DIRECT_PATH = 20;
+    private static final int MIN_RANGE_FOR_DIRECT_PATH = 400;
 
     /**
      * The worker entity associated with the proxy.
@@ -36,7 +36,7 @@ public class WalkToProxy
     /**
      * The min distance a worker has to have to a proxy.
      */
-    private static final int MIN_DISTANCE = 5;
+    private static final int MIN_DISTANCE = 25;
 
     private ArrayList<BlockPos> proxyList = new ArrayList<>();
 
@@ -93,7 +93,15 @@ public class WalkToProxy
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
-            currentProxy = target;
+            if(distanceToPath <= MIN_DISTANCE)
+            {
+                currentProxy = null;
+            }
+            else
+            {
+                currentProxy = target;
+            }
+
             proxyList = new ArrayList<>();
             return takeTheDirectPath(target, range, onMove);
         }
@@ -244,7 +252,6 @@ public class WalkToProxy
         double weight = Double.MAX_VALUE;
         BlockPos proxyPoint = null;
 
-        //todo getWayPoints only returns waypoint which are kinda between the position and the target.
         for(BlockPos wayPoint: worker.getColony().getWayPoints(position, target))
         {
             double simpleDistance = BlockPosUtil.getDistanceSquared(position, wayPoint);
