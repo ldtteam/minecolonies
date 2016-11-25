@@ -7,8 +7,21 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobBuilder;
+import com.minecolonies.entity.ai.citizen.miner.Level;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.BufferUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The builders building.
@@ -22,7 +35,18 @@ public class BuildingBuilder extends AbstractBuildingWorker
     /**
      * The job description.
      */
-    private static final String BUILDER            = "Builder";
+    private static final String BUILDER           = "Builder";
+
+    /**
+     * Tags to store the needed resourced to nbt.
+     */
+    private static final String TAG_RESOURCE_LIST = "resources";
+    private static final String TAG_AMOUNT        = "amount";
+
+    /**
+     * Contains all resources needed for a certain build.
+     */
+    private HashMap<Block, Integer> neededResources = new HashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -102,10 +126,118 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * Get the needed resources for the current build.
+     * @return a new Hashmap.
+     */
+    public Map<Block, Integer> getNeededResources()
+    {
+        return new HashMap<>(neededResources);
+    }
+
+    /**
+     * Add a new resource to the needed list.
+     * @param res the resource.
+     * @param amount the amount.
+     */
+    public void addNeededResource(Block res, int amount)
+    {
+        int preAmount = 0;
+        if(this.neededResources.containsKey(res))
+        {
+            preAmount = this.neededResources.get(res);
+        }
+        this.neededResources.put(res, preAmount + amount);
+        this.markDirty();
+    }
+
+    /**
+     * Reduce a resource of the needed list.
+     * @param res the resource.
+     * @param amount the amount.
+     */
+    public void reduceNeededResource(Block res, int amount)
+    {
+        int preAmount = 0;
+        if(this.neededResources.containsKey(res))
+        {
+            preAmount = this.neededResources.get(res);
+        }
+
+        if(preAmount - amount <= 0)
+        {
+            this.neededResources.remove(res);
+        }
+        else
+        {
+            this.neededResources.put(res, preAmount - amount);
+        }
+        this.markDirty();
+    }
+
+    /**
+     * Resets the needed resources completely.
+     */
+    public void resetNeededResources()
+    {
+        neededResources = new HashMap<>();
+        this.markDirty();
+    }
+
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        final NBTTagList neededResTagList = compound.getTagList(TAG_RESOURCE_LIST, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < neededResTagList.tagCount(); ++i)
+        {
+            NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
+            final IBlockState state = NBTUtil.readBlockState(neededRes);
+            final int amount = neededRes.getInteger(TAG_AMOUNT);
+            neededResources.put(state.getBlock(), amount);
+        }
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        @NotNull final NBTTagList neededResTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<Block, Integer> entry : neededResources.entrySet())
+        {
+            @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
+            NBTUtil.writeBlockState(neededRes, entry.getKey().getDefaultState());
+            neededRes.setInteger(TAG_AMOUNT, entry.getValue());
+
+            neededResTagList.appendTag(neededRes);
+        }
+        compound.setTag(TAG_RESOURCE_LIST, neededResTagList);
+    }
+
+    /**
+     * Method to serialize data to send it to the view.
+     *
+     * @param buf the used ByteBuffer.
+     */
+    @Override
+    public void serializeToView(@NotNull ByteBuf buf)
+    {
+        super.serializeToView(buf);
+
+        buf.writeInt(neededResources.size());
+
+        for (@NotNull final Map.Entry<Block, Integer> entry : neededResources.entrySet())
+        {
+            ByteBufUtils.writeUTF8String(buf, entry.getKey().getLocalizedName());
+            buf.writeInt(entry.getValue());
+        }
+    }
+
+    /**
      * Provides a view of the builder building class.
      */
     public static class View extends AbstractBuildingWorker.View
     {
+        private HashMap<String, Integer> neededResources;
         /**
          * Public constructor of the view, creates an instance of it.
          *
@@ -126,6 +258,31 @@ public class BuildingBuilder extends AbstractBuildingWorker
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutBuilder(this);
+        }
+
+        @Override
+        public void deserialize(@NotNull ByteBuf buf)
+        {
+            super.deserialize(buf);
+
+            int size = buf.readInt();
+            neededResources = new HashMap<>();
+
+            for (int i = 0; i < size; i++)
+            {
+                String block = ByteBufUtils.readUTF8String(buf);
+                int amount = buf.readInt();
+                neededResources.put(block, amount);
+            }
+        }
+
+        /**
+         * Getter for the needed resources.
+         * @return a copy of the HashMap<String, Object>.
+         */
+        public Map<String, Integer> getNeededResources()
+        {
+            return new HashMap<>(neededResources);
         }
     }
 }

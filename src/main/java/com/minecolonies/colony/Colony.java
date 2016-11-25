@@ -1414,11 +1414,29 @@ public class Colony implements IColony
      * Returns a list of all wayPoints of the colony.
      * @return list of wayPoints
      */
-    public List<BlockPos> getWayPoints()
+    @NotNull
+    public List<BlockPos> getWayPoints(@NotNull BlockPos position,@NotNull BlockPos target)
     {
         List<BlockPos> tempWayPoints = new ArrayList<>();
         tempWayPoints.addAll(wayPoints.keySet());
         tempWayPoints.addAll(getBuildings().keySet());
+
+        double maxX = Math.max(position.getX(), target.getX());
+        double maxZ = Math.max(position.getZ(), target.getZ());
+
+        double minX = Math.min(position.getX(), target.getX());
+        double minZ = Math.min(position.getZ(), target.getZ());
+
+        List<BlockPos> wayPointsCopy = new ArrayList<>(tempWayPoints);
+        for(BlockPos p: wayPointsCopy)
+        {
+            int x = p.getX();
+            int z = p.getZ();
+            if(x < minX || x > maxX || z < minZ || z > maxZ)
+            {
+                tempWayPoints.remove(p);
+            }
+        }
 
         return tempWayPoints;
     }

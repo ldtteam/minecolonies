@@ -3,11 +3,13 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.StructureWrapper;
+import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -185,6 +187,18 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
+     * Reset the needed items list.
+     */
+    private void resetNeededItems()
+    {
+        AbstractBuilding workerBuilding = this.getCitizen().getWorkBuilding();
+        if(workerBuilding instanceof BuildingBuilder)
+        {
+            ((BuildingBuilder) workerBuilding).resetNeededResources();
+        }
+    }
+
+    /**
      * Set a Work Order for this Job.
      *
      * @param order Work Order to associate with this job, or null
@@ -194,6 +208,7 @@ public class JobBuilder extends AbstractJob
         if (order == null)
         {
             workOrderId = 0;
+            resetNeededItems();
         }
         else
         {

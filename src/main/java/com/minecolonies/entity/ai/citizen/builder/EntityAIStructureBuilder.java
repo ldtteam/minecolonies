@@ -4,6 +4,7 @@ import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.colony.jobs.JobBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
@@ -29,6 +30,7 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -152,8 +154,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return false;
     }
 
-    //todo why does this return AIState if it isn't used.
-    private AIState initiate()
+    private void initiate()
     {
         if (!job.hasStructure())
         {
@@ -167,7 +168,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                   String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)",
                     worker.getColony().getID(),
                     worker.getCitizenData().getId(), job.getWorkOrderId()));
-                return this.getState();
+                return;
             }
 
             if (wo instanceof WorkOrderBuildDecoration)
@@ -175,12 +176,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
                   "entity.builder.messageBuildStart",
                   job.getStructure().getName());
-
-                if (!job.hasStructure() || !job.getStructure().decrementBlock())
-                {
-                    return this.getState();
-                }
-                return AIState.START_WORKING;
             }
             else
             {
@@ -190,7 +185,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     Log.getLogger().error(
                       String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)",
                         worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()));
-                    return this.getState();
+                    return;
                 }
 
                 LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
@@ -201,26 +196,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 if (building.getBuildingLevel() > 0)
                 {
                     wo.setCleared(true);
-                    if (!job.hasStructure() || !incrementBlock())
-                    {
-                        return this.getState();
-                    }
-                    return AIState.BUILDER_REQUEST_MATERIALS;
-                }
-                else
-                {
-                    if (!job.hasStructure() || !job.getStructure().decrementBlock())
-                    {
-                        return this.getState();
-                    }
-                    return AIState.START_WORKING;
                 }
             }
         }
-
-        BlockPosUtil.tryMoveLivingToXYZ(worker, job.getStructure().getPosition());
-
-        return AIState.IDLE;
     }
 
     private void loadStructure()
@@ -433,7 +411,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         if (wo.isCleared())
         {
-            return AIState.BUILDER_STRUCTURE_STEP;
+            return AIState.BUILDER_REQUEST_MATERIALS;
         }
 
         BlockPos coordinates = job.getStructure().getBlockPosition();
@@ -493,11 +471,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             job.complete();
         }
 
-        //todo as soon as material handling has been implemented this should be set to work!
         //We need to deal with materials
         if (!Configurations.builderInfiniteResources)
         {
-            //TODO thread this
             while (job.getStructure().findNextBlock())
             {
                 if (job.getStructure().doesStructureBlockEqualWorldBlock())
@@ -505,21 +481,31 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     continue;
                 }
 
-                @Nullable Block block = job.getStructure().getBlock();
-                @NotNull ItemStack itemstack = new ItemStack(block, 1);
+                @Nullable IBlockState blockState = job.getStructure().getBlockState();
 
                 Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
 
-                if (itemstack.getItem() != null
-                      && block != null
-                      && block != Blocks.AIR
+                if (blockState != null
+                      && blockState != Blocks.AIR
                       && worldBlock != Blocks.BEDROCK
                       && !(worldBlock instanceof AbstractBlockHut)
-                      && !isBlockFree(block, 0)
-                      && checkOrRequestItems(new ItemStack(block)))
+                      && !isBlockFree(blockState.getBlock(), 0))
                 {
-                    job.getStructure().reset();
-                    return this.getState();
+                    if(blockState instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                    {
+                        continue;
+                    }
+                    else if(blockState instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
+                    {
+                        continue;
+                    }
+
+                    AbstractBuilding building = getOwnBuilding();
+                    if(building instanceof BuildingBuilder)
+                    {
+                        Block block = blockState.getBlock();
+                        ((BuildingBuilder) building).addNeededResource(block, 1);
+                    }
                 }
             }
             job.getStructure().reset();
@@ -841,13 +827,26 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
+            reduceNeededResources(block);
         }
         return true;
     }
 
+    /**
+     * Reduces the needed resources by 1.
+     * @param block the block which has been used now.
+     */
+    private void reduceNeededResources(Block block)
+    {
+        AbstractBuilding workerBuilding = this.getOwnBuilding();
+        if(workerBuilding instanceof BuildingBuilder)
+        {
+            ((BuildingBuilder) workerBuilding).reduceNeededResource(block, 1);
+        }
+    }
+
     private void setTileEntity(@NotNull BlockPos pos)
     {
-        //TODO do we need to load TileEntities when building?
         @Nullable TileEntity tileEntity = job.getStructure().getTileEntity();
         if (tileEntity != null && world.getTileEntity(pos) != null)
         {
@@ -930,6 +929,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
               job.getWorkOrderId()));
         }
 
+        AbstractBuilding workerBuilding = getOwnBuilding();
+        if(workerBuilding instanceof BuildingBuilder)
+        {
+            ((BuildingBuilder) workerBuilding).resetNeededResources();
+        }
         resetTask();
         worker.addExperience(XP_EACH_BUILDING);
         workFrom = null;

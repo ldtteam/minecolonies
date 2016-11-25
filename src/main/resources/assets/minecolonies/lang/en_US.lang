@@ -130,6 +130,7 @@ achievement.upgrade.townhall.first.desc=Build a townhall!
 achievement.upgrade.townhall.max=I am the King!
 achievement.upgrade.townhall.max.desc=What a King!
 com.minecolonies.gui.workerHuts.minerNodeList=Levels
+com.minecolonies.gui.workerHuts.resourceList=Required Resources
 com.minecolonies.job.Miner=Miner
 com.minecolonies.gui.warehouse.toBlacksmith=Deliver to Blacksmith:
 tile.minecolonies.blockHutWarehouse.name=Warehouse
