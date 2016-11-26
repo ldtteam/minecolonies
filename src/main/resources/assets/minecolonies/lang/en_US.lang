@@ -218,3 +218,7 @@ com.minecolonies.gui.workerHuts.task.guard=Guard
 com.minecolonies.gui.workerHuts.task.patrol=Patrol
 com.minecolonies.gui.workerHuts.task.follow=Follow
 item.minecolonies.scepterGuard.name=Guard-scepter
+
+com.minecolonies.gui.workerHuts.noSpace=Please make space in your inventory in order to use this functionality.
+
+// tell player to make space

@@ -4,14 +4,14 @@ import com.blockout.Pane;
 import com.blockout.controls.Button;
 import com.blockout.views.ScrollingList;
 import com.blockout.views.SwitchView;
-import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.colony.buildings.BuildingGuardTower;
-import com.minecolonies.items.ItemScepterGuard;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -176,8 +176,22 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
     private void switchTask(final Button button)
     {
+        EntityPlayerSP player = this.mc.thePlayer;
+        int emptySlot = player.inventory.getFirstEmptyStack();
+
         if(button.getLabel().contains("Patrol"))
         {
+            if(building.patrolManually)
+            {
+                if(emptySlot == -1)
+                {
+                    LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.gui.workerHuts.noSpace");
+                    return;
+                }
+                givePlayerScepter(player, emptySlot, BuildingGuardTower.Task.PATROL);
+                //todo send message to player which tells him what he has to do:
+            }
+
             building.task = BuildingGuardTower.Task.PATROL;
 
             buttonTaskPatrol.setEnabled(false);
@@ -196,27 +210,43 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         }
         else
         {
-            building.task = BuildingGuardTower.Task.GUARD;
+            if(emptySlot == -1)
+            {
+                LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.gui.workerHuts.noSpace");
+                return;
+            }
+            givePlayerScepter(player, emptySlot, BuildingGuardTower.Task.GUARD);
+            //todo send message to player which tells him what he has to do:
 
+            building.task = BuildingGuardTower.Task.GUARD;
             buttonTaskGuard.setEnabled(false);
 
             buttonTaskPatrol.setEnabled(true);
             buttonTaskFollow.setEnabled(true);
         }
+    }
 
-        //todo send message to player which tells him what he has to do:
-        //todo if guard -> right click one block to mark it as guard position
-        //todo if follow -> don't give stick
-        //todo if patrol + manual -> "Right click blocks to mark them as patrol targets left click to terminate.
-        //todo if patrol + auto -> don't give
+    private void givePlayerScepter(EntityPlayerSP player, int emptySlot, BuildingGuardTower.Task task)
+    {
+        ItemStack scepter = new ItemStack(ModItems.scepterGuard);
+        if (!scepter.hasTagCompound())
+        {
+            scepter.setTagCompound(new NBTTagCompound());
+        }
+        NBTTagCompound compound = scepter.getTagCompound();
 
-        //todo send message to server with task
-        //todo at server in the tool recognize which task he should follow, following that message.
-        EntityPlayerSP player = this.mc.thePlayer;
+        //Should never happen.
+        if(compound == null)
+        {
+            return;
+        }
+        compound.setInteger("task", task.ordinal());
+        BlockPosUtil.writeToNBT(compound, "pos", building.getID());
+        scepter.setTagCompound(compound);
 
-        //todo put the itemStack into an empty slot. If no empty slot, tell player to make space
         ItemStack item = player.inventory.getStackInSlot(player.inventory.currentItem);
-        player.inventory.setInventorySlotContents(player.inventory.currentItem, new ItemStack(ModItems.scepterGuard));
+        player.inventory.setInventorySlotContents(emptySlot, item);
+        player.inventory.setInventorySlotContents(player.inventory.currentItem, scepter);
     }
 
     private void switchRetrievalMode(final Button button)
