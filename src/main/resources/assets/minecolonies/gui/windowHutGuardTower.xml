@@ -1,0 +1,45 @@
+<window inherit="minecolonies:gui/windowBase.xml">
+    <switch id="pages" size="100% 200px" pos="0 7">
+        <view id="pageActions" size="100% 100%">
+            <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
+        </view>
+
+        <view id="levelActions" size="100% 100%" >
+
+            <label size="100% 11" pos="0 0"
+                   label="$(com.minecolonies.gui.workerHuts.guardActions)" color="black" textalign="BottomMiddle"/>
+
+            <button id="job" size="50% 15" pos="40 15" label="$(com.minecolonies.gui.workerHuts.knight)"/>
+
+            <label size="50% 11" pos="40 30" label="$(com.minecolonies.gui.workerHuts.assign)" color="black" textalign="BottomMiddle"/>
+            <button id="assign" size="50% 12" pos="40 45" label="$(com.minecolonies.gui.workerHuts.modeA)"/>
+            <label size="50% 11" pos="40 60" label="$(com.minecolonies.gui.workerHuts.patrol)" color="black" textalign="BottomMiddle"/>
+            <button id="patrol" size="50% 12" pos="40 75" label="$(com.minecolonies.gui.workerHuts.modeA)"/>
+
+            <label size="50% 11" pos="40 90" label="$(com.minecolonies.gui.workerHuts.retrieve)" color="black" textalign="BottomMiddle"/>
+            <button id="retrieve" size="50% 12" pos="40 105" label="$(com.minecolonies.gui.workerHuts.retrieveOff)"/>
+
+            <button id="patrolling" size="30% 14" pos="10 125" label="$(com.minecolonies.gui.workerHuts.task.patrol)"/>
+            <button id="following" size="30% 14" pos="62 125" label="$(com.minecolonies.gui.workerHuts.task.follow)"/>
+            <button id="guarding" size="30% 14" pos="114 125" label="$(com.minecolonies.gui.workerHuts.task.guard)"/>
+
+
+            <list id="positions" size="78% 85%" pos="30 150" >
+                <box size="100% 30" linewidth="2">
+                    <label id="lvl" size="100 12" pos="5 2" textalign="MiddleLeft" color="black"/>
+                    <button id="changeToLevel" size="100 12" pos="5 2" align="TopRight" label="$(com.minecolonies.gui.workerHuts.minerMineNode)"/>
+                    <label id="nONodes" size="50 12" pos="35 16" textalign="MiddleLeft" color="black"/>
+                </box>
+            </list>
+
+        </view>
+
+
+    </switch>
+    <button id="prevPage" align="TopLeft" size="20 20" pos="10 5" label="&lt;&lt;"/>
+    <button id="nextPage" align="TopRight" size="20 20" pos="10 5" label="&gt;&gt;"/>
+
+    <button id="inventory"
+            align="BottomMiddle" size="116 20" pos="0 13"
+            label="$(container.inventory)" />
+</window>

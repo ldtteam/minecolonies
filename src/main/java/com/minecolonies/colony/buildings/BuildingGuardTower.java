@@ -1,15 +1,23 @@
 package com.minecolonies.colony.buildings;
 
 import com.minecolonies.achievements.ModAchievements;
+import com.minecolonies.client.gui.WindowHutGuardTower;
 import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobGuard;
+import com.minecolonies.util.BlockPosUtil;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
 
 /**
  * Building class of the guard tower.
@@ -21,6 +29,11 @@ public class BuildingGuardTower extends AbstractBuildingWorker
      */
     private static final String GUARD_TOWER = "GuardTower";
 
+    /**
+     * TAG to store his task to nbt.
+     */
+    private static final String TAG_TASK  = "TASK";
+    private static final String TAG_JOB = "job";
     /**
      * Max level of the guard hut.
      */
@@ -44,7 +57,62 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     /**
      * Vision bonus per level.
      */
-    private static final int VISION_BONUS = 5;
+    private static final int VISION_BONUS          = 5;
+    private static final String TAG_ASSIGN         = "assign";
+    private static final String TAG_RETRIEVE       = "retrieve";
+    private static final String TAG_PATROL         = "patrol";
+    private static final String TAG_PATROL_TARGETS = "patrol targets";
+    private static final String TAG_TARGET         = "target";
+
+    /**
+     * Assign the job manually, knight or ranger.
+     */
+    private boolean assignManually = false;
+
+    /**
+     * Retrieve the guard on low health.
+     */
+    private boolean retrieveOnLowHealth = false;
+
+    /**
+     * Patrol manually or automatically.
+     */
+    private boolean patrolManually = false;
+
+    /**
+     * The task of the guard, following the Task enum.
+     */
+    private Task task = Task.GUARD;
+
+    /**
+     * The job of the guard, following the GuarJob enum.
+     */
+    private GuardJob job = null;
+
+    /**
+     * The list of manual patrol targets.
+     */
+    private ArrayList<BlockPos> patrolTargets = new ArrayList<>();
+
+    /**
+     * Possible job/AI.
+     */
+    public enum GuardJob
+    {
+        KNIGHT,
+        RANGER,
+    }
+
+    /**
+     * Possible tasks.
+     */
+    public enum Task
+    {
+        FOLLOW,
+        GUARD,
+        PATROL
+    }
+
 
     /**
      * Constructor for the guardTower building.
@@ -56,6 +124,26 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     {
         super(c, l);
     }
+
+
+    /**
+     * Sets the job/ai of the guard.
+     * @param job the job to set.
+     */
+    public void setJob(GuardJob job)
+    {
+        this.job = job;
+    }
+
+    /**
+     * Gets the job/ai of the guard.
+     * @return the enum job.
+     */
+    public GuardJob getJob()
+    {
+        return this.job;
+    }
+
 
     /**
      * Gets the name of the schematic.
@@ -167,11 +255,79 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         return MAX_VISION_BONUS_MULTIPLIER * VISION_BONUS;
     }
 
+    @Override
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+        task = Task.values()[compound.getInteger(TAG_TASK)];
+        int jobId = compound.getInteger(TAG_JOB);
+        job = jobId == -1 ? null : GuardJob.values()[jobId];
+        assignManually = compound.getBoolean(TAG_ASSIGN);
+        retrieveOnLowHealth = compound.getBoolean(TAG_RETRIEVE);
+        patrolManually = compound.getBoolean(TAG_PATROL);
+
+        final NBTTagList wayPointTagList = compound.getTagList(TAG_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < wayPointTagList.tagCount(); ++i)
+        {
+            NBTTagCompound blockAtPos = wayPointTagList.getCompoundTagAt(i);
+            final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, TAG_TARGET);
+            patrolTargets.add(pos);
+        }
+    }
+
+    @Override
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+        compound.setInteger(TAG_TASK, task.ordinal());
+        compound.setInteger(TAG_JOB, job == null ? -1 : job.ordinal());
+        compound.setBoolean(TAG_ASSIGN, assignManually);
+        compound.setBoolean(TAG_RETRIEVE, retrieveOnLowHealth);
+        compound.setBoolean(TAG_PATROL, patrolManually);
+
+        @NotNull final NBTTagList wayPointTagList = new NBTTagList();
+        for (@NotNull final BlockPos pos: patrolTargets)
+        {
+            @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
+            BlockPosUtil.writeToNBT(wayPointCompound, TAG_TARGET, pos);
+
+
+            wayPointTagList.appendTag(wayPointCompound);
+        }
+        compound.setTag(TAG_PATROL_TARGETS, wayPointTagList);
+    }
+
+    @Override
+    public void serializeToView(@NotNull final ByteBuf buf)
+    {
+        super.serializeToView(buf);
+        buf.writeBoolean(assignManually);
+        buf.writeBoolean(retrieveOnLowHealth);
+        buf.writeBoolean(patrolManually);
+        buf.writeInt(task.ordinal());
+        buf.writeInt(job == null ? -1 : job.ordinal());
+        buf.writeInt(patrolTargets.size());
+
+        for(BlockPos pos: patrolTargets)
+        {
+            BlockPosUtil.writeToByteBuf(buf, pos);
+        }
+    }
+
     /**
      * The client view for the baker building.
      */
+    //todo something going wrong with the task serialization.
     public static class View extends AbstractBuildingWorker.View
     {
+        public boolean assignManually = false;
+        public boolean retrieveOnLowHealth = false;
+        public boolean patrolManually = false;
+        public Task task = Task.GUARD;
+        public GuardJob job = null;
+
+        public ArrayList<BlockPos> patrolTargets = new ArrayList<>();
+
         /**
          * The client view constructor for the baker building.
          *
@@ -192,7 +348,27 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         @Override
         public com.blockout.views.Window getWindow()
         {
-            return new WindowHutWorkerPlaceholder<>(this, GUARD_TOWER);
+            return new WindowHutGuardTower(this);
+        }
+
+        @Override
+        public void deserialize(@NotNull final ByteBuf buf)
+        {
+            super.deserialize(buf);
+            assignManually = buf.readBoolean();
+            retrieveOnLowHealth = buf.readBoolean();
+            patrolManually = buf.readBoolean();
+            task = Task.values()[buf.readInt()];
+            int jobId = buf.readInt();
+            job = jobId == -1 ? null : GuardJob.values()[jobId];
+
+            int size = buf.readInt();
+            patrolTargets = new ArrayList<>();
+
+            for(int i = 0; i < size; i++)
+            {
+                patrolTargets.add(BlockPosUtil.readFromByteBuf(buf));
+            }
         }
     }
 }

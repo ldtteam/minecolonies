@@ -2,11 +2,12 @@ package com.minecolonies.colony.jobs;
 
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.guard.EntityAIMeleeGuard;
 import com.minecolonies.entity.ai.citizen.guard.EntityAIRangeGuard;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.Random;
 
 /**
@@ -18,7 +19,6 @@ public class JobGuard extends AbstractJob
      * The higher the number the lower the chance to spawn a knight. Default: 3, 50% chance.
      */
     private static final int GUARD_CHANCE = 3;
-    private GuardJob task = GuardJob.RANGER;
 
     /**
      * Public constructor of the farmer job.
@@ -41,14 +41,40 @@ public class JobGuard extends AbstractJob
     @Override
     public RenderBipedCitizen.Model getModel()
     {
+        final AbstractBuilding building = getCitizen().getWorkBuilding();
+        if(building instanceof BuildingGuardTower)
+        {
+            BuildingGuardTower.GuardJob job = ((BuildingGuardTower) building).getJob();
+            if (job == null)
+            {
+                job = generateRandomAI((BuildingGuardTower) building);
+            }
+
+            if (job == BuildingGuardTower.GuardJob.KNIGHT)
+            {
+                return RenderBipedCitizen.Model.KNIGHT_GUARD;
+            }
+            return RenderBipedCitizen.Model.ARCHER_GUARD;
+        }
+        return RenderBipedCitizen.Model.ARCHER_GUARD;
+    }
+
+    /**
+     * Sets a random job of the job hasn't been set yet.
+     * @param building the building of the guard.
+     * @return the new job.
+     */
+    @NotNull
+    private static BuildingGuardTower.GuardJob generateRandomAI(@NotNull final BuildingGuardTower building)
+    {
         final int chance = new Random().nextInt(GUARD_CHANCE);
         if (chance == 1)
         {
-            task = GuardJob.KNIGHT;
-            return RenderBipedCitizen.Model.KNIGHT_GUARD;
+            building.setJob(BuildingGuardTower.GuardJob.KNIGHT);
+            return BuildingGuardTower.GuardJob.KNIGHT;
         }
-        task = GuardJob.RANGER;
-        return RenderBipedCitizen.Model.ARCHER_GUARD;
+        building.setJob(BuildingGuardTower.GuardJob.RANGER);
+        return BuildingGuardTower.GuardJob.RANGER;
     }
 
     /**
@@ -58,16 +84,16 @@ public class JobGuard extends AbstractJob
     @Override
     public AbstractAISkeleton<? extends AbstractJob> generateAI()
     {
-        if (task == GuardJob.KNIGHT)
+        final AbstractBuilding building = getCitizen().getWorkBuilding();
+        if(building instanceof BuildingGuardTower)
         {
-            return new EntityAIMeleeGuard(this);
+            final BuildingGuardTower.GuardJob job = ((BuildingGuardTower) building).getJob();
+            if (job == BuildingGuardTower.GuardJob.KNIGHT)
+            {
+                return new EntityAIMeleeGuard(this);
+            }
+            return new EntityAIRangeGuard(this);
         }
         return new EntityAIRangeGuard(this);
-    }
-
-    private enum GuardJob
-    {
-        KNIGHT,
-        RANGER,
     }
 }

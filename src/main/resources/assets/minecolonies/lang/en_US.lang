@@ -202,3 +202,19 @@ com.minecolonies.gui.workerHuts.level0=Please construct the hut to hire a worker
 com.minecolonies.job.guard.name=GuardTower
 com.minecolonies.job.guard.needWeapon=a weapon!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
+
+com.minecolonies.gui.workerHuts.guardActions=Guard-actions:
+com.minecolonies.gui.workerHuts.assign=Assign the guard to the job:
+com.minecolonies.gui.workerHuts.patrol=Find patrol target:
+com.minecolonies.gui.workerHuts.retrieve=Try to retrieve on low health:
+com.minecolonies.gui.workerHuts.knight=Knight
+com.minecolonies.gui.workerHuts.ranger=Ranger
+com.minecolonies.gui.workerHuts.modeM=Manually
+com.minecolonies.gui.workerHuts.modeA=Automatically
+
+com.minecolonies.gui.workerHuts.retrieveOff=Off
+
+com.minecolonies.gui.workerHuts.task.guard=Guard
+com.minecolonies.gui.workerHuts.task.patrol=Patrol
+com.minecolonies.gui.workerHuts.task.follow=Follow
+item.minecolonies.scepterGuard.name=Guard-scepter
