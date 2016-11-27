@@ -2,7 +2,6 @@ package com.minecolonies.colony.buildings;
 
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.client.gui.WindowHutGuardTower;
-import com.minecolonies.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
@@ -85,6 +84,11 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     private Task task = Task.GUARD;
 
     /**
+     * Position the guard should guard at.
+     */
+    private BlockPos guardPos = this.getID();
+
+    /**
      * The job of the guard, following the GuarJob enum.
      */
     private GuardJob job = null;
@@ -133,6 +137,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     public void setJob(GuardJob job)
     {
         this.job = job;
+        this.markDirty();
     }
 
     /**
@@ -143,7 +148,6 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     {
         return this.job;
     }
-
 
     /**
      * Gets the name of the schematic.
@@ -166,6 +170,44 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     public int getMaxBuildingLevel()
     {
         return GUARD_HUT_MAX_LEVEL;
+    }
+
+    /**
+     * Adds new patrolTargets.
+     * @param target the target to add
+     */
+    public void addPatrolTargets(final BlockPos target)
+    {
+        this.patrolTargets.add(target);
+        this.markDirty();
+    }
+
+    /**
+     * Sets the guards guard target.
+     * @param target the target to set.
+     */
+    public void setGuardTarget(final BlockPos target)
+    {
+        this.guardPos = target;
+        this.markDirty();
+    }
+
+    /**
+     * Resets the patrolTargets list.
+     */
+    public void resetPatrolTargets()
+    {
+        this.patrolTargets = new ArrayList<>();
+        this.markDirty();
+    }
+
+    /**
+     * Getter of the guard task.
+     * @return the task of the guard (Patrol, Follow, Guard).
+     */
+    public Task getTask()
+    {
+        return this.task;
     }
 
     @Override
@@ -312,6 +354,73 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         {
             BlockPosUtil.writeToByteBuf(buf, pos);
         }
+    }
+
+    /**
+     * Check if the guard should retrieve on low health.
+     * @return true if so.
+     */
+    public boolean shallRetrieveOnLowHealth()
+    {
+        return retrieveOnLowHealth;
+    }
+
+    /**
+     * Set if the guard should retrieve on low health.
+     * @param retrieveOnLowHealth state to set.
+     */
+    public void setRetrieveOnLowHealth(final boolean retrieveOnLowHealth)
+    {
+        this.retrieveOnLowHealth = retrieveOnLowHealth;
+        this.markDirty();
+    }
+
+    /**
+     * Check if the guard should patrol manually (Use defined values).
+     * @return true if so.
+     */
+    public boolean shallPatrolManually()
+    {
+        return patrolManually;
+    }
+
+    /**
+     * Set if the guard should patrol manually.
+     * @param patrolManually the state to set.
+     */
+    public void setPatrolManually(final boolean patrolManually)
+    {
+        this.patrolManually = patrolManually;
+        this.markDirty();
+    }
+
+    /**
+     * Set the task of the guard.
+     * @param task the task to set.
+     */
+    public void setTask(final Task task)
+    {
+        this.task = task;
+        this.markDirty();
+    }
+
+    /**
+     * Getter of the position the gurd should guard.
+     * @return the blockPos position.
+     */
+    public BlockPos getGuardPos()
+    {
+        return guardPos;
+    }
+
+    /**
+     * Set if the jobs should be assigned manually.
+     * @param assignManually the state to set.
+     */
+    public void setAssignManually(final boolean assignManually)
+    {
+        this.assignManually = assignManually;
+        this.markDirty();
     }
 
     /**

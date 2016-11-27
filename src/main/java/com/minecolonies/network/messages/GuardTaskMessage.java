@@ -2,7 +2,7 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.buildings.BuildingFarmer;
+import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
@@ -17,14 +17,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage>
 {
-    //todo assignment (range, knight)
-    //todo patrol (manual, auto)
-    //todo assign (manual, auto)
-    //todo retrieve (off /10% / 20%)
-    //todo task - patrol, follow, guard
     private int      colonyId;
     private BlockPos buildingId;
+    private int job;
     private boolean  assignmentMode;
+    private boolean  patrollingMode;
+    private boolean retrieval;
+    private int task;
 
     /**
      * Empty standard constructor.
@@ -40,12 +39,16 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
      * @param building       View of the building to read data from.
      * @param assignmentMode assignmentMode of the particular farmer.
      */
-    public GuardTaskMessage(@NotNull BuildingFarmer.View building, boolean assignmentMode)
+    public GuardTaskMessage(@NotNull BuildingGuardTower.View building, int job, boolean assignmentMode, boolean patrollingMode, boolean retrieval, int task )
     {
         super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
+        this.job = job;
         this.assignmentMode = assignmentMode;
+        this.patrollingMode = patrollingMode;
+        this.retrieval = retrieval;
+        this.task = task;
     }
 
     @Override
@@ -53,7 +56,11 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
+        job = buf.readInt();
         assignmentMode = buf.readBoolean();
+        patrollingMode = buf.readBoolean();
+        retrieval = buf.readBoolean();
+        task = buf.readInt();
     }
 
     @Override
@@ -61,7 +68,11 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
+        buf.writeInt(job);
         buf.writeBoolean(assignmentMode);
+        buf.writeBoolean(patrollingMode);
+        buf.writeBoolean(retrieval);
+        buf.writeInt(task);
     }
 
     @Override
@@ -76,10 +87,14 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
                 return;
             }
 
-            @Nullable final BuildingFarmer building = colony.getBuilding(message.buildingId, BuildingFarmer.class);
+            @Nullable final BuildingGuardTower building = colony.getBuilding(message.buildingId, BuildingGuardTower.class);
             if (building != null)
             {
+                building.setJob(BuildingGuardTower.GuardJob.values()[message.job]);
                 building.setAssignManually(message.assignmentMode);
+                building.setPatrolManually(message.retrieval);
+                building.setRetrieveOnLowHealth(message.retrieval);
+                building.setTask(BuildingGuardTower.Task.values()[message.task]);
             }
         }
     }

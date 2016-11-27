@@ -154,11 +154,38 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         registerButton(BUTTON_TASK_GUARD, this::switchTask);
 
         Button buttonJob = this.findPaneOfTypeByID(BUTTON_JOB, Button.class);
+
+        if(job.equals(BuildingGuardTower.GuardJob.KNIGHT))
+        {
+            buttonJob.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.knight"));
+        }
+        else
+        {
+            buttonJob.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.ranger"));
+        }
+
         buttonJob.setEnabled(assignManually);
 
         buttonTaskPatrol = this.findPaneOfTypeByID(BUTTON_TASK_PATROL, Button.class);
         buttonTaskFollow = this.findPaneOfTypeByID(BUTTON_TASK_FOLLOW, Button.class);
         buttonTaskGuard = this.findPaneOfTypeByID(BUTTON_TASK_GUARD, Button.class);
+        handleButtons();
+    }
+
+    /**
+     * Handle the task buttons correctly.
+     */
+    private void handleButtons()
+    {
+        String auto = LanguageHandler.format("com.minecolonies.gui.workerHuts.modeA");
+        String manual = LanguageHandler.format("com.minecolonies.gui.workerHuts.modeM");
+
+        String on = LanguageHandler.format("com.minecolonies.gui.workerHuts.retrieveOn");
+        String off = LanguageHandler.format("com.minecolonies.gui.workerHuts.retrieveOn");
+
+        this.findPaneOfTypeByID(BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(assignManually ? manual : auto);
+        this.findPaneOfTypeByID(BUTTON_PATROL_MODE, Button.class).setLabel(patrolManually ? manual : auto);
+        this.findPaneOfTypeByID(BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? on : off);
 
         if(task.equals(BuildingGuardTower.Task.PATROL))
         {
@@ -172,6 +199,11 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         {
             buttonTaskGuard.setEnabled(false);
         }
+    }
+
+    public String getWorkerName()
+    {
+        return building.getWorkerId() + "";
     }
 
     private void switchTask(final Button button)
@@ -242,11 +274,11 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         }
         compound.setInteger("task", task.ordinal());
         BlockPosUtil.writeToNBT(compound, "pos", building.getID());
-        scepter.setTagCompound(compound);
 
         ItemStack item = player.inventory.getStackInSlot(player.inventory.currentItem);
         player.inventory.setInventorySlotContents(emptySlot, item);
         player.inventory.setInventorySlotContents(player.inventory.currentItem, scepter);
+        player.inventory.markDirty();
     }
 
     private void switchRetrievalMode(final Button button)

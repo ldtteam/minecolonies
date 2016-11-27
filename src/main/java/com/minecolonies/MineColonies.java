@@ -2,6 +2,7 @@ package com.minecolonies;
 
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.Structures;
+import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.commands.CommandEntryPoint;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.configuration.Configurations;
@@ -143,6 +144,9 @@ public class MineColonies
         getNetwork().registerMessage(WorkOrderChangeMessage.class, WorkOrderChangeMessage.class, 29, Side.SERVER);
         getNetwork().registerMessage(AssignFieldMessage.class, AssignFieldMessage.class, 30, Side.SERVER);
         getNetwork().registerMessage(AssignmentModeMessage.class, AssignmentModeMessage.class, 31, Side.SERVER);
+        getNetwork().registerMessage(GuardTargetMessage.class, GuardTargetMessage.class, 32, Side.SERVER);
+        getNetwork().registerMessage(GuardTaskMessage.class, GuardTaskMessage.class, 33, Side.SERVER);
+
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, 50, Side.CLIENT);
