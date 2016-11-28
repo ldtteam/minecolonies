@@ -120,10 +120,4 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
         return EnumActionResult.SUCCESS;
     }
-
-    @Override
-    public boolean onDroppedByPlayer(final ItemStack item, final EntityPlayer player)
-    {
-        return false;
-    }
 }

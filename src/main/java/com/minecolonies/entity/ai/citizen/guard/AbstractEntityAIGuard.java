@@ -1,16 +1,19 @@
 package com.minecolonies.entity.ai.citizen.guard;
 
+import com.blockout.Log;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -69,7 +72,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Worker gets this distance times building level away from his building to patrol.
      */
-    private static final int PATROL_DISTANCE = 20;
+    public static final int PATROL_DISTANCE = 20;
 
     /**
      * Horizontal range in which the guard picks up items
@@ -96,9 +99,14 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     private static final int ITEM_PICKUP_RANGE = 3;
 
     /**
+     * The dump base of actions, will increase depending on level.
+     */
+    private static final int DUMP_BASE = 20;
+
+    /**
      * Checks if the guard should dump its inventory.
      */
-    private static final int DUMP_AFTER_ACTIONS = 10;
+    private int dump_after_actions = DUMP_BASE;
 
     /**
      * The current target.
@@ -147,10 +155,37 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, () -> GUARD_RESTOCK),
-          new AITarget(GUARD_GATHERING, this::gathering)
+                new AITarget(this::checkIfExecute, this::getState),
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, () -> GUARD_RESTOCK),
+                new AITarget(GUARD_GATHERING, this::gathering)
         );
+    }
+
+    /**
+     * Checks if the worker is in a state where he can execute well.
+     * @return true if so.
+     */
+    private boolean checkIfExecute()
+    {
+        AbstractBuilding building = getOwnBuilding();
+        if(building == null || !(building instanceof BuildingGuardTower))
+        {
+            return true;
+        }
+
+        if(!((BuildingGuardTower) building).shallRetrieveOnLowHealth())
+        {
+            return false;
+        }
+
+        if(worker.getHealth() > 2)
+        {
+            return false;
+        }
+
+        worker.isWorkerAtSiteWithMove(building.getLocation(), 3);
+        return true;
     }
 
     /**
@@ -225,6 +260,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                         }
                     }
                 }
+                dump_after_actions = DUMP_BASE * workBuilding.getBuildingLevel();
             }
             attacksExecuted = 0;
             return AIState.GUARD_SEARCH_TARGET;
@@ -235,7 +271,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return DUMP_AFTER_ACTIONS;
+        return dump_after_actions;
     }
 
     /**
@@ -283,7 +319,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     }
 
     /**
-     * Searches for the next taget.
+     * Searches for the next target.
      *
      * @return the next AIState.
      */
@@ -350,7 +386,9 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
         if (building != null && building instanceof BuildingGuardTower)
         {
-            if (currentPatrolTarget == null)
+            if (currentPatrolTarget == null
+                    || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPatrolTarget) > Configurations.workingRangeTownHall + Configurations.townHallPadding
+                    || currentPatrolTarget.getY() < 5)
             {
                 return getNextPatrollingTarget((BuildingGuardTower) building);
             }
@@ -392,8 +430,19 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         }
         else if(building.getTask().equals(BuildingGuardTower.Task.FOLLOW))
         {
-            //todo need player object.
-            //todo set in class that move not too far away from player.
+            BlockPos pos = building.getPlayerToFollow();
+            if(pos == null || BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()) > Configurations.workingRangeTownHall + Configurations.townHallPadding)
+            {
+                EntityPlayer player = building.getPlayer();
+                if(player != null)
+                {
+                    LanguageHandler.sendPlayerMessage(building.getPlayer(), LanguageHandler.format("com.minecolonies.job.guard.switch"));
+                }
+                pos = building.getLocation();
+                building.setTask(BuildingGuardTower.Task.GUARD);
+            }
+            currentPatrolTarget = pos;
+            return AIState.GUARD_SEARCH_TARGET;
         }
         currentPatrolTarget = getRandomBuilding();
         return AIState.GUARD_SEARCH_TARGET;
@@ -536,6 +585,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     private BlockPos getAndRemoveClosestItem()
     {
+        if(items == null)
+        {
+            return worker.getPosition();
+        }
+
         int index = 0;
         double distance = Double.MAX_VALUE;
 

@@ -95,6 +95,11 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
                 building.setPatrolManually(message.patrollingMode);
                 building.setRetrieveOnLowHealth(message.retrieval);
                 building.setTask(BuildingGuardTower.Task.values()[message.task]);
+
+                if(building.getTask().equals(BuildingGuardTower.Task.FOLLOW))
+                {
+                    building.setPlayerToFollow(player);
+                }
             }
         }
     }

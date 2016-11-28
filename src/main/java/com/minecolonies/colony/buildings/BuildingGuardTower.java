@@ -10,6 +10,7 @@ import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -63,6 +64,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     private static final String TAG_PATROL         = "patrol";
     private static final String TAG_PATROL_TARGETS = "patrol targets";
     private static final String TAG_TARGET         = "target";
+    private static final String TAG_GUARD          = "guard";
 
     /**
      * Assign the job manually, knight or ranger.
@@ -98,6 +100,11 @@ public class BuildingGuardTower extends AbstractBuildingWorker
      * The list of manual patrol targets.
      */
     private ArrayList<BlockPos> patrolTargets = new ArrayList<>();
+
+    /**
+     * The player to follow.
+     */
+    private EntityPlayer followPlayer;
 
     /**
      * Possible job/AI.
@@ -163,6 +170,29 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     }
 
     /**
+     * Sets the player to follow.
+     * @param player the player to follow.
+     */
+    public void setPlayerToFollow(EntityPlayer player)
+    {
+        this.followPlayer = player;
+    }
+
+    /**
+     * Gets the player to follow.
+     * @return the entity player.
+     */
+    public BlockPos getPlayerToFollow()
+    {
+        if(task.equals(Task.FOLLOW) && followPlayer != null)
+        {
+            return followPlayer.getPosition();
+        }
+        task = Task.GUARD;
+        return this.getLocation();
+    }
+
+    /**
      * Gets the max level of the baker's hut.
      *
      * @return The max level of the baker's hut.
@@ -211,6 +241,15 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         return this.task;
     }
 
+    /**
+     * Getter for the player.
+     * @return the player.
+     */
+    public EntityPlayer getPlayer()
+    {
+        return followPlayer;
+    }
+
     @Override
     public void onUpgradeComplete(final int newLevel)
     {
@@ -236,7 +275,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
      *
      * @return the bonus health.
      */
-    public int getBonusHealth()
+    private int getBonusHealth()
     {
         if (getBuildingLevel() > MAX_VISION_BONUS_MULTIPLIER)
         {
@@ -349,6 +388,8 @@ public class BuildingGuardTower extends AbstractBuildingWorker
             final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, TAG_TARGET);
             patrolTargets.add(pos);
         }
+
+        guardPos = BlockPosUtil.readFromNBT(compound, TAG_GUARD);
     }
 
     @Override
@@ -371,6 +412,8 @@ public class BuildingGuardTower extends AbstractBuildingWorker
             wayPointTagList.appendTag(wayPointCompound);
         }
         compound.setTag(TAG_PATROL_TARGETS, wayPointTagList);
+
+        BlockPosUtil.writeToNBT(compound, TAG_GUARD, guardPos);
     }
 
     @Override
@@ -388,6 +431,8 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         {
             BlockPosUtil.writeToByteBuf(buf, pos);
         }
+
+        BlockPosUtil.writeToByteBuf(buf, guardPos);
     }
 
     /**
@@ -460,7 +505,6 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     /**
      * The client view for the baker building.
      */
-    //todo something going wrong with the task serialization.
     public static class View extends AbstractBuildingWorker.View
     {
         public boolean assignManually = false;
@@ -468,6 +512,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         public boolean patrolManually = false;
         public Task task = Task.GUARD;
         public GuardJob job = null;
+        public BlockPos guardPos = getLocation();
 
         public ArrayList<BlockPos> patrolTargets = new ArrayList<>();
 
@@ -512,6 +557,8 @@ public class BuildingGuardTower extends AbstractBuildingWorker
             {
                 patrolTargets.add(BlockPosUtil.readFromByteBuf(buf));
             }
+
+            guardPos = BlockPosUtil.readFromByteBuf(buf);
         }
     }
 }

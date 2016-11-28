@@ -77,7 +77,10 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      */
     private static final String BUTTON_TASK_GUARD = "guarding";
 
-
+    /**
+     * Id of the settarget button in the GUI - Depending on task sets guard position or patrol..
+     */
+    private static final String BUTTON_SET_TARGET = "setTarget";
 
 
     private static final String VIEW_PAGES                      = "pages";
@@ -118,11 +121,16 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     /**
      * The patrol list.
      */
-    ScrollingList patrolList;
+    private ScrollingList patrolList;
 
+    /**
+     * Buttons used in the application:
+     */
     private final Button buttonTaskPatrol;
     private final Button buttonTaskFollow;
     private final Button buttonTaskGuard;
+    private final Button buttonSetTarget;
+
 
     /**
      * Constructor for the window of the guardTower hut
@@ -143,10 +151,13 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         registerButton(BUTTON_TASK_PATROL, this::switchTask);
         registerButton(BUTTON_TASK_FOLLOW, this::switchTask);
         registerButton(BUTTON_TASK_GUARD, this::switchTask);
+        registerButton(BUTTON_SET_TARGET, this::setTarget);
 
         buttonTaskPatrol = this.findPaneOfTypeByID(BUTTON_TASK_PATROL, Button.class);
         buttonTaskFollow = this.findPaneOfTypeByID(BUTTON_TASK_FOLLOW, Button.class);
         buttonTaskGuard = this.findPaneOfTypeByID(BUTTON_TASK_GUARD, Button.class);
+
+        buttonSetTarget = this.findPaneOfTypeByID(BUTTON_SET_TARGET, Button.class);
         handleButtons();
     }
 
@@ -180,15 +191,26 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
         if(task.equals(BuildingGuardTower.Task.PATROL))
         {
+            if(patrolManually)
+            {
+                buttonSetTarget.setEnabled(true);
+                buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.targetPatrol"));
+            }
+            else
+            {
+                buttonSetTarget.setEnabled(false);
+            }
             buttonTaskPatrol.setEnabled(false);
         }
         else if(task.equals(BuildingGuardTower.Task.FOLLOW))
         {
             buttonTaskFollow.setEnabled(false);
+            buttonSetTarget.hide();
         }
         else
         {
-            buttonTaskGuard.setEnabled(false);
+            buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.targetGuard"));
+            buttonTaskGuard.setEnabled(true);
         }
     }
 
@@ -198,57 +220,68 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      */
     private void switchTask(final Button button)
     {
-        final EntityPlayerSP player = this.mc.thePlayer;
-        final int emptySlot = player.inventory.getFirstEmptyStack();
-
         if(button.getID().contains("patrol"))
         {
-            if(building.patrolManually)
-            {
-                if(emptySlot == -1)
-                {
-                    LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.gui.workerHuts.noSpace");
-                    return;
-                }
-                givePlayerScepter(BuildingGuardTower.Task.PATROL);
-                LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.job.guard.tool.taskPatrol");
-            }
-
             building.task = BuildingGuardTower.Task.PATROL;
 
             buttonTaskPatrol.setEnabled(false);
-
             buttonTaskFollow.setEnabled(true);
             buttonTaskGuard.setEnabled(true);
+
+            buttonSetTarget.show();
         }
         else if(button.getID().contains("follow"))
         {
             building.task = BuildingGuardTower.Task.FOLLOW;
 
             buttonTaskFollow.setEnabled(false);
-
             buttonTaskPatrol.setEnabled(true);
             buttonTaskGuard.setEnabled(true);
+
+            buttonSetTarget.hide();
         }
         else
         {
-            if(emptySlot == -1)
-            {
-                LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.gui.workerHuts.noSpace");
-                return;
-            }
             building.task = BuildingGuardTower.Task.GUARD;
-            givePlayerScepter(BuildingGuardTower.Task.GUARD);
-            LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.job.guard.tool.taskGuard");
 
             buttonTaskGuard.setEnabled(false);
-
             buttonTaskPatrol.setEnabled(true);
             buttonTaskFollow.setEnabled(true);
+
+            buttonSetTarget.show();
         }
         pullInfoFromHut();
         sendChangesToServer();
     }
+
+    /**
+     * Sets the target for patrolling or guarding of the guard.
+     * @param button clicked button.
+     */
+    private void setTarget(final Button button)
+    {
+        final EntityPlayerSP player = this.mc.thePlayer;
+        final int emptySlot = player.inventory.getFirstEmptyStack();
+        pullInfoFromHut();
+
+        if(emptySlot == -1)
+        {
+            LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.gui.workerHuts.noSpace");
+        }
+
+        if(patrolManually && task.equals(BuildingGuardTower.Task.PATROL))
+        {
+            givePlayerScepter(BuildingGuardTower.Task.PATROL);
+            LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.job.guard.tool.taskPatrol");
+        }
+        else if(task.equals(BuildingGuardTower.Task.GUARD))
+        {
+            givePlayerScepter(BuildingGuardTower.Task.GUARD);
+            LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.job.guard.tool.taskGuard");
+        }
+        window.close();
+    }
+
 
     /**
      * Send message to player to add scepter to his inventory.
@@ -287,20 +320,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         building.patrolManually = !building.patrolManually;
         pullInfoFromHut();
         sendChangesToServer();
-
-        if(building.patrolManually)
-        {
-            final EntityPlayerSP player = this.mc.thePlayer;
-            final int emptySlot = player.inventory.getFirstEmptyStack();
-
-            if(emptySlot == -1)
-            {
-                LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.gui.workerHuts.noSpace");
-                return;
-            }
-            givePlayerScepter(BuildingGuardTower.Task.PATROL);
-            LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.job.guard.tool.taskPatrol");
-        }
+        handleButtons();
     }
 
     /**
@@ -376,7 +396,21 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         }
         else if(task.equals(BuildingGuardTower.Task.GUARD))
         {
-            //print guard position
+            patrolList.setDataProvider(new ScrollingList.DataProvider()
+            {
+                @Override
+                public int getElementCount()
+                {
+                    return 1;
+                }
+
+                @Override
+                public void updateElement(int index, @NotNull Pane rowPane)
+                {
+                    BlockPos pos = building.guardPos;
+                    rowPane.findPaneOfTypeByID("position", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                }
+            });
         }
     }
 

@@ -23,8 +23,10 @@
             <button id="following" size="30% 14" pos="62 125" label="$(com.minecolonies.gui.workerHuts.task.follow)"/>
             <button id="guarding" size="30% 14" pos="114 125" label="$(com.minecolonies.gui.workerHuts.task.guard)"/>
 
+            <button id="setTarget" size="75% 12" pos="25 140" label="$(com.minecolonies.gui.workerHuts.setTarget)"/>
 
-            <list id="positions" size="78% 50" pos="30 150" >
+
+            <list id="positions" size="78% 50" pos="30 155" >
                 <box size="100% 15" linewidth="2">
                     <label id="position" size="100 12" pos="5 2" textalign="MiddleLeft" color="black"/>
                 </box>

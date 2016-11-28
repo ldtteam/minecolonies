@@ -1,8 +1,11 @@
 package com.minecolonies.entity.ai.citizen.guard;
 
+import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
+import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.InventoryFunctions;
 import com.minecolonies.util.Utils;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -148,6 +151,19 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             }
 
             return AIState.GUARD_HUNT_DOWN_TARGET;
+        }
+
+        AbstractBuilding building = getOwnBuilding();
+        if(building != null && building instanceof BuildingGuardTower)
+        {
+            BuildingGuardTower.Task task = ((BuildingGuardTower) building).getTask();
+            if((task.equals(BuildingGuardTower.Task.FOLLOW)
+                    && BlockPosUtil.getDistance2D(worker.getPosition(), ((BuildingGuardTower) building).getPlayerToFollow()) > PATROL_DISTANCE)
+                    || (task.equals(BuildingGuardTower.Task.GUARD)
+                    && BlockPosUtil.getDistance2D(worker.getPosition(), ((BuildingGuardTower) building).getGuardPos()) > PATROL_DISTANCE))
+            {
+                return AIState.GUARD_PATROL;
+            }
         }
         worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getExperienceLevel()));
         worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), (int) MIN_ATTACK_DISTANCE);
