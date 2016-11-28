@@ -115,7 +115,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     private BuildingGuardTower.Task task = BuildingGuardTower.Task.GUARD;
 
     /**
-     * The job of the guard, following the GuarJob enum.
+     * The job of the guard, following the GuardJob enum.
      */
     private BuildingGuardTower.GuardJob job = null;
 
@@ -130,7 +130,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     private ScrollingList patrolList;
 
     /**
-     * Buttons used in the application:
+     * Buttons used in the application.
      */
     private final Button buttonTaskPatrol;
     private final Button buttonTaskFollow;
@@ -300,7 +300,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      */
     private void sendChangesToServer()
     {
-        int ordinal = building.job == null ? -1 : job.ordinal();
+        final int ordinal = building.job == null ? -1 : job.ordinal();
         MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal()));
     }
 
@@ -355,7 +355,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
     /**
      * Switch the assignment mode.
-     * @param button clicked button
+     * @param button clicked button.
      */
     private void switchAssignmentMode(final Button button)
     {
@@ -365,7 +365,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     }
 
     /**
-     * Retrieve positions from the building to display in GUI
+     * Retrieve positions from the building to display in GUI.
      */
 
     private void pullInfoFromHut()
@@ -401,7 +401,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
                 @Override
                 public void updateElement(int index, @NotNull Pane rowPane)
                 {
-                    BlockPos pos = patrolTargets.get(index);
+                    final BlockPos pos = patrolTargets.get(index);
                     rowPane.findPaneOfTypeByID("position", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
                 }
             });
@@ -419,7 +419,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
                 @Override
                 public void updateElement(int index, @NotNull Pane rowPane)
                 {
-                    BlockPos pos = building.guardPos;
+                    final BlockPos pos = building.guardPos;
                     rowPane.findPaneOfTypeByID("position", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
                 }
             });

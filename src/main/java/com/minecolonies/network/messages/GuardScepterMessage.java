@@ -10,8 +10,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 /**
  * Message to set the guard scepter in the player inventory.
  */

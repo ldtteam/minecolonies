@@ -13,7 +13,6 @@ import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.util.*;
 import net.minecraft.block.*;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
@@ -270,8 +269,12 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         workOrder.setCleared(false);
     }
 
-
-    private int getRotationFromFacing(EnumFacing facing)
+    /**
+     * Gets a rotation from a block facing.
+     * @param facing the block facing.
+     * @return the int rotation.
+     */
+    private static int getRotationFromFacing(EnumFacing facing)
     {
         switch (facing)
         {

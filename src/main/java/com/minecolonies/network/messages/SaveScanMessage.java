@@ -1,8 +1,6 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.items.ItemScanTool;
 import com.minecolonies.util.ClientStructureWrapper;
-import com.minecolonies.util.StructureWrapper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -11,7 +9,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
 
 /**
  * Handles sendScanMessages.
