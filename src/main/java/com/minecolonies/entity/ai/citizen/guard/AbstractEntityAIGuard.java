@@ -346,17 +346,56 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     protected AIState patrol()
     {
         worker.setAIMoveSpeed(1);
+        AbstractBuilding building = getOwnBuilding();
 
-        if (currentPatrolTarget == null)
+        if (building != null && building instanceof BuildingGuardTower)
         {
-            currentPatrolTarget = getRandomBuilding();
+            if (currentPatrolTarget == null)
+            {
+                return getNextPatrollingTarget((BuildingGuardTower) building);
+            }
+
+            if (worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
+            {
+                return getNextPatrollingTarget((BuildingGuardTower) building);
+            }
         }
 
-        if (worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
-        {
-            currentPatrolTarget = null;
-        }
+        return AIState.GUARD_SEARCH_TARGET;
+    }
 
+    /**
+     * Retrieves the next patrolling target from the guard tower.
+     * @param building his building.
+     * @return the next state to go to.
+     */
+    private AIState getNextPatrollingTarget(BuildingGuardTower building)
+    {
+        if (building.shallPatrolManually() && building.getTask().equals(BuildingGuardTower.Task.PATROL))
+        {
+            BlockPos pos = building.getNextPatrolTarget(currentPatrolTarget);
+            if (pos != null)
+            {
+                currentPatrolTarget = pos;
+                return AIState.GUARD_SEARCH_TARGET;
+            }
+        }
+        else if(building.getTask().equals(BuildingGuardTower.Task.GUARD))
+        {
+            BlockPos pos = building.getGuardPos();
+            if(pos == null)
+            {
+                pos = building.getLocation();
+            }
+            currentPatrolTarget = pos;
+            return AIState.GUARD_SEARCH_TARGET;
+        }
+        else if(building.getTask().equals(BuildingGuardTower.Task.FOLLOW))
+        {
+            //todo need player object.
+            //todo set in class that move not too far away from player.
+        }
+        currentPatrolTarget = getRandomBuilding();
         return AIState.GUARD_SEARCH_TARGET;
     }
 

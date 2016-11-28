@@ -645,7 +645,7 @@ public abstract class AbstractBuilding
         dirty = true;
         colony.markBuildingsDirty();
     }
-
+    
     /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
      * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form

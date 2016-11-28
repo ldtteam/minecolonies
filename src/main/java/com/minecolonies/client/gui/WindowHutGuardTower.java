@@ -287,6 +287,20 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         building.patrolManually = !building.patrolManually;
         pullInfoFromHut();
         sendChangesToServer();
+
+        if(building.patrolManually)
+        {
+            final EntityPlayerSP player = this.mc.thePlayer;
+            final int emptySlot = player.inventory.getFirstEmptyStack();
+
+            if(emptySlot == -1)
+            {
+                LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.gui.workerHuts.noSpace");
+                return;
+            }
+            givePlayerScepter(BuildingGuardTower.Task.PATROL);
+            LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.job.guard.tool.taskPatrol");
+        }
     }
 
     /**
@@ -341,10 +355,9 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
 
-
+        patrolList = findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class);
         if(task.equals(BuildingGuardTower.Task.PATROL))
         {
-            patrolList = findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class);
             patrolList.setDataProvider(new ScrollingList.DataProvider()
             {
                 @Override

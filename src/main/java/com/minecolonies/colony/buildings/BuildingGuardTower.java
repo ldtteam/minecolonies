@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
@@ -243,6 +244,39 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         }
         return 0;
     }
+
+    /**
+     * Returns a patrolTarget to patrol to.
+     * @param currentPatrolTarget previous target.
+     * @return the position of the next target.
+     */
+    @Nullable
+    public BlockPos getNextPatrolTarget(final BlockPos currentPatrolTarget)
+    {
+        if(patrolTargets == null || patrolTargets.isEmpty())
+        {
+            return null;
+        }
+
+        if(currentPatrolTarget == null)
+        {
+            return patrolTargets.get(0);
+        }
+
+        if(patrolTargets.contains(currentPatrolTarget))
+        {
+            int index = patrolTargets.indexOf(currentPatrolTarget) + 1;
+
+            if(index >= patrolTargets.size())
+            {
+                index = 0;
+            }
+
+            return patrolTargets.get(index);
+        }
+        return patrolTargets.get(0);
+    }
+
 
     /**
      * The name of the baker's job.
