@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -355,6 +356,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             Log.getLogger().warn("No additional files found", e);
         }
 
+        if (hutDec.isEmpty())
+        {
+            return Collections.emptyList();
+        }
+        
         if (Settings.instance.isInHutMode())
         {
             return Structures.getStylesForHut(hutDec.get(hutDecIndex));
