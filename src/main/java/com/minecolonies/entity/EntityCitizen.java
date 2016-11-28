@@ -546,14 +546,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageGuardDead",
-                  citizenData.getName());
+                  citizenData.getName(), posX, posY, posZ);
             }
             else
             {
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageColonistDead",
-                  citizenData.getName());
+                  citizenData.getName(), posX, posY, posZ);
             }
             colony.removeCitizen(getCitizenData());
         }
