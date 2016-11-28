@@ -168,13 +168,16 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     {
         Button buttonJob = this.findPaneOfTypeByID(BUTTON_JOB, Button.class);
 
-        if(job.equals(BuildingGuardTower.GuardJob.KNIGHT))
+        if(job != null)
         {
-            buttonJob.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.knight"));
-        }
-        else
-        {
-            buttonJob.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.ranger"));
+            if (job.equals(BuildingGuardTower.GuardJob.KNIGHT))
+            {
+                buttonJob.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.knight"));
+            }
+            else
+            {
+                buttonJob.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.ranger"));
+            }
         }
 
         buttonJob.setEnabled(assignManually);
