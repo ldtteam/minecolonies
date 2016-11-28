@@ -175,6 +175,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
     {
         double damgeToBeDealt = baseDamage;
 
+        if(worker.getHealth() <= 2)
+        {
+            damgeToBeDealt*=2;
+        }
+
         final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem != null)
         {

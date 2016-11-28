@@ -13,7 +13,6 @@ com.minecolonies.gui.workerHuts.buildersHut=Builder's Hut
 com.minecolonies.job.Lumberjack=Lumberjack
 item.scepterSteel.scanFailure=Scan failed to save
 tile.blockHutTownHall.messageColonistDead=The colonist %s has died at %d %d %d!
-tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
 com.minecolonies.gui.townHall.population.totalCitizens=Number of Citizens: %d/%d
 entity.miner.messageNeedTools=Need tool %s!
 com.minecolonies.gui.citizen.skills.intelligence=Intelligence: %d
@@ -202,6 +201,9 @@ com.minecolonies.gui.workerHuts.level0=Please construct the hut to hire a worker
 com.minecolonies.job.guard.name=GuardTower
 com.minecolonies.job.guard.needWeapon=a weapon!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
+
+
+tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
 
 com.minecolonies.gui.workerHuts.guardActions=Guard-actions:
 com.minecolonies.gui.workerHuts.assign=Assign the guard to the job:
