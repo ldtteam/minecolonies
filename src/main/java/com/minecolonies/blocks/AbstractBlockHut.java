@@ -7,18 +7,20 @@ import com.minecolonies.creativetab.ModCreativeTabs;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -35,10 +37,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
-
-    private static final float HARDNESS   = 10F;
-    private static final float RESISTANCE = Float.POSITIVE_INFINITY;
-    private static final PropertyDirection FACING = PropertyDirection.create("FACING", EnumFacing.Plane.HORIZONTAL);
+    public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
+    private static final float             HARDNESS   = 10F;
+    private static final float             RESISTANCE = Float.POSITIVE_INFINITY;
     protected int workingRange;
 
     /**
@@ -48,7 +49,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      */
     public AbstractBlockHut()
     {
-        super(Material.wood);
+        super(Material.WOOD);
         initBlock();
     }
 
@@ -62,7 +63,8 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         //Hardness of 10 takes a long time to mine to not loose progress
         setHardness(HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-        GameRegistry.registerBlock(this);
+        GameRegistry.register(this);
+        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
     }
 
     /**
@@ -80,23 +82,31 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return new TileEntityColonyBuilding();
     }
 
+    /**
+     * Convert the given metadata into a BlockState for this Block
+     */
+    @NotNull
     @Override
     public IBlockState getStateFromMeta(int meta)
     {
-        EnumFacing facing = EnumFacing.getFront(meta);
-        if (facing.getAxis() == EnumFacing.Axis.Y)
+        EnumFacing enumfacing = EnumFacing.getFront(meta);
+
+        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
         {
-            facing = EnumFacing.NORTH;
+            enumfacing = EnumFacing.NORTH;
         }
-        return this.getDefaultState().withProperty(FACING, facing);
+
+        return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
+    /**
+     * Convert the BlockState into the correct metadata value
+     */
     @Override
-    public int getMetaFromState(@NotNull IBlockState state)
+    public int getMetaFromState(IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
-
 
     // =======================================================================
     // ======================= Rendering & IBlockState =======================
@@ -106,13 +116,23 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     @NotNull
     @Override
     @SideOnly(Side.CLIENT)
-    public EnumWorldBlockLayer getBlockLayer()
+    public BlockRenderLayer getBlockLayer()
     {
-        return EnumWorldBlockLayer.SOLID;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override
-    public boolean onBlockActivated(@NotNull World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(
+                                     World worldIn,
+                                     BlockPos pos,
+                                     IBlockState state,
+                                     EntityPlayer playerIn,
+                                     EnumHand hand,
+                                     @Nullable ItemStack heldItem,
+                                     EnumFacing side,
+                                     float hitX,
+                                     float hitY,
+                                     float hitZ)
     {
         /*
         If the world is client, open the gui of the building
@@ -128,12 +148,27 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
         return true;
     }
-
+    
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nullable EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
+    }
+
+    //We unfortunately have to implement these two, to rotate our blocks in the structures.
+    @NotNull
+    @Override
+    public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
+    {
+        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    @NotNull
+    @Override
+    public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
+    {
+        return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
     }
 
     /**
@@ -174,11 +209,35 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
     }
 
+    @Override
+    public boolean isFullCube(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isFullBlock(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
+    {
+        return false;
+    }
+
     @NotNull
     @Override
-    protected BlockState createBlockState()
+    protected BlockStateContainer createBlockState()
     {
-        return new BlockState(this, FACING);
+        return new BlockStateContainer(this, FACING);
     }
 
     // =======================================================================

@@ -5,6 +5,16 @@
 [![Lines of Code](http://home.kk-sc.de:9000/api/badges/measure?key=com.minecolonies%3Aminecolonies%3Adevelop&blinking=true&metric=ncloc)](http://home.kk-sc.de:9000/overview?id=com.minecolonies%3Aminecolonies%3Adevelop)
 [![Stories in Ready](https://badge.waffle.io/Minecolonies/minecolonies.png?label=help%20wanted&title=Help%20Wanted)](http://waffle.io/Minecolonies/minecolonies)
 
+
+![alt tag](resources/minecolonies.png)
+
+### About the mod ###
+
+   **MineColonies** is a mod for the famous game *Minecraft* from Mojang. This mod allows the user to generate many structures like ships, town halls, farms and even NPC's which are called workers. These workers can be assigned by the player to do various things ranging from building structures, gathering resources and even protecting existing buildings! Workers also have an experience and leveling system: the more they work, the more experience they'll get, allowing them to complete their tasks a lot faster.
+    The freedom and convenience given by this mod allows anyone to build many different cities: they can be small, specialized villages or big and vibrant metropolis. The possibilities are endless!
+
+
+
 For Users
 --
 
@@ -48,7 +58,7 @@ Gradle is used to execute the various build tasks when compiling MineColonies
 2. Windows: Set environment variables for Gradle.
 	* Go back to `Environment Variables` and then create a new system variable.
 	* For `Variable Name`, input `GRADLE_HOME`.
-	* For `Variable Value`, input something similar to `C:\Gradle-1.10` exactly as shown (or wherever your Gradle installation is), and click `Ok`.
+	* For `Variable Value`, input something similar to `C:\Gradle-3.0` exactly as shown (or wherever your Gradle installation is), and click `Ok`.
 	* Scroll down to `Path` again, and append `;%GRADLE_HOME%\bin` EXACTLY AS SHOWN and click `Ok`.  Once again, double-check the location.
 3. Open up your command line and run `gradle`.  If it says "Welcome to Gradle [version].", then you're good to go.  If not, either try the steps again.
 

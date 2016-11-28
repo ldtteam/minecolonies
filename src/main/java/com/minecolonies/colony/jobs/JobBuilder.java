@@ -7,9 +7,9 @@ import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.SchematicWrapper;
+import com.minecolonies.util.StructureWrapper;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,7 +21,7 @@ public class JobBuilder extends AbstractJob
     private static final String TAG_POSITION   = "position";
     private static final String TAG_PROGRESS   = "progress";
     private static final String TAG_STAGE      = "stage";
-    protected SchematicWrapper schematic;
+    protected StructureWrapper schematic;
     //TODO save some of this in building
     private   int              workOrderId;
     private   String           schematicName;
@@ -73,7 +73,7 @@ public class JobBuilder extends AbstractJob
         {
             compound.setInteger(TAG_WORK_ORDER, workOrderId);
 
-            if (hasSchematic())
+            if (hasStructure())
             {
                 @NotNull final NBTTagCompound schematicTag = new NBTTagCompound();
                 schematicTag.setString(TAG_NAME, schematic.getName());
@@ -85,20 +85,20 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Does this job have a loaded Schematic?
+     * Does this job have a loaded StructureProxy?
      * <p>
      * if a schematic is not null there exists a location for it
      *
      * @return true if there is a loaded schematic for this Job
      */
-    public boolean hasSchematic()
+    public boolean hasStructure()
     {
         return schematic != null;
     }
 
     @NotNull
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<JobBuilder> generateAI()
     {
         return new EntityAIStructureBuilder(this);
     }
@@ -124,11 +124,11 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
-     * Get the Schematic loaded by the Job.
+     * Get the StructureProxy loaded by the Job.
      *
-     * @return Schematic loaded by the Job
+     * @return StructureProxy loaded by the Job
      */
-    public SchematicWrapper getSchematic()
+    public StructureWrapper getStructure()
     {
         return schematic;
     }
@@ -136,9 +136,9 @@ public class JobBuilder extends AbstractJob
     /**
      * Set the schematic of builder's job.
      *
-     * @param schematic {@link SchematicWrapper} object
+     * @param schematic {@link StructureWrapper} object
      */
-    public void setSchematic(SchematicWrapper schematic)
+    public void setStructure(StructureWrapper schematic)
     {
         this.schematic = schematic;
     }
@@ -170,7 +170,7 @@ public class JobBuilder extends AbstractJob
 
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
-        setSchematic(null);
+        setStructure(null);
     }
 
     /**

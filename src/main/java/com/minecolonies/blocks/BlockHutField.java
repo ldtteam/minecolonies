@@ -9,17 +9,22 @@ import com.minecolonies.lib.Constants;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -28,7 +33,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.util.EnumFacing.*;
+import static net.minecraft.util.EnumFacing.NORTH;
+import static net.minecraft.util.EnumFacing.fromAngle;
+
 /**
  * The class handling the fieldBlocks, placement and activation.
  */
@@ -37,19 +44,19 @@ public class BlockHutField extends BlockContainer
     /**
      * The position it faces.
      */
-    public static final PropertyDirection FACING = PropertyDirection.create("FACING", Plane.HORIZONTAL);
+    public static final  PropertyDirection FACING           = BlockHorizontal.FACING;
     /**
      * Hardness of the block.
      */
-    private static final float HARDNESS = 10F;
+    private static final float             HARDNESS         = 10F;
     /**
      * Resistance of the block.
      */
-    private static final float RESISTANCE = 10F;
+    private static final float             RESISTANCE       = 10F;
     /**
      * Start of the collision box at y.
      */
-    private static final double BOTTOM_COLLISION = 0.0;
+    private static final double            BOTTOM_COLLISION = 0.0;
 
     /**
      * Start of the collision box at x and z.
@@ -76,7 +83,7 @@ public class BlockHutField extends BlockContainer
      */
     BlockHutField()
     {
-        super(Material.wood);
+        super(Material.WOOD);
         initBlock();
     }
 
@@ -94,35 +101,14 @@ public class BlockHutField extends BlockContainer
         //Hardness of 10 takes a long time to mine to not loose progress.
         setHardness(HARDNESS);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, NORTH));
-        GameRegistry.registerBlock(this);
-        setBlockBounds((float) START_COLLISION, (float) BOTTOM_COLLISION, (float) START_COLLISION, (float) END_COLLISION, (float) HEIGHT_COLLISION, (float) END_COLLISION);
+        GameRegistry.register(this);
+        GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
     }
 
     @Override
-    public int getRenderType()
+    public EnumBlockRenderType getRenderType(IBlockState state)
     {
-        return -1;
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta)
-    {
-        EnumFacing facing;
-        switch (getFront(meta))
-        {
-            case WEST:
-                facing = WEST;
-                break;
-            case EAST:
-                facing = EAST;
-                break;
-            case NORTH:
-                facing = NORTH;
-                break;
-            default:
-                facing = SOUTH;
-        }
-        return this.getDefaultState().withProperty(FACING, facing);
+        return EnumBlockRenderType.INVISIBLE;
     }
 
     @Override
@@ -131,8 +117,10 @@ public class BlockHutField extends BlockContainer
         return state.getValue(FACING).getIndex();
     }
 
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings("deprecation")
     @Override
-    public boolean isFullCube()
+    public boolean isFullCube(IBlockState state)
     {
         return false;
     }
@@ -143,8 +131,23 @@ public class BlockHutField extends BlockContainer
         return false;
     }
 
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings("deprecation")
     @Override
-    public boolean isOpaqueCube()
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        return new AxisAlignedBB((float) START_COLLISION,
+                                  (float) BOTTOM_COLLISION,
+                                  (float) START_COLLISION,
+                                  (float) END_COLLISION,
+                                  (float) HEIGHT_COLLISION,
+                                  (float) END_COLLISION);
+    }
+
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings("deprecation")
+    @Override
+    public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
     }
@@ -152,14 +155,23 @@ public class BlockHutField extends BlockContainer
     @NotNull
     @Override
     @SideOnly(Side.CLIENT)
-    public EnumWorldBlockLayer getBlockLayer()
+    public BlockRenderLayer getBlockLayer()
     {
-        return EnumWorldBlockLayer.SOLID;
+        return BlockRenderLayer.SOLID;
     }
 
     @Override
-    public boolean onBlockActivated(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, @NotNull EntityPlayer playerIn, EnumFacing side,
-            float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(
+                                     World worldIn,
+                                     BlockPos pos,
+                                     IBlockState state,
+                                     EntityPlayer playerIn,
+                                     EnumHand hand,
+                                     @Nullable ItemStack heldItem,
+                                     EnumFacing side,
+                                     float hitX,
+                                     float hitY,
+                                     float hitZ)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
@@ -209,9 +221,9 @@ public class BlockHutField extends BlockContainer
 
     @NotNull
     @Override
-    protected BlockState createBlockState()
+    protected BlockStateContainer createBlockState()
     {
-        return new BlockState(this, FACING);
+        return new BlockStateContainer(this, FACING);
     }
 
     @Override

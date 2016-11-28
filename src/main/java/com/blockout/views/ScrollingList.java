@@ -17,6 +17,7 @@ public class ScrollingList extends ScrollingView
     //  Runtime
     protected DataProvider dataProvider;
     private   PaneParams   listNodeParams;
+
     /**
      * Default constructor required by Blockout.
      */

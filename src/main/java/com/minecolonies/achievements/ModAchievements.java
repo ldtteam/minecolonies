@@ -3,6 +3,7 @@ package com.minecolonies.achievements;
 import com.minecolonies.blocks.ModBlocks;
 import com.minecolonies.items.ModItems;
 import com.minecolonies.lib.Constants;
+import net.minecraft.init.Items;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
 
@@ -47,14 +48,25 @@ public final class ModAchievements
     /**
      * Place a townhall.
      */
-    public static final Achievement achievementBuildingTownhall = new MineColoniesAchievement("townhall", -2, 0, ModBlocks.blockHutTownHall, achievementGetSupply)
+    public static final Achievement achievementTownhall         = new MineColoniesAchievement("townhall", -2, 0, ModBlocks.blockHutTownHall, null)
                                                                     .registerStat();
+    /**
+     * Upgrade a townhall to lv 1.
+     */
+    public static final Achievement achievementBuildingTownhall = new MineColoniesAchievement("upgrade.townhall.first", 0, 0, ModBlocks.blockHutTownHall,
+                                                                                               achievementTownhall).registerStat();
+
+    /**
+     * Max out a townhall.
+     */
+    public static final Achievement achievementUpgradeTownhallMax = new MineColoniesAchievement("upgrade.townhall.max", 2, 0, ModBlocks.blockHutTownHall,
+                                                                                                 achievementBuildingTownhall).registerStat();
 
     /**
      * Upgrade a builder to lv 1.
      */
     public static final Achievement achievementBuildingBuilder   = new MineColoniesAchievement("upgrade.builder.first", 0, 1, ModBlocks.blockHutBuilder,
-                                                                                                achievementBuildingTownhall).registerStat();
+                                                                                                achievementTownhall).registerStat();
     /**
      * Max out a builder.
      */
@@ -68,7 +80,7 @@ public final class ModAchievements
                                                                                                  0,
                                                                                                  2,
                                                                                                  ModBlocks.blockHutCitizen,
-                                                                                                 achievementBuildingTownhall).registerStat();
+                                                                                                 achievementTownhall).registerStat();
     /**
      * Max out a builder.
      */
@@ -82,7 +94,7 @@ public final class ModAchievements
                                                                                                    0,
                                                                                                    3,
                                                                                                    ModBlocks.blockHutLumberjack,
-                                                                                                   achievementBuildingTownhall).registerStat();
+                                                                                                   achievementTownhall).registerStat();
     /**
      * Max out a lumberjack.
      */
@@ -96,7 +108,7 @@ public final class ModAchievements
      * Upgrade a miner to lv 1.
      */
     public static final Achievement achievementBuildingMiner   = new MineColoniesAchievement("upgrade.miner.first", 0, 4, ModBlocks.blockHutMiner,
-                                                                                              achievementBuildingTownhall).registerStat();
+                                                                                              achievementTownhall).registerStat();
     /**
      * Max out a miner.
      */
@@ -107,7 +119,7 @@ public final class ModAchievements
      * Upgrade a fisher to lv 1.
      */
     public static final Achievement achievementBuildingFisher   = new MineColoniesAchievement("upgrade.fisher.first", 0, 5, ModBlocks.blockHutFisherman,
-                                                                                               achievementBuildingTownhall).registerStat();
+                                                                                               achievementTownhall).registerStat();
     /**
      * Max out a fisher.
      */
@@ -118,35 +130,74 @@ public final class ModAchievements
      * Upgrade a farmer to lv 1.
      */
     public static final Achievement achievementBuildingFarmer   = new MineColoniesAchievement("upgrade.farmer.first", 0, 6, ModBlocks.blockHutFarmer,
-                                                                                               achievementBuildingTownhall).registerStat();
+                                                                                               achievementTownhall).registerStat();
     /**
      * Max out a farmer.
      */
     public static final Achievement achievementUpgradeFarmerMax = new MineColoniesAchievement("upgrade.farmer.max", 2, 6, ModBlocks.blockHutFarmer,
                                                                                                achievementBuildingFarmer).registerStat();
 
+    /**
+     * Upgrade a guard to lv 1.
+     */
+    public static final Achievement achievementBuildingGuard   = new MineColoniesAchievement("upgrade.guard.first", 0, 7, ModBlocks.blockHutGuardTower,
+                                                                                               achievementTownhall).registerStat();
+    /**
+     * Max out a guard.
+     */
+    public static final Achievement achievementUpgradeGuardMax = new MineColoniesAchievement("upgrade.guard.max", 2, 7, ModBlocks.blockHutGuardTower,
+                                                                                               achievementBuildingGuard).registerStat();
+
+    /**
+     * Kill one mob.
+     */
+    public static final Achievement achievementKillOneMob = new MineColoniesAchievement("guard.mobkill.one", 2, 8, Items.BONE, achievementBuildingGuard).registerStat();
+
+    /**
+     * Kill 25 mobs.
+     */
+    public static final Achievement achievementKill25Mobs = new MineColoniesAchievement("guard.mobkill.25", 4, 8, Items.ROTTEN_FLESH, achievementKillOneMob).registerStat();
+
+    /**
+     * Kill 100 mobs.
+     */
+    public static final Achievement achievementKill100Mobs = new MineColoniesAchievement("guard.mobkill.100", 6, 8, Items.GUNPOWDER, achievementKill25Mobs).registerStat();
+
+    /**
+     * Kill 500 mobs.
+     */
+    public static final Achievement achievementKill500Mobs = new MineColoniesAchievement("guard.mobkill.500", 8, 8, Items.ENDER_PEARL, achievementKill100Mobs).registerStat();
+
+    /**
+     * Kill 1000 mobs.
+     */
+    public static final Achievement achievementKill1000Mobs = new MineColoniesAchievement("guard.mobkill.1000", 10, 8, Items.ENDER_EYE, achievementKill500Mobs).registerStat();
+
+
+
+
     // Sizes
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_SETTLEMENT} citizens.
      */
     public static final Achievement achievementSizeSettlement = new MineColoniesAchievement("size.settlement", -4, 0, ModItems.itemAchievementProxySettlement,
-            achievementBuildingTownhall).registerStat();
+                                                                                             achievementTownhall).registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_TOWN} citizens.
      */
     public static final Achievement achievementSizeTown       = new MineColoniesAchievement("size.town", -6, 0, ModItems.itemAchievementProxyTown, achievementSizeSettlement)
-            .registerStat();
+                                                                  .registerStat();
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_CITY} citizens.
      */
     public static final Achievement achievementSizeCity       = new MineColoniesAchievement("size.city", -8, 0, ModItems.itemAchievementProxyCity, achievementSizeTown)
-            .registerStat();
+                                                                  .registerStat();
 
     /**
      * Reach {@link ModAchievements#ACHIEVEMENT_SIZE_METROPOLIS} citizens.
      */
     public static final Achievement achievementSizeMetropolis = new MineColoniesAchievement("size.metropolis", -10, 0, ModItems.itemAchievementProxyMetropolis, achievementSizeCity)
-            .registerStat();
+                                                                  .registerStat();
 
     // Achievement pages
     /**
@@ -156,7 +207,9 @@ public final class ModAchievements
                                                                                                         Constants.MOD_NAME,
                                                                                                         achievementGetSupply,
                                                                                                         achievementWandOfbuilding,
+                                                                                                        achievementTownhall,
                                                                                                         achievementBuildingTownhall,
+                                                                                                        achievementUpgradeTownhallMax,
                                                                                                         achievementBuildingBuilder,
                                                                                                         achievementBuildingColonist,
                                                                                                         achievementBuildingLumberjack,
@@ -172,7 +225,16 @@ public final class ModAchievements
                                                                                                         achievementUpgradeFisherMax,
                                                                                                         achievementSizeMetropolis,
                                                                                                         achievementBuildingFarmer,
-                                                                                                        achievementUpgradeFarmerMax
+                                                                                                        achievementUpgradeFarmerMax,
+                                                                                                        achievementBuildingGuard,
+                                                                                                        achievementUpgradeGuardMax,
+                                                                                                        achievementKillOneMob,
+                                                                                                        achievementKill25Mobs,
+                                                                                                        achievementKill100Mobs,
+                                                                                                        achievementKill500Mobs,
+                                                                                                        achievementKill1000Mobs
+
+
     );
 
     /**

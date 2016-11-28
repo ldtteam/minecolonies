@@ -9,17 +9,15 @@ import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-
 
 public class ItemCompost extends AbstractItemMinecolonies
 {
     /**
      * Compost constructor, Set max stack size to 64 like all other items.
-      */
+     */
     public ItemCompost()
     {
         super("compost");
@@ -27,7 +25,7 @@ public class ItemCompost extends AbstractItemMinecolonies
         super.setCreativeTab(ModCreativeTabs.MINECOLONIES);
         maxStackSize = 64;
     }
-    
+
     //whenever player right click a block with this "compost item", call this method
     public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
     {

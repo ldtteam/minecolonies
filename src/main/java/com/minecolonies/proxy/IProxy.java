@@ -1,7 +1,7 @@
 package com.minecolonies.proxy;
 
 import com.minecolonies.colony.CitizenDataView;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 
 public interface IProxy
 {
@@ -31,6 +31,11 @@ public interface IProxy
      * Method to register entity rendering in
      */
     void registerEntityRendering();
+
+    /**
+     * Method to register sounds.
+     */
+    void registerSounds();
 
     /**
      * Method to register tile entity rendering in

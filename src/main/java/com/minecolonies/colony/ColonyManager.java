@@ -1,6 +1,7 @@
 package com.minecolonies.colony;
 
 import com.minecolonies.achievements.ModAchievements;
+import com.minecolonies.blocks.AbstractBlockHut;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.configuration.Configurations;
@@ -13,7 +14,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -44,6 +46,10 @@ public final class ColonyManager
     // Used to trigger loading/unloading colonies
     private static int     numWorldsLoaded;
     private static boolean saveNeeded;
+    /**
+     * The damage source used to kill citizens.
+     */
+    private static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
 
     private ColonyManager()
     {
@@ -65,32 +71,72 @@ public final class ColonyManager
         @NotNull Colony colony = new Colony(topColonyId, w, pos);
         colonies.put(colony.getID(), colony);
 
-        if (!coloniesByWorld.containsKey(colony.getDimensionId()))
+        if (!coloniesByWorld.containsKey(colony.getDimension()))
         {
-            coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
+            coloniesByWorld.put(colony.getDimension(), new ArrayList<>());
         }
 
-        coloniesByWorld.get(colony.getDimensionId()).add(colony);
+        coloniesByWorld.get(colony.getDimension()).add(colony);
 
         String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
-        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER);
+        colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER, w);
 
         colony.triggerAchievement(ModAchievements.achievementGetSupply);
-        colony.triggerAchievement(ModAchievements.achievementBuildingTownhall);
+        colony.triggerAchievement(ModAchievements.achievementTownhall);
 
         markDirty();
 
-        Log.getLogger().info("New Colony %d", colony.getID());
+        Log.getLogger().info(String.format("New Colony Id: %d by %s", colony.getID(), player.getName()));
 
         return colony;
     }
 
     /**
-     * Syncs the achievements for all colonies.
+     * Delete a colony and kill all citizens/purge all buildings.
+     *
+     * @param id the colonies id
      */
-    public static void syncAllColoniesAchievements(){
-        colonies.values().forEach(AchievementUtils::syncAchievements);
+    public static void deleteColony(int id)
+    {
+        try
+        {
+            final Colony colony = getColony(id);
+            Log.getLogger().info("Deleting colony " + id);
+            colonies.remove(id);
+            coloniesByWorld.get(colony.getDimension()).remove(colony);
+            final Set<World> colonyWorlds = new HashSet<>();
+            Log.getLogger().info("Removing citizens for " + id);
+            for (final CitizenData citizenData : new ArrayList<>(colony.getCitizens().values()))
+            {
+                Log.getLogger().info("Kill Citizen " + citizenData.getName());
+                World world = citizenData.getCitizenEntity().getEntityWorld();
+                citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
+                colonyWorlds.add(world);
+            }
+            Log.getLogger().info("Removing buildings for " + id);
+            for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
+            {
+
+                final BlockPos location = building.getLocation();
+                Log.getLogger().info("Delete Building at " + location);
+                building.destroy();
+                for (final World world : colonyWorlds)
+                {
+                    Log.getLogger().info("Try out World " + world.getProviderName());
+                    if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
+                    {
+                        Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
+                        world.setBlockToAir(location);
+                    }
+                }
+            }
+            Log.getLogger().info("Done with " + id);
+        }
+        catch (RuntimeException e)
+        {
+            Log.getLogger().warn("Deleting Colony " + id + " errored:", e);
+        }
     }
 
     /**
@@ -99,6 +145,14 @@ public final class ColonyManager
     public static void markDirty()
     {
         saveNeeded = true;
+    }
+
+    /**
+     * Syncs the achievements for all colonies.
+     */
+    public static void syncAllColoniesAchievements()
+    {
+        colonies.values().forEach(AchievementUtils::syncAchievements);
     }
 
     /**
@@ -132,9 +186,9 @@ public final class ColonyManager
         }
 
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius
-        if (coloniesByWorld.containsKey(w.provider.getDimensionId()))
+        if (coloniesByWorld.containsKey(w.provider.getDimension()))
         {
-            for (@NotNull Colony otherColony : coloniesByWorld.get(w.provider.getDimensionId()))
+            for (@NotNull Colony otherColony : coloniesByWorld.get(w.provider.getDimension()))
             {
                 AbstractBuilding building = otherColony.getBuilding(pos);
                 if (building != null)
@@ -156,7 +210,7 @@ public final class ColonyManager
      */
     public static Colony getColony(@NotNull World w, @NotNull BlockPos pos)
     {
-        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
+        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
         if (coloniesInWorld == null)
         {
             return null;
@@ -171,6 +225,34 @@ public final class ColonyManager
         }
 
         return null;
+    }
+
+    /**
+     * Get all colonies in this world.
+     *
+     * @param w World
+     * @return a list of colonies
+     */
+    @NotNull
+    public static List<Colony> getColonies(@NotNull World w)
+    {
+        final List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
+        if (coloniesInWorld == null)
+        {
+            return new ArrayList<>();
+        }
+        return coloniesInWorld;
+    }
+
+    /**
+     * Get all colonies in all worlds.
+     *
+     * @return a list of colonies
+     */
+    @NotNull
+    public static List<Colony> getColonies()
+    {
+        return new ArrayList<>(colonies.values());
     }
 
     /**
@@ -260,7 +342,7 @@ public final class ColonyManager
 
         for (@NotNull ColonyView c : colonyViews.values())
         {
-            if (c.getDimensionId() == w.provider.getDimensionId())
+            if (c.getDimension() == w.provider.getDimension())
             {
                 long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
@@ -281,9 +363,9 @@ public final class ColonyManager
      * @param pos coordinates
      * @return Colony closest to coordinates
      */
-    private static Colony getClosestColony(@NotNull World w, @NotNull BlockPos pos)
+    public static Colony getClosestColony(@NotNull World w, @NotNull BlockPos pos)
     {
-        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimensionId());
+        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
         if (coloniesInWorld == null)
         {
             return null;
@@ -294,7 +376,7 @@ public final class ColonyManager
 
         for (@NotNull Colony c : coloniesInWorld)
         {
-            if (c.getDimensionId() == w.provider.getDimensionId())
+            if (c.getDimension() == w.provider.getDimension())
             {
                 long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
@@ -371,7 +453,7 @@ public final class ColonyManager
     @Nullable
     private static IColony getColonyByOwner(@Nullable UUID owner)
     {
-        if(owner == null)
+        if (owner == null)
         {
             return null;
         }
@@ -504,7 +586,7 @@ public final class ColonyManager
         final Map<Integer, Colony> coloniesCopy = new HashMap<>(colonies);
 
         coloniesCopy.values().stream()
-          .filter(c -> c.getDimensionId() == event.world.provider.getDimensionId())
+          .filter(c -> c.getDimension() == event.world.provider.getDimension())
           .forEach(c -> c.onWorldTick(event));
     }
 
@@ -529,7 +611,7 @@ public final class ColonyManager
             }
             ++numWorldsLoaded;
 
-            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimensionId());
+            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimension());
             if (worldColonies != null)
             {
                 for (@NotNull Colony c : worldColonies)
@@ -538,7 +620,7 @@ public final class ColonyManager
                 }
             }
 
-            world.addWorldAccess(new ColonyManagerWorldAccess());
+            world.addEventListener(new ColonyManagerWorldAccess());
         }
     }
 
@@ -578,11 +660,11 @@ public final class ColonyManager
             @NotNull Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i));
             colonies.put(colony.getID(), colony);
 
-            if (!coloniesByWorld.containsKey(colony.getDimensionId()))
+            if (!coloniesByWorld.containsKey(colony.getDimension()))
             {
-                coloniesByWorld.put(colony.getDimensionId(), new ArrayList<>());
+                coloniesByWorld.put(colony.getDimension(), new ArrayList<>());
             }
-            coloniesByWorld.get(colony.getDimensionId()).add(colony);
+            coloniesByWorld.get(colony.getDimension()).add(colony);
 
             topColonyId = Math.max(topColonyId, colony.getID());
         }
@@ -598,7 +680,7 @@ public final class ColonyManager
     public static void onWorldSave(@NotNull World world)
     {
         //We save when the first dimension is saved.
-        if (!world.isRemote && world.provider.getDimensionId() == 0)
+        if (!world.isRemote && world.provider.getDimension() == 0)
         {
             saveColonies();
         }
@@ -614,7 +696,7 @@ public final class ColonyManager
     {
         if (!world.isRemote)
         {
-            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimensionId());
+            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimension());
             if (worldColonies != null)
             {
                 for (@NotNull Colony c : worldColonies)

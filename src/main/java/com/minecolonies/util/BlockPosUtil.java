@@ -11,8 +11,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -139,6 +139,21 @@ public final class BlockPosUtil
     }
 
     /**
+     * Simple two dimensional distance between two points..
+     *
+     * @param block1 position one.
+     * @param block2 position two.
+     * @return squared distance.
+     */
+    public static long getDistance2D(@NotNull BlockPos block1, @NotNull BlockPos block2)
+    {
+        final long xDiff = (long) block1.getX() - block2.getX();
+        final long zDiff = (long) block1.getZ() - block2.getZ();
+
+        return xDiff + zDiff;
+    }
+
+    /**
      * Squared distance between two BlockPos.
      *
      * @param block1 position one.
@@ -155,7 +170,7 @@ public final class BlockPosUtil
         if (result < 0)
         {
             throw new IllegalStateException("max-sqrt is to high! Failure to catch overflow with "
-                    + xDiff + " | " + yDiff + " | " + zDiff);
+                                              + xDiff + " | " + yDiff + " | " + zDiff);
         }
         return result;
     }
@@ -176,7 +191,7 @@ public final class BlockPosUtil
         if (result < 0)
         {
             throw new IllegalStateException("max-sqrt is to high! Failure to catch overflow with "
-                    + xDiff + " | " + zDiff);
+                                              + xDiff + " | " + zDiff);
         }
         return result;
     }
@@ -321,14 +336,14 @@ public final class BlockPosUtil
     }
 
     /**
-     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.BlockPos.MutableBlockPos#set(int, int, int)}.
+     * Create a method for using a {@link BlockPos} when using {@link net.minecraft.util.math.BlockPos.MutableBlockPos#setPos(int, int, int)}.
      *
-     * @param pos    {@link net.minecraft.util.BlockPos.MutableBlockPos}.
+     * @param pos    {@link net.minecraft.util.math.BlockPos.MutableBlockPos}.
      * @param newPos The new position to set.
      */
     public static void set(@NotNull BlockPos.MutableBlockPos pos, @NotNull BlockPos newPos)
     {
-        pos.set(newPos.getX(), newPos.getY(), newPos.getZ());
+        pos.setPos(newPos.getX(), newPos.getY(), newPos.getZ());
     }
 
     /**

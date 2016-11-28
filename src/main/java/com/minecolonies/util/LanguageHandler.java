@@ -1,8 +1,7 @@
 package com.minecolonies.util;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.fml.common.registry.LanguageRegistry;
+import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -29,7 +28,7 @@ public class LanguageHandler
 
     public static void sendPlayerMessage(@NotNull EntityPlayer player, String message)
     {
-        player.addChatComponentMessage(new ChatComponentText(message));
+        player.addChatComponentMessage(new TextComponentString(message));
     }
 
     /**
@@ -62,10 +61,12 @@ public class LanguageHandler
      * @param defaultValue the value to return if no key is found
      * @return Localized string
      */
+    @SuppressWarnings("deprecation")
     public static String getString(String key, String defaultValue)
     {
-        String value = LanguageRegistry.instance().getStringLocalization(key);
-        return "".equals(value) ? defaultValue : value;
+        //todo: use TextComponentTranslation like mojang wants us to
+        //using fully qualified name to remove deprecation warning on import
+        return net.minecraft.util.text.translation.I18n.translateToLocal(key);
     }
 
     /**

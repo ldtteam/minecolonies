@@ -17,8 +17,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
  */
 public class Pane extends Gui
 {
-    protected static Pane   lastClickedPane;
-    protected static Pane   focus;
+    protected static Pane lastClickedPane;
+    protected static Pane focus;
     protected static boolean             debugging         = false;
     @NotNull
     private static   Deque<ScissorsInfo> scissorsInfoStack = new ConcurrentLinkedDeque<>();
@@ -33,8 +33,8 @@ public class Pane extends Gui
     protected        boolean             visible           = true;
     protected        boolean             enabled           = true;
     //  Runtime
-    protected        Window window;
-    protected        View   parent;
+    protected Window window;
+    protected View   parent;
 
     /**
      * Default constructor

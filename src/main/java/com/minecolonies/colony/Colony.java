@@ -13,6 +13,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.ai.citizen.farmer.Field;
 import com.minecolonies.network.messages.*;
+import com.minecolonies.permissions.ColonyPermissionEventHandler;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.*;
@@ -22,12 +23,12 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -50,12 +51,18 @@ public class Colony implements IColony
     private static final String TAG_MAX_CITIZENS               = "maxCitizens";
     private static final String TAG_BUILDINGS                  = "buildings";
     private static final String TAG_CITIZENS                   = "citizens";
-    private static final String TAG_ACHIEVEMENT                = "achievement";
-    private static final String TAG_ACHIEVEMENT_LIST           = "achievementlist";
-    private static final String TAG_WORK                       = "work";
-    private static final String TAG_MANUAL_HIRING              = "manualHiring";
+    private static final String TAG_ACHIEVEMENT            = "achievement";
+    private static final String TAG_ACHIEVEMENT_LIST       = "achievementlist";
+    private static final String TAG_WORK                   = "work";
+    private static final String TAG_MANUAL_HIRING          = "manualHiring";
     //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS                     = "fields";
+    private static final String TAG_FIELDS                 = "fields";
+    private static final String TAG_MOB_KILLS              = "mobKills";
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST = 1;
+    private static final int    NUM_MOBS_ACHIEVEMENT_SECOND = 25;
+    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD = 100;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH = 500;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH = 1000;
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -91,6 +98,7 @@ public class Colony implements IColony
     private Map<Integer, CitizenData>       citizens     = new HashMap<>();
     private int                             topCitizenId = 0;
     private int                             maxCitizens  = Configurations.maxCitizens;
+    private int                             killedMobs   = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -101,7 +109,7 @@ public class Colony implements IColony
      */
     Colony(int id, @NotNull World w, BlockPos c)
     {
-        this(id, w.provider.getDimensionId());
+        this(id, w.provider.getDimension());
         center = c;
         world = w;
         this.permissions = new Permissions(this);
@@ -119,6 +127,9 @@ public class Colony implements IColony
         this.dimensionId = dim;
         this.permissions = new Permissions(this);
         this.colonyAchievements = new ArrayList<>();
+
+        // Register a new event handler
+        MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
     }
 
     /**
@@ -149,6 +160,7 @@ public class Colony implements IColony
 
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
+        killedMobs = compound.getInteger(TAG_MOB_KILLS);
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -256,6 +268,8 @@ public class Colony implements IColony
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
+        compound.setInteger(TAG_MOB_KILLS, killedMobs);
+
         // Permissions
         permissions.savePermissions(compound);
 
@@ -310,9 +324,20 @@ public class Colony implements IColony
      *
      * @return Dimension ID.
      */
-    public int getDimensionId()
+    public int getDimension()
     {
         return dimensionId;
+    }
+
+    /**
+     * Returns the center of the colony.
+     *
+     * @return Chunk Coordinates of the center of the colony.
+     */
+    @Override
+    public BlockPos getCenter()
+    {
+        return center;
     }
 
     @Override
@@ -339,6 +364,47 @@ public class Colony implements IColony
     private void markDirty()
     {
         isDirty = true;
+    }
+
+    /**
+     * Increment the mobs killed by this colony.
+     * <p>
+     * Will award achievements for mobs killed.
+     */
+    public void incrementMobsKilled()
+    {
+        killedMobs++;
+        final int mobKills = this.getKilledMobs();
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementKillOneMob);
+        }
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill25Mobs);
+        }
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill100Mobs);
+        }
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill500Mobs);
+        }
+        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
+        }
+    }
+
+    /**
+     * get the amount of killed mobs.
+     *
+     * @return amount of mobs killed
+     */
+    public int getKilledMobs()
+    {
+        return killedMobs;
     }
 
     @NotNull
@@ -380,17 +446,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Returns the center of the colony.
-     *
-     * @return Chunk Coordinates of the center of the colony.
-     */
-    @Override
-    public BlockPos getCenter()
-    {
-        return center;
-    }
-
-    /**
      * Marks citizen data dirty.
      */
     public void markCitizensDirty()
@@ -413,7 +468,7 @@ public class Colony implements IColony
      */
     public void onWorldLoad(@NotNull World w)
     {
-        if (w.provider.getDimensionId() == dimensionId)
+        if (w.provider.getDimension() == dimensionId)
         {
             world = w;
         }
@@ -464,7 +519,7 @@ public class Colony implements IColony
 
         // Add owners
         subscribers.addAll(
-          MinecraftServer.getServer().getConfigurationManager().playerEntityList
+          this.getWorld().getMinecraftServer().getPlayerList().getPlayerList()
             .stream()
             .filter(permissions::isSubscriber)
             .collect(Collectors.toList()));
@@ -760,7 +815,7 @@ public class Colony implements IColony
 
     private void cleanUpBuildings(@NotNull TickEvent.WorldTickEvent event)
     {
-        @Nullable List<AbstractBuilding> removedBuildings = null;
+        @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
 
         //Need this list, we may enter he while we add a building in the real world.
         List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
@@ -771,31 +826,27 @@ public class Colony implements IColony
             if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
             {
                 //  Sanity cleanup
-                if (removedBuildings == null)
-                {
-                    removedBuildings = new ArrayList<>();
-                }
                 removedBuildings.add(building);
             }
         }
 
-        if (removedBuildings != null)
-        {
-            removedBuildings.forEach(AbstractBuilding::destroy);
-        }
+        removedBuildings.forEach(AbstractBuilding::destroy);
 
         @NotNull final ArrayList<Field> tempFields = new ArrayList<>(fields.values());
 
         for (@NotNull final Field field : tempFields)
         {
-            @NotNull final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) world.getTileEntity(field.getID());
-            if (scarecrow == null)
+            if (event.world.isBlockLoaded(field.getLocation()))
             {
-                fields.remove(field.getID());
-            }
-            else
-            {
-                field.setInventoryField(scarecrow.getInventoryField());
+                final ScarecrowTileEntity scarecrow = (ScarecrowTileEntity) event.world.getTileEntity(field.getID());
+                if (scarecrow == null)
+                {
+                    fields.remove(field.getID());
+                }
+                else
+                {
+                    field.setInventoryField(scarecrow.getInventoryField());
+                }
             }
         }
 
@@ -815,7 +866,7 @@ public class Colony implements IColony
      *
      * @param data Data to use to spawn citizen
      */
-    private void spawnCitizen(CitizenData data)
+    public void spawnCitizen(CitizenData data)
     {
         if (!world.isBlockLoaded(center))
         {
@@ -823,7 +874,7 @@ public class Colony implements IColony
             return;
         }
 
-        @Nullable BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, center, 1, 1, 1, 2, Blocks.air, Blocks.snow_layer);
+        @Nullable BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, center, 1, 1, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
 
         if (spawnPoint != null)
         {
@@ -1008,6 +1059,7 @@ public class Colony implements IColony
         @NotNull final Field field = new Field(tileEntity, inventoryPlayer, world, pos);
         field.setCustomName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         addField(field);
+        field.calculateSize(world, pos);
         markFieldsDirty();
     }
 
@@ -1062,7 +1114,7 @@ public class Colony implements IColony
      */
     public void calculateMaxCitizens()
     {
-        int newMaxCitizens = Configurations.maxCitizens;
+        int newMaxCitizens = 0;
 
         for (AbstractBuilding b : buildings.values())
         {
@@ -1072,7 +1124,8 @@ public class Colony implements IColony
                 newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
             }
         }
-
+        // Have at least the minimum amount of citizens
+        newMaxCitizens = Math.max(Configurations.maxCitizens, newMaxCitizens);
         if (maxCitizens != newMaxCitizens)
         {
             maxCitizens = newMaxCitizens;

@@ -1,7 +1,8 @@
 package com.minecolonies;
 
 import com.minecolonies.achievements.ModAchievements;
-import com.minecolonies.colony.Schematics;
+import com.minecolonies.colony.Structures;
+import com.minecolonies.commands.CommandEntryPoint;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.lib.Constants;
@@ -14,25 +15,29 @@ import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
 @Mod(modid = Constants.MOD_ID, name = Constants.MOD_NAME, version = Constants.VERSION,
-  dependencies = Constants.FORGE_VERSION, acceptedMinecraftVersions = Constants.MC_VERSION)
+  /*dependencies = Constants.FORGE_VERSION,*/ acceptedMinecraftVersions = Constants.MC_VERSION)
 public class MineColonies
 {
     /**
      * Forge created instance of the Mod.
      */
     @Mod.Instance(Constants.MOD_ID)
-    public static  MineColonies         instance;
+    public static MineColonies instance;
     /**
      * Access to the proxy associated with your current side. Variable updated by forge.
      */
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
-    public static  IProxy               proxy;
+    public static IProxy       proxy;
+    private static Logger logger = LogManager.getLogger(Constants.MOD_ID);
     private static SimpleNetworkWrapper network;
 
     /**
@@ -56,6 +61,16 @@ public class MineColonies
     }
 
     /**
+     * Getter for the minecolonies Logger.
+     *
+     * @return the logger.
+     */
+    public static Logger getLogger()
+    {
+        return logger;
+    }
+
+    /**
      * Event handler for forge pre init event.
      *
      * @param event the forge pre init event.
@@ -64,7 +79,7 @@ public class MineColonies
     public void preInit(@NotNull FMLPreInitializationEvent event)
     {
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
-
+        proxy.registerSounds();
         proxy.registerEntities();
 
         proxy.registerEntityRendering();
@@ -90,7 +105,7 @@ public class MineColonies
 
         proxy.registerRenderer();
 
-        Schematics.init();
+        Structures.init();
 
         ModAchievements.init();
     }
@@ -131,6 +146,8 @@ public class MineColonies
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, 50, Side.CLIENT);
+        getNetwork().registerMessage(SaveScanMessage.class, SaveScanMessage.class, 51, Side.CLIENT);
+
     }
 
     public static SimpleNetworkWrapper getNetwork()
@@ -142,5 +159,12 @@ public class MineColonies
     public void postInit(FMLPostInitializationEvent event)
     {
         // Load unimportant resources
+    }
+
+    @Mod.EventHandler
+    public void serverLoad(FMLServerStartingEvent event)
+    {
+        // register server commands
+        event.registerServerCommand(new CommandEntryPoint());
     }
 }

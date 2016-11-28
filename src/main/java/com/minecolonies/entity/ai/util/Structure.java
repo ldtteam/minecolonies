@@ -2,11 +2,11 @@ package com.minecolonies.entity.ai.util;
 
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.BlockPosUtil;
-import com.minecolonies.util.SchematicWrapper;
+import com.minecolonies.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,10 +23,12 @@ import java.util.function.Supplier;
 public class Structure
 {
     /**
-     * This exception get's thrown when a Schematic file could not be loaded.
+     * This exception get's thrown when a StructureProxy file could not be loaded.
      */
     public static final class StructureException extends Exception
     {
+        public static final long serialVersionUID = 8632728763984762837L;
+
         /**
          * Create this exception to throw a previously catched one.
          *
@@ -85,7 +87,7 @@ public class Structure
      * The internal schematic loaded.
      */
     @Nullable
-    private final SchematicWrapper schematic;
+    private final StructureWrapper schematic;
     /**
      * the targetWorld to build the structure in.
      */
@@ -135,7 +137,7 @@ public class Structure
      * @throws StructureException when there is an error loading the schematic file
      */
     @Nullable
-    private static SchematicWrapper loadSchematic(
+    private static StructureWrapper loadSchematic(
                                                    @Nullable World targetWorld,
                                                    @Nullable BlockPos buildingLocation,
                                                    @Nullable String schematicFileName,
@@ -149,11 +151,11 @@ public class Structure
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
               targetWorld, buildingLocation, schematicFileName));
         }
-        @Nullable SchematicWrapper tempSchematic = null;
+        @Nullable StructureWrapper tempSchematic = null;
         //failsafe for faulty schematic files
         try
         {
-            tempSchematic = new SchematicWrapper(targetWorld, schematicFileName);
+            tempSchematic = new StructureWrapper(targetWorld, schematicFileName);
         }
         catch (IllegalStateException e)
         {
@@ -191,7 +193,7 @@ public class Structure
     }
 
     /**
-     * Advance one block in the Schematic.
+     * Advance one block in the StructureProxy.
      * <p>
      * Will skip blocks not relevant.
      *

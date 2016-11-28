@@ -2,23 +2,25 @@ package com.minecolonies.network.messages;
 
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
-import com.minecolonies.colony.Schematics;
+import com.minecolonies.colony.Structures;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.event.EventHandler;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.util.BlockUtils;
+import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,22 +30,24 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Colton
  */
-public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToolPlaceMessage, IMessage>
+public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage, IMessage>
 {
-    private String hutDec;
-    private String style;
-    private int    rotation;
-
+    /**
+     * Language key for missing hut message
+     */
+    private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
+    private String   hutDec;
+    private String   style;
+    private int      rotation;
     private BlockPos pos;
-
-    private boolean isHut;
+    private boolean  isHut;
 
     /**
      * Empty constructor used when registering the message.
      */
     public BuildToolPlaceMessage()
     {
-        // Called using reflection by Forge.
+        super();
     }
 
     /**
@@ -58,6 +62,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      */
     public BuildToolPlaceMessage(String hutDec, String style, BlockPos pos, int rotation, boolean isHut)
     {
+        super();
         this.hutDec = hutDec;
         this.style = style;
         this.pos = pos;
@@ -103,18 +108,9 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         buf.writeBoolean(isHut);
     }
 
-    /**
-     * {@link BuildToolPlaceMessage} handler.
-     *
-     * @param message Packet received.
-     * @param ctx     Contains info about the Client that sent the packet.
-     * @return null - Don't send a response packet.
-     */
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull BuildToolPlaceMessage message, @NotNull MessageContext ctx)
+    public void messageOnServerThread(final BuildToolPlaceMessage message, final EntityPlayerMP player)
     {
-        EntityPlayer player = ctx.getServerHandler().playerEntity;
         World world = player.worldObj;
         if (message.isHut)
         {
@@ -124,8 +120,6 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
         {
             handleDecoration(world, player, message.hutDec, message.style, message.rotation, message.pos);
         }
-
-        return null;
     }
 
     /**
@@ -140,33 +134,58 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      */
     private static void handleHut(@NotNull World world, @NotNull EntityPlayer player, String hut, String style, int rotation, @NotNull BlockPos buildPos)
     {
-        if (Schematics.getStylesForHut(hut) == null)
+        if (Structures.getStylesForHut(hut) == null)
         {
             Log.getLogger().error("No record of hut: " + hut);
             return;
         }
 
+        Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
+        if (tempColony != null && !tempColony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+        {
+                return;
+        }
+
         Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
 
-        if (player.inventory.hasItem(Item.getItemFromBlock(block)) && EventHandler.onBlockHutPlaced(world, player, block, buildPos))
+        if (block != null && player.inventory.hasItemStack(new ItemStack(block)))
         {
-            world.destroyBlock(buildPos, true);
-            world.setBlockState(buildPos, block.getDefaultState());
-            block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);
-
-            player.inventory.consumeInventoryItem(Item.getItemFromBlock(block));
-
-            @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
-
-            if (building != null)
+            if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
-                building.setStyle(style);
-                building.setRotation(rotation);
+                world.destroyBlock(buildPos, true);
+                world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
+                block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);
+
+                player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
+
+                @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
+
+                if (building == null)
+                {
+                    Log.getLogger().error("BuildTool: building is null!");
+                }
+                else
+                {
+                    if (building.getTileEntity() != null)
+                    {
+                        final Colony colony = ColonyManager.getColony(world, buildPos);
+                        if (colony == null)
+                        {
+                            Log.getLogger().info("No colony for " + player.getName());
+                        }
+                        else
+                        {
+                            building.getTileEntity().setColony(colony);
+                        }
+                    }
+                    building.setStyle(style);
+                    building.setRotation(rotation);
+                }
             }
-            else
-            {
-                Log.getLogger().error("BuildTool: building is null!");
-            }
+        }
+        else
+        {
+            LanguageHandler.sendPlayerLocalizedMessage(player, BuildToolPlaceMessage.NO_HUT_IN_INVENTORY);
         }
     }
 
@@ -182,7 +201,7 @@ public class BuildToolPlaceMessage implements IMessage, IMessageHandler<BuildToo
      */
     private static void handleDecoration(@NotNull World world, @NotNull EntityPlayer player, String decoration, String style, int rotation, @NotNull BlockPos buildPos)
     {
-        if (Schematics.getStylesForDecoration(decoration) == null)
+        if (Structures.getStylesForDecoration(decoration) == null)
         {
             Log.getLogger().error("No record of decoration: " + decoration);
             return;

@@ -40,7 +40,7 @@ public class JobFarmer extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<JobFarmer> generateAI()
     {
         return new EntityAIWorkFarmer(this);
     }

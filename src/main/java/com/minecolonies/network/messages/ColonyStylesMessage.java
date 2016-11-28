@@ -1,6 +1,6 @@
 package com.minecolonies.network.messages;
 
-import com.minecolonies.colony.Schematics;
+import com.minecolonies.colony.Structures;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -26,30 +26,6 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         decorationStyleMap = readStyleMapFromByteBuf(buf);
     }
 
-    @Override
-    public void toBytes(@NotNull ByteBuf buf)
-    {
-        writeStyleMapToByteBuf(buf, Schematics.getHuts(), Schematics::getStylesForHut);
-        writeStyleMapToByteBuf(buf, Schematics.getDecorations(), Schematics::getStylesForDecoration);
-    }
-
-    private static void writeStyleMapToByteBuf(@NotNull ByteBuf buf, @NotNull Set<String> objects, @NotNull Function<String, List<String>> getStyles)
-    {
-        buf.writeInt(objects.size());
-        for (@NotNull String object : objects)
-        {
-            List<String> styles = getStyles.apply(object);
-
-            buf.writeInt(styles.size());
-            for (@NotNull String style : styles)
-            {
-                ByteBufUtils.writeUTF8String(buf, style);
-            }
-
-            ByteBufUtils.writeUTF8String(buf, object);
-        }
-    }
-
     @NotNull
     private static Map<String, List<String>> readStyleMapFromByteBuf(@NotNull ByteBuf buf)
     {
@@ -70,6 +46,30 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         return map;
     }
 
+    @Override
+    public void toBytes(@NotNull ByteBuf buf)
+    {
+        writeStyleMapToByteBuf(buf, Structures.getHuts(), Structures::getStylesForHut);
+        writeStyleMapToByteBuf(buf, Structures.getDecorations(), Structures::getStylesForDecoration);
+    }
+
+    private static void writeStyleMapToByteBuf(@NotNull ByteBuf buf, @NotNull Set<String> objects, @NotNull Function<String, List<String>> getStyles)
+    {
+        buf.writeInt(objects.size());
+        for (@NotNull String object : objects)
+        {
+            List<String> styles = getStyles.apply(object);
+
+            buf.writeInt(styles.size());
+            for (@NotNull String style : styles)
+            {
+                ByteBufUtils.writeUTF8String(buf, style);
+            }
+
+            ByteBufUtils.writeUTF8String(buf, object);
+        }
+    }
+
     /**
      * {@inheritDoc}
      * <p>
@@ -83,7 +83,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public IMessage onMessage(@NotNull ColonyStylesMessage message, MessageContext ctx)
     {
-        Schematics.setStyles(message.hutStyleMap, message.decorationStyleMap);
+        Structures.setStyles(message.hutStyleMap, message.decorationStyleMap);
         return null;
     }
 }

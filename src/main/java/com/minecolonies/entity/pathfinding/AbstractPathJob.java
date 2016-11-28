@@ -5,12 +5,13 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -23,17 +24,24 @@ import java.util.concurrent.Callable;
 /**
  * Abstract class for Jobs that run in the multithreaded path finder.
  */
-public abstract class AbstractPathJob implements Callable<PathEntity>
+public abstract class AbstractPathJob implements Callable<Path>
 {
     //  Debug Output
-    protected static final int DEBUG_VERBOSITY_NONE  = 0;
-    protected static final int DEBUG_VERBOSITY_BASIC = 1;
-    protected static final int DEBUG_VERBOSITY_FULL  = 2;
-    protected static final Object debugNodeMonitor = new Object();
-    private static final int SHIFT_SOUTH = 1;
-    private static final int SHIFT_WEST  = 2;
-    private static final int SHIFT_NORTH = 3;
-    private static final int SHIFT_EAST  = 4;
+    protected static final int      DEBUG_VERBOSITY_NONE  = 0;
+    protected static final int      DEBUG_VERBOSITY_BASIC = 1;
+    protected static final int      DEBUG_VERBOSITY_FULL  = 2;
+    protected static final Object   debugNodeMonitor      = new Object();
+    private static final   int      SHIFT_SOUTH           = 1;
+    private static final   int      SHIFT_WEST            = 2;
+    private static final   int      SHIFT_NORTH           = 3;
+    private static final   int      SHIFT_EAST            = 4;
+    private static final   BlockPos BLOCKPOS_IDENTITY     = new BlockPos(0, 0, 0);
+    private static final   BlockPos BLOCKPOS_UP           = new BlockPos(0, 1, 0);
+    private static final   BlockPos BLOCKPOS_DOWN         = new BlockPos(0, -1, 0);
+    private static final   BlockPos BLOCKPOS_NORTH        = new BlockPos(0, 0, -1);
+    private static final   BlockPos BLOCKPOS_SOUTH        = new BlockPos(0, 0, 1);
+    private static final   BlockPos BLOCKPOS_EAST         = new BlockPos(1, 0, 0);
+    private static final   BlockPos BLOCKPOS_WEST         = new BlockPos(-1, 0, 0);
     @Nullable
     protected static Set<Node>    lastDebugNodesVisited;
     @Nullable
@@ -87,10 +95,10 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      */
     public AbstractPathJob(World world, @NotNull BlockPos start, @NotNull BlockPos end, int range, PathResult result)
     {
-        int minX = Math.min(start.getX(), end.getX());
-        int minZ = Math.min(start.getZ(), end.getZ());
-        int maxX = Math.max(start.getX(), end.getX());
-        int maxZ = Math.max(start.getZ(), end.getZ());
+        int minX = Math.min(start.getX(), end.getX()) - (range / 2);
+        int minZ = Math.min(start.getZ(), end.getZ()) - (range / 2);
+        int maxX = Math.max(start.getX(), end.getX()) + (range / 2);
+        int maxZ = Math.max(start.getZ(), end.getZ()) + (range / 2);
 
         this.world = new ChunkCache(world, new BlockPos(minX, 0, minZ), new BlockPos(maxX, 256, maxZ), range);
 
@@ -128,44 +136,45 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
     public static BlockPos prepareStart(@NotNull EntityLiving entity)
     {
         @NotNull BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor_double(entity.posX),
-                                                                     (int) entity.posY,
-                                                                     MathHelper.floor_double(entity.posZ));
-        Block b = entity.worldObj.getBlockState(pos).getBlock();
+                                                                              (int) entity.posY,
+                                                                              MathHelper.floor_double(entity.posZ));
+        IBlockState bs = entity.worldObj.getBlockState(pos);
+        Block b = bs.getBlock();
 
         if (entity.isInWater())
         {
-            while (b.getMaterial().isLiquid())
+            while (bs.getMaterial().isLiquid())
             {
-                pos.set(pos.getX(), pos.getY() + 1, pos.getZ());
-                b = entity.worldObj.getBlockState(pos).getBlock();
+                pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
+                bs = entity.worldObj.getBlockState(pos);
             }
         }
         else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof BlockHutField)
         {
-            //  Push away from fence
+            //Push away from fence
             double dX = entity.posX - Math.floor(entity.posX);
             double dZ = entity.posZ - Math.floor(entity.posZ);
 
             if (dX < 0.1)
             {
-                pos.set(pos.getX() - 1, pos.getY(), pos.getZ());
+                pos.setPos(pos.getX() - 1, pos.getY(), pos.getZ());
             }
             else if (dX > 0.9)
             {
-                pos.set(pos.getX() + 1, pos.getY(), pos.getZ());
+                pos.setPos(pos.getX() + 1, pos.getY(), pos.getZ());
             }
 
             if (dZ < 0.1)
             {
-                pos.set(pos.getX(), pos.getY(), pos.getZ() - 1);
+                pos.setPos(pos.getX(), pos.getY(), pos.getZ() - 1);
             }
             else if (dZ > 0.9)
             {
-                pos.set(pos.getX(), pos.getY(), pos.getZ() + 1);
+                pos.setPos(pos.getX(), pos.getY(), pos.getZ() + 1);
             }
         }
 
-        return pos.getImmutable();
+        return pos.toImmutable();
     }
 
     /**
@@ -223,6 +232,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      * Encodes the lowest 12 bits of x,z and all useful bits of y.
      * This creates unique keys for all blocks within a 4096x256x4096 cube, which is FAR
      * bigger volume than one should attempt to pathfind within
+     * This version takes a BlockPos
      *
      * @param pos BlockPos to generate key from
      * @return key for node in map
@@ -278,7 +288,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
     private static boolean calculateSwimming(@NotNull IBlockAccess world, @NotNull BlockPos pos, @Nullable Node node)
     {
-        return (node != null) ? node.isSwimming : world.getBlockState(pos.down()).getBlock().getMaterial().isLiquid();
+        return (node != null) ? node.isSwimming : world.getBlockState(pos.down()).getMaterial().isLiquid();
     }
 
     public PathResult getResult()
@@ -292,7 +302,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      * @return path to follow or null
      */
     @Override
-    public final PathEntity call()
+    public final Path call()
     {
         try
         {
@@ -309,10 +319,10 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
     /**
      * Perform the search
      *
-     * @return PathEntity of a path to the given location, a best-effort, or null
+     * @return Path of a path to the given location, a best-effort, or null
      */
     @Nullable
-    protected PathEntity search()
+    protected Path search()
     {
         Node bestNode = getAndSetupStartNode();
 
@@ -330,14 +340,17 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
             totalNodesVisited++;
             currentNode.counterVisited = totalNodesVisited;
 
-            addNodeToDebug(currentNode);
+            if (debugDrawEnabled)
+            {
+                addNodeToDebug(currentNode);
+            }
 
             currentNode.closed = true;
 
             if (Configurations.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
             {
                 Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
-                        currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.cost, currentNode.score));
+                  currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.cost, currentNode.score));
             }
 
             if (isAtDestination(currentNode))
@@ -366,7 +379,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
             }
         }
 
-        @NotNull PathEntity path = finalizePath(bestNode);
+        @NotNull Path path = finalizePath(bestNode);
 
         handleDebugDraw();
 
@@ -375,11 +388,8 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
     private void addNodeToDebug(Node currentNode)
     {
-        if (debugDrawEnabled)
-        {
-            debugNodesNotVisited.remove(currentNode);
-            debugNodesVisited.add(currentNode);
-        }
+        debugNodesNotVisited.remove(currentNode);
+        debugNodesVisited.add(currentNode);
     }
 
     private boolean doDebugSleep()
@@ -411,7 +421,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
     private void walkCurrentNode(@NotNull Node currentNode)
     {
-        BlockPos dPos = new BlockPos(0, 0, 0);
+        BlockPos dPos = BLOCKPOS_IDENTITY;
         if (currentNode.parent != null)
         {
             dPos = currentNode.pos.subtract(currentNode.parent.pos);
@@ -420,37 +430,37 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
         //  On a ladder, we can go 1 straight-up
         if (onLadderGoingUp(currentNode, dPos))
         {
-            walk(currentNode, new BlockPos(0, 1, 0));
+            walk(currentNode, BLOCKPOS_UP);
         }
 
         //  We can also go down 1, if the lower block is a ladder
         if (onLadderGoingDown(currentNode, dPos))
         {
-            walk(currentNode, new BlockPos(0, -1, 0));
+            walk(currentNode, BLOCKPOS_DOWN);
         }
 
         // N
         if (dPos.getZ() <= 0)
         {
-            walk(currentNode, new BlockPos(0, 0, -1));
+            walk(currentNode, BLOCKPOS_NORTH);
         }
 
         // E
         if (dPos.getX() >= 0)
         {
-            walk(currentNode, new BlockPos(1, 0, 0));
+            walk(currentNode, BLOCKPOS_EAST);
         }
 
         // S
         if (dPos.getZ() >= 0)
         {
-            walk(currentNode, new BlockPos(0, 0, 1));
+            walk(currentNode, BLOCKPOS_SOUTH);
         }
 
         // W
         if (dPos.getX() <= 0)
         {
-            walk(currentNode, new BlockPos(-1, 0, 0));
+            walk(currentNode, BLOCKPOS_WEST);
         }
     }
 
@@ -476,13 +486,13 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
     private Node getAndSetupStartNode()
     {
         @NotNull Node startNode = new Node(start,
-                                   computeHeuristic(start));
+                                            computeHeuristic(start));
 
         if (isLadder(start))
         {
             startNode.isLadder = true;
         }
-        else if (world.getBlockState(start).getBlock().getMaterial().isLiquid())
+        else if (world.getBlockState(start).getMaterial().isLiquid())
         {
             startNode.isSwimming = true;
         }
@@ -502,7 +512,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      * @return the path.
      */
     @NotNull
-    private PathEntity finalizePath(Node targetNode)
+    private Path finalizePath(Node targetNode)
     {
         //  Compute length of path, since we need to allocate an array.  This is cheaper/faster than building a List
         //  and converting it.  Yes, we have targetNode.steps, but I do not want to rely on that being accurate (I might
@@ -521,7 +531,10 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
         node = targetNode;
         while (node.parent != null)
         {
-            addNodeToDebug(node);
+            if (debugDrawEnabled)
+            {
+                addNodeToDebug(node);
+            }
 
             --pathLength;
 
@@ -530,7 +543,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
             if (node.isSwimming)
             {
                 //  Not truly necessary but helps prevent them spinning in place at swimming nodes
-                pos.add(0, -1, 0);
+                pos.add(BLOCKPOS_DOWN);
             }
 
             @NotNull PathPointExtended p = new PathPointExtended(pos);
@@ -559,7 +572,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
         doDebugPrinting(points);
 
-        return new PathEntity(points);
+        return new Path(points);
     }
 
     /**
@@ -755,24 +768,29 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
         }
 
         //  Now check the block we want to move to
-        Block target = world.getBlockState(pos).getBlock();
-        if (!isPassable(target, pos))
+        final IBlockState target = world.getBlockState(pos);
+        if (!isPassable(target))
         {
             return handleTargeNotPassable(parent, pos, target);
         }
 
         //  Do we have something to stand on in the target space?
-        Block below = world.getBlockState(pos.down()).getBlock();
-        if (isWalkableSurface(below, pos.down()))
+        final IBlockState below = world.getBlockState(pos.down());
+        final SurfaceType walkability = isWalkableSurface(below);
+        if (walkability == SurfaceType.WALKABLE)
         {
             //  Level path
             return pos.getY();
+        }
+        else if (walkability == SurfaceType.NOT_PASSABLE)
+        {
+            return -1;
         }
 
         return handleNotStanding(parent, pos, below);
     }
 
-    private int handleNotStanding(@Nullable Node parent, @NotNull BlockPos pos, @NotNull Block below)
+    private int handleNotStanding(@Nullable Node parent, @NotNull BlockPos pos, @NotNull IBlockState below)
     {
         boolean isSwimming = parent != null && parent.isSwimming;
 
@@ -781,7 +799,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
             return handleInLiquid(pos, below, isSwimming);
         }
 
-        if (isLadder(below, pos.down()))
+        if (isLadder(below.getBlock(), pos.down()))
         {
             return pos.getY();
         }
@@ -798,18 +816,18 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
             return -1;
         }
 
-        //  How far of a drop?
-        Block below = world.getBlockState(pos.down(2)).getBlock();
-        if (isWalkableSurface(below, pos.down(2)))
+        final BlockPos down = pos.down(2);
+        final IBlockState below = world.getBlockState(down);
+        if (isWalkableSurface(below) == SurfaceType.WALKABLE)
         {
+            //  Level path
             return pos.getY() - 1;
         }
 
-        //  Too far
         return -1;
     }
 
-    private int handleInLiquid(@NotNull BlockPos pos, @NotNull Block below, boolean isSwimming)
+    private int handleInLiquid(@NotNull BlockPos pos, @NotNull IBlockState below, boolean isSwimming)
     {
         if (isSwimming)
         {
@@ -817,7 +835,7 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
             return pos.getY();
         }
 
-        if (allowSwimming && below.getMaterial() == Material.water)
+        if (allowSwimming && below.getMaterial() == Material.WATER)
         {
             //  This is water, and we are allowed to swim
             return pos.getY();
@@ -827,11 +845,11 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
         return -1;
     }
 
-    private int handleTargeNotPassable(@Nullable Node parent, @NotNull BlockPos pos, @NotNull Block target)
+    private int handleTargeNotPassable(@Nullable Node parent, @NotNull BlockPos pos, @NotNull IBlockState target)
     {
         boolean canJump = parent != null && !parent.isLadder && !parent.isSwimming;
         //  Need to try jumping up one, if we can
-        if (!canJump || !isWalkableSurface(target, pos))
+        if (!canJump || isWalkableSurface(target) != SurfaceType.WALKABLE)
         {
             return -1;
         }
@@ -861,8 +879,8 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
         if (parent != null)
         {
-            Block here = world.getBlockState(parent.pos.down()).getBlock();
-            if (here.getMaterial().isLiquid() && !isPassable(pos))
+            final IBlockState hereState = world.getBlockState(parent.pos.down());
+            if (hereState.getMaterial().isLiquid() && !isPassable(pos))
             {
                 return true;
             }
@@ -874,18 +892,17 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      * Is the space passable?
      *
      * @param block the block we are checking.
-     * @param pos   location of the block.
      * @return true if the block does not block movement
      */
-    protected boolean isPassable(@NotNull Block block, BlockPos pos)
+    protected boolean isPassable(@NotNull IBlockState block)
     {
-        if (block.getMaterial() != Material.air)
+        if (block.getMaterial() != Material.AIR)
         {
             if (block.getMaterial().blocksMovement())
             {
-                return block instanceof BlockDoor ||
+                return block.getBlock() instanceof BlockDoor ||
                          //  block instanceof BlockTrapDoor ||
-                         block instanceof BlockFenceGate;
+                         block.getBlock() instanceof BlockFenceGate;
             }
             else if (block.getMaterial().isLiquid())
             {
@@ -898,23 +915,33 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
 
     protected boolean isPassable(BlockPos pos)
     {
-        return isPassable(world.getBlockState(pos).getBlock(), pos);
+        return isPassable(world.getBlockState(pos));
     }
 
     /**
      * Is the block solid and can be stood upon?
      *
-     * @param block Block to check
-     * @param pos   position of block
+     * @param blockState Block to check
      * @return true if the block at that location can be walked on.
      */
-    protected boolean isWalkableSurface(@NotNull Block block, BlockPos pos)
+    @NotNull
+    protected SurfaceType isWalkableSurface(@NotNull IBlockState blockState)
     {
-        return block.getMaterial().isSolid()
-                 && !(block instanceof BlockFence)
-                 && !(block instanceof BlockFenceGate)
-                 && !(block instanceof BlockWall)
-                 && !(block instanceof BlockHutField);
+        final Block block = blockState.getBlock();
+        if (block instanceof BlockFence
+              || block instanceof BlockFenceGate
+              || block instanceof BlockWall
+              || block instanceof BlockHutField)
+        {
+            return SurfaceType.NOT_PASSABLE;
+        }
+
+        if (blockState.getMaterial().isSolid())
+        {
+            return SurfaceType.WALKABLE;
+        }
+
+        return SurfaceType.DROPABLE;
     }
 
     /**
@@ -926,11 +953,41 @@ public abstract class AbstractPathJob implements Callable<PathEntity>
      */
     protected boolean isLadder(@NotNull Block block, BlockPos pos)
     {
-        return block.isLadder(world, pos, null);
+        return block.isLadder(this.world.getBlockState(pos), world, pos, null);
     }
 
     protected boolean isLadder(BlockPos pos)
     {
         return isLadder(world.getBlockState(pos).getBlock(), pos);
+    }
+
+    /**
+     * Getter for the allowSwimming.
+     *
+     * @return true if is allowed.
+     */
+    protected boolean isAllowedSwimming()
+    {
+        return allowSwimming;
+    }
+
+    /**
+     * Setter for the allowSwimming.
+     *
+     * @param allowSwimming the value to set.
+     */
+    protected void setAllowedSwimming(boolean allowSwimming)
+    {
+        this.allowSwimming = allowSwimming;
+    }
+
+    /**
+     * Check if we can walk on a surface, drop into, or neither.
+     */
+    private enum SurfaceType
+    {
+        WALKABLE,
+        DROPABLE,
+        NOT_PASSABLE
     }
 }

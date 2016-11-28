@@ -1,365 +1,733 @@
 {
-    "mob.baker.grind": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/baker/grind",
-                "stream": false
-            }
-        ]
-    },
-    "mob.barbarian.death": {
-        "category": "hostile",
-        "sounds": [
-            {
-                "name": "mob/barbarian/death",
-                "stream": false
-            }
-        ]
-    },
-    "mob.barbarian.hurt": {
-        "category": "hostile",
-        "sounds": [
-            {
-                "name": "mob/barbarian/hurt1",
-                "stream": false
-            },
-            {
-                "name": "mob/barbarian/hurt2",
-                "stream": false
-            },
-            {
-                "name": "mob/barbarian/hurt3",
-                "stream": false
-            },
-            {
-                "name": "mob/barbarian/hurt4",
-                "stream": false
-            }
-        ]
-    },
-    "mob.barbarian.say": {
-        "category": "hostile",
-        "sounds": [
-            {
-                "name": "mob/barbarian/say",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.built": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/built1",
-                "stream": false
-            },
-            {
-                "name": "mob/blacksmith/built2",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.death": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/death",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.fight": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/fight",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.grind": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/grind",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.hammer": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/hammer1",
-                "stream": false
-            },
-            {
-                "name": "mob/blacksmith/hammer2",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.levelup": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/levelup",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.quench": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/quench",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.sing": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/sing",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.startwork": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/startwork",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.target": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/target",
-                "stream": false
-            }
-        ]
-    },
-    "mob.blacksmith.work": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/blacksmith/work1",
-                "stream": false
-            },
-            {
-                "name": "mob/blacksmith/work2",
-                "stream": false
-            },
-            {
-                "name": "mob/blacksmith/work3",
-                "stream": false
-            },
-            {
-                "name": "mob/blacksmith/work4",
-                "stream": false
-            }
-        ]
-    },
-    "mob.citizen.female.say": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/citizen/female/say1",
-                "stream": false
-            },
-            {
-                "name": "mob/citizen/female/say2",
-                "stream": false
-            },
-            {
-                "name": "mob/citizen/female/say2",
-                "stream": false
-            }
-        ]
-    },
-    "mob.citizen.male.say": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/citizen/male/say1",
-                "stream": false
-            },
-            {
-                "name": "mob/citizen/male/say2",
-                "stream": false
-            },
-            {
-                "name": "mob/citizen/male/say3",
-                "stream": false
-            }
-        ]
-    },
-    "mob.citizen.snore": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/citizen/snore",
-                "stream": false
-            }
-        ]
-    },
-    "mob.hunter.death": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/hunter/death",
-                "stream": false
-            }
-        ]
-    },
-    "mob.hunter.fight": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/hunter/fight",
-                "stream": false
-            }
-        ]
-    },
-    "mob.hunter.flee": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/hunter/flee",
-                "stream": false
-            }
-        ]
-    },
-    "mob.hunter.hounds": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/hunter/hounds",
-                "stream": false
-            }
-        ]
-    },
-    "mob.hunter.idle": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/hunter/idle",
-                "stream": false
-            }
-        ]
-    },
-    "mob.hunter.levelup": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/hunter/levelup",
-                "stream": false
-            }
-        ]
-    },
-    "mob.hunter.loot": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/hunter/loot",
-                "stream": false
-            }
-        ]
-    },
-    "mob.hunter.target": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/hunter/target",
-                "stream": false
-            }
-        ]
-    },
-    "mob.soldier.death": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/soldier/death",
-                "stream": false
-            }
-        ]
-    },
-    "mob.soldier.fight": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/soldier/fight",
-                "stream": false
-            }
-        ]
-    },
-    "mob.soldier.flee": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/soldier/flee",
-                "stream": false
-            }
-        ]
-    },
-    "mob.soldier.idle": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/soldier/idle",
-                "stream": false
-            }
-        ]
-    },
-    "mob.soldier.levelup": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/soldier/levelup",
-                "stream": false
-            }
-        ]
-    },
-    "mob.soldier.maxlevel": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/soldier/maxlevel",
-                "stream": false
-            }
-        ]
-    },
-    "mob.soldier.target": {
-        "category": "neutral",
-        "sounds": [
-            {
-                "name": "mob/soldier/target",
-                "stream": false
-            }
-        ]
-    },
-    "tile.bell.ring": {
-        "category": "block",
-        "sounds": [
-            {
-                "name": "tile/bell/ring",
-                "stream": false
-            }
-        ]
-    },
-    "tile.hutbaker.windmill": {
-        "category": "block",
-        "sounds": [
-            {
-                "name": "tile/hutbaker/windmill",
-                "stream": false
-            }
-        ]
-    }
+  "mob.baker.grind": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/baker/grind",
+        "stream": false
+      }
+    ]
+  },
+  "mob.barbarian.death": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/death",
+        "stream": false
+      }
+    ]
+  },
+  "mob.barbarian.hurt": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/hurt1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/barbarian/hurt4",
+        "stream": false
+      }
+    ]
+  },
+  "mob.barbarian.say": {
+    "category": "hostile",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/barbarian/say",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.built": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/built1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/blacksmith/built2",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.death": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/death",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.fight": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/fight",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.grind": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/grind",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.hammer": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/hammer1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/blacksmith/hammer2",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.levelup": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/levelup",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.quench": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/quench",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.sing": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/sing",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.startwork": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/startwork",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.target": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/target",
+        "stream": false
+      }
+    ]
+  },
+  "mob.blacksmith.work": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/blacksmith/work1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/blacksmith/work2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/blacksmith/work3",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/blacksmith/work4",
+        "stream": false
+      }
+    ]
+  },
+  "mob.citizen.female.say": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/female/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/female/say2",
+        "stream": false
+      }
+    ]
+  },
+  "mob.citizen.male.say": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/male/say1",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say2",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/citizen/male/say3",
+        "stream": false
+      }
+    ]
+  },
+  "mob.citizen.snore": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/citizen/snore",
+        "stream": false
+      }
+    ]
+  },
+  "mob.hunter.death": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/hunter/death",
+        "stream": false
+      }
+    ]
+  },
+  "mob.hunter.fight": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/hunter/fight",
+        "stream": false
+      }
+    ]
+  },
+  "mob.hunter.flee": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/hunter/flee",
+        "stream": false
+      }
+    ]
+  },
+  "mob.hunter.hounds": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/hunter/hounds",
+        "stream": false
+      }
+    ]
+  },
+  "mob.hunter.idle": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/hunter/idle",
+        "stream": false
+      }
+    ]
+  },
+  "mob.hunter.levelup": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/hunter/levelup",
+        "stream": false
+      }
+    ]
+  },
+  "mob.hunter.loot": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/hunter/loot",
+        "stream": false
+      }
+    ]
+  },
+  "mob.hunter.target": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/hunter/target",
+        "stream": false
+      }
+    ]
+  },
+  "mob.soldier.death": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/soldier/death",
+        "stream": false
+      }
+    ]
+  },
+  "mob.soldier.fight": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/soldier/fight",
+        "stream": false
+      }
+    ]
+  },
+  "mob.soldier.flee": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/soldier/flee",
+        "stream": false
+      }
+    ]
+  },
+  "mob.soldier.idle": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/soldier/idle",
+        "stream": false
+      }
+    ]
+  },
+  "mob.soldier.levelup": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/soldier/levelup",
+        "stream": false
+      }
+    ]
+  },
+  "mob.soldier.maxlevel": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/soldier/maxlevel",
+        "stream": false
+      }
+    ]
+  },
+  "mob.soldier.target": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/soldier/target",
+        "stream": false
+      }
+    ]
+  },
+  "tile.bell.ring": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "minecolonies:tile/bell/ring",
+        "stream": false
+      }
+    ]
+  },
+  "tile.hutbaker.windmill": {
+    "category": "block",
+    "sounds": [
+      {
+        "name": "minecolonies:tile/hutbaker/windmill",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.female.generalPhrases": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/female/workWorkWork",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/theresFishToCatch",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/rowYourBoat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/offToFish",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/notBitingToday",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/lovelyDay",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/haveAGoodDay",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/goodDayToYou",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/fishingWeWillGo",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/callingItADay",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.female.noise": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/female/yawns",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/sniffles",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/sighs",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/ho_hum",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/hey",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/grumbles",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/coughs",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/female/cheers",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.male.noise": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/cough_cough",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/doopy_doopy_doo",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/dum_dee_dum",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/groan",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/ha_ha_ha",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/ho_hum",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/ho_hum_dum_dee_dum",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/sniff",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/tired_groan",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/tired_sigh",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/yawn",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/yawn_alt_",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.male.generalPhrases": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/a-fishing_we_will_go",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/annoyed",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/brand_new_day",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/brand_new_day_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/bye_bye",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/calling_it_a_day",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/get_on_the_hook_fishy",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/good_day_to_you",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/hello",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/here_fishy_fishy",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/here_fishy_fishy_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/hey_hows_it_going",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/hey_hows_it_going_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/hey_whats_up",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/howdy",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/lovely_day_today",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/lovely_weather_today",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/nice_weather_today",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/row_your_boat",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/row_your_boat_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/see_ya_later",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/see_ya_later_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/take_care",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/take_care_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/talk_to_you_later",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/theyre_just_not_biting",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/theyre_just_not_biting_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/well_off_to_fish",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/well_off_to_fish_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/well_theres_fish_to_catch",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/well_theres_fish_to_catch_alt_",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/work_work_work",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/you_can_do_it",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/you_know_you_want_it",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.female.offToBed": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/female/offToBed",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.male.offToBed": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/off_to_bed",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.female.needFishingRod": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/female/needFishingRod",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.male.needFishingRod": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/need_a_fishing_rod",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.female.iGotOne": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/female/iGotOne",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.male.iGotOne": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/hey_i_got_one",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/youre_mine_now",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.male.badWeather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/male/awful_weather_today",
+        "stream": false
+      },
+      {
+        "name": "minecolonies:mob/fisherman/male/ahg_this_rain",
+        "stream": false
+      }
+    ]
+  },
+
+  "mob.fisherman.female.badWeather": {
+    "category": "neutral",
+    "sounds": [
+      {
+        "name": "minecolonies:mob/fisherman/female/lousyWheather",
+        "stream": false
+      }
+    ]
+  }
 }

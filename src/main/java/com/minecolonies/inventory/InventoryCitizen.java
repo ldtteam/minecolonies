@@ -12,10 +12,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,36 +28,37 @@ public class InventoryCitizen implements IInventory
     /**
      * Number of slots in the inventory.
      */
-    private static final int         INVENTORY_SIZE  = 27;
+    private static final int    INVENTORY_SIZE  = 27;
     /**
      * Max size of the stacks.
      */
-    private static final int         MAX_STACK_SIZE  = 64;
+    private static final int    MAX_STACK_SIZE  = 64;
     /**
      * NBT tag to store and retrieve the inventory.
      */
-    private static final String      TAG_INVENTORY   = "Inventory";
+    private static final String TAG_INVENTORY   = "Inventory";
     /**
      * NBT tag to store and retrieve the custom name.
      */
-    private static final String      TAG_CUSTOM_NAME = "CustomName";
+    private static final String TAG_CUSTOM_NAME = "CustomName";
     /**
      * NBT tag to store and retrieve the custom name.
      */
-    private static final String      TAG_ITEMS       = "Items";
+    private static final String TAG_ITEMS       = "Items";
     /**
      * NBT tag to store and retrieve the custom name.
      */
-    private static final String      TAG_SLOT        = "Slot";
+    private static final String TAG_SLOT        = "Slot";
     /**
      * The returned slot if a slot hasn't been found.
      */
-    private static final int         NO_SLOT         = -1;
+    private static final int    NO_SLOT         = -1;
+
     /**
      * The inventory content.
      */
     @NotNull
-    private              ItemStack[] stacks          = new ItemStack[INVENTORY_SIZE];
+    private ItemStack[] stacks = new ItemStack[INVENTORY_SIZE];
     /**
      * The inventories custom name. In our case the citizens name.
      */
@@ -73,12 +74,11 @@ public class InventoryCitizen implements IInventory
     /**
      * Updated after the inventory has been changed
      */
-    private              boolean inventoryChanged = false;
+    private boolean inventoryChanged = false;
     /**
      * The citizen which owns the inventory.
      */
     private EntityCitizen citizen;
-
     /**
      * Creates the inventory of the citizen.
      *
@@ -149,7 +149,7 @@ public class InventoryCitizen implements IInventory
      *
      * @return {@link ItemStack} currently being held by citizen
      */
-    public ItemStack getHeldItem()
+    public ItemStack getHeldItemMainhand()
     {
         return getStackInSlot(heldItem);
     }
@@ -217,7 +217,7 @@ public class InventoryCitizen implements IInventory
             {
                 if (itemStackIn.isItemDamaged())
                 {
-                    int j = this.getFirstEmptyStack();
+                    int j = this.getFirstEmptySlot();
 
                     if (j != NO_SLOT)
                     {
@@ -254,7 +254,14 @@ public class InventoryCitizen implements IInventory
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
-                crashreportcategory.addCrashSectionCallable("Item name", itemStackIn::getDisplayName);
+                try
+                {
+                    crashreportcategory.addCrashSection("Item name", itemStackIn.getDisplayName());
+                }
+                catch (RuntimeException e)
+                {
+                    crashreportcategory.addCrashSectionThrowable("Item name", e);
+                }
                 throw new ReportedException(crashreport);
             }
         }
@@ -265,11 +272,11 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Returns the first item stack that is empty.
+     * Returns the first item slot that is empty.
      *
      * @return the id of the first empty slot.
      */
-    public int getFirstEmptyStack()
+    public int getFirstEmptySlot()
     {
         for (int i = 0; i < this.stacks.length; ++i)
         {
@@ -293,7 +300,7 @@ public class InventoryCitizen implements IInventory
 
         if (j < 0)
         {
-            j = this.getFirstEmptyStack();
+            j = this.getFirstEmptySlot();
         }
 
         if (j < 0)
@@ -332,16 +339,6 @@ public class InventoryCitizen implements IInventory
                 return i;
             }
         }
-    }    /**
-     * Get the name of this object. For citizens this returns their name.
-     *
-     * @return the name of the inventory.
-     */
-    @NotNull
-    @Override
-    public String getName()
-    {
-        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     /**
@@ -372,34 +369,17 @@ public class InventoryCitizen implements IInventory
     public boolean hasItem(Item itemIn)
     {
         return getInventorySlotContainItem(itemIn) != NO_SLOT;
-    }    /**
-     * Checks if the inventory is named.
-     *
-     * @return true if the inventory has a custom name.
-     */
-    @Override
-    public boolean hasCustomName()
-    {
-        return this.customName != null;
     }
 
     /**
      * Gets slot that hold item that is being held by citizen.
-     * {@link #getHeldItem()}.
+     * {@link #getHeldItemMainhand()}.
      *
      * @return Slot index of held item
      */
     public int getHeldItemSlot()
     {
         return heldItem;
-    }    /**
-     * Get the formatted ChatComponent that will be used for the sender's username in chat
-     */
-    @NotNull
-    @Override
-    public IChatComponent getDisplayName()
-    {
-        return this.hasCustomName() ? new ChatComponentText(this.getName()) : new ChatComponentTranslation(this.getName());
     }
 
     /**
@@ -419,6 +399,18 @@ public class InventoryCitizen implements IInventory
         {
             materialStore = new MaterialStore(MaterialStore.Type.INVENTORY, system);
         }
+    }
+
+    /**
+     * Get the name of this object. For citizens this returns their name.
+     *
+     * @return the name of the inventory.
+     */
+    @NotNull
+    @Override
+    public String getName()
+    {
+        return this.hasCustomName() ? this.customName : "citizen.inventory";
     }
 
     public MaterialStore getMaterialStore()
@@ -550,6 +542,17 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
+     * Checks if the inventory is named.
+     *
+     * @return true if the inventory has a custom name.
+     */
+    @Override
+    public boolean hasCustomName()
+    {
+        return this.customName != null;
+    }
+
+    /**
      * Removes a stack from the given slot and returns it.
      *
      * @param index the slot of the stack.
@@ -646,6 +649,16 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
+     * Get the formatted TextComponent that will be used for the sender's username in chat
+     */
+    @NotNull
+    @Override
+    public ITextComponent getDisplayName()
+    {
+        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
+    }
+
+    /**
      * Called after the inventory has been closed by a player.
      *
      * @param player the player who opened the inventory.
@@ -697,8 +710,6 @@ public class InventoryCitizen implements IInventory
          */
     }
 
-    //-----------------------------Material Handling--------------------------------
-
     /**
      * Returns the number of fields.
      *
@@ -721,18 +732,6 @@ public class InventoryCitizen implements IInventory
             this.stacks[i] = null;
         }
     }
-
-    //todo missing now
-    /*
-    @Override
-    public ItemStack getStackInSlotOnClosing(int index)
-    {
-            ItemStack removed = super.getStackInSlotOnClosing(index);
-
-                    removeStackFromMaterialStore(removed);
-
-                    return removed;
-    }*/
 
     /**
      * Used to store variables.
@@ -773,4 +772,20 @@ public class InventoryCitizen implements IInventory
 
 
 
+
+
+    //-----------------------------Material Handling--------------------------------
+
+
+    //todo missing now
+    /*
+    @Override
+    public ItemStack getStackInSlotOnClosing(int index)
+    {
+            ItemStack removed = super.getStackInSlotOnClosing(index);
+
+                    removeStackFromMaterialStore(removed);
+
+                    return removed;
+    }*/
 }

@@ -16,7 +16,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,18 +59,21 @@ public abstract class AbstractBuilding
         addMapping("TownHall", BuildingTownHall.class, BlockHutTownHall.class);
         addMapping("Warehouse", BuildingWarehouse.class, BlockHutWarehouse.class);
         addMapping("Fisherman", BuildingFisherman.class, BlockHutFisherman.class);
+        addMapping("GuardTower", BuildingGuardTower.class, BlockHutGuardTower.class);
     }
+
     private final BlockPos                 location;
     @NotNull
     private final Colony                   colony;
     private       MaterialStore            materialStore;
     private       TileEntityColonyBuilding tileEntity;
     // Attributes
-    private int    buildingLevel = 0;
-    private int    rotation      = 0;
-    private String style         = "classic";
+    private int     buildingLevel = 0;
+    private int     rotation      = 0;
+    private String  style         = "default";
     //  State
-    private boolean dirty = false;
+    private boolean dirty         = false;
+
     /**
      * Constructor for a AbstractBuilding.
      *
@@ -194,8 +197,8 @@ public abstract class AbstractBuilding
         style = compound.getString(TAG_STYLE);
         if ("".equals(style))
         {
-            Log.getLogger().warn("Loaded empty style, setting to classic");
-            style = "classic";
+            Log.getLogger().warn("Loaded empty style, setting to default");
+            style = "default";
         }
 
         if (MaterialSystem.isEnabled)
@@ -302,7 +305,7 @@ public abstract class AbstractBuilding
     /**
      * Children must return the name of their schematic.
      *
-     * @return Schematic name.
+     * @return StructureProxy name.
      */
     public abstract String getSchematicName();
 
@@ -383,6 +386,16 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Sets the tile entity for the building.
+     *
+     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
+     */
+    public void setTileEntity(TileEntityColonyBuilding te)
+    {
+        tileEntity = te;
+    }
+
+    /**
      * Returns the colony of the building
      *
      * @return {@link com.minecolonies.colony.Colony} of the current object
@@ -391,16 +404,6 @@ public abstract class AbstractBuilding
     public Colony getColony()
     {
         return colony;
-    }
-
-    /**
-     * Sets the tile entity for the building.
-     *
-     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
-     */
-    public void setTileEntity(TileEntityColonyBuilding te)
-    {
-        tileEntity = te;
     }
 
     /**
@@ -482,6 +485,13 @@ public abstract class AbstractBuilding
             requestWorkOrder(buildingLevel + 1);
         }
     }
+
+    /**
+     * Children must return their max building level.
+     *
+     * @return Max building level.
+     */
+    public abstract int getMaxBuildingLevel();
 
     /**
      * Adds work orders to the {@link Colony#workManager}
@@ -626,13 +636,6 @@ public abstract class AbstractBuilding
         markDirty();
         ColonyManager.markDirty();
     }
-
-    /**
-     * Children must return their max building level.
-     *
-     * @return Max building level.
-     */
-    public abstract int getMaxBuildingLevel();
 
     /**
      * Marks the instance and the building dirty

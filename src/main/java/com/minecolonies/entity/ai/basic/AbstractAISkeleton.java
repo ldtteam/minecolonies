@@ -9,7 +9,6 @@ import com.minecolonies.util.Log;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +29,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     private static final int MUTEX_MASK = 3;
     @NotNull
     protected final J                   job;
-    @Nullable
+    @NotNull
     protected final EntityCitizen       worker;
     protected final World               world;
     @NotNull
@@ -170,9 +169,20 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         catch (RuntimeException e)
         {
             Log.getLogger().warn("Condition check for target " + target + " threw an exception:", e);
+            this.onException(e);
             return false;
         }
         return applyTarget(target);
+    }
+
+    /**
+     * Handle an exception higher up.
+     *
+     * @param e The exception to be handled
+     */
+    protected void onException(RuntimeException e)
+    {
+
     }
 
     /**
@@ -194,6 +204,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         catch (RuntimeException e)
         {
             Log.getLogger().warn("Action for target " + target + " threw an exception:", e);
+            this.onException(e);
             return false;
         }
         if (newState != null)
@@ -212,5 +223,10 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     public final AIState getState()
     {
         return state;
+    }
+
+    protected int getLevelDelay()
+    {
+        return 10;
     }
 }

@@ -17,7 +17,7 @@ import com.minecolonies.util.LanguageHandler;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -41,7 +41,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     /**
      * The maximum building level of the hut.
      */
-    private static final int MAX_BUILDING_LEVEL = 3;
+    private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
      * NBTTag to store the fields.
@@ -108,6 +108,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      */
     public void addFarmerFields(Field field)
     {
+        field.calculateSize(getColony().getWorld(), field.getLocation().down());
         farmerFields.add(field);
     }
 
@@ -165,6 +166,21 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return MAX_BUILDING_LEVEL;
     }
 
+    @Override
+    public void onUpgradeComplete(final int newLevel)
+    {
+        super.onUpgradeComplete(newLevel);
+
+        if (newLevel == 1)
+        {
+            getColony().triggerAchievement(ModAchievements.achievementBuildingFarmer);
+        }
+        if (newLevel >= getMaxBuildingLevel())
+        {
+            getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
+        }
+    }
+
     @NotNull
     @Override
     public String getJobName()
@@ -189,25 +205,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
             }
         }
         return new JobFarmer(citizen);
-    }
-
-    @Override
-    public void onDestroyed()
-    {
-        super.onDestroyed();
-        for (@NotNull final Field field : farmerFields)
-        {
-            final Field tempField = getColony().getField(field.getID());
-
-            if (tempField != null)
-            {
-                tempField.setTaken(false);
-                tempField.setOwner("");
-                @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
-                getColony().getWorld().markBlockForUpdate(scarecrowTileEntity.getPos());
-                scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
-            }
-        }
     }
 
     //we have to update our field from the colony!
@@ -241,6 +238,29 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
         compound.setTag(TAG_FIELDS, fieldTagList);
         compound.setBoolean(TAG_ASSIGN_MANUALLY, assignManually);
+    }
+
+    @Override
+    public void onDestroyed()
+    {
+        super.onDestroyed();
+        for (@NotNull final Field field : farmerFields)
+        {
+            final Field tempField = getColony().getField(field.getID());
+
+            if (tempField != null)
+            {
+                tempField.setTaken(false);
+                tempField.setOwner("");
+                @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
+                getColony().getWorld()
+                  .notifyBlockUpdate(scarecrowTileEntity.getPos(),
+                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                    3);
+                scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
+            }
+        }
     }
 
     /**
@@ -325,7 +345,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 else
                 {
                     scarecrow.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
-                    getColony().getWorld().markBlockForUpdate(scarecrow.getPos());
+                    getColony().getWorld()
+                      .notifyBlockUpdate(scarecrow.getPos(), getColony().getWorld().getBlockState(scarecrow.getPos()), getColony().getWorld().getBlockState(scarecrow
+                                                                                                                                                              .getPos()), 3);
                     field.setInventoryField(scarecrow.getInventoryField());
                     if (currentField != null && currentField.getID() == field.getID())
                     {
@@ -375,7 +397,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
             field.setTaken(false);
             field.setOwner("");
             @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
-            getColony().getWorld().markBlockForUpdate(scarecrowTileEntity.getPos());
+            getColony().getWorld()
+              .notifyBlockUpdate(scarecrowTileEntity.getPos(),
+                getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                3);
             scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         }
     }
@@ -401,21 +427,6 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public void setAssignManually(final boolean assignManually)
     {
         this.assignManually = assignManually;
-    }
-
-    @Override
-    public void onUpgradeComplete(final int newLevel)
-    {
-        super.onUpgradeComplete(newLevel);
-
-        if (newLevel == 1)
-        {
-            getColony().triggerAchievement(ModAchievements.achievementBuildingFarmer);
-        }
-        if (newLevel >= getMaxBuildingLevel())
-        {
-            getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
-        }
     }
 
     /**
@@ -551,4 +562,3 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
     }
 }
-

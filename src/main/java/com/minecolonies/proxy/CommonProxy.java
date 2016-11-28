@@ -8,10 +8,11 @@ import com.minecolonies.event.EventHandler;
 import com.minecolonies.event.FMLEventHandler;
 import com.minecolonies.inventory.GuiHandler;
 import com.minecolonies.lib.Constants;
+import com.minecolonies.sounds.ModSoundEvents;
 import com.minecolonies.tileentities.ScarecrowTileEntity;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
@@ -26,7 +27,7 @@ public class CommonProxy implements IProxy
      * Used to store IExtendedEntityProperties data temporarily between player death and respawn
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
-    private int nextEntityId = 0;
+    private              int                         nextEntityId         = 0;
 
     /**
      * Adds an entity's custom data to the map for temporary storage
@@ -90,6 +91,12 @@ public class CommonProxy implements IProxy
 
     @Override
     public void registerEntityRendering() {}
+
+    @Override
+    public void registerSounds()
+    {
+        ModSoundEvents.registerSounds();
+    }
 
     @Override
     public void registerTileEntityRendering() {}

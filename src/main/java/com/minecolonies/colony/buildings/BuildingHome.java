@@ -9,7 +9,7 @@ import com.minecolonies.util.ServerUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,19 +28,6 @@ public class BuildingHome extends AbstractBuildingHut
     public BuildingHome(Colony c, BlockPos l)
     {
         super(c, l);
-    }
-
-    @NotNull
-    @Override
-    public String getSchematicName()
-    {
-        return CITIZEN;
-    }
-
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return 4;
     }
 
     @Override
@@ -63,6 +50,13 @@ public class BuildingHome extends AbstractBuildingHut
         }
     }
 
+    @NotNull
+    @Override
+    public String getSchematicName()
+    {
+        return CITIZEN;
+    }
+
     @Override
     public void writeToNBT(@NotNull NBTTagCompound compound)
     {
@@ -80,17 +74,12 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void setBuildingLevel(int level)
-    {
-        super.setBuildingLevel(level);
-        getColony().calculateMaxCitizens();
-    }
-
-    @Override
     public void onDestroyed()
     {
-        residents.stream().filter(citizen -> citizen != null).forEach(citizen -> citizen.setHomeBuilding(null));
-
+        residents.stream()
+          .filter(citizen -> citizen != null)
+          .forEach(citizen -> citizen.setHomeBuilding(null));
+        residents.clear();
         super.onDestroyed();
     }
 
@@ -122,17 +111,24 @@ public class BuildingHome extends AbstractBuildingHut
     @Override
     public int getMaxInhabitants()
     {
-        return 2;
+        return getBuildingLevel();
     }
 
     /**
      * Looks for a homeless citizen to add to the current building. Calls
      * {@link #addResident(CitizenData)}
      */
-    public void addHomelessCitizens()
+    private void addHomelessCitizens()
     {
         for (@NotNull CitizenData citizen : getColony().getCitizens().values())
         {
+            // Move the citizen to a better hut
+            if (citizen.getHomeBuilding() != null &&
+                  citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
+            {
+                // The citizen can move to this hut to improve conditions
+                citizen.getHomeBuilding().removeCitizen(citizen);
+            }
             if (citizen.getHomeBuilding() == null)
             {
                 addResident(citizen);
@@ -159,11 +155,17 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
+    public int getMaxBuildingLevel()
+    {
+        return 5;
+    }
+
+    @Override
     public void onUpgradeComplete(final int newLevel)
     {
         super.onUpgradeComplete(newLevel);
 
-        @Nullable final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner());
+        @Nullable final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner(), getColony().getWorld());
 
         if (newLevel == 1)
         {
@@ -185,6 +187,13 @@ public class BuildingHome extends AbstractBuildingHut
         {
             buf.writeInt(citizen.getId());
         }
+    }
+
+    @Override
+    public void setBuildingLevel(int level)
+    {
+        super.setBuildingLevel(level);
+        getColony().calculateMaxCitizens();
     }
 
     /**

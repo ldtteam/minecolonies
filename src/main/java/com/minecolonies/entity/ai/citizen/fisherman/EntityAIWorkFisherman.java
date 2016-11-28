@@ -5,18 +5,27 @@ import com.minecolonies.colony.jobs.JobFisherman;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.entity.EntityFishHook;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
+import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.pathfinding.PathJobFindWater;
+import com.minecolonies.sounds.FishermanSounds;
 import com.minecolonies.util.InventoryUtils;
+import com.minecolonies.util.SoundUtils;
 import com.minecolonies.util.Utils;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -93,26 +102,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private static final int SEARCH_RANGE = 50;
 
     /**
-     * The volume in percent which shall be played for the entity sounds
-     */
-    private static final float VOLUME = 0.5F;
-
-    /**
-     * The upper limit for the frequency of the played sounds
-     */
-    private static final double FREQUENCY_UPPER_LIMIT_DIVIDER = 1.2D;
-
-    /**
-     * The lower limit for the frequency of the played sounds
-     */
-    private static final double FREQUENCY_LOWER_LIMIT_DIVIDER = 0.8D;
-
-    /**
-     * The frequency should be around this value
-     */
-    private static final double FREQUENCY_BOUND_VALUE = 0.4D;
-
-    /**
      * The percentage of times where the fisherman will check out a new pond.
      */
     private static final double CHANCE_NEW_POND = 0.05D;
@@ -127,7 +116,15 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private static final int DEXTERITY_MULTIPLIER = 1;
 
+    /**
+     * Time out fo fish again.
+     */
     private static final int FISHING_TIMEOUT = 5;
+
+    /**
+     * Chance to play a specific fisherman sound.
+     */
+    private static final int CHANCE_TO_PLAY_SOUND = 20;
 
     /**
      * The number of executed adjusts of the fisherman's rotation.
@@ -207,8 +204,9 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private AIState prepareForFishing()
     {
-        if (checkOrRequestItems(new ItemStack(Items.fishing_rod)))
+        if (checkOrRequestItems(new ItemStack(Items.FISHING_ROD)))
         {
+            playNeedRodSound();
             return getState();
         }
         if (job.getWater() == null)
@@ -216,6 +214,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
             return FISHERMAN_SEARCHING_WATER;
         }
         return FISHERMAN_WALKING_TO_WATER;
+    }
+
+    /**
+     * Plays a sound when the fisherman needs a rod.
+     */
+    private void playNeedRodSound()
+    {
+        if (worker != null)
+        {
+            final SoundEvent needFishingRod = worker.isFemale() ? FishermanSounds.Female.needFishingRod : FishermanSounds.Male.needFishingRod;
+            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), needFishingRod, CHANCE_TO_PLAY_SOUND);
+        }
     }
 
     /**
@@ -271,7 +281,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasitemInInventory(getInventory(), Items.fish);
+        return InventoryUtils.hasitemInInventory(getInventory(), Items.FISH);
     }
 
     /**
@@ -281,32 +291,23 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasRodButNotEquipped()
     {
-        return worker.hasItemInInventory(Items.fishing_rod) && worker.getHeldItem() != null && !(worker.getHeldItem().getItem() instanceof ItemFishingRod);
+        return worker.hasItemInInventory(Items.FISHING_ROD) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
     }
 
     /**
-     * Override this method if you want to keep some items in inventory.
+     * Override this method if you want to keep an amount of items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.
      * But you can use this method to hold some stacks back.
      *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
+     * @return a list of objects which should be kept.
      */
     @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
+    protected Map<ItemStorage, Integer> needXForWorker()
     {
-        return isStackRod(stack);
-    }
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
+        keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
 
-    /**
-     * Checks if a given stack equals a fishingRod.
-     *
-     * @param stack the stack to decide on
-     * @return if the stack matches
-     */
-    private static boolean isStackRod(@Nullable ItemStack stack)
-    {
-        return stack != null && stack.getItem().equals(Items.fishing_rod);
+        return keepX;
     }
 
     /**
@@ -458,6 +459,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
+            playCaughtFishSound();
             if (random.nextDouble() < CHANCE_NEW_POND)
             {
                 job.setWater(null);
@@ -467,6 +469,18 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
 
         return throwOrRetrieveHook();
+    }
+
+    /**
+     * Plays a sound with a chance when a fish has been caught.
+     */
+    private void playCaughtFishSound()
+    {
+        if (worker != null)
+        {
+            final SoundEvent iGotOne = worker.isFemale() ? FishermanSounds.Female.iGotOne : FishermanSounds.Male.iGotOne;
+            SoundUtils.playSoundAtCitizenWithChance(world, worker.getPosition(), iGotOne, CHANCE_TO_PLAY_SOUND);
+        }
     }
 
     /**
@@ -506,18 +520,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         if (!world.isRemote)
         {
             worker.faceBlock(job.getWater());
-            world.playSoundAtEntity(
-              worker, "random.bow", VOLUME,
-              (float) (FREQUENCY_BOUND_VALUE
-                         / (random.nextDouble()
-                              * (FREQUENCY_UPPER_LIMIT_DIVIDER
-                                   - FREQUENCY_LOWER_LIMIT_DIVIDER)
-                              + FREQUENCY_LOWER_LIMIT_DIVIDER)));
+            world.playSound((EntityPlayer) null,
+              this.worker.getPosition(),
+              SoundEvents.ENTITY_BOBBER_THROW,
+              SoundCategory.NEUTRAL,
+              0.5F,
+              0.4F / (this.world.rand.nextFloat() * 0.4F + 0.8F));
             this.entityFishHook = new EntityFishHook(world, this.getCitizen());
             world.spawnEntityInWorld(this.entityFishHook);
         }
 
-        worker.swingItem();
+        worker.swingArm(worker.getActiveHand());
     }
 
     /**
@@ -555,25 +568,25 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private AIState isReadyToFish()
     {
         //We really do have our Rod in our inventory?
-        if (!worker.hasItemInInventory(Items.fishing_rod))
+        if (!worker.hasItemInInventory(Items.FISHING_ROD))
         {
             return PREPARING;
         }
 
-        if (world.getBlockState(worker.getPosition()).getBlock() == Blocks.water)
+        if (world.getBlockState(worker.getPosition()).getBlock() == Blocks.WATER)
         {
             job.removeFromPonds(job.getWater());
             job.setWater(null);
             return FISHERMAN_SEARCHING_WATER;
         }
         //If there is no close water, try to move closer
-        if (!Utils.isBlockInRange(world, Blocks.water, (int) worker.posX, (int) worker.posY, (int) worker.posZ, MIN_DISTANCE_TO_WATER))
+        if (!Utils.isBlockInRange(world, Blocks.WATER, (int) worker.posX, (int) worker.posY, (int) worker.posZ, MIN_DISTANCE_TO_WATER))
         {
             return FISHERMAN_WALKING_TO_WATER;
         }
 
         //Check if Rod is held item if not put it as held item
-        if (worker.getHeldItem() == null || !worker.getHeldItem().getItem().equals(Items.fishing_rod))
+        if (worker.getHeldItemMainhand() == null || !worker.getHeldItemMainhand().getItem().equals(Items.FISHING_ROD))
         {
             equipRod();
             return getState();
@@ -630,7 +643,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private void retrieveRod()
     {
-        worker.swingItem();
+        worker.swingArm(worker.getActiveHand());
         int i = entityFishHook.getDamage(this.getCitizen());
         worker.damageItemInHand(i);
         entityFishHook = null;

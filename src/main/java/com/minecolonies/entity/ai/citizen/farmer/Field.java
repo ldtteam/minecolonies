@@ -14,10 +14,11 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -87,6 +88,11 @@ public class Field extends Container
     private static final String TAG_OWNER = "owner";
 
     /**
+     * Tag to store if initialized or not.
+     */
+     private static final String TAG_INITIALIZED = "initialized";
+
+    /**
      * Amount of rows in the player inventory.
      */
     private static final int PLAYER_INVENTORY_ROWS = 3;
@@ -140,7 +146,12 @@ public class Field extends Container
     /**
      * Checks if the field needsWork (Hoeig, Seedings, Farming etc).
      */
-    private boolean needsWork = false;
+    private boolean needsWork = true;
+
+    /**
+     * Is the field new or recently reseeded?
+     */
+    private boolean initialized = false;
 
     /**
      * Has the field been planted?
@@ -214,10 +225,10 @@ public class Field extends Container
             for (int j = 0; j < PLAYER_INVENTORY_COLUMNS; j++)
             {
                 addSlotToContainer(new Slot(
-                                             playerInventory,
-                                             j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
-                                             PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
-                                             PLAYER_INVENTORY_INITIAL_Y_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH
+                        playerInventory,
+                        j + i * PLAYER_INVENTORY_COLUMNS + PLAYER_INVENTORY_COLUMNS,
+                        PLAYER_INVENTORY_INITIAL_X_OFFSET + j * PLAYER_INVENTORY_OFFSET_EACH,
+                        PLAYER_INVENTORY_INITIAL_Y_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH
                 ));
             }
         }
@@ -225,57 +236,11 @@ public class Field extends Container
         for (i = 0; i < PLAYER_INVENTORY_COLUMNS; i++)
         {
             addSlotToContainer(new Slot(
-                                         playerInventory, i,
-                                         PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
-                                         PLAYER_INVENTORY_HOTBAR_OFFSET
+                    playerInventory, i,
+                    PLAYER_INVENTORY_INITIAL_X_OFFSET + i * PLAYER_INVENTORY_OFFSET_EACH,
+                    PLAYER_INVENTORY_HOTBAR_OFFSET
             ));
         }
-        calculateSize(world, location.down());
-    }
-
-    /**
-     * Create and load a Field given it's saved NBTTagCompound.
-     *
-     * @param colony   The owning colony.
-     * @param compound The saved data.
-     * @return {@link Field} created from the compound.
-     */
-    @NotNull
-    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
-    {
-        @NotNull final Field field = new Field(colony);
-        field.readFromNBT(compound);
-        return field;
-    }
-
-    /**
-     * Save data to NBT compound.
-     * Writes the {@link #location} value.
-     *
-     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
-     */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
-    {
-        location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
-        taken = compound.getBoolean(TAG_TAKEN);
-        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
-        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
-        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
-        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
-        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
-        inventory = new InventoryField("");
-        inventory.readFromNBT(compound);
-        setOwner(compound.getString(TAG_OWNER));
-    }
-
-    /**
-     * Getter for MAX_RANGE.
-     *
-     * @return the max range.
-     */
-    private static int getMaxRange()
-    {
-        return MAX_RANGE;
     }
 
     @Override
@@ -328,6 +293,52 @@ public class Field extends Container
     }
 
     /**
+     * Create and load a Field given it's saved NBTTagCompound.
+     *
+     * @param colony   The owning colony.
+     * @param compound The saved data.
+     * @return {@link Field} created from the compound.
+     */
+    @NotNull
+    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
+    {
+        @NotNull final Field field = new Field(colony);
+        field.readFromNBT(compound);
+        return field;
+    }
+
+    /**
+     * Save data to NBT compound.
+     * Writes the {@link #location} value.
+     *
+     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
+     */
+    public void readFromNBT(@NotNull NBTTagCompound compound)
+    {
+        location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+        taken = compound.getBoolean(TAG_TAKEN);
+        fieldStage = FieldStage.values()[compound.getInteger(TAG_STAGE)];
+        lengthPlusX = compound.getInteger(TAG_LENGTH_PLUS);
+        widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
+        lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
+        widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
+        inventory = new InventoryField("");
+        inventory.readFromNBT(compound);
+        setOwner(compound.getString(TAG_OWNER));
+        initialized = compound.getBoolean(TAG_INITIALIZED);
+    }
+
+    /**
+     * Getter for MAX_RANGE.
+     *
+     * @return the max range.
+     */
+    private static int getMaxRange()
+    {
+        return MAX_RANGE;
+    }
+
+    /**
      * Calculates recursively the length of the field until a certain point.
      * <p>
      * This mutates the field!
@@ -355,7 +366,7 @@ public class Field extends Container
      */
     private int searchNextBlock(int blocksChecked, @NotNull BlockPos position, EnumFacing direction, @NotNull World world)
     {
-        if (blocksChecked == getMaxRange() || isNoPartOfField(world, position))
+        if (blocksChecked >= getMaxRange() || isNoPartOfField(world, position))
         {
             return blocksChecked;
         }
@@ -371,7 +382,7 @@ public class Field extends Container
      */
     public boolean isNoPartOfField(@NotNull World world, @NotNull BlockPos position)
     {
-        return world.isAirBlock(position) || world.getBlockState(position.up()).getBlock().getMaterial().isSolid();
+        return world.isAirBlock(position) || world.getBlockState(position.up()).getMaterial().isSolid();
     }
 
     /**
@@ -402,6 +413,7 @@ public class Field extends Container
         compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
         inventory.writeToNBT(compound);
         compound.setString(TAG_OWNER, owner);
+        compound.setBoolean(TAG_INITIALIZED, initialized);
     }
 
     /**
@@ -462,6 +474,26 @@ public class Field extends Container
     public void setNeedsWork(boolean needsWork)
     {
         this.needsWork = needsWork;
+    }
+
+    /**
+     * Checks if the field is initialized.
+     *
+     * @return true if so.
+     */
+    public boolean isInitialized()
+    {
+        return this.initialized;
+    }
+
+    /**
+     * Sets that the field has been initialized.
+     *
+     * @param initialized true if so.
+     */
+    public void setInitialized(boolean initialized)
+    {
+        this.initialized = initialized;
     }
 
     /**

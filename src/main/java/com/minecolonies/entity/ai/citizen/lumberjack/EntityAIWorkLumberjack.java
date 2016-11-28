@@ -2,23 +2,24 @@ package com.minecolonies.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.colony.jobs.JobLumberjack;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.entity.pathfinding.PathJobFindTree;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
+import net.minecraft.block.SoundType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -82,9 +83,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Time in ticks to wait before placing a sapling.
      * Is used to collect falling saplings from the ground.
      */
-    private static final int MAX_WAITING_TIME = 500;
+    private static final int MAX_WAITING_TIME = 100;
 
-    private static final double HALF_BLOCK_OFFSET = 0.5D;
+    /**
+     * Sets the amount of saplings the lumberjack should keep.
+     */
+    private static final int SAPLINGS_TO_KEEP = 10;
 
     /**
      * Number of ticks to wait for tree.
@@ -114,7 +118,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Vertical range in which the lumberjack picks up items
      */
-    private static final float RANGE_VERTICAL_PICKUP   = 15.0F;
+    private static final float RANGE_VERTICAL_PICKUP   = 3.0F;
     /**
      * How often should strength factor into the lumberjacks skill modifier.
      */
@@ -146,11 +150,13 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * to check if the lumberjack is still walking
      */
     private              int   previousIndex           = 0;
+
     /**
      * Positions of all items that have to be collected.
      */
     @Nullable
-    private List<BlockPos>                 items;
+    private List<BlockPos> items;
+
     /**
      * The active pathfinding job used to walk to trees
      */
@@ -169,6 +175,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     public EntityAIWorkLumberjack(@NotNull JobLumberjack job)
     {
+
         super(job);
         super.registerTargets(
           new AITarget(IDLE, START_WORKING),
@@ -412,7 +419,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean plantSapling(@NotNull BlockPos location)
     {
-        if (BlockPosUtil.getBlock(world, location) != Blocks.air)
+        final Block worldBlock = world.getBlockState(location).getBlock();
+        if (worldBlock != Blocks.AIR && !(worldBlock instanceof BlockSapling))
         {
             return false;
         }
@@ -426,14 +434,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             worker.setHeldItem(saplingSlot);
 
             placeSaplings(saplingSlot, stack, block);
-
-            world.playSoundEffect((float) location.getX() + HALF_BLOCK_OFFSET,
-              (float) location.getY() + HALF_BLOCK_OFFSET,
-              (float) location.getZ() + HALF_BLOCK_OFFSET,
-              block.stepSound.getBreakSound(),
-              block.stepSound.getVolume(),
-              block.stepSound.getFrequency());
-            worker.swingItem();
+            final SoundType soundType = block.getSoundType(world.getBlockState(location), world, location, worker);
+            world.playSound(null,
+              this.worker.getPosition(),
+              soundType.getPlaceSound(),
+              SoundCategory.BLOCKS,
+              soundType.getVolume(),
+              soundType.getPitch());
+            worker.swingArm(worker.getActiveHand());
         }
 
         if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
@@ -466,7 +474,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 for (int z = playerZ - radius; z < playerZ + radius; z++)
                 {
                     @NotNull BlockPos pos = new BlockPos(x, y, z);
-                    if (world.getBlockState(pos).getBlock().isLeaves(world, pos))
+                    if (world.getBlockState(pos).getBlock().isLeaves(world.getBlockState(pos), world, pos))
                     {
                         return pos;
                     }
@@ -489,6 +497,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         return -1;
     }
 
+    //todo: we need to use a different way to get Metadata
+    @SuppressWarnings("deprecation")
     private void placeSaplings(int saplingSlot, @NotNull ItemStack stack, @NotNull Block block)
     {
         while (!job.tree.getStumpLocations().isEmpty())
@@ -509,7 +519,14 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
     }
 
-    private boolean isCorrectSapling(@NotNull ItemStack stack)
+    //todo: we need to use a different way to get Metadata
+    @SuppressWarnings("deprecation")
+    /**
+     * Checks if this is the correct Sapling. Please stop that @NotNull stuff. You put it where it doesn't belong!!!
+     * @param stack incoming stack.
+     * @return true if so.
+     */
+    private boolean isCorrectSapling(ItemStack stack)
     {
         return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
     }
@@ -646,6 +663,23 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    protected Map<ItemStorage, Integer> needXForWorker()
+    {
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
+        final ItemStack stack = new ItemStack(Blocks.SAPLING);
+        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
+
+        return keepX;
+    }
+
+    /**
      * Override this method if you want to keep some items in inventory.
      * When the inventory is full, everything get's dumped into the building chest.
      * But you can use this method to hold some stacks back.
@@ -656,7 +690,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     @Override
     protected boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return isStackAxe(stack) || isStackSapling(stack);
+        return isStackAxe(stack);
     }
 
     /**

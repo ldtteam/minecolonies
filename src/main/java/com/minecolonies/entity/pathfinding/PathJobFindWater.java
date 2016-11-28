@@ -1,7 +1,7 @@
 package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.ai.citizen.fisherman.Pond;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -24,6 +24,7 @@ public class PathJobFindWater extends AbstractPathJob
     private BlockPos hutLocation;
     @NotNull
     private ArrayList<BlockPos> ponds = new ArrayList<>();
+
     /**
      * AbstractPathJob constructor
      *
@@ -44,6 +45,11 @@ public class PathJobFindWater extends AbstractPathJob
     {
         public BlockPos pond;
         public boolean  isEmpty;
+    }
+
+    private static double squareDistance(@NotNull BlockPos currentPond, @NotNull BlockPos nextPond)
+    {
+        return currentPond.distanceSq(nextPond.getX(), nextPond.getY(), nextPond.getZ());
     }
 
     @NotNull
@@ -104,11 +110,6 @@ public class PathJobFindWater extends AbstractPathJob
         }
 
         return false;
-    }
-
-    private static double squareDistance(@NotNull BlockPos currentPond, @NotNull BlockPos nextPond)
-    {
-        return currentPond.distanceSq(nextPond.getX(), nextPond.getY(), nextPond.getZ());
     }
 
     private Predicate<BlockPos> generateDistanceFrom(int range, @NotNull BlockPos newpond)

@@ -5,8 +5,13 @@ import net.minecraftforge.fml.common.registry.GameData;
 /**
  * A MaterialException for not enough items.
  */
-class QuantityNotFound extends MaterialException
+class QuantityNotFound extends RuntimeException
 {
+
+    public static final long serialVersionUID = -703925360745766939L;
+
+    //todo: We need to change registry access
+    @SuppressWarnings("deprecation")
     /**
      * Create a new Exception fo this type.
      *

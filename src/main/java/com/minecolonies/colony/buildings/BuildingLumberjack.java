@@ -7,7 +7,7 @@ import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.colony.jobs.JobLumberjack;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -18,7 +18,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     /**
      * The maximum upgrade of the building.
      */
-    private static final int    MAX_BUILDING_LEVEL  = 3;
+    private static final int    MAX_BUILDING_LEVEL  = 5;
     /**
      * The job description.
      */
@@ -52,6 +52,17 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     }
 
     /**
+     * Getter of the max building level.
+     *
+     * @return the integer.
+     */
+    @Override
+    public int getMaxBuildingLevel()
+    {
+        return MAX_BUILDING_LEVEL;
+    }
+
+    /**
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
@@ -67,17 +78,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
         }
-    }
-
-    /**
-     * Getter of the max building level.
-     *
-     * @return the integer.
-     */
-    @Override
-    public int getMaxBuildingLevel()
-    {
-        return MAX_BUILDING_LEVEL;
     }
 
     /**

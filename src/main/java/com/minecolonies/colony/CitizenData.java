@@ -6,9 +6,12 @@ import com.minecolonies.colony.buildings.BuildingHome;
 import com.minecolonies.colony.jobs.AbstractJob;
 import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
@@ -21,29 +24,29 @@ import java.util.Random;
  */
 public class CitizenData
 {
-    private static final float MAX_HEALTH = 20.0F;
+    private static final float  MAX_HEALTH              = 20.0F;
     /**
      * Max level of an attribute a citizen may initially have.
      */
-    private static final int LEVEL_CAP = 5;
-    private static final int LETTERS_IN_THE_ALPHABET = 26;
+    private static final int    LEVEL_CAP               = 5;
+    private static final int    LETTERS_IN_THE_ALPHABET = 26;
     /**
      * Tags
      */
-    private static final String TAG_ID         = "id";
-    private static final String TAG_NAME       = "name";
-    private static final String TAG_FEMALE     = "female";
-    private static final String TAG_TEXTURE    = "texture";
-    private static final String TAG_LEVEL      = "level";
-    private static final String TAG_EXPERIENCE = "experience";
-    private static final String TAG_HEALTH     = "health";
-    private static final String TAG_MAX_HEALTH = "maxHealth";
-    private static final String TAG_SKILLS             = "skills";
-    private static final String TAG_SKILL_STRENGTH     = "strength";
-    private static final String TAG_SKILL_STAMINA      = "endurance";
-    private static final String TAG_SKILL_SPEED        = "charisma";
-    private static final String TAG_SKILL_INTELLIGENCE = "intelligence";
-    private static final String TAG_SKILL_DEXTERITY    = "dexterity";
+    private static final String TAG_ID                  = "id";
+    private static final String TAG_NAME                = "name";
+    private static final String TAG_FEMALE              = "female";
+    private static final String TAG_TEXTURE             = "texture";
+    private static final String TAG_LEVEL               = "level";
+    private static final String TAG_EXPERIENCE          = "experience";
+    private static final String TAG_HEALTH              = "health";
+    private static final String TAG_MAX_HEALTH          = "maxHealth";
+    private static final String TAG_SKILLS              = "skills";
+    private static final String TAG_SKILL_STRENGTH      = "strength";
+    private static final String TAG_SKILL_STAMINA       = "endurance";
+    private static final String TAG_SKILL_SPEED         = "charisma";
+    private static final String TAG_SKILL_INTELLIGENCE  = "intelligence";
+    private static final String TAG_SKILL_DEXTERITY     = "dexterity";
     /**
      * The unique citizen id.
      */
@@ -166,6 +169,15 @@ public class CitizenData
     }
 
     /**
+     * Marks the instance dirty
+     */
+    public void markDirty()
+    {
+        dirty = true;
+        colony.markCitizensDirty();
+    }
+
+    /**
      * Create a CitizenData View given it's saved NBTTagCompound
      *
      * @param id  The citizen's id
@@ -241,15 +253,6 @@ public class CitizenData
             firstName = getRandomElement(rand, Configurations.femaleFirstNames);
         }
         return String.format("%s %s. %s", firstName, getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));
-    }
-
-    /**
-     * Marks the instance dirty
-     */
-    public void markDirty()
-    {
-        dirty = true;
-        colony.markCitizensDirty();
     }
 
     /**
@@ -447,6 +450,11 @@ public class CitizenData
             }
             else if (job != null)
             {
+                EntityCitizen citizen = getCitizenEntity();
+                if(citizen != null)
+                {
+                    citizen.tasks.removeTask(citizen.tasks.taskEntries.stream().filter(task -> task.action instanceof AbstractAISkeleton).findFirst().orElse(null).action);
+                }
                 //  No place of employment, get rid of our job
                 setJob(null);
                 colony.getWorkManager().clearWorkForCitizen(this);
@@ -607,6 +615,16 @@ public class CitizenData
     }
 
     /**
+     * Sets the level of the citizen.
+     *
+     * @param lvl the new level for the citizen.
+     */
+    public void setLevel(int lvl)
+    {
+        this.level = lvl;
+    }
+
+    /**
      * Returns the experience of the citizen.
      *
      * @return experience of the citizen.
@@ -664,15 +682,5 @@ public class CitizenData
     public int getDexterity()
     {
         return dexterity;
-    }
-
-    /**
-     * Sets the level of the citizen.
-     *
-     * @param lvl the new level for the citizen.
-     */
-    public void setLevel(int lvl)
-    {
-        this.level = lvl;
     }
 }

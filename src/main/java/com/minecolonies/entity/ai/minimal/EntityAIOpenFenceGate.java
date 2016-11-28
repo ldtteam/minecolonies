@@ -1,8 +1,11 @@
 package com.minecolonies.entity.ai.minimal;
 
+import com.minecolonies.util.SoundUtils;
 import net.minecraft.block.BlockFenceGate;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -14,14 +17,6 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      * Close door after ... ticks.
      */
     private static final int TIME_TO_CLOSE_DOOR = 20;
-    /**
-     * Sound played to open the gate.
-     */
-    private static final int OPEN_SOUND         = 1003;
-    /**
-     * Sound played to close the gate.
-     */
-    private static final int CLOSE_SOUND        = 1006;
     /**
      * Checks if the gate should be closed
      */
@@ -76,7 +71,8 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
         if (iblockstate.getBlock() == this.gateBlock && (iblockstate.getValue(BlockFenceGate.OPEN)) != open)
         {
             this.theEntity.worldObj.setBlockState(this.gatePosition, iblockstate.withProperty(BlockFenceGate.OPEN, open), 2);
-            this.theEntity.worldObj.playAuxSFXAtEntity(null, open ? OPEN_SOUND : CLOSE_SOUND, this.gatePosition, 0);
+            final SoundEvent openCloseSound = open ? SoundEvents.BLOCK_FENCE_GATE_OPEN : SoundEvents.BLOCK_FENCE_GATE_CLOSE;
+            SoundUtils.playSoundAtCitizen(this.theEntity.worldObj, this.gatePosition, openCloseSound);
         }
     }
 

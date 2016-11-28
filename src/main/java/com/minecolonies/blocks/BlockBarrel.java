@@ -6,14 +6,14 @@ import com.minecolonies.util.Log;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -48,13 +48,15 @@ public class BlockBarrel extends Block
 
     public BlockBarrel()
     {
-        super(Material.wood);
+        super(Material.WOOD);
         this.setDefaultState(this.blockState.getBaseState().withProperty(BARRELSTATE, BARRELSTATE_FILLING));
 
         this.setTickRandomly(true);
         initBlock();
     }
 
+    //todo: register block with new method
+    @SuppressWarnings("deprecation")
     /**
      * initialize the block
      */
@@ -102,7 +104,7 @@ public class BlockBarrel extends Block
 
         Item item = itemstack.getItem();
 
-        if (item == Items.rotten_flesh && barrelState == BARRELSTATE_FILLING)
+        if (item == Items.ROTTEN_FLESH && barrelState == BARRELSTATE_FILLING)
         {
             Log.getLogger().info("item Consumed");
 
@@ -132,6 +134,8 @@ public class BlockBarrel extends Block
         }
     }
 
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings("deprecation")
     @Override
     public IBlockState getStateFromMeta(final int meta)
     {
@@ -149,8 +153,10 @@ public class BlockBarrel extends Block
      *
      * @return true
      */
+    //todo: remove once we no longer need to support this
+    @SuppressWarnings("deprecation")
     @Override
-    public boolean isOpaqueCube()
+    public boolean isOpaqueCube(IBlockState state)
     {
         return true;
     }
@@ -198,6 +204,12 @@ public class BlockBarrel extends Block
         timers.put(pos, timer);
     }
 
+    @Override
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, BARRELSTATE);
+    }
+
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
     {
         Log.getLogger().info("block right-clicked");
@@ -205,11 +217,5 @@ public class BlockBarrel extends Block
         ItemStack itemstack = playerIn.inventory.getCurrentItem();
         UseBarrel(worldIn, playerIn, itemstack, state, pos);
         return true;
-    }
-
-    @Override
-    protected BlockState createBlockState()
-    {
-        return new BlockState(this, BARRELSTATE);
     }
 }

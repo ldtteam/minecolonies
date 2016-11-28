@@ -4,9 +4,10 @@ import com.minecolonies.entity.EntityCitizen;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3i;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,11 +25,14 @@ public final class EntityUtils
     /**
      * Default range for moving to something until we stop.
      */
-    private static final int DEFAULT_MOVE_RANGE       = 3;
+    private static final int    DEFAULT_MOVE_RANGE       = 3;
     /**
      * How many blocks the citizen needs to stand safe
      */
-    private static final int AIR_SPACE_ABOVE_TO_CHECK = 2;
+    private static final int    AIR_SPACE_ABOVE_TO_CHECK = 2;
+    private static final int    TELEPORT_RANGE           = 512;
+    private static final double MIDDLE_BLOCK_OFFSET      = 0.5D;
+    private static final int    SCAN_RADIUS              = 5;
 
     /**
      * Private constructor to hide the implicit public one.
@@ -66,6 +70,26 @@ public final class EntityUtils
      */
     public static boolean isWorkerAtSiteWithMove(@NotNull EntityCitizen worker, int x, int y, int z, int range)
     {
+        if (!isWorkerAtSite(worker, x, y, z, TELEPORT_RANGE))
+        {
+            BlockPos spawnPoint =
+              Utils.scanForBlockNearPoint(worker.getEntityWorld(),
+                new BlockPos(x, y, z),
+                SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
+                Blocks.AIR,
+                Blocks.SNOW_LAYER,
+                Blocks.TALLGRASS,
+                Blocks.RED_FLOWER,
+                Blocks.YELLOW_FLOWER);
+
+            worker.setLocationAndAngles(
+              spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
+              spawnPoint.getY(),
+              spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
+              worker.rotationYaw,
+              worker.rotationPitch);
+            return true;
+        }
         //If too far away
         if (!isWorkerAtSite(worker, x, y, z, range))
         {
@@ -221,7 +245,7 @@ public final class EntityUtils
                 return false;
             }
         }
-        return world.getBlockState(groundPosition).getBlock().getMaterial().isSolid();
+        return world.getBlockState(groundPosition).getMaterial().isSolid();
     }
 
     /**
@@ -236,7 +260,7 @@ public final class EntityUtils
      */
     public static boolean solidOrLiquid(@NotNull World world, @NotNull BlockPos blockPos)
     {
-        final Material material = world.getBlockState(blockPos).getBlock().getMaterial();
+        final Material material = world.getBlockState(blockPos).getMaterial();
         return material.isSolid()
                  || material.isLiquid();
     }

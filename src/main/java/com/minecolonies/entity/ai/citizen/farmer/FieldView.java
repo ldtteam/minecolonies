@@ -3,7 +3,7 @@ package com.minecolonies.entity.ai.citizen.farmer;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.Item;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

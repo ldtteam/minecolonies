@@ -3,14 +3,13 @@ package com.minecolonies.network.messages;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.permissions.Permissions;
 import com.minecolonies.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.util.BlockPos;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Adds a entry to the builderRequired map
@@ -18,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
  *
  * @author Colton
  */
-public class BuildRequestMessage implements IMessage, IMessageHandler<BuildRequestMessage, IMessage>
+public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IMessage>
 {
     /**
      * The int mode for a build job.
@@ -46,9 +45,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
      */
     public BuildRequestMessage()
     {
-        /*
-         * Required standard constructor.
-         */
+        super();
     }
 
     /**
@@ -59,6 +56,7 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
      */
     public BuildRequestMessage(@NotNull AbstractBuilding.View building, int mode)
     {
+        super();
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
         this.mode = mode;
@@ -80,20 +78,25 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
         buf.writeInt(mode);
     }
 
-    @Nullable
     @Override
-    public IMessage onMessage(@NotNull BuildRequestMessage message, MessageContext ctx)
+    public void messageOnServerThread(final BuildRequestMessage message, final EntityPlayerMP player)
     {
         Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony == null)
         {
-            return null;
+            return;
         }
 
         AbstractBuilding building = colony.getBuilding(message.buildingId);
         if (building == null)
         {
-            return null;
+            return;
+        }
+
+        //Verify player has permission to change this huts settings
+        if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+        {
+            return;
         }
 
         switch (message.mode)
@@ -107,7 +110,5 @@ public class BuildRequestMessage implements IMessage, IMessageHandler<BuildReque
             default:
                 break;
         }
-
-        return null;
     }
 }

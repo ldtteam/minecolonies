@@ -7,7 +7,7 @@ import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
 import com.minecolonies.util.BlockPosUtil;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 public class JobDeliveryman extends AbstractJob
@@ -61,7 +61,7 @@ public class JobDeliveryman extends AbstractJob
      */
     @NotNull
     @Override
-    public AbstractAISkeleton generateAI()
+    public AbstractAISkeleton<JobDeliveryman> generateAI()
     {
         return new EntityAIWorkDeliveryman(this);
     }

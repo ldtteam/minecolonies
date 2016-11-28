@@ -6,21 +6,27 @@ import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.IColony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.permissions.Permissions;
-import com.minecolonies.entity.PlayerProperties;
 import com.minecolonies.util.LanguageHandler;
 import com.minecolonies.util.Log;
 import com.minecolonies.util.MathUtils;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,6 +36,48 @@ import org.jetbrains.annotations.Nullable;
 public class EventHandler
 {
     /**
+     * Event when the debug screen is opened.
+     * Event gets called by displayed text on the screen, we only need it when f3 is clicked.
+     *
+     * @param event {@link net.minecraftforge.client.event.RenderGameOverlayEvent.Text}
+     */
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onDebugOverlay(RenderGameOverlayEvent.Text event)
+    {
+        if (FMLCommonHandler.instance().getEffectiveSide().isClient())
+        {
+            final Minecraft mc = Minecraft.getMinecraft();
+            if (mc.gameSettings.showDebugInfo)
+            {
+                final WorldClient world = mc.theWorld;
+                final EntityPlayerSP player = mc.thePlayer;
+                IColony colony = ColonyManager.getIColony(world, player.getPosition());
+                final double minDistance = ColonyManager.getMinimumDistanceBetweenTownHalls();
+
+                if (colony == null)
+                {
+                    colony = ColonyManager.getClosestIColony(world, player.getPosition());
+
+                    if (colony == null || Math.sqrt(colony.getDistanceSquared(player.getPosition())) > 2 * minDistance)
+                    {
+                        event.getLeft().add(LanguageHandler.format("com.minecolonies.gui.debugScreen.noCloseColony"));
+                        return;
+                    }
+
+                    event.getLeft().add(LanguageHandler.format("com.minecolonies.gui.debugScreen.nextColony",
+                      (int) Math.sqrt(colony.getDistanceSquared(player.getPosition())), minDistance));
+                    return;
+                }
+
+                event.getLeft().add(colony.getName() + " : "
+                                      + LanguageHandler.format("com.minecolonies.gui.debugScreen.blocksFromCenter",
+                  (int) Math.sqrt(colony.getDistanceSquared(player.getPosition()))));
+            }
+        }
+    }
+
+    /**
      * Event when a block is broken
      * Event gets cancelled when there no permission to break a hut
      *
@@ -38,11 +86,11 @@ public class EventHandler
     @SubscribeEvent
     public void onBlockBreak(@NotNull BlockEvent.BreakEvent event)
     {
-        World world = event.world;
+        World world = event.getWorld();
 
-        if (!world.isRemote && event.state.getBlock() instanceof AbstractBlockHut)
+        if (!world.isRemote && event.getState().getBlock() instanceof AbstractBlockHut)
         {
-            @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, event.pos);
+            @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, event.getPos());
             if (building == null)
             {
                 return;
@@ -63,22 +111,23 @@ public class EventHandler
      * Event gets cancelled when player has no permission
      * Event gets cancelled when the player has no permission to place a hut, and tried it
      *
-     * @param event {@link PlayerInteractEvent}
+     * @param event {@link PlayerInteractEvent.RightClickBlock}
      */
     @SubscribeEvent
-    public void onPlayerInteract(@NotNull PlayerInteractEvent event)
+    public void onPlayerInteract(@NotNull PlayerInteractEvent.RightClickBlock event)
     {
-        if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK)
-        {
-            EntityPlayer player = event.entityPlayer;
-            World world = event.world;
+        EntityPlayer player = event.getEntityPlayer();
+        World world = event.getWorld();
 
-            if (playerRightClickInteract(player, world, event.pos) &&
+        //Only execute for the main hand our colony events.
+        if (event.getHand() == EnumHand.MAIN_HAND && !(event.getWorld().isRemote))
+        {
+            if (playerRightClickInteract(player, world, event.getPos()) &&
                   // this was the simple way of doing it, minecraft calls onBlockActivated
                   // and uses that return value, but I didn't want to call it twice
-                  world.getBlockState(event.pos).getBlock() instanceof AbstractBlockHut)
+                  world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
             {
-                IColony colony = ColonyManager.getIColony(world, event.pos);
+                IColony colony = ColonyManager.getIColony(world, event.getPos());
                 if (colony != null &&
                       !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
                 {
@@ -88,7 +137,7 @@ public class EventHandler
                 return;
             }
 
-            if (player.getHeldItem() == null || player.getHeldItem().getItem() == null)
+            if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)
             {
                 return;
             }
@@ -99,16 +148,16 @@ public class EventHandler
 
     private static boolean playerRightClickInteract(@NotNull EntityPlayer player, World world, BlockPos pos)
     {
-        return !player.isSneaking() || player.getHeldItem() == null || player.getHeldItem().getItem() == null ||
-                 player.getHeldItem().getItem().doesSneakBypassUse(world, pos, player);
+        return !player.isSneaking() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null ||
+                 player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
     }
 
     private void handleEventCancellation(@NotNull PlayerInteractEvent event, @NotNull EntityPlayer player)
     {
-        Block heldBlock = Block.getBlockFromItem(player.getHeldItem().getItem());
+        Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
         if (heldBlock instanceof AbstractBlockHut)
         {
-            event.setCanceled(!onBlockHutPlaced(event.world, player, heldBlock, event.pos.offset(event.face)));
+            event.setCanceled(!onBlockHutPlaced(event.getWorld(), player, heldBlock, event.getPos().offset(event.getFace())));
         }
     }
 
@@ -209,7 +258,7 @@ public class EventHandler
             if (closestColony.hasTownHall() || !closestColony.getPermissions().isColonyMember(player))
             {
                 Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
-                        + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
+                                       + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
                 //Placing in a colony which already has a town hall
                 LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
                 return false;
@@ -228,7 +277,7 @@ public class EventHandler
         if (closestColony.getDistanceSquared(pos) <= MathUtils.square(ColonyManager.getMinimumDistanceBetweenTownHalls()))
         {
             Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
-                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
+                                   + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
             //Placing too close to an existing colony
             LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
             return false;
@@ -242,21 +291,21 @@ public class EventHandler
      * Called when an entity is being constructed
      * Used to register player properties
      *
-     * @param event {@link net.minecraftforge.event.entity.EntityEvent.EntityConstructing}
+     * @param event {@link net.minecraftforge.event.getEntity().getEntity()Event.getEntity()Constructing}
      */
-    @SubscribeEvent
+    /*@SubscribeEvent
     public void onEntityConstructing(@NotNull EntityEvent.EntityConstructing event)
     {
-        if (event.entity instanceof EntityPlayer)
+        if (event.getEntity() instanceof EntityPlayer)
         {
-            @NotNull EntityPlayer player = (EntityPlayer) event.entity;
+            @NotNull EntityPlayer player = (EntityPlayer) event.getEntity();
             if (PlayerProperties.get(player) == null)
             {
                 PlayerProperties.register(player);
             }
 
         }
-    }
+    }*/
 
     /**
      * Called when an entity dies
@@ -264,14 +313,14 @@ public class EventHandler
      *
      * @param event {@link LivingDeathEvent}
      */
-    @SubscribeEvent
+    /*@SubscribeEvent
     public void onLivingDeath(@NotNull LivingDeathEvent event)
     {
-        if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer)
+        if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof EntityPlayer)
         {
-            PlayerProperties.saveProxyData((EntityPlayer) event.entity);
+            PlayerProperties.saveProxyData((EntityPlayer) event.getEntity());
         }
-    }
+    }*/
 
     /**
      * Called when an entity joins the world
@@ -279,14 +328,14 @@ public class EventHandler
      *
      * @param event {@link EntityJoinWorldEvent}
      */
-    @SubscribeEvent
+    /*@SubscribeEvent
     public void onEntityJoinWorld(@NotNull EntityJoinWorldEvent event)
     {
-        if (!event.entity.worldObj.isRemote && event.entity instanceof EntityPlayer)
+        if (!event.getEntity().worldObj.isRemote && event.getEntity() instanceof EntityPlayer)
         {
-            PlayerProperties.loadProxyData((EntityPlayer) event.entity);
+            PlayerProperties.loadProxyData((EntityPlayer) event.getEntity());
         }
-    }
+    }*/
 
     /**
      * Gets called when world loads.
@@ -297,7 +346,7 @@ public class EventHandler
     @SubscribeEvent
     public void onWorldLoad(@NotNull WorldEvent.Load event)
     {
-        ColonyManager.onWorldLoad(event.world);
+        ColonyManager.onWorldLoad(event.getWorld());
     }
 
     /**
@@ -309,7 +358,7 @@ public class EventHandler
     @SubscribeEvent
     public void onWorldUnload(@NotNull WorldEvent.Unload event)
     {
-        ColonyManager.onWorldUnload(event.world);
+        ColonyManager.onWorldUnload(event.getWorld());
     }
 
     /**
@@ -321,6 +370,6 @@ public class EventHandler
     @SubscribeEvent
     public void onWorldSave(@NotNull WorldEvent.Save event)
     {
-        ColonyManager.onWorldSave(event.world);
+        ColonyManager.onWorldSave(event.getWorld());
     }
 }
