@@ -393,7 +393,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         {
             if (currentPatrolTarget == null
                     || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPatrolTarget) > Configurations.workingRangeTownHall + Configurations.townHallPadding
-                    || currentPatrolTarget.getY() < 5)
+                    || currentPatrolTarget.getY() < 2)
             {
                 return getNextPatrollingTarget((BuildingGuardTower) building);
             }
