@@ -398,7 +398,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                 return getNextPatrollingTarget((BuildingGuardTower) building);
             }
 
-            if (!worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
+            if (worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
             {
                 return getNextPatrollingTarget((BuildingGuardTower) building);
             }
@@ -450,7 +450,6 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                 pos = building.getLocation();
                 building.setTask(BuildingGuardTower.Task.GUARD);
             }
-            //todo something going wrong, worker stops following out of nothing.
             currentPatrolTarget = pos;
             return AIState.GUARD_SEARCH_TARGET;
         }

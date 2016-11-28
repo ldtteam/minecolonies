@@ -78,7 +78,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     private static final String BUTTON_TASK_GUARD = "guarding";
 
     /**
-     * Id of the settarget button in the GUI - Depending on task sets guard position or patrol..
+     * Id of the settarget button in the GUI - Depending ON task sets guard position or patrol..
      */
     private static final String BUTTON_SET_TARGET = "setTarget";
 
@@ -88,13 +88,19 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     private Button                  buttonPrevPage;
     private Button                  buttonNextPage;
 
+    private static final String AUTO   = LanguageHandler.format("com.minecolonies.gui.workerHuts.modeA");
+    private static final String MANUAL = LanguageHandler.format("com.minecolonies.gui.workerHuts.modeM");
+
+    private static final String ON  = LanguageHandler.format("com.minecolonies.gui.workerHuts.retrieveOn");
+    private static final String OFF = LanguageHandler.format("com.minecolonies.gui.workerHuts.retrieveOff");
+
     /**
      * Assign the job manually, knight or ranger.
      */
     private boolean assignManually = false;
 
     /**
-     * Retrieve the guard on low health.
+     * Retrieve the guard ON low health.
      */
     private boolean retrieveOnLowHealth = false;
 
@@ -114,7 +120,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     private BuildingGuardTower.GuardJob job = null;
 
     /**
-     * The list of manual patrol targets.
+     * The list of MANUAL patrol targets.
      */
     private ArrayList<BlockPos> patrolTargets = new ArrayList<>();
 
@@ -182,15 +188,9 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
         buttonJob.setEnabled(assignManually);
 
-        String auto = LanguageHandler.format("com.minecolonies.gui.workerHuts.modeA");
-        String manual = LanguageHandler.format("com.minecolonies.gui.workerHuts.modeM");
-
-        String on = LanguageHandler.format("com.minecolonies.gui.workerHuts.retrieveOn");
-        String off = LanguageHandler.format("com.minecolonies.gui.workerHuts.retrieveOn");
-
-        this.findPaneOfTypeByID(BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(assignManually ? manual : auto);
-        this.findPaneOfTypeByID(BUTTON_PATROL_MODE, Button.class).setLabel(patrolManually ? manual : auto);
-        this.findPaneOfTypeByID(BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? on : off);
+        this.findPaneOfTypeByID(BUTTON_ASSIGNMENT_MODE, Button.class).setLabel(assignManually ? MANUAL : AUTO);
+        this.findPaneOfTypeByID(BUTTON_PATROL_MODE, Button.class).setLabel(patrolManually ? MANUAL : AUTO);
+        this.findPaneOfTypeByID(BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? ON : OFF);
 
         if(task.equals(BuildingGuardTower.Task.PATROL))
         {
@@ -210,10 +210,10 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
             buttonTaskFollow.setEnabled(false);
             buttonSetTarget.hide();
         }
-        else
+        else if(task.equals(BuildingGuardTower.Task.GUARD))
         {
             buttonSetTarget.setLabel(LanguageHandler.format("com.minecolonies.gui.workerHuts.targetGuard"));
-            buttonTaskGuard.setEnabled(true);
+            buttonTaskGuard.setEnabled(false);
         }
     }
 
@@ -300,7 +300,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      */
     private void sendChangesToServer()
     {
-        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, job.ordinal(), assignManually, patrolManually, retrieveOnLowHealth, task.ordinal()));
+        int ordinal = building.job == null ? -1 : job.ordinal();
+        MineColonies.getNetwork().sendToServer(new GuardTaskMessage(building, ordinal, assignManually, patrolManually, retrieveOnLowHealth, task.ordinal()));
     }
 
     /**
@@ -312,6 +313,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
         building.retrieveOnLowHealth = !building.retrieveOnLowHealth;
         pullInfoFromHut();
         sendChangesToServer();
+        this.findPaneOfTypeByID(BUTTON_RETRIEVAL_MODE, Button.class).setLabel(retrieveOnLowHealth ? ON : OFF);
     }
 
     /**
@@ -332,13 +334,20 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      */
     private void switchJob(final Button button)
     {
-        if(building.job.equals(BuildingGuardTower.GuardJob.KNIGHT))
+        if(building.job == null)
         {
             building.job = BuildingGuardTower.GuardJob.RANGER;
         }
         else
         {
-            building.job = BuildingGuardTower.GuardJob.KNIGHT;
+            if (building.job.equals(BuildingGuardTower.GuardJob.KNIGHT))
+            {
+                building.job = BuildingGuardTower.GuardJob.RANGER;
+            }
+            else
+            {
+                building.job = BuildingGuardTower.GuardJob.KNIGHT;
+            }
         }
         pullInfoFromHut();
         sendChangesToServer();
@@ -461,7 +470,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     @Override
     public String getBuildingName()
     {
-        return "com.minecolonies.gui.workerHuts.minerHut";
+        return "com.minecolonies.gui.workerHuts.GuardTower";
     }
 }
 
