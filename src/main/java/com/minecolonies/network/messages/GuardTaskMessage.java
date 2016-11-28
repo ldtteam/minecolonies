@@ -92,7 +92,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
             {
                 building.setJob(BuildingGuardTower.GuardJob.values()[message.job]);
                 building.setAssignManually(message.assignmentMode);
-                building.setPatrolManually(message.retrieval);
+                building.setPatrolManually(message.patrollingMode);
                 building.setRetrieveOnLowHealth(message.retrieval);
                 building.setTask(BuildingGuardTower.Task.values()[message.task]);
             }

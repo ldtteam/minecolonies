@@ -213,7 +213,7 @@ com.minecolonies.gui.workerHuts.modeM=Manually
 com.minecolonies.gui.workerHuts.modeA=Automatically
 
 com.minecolonies.gui.workerHuts.retrieveOff=Off
-com.minecolonies.gui.workerHuts.retrieveOff=On
+com.minecolonies.gui.workerHuts.retrieveOn=On
 
 com.minecolonies.gui.workerHuts.task.guard=Guard
 com.minecolonies.gui.workerHuts.task.patrol=Patrol
@@ -222,8 +222,12 @@ item.minecolonies.scepterGuard.name=Guard-scepter
 
 com.minecolonies.gui.workerHuts.noSpace=Please make space in your inventory in order to use this functionality.
 
+com.minecolonies.job.guard.tool.taskPatrol=Right click on a block to add it as patrol target. Double click to close the tool.
+com.minecolonies.job.guard.tool.taskGuard=Right click on a block to set it as guard spot. Double click to close the tool.
+
+
 com.minecolonies.job.guard.toolClickPatrol=Added position %s as new patrolling target for guard%s.
-com.minecolonies.job.guard.toolClickPatrol=Set position %s as new guarding target for guard%s.
+com.minecolonies.job.guard.toolClickGuard=Set position %s as new guarding target for guard%s.
 
 com.minecolonies.job.guard.toolDoubleClick=Finished adding new patrol-targets.
 

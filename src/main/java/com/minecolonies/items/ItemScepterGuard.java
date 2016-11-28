@@ -42,8 +42,9 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     @Override
     public EnumActionResult onItemUse(ItemStack scepter, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        // if client world, do nothing
-        if (!worldIn.isRemote)
+        //todo watch how interaction with server is, might facilitate this.
+        // if server world, do nothing
+        if (worldIn.isRemote)
         {
             return EnumActionResult.FAIL;
         }
@@ -113,7 +114,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
                 name = " " + citizen.getName();
             }
             LanguageHandler.sendPlayerMessage(playerIn, LanguageHandler.format("com.minecolonies.job.guard.toolClickPatrol", pos, name));
-            MineColonies.getNetwork().sendToServer(new GuardTargetMessage(colony.getID(), guardTower, pos, compound.hasKey(TAG_LAST_POS)));
+            MineColonies.getNetwork().sendToServer(new GuardTargetMessage(colony.getID(), guardTower, pos, !compound.hasKey(TAG_LAST_POS)));
         }
         BlockPosUtil.writeToNBT(compound, TAG_LAST_POS, pos);
 

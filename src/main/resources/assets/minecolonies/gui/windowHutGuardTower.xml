@@ -24,11 +24,9 @@
             <button id="guarding" size="30% 14" pos="114 125" label="$(com.minecolonies.gui.workerHuts.task.guard)"/>
 
 
-            <list id="positions" size="78% 85%" pos="30 150" >
-                <box size="100% 30" linewidth="2">
-                    <label id="lvl" size="100 12" pos="5 2" textalign="MiddleLeft" color="black"/>
-                    <button id="changeToLevel" size="100 12" pos="5 2" align="TopRight" label="$(com.minecolonies.gui.workerHuts.minerMineNode)"/>
-                    <label id="nONodes" size="50 12" pos="35 16" textalign="MiddleLeft" color="black"/>
+            <list id="positions" size="78% 50" pos="30 150" >
+                <box size="100% 15" linewidth="2">
+                    <label id="position" size="100 12" pos="5 2" textalign="MiddleLeft" color="black"/>
                 </box>
             </list>
 

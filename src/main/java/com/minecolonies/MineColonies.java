@@ -146,6 +146,7 @@ public class MineColonies
         getNetwork().registerMessage(AssignmentModeMessage.class, AssignmentModeMessage.class, 31, Side.SERVER);
         getNetwork().registerMessage(GuardTargetMessage.class, GuardTargetMessage.class, 32, Side.SERVER);
         getNetwork().registerMessage(GuardTaskMessage.class, GuardTaskMessage.class, 33, Side.SERVER);
+        getNetwork().registerMessage(GuardScepterMessage.class, GuardScepterMessage.class, 34, Side.SERVER);
 
 
         //Client side only
