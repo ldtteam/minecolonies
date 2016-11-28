@@ -104,9 +104,14 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     private static final int DUMP_BASE = 20;
 
     /**
+     * Follow the player if farther than this.
+     */
+    public static final int FOLLOW_RANGE = 10;
+
+    /**
      * Checks if the guard should dump its inventory.
      */
-    private int dump_after_actions = DUMP_BASE;
+    private int dumpAfterActions = DUMP_BASE;
 
     /**
      * The current target.
@@ -260,7 +265,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                         }
                     }
                 }
-                dump_after_actions = DUMP_BASE * workBuilding.getBuildingLevel();
+                dumpAfterActions = DUMP_BASE * workBuilding.getBuildingLevel();
             }
             attacksExecuted = 0;
             return AIState.GUARD_SEARCH_TARGET;
@@ -271,7 +276,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return dump_after_actions;
+        return dumpAfterActions;
     }
 
     /**
@@ -393,7 +398,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                 return getNextPatrollingTarget((BuildingGuardTower) building);
             }
 
-            if (worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
+            if (!worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
             {
                 return getNextPatrollingTarget((BuildingGuardTower) building);
             }
@@ -433,6 +438,10 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             BlockPos pos = building.getPlayerToFollow();
             if(pos == null || BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()) > Configurations.workingRangeTownHall + Configurations.townHallPadding)
             {
+                if(pos != null)
+                {
+                    Log.getLogger().info(BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()));
+                }
                 EntityPlayer player = building.getPlayer();
                 if(player != null)
                 {
@@ -441,6 +450,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                 pos = building.getLocation();
                 building.setTask(BuildingGuardTower.Task.GUARD);
             }
+            //todo something going wrong, worker stops following out of nothing.
             currentPatrolTarget = pos;
             return AIState.GUARD_SEARCH_TARGET;
         }
