@@ -90,7 +90,10 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
             @Nullable final BuildingGuardTower building = colony.getBuilding(message.buildingId, BuildingGuardTower.class);
             if (building != null)
             {
-                building.setJob(BuildingGuardTower.GuardJob.values()[message.job]);
+                if(message.job != -1)
+                {
+                    building.setJob(BuildingGuardTower.GuardJob.values()[message.job]);
+                }
                 building.setAssignManually(message.assignmentMode);
                 building.setPatrolManually(message.patrollingMode);
                 building.setRetrieveOnLowHealth(message.retrieval);

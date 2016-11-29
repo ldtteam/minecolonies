@@ -1,10 +1,8 @@
 package com.minecolonies.items;
 
-import com.minecolonies.MineColonies;
 import com.minecolonies.colony.*;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingGuardTower;
-import com.minecolonies.network.messages.GuardTargetMessage;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
@@ -79,42 +77,42 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     @NotNull
     private static EnumActionResult handleItemUsage(World worldIn, BlockPos pos, NBTTagCompound compound, EntityPlayer playerIn)
     {
-        ColonyView colony = ColonyManager.getClosestColonyView(worldIn, pos);
+        Colony colony = ColonyManager.getClosestColony(worldIn, pos);
         if(colony == null)
         {
             return EnumActionResult.FAIL;
         }
 
         BlockPos guardTower = BlockPosUtil.readFromNBT(compound, "pos");
-        AbstractBuilding.View hut = colony.getBuilding(guardTower);
-        if(hut == null || !(hut instanceof BuildingGuardTower.View))
+        AbstractBuilding hut = colony.getBuilding(guardTower);
+        if(hut == null || !(hut instanceof BuildingGuardTower))
         {
             return EnumActionResult.FAIL;
         }
 
         BuildingGuardTower.Task task = BuildingGuardTower.Task.values()[compound.getInteger("task")];
+        final CitizenData citizen = ((BuildingGuardTower) hut).getWorker();
+
+        String name = "";
+        if(citizen != null)
+        {
+            name = " " + citizen.getName();
+        }
+
         if(task.equals(BuildingGuardTower.Task.GUARD))
         {
-            final CitizenDataView citizen = colony.getCitizen(((BuildingGuardTower.View) hut).getWorkerId());
-            String name = "";
-            if(citizen != null)
-            {
-                name = " " + citizen.getName();
-            }
             LanguageHandler.sendPlayerMessage(playerIn, LanguageHandler.format("com.minecolonies.job.guard.toolClickGuard", pos, name));
-            MineColonies.getNetwork().sendToServer(new GuardTargetMessage(colony.getID(), guardTower, pos, false));
+            ((BuildingGuardTower) hut).setGuardTarget(pos);
             playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
         }
         else
         {
-            final CitizenDataView citizen = colony.getCitizen(((BuildingGuardTower.View) hut).getWorkerId());
-            String name = "";
-            if(citizen != null)
+            if(!compound.hasKey(TAG_LAST_POS))
             {
-                name = " " + citizen.getName();
+                ((BuildingGuardTower) hut).resetPatrolTargets();
             }
+            ((BuildingGuardTower) hut).addPatrolTargets(pos);
             LanguageHandler.sendPlayerMessage(playerIn, LanguageHandler.format("com.minecolonies.job.guard.toolClickPatrol", pos, name));
-            MineColonies.getNetwork().sendToServer(new GuardTargetMessage(colony.getID(), guardTower, pos, !compound.hasKey(TAG_LAST_POS)));
         }
         BlockPosUtil.writeToNBT(compound, TAG_LAST_POS, pos);
 
