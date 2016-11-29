@@ -8,7 +8,12 @@
 
 ### Controlabilidade ###
 
+> "How easy it is to provide a program with the needed inputs, in terms of values, operations, and behaviors." - Introduction to Software Testing, Paul Ammann and Jeff Offputt, page 36
+
 ### Observabilidade ###
+
+> "How easy it is to observe the behavior of a program in terms of its outputs, effects on the environment, and other hardware and software components." - Introduction to Software Testing, Paul Ammann and Jeff Offputt, page 36
+
 
 ### Isolabilidade ###
 
