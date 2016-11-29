@@ -14,14 +14,14 @@
 
 > "How easy it is to observe the behavior of a program in terms of its outputs, effects on the environment, and other hardware and software components." - Introduction to Software Testing, page 36, Paul Ammann and Jeff Offputt
 
-O MineColonies utiliza as ferramentas disponibilizadas pelo SonarQube para controlo de qualidade do código, nomeadamente, execução de testes unitários sempre que há um build ou pull request do projeto. No SonarQube temos acesso à informação relacionada com estatísticas sobre o programa onde podemos obter: resultados, gráficos e os pacotes/ficheiros onde essas estatísticas foram aplicadas. A partir da página principal de estatísticas do [SonarQube para o MineColonies](http://home.kk-sc.de:9000/dashboard/index/51619) temos acesso a determinada informação, sendo a mais relevante:
+O **MineColonies** utiliza as ferramentas disponibilizadas pelo SonarQube para controlo de qualidade do código, nomeadamente, execução de testes unitários sempre que há um build ou pull request do projeto. No SonarQube temos acesso à informação relacionada com estatísticas sobre o programa onde podemos obter: resultados, gráficos e os pacotes/ficheiros onde essas estatísticas foram aplicadas. A partir da página principal de estatísticas do [SonarQube para o MineColonies](http://home.kk-sc.de:9000/dashboard/index/51619) temos acesso a determinada informação, sendo a mais relevante:
 
-Quality Gate - nível de qualidade atribuído pelos parâmetros do SonarQube;
-Critical Issues - problemas no programa de nível crítico;
-Bugs & Vulnerabilities - procura bugs e vulnerabilidades no código;
-Code Smells - quantidade de code smells no programa;
-Coverage - quantidade de linhas de código cobertas pelos testes unitários;
-Duplications - quantidade de código duplicado em todo o projeto.
+- Quality Gate - nível de qualidade atribuído pelos parâmetros do SonarQube
+- Critical Issues - problemas no programa de nível crítico
+- Bugs & Vulnerabilities - procura bugs e vulnerabilidades no código
+- Code Smells - quantidade de code smells no programa
+- Coverage - quantidade de linhas de código cobertas pelos testes unitários
+- Duplications - quantidade de código duplicado em todo o projeto
 
 Em suma, a observabilidade dos resultados dos testes é boa porque a partir da informação disponível acima é possível proceder de uma forma eficiente e direta à resolução ou detecção de eventuais problemas ou más implementações no programa. Contudo, a quantidade e cobertura de testes unitários também é um fator decisivo para a obtenção de algumas destas estatísticas, pelo que, este projeto está em falta, devido ao número reduzido de testes.
 
