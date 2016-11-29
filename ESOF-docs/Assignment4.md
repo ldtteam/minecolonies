@@ -22,7 +22,7 @@
 
 ## Estatísticas de testes ##
 
-## Bug Report $$
+## Bug Report ##
 
 ## Bibliografia ##
 
