@@ -360,7 +360,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             return Collections.emptyList();
         }
-        
+
         if (Settings.instance.isInHutMode())
         {
             return Structures.getStylesForHut(hutDec.get(hutDecIndex));

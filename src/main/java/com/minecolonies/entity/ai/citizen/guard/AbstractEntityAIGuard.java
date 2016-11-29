@@ -72,7 +72,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Worker gets this distance times building level away from his building to patrol.
      */
-    public static final int PATROL_DISTANCE = 20;
+    public static final int PATROL_DISTANCE = 40;
 
     /**
      * Horizontal range in which the guard picks up items
@@ -128,7 +128,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Current goTo task.
      */
-    private BlockPos currentPatrolTarget;
+    private BlockPos     currentPathTarget;
     /**
      * Containing all close entities.
      */
@@ -391,14 +391,14 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
         if (building != null && building instanceof BuildingGuardTower)
         {
-            if (currentPatrolTarget == null
-                    || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPatrolTarget) > Configurations.workingRangeTownHall + Configurations.townHallPadding
-                    || currentPatrolTarget.getY() < 2)
+            if (currentPathTarget == null
+                    || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPathTarget) > Configurations.workingRangeTownHall + Configurations.townHallPadding
+                    || currentPathTarget.getY() < 2)
             {
                 return getNextPatrollingTarget((BuildingGuardTower) building);
             }
 
-            if (worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
+            if (worker.isWorkerAtSiteWithMove(currentPathTarget, PATH_CLOSE))
             {
                 return getNextPatrollingTarget((BuildingGuardTower) building);
             }
@@ -416,10 +416,10 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     {
         if (building.shallPatrolManually() && building.getTask().equals(BuildingGuardTower.Task.PATROL))
         {
-            BlockPos pos = building.getNextPatrolTarget(currentPatrolTarget);
+            BlockPos pos = building.getNextPatrolTarget(currentPathTarget);
             if (pos != null)
             {
-                currentPatrolTarget = pos;
+                currentPathTarget = pos;
                 return AIState.GUARD_SEARCH_TARGET;
             }
         }
@@ -430,7 +430,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             {
                 pos = building.getLocation();
             }
-            currentPatrolTarget = pos;
+            currentPathTarget = pos;
             return AIState.GUARD_SEARCH_TARGET;
         }
         else if(building.getTask().equals(BuildingGuardTower.Task.FOLLOW))
@@ -450,11 +450,30 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                 pos = building.getLocation();
                 building.setTask(BuildingGuardTower.Task.GUARD);
             }
-            currentPatrolTarget = pos;
+            currentPathTarget = pos;
             return AIState.GUARD_SEARCH_TARGET;
         }
-        currentPatrolTarget = getRandomBuilding();
+        currentPathTarget = getRandomBuilding();
         return AIState.GUARD_SEARCH_TARGET;
+    }
+
+    /**
+     * Checks if the the worker is too far from his patrol/guard/follow target.
+     * @param target an attack target.
+     * @param range the range allowed to be from the patrol/guard/follow target.
+     * @return true if too far.
+     */
+    public boolean shouldReturnToTarget(BlockPos target, double range)
+    {
+        AbstractBuilding building = getOwnBuilding();
+        if (building != null && building instanceof BuildingGuardTower)
+        {
+            if (BlockPosUtil.getDistance2D(target, currentPathTarget) > range)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

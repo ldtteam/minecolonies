@@ -137,19 +137,6 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             return AIState.GUARD_GATHERING;
         }
 
-        AbstractBuilding building = getOwnBuilding();
-        if(building != null && building instanceof BuildingGuardTower)
-        {
-            BuildingGuardTower.Task task = ((BuildingGuardTower) building).getTask();
-            if((task.equals(BuildingGuardTower.Task.FOLLOW)
-                    && BlockPosUtil.getDistance2D(worker.getPosition(), ((BuildingGuardTower) building).getPlayerToFollow()) > FOLLOW_RANGE)
-                    || (task.equals(BuildingGuardTower.Task.GUARD)
-                    && BlockPosUtil.getDistance2D(worker.getPosition(), ((BuildingGuardTower) building).getGuardPos()) > FOLLOW_RANGE))
-            {
-                return AIState.GUARD_PATROL;
-            }
-        }
-
         if (worker.getEntitySenses().canSee(targetEntity) && worker.getDistanceToEntity(targetEntity) <= MIN_ATTACK_DISTANCE)
         {
             worker.resetActiveHand();
@@ -164,6 +151,11 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             }
 
             return AIState.GUARD_HUNT_DOWN_TARGET;
+        }
+
+        if (shouldReturnToTarget(targetEntity.getPosition(), FOLLOW_RANGE))
+        {
+            return AIState.GUARD_PATROL;
         }
 
         worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getExperienceLevel()));
