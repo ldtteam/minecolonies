@@ -24,73 +24,73 @@ import org.jetbrains.annotations.Nullable;
 import static net.minecraft.util.EnumParticleTypes.*;
 
 /**
- * Creates a custom fishHook for the Fisherman to throw
- * This class manages the entity
+ * Creates a custom fishHook for the Fisherman to throw.
+ * This class manages the entity.
  */
 public final class EntityFishHook extends Entity
 {
     /**
-     * Number of seconds to wait before removing a stuck hook
+     * Number of seconds to wait before removing a stuck hook.
      */
     private static final int TTL = 360;
 
     /**
-     * Entity size to scale it down
+     * Entity size to scale it down.
      */
     private static final float ENTITY_SIZE = 0.25F;
 
     /**
-     * 180 degree used in trig. functions
+     * 180 degree used in trig. functions.
      */
     private static final double HALF_CIRCLE = 180.0;
 
     /**
-     * Used as a speed multiplicator for drifting movement
+     * Used as a speed multiplicator for drifting movement.
      */
     private static final double RANDOM_MOVEMENT_OFFSET = 0.007499999832361937;
 
     /**
-     * Limits initial horizontal movement speed
+     * Limits initial horizontal movement speed.
      */
     private static final double INITIAL_MOVEMENT_LIMITER = 0.16;
 
     /**
-     * The hook starts a bit lower
+     * The hook starts a bit lower.
      */
     private static final double SUNKEN_OFFSET = 0.10000000149011612;
 
     /**
-     * Multiplicator to get sum of edges
+     * Multiplicator to get sum of edges.
      */
     private static final double NUM_BOUNDING_BOX_EDGES = 4.0;
 
     /**
-     * factor to scale up to distance
+     * factor to scale up to distance.
      */
     private static final double DISTANCE_FACTOR = 64.0;
 
     /**
-     * Limits horizontal movement speed while bouncing
+     * Limits horizontal movement speed while bouncing.
      */
     private static final double BOUNCE_MOVEMENT_LIMITER = 0.2;
 
     /**
-     * Limits horizontal movement speed while in air
+     * Limits horizontal movement speed while in air.
      */
     private static final float AIR_MOVEMENT_LIMITER = 0.92F;
 
     /**
-     * Limits horizontal movement speed while on the ground
+     * Limits horizontal movement speed while on the ground.
      */
     private static final double GROUND_MOVEMENT_LIMITER = 0.5;
 
     /**
-     * Limits horizontal movement speed while in the water
+     * Limits horizontal movement speed while in the water.
      */
     private static final double WATER_MOVEMENT_LIMITER = 0.03999999910593033;
 
     /**
-     * Chance to slow down fishing while the sky is not visible
+     * Chance to slow down fishing while the sky is not visible.
      */
     private static final double NO_CLEAR_SKY_CHANCE = 0.5;
 
@@ -100,27 +100,27 @@ public final class EntityFishHook extends Entity
     private static final double INCREASE_RARENESS_MODIFIER = 20.0;
 
     /**
-     * The citizen who threw this rod
+     * The citizen who threw this rod.
      */
     private EntityCitizen citizen;
 
     /**
-     * The fishing speed enchantment level on the rod that threw this hook
+     * The fishing speed enchantment level on the rod that threw this hook.
      */
     private int fishingSpeedEnchantment;
 
     /**
-     * The fishing loot enchantment level on the rod that threw this hook
+     * The fishing loot enchantment level on the rod that threw this hook.
      */
     private int fishingLootEnchantment;
 
     /**
-     * If this hook is in the ground
+     * If this hook is in the ground.
      */
     private boolean inGround;
 
     /**
-     * A counter for at what position in the shaking movement the hook is
+     * A counter for at what position in the shaking movement the hook is.
      */
     private int    shake;
     private int    countdownNoFish;
@@ -135,15 +135,15 @@ public final class EntityFishHook extends Entity
     private long creationTime;
 
     /**
-     * When a fish is on the hook, this will be true
+     * When a fish is on the hook, this will be true.
      */
     private boolean isFishCaugth = false;
 
     /**
      * Constructor for throwing out a hook.
      *
-     * @param world   the world the hook lives in
-     * @param citizen the citizen throwing the hook
+     * @param world   the world the hook lives in.
+     * @param citizen the citizen throwing the hook.
      */
     public EntityFishHook(final World world, @NotNull final EntityCitizen citizen)
     {
@@ -168,10 +168,10 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Lowest denominator constructor
-     * Used by other constructors to do general stuff
+     * Lowest denominator constructor.
+     * Used by other constructors to do general stuff.
      *
-     * @param world the world this entity lives in
+     * @param world the world this entity lives in.
      */
     public EntityFishHook(final World world)
     {
@@ -205,7 +205,7 @@ public final class EntityFishHook extends Entity
     /**
      * Returns the citizen throwing the hook.
      *
-     * @return a citizen
+     * @return a citizen.
      */
     public EntityCitizen getCitizen()
     {
@@ -213,7 +213,7 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Minecraft may call this method
+     * Minecraft may call this method.
      */
     @Override
     protected void entityInit()
@@ -256,11 +256,11 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
-     * length * 64 * renderDistanceWeight Args: distance
+     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge.
+     * length * 64 * renderDistanceWeight Args: distance.
      *
-     * @param range the real range
-     * @return true or false
+     * @param range the real range.
+     * @return true or false.
      */
     @Override
     @SideOnly(Side.CLIENT)
@@ -307,7 +307,7 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Check if a fishhook is there for too long
+     * Check if a fishhook is there for too long.
      * and became bugged.
      * After 360 seconds remove the hook.
      *
@@ -346,7 +346,7 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Main update method thingie
+     * Main update method thingy.
      * hopefully I'm able to reduce it somewhat...
      */
     private void moveSomeStuff()
@@ -401,7 +401,7 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Update the fishing hooks motion
+     * Update the fishing hooks motion.
      * and its rotation.
      */
     private void updateMotionAndRotation()
@@ -435,13 +435,13 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Server side method to do
-     * some animation and movement stuff
-     * when the hook swims in water
+     * Server side method to do.
+     * some animation and movement stuff.
+     * when the hook swims in water.
      * <p>
-     * will set isFishCaught if a fish bites
+     * will set isFishCaught if a fish bites.
      *
-     * @param waterDensity the amount of water around
+     * @param waterDensity the amount of water around.
      */
     private void checkIfFishBites(final double waterDensity)
     {
@@ -544,10 +544,10 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Render little splashes around the fishing hook
-     * simulating fish movement
+     * Render little splashes around the fishing hook.
+     * simulating fish movement.
      *
-     * @param worldServer the server side world
+     * @param worldServer the server side world.
      */
     private void renderLittleSplash(@NotNull final WorldServer worldServer)
     {
@@ -571,9 +571,9 @@ public final class EntityFishHook extends Entity
      * Show bubbles towards the hook.
      * Let the hook sink in a bit.
      * Play a sound to signal to the player,
-     * that a fish bit
+     * that a fish bit.
      *
-     * @param worldServer the server side world
+     * @param worldServer the server side world.
      */
     private void showFishBiteAnimation(@NotNull final WorldServer worldServer)
     {
@@ -603,10 +603,10 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Show bubbles moving towards the hook
-     * make it look like a fish will bite soon
+     * Show bubbles moving towards the hook.
+     * make it look like a fish will bite soon.
      *
-     * @param worldServer the server side world
+     * @param worldServer the server side world.
      */
     private void showFishSwimmingTowardsHookAnimation(@NotNull final WorldServer worldServer)
     {
@@ -633,7 +633,7 @@ public final class EntityFishHook extends Entity
      * Returns a damage value by how much the fishingRod should be damaged.
      * Also spawns loot and exp and destroys the hook.
      *
-     * @param citizen the fisherman fishing
+     * @param citizen the fisherman fishing.
      * @return the number of damage points to be deducted.
      */
     public int getDamage(@NotNull final EntityCitizen citizen)
@@ -662,12 +662,12 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Spawns a random loot from the loot table
+     * Spawns a random loot from the loot table.
      * and some exp orbs.
      * Should be called when retrieving a hook.
      * todo: Perhaps streamline this and directly add the items?
      *
-     * @param citizen the fisherman getting the loot
+     * @param citizen the fisherman getting the loot.
      */
     private void spawnLootAndExp(@NotNull final EntityCitizen citizen)
     {
@@ -693,11 +693,11 @@ public final class EntityFishHook extends Entity
     /**
      * Determines which loot table should be used.
      * <p>
-     * The selection is somewhat random and depends on enchantments
+     * The selection is somewhat random and depends on enchantments.
      * and the level of the fisherman hut.
      *
-     * @param citizen the fisherman getting the loot
-     * @return an ItemStack randomly from the loot table
+     * @param citizen the fisherman getting the loot.
+     * @return an ItemStack randomly from the loot table.
      */
     private ItemStack getFishingLoot(final EntityCitizen citizen)
     {

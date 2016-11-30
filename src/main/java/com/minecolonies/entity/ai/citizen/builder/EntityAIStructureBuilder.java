@@ -492,16 +492,18 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 }
 
                 @Nullable final Block block = job.getStructure().getBlock();
+
                 @NotNull final ItemStack itemstack = new ItemStack(block, 1);
 
                 final Block worldBlock = BlockPosUtil.getBlock(world, job.getStructure().getBlockPosition());
 
-                if (blockState != null
-                      && blockState.getBlock() != Blocks.AIR
+                if (block != null
+                      && block != Blocks.AIR
                       && worldBlock != Blocks.BEDROCK
                       && !(worldBlock instanceof AbstractBlockHut)
-                      && !isBlockFree(blockState.getBlock(), 0))
+                      && !isBlockFree(block, 0))
                 {
+                    @NotNull final IBlockState blockState = job.getStructure().getBlockState();;
                     if(blockState instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
                     {
                         continue;
@@ -511,10 +513,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                         continue;
                     }
 
-                    AbstractBuilding building = getOwnBuilding();
+                    final AbstractBuilding building = getOwnBuilding();
                     if(building instanceof BuildingBuilder)
                     {
-                        Block block = blockState.getBlock();
                         ((BuildingBuilder) building).addNeededResource(block, 1);
                     }
                 }
