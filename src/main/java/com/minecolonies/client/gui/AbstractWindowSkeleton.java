@@ -40,6 +40,17 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
     }
 
     /**
+     * Register a button on the window.
+     *
+     * @param id     Button ID.
+     * @param action Consumer with the action to be performed.
+     */
+    public final void registerButton(String id, Runnable action)
+    {
+        registerButton(id, (button) -> action.run());
+    }
+
+    /**
      * Handle a button clicked event.
      * Find the registered event and execute that.
      * <p>
