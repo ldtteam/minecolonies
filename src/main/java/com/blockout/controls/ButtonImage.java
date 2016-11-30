@@ -39,7 +39,7 @@ public class ButtonImage extends Button
     protected int       disabledMapWidth   = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
     protected int       disabledMapHeight  = Image.MINECRAFT_DEFAULT_TEXTURE_MAP_SIZE;
     protected double    textScale          = 1.0;
-    protected Alignment textAlignment      = Alignment.Middle;
+    protected Alignment textAlignment      = Alignment.MIDDLE;
     protected int       textColor          = 0xffffff;
     protected int       textHoverColor     = 0xffffff;
     protected int       textDisabledColor  = 0xffffff;

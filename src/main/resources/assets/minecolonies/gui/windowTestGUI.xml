@@ -37,7 +37,7 @@
               size="100%">
             <view size="100% 45px">
                 <label id="listlabel" width="-35" height="11" color="black" hovercolor="white" label="1" />
-                <button id="listbutton" width="30" height="11" x="5" y="0" align="TopRight" label="B" />
+                <button id="listbutton" width="30" height="11" x="5" y="0" align="TOP_RIGHT" label="B" />
                 <list id="scrollgroup2" width="100%" height="30" y="12">
                     <label id="listlabel2" height="11" color="black" hovercolor="white" label="1" />
                 </list>

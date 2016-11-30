@@ -91,8 +91,8 @@
             </group>
         </view>
         <view id="pagePermissions">
-            <!-- label size="80 12" pos="20 7" textalign="MiddleLeft" color="black" label="§n§4NAME"/>
-            <label size="25 12" pos="90 7" textalign="MiddleLeft" color="black" label="§n§4RANK"/ -->
+            <!-- label size="80 12" pos="20 7" textalign="MIDDLE_LEFT" color="black" label="§n§4NAME"/>
+            <label size="25 12" pos="90 7" textalign="MIDDLE_LEFT" color="black" label="§n§4RANK"/ -->
 
             <list id="users" size="140 150" pos="15 7">
                 <box size="100% 30" linewidth="2">

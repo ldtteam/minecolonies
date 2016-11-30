@@ -12,7 +12,7 @@ public abstract class AbstractTextElement extends Pane
 {
     protected static final ResourceLocation TEXTURE       = new ResourceLocation("textures/gui/widgets.png");
     protected              double           scale         = 1.0;
-    protected              Alignment        textAlignment = Alignment.MiddleLeft;
+    protected              Alignment        textAlignment = Alignment.MIDDLE_LEFT;
     protected              int              textColor     = 0xffffff;
     protected              boolean          shadow        = false;
 

@@ -13,6 +13,9 @@ import java.util.regex.Pattern;
 
 import static com.blockout.Log.getLogger;
 
+/**
+ * Special parameters for the panes.
+ */
 public class PaneParams
 {
     private static final Pattern PERCENTAGE_PATTERN = Pattern.compile("([-+]?\\d+)(%|px)?", Pattern.CASE_INSENSITIVE);
@@ -21,6 +24,10 @@ public class PaneParams
     private Node node;
     private View parentView;
 
+    /**
+     * Instantiates the pane parameters.
+     * @param n the node.
+     */
     public PaneParams(final Node n)
     {
         node = n;
@@ -121,11 +128,22 @@ public class PaneParams
         return s;
     }
 
+    /**
+     * Get the string attribute.
+     * @param name the name to search.
+     * @return the attribute.
+     */
     public String getStringAttribute(final String name)
     {
         return getStringAttribute(name, "");
     }
 
+    /**
+     * Get the String attribute from the name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the String.
+     */
     public String getStringAttribute(final String name, final String def)
     {
         final Node attr = getAttribute(name);
@@ -137,23 +155,45 @@ public class PaneParams
         return node.getAttributes().getNamedItem(name);
     }
 
+    /**
+     * Get the localized string attribute from the name.
+     * @param name the name.
+     * @return the string attribute.
+     */
     @Nullable
     public String getLocalizedStringAttribute(final String name)
     {
         return getLocalizedStringAttribute(name, "");
     }
-
+    
+    /**
+     * Get the localized String attribute from the name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the string.
+     */
     @Nullable
     public String getLocalizedStringAttribute(final String name, final String def)
     {
         return localize(getStringAttribute(name, def));
     }
 
+    /**
+     * Get the integer attribute from the name.
+     * @param name the name.
+     * @return the integer.
+     */
     public int getIntegerAttribute(final String name)
     {
         return getIntegerAttribute(name, 0);
     }
 
+    /**
+     * Get the integer attribute from name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the int.
+     */
     public int getIntegerAttribute(final String name, final int def)
     {
         final String attr = getStringAttribute(name, null);
@@ -164,11 +204,22 @@ public class PaneParams
         return def;
     }
 
+    /**
+     * Get the float attribute from name.
+     * @param name the name.
+     * @return the float.
+     */
     public float getFloatAttribute(final String name)
     {
         return getFloatAttribute(name, 0);
     }
 
+    /**
+     * Get the float attribute from name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the float.
+     */
     public float getFloatAttribute(final String name, final float def)
     {
         final String attr = getStringAttribute(name, null);
@@ -179,11 +230,22 @@ public class PaneParams
         return def;
     }
 
+    /**
+     * Get the double attribute from name.
+     * @param name the name.
+     * @return the double.
+     */
     public double getDoubleAttribute(final String name)
     {
         return getDoubleAttribute(name, 0);
     }
 
+    /**
+     * Get the double attribute from name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the double.
+     */
     public double getDoubleAttribute(final String name, final double def)
     {
         final String attr = getStringAttribute(name, null);
@@ -195,11 +257,22 @@ public class PaneParams
         return def;
     }
 
+    /**
+     * Get the boolean attribute from name.
+     * @param name the name.
+     * @return the boolean.
+     */
     public boolean getBooleanAttribute(final String name)
     {
         return getBooleanAttribute(name, false);
     }
 
+    /**
+     * Get the boolean attribute from name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the boolean.
+     */
     public boolean getBooleanAttribute(final String name, final boolean def)
     {
         final String attr = getStringAttribute(name, null);
@@ -210,6 +283,13 @@ public class PaneParams
         return def;
     }
 
+    /**
+     * Get the boolean attribute from name and class and definition..
+     * @param name the name.
+     * @param clazz the class.
+     * @param def the definition.
+     * @return the boolean.
+     */
     public <T extends Enum<T>> T getEnumAttribute(final String name, final Class<T> clazz, final T def)
     {
         final String attr = getStringAttribute(name, null);
@@ -220,6 +300,13 @@ public class PaneParams
         return def;
     }
 
+    /**
+     * Get the scalable integer attribute from name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @param scale the scale.
+     * @return the integer.
+     */
     public int getScalableIntegerAttribute(final String name, final int def, final int scale)
     {
         final String attr = getStringAttribute(name, null);
@@ -259,6 +346,13 @@ public class PaneParams
         return def;
     }
 
+    /**
+     * Get the size pair attribute.
+     * @param name the name.
+     * @param def the definition.
+     * @param scale the scale.
+     * @return the SizePair.
+     */
     @Nullable
     public SizePair getSizePairAttribute(final String name, final SizePair def, final SizePair scale)
     {
@@ -286,6 +380,12 @@ public class PaneParams
         return def;
     }
 
+    /**
+     * Get the color attribute from name and definition.
+     * @param name the name.
+     * @param def the definition
+     * @return int color value.
+     */
     public int getColorAttribute(final String name, final int def)
     {
         final String attr = getStringAttribute(name, null);
@@ -341,11 +441,19 @@ public class PaneParams
         }
     }
 
+    /**
+     * Size pair of width and height.
+     */
     public static class SizePair
     {
         private int x;
         private int y;
 
+        /**
+         * Instantiates a SizePair object.
+         * @param w width.
+         * @param h height.
+         */
         public SizePair(final int w, final int h)
         {
             x = w;
