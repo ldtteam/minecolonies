@@ -151,17 +151,28 @@ public final class BlockPosUtil
         final long yDiff = (long) block1.getY() - block2.getY();
         final long zDiff = (long) block1.getZ() - block2.getZ();
 
-        final long result = xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
-        if (result < 0)
-        {
-            throw new IllegalStateException("max-sqrt is to high! Failure to catch overflow with "
-                                              + xDiff + " | " + yDiff + " | " + zDiff);
-        }
-        return result;
+        return Math.abs(xDiff + zDiff);
     }
+
 
     /**
      * Simple two dimensional distance between two points..
+     *
+     * @param block1 position one.
+     * @param block2 position two.
+     * @return squared distance.
+     */
+    public static long getDistance(@NotNull BlockPos block1, @NotNull BlockPos block2)
+    {
+        final long xDiff = (long) block1.getX() - block2.getX();
+        final long yDiff = (long) block1.getY() - block2.getY();
+        final long zDiff = (long) block1.getZ() - block2.getZ();
+
+        return Math.abs(xDiff + yDiff + zDiff);
+    }
+
+    /**
+     * Squared distance between two BlockPos.
      *
      * @param block1 position one.
      * @param block2 position two.

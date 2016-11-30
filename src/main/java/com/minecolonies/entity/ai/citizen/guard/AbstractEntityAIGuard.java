@@ -67,7 +67,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Path that close to the patrol target.
      */
-    private static final int PATH_CLOSE      = 3;
+    private static final int PATH_CLOSE      = 2;
 
     /**
      * Worker gets this distance times building level away from his building to patrol.
@@ -238,39 +238,40 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     protected AIState goToBuilding()
     {
-        if (!walkToBuilding())
+        if (walkToBuilding())
         {
-            final AbstractBuildingWorker workBuilding = getOwnBuilding();
-            if (workBuilding != null)
+            return AIState.GUARD_RESTOCK;
+        }
+
+        final AbstractBuildingWorker workBuilding = getOwnBuilding();
+        if (workBuilding != null)
+        {
+            final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
+
+            for (int i = 0; i < workBuilding.getTileEntity().getSizeInventory(); i++)
             {
-                final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
+                final ItemStack stack = chest.getStackInSlot(i);
 
-                for (int i = 0; i < workBuilding.getTileEntity().getSizeInventory(); i++)
+                if (stack == null)
                 {
-                    final ItemStack stack = chest.getStackInSlot(i);
+                    continue;
+                }
 
-                    if (stack == null)
+                if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
+                {
+                    final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
+
+                    if (emptySlot != -1)
                     {
-                        continue;
-                    }
-
-                    if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
-                    {
-                        final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
-
-                        if (emptySlot != -1)
-                        {
-                            worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
-                            chest.setInventorySlotContents(i, null);
-                        }
+                        worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
+                        chest.setInventorySlotContents(i, null);
                     }
                 }
                 dumpAfterActions = DUMP_BASE * workBuilding.getBuildingLevel();
             }
-            attacksExecuted = 0;
-            return AIState.GUARD_SEARCH_TARGET;
         }
-        return AIState.GUARD_RESTOCK;
+        attacksExecuted = 0;
+        return AIState.GUARD_SEARCH_TARGET;
     }
 
     @Override
@@ -333,6 +334,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         entityList = this.worker.worldObj.getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(currentSearchDistance));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(currentSearchDistance)));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
+
+        if(targetEntity != null && targetEntity.isEntityAlive() && worker.getEntitySenses().canSee(targetEntity))
+        {
+            return AIState.GUARD_HUNT_DOWN_TARGET;
+        }
 
         setDelay(BASE_DELAY);
         if (entityList.isEmpty())
@@ -510,6 +516,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         final Colony colony = this.getOwnBuilding().getColony();
         colony.incrementMobsKilled();
         incrementActionsDone();
+        worker.getNavigator().clearPathEntity();
     }
 
     /**

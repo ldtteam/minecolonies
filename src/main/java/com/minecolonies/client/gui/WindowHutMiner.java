@@ -64,7 +64,6 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
 
-
         levelList = findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class);
         levelList.setDataProvider(new ScrollingList.DataProvider()
         {

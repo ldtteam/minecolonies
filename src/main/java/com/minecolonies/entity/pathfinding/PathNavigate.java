@@ -2,9 +2,11 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.*;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -121,7 +123,6 @@ public class PathNavigate extends PathNavigateGround
         {
             return pathResult;
         }
-
 
         final Vec3d moveVector = getEntityPosition().subtractReverse(new Vec3d(newX, newY, newZ));
         final double moveLength = moveVector.lengthVector();
@@ -288,6 +289,17 @@ public class PathNavigate extends PathNavigateGround
                 }
 
                 this.entity.getMoveHelper().setMoveTo(Vec3d.xCoord, Vec3d.yCoord, Vec3d.zCoord, walkSpeed);
+            }
+            else
+            {
+                if(BlockUtils.isPathBlock(worldObj.getBlockState(entity.getPosition().down()).getBlock()))
+                {
+                    speed = 1.3;
+                }
+                else
+                {
+                    speed = 1.0;
+                }
             }
         }
 

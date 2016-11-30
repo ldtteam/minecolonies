@@ -2,11 +2,13 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.blocks.BlockHutField;
 import com.minecolonies.configuration.Configurations;
+import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.Log;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.EnumFacing;
@@ -252,7 +254,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param isSwimming true is the current node would require the citizen to swim.
      * @return cost to move from the parent to the new position
      */
-    protected static double computeCost(final Node parent, @NotNull final BlockPos dPos, final boolean isSwimming)
+    protected static double computeCost(Node parent, @NotNull BlockPos dPos, boolean isSwimming, boolean onPath)
     {
         double cost = 1D;
 
@@ -260,6 +262,11 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             //  Tax the cost for jumping, dropping (warning: also taxes stairs)
             cost *= 1.1D;
+        }
+
+        if(onPath)
+        {
+            cost *= 0.75D;
         }
 
         if (isSwimming)
@@ -667,13 +674,13 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
 
-        final boolean isSwimming = calculateSwimming(world, pos, node);
-
+        boolean isSwimming = calculateSwimming(world, pos, node);
+        boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos).getBlock());
         //  Cost may have changed due to a jump up or drop
-        final double stepCost = computeCost(parent, dPos, isSwimming);
-        final double heuristic = computeHeuristic(pos);
-        final double cost = parent.cost + stepCost;
-        final double score = cost + heuristic;
+        double stepCost = computeCost(parent, dPos, isSwimming, onRoad);
+        double heuristic = computeHeuristic(pos);
+        double cost = parent.cost + stepCost;
+        double score = cost + heuristic;
 
         if (node != null)
         {

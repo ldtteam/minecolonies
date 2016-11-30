@@ -40,7 +40,7 @@ public class EntityAICitizenWander extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (isToOld() || checkForRandom())
+        if (isToOld() || checkForRandom() || citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP)
         {
             return false;
         }
@@ -90,7 +90,7 @@ public class EntityAICitizenWander extends EntityAIBase
         }
 
         while (returnHeight >= 1 && citizen.worldObj.isAirBlock(new BlockPos(MathHelper.floor_double(position.xCoord),
-                                                                              (int) returnHeight - 1,
+                                                                              (int) returnHeight,
                                                                               MathHelper.floor_double(position.zCoord))))
         {
             returnHeight -= 1.0D;

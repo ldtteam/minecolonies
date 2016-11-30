@@ -23,6 +23,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private static final String TAG_UPGRADE_LEVEL     = "upgradeLevel";
     private static final String TAG_UPGRADE_NAME      = "upgrade";
     private static final String TAG_IS_CLEARED        = "cleared";
+    private static final String TAG_IS_REQUESTED      = "requested";
+
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
 
@@ -35,6 +37,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private   int      upgradeLevel;
     private   String   upgradeName;
     private boolean hasSentMessageForThisWorkOrder = false;
+    private boolean requested;
 
     /**
      * Unused constructor for reflection.
@@ -58,8 +61,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.upgradeName = building.getSchematicName() + level;
         this.buildingRotation = building.getRotation();
         this.cleared = level > 1;
+        this.requested = false;
 
-        if(MinecraftServer.class.getResourceAsStream("minecolonies:schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".nbt") == null)
+        if(MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".nbt") == null)
         {
             Log.getLogger().warn(String.format("StructureProxy in Style (%s) does not exist - switching to default", building.getStyle()));
             this.structureName = DEFAULT_STYLE + '/' + this.getUpgradeName();
@@ -96,6 +100,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         cleared = compound.getBoolean(TAG_IS_CLEARED);
         structureName = compound.getString(TAG_SCHEMATIC_NAME);
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
+        requested = compound.getBoolean(TAG_IS_REQUESTED);
     }
 
     /**
@@ -116,6 +121,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         compound.setBoolean(TAG_IS_CLEARED, cleared);
         compound.setString(TAG_SCHEMATIC_NAME, structureName);
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
+        compound.setBoolean(TAG_IS_REQUESTED, requested);
     }
 
     /**
@@ -294,5 +300,24 @@ public class WorkOrderBuild extends AbstractWorkOrder
     public void setCleared(final boolean cleared)
     {
         this.cleared = cleared;
+    }
+
+    /**
+     * Set whether or not the building materials have been requested already.
+     * @param requested true if so.
+     */
+    public void setRequested(final boolean requested)
+    {
+        this.requested = requested;
+    }
+
+    /**
+     * Gets whether or not the building materials have been requested already.
+     *
+     * @return true if the materials has been requested.
+     */
+    public boolean isRequested()
+    {
+        return requested;
     }
 }

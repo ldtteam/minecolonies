@@ -359,4 +359,14 @@ public final class BlockUtils
             return block.damageDropped(blockState);
         }
     }
+
+    /**
+     * Checks if a certain block is a pathBlock (roadBlock)
+     * @param block the block to analyze.
+     * @return true if is so.
+     */
+    public static boolean isPathBlock(final Block block)
+    {
+        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK;
+    }
 }

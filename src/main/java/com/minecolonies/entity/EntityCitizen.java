@@ -12,6 +12,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.minimal.*;
 import com.minecolonies.entity.pathfinding.PathNavigate;
+import com.minecolonies.entity.pathfinding.WalkToProxy;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
@@ -169,7 +170,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private int level;
     private int textureId;
     /**
-     * Skill modifier defines how fast a citizen levels in a certain skill.
+     * Walk to proxy.
+     */
+    private WalkToProxy proxy;
+    /**
+     * Skill modifier defines how fast a citizen levels in a certain skill
      */
     private double skillModifier = 0;
     private boolean     female;
@@ -376,9 +381,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
-        return EntityUtils.isWorkerAtSiteWithMove(this, site.getX(), site.getY(), site.getZ(), range)
-                 //Fix for getting stuck sometimes
-                 || EntityUtils.isWorkerAtSite(this, site.getX(), site.getY(), site.getZ(), range + 1);
+        if (proxy == null)
+        {
+            proxy = new WalkToProxy(this);
+        }
+        return proxy.walkToBlock(site, range, true);
     }
 
     /**
