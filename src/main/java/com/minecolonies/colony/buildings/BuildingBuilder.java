@@ -123,6 +123,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
          * @return the window of the builder building.
          */
         @NotNull
+        @Override
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutBuilder(this);
