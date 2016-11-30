@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A material store is a node in the material network, keeping track of materials in a specific inventory
+ * A material store is a node in the material network, keeping track of materials in a specific inventory.
  * Created: December 14, 2015
  *
  * @author Colton
@@ -45,10 +45,10 @@ public class MaterialStore
     private MaterialSystem system;
 
     /**
-     * Constructor for MaterialStore
+     * Constructor for MaterialStore.
      *
-     * @param type   What kind of inventory, Entity(INVENTORY) or AbstractBuilding(CHEST)
-     * @param system The MaterialSystem associated with the colony
+     * @param type   What kind of inventory, Entity(INVENTORY) or AbstractBuilding(CHEST).
+     * @param system The MaterialSystem associated with the colony.
      */
     public MaterialStore(final Type type, @NotNull final MaterialSystem system)
     {
@@ -59,7 +59,7 @@ public class MaterialStore
     }
 
     /**
-     * @return What kind of inventory is this? Entity Inventory, or Chest Inventory
+     * @return What kind of inventory is this? Entity Inventory, or Chest Inventory.
      */
     public Type getType()
     {
@@ -67,9 +67,9 @@ public class MaterialStore
     }
 
     /**
-     * These are the Materials that we need, this function will provide a list and quantity for someone like the deliveryman.
+     * These are the Materials that we need, this function will provide a list and quantity for someone like the deliveryman..
      *
-     * @return An unmodifiable version of the need map
+     * @return An unmodifiable version of the need map.
      */
     @NotNull
     public Map<Material, Integer> getNeed()
@@ -80,7 +80,7 @@ public class MaterialStore
     /**
      * These are the Materials that we have, but we don't need. So someone else could come and take them if they wanted.
      *
-     * @return An unmodifiable version of the dontNeed map
+     * @return An unmodifiable version of the dontNeed map.
      */
     @NotNull
     public Map<Material, Integer> getHave()
@@ -91,8 +91,8 @@ public class MaterialStore
     /**
      * This returns how many of a Material that we have and don't need.
      *
-     * @param material Material that we are checking
-     * @return How many of material that we have
+     * @param material Material that we are checking.
+     * @return How many of material that we have.
      */
     public int getMaterialCount(final Material material)
     {
@@ -105,8 +105,8 @@ public class MaterialStore
      * Add a Material to this inventory. First check if we need that item and act accordingly. Then put any extra
      * in the dontNeed map.
      *
-     * @param item     Item that is being added to the MaterialStore
-     * @param quantity How much of item is being added
+     * @param item     Item that is being added to the MaterialStore.
+     * @param quantity How much of item is being added.
      */
     public void addMaterial(final Item item, final int quantity)
     {
@@ -167,8 +167,8 @@ public class MaterialStore
      * Add a Material to this inventory. First check if we need that item and act accordingly. Then put any extra
      * in the dontNeed map.
      *
-     * @param block    Block that is being added to the MaterialStore
-     * @param quantity How much of block is being added
+     * @param block    Block that is being added to the MaterialStore.
+     * @param quantity How much of block is being added.
      */
     public void addMaterial(final Block block, final int quantity)
     {
@@ -179,8 +179,8 @@ public class MaterialStore
      * Remove a material from this inventory. First remove from dontNeed, then remove from haveNeed. If material was removed
      * from haveNeed, then request that quantity in need.
      *
-     * @param item     Item that is being removed from the MaterialStore
-     * @param quantity How much of item is being removed
+     * @param item     Item that is being removed from the MaterialStore.
+     * @param quantity How much of item is being removed.
      */
     public void removeMaterial(final Item item, final int quantity)
     {
@@ -221,7 +221,7 @@ public class MaterialStore
                 final int countToRemove = quantity - count;
                 if (countNeed == null || countNeed < countToRemove)
                 {
-                    throw new QuantityNotFound("MaterialStore (dontNeed+haveNeed)", material.getID(), countNeed == null ? count : countNeed + count, quantity);
+                    throw new QuantityNotFound("MaterialStore (dontNeed+haveNeed)", material.getID(), countNeed == null ? count : (countNeed + count), quantity);
                 }
                 else
                 {
@@ -270,8 +270,8 @@ public class MaterialStore
      * Remove a material from this inventory. First remove from dontNeed, then remove from haveNeed. If material was removed
      * from haveNeed, then request that quantity in need.
      *
-     * @param block    Block that is being removed from the MaterialStore
-     * @param quantity How much of block is being removed
+     * @param block    Block that is being removed from the MaterialStore.
+     * @param quantity How much of block is being removed.
      */
     public void removeMaterial(final Block block, final int quantity)
     {
@@ -281,8 +281,8 @@ public class MaterialStore
     /**
      * Call this method when you need something.
      *
-     * @param item     Item that you need
-     * @param quantity How much you need
+     * @param item     Item that you need.
+     * @param quantity How much you need.
      */
     public void addNeededMaterial(final Item item, final int quantity)
     {
@@ -292,8 +292,8 @@ public class MaterialStore
     /**
      * Call this method when you need something.
      *
-     * @param block    Block that you need
-     * @param quantity How much you need
+     * @param block    Block that you need.
+     * @param quantity How much you need.
      */
     public void addNeededMaterial(final Block block, final int quantity)
     {
@@ -303,8 +303,8 @@ public class MaterialStore
     /**
      * Call this method when you don't need something anymore.
      *
-     * @param item     Item that you need
-     * @param quantity How much you need
+     * @param item     Item that you need.
+     * @param quantity How much you need.
      */
     public void removeNeededMaterial(final Item item, final int quantity)
     {
@@ -363,8 +363,8 @@ public class MaterialStore
     /**
      * Call this method when you don't need something anymore.
      *
-     * @param block    Block that you need
-     * @param quantity How much you need
+     * @param block    Block that you need.
+     * @param quantity How much you need.
      */
     public void removeNeededMaterial(final Block block, final int quantity)
     {
@@ -400,7 +400,7 @@ public class MaterialStore
     }
 
     /**
-     * Removes all Materials from the system before the MaterialStore is destroyed
+     * Removes all Materials from the system before the MaterialStore is destroyed.
      */
     public void destroy()
     {
@@ -410,7 +410,7 @@ public class MaterialStore
     }
 
     /**
-     * Removes all the Materials from the store
+     * Removes all the Materials from the store.
      */
     public void clear()
     {
@@ -420,6 +420,10 @@ public class MaterialStore
         }
     }
 
+    /**
+     * Read a state from nbt.
+     * @param nbtTagCompound the compound used.
+     */
     public void readFromNBT(@NotNull final NBTTagCompound nbtTagCompound)
     {
         final NBTTagCompound compound = nbtTagCompound.getCompoundTag(TAG_MATERIAL_STORE);
@@ -454,6 +458,10 @@ public class MaterialStore
         }
     }
 
+    /**
+     * Store data to NBT.
+     * @param nbtTagCompound compound used to store.
+     */
     public void writeToNBT(@NotNull final NBTTagCompound nbtTagCompound)
     {
         @NotNull final NBTTagCompound compound = new NBTTagCompound();
@@ -479,7 +487,8 @@ public class MaterialStore
         {
             @NotNull final NBTTagCompound tag = new NBTTagCompound();
 
-            tag.setInteger(TAG_ID, entry.getKey().hashCode());//hashCode is item ID
+            //hashCode is item ID
+            tag.setInteger(TAG_ID, entry.getKey().hashCode());
             tag.setInteger(TAG_QUANTITY, entry.getValue());
 
             compound.appendTag(tag);

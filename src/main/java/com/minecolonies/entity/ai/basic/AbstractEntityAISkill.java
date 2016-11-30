@@ -4,9 +4,9 @@ import com.minecolonies.colony.jobs.AbstractJob;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * AI class for skills
+ * AI class for skills.
  *
- * @param <J> The job this ai has to fulfil
+ * @param <J> The job this ai has to fulfil.
  */
 public abstract class AbstractEntityAISkill<J extends AbstractJob> extends AbstractEntityAIBasic<J>
 {
@@ -14,7 +14,7 @@ public abstract class AbstractEntityAISkill<J extends AbstractJob> extends Abstr
     /**
      * Sets up some important skeleton stuff for every ai.
      *
-     * @param job the job class
+     * @param job the job class.
      */
     protected AbstractEntityAISkill(@NotNull final J job)
     {

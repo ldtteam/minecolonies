@@ -16,18 +16,18 @@ import java.util.*;
 public class MaterialSystem
 {
     /**
-     * Temporary variable to disabled MaterialHandling until I have time to complete it - Colton
+     * Temporary variable to disabled MaterialHandling until I have time to complete it - Colton.
      */
     public static final boolean isEnabled = false;
 
     /**
-     * This Map contains keeps track of how many extra materials we have in the colony. (Materials that aren't needed)
+     * This Map contains keeps track of how many extra materials we have in the colony. (Materials that aren't needed).
      */
     @NotNull
     private Map<Material, Integer> materials = new HashMap<>();
 
     /**
-     * Set of MaterialStores inside this MaterialSystem(Colony)
+     * Set of MaterialStores inside this MaterialSystem(Colony).
      */
     @NotNull
     private Set<MaterialStore> stores = new HashSet<>();
@@ -39,7 +39,7 @@ public class MaterialSystem
     private Map<Integer, Material> materialCache = new HashMap<>();
 
     /**
-     * @return An unmodifiable version of the materials map
+     * @return An unmodifiable version of the materials map.
      */
     @NotNull
     public Map<Material, Integer> getMaterials()
@@ -48,7 +48,7 @@ public class MaterialSystem
     }
 
     /**
-     * @return An unmodifiable version of the stores set
+     * @return An unmodifiable version of the stores set.
      */
     @NotNull
     public Set<MaterialStore> getStores()
@@ -59,8 +59,8 @@ public class MaterialSystem
     /**
      * Finds how much extra(unneeded) items we have in the system(colony).
      *
-     * @param item Item you want to know how much of you have
-     * @return The number of unneeded item that is in the colony
+     * @param item Item you want to know how much of you have.
+     * @return The number of unneeded item that is in the colony.
      */
     public int getMaterialCount(final Item item)
     {
@@ -116,8 +116,8 @@ public class MaterialSystem
     /**
      * Finds how much extra(unneeded) blocks we have in the system(colony).
      *
-     * @param block Block you want to know how much of you have
-     * @return The number of unneeded block that is in the colony
+     * @param block Block you want to know how much of you have.
+     * @return The number of unneeded block that is in the colony.
      */
     public int getMaterialCount(final Block block)
     {
@@ -138,8 +138,8 @@ public class MaterialSystem
     /**
      * Adds a material to the system.
      *
-     * @param material What material you're adding
-     * @param quantity How much you're adding
+     * @param material What material you're adding.
+     * @param quantity How much you're adding.
      */
     void addMaterial(final Material material, final int quantity)
     {

@@ -5,14 +5,14 @@ import com.minecolonies.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for the fisherman hut
+ * Window for the fisherman hut.
  */
 public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFisherman.View>
 {
     /**
-     * Constructor for the window of the fisherman
+     * Constructor for the window of the fisherman.
      *
-     * @param building {@link com.minecolonies.colony.buildings.BuildingFisherman.View}
+     * @param building {@link com.minecolonies.colony.buildings.BuildingFisherman.View}.
      */
     public WindowHutFisherman(final BuildingFisherman.View building)
     {
@@ -20,9 +20,9 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
     }
 
     /**
-     * Returns the name of a building
+     * Returns the name of a building.
      *
-     * @return Name of a building
+     * @return Name of a building.
      */
     @NotNull
     @Override

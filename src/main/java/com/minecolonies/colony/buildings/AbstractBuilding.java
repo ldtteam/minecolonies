@@ -77,8 +77,8 @@ public abstract class AbstractBuilding
     /**
      * Constructor for a AbstractBuilding.
      *
-     * @param colony Colony the building belongs to
-     * @param pos    Location of the building (it's Hut Block)
+     * @param colony Colony the building belongs to.
+     * @param pos    Location of the building (it's Hut Block).
      */
     protected AbstractBuilding(@NotNull final Colony colony, final BlockPos pos)
     {
@@ -89,12 +89,12 @@ public abstract class AbstractBuilding
 
     /**
      * Add build to a mapping.
-     * <code>buildingClass</code> needs to extend {@link AbstractBuilding}
-     * <code>parentBlock</code> needs to extend {@link AbstractBlockHut}
+     * <code>buildingClass</code> needs to extend {@link AbstractBuilding}.
+     * <code>parentBlock</code> needs to extend {@link AbstractBlockHut}.
      *
      * @param name          name of building.
-     * @param buildingClass subclass of AbstractBuilding, located in {@link com.minecolonies.colony.buildings}
-     * @param parentBlock   subclass of Block, located in {@link com.minecolonies.blocks}
+     * @param buildingClass subclass of AbstractBuilding, located in {@link com.minecolonies.colony.buildings}.
+     * @param parentBlock   subclass of Block, located in {@link com.minecolonies.blocks}.
      */
     private static void addMapping(final String name, @NotNull final Class<? extends AbstractBuilding> buildingClass, @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
@@ -133,11 +133,11 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Create and load a AbstractBuilding given it's saved NBTTagCompound
-     * Calls {@link #readFromNBT(net.minecraft.nbt.NBTTagCompound)}
+     * Create and load a AbstractBuilding given it's saved NBTTagCompound.
+     * Calls {@link #readFromNBT(net.minecraft.nbt.NBTTagCompound)}.
      *
-     * @param colony   The owning colony
-     * @param compound The saved data
+     * @param colony   The owning colony.
+     * @param compound The saved data.
      * @return {@link AbstractBuilding} created from the compound.
      */
     @Nullable
@@ -185,9 +185,9 @@ public abstract class AbstractBuilding
 
     /**
      * Load data from NBT compound.
-     * Writes to {@link #buildingLevel}, {@link #rotation} and {@link #style}
+     * Writes to {@link #buildingLevel}, {@link #rotation} and {@link #style}.
      *
-     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to read data from
+     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to read data from.
      */
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
@@ -208,9 +208,9 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Create a Building given it's TileEntity
+     * Create a Building given it's TileEntity.
      *
-     * @param colony The owning colony
+     * @param colony The owning colony.
      * @param parent The Tile Entity the building belongs to.
      * @return {@link AbstractBuilding} instance, without NBTTags applied.
      */
@@ -244,12 +244,12 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Create a AbstractBuilding View given it's saved NBTTagCompound
+     * Create a AbstractBuilding View given it's saved NBTTagCompound.
      *
-     * @param colony The owning colony
+     * @param colony The owning colony.
      * @param id     Chunk coordinate of the block a view is created for.
-     * @param buf    The network data
-     * @return {@link AbstractBuilding.View} created from reading the buf
+     * @param buf    The network data.
+     * @return {@link AbstractBuilding.View} created from reading the buf.
      */
     @Nullable
     public static View createBuildingView(final ColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
@@ -312,8 +312,8 @@ public abstract class AbstractBuilding
     /**
      * Checks if a block matches the current object.
      *
-     * @param block Block you want to know whether it matches this class or not
-     * @return True if the block matches this class, otherwise false
+     * @param block Block you want to know whether it matches this class or not.
+     * @return True if the block matches this class, otherwise false.
      */
     public boolean isMatchingBlock(@NotNull final Block block)
     {
@@ -322,10 +322,10 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Save data to NBT compound
-     * Writes the {@link #buildingLevel}, {@link #rotation}, {@link #style}, {@link #location}, and {@link #getClass()} value
+     * Save data to NBT compound.
+     * Writes the {@link #buildingLevel}, {@link #rotation}, {@link #style}, {@link #location}, and {@link #getClass()} value.
      *
-     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to
+     * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
      */
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
@@ -352,9 +352,9 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Returns the {@link BlockPos} of the current object, also used as ID
+     * Returns the {@link BlockPos} of the current object, also used as ID.
      *
-     * @return {@link BlockPos} of the current object
+     * @return {@link BlockPos} of the current object.
      */
     public BlockPos getLocation()
     {
@@ -362,9 +362,9 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Returns the tile entity that belongs to the colony building
+     * Returns the tile entity that belongs to the colony building.
      *
-     * @return {@link TileEntityColonyBuilding} object of the building
+     * @return {@link TileEntityColonyBuilding} object of the building.
      */
     public TileEntityColonyBuilding getTileEntity()
     {
@@ -388,7 +388,7 @@ public abstract class AbstractBuilding
     /**
      * Sets the tile entity for the building.
      *
-     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
+     * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field.
      */
     public void setTileEntity(final TileEntityColonyBuilding te)
     {
@@ -396,9 +396,9 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Returns the colony of the building
+     * Returns the colony of the building.
      *
-     * @return {@link com.minecolonies.colony.Colony} of the current object
+     * @return {@link com.minecolonies.colony.Colony} of the current object.
      */
     @NotNull
     public Colony getColony()
@@ -417,7 +417,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Sets {@link #dirty} to false, meaning that the instance is up to date
+     * Sets {@link #dirty} to false, meaning that the instance is up to date.
      */
     public final void clearDirty()
     {
@@ -426,7 +426,7 @@ public abstract class AbstractBuilding
 
     /**
      * Destroys the block.
-     * Calls {@link #onDestroyed()}
+     * Calls {@link #onDestroyed()}.
      */
     public final void destroy()
     {
@@ -448,7 +448,7 @@ public abstract class AbstractBuilding
     /**
      * Method to remove a citizen.
      *
-     * @param citizen Citizen to be removed
+     * @param citizen Citizen to be removed.
      */
     public void removeCitizen(final CitizenData citizen)
     {
@@ -456,7 +456,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * On tick of the server
+     * On tick of the server.
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
@@ -466,7 +466,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * On tick of the world
+     * On tick of the world.
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
@@ -476,7 +476,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Requests an upgrade for the current building
+     * Requests an upgrade for the current building.
      */
     public void requestUpgrade()
     {
@@ -513,18 +513,18 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Returns the {@link BlockPos} of the current object, also used as ID
+     * Returns the {@link BlockPos} of the current object, also used as ID.
      *
-     * @return {@link BlockPos} of the current object
+     * @return {@link BlockPos} of the current object.
      */
     public BlockPos getID()
     {
-        // Location doubles as ID
+        // Location doubles as ID.
         return location;
     }
 
     /**
-     * Requests a repair for the current building
+     * Requests a repair for the current building.
      */
     public void requestRepair()
     {
@@ -535,9 +535,9 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Returns the rotation of the current building
+     * Returns the rotation of the current building.
      *
-     * @return integer value of the rotation
+     * @return integer value of the rotation.
      */
     public int getRotation()
     {
@@ -545,9 +545,9 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Sets the rotation of the current building
+     * Sets the rotation of the current building.
      *
-     * @param rotation integer value of the rotation
+     * @param rotation integer value of the rotation.
      */
     public void setRotation(final int rotation)
     {
@@ -555,7 +555,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Returns the style of the current building
+     * Returns the style of the current building.
      *
      * @return String representation of the current building-style
      */
@@ -565,9 +565,9 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Sets the style of the building
+     * Sets the style of the building.
      *
-     * @param style String value of the style
+     * @param style String value of the style.
      */
     public void setStyle(final String style)
     {
@@ -587,7 +587,7 @@ public abstract class AbstractBuilding
     /**
      * Called upon completion of an upgrade process.
      *
-     * @param newLevel The new level
+     * @param newLevel The new level.
      */
     public void onUpgradeComplete(final int newLevel)
     {
@@ -597,11 +597,11 @@ public abstract class AbstractBuilding
     /**
      * Serializes to view.
      * Sends 3 integers.
-     * 1) hashcode of the name of the class
-     * 2) building level
-     * 3) max building level
+     * 1) hashcode of the name of the class.
+     * 2) building level.
+     * 3) max building level.
      *
-     * @param buf ByteBuf to write to
+     * @param buf ByteBuf to write to.
      */
     public void serializeToView(@NotNull final ByteBuf buf)
     {
@@ -611,9 +611,9 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Returns the level of the current object
+     * Returns the level of the current object.
      *
-     * @return Level of the current object
+     * @return Level of the current object.
      */
     public int getBuildingLevel()
     {
@@ -621,9 +621,9 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Sets the current level of the building
+     * Sets the current level of the building.
      *
-     * @param level Level of the building
+     * @param level Level of the building.
      */
     public void setBuildingLevel(final int level)
     {
@@ -638,7 +638,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Marks the instance and the building dirty
+     * Marks the instance and the building dirty.
      */
     public final void markDirty()
     {
@@ -648,8 +648,8 @@ public abstract class AbstractBuilding
     
     /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
-     * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form
-     * Mutable operations on a View result in a message to the server to perform the operation
+     * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
+     * Mutable operations on a View result in a message to the server to perform the operation.
      */
     public static class View
     {

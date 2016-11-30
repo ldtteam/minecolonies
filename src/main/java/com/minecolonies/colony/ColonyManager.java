@@ -59,10 +59,10 @@ public final class ColonyManager
     /**
      * Create a new Colony in the given world and at that location.
      *
-     * @param w      World of the colony
-     * @param pos    Coordinate of the center of the colony
+     * @param w      World of the colony.
+     * @param pos    Coordinate of the center of the colony.
      * @param player the player that creates the colony - owner.
-     * @return The created colony
+     * @return The created colony.
      */
     @NotNull
     public static Colony createColony(@NotNull final World w, final BlockPos pos, @NotNull final EntityPlayer player)
@@ -95,7 +95,7 @@ public final class ColonyManager
     /**
      * Delete a colony and kill all citizens/purge all buildings.
      *
-     * @param id the colonies id
+     * @param id the colonies id.
      */
     public static void deleteColony(final int id)
     {
@@ -156,10 +156,10 @@ public final class ColonyManager
     }
 
     /**
-     * Get Colony by UUID
+     * Get Colony by UUID.
      *
-     * @param id ID of colony
-     * @return Colony with given ID
+     * @param id ID of colony.
+     * @return Colony with given ID.
      */
     public static Colony getColony(final int id)
     {
@@ -167,11 +167,11 @@ public final class ColonyManager
     }
 
     /**
-     * Get a AbstractBuilding by a World and coordinates
+     * Get a AbstractBuilding by a World and coordinates.
      *
-     * @param w   World
-     * @param pos Block position
-     * @return AbstractBuilding at the given location
+     * @param w   World.
+     * @param pos Block position.
+     * @return AbstractBuilding at the given location.
      */
     public static AbstractBuilding getBuilding(@NotNull final World w, @NotNull final BlockPos pos)
     {
@@ -185,7 +185,7 @@ public final class ColonyManager
             }
         }
 
-        //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius
+        //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius.
         if (coloniesByWorld.containsKey(w.provider.getDimension()))
         {
             for (@NotNull final Colony otherColony : coloniesByWorld.get(w.provider.getDimension()))
@@ -202,11 +202,11 @@ public final class ColonyManager
     }
 
     /**
-     * Get colony that contains a given coordinate
+     * Get colony that contains a given coordinate.
      *
-     * @param w   World
-     * @param pos coordinates
-     * @return Colony at the given location
+     * @param w   World.
+     * @param pos coordinates.
+     * @return Colony at the given location.
      */
     public static Colony getColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
@@ -230,8 +230,8 @@ public final class ColonyManager
     /**
      * Get all colonies in this world.
      *
-     * @param w World
-     * @return a list of colonies
+     * @param w World.
+     * @return a list of colonies.
      */
     @NotNull
     public static List<Colony> getColonies(@NotNull final World w)
@@ -247,7 +247,7 @@ public final class ColonyManager
     /**
      * Get all colonies in all worlds.
      *
-     * @return a list of colonies
+     * @return a list of colonies.
      */
     @NotNull
     public static List<Colony> getColonies()
@@ -258,8 +258,8 @@ public final class ColonyManager
     /**
      * Get a AbstractBuilding by position.
      *
-     * @param pos Block position
-     * @return Returns the view belonging to the building at (x, y, z)
+     * @param pos Block position.
+     * @return Returns the view belonging to the building at (x, y, z).
      */
     public static AbstractBuilding.View getBuildingView(final BlockPos pos)
     {
@@ -279,11 +279,11 @@ public final class ColonyManager
     /**
      * Side neutral method to get colony.
      * On clients it returns the view.
-     * On servers it returns the colony itself
+     * On servers it returns the colony itself.
      *
-     * @param w   World
-     * @param pos coordinates
-     * @return View of colony or colony itself depending on side
+     * @param w   World.
+     * @param pos coordinates.
+     * @return View of colony or colony itself depending on side.
      */
     @Nullable
     public static IColony getIColony(@NotNull final World w, @NotNull final BlockPos pos)
@@ -317,9 +317,9 @@ public final class ColonyManager
      * On servers it returns the colony itself.
      * {@link #getClosestColony(World, BlockPos)}
      *
-     * @param w   World
-     * @param pos Block position
-     * @return View of colony or colony itself depending on side, closest to coordinates
+     * @param w   World.
+     * @param pos Block position.
+     * @return View of colony or colony itself depending on side, closest to coordinates.
      */
     @Nullable
     public static IColony getClosestIColony(@NotNull final World w, @NotNull final BlockPos pos)
@@ -330,9 +330,9 @@ public final class ColonyManager
     /**
      * Returns the closest view {@link #getColonyView(World, BlockPos)}.
      *
-     * @param w   World
-     * @param pos Block Position
-     * @return View of the closest colony
+     * @param w   World.
+     * @param pos Block Position.
+     * @return View of the closest colony.
      */
     @Nullable
     public static ColonyView getClosestColonyView(@NotNull final World w, @NotNull final BlockPos pos)
@@ -357,11 +357,11 @@ public final class ColonyManager
     }
 
     /**
-     * Get closest colony by x,y,z
+     * Get closest colony by x,y,z.
      *
-     * @param w   World
-     * @param pos coordinates
-     * @return Colony closest to coordinates
+     * @param w   World.
+     * @param pos coordinates.
+     * @return Colony closest to coordinates.
      */
     public static Colony getClosestColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
@@ -393,13 +393,13 @@ public final class ColonyManager
     /**
      * Side neutral method to get colony.
      * On clients it returns the view.
-     * On servers it returns the colony itself
+     * On servers it returns the colony itself.
      * <p>
-     * Returns a colony or view with the given Player as owner
+     * Returns a colony or view with the given Player as owner.
      *
-     * @param w     World
-     * @param owner Entity Player
-     * @return IColony belonging to specific player
+     * @param w     World.
+     * @param owner Entity Player.
+     * @return IColony belonging to specific player.
      */
     @Nullable
     public static IColony getIColonyByOwner(@NotNull final World w, @NotNull final EntityPlayer owner)
@@ -410,13 +410,13 @@ public final class ColonyManager
     /**
      * Side neutral method to get colony.
      * On clients it returns the view.
-     * On servers it returns the colony itself
+     * On servers it returns the colony itself.
      * <p>
-     * Returns a colony or view with given Player as owner
+     * Returns a colony or view with given Player as owner.
      *
      * @param w     World
-     * @param owner UUID of the owner
-     * @return IColony belonging to specific player
+     * @param owner UUID of the owner.
+     * @return IColony belonging to specific player.
      */
     @Nullable
     public static IColony getIColonyByOwner(@NotNull final World w, final UUID owner)
@@ -427,8 +427,8 @@ public final class ColonyManager
     /**
      * Returns a ColonyView with specific owner.
      *
-     * @param owner UUID of the owner
-     * @return ColonyView
+     * @param owner UUID of the owner.
+     * @return ColonyView.
      */
     private static IColony getColonyViewByOwner(final UUID owner)
     {
@@ -447,8 +447,8 @@ public final class ColonyManager
     /**
      * Returns a Colony that has the given owner.
      *
-     * @param owner UUID of the owner
-     * @return Colony that belong to given owner UUID
+     * @param owner UUID of the owner.
+     * @return Colony that belong to given owner UUID.
      */
     @Nullable
     private static IColony getColonyByOwner(@Nullable final UUID owner)
@@ -468,7 +468,7 @@ public final class ColonyManager
     /**
      * Returns the minimum distance between two town halls, to not make colonies collide.
      *
-     * @return Minimum town hall distance
+     * @return Minimum town hall distance.
      */
     public static double getMinimumDistanceBetweenTownHalls()
     {
@@ -478,7 +478,7 @@ public final class ColonyManager
 
     /**
      * On server tick, tick every Colony.
-     * NOTE: Review this for performance
+     * NOTE: Review this for performance.
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
@@ -496,7 +496,7 @@ public final class ColonyManager
     }
 
     /**
-     * Save all the Colonies
+     * Save all the Colonies.
      */
     private static void saveColonies()
     {
@@ -510,9 +510,9 @@ public final class ColonyManager
     }
 
     /**
-     * Write colonies to NBT data for saving
+     * Write colonies to NBT data for saving.
      *
-     * @param compound NBT-Tag
+     * @param compound NBT-Tag.
      */
     public static void writeToNBT(@NotNull final NBTTagCompound compound)
     {
@@ -527,9 +527,9 @@ public final class ColonyManager
     }
 
     /**
-     * Get save location for Minecolonies data, from the world/save directory
+     * Get save location for Minecolonies data, from the world/save directory.
      *
-     * @return Save file for minecolonies
+     * @return Save file for minecolonies.
      */
     @NotNull
     private static File getSaveLocation()
@@ -539,10 +539,10 @@ public final class ColonyManager
     }
 
     /**
-     * Save an NBTTagCompound to a file.  Does so in a safe manner using an intermediate tmp file
+     * Save an NBTTagCompound to a file.  Does so in a safe manner using an intermediate tmp file.
      *
-     * @param file     The destination file to write the data to
-     * @param compound The NBTTagCompound to write to the file
+     * @param file     The destination file to write the data to.
+     * @param compound The NBTTagCompound to write to the file.
      */
     private static void saveNBTToPath(@Nullable final File file, @NotNull final NBTTagCompound compound)
     {
@@ -563,7 +563,7 @@ public final class ColonyManager
     /**
      * On Client tick, clears views when player left.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}
+     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}.
      */
     public static void onClientTick(@NotNull final TickEvent.ClientTickEvent event)
     {
@@ -576,9 +576,9 @@ public final class ColonyManager
 
     /**
      * On world tick, tick every Colony in that world.
-     * NOTE: Review this for performance
+     * NOTE: Review this for performance.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}.
      */
     public static void onWorldTick(
                                     @NotNull final TickEvent.WorldTickEvent event)
@@ -591,10 +591,10 @@ public final class ColonyManager
     }
 
     /**
-     * When a world is loaded, Colonies in that world need to grab the reference to the World
+     * When a world is loaded, Colonies in that world need to grab the reference to the World.
      * Additionally, when loading the first world, load all colonies.
      *
-     * @param world World
+     * @param world World.
      */
     public static void onWorldLoad(@NotNull final World world)
     {
@@ -625,10 +625,10 @@ public final class ColonyManager
     }
 
     /**
-     * Load a file and return the data as an NBTTagCompound
+     * Load a file and return the data as an NBTTagCompound.
      *
-     * @param file The path to the file
-     * @return the data from the file as an NBTTagCompound, or null
+     * @param file The path to the file.
+     * @return the data from the file as an NBTTagCompound, or null.
      */
     private static NBTTagCompound loadNBTFromPath(
                                                    @Nullable final File file)
@@ -648,9 +648,9 @@ public final class ColonyManager
     }
 
     /**
-     * Read Colonies from saved NBT data
+     * Read Colonies from saved NBT data.
      *
-     * @param compound NBT Tag
+     * @param compound NBT Tag.
      */
     public static void readFromNBT(@NotNull final NBTTagCompound compound)
     {
@@ -675,7 +675,7 @@ public final class ColonyManager
     /**
      * Saves data when world is saved
      *
-     * @param world World
+     * @param world World.
      */
     public static void onWorldSave(@NotNull final World world)
     {
@@ -687,10 +687,10 @@ public final class ColonyManager
     }
 
     /**
-     * When a world unloads, all colonies in that world are informed
-     * Additionally, when the last world is unloaded, delete all colonies
+     * When a world unloads, all colonies in that world are informed.
+     * Additionally, when the last world is unloaded, delete all colonies.
      *
-     * @param world World
+     * @param world World.
      */
     public static void onWorldUnload(@NotNull final World world)
     {
@@ -715,11 +715,11 @@ public final class ColonyManager
     }
 
     /**
-     * Sends view message to the right view
+     * Sends view message to the right view.
      *
-     * @param colonyId          ID of the colony
-     * @param colonyData        {@link ByteBuf} with colony data
-     * @param isNewSubscription whether this is a new subscription or not
+     * @param colonyId          ID of the colony.
+     * @param colonyData        {@link ByteBuf} with colony data.
+     * @param isNewSubscription whether this is a new subscription or not.
      * @return the response message.
      */
     @Nullable
@@ -736,10 +736,10 @@ public final class ColonyManager
     }
 
     /**
-     * Get ColonyView by ID
+     * Get ColonyView by ID.
      *
-     * @param id ID of colony
-     * @return The ColonyView belonging to the colony
+     * @param id ID of colony.
+     * @return The ColonyView belonging to the colony.
      */
     public static ColonyView getColonyView(final int id)
     {
@@ -747,12 +747,12 @@ public final class ColonyManager
     }
 
     /**
-     * Returns result of {@link ColonyView#handlePermissionsViewMessage(ByteBuf)} if {@link #getColonyView(int)}
-     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     * Returns result of {@link ColonyView#handlePermissionsViewMessage(ByteBuf)} if {@link #getColonyView(int)}.
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null.
      *
-     * @param colonyID ID of the colony
-     * @param data     {@link ByteBuf} with colony data
-     * @return result of {@link ColonyView#handlePermissionsViewMessage(ByteBuf)} or null
+     * @param colonyID ID of the colony.
+     * @param data     {@link ByteBuf} with colony data.
+     * @return result of {@link ColonyView#handlePermissionsViewMessage(ByteBuf)} or null.
      */
     public static IMessage handlePermissionsViewMessage(final int colonyID, @NotNull final ByteBuf data)
     {
@@ -770,12 +770,12 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewCitizensMessage(int, ByteBuf)} if {@link #getColonyView(int)}
-     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null.
      *
-     * @param colonyId  ID of the colony
-     * @param citizenId ID of the citizen
-     * @param buf       {@link ByteBuf} with colony data
-     * @return result of {@link ColonyView#handleColonyViewCitizensMessage(int, ByteBuf)} or null
+     * @param colonyId  ID of the colony.
+     * @param citizenId ID of the citizen.
+     * @param buf       {@link ByteBuf} with colony data.
+     * @return result of {@link ColonyView#handleColonyViewCitizensMessage(int, ByteBuf)} or null.
      */
     public static IMessage handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final ByteBuf buf)
     {
@@ -790,11 +790,11 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)} (int, ByteBuf)} if {@link #getColonyView(int)}
-     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null.
      *
-     * @param colonyId ID of the colony
-     * @param buf      {@link ByteBuf} with colony data
-     * @return result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)} or null
+     * @param colonyId ID of the colony.
+     * @param buf      {@link ByteBuf} with colony data.
+     * @return result of {@link ColonyView#handleColonyViewWorkOrderMessage(ByteBuf)} or null.
      */
     public static IMessage handleColonyViewWorkOrderMessage(final int colonyId, final ByteBuf buf)
     {
@@ -809,11 +809,11 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewRemoveCitizenMessage(int)} if {@link #getColonyView(int)}
-     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null.
      *
-     * @param colonyId  ID of the colony
-     * @param citizenId ID of the citizen
-     * @return result of {@link ColonyView#handleColonyViewRemoveCitizenMessage(int)}  or null
+     * @param colonyId  ID of the colony.
+     * @param citizenId ID of the citizen.
+     * @return result of {@link ColonyView#handleColonyViewRemoveCitizenMessage(int)}  or null.
      */
     public static IMessage handleColonyViewRemoveCitizenMessage(final int colonyId, final int citizenId)
     {
@@ -821,7 +821,7 @@ public final class ColonyManager
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
-            //  possible to receive a 'remove' notice before receiving the View
+            //  possible to receive a 'remove' notice before receiving the View.
             return view.handleColonyViewRemoveCitizenMessage(citizenId);
         }
 
@@ -830,12 +830,12 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, ByteBuf)} if {@link #getColonyView(int)}
-     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null.
      *
-     * @param colonyId   ID of the colony
-     * @param buildingId ID of the building
-     * @param buf        {@link ByteBuf} with colony data
-     * @return result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, ByteBuf)} or null
+     * @param colonyId   ID of the colony.
+     * @param buildingId ID of the building.
+     * @param buf        {@link ByteBuf} with colony data.
+     * @return result of {@link ColonyView#handleColonyBuildingViewMessage(BlockPos, ByteBuf)} or null.
      */
     public static IMessage handleColonyBuildingViewMessage(final int colonyId, final BlockPos buildingId, @NotNull final ByteBuf buf)
     {
@@ -853,11 +853,11 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)} if {@link #getColonyView(int)}
-     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null.
      *
-     * @param colonyId   ID of the colony
-     * @param buildingId ID of the building
-     * @return result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)}  or null
+     * @param colonyId   ID of the colony.
+     * @param buildingId ID of the building.
+     * @return result of {@link ColonyView#handleColonyViewRemoveBuildingMessage(BlockPos)}  or null.
      */
     public static IMessage handleColonyViewRemoveBuildingMessage(final int colonyId, final BlockPos buildingId)
     {
@@ -865,7 +865,7 @@ public final class ColonyManager
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
-            //  possible to receive a 'remove' notice before receiving the View
+            //  possible to receive a 'remove' notice before receiving the View.
             return view.handleColonyViewRemoveBuildingMessage(buildingId);
         }
 
@@ -874,11 +874,11 @@ public final class ColonyManager
 
     /**
      * Returns result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)} if {@link #getColonyView(int)}
-     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null
+     * gives a not-null result. If {@link #getColonyView(int)} is null, returns null.
      *
-     * @param colonyId    ID of the colony
-     * @param workOrderId ID of the workOrder
-     * @return result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)}  or null
+     * @param colonyId    ID of the colony.
+     * @param workOrderId ID of the workOrder.
+     * @return result of {@link ColonyView#handleColonyViewRemoveWorkOrderMessage(int)}  or null.
      */
     public static IMessage handleColonyViewRemoveWorkOrderMessage(final int colonyId, final int workOrderId)
     {
@@ -886,7 +886,7 @@ public final class ColonyManager
         if (view != null)
         {
             //  Can legitimately be NULL, because (to keep the code simple and fast), it is
-            //  possible to receive a 'remove' notice before receiving the View
+            //  possible to receive a 'remove' notice before receiving the View.
             return view.handleColonyViewRemoveWorkOrderMessage(workOrderId);
         }
 

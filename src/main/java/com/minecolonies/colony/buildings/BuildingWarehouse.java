@@ -11,6 +11,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Class of the warehouse building.
+ */
 public class BuildingWarehouse extends AbstractBuildingWorker
 {
 
@@ -41,6 +44,11 @@ public class BuildingWarehouse extends AbstractBuildingWorker
     public boolean guardWeapon          = false;
     public boolean citizenVisit         = false;
 
+    /**
+     * Instantiates a new warehouse building.
+     * @param c the colony.
+     * @param l the location
+     */
     public BuildingWarehouse(final Colony c, final BlockPos l)
     {
         super(c, l);
@@ -158,7 +166,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
     }
 
     /**
-     * BuildingWarehouse View
+     * BuildingWarehouse View.
      */
     public static class View extends AbstractBuildingWorker.View
     {
@@ -178,6 +186,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
         }
 
         @NotNull
+        @Override
         public com.blockout.views.Window getWindow()
         {
             return new WindowHutWarehouse(this);

@@ -65,7 +65,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private Field currentField;
 
     /**
-     * Fields should be assigned manually to the farmer?
+     * Fields should be assigned manually to the farmer.
      */
     private boolean assignManually = false;
 
@@ -466,6 +466,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             super(c, l);
         }
 
+        @Override
         @NotNull
         public com.blockout.views.Window getWindow()
         {
@@ -493,7 +494,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
 
         /**
-         * Should the farmer be assigned manually to the fields?
+         * Should the farmer be assigned manually to the fields.
          *
          * @return true if yes.
          */
@@ -544,6 +545,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
             this.assignFieldManually = assignFieldManually;
         }
 
+        /**
+         * Change a field at a certain position.
+         * @param id the position of the field.
+         * @param addNewField should new field be added.
+         * @param row the row of the field.
+         */
         public void changeFields(final BlockPos id, final boolean addNewField, final int row)
         {
             MineColonies.getNetwork().sendToServer(new AssignFieldMessage(this, addNewField, id));

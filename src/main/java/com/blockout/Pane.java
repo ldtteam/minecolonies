@@ -13,7 +13,7 @@ import java.util.Deque;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
- * A Pane is the root of all UI objects
+ * A Pane is the root of all UI objects.
  */
 public class Pane extends Gui
 {
@@ -37,7 +37,7 @@ public class Pane extends Gui
     protected View   parent;
 
     /**
-     * Default constructor
+     * Default constructor.
      */
     public Pane()
     {
@@ -46,16 +46,16 @@ public class Pane extends Gui
     }
 
     /**
-     * Constructs a Pane from PaneParams
+     * Constructs a Pane from PaneParams.
      *
-     * @param params Params for the Pane
+     * @param params Params for the Pane.
      */
     public Pane(@NotNull final PaneParams params)
     {
         super();
         id = params.getStringAttribute("id", id);
 
-        final @NotNull PaneParams.SizePair parentSizePair = new PaneParams.SizePair(params.getParentWidth(), params.getParentHeight());
+        @NotNull final PaneParams.SizePair parentSizePair = new PaneParams.SizePair(params.getParentWidth(), params.getParentHeight());
         PaneParams.SizePair sizePair = params.getSizePairAttribute("size", null, parentSizePair);
         if (sizePair != null)
         {
@@ -86,9 +86,9 @@ public class Pane extends Gui
     }
 
     /**
-     * Returns the currently focused Pane
+     * Returns the currently focused Pane.
      *
-     * @return the currently focused Pane
+     * @return the currently focused Pane.
      */
     public static synchronized Pane getFocus()
     {
@@ -104,7 +104,7 @@ public class Pane extends Gui
     }
 
     /**
-     * Override to respond to the Pane losing focus
+     * Override to respond to the Pane losing focus.
      */
     public void onFocusLost()
     {
@@ -112,13 +112,17 @@ public class Pane extends Gui
     }
 
     /**
-     * Override to respond to the Pane becoming the current focus
+     * Override to respond to the Pane becoming the current focus.
      */
     public void onFocus()
     {
         // Can be overloaded
     }
 
+    /**
+     * Parse the children of the pane.
+     * @param params the parameter.
+     */
     public void parseChildren(final PaneParams params)
     {
         // Can be overloaded
@@ -135,18 +139,33 @@ public class Pane extends Gui
         this.id = id;
     }
 
+    /**
+     * Set the size of a pane.
+     * @param w the width.
+     * @param h the height.
+     */
     public void setSize(final int w, final int h)
     {
         width = w;
         height = h;
     }
 
+    /**
+     * Set the position of the pane.
+     * @param newX the new x.
+     * @param newY the new y.
+     */
     public void setPosition(final int newX, final int newY)
     {
         x = newX;
         y = newY;
     }
 
+    /**
+     * Move the pane by x and y to a place.
+     * @param dx the x.
+     * @param dy the y.
+     */
     public void moveBy(final int dx, final int dy)
     {
         x += dx;
@@ -174,11 +193,17 @@ public class Pane extends Gui
         visible = v;
     }
 
+    /**
+     * Show this pane.
+     */
     public void show()
     {
         setVisible(true);
     }
 
+    /**
+     * Hide this pane.
+     */
     public void hide()
     {
         setVisible(false);
@@ -195,18 +220,21 @@ public class Pane extends Gui
         enabled = e;
     }
 
+    /**
+     * Enable this pane.
+     */
     public void enable()
     {
         setEnabled(true);
     }
 
+    /**
+     * Disable this pane.
+     */
     public void disable()
     {
         setEnabled(false);
     }
-
-
-    //  Focus
 
     /**
      * Set Focus to this Pane.
@@ -219,7 +247,7 @@ public class Pane extends Gui
     /**
      * Return <tt>true</tt> if this Pane is the current focus.
      *
-     * @return <tt>true</tt> if this Pane is the current focus
+     * @return <tt>true</tt> if this Pane is the current focus.
      */
     public final synchronized boolean isFocus()
     {
@@ -227,9 +255,9 @@ public class Pane extends Gui
     }
 
     /**
-     * Set the currently focused Pane
+     * Set the currently focused Pane.
      *
-     * @param f Pane to focus, or nil
+     * @param f Pane to focus, or nil.
      */
     public static synchronized void setFocus(final Pane f)
     {
@@ -249,8 +277,8 @@ public class Pane extends Gui
     /**
      * Draw the current Pane if visible.
      *
-     * @param mx mouse x
-     * @param my mouse y
+     * @param mx mouse x.
+     * @param my mouse y.
      */
     public final void draw(final int mx, final int my)
     {
@@ -274,12 +302,12 @@ public class Pane extends Gui
     }
 
     /**
-     * Draw self.  The graphics port is already relative to the appropriate location
+     * Draw self.  The graphics port is already relative to the appropriate location.
      * <p>
      * Override this to actually draw.
      *
-     * @param mx Mouse x (relative to parent)
-     * @param my Mouse y (relative to parent)
+     * @param mx Mouse x (relative to parent).
+     * @param my Mouse y (relative to parent).
      */
     protected void drawSelf(final int mx, final int my)
     {
@@ -287,11 +315,11 @@ public class Pane extends Gui
     }
 
     /**
-     * Is a point relative to the parent's origin within the pane?
+     * Is a point relative to the parent's origin within the pane?.
      *
-     * @param mx point x
-     * @param my point y
-     * @return true if the point is in the pane
+     * @param mx point x.
+     * @param my point y.
+     * @return true if the point is in the pane.
      */
     protected boolean isPointInPane(final int mx, final int my)
     {
@@ -313,18 +341,18 @@ public class Pane extends Gui
     }
 
     /**
-     * Returns the first Pane (depth-first search) of a given ID,
+     * Returns the first Pane (depth-first search) of a given ID.
      * if it matches the specified type.
      * Performs a depth-first search on the hierarchy of Panes and Views.
      *
-     * @param id   ID of Pane to find
-     * @param type Class of the desired Pane type
-     * @param <T>  The type of pane returned
-     * @return a Pane of the given ID, if it matches the specified type
+     * @param id   ID of Pane to find.
+     * @param type Class of the desired Pane type.
+     * @param <T>  The type of pane returned.
+     * @return a Pane of the given ID, if it matches the specified type.
      */
     public final <T extends Pane> T findPaneOfTypeByID(final String id, @NotNull final Class<T> type)
     {
-        final @Nullable Pane p = findPaneByID(id);
+        @Nullable final Pane p = findPaneByID(id);
         try
         {
             return type.cast(p);
@@ -335,14 +363,14 @@ public class Pane extends Gui
         }
     }
 
-    //  Subpanes
+    //----------Subpanes-------------//
 
     /**
-     * Returns the first Pane of a given ID
-     * Performs a depth-first search on the hierarchy of Panes and Views
+     * Returns the first Pane of a given ID.
+     * Performs a depth-first search on the hierarchy of Panes and Views.
      *
-     * @param id ID of Pane to find
-     * @return a Pane of the given ID
+     * @param id ID of Pane to find.
+     * @return a Pane of the given ID.
      */
     @Nullable
     public Pane findPaneByID(final String id)
@@ -376,9 +404,9 @@ public class Pane extends Gui
     }
 
     /**
-     * Put this Pane inside a View.  Only Views and subclasses can contain Panes
+     * Put this Pane inside a View.  Only Views and subclasses can contain Panes.
      *
-     * @param newParent the View to put this Pane into, or null to remove from Parents
+     * @param newParent the View to put this Pane into, or null to remove from Parents.
      */
     public void putInside(final View newParent)
     {
@@ -400,15 +428,15 @@ public class Pane extends Gui
         return visible && enabled;
     }
 
-    //  Mouse
+    //----------Mouse-------------//
 
     /**
      * Process a mouse down on the Pane.
      * <p>
-     * It is advised that only containers of other panes override this method
+     * It is advised that only containers of other panes override this method.
      *
-     * @param mx mouse X coordinate, relative to parent's top-left
-     * @param my mouse Y coordinate, relative to parent's top-left
+     * @param mx mouse X coordinate, relative to parent's top-left.
+     * @param my mouse Y coordinate, relative to parent's top-left.
      */
     public void click(final int mx, final int my)
     {
@@ -416,34 +444,53 @@ public class Pane extends Gui
         handleClick(mx - x, my - y);
     }
 
+    /**
+     * Set a pane as the last clicked pane.
+     * @param pane pane to set.
+     */
     private static synchronized void setLastClickedPane(final Pane pane)
     {
         lastClickedPane = pane;
     }
 
     /**
-     * Process a click on the Pane
+     * Process a click on the Pane.
      * <p>
-     * Override this to process the actual click
+     * Override this to process the actual click.
      *
-     * @param mx mouse X coordinate, relative to Pane's top-left
-     * @param my mouse Y coordinate, relative to Pane's top-left
+     * @param mx mouse X coordinate, relative to Pane's top-left.
+     * @param my mouse Y coordinate, relative to Pane's top-left.
      */
     public void handleClick(final int mx, final int my)
     {
         // Can be overloaded
     }
 
+    /**
+     * Check if a pane can handle clicks.
+     * @param mx int x position.
+     * @param my int y position.
+     * @return true if so.
+     */
     public boolean canHandleClick(final int mx, final int my)
     {
         return visible && enabled && isPointInPane(mx, my);
     }
 
+    /**
+     * Called when a key is pressed.
+     * @param ch the character.
+     * @param key the key.
+     * @return false at all times - do nothing.
+     */
     public boolean onKeyTyped(final char ch, final int key)
     {
         return false;
     }
 
+    /**
+     * On update. Can be overloaded.
+     */
     public void onUpdate()
     {
         // Can be overloaded
@@ -483,12 +530,19 @@ public class Pane extends Gui
         GL11.glScissor(info.x * scale, mc.displayHeight - ((info.y + info.height) * scale), info.width * scale, info.height * scale);
     }
 
-    //  Position
+    /**
+     * X position.
+     * @return the int x.
+     */
     public int getX()
     {
         return x;
     }
 
+    /**
+     * Y position.
+     * @return the int y.
+     */
     public int getY()
     {
         return y;

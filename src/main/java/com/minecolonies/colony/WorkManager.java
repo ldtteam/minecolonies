@@ -48,7 +48,7 @@ public class WorkManager
     /**
      * Removes a work order from the work manager.
      *
-     * @param order {@link AbstractWorkOrder} to remove
+     * @param order {@link AbstractWorkOrder} to remove.
      */
     public void removeWorkOrder(@NotNull final AbstractWorkOrder order)
     {
@@ -69,10 +69,10 @@ public class WorkManager
     /**
      * Get a work order of the specified id, as a specific type.
      *
-     * @param id   the id of the work order
-     * @param type the class of the expected type of the work order
+     * @param id   the id of the work order.
+     * @param type the class of the expected type of the work order.
      * @param <W>  the type of work order to return.
-     * @return the work order of the specified id, or null if it was not found or is of an incompatible type
+     * @return the work order of the specified id, or null if it was not found or is of an incompatible type.
      */
     @Nullable
     public <W extends AbstractWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
@@ -92,8 +92,8 @@ public class WorkManager
     /**
      * Get a work order of the specified id.
      *
-     * @param id the id of the work order
-     * @return the work order of the specified id, or null
+     * @param id the id of the work order.
+     * @return the work order of the specified id, or null.
      */
     public AbstractWorkOrder getWorkOrder(final int id)
     {
@@ -103,9 +103,9 @@ public class WorkManager
     /**
      * Get an unclaimed work order of a specified type.
      *
-     * @param type the class of the type of work order to find
+     * @param type the class of the type of work order to find.
      * @param <W>  the type of work order to return.
-     * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found
+     * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found.
      */
     @Nullable
     public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
@@ -124,9 +124,9 @@ public class WorkManager
     /**
      * Get all work orders of a specified type.
      *
-     * @param type the class of the type of work order to find
+     * @param type the class of the type of work order to find.
      * @param <W>  the type of work order to return.
-     * @return a list of all work orders of the given type
+     * @return a list of all work orders of the given type.
      */
     public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
     {
@@ -145,7 +145,7 @@ public class WorkManager
     }
 
     /**
-     * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen
+     * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen.
      *
      * @param citizen Citizen to unclaim work for.
      */
@@ -156,9 +156,9 @@ public class WorkManager
     }
 
     /**
-     * Save the Work Manager
+     * Save the Work Manager.
      *
-     * @param compound Compound to save to
+     * @param compound Compound to save to.
      */
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
@@ -174,9 +174,9 @@ public class WorkManager
     }
 
     /**
-     * Restore the Work Manager
+     * Restore the Work Manager.
      *
-     * @param compound Compound to read from
+     * @param compound Compound to read from.
      */
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
@@ -204,9 +204,9 @@ public class WorkManager
     }
 
     /**
-     * Adds work order to the work manager
+     * Adds work order to the work manager.
      *
-     * @param order Order to add
+     * @param order Order to add.
      */
     public void addWorkOrder(@NotNull final AbstractWorkOrder order)
     {
@@ -222,10 +222,10 @@ public class WorkManager
     }
 
     /**
-     * Process updates on the World Tick
-     * Currently, does periodic Work Order cleanup
+     * Process updates on the World Tick.
+     * Currently, does periodic Work Order cleanup.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}.
      */
     public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {

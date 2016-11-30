@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * A Group is a View which enforces the position of children to be
  * a Y-sorted list in the order they are added.
  * <p>
- * All children are set to a Top version of their alignment, and have their Y coordinates overwritten
+ * All children are set to a Top version of their alignment, and have their Y coordinates overwritten.
  */
 public class Group extends View
 {
@@ -24,9 +24,9 @@ public class Group extends View
     }
 
     /**
-     * Constructs a View from PaneParams
+     * Constructs a View from PaneParams.
      *
-     * @param params Params for the Pane
+     * @param params Params for the Pane.
      */
     public Group(@NotNull final PaneParams params)
     {

@@ -15,6 +15,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The class of the citizen hut.
+ */
 public class BuildingHome extends AbstractBuildingHut
 {
     private static final String            TAG_RESIDENTS = "residents";
@@ -22,6 +25,11 @@ public class BuildingHome extends AbstractBuildingHut
     @NotNull
     private              List<CitizenData> residents     = new ArrayList<>();
 
+    /**
+     * Instantiates a new citizen hut.
+     * @param c the colony.
+     * @param l the location.
+     */
     public BuildingHome(final Colony c, final BlockPos l)
     {
         super(c, l);
@@ -112,7 +120,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     /**
-     * Looks for a homeless citizen to add to the current building. Calls
+     * Looks for a homeless citizen to add to the current building Calls.
      * {@link #addResident(CitizenData)}
      */
     private void addHomelessCitizens()
@@ -139,9 +147,9 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     /**
-     * Adds the citizen to the building
+     * Adds the citizen to the building.
      *
-     * @param citizen Citizen to add
+     * @param citizen Citizen to add.
      */
     private void addResident(@NotNull final CitizenData citizen)
     {
@@ -192,10 +200,10 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     /**
-     * Returns whether the citizen has this as home or not
+     * Returns whether the citizen has this as home or not.
      *
-     * @param citizen Citizen to check
-     * @return True if citizen lives here, otherwise false
+     * @param citizen Citizen to check.
+     * @return True if citizen lives here, otherwise false.
      */
     public boolean hasResident(final CitizenData citizen)
     {

@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
 
 /**
- * Wraps MineCrafts GuiScreen for BlockOut's Window
+ * Wraps MineCrafts GuiScreen for BlockOut's Window.
  */
 public class Screen extends GuiScreen
 {

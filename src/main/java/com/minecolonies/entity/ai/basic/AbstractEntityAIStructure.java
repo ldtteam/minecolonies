@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * Once an ai starts building a structure, control over it is only given back once that is done.
  * <p>
  * If the ai resets, the structure is gone,
- * so just restart building and no progress will be reset
+ * so just restart building and no progress will be reset.
  *
  * @param <J> the job type this AI has to do.
  */
@@ -30,15 +30,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 {
 
     /**
-     * The minimum range to keep from the current building place
+     * The minimum range to keep from the current building place.
      */
     private static final int MIN_ADDITIONAL_RANGE_TO_BUILD = 3;
     /**
-     * The maximum range to keep from the current building place
+     * The maximum range to keep from the current building place.
      */
     private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
     /**
-     * The amount of blocks away from his working position until the builder will build
+     * The amount of blocks away from his working position until the builder will build.
      */
     private static final int BUILDING_WALK_RANGE           = 10;
     /**
@@ -59,7 +59,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * <p>
      * Always use this constructor!
      *
-     * @param job the job class of the ai using this base class
+     * @param job the job class of the ai using this base class.
      */
     protected AbstractEntityAIStructure(@NotNull final J job)
     {
@@ -74,12 +74,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
            */
           new AITarget(AIState.START_BUILDING, this::startBuilding),
           /**
-           * Clear out the building area
+           * Clear out the building area.
            * todo: implement
            */
           new AITarget(AIState.CLEAR_STEP, generateSchematicIterator(this::clearStep, AIState.BUILDER_STRUCTURE_STEP)),
           /**
-           * Build the structure and foundation of the building
+           * Build the structure and foundation of the building.
            * todo: implement
            */
           new AITarget(AIState.BUILDING_STEP, () -> AIState.IDLE),
@@ -89,7 +89,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
            */
           new AITarget(AIState.DECORATION_STEP, () -> AIState.IDLE),
           /**
-           * Spawn entities on the structure
+           * Spawn entities on the structure.
            * todo: implement
            */
           new AITarget(AIState.SPAWN_STEP, () -> AIState.IDLE),
@@ -108,7 +108,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @param evaluationFunction the function to be called each block.
      * @param nextState          the next state to change to once done iterating.
-     * @return the new state this AI will be in after one pass
+     * @return the new state this AI will be in after one pass.
      */
     private Supplier<AIState> generateSchematicIterator(@NotNull final Function<Structure.SchematicBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
     {
@@ -147,7 +147,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * <p>
      * Calculates and caches the position where to walk to.
      *
-     * @return true while walking to the site
+     * @return true while walking to the site.
      */
     private boolean walkToConstructionSite()
     {
@@ -179,7 +179,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * <p>
      * Then finds the floor level at that distance and then check if it does contain two air levels.
      *
-     * @param offset the extra distance to apply away from the building
+     * @param offset the extra distance to apply away from the building.
      * @return BlockPos position to work from.
      */
     private BlockPos getWorkingPosition(final int offset)
@@ -211,7 +211,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * Works on clearing the area of unneeded blocks.
      *
-     * @return the next step once done
+     * @return the next step once done.
      */
     private boolean clearStep(@NotNull final Structure.SchematicBlock currentBlock)
     {
@@ -220,7 +220,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
         {
             //Fill workFrom with the position from where the builder should build.
-            //also ensure we are at that position
+            //also ensure we are at that position.
             if (walkToConstructionSite())
             {
                 return false;
@@ -248,10 +248,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Gets a floorPosition in a particular direction
+     * Gets a floorPosition in a particular direction.
      *
-     * @param facing   the direction
-     * @param distance the distance
+     * @param facing   the direction.
+     * @param distance the distance.
      * @return a BlockPos position.
      */
     @NotNull
@@ -261,10 +261,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Calculates the floor level
+     * Calculates the floor level.
      *
-     * @param position input position
-     * @return returns BlockPos position with air above
+     * @param position input position.
+     * @return returns BlockPos position with air above.
      */
     @NotNull
     private BlockPos getFloor(@NotNull final BlockPos position)

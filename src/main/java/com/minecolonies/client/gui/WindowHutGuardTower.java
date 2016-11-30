@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 
 /**
- * Window for the guardTower hut
+ * Window for the guardTower hut.
  */
 public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGuardTower.View>
 {
@@ -78,7 +78,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     private static final String BUTTON_TASK_GUARD = "guarding";
 
     /**
-     * Id of the settarget button in the GUI - Depending ON task sets guard position or patrol..
+     * Id of the settarget button in the GUI - Depending ON task sets guard position or patrol.
      */
     private static final String BUTTON_SET_TARGET = "setTarget";
 
@@ -139,9 +139,9 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
 
     /**
-     * Constructor for the window of the guardTower hut
+     * Constructor for the window of the guardTower hut.
      *
-     * @param building {@link BuildingGuardTower.View}
+     * @param building {@link BuildingGuardTower.View}.
      */
     public WindowHutGuardTower(final BuildingGuardTower.View building)
     {

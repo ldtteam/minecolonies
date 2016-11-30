@@ -70,12 +70,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final int MOVE_AWAY_RANGE = 6;
 
     /**
-     * Number of ticks to heal the citizens
+     * Number of ticks to heal the citizens.
      */
     private static final int HEAL_CITIZENS_AFTER = 100;
 
     /**
-     * Tag's to save data to NBT
+     * Tag's to save data to NBT.
      */
     private static final String TAG_COLONY_ID      = "colony";
     private static final String TAG_CITIZEN        = "citizen";
@@ -153,7 +153,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private int level;
     private int textureId;
     /**
-     * Skill modifier defines how fast a citizen levels in a certain skill
+     * Skill modifier defines how fast a citizen levels in a certain skill.
      */
     private double skillModifier = 0;
     private boolean     female;
@@ -189,9 +189,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         initTasks();
     }
 
-    /**
-     *
-     */
     private synchronized void updateNavigatorField()
     {
         if (navigatorField == null)
@@ -368,6 +365,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
                  || EntityUtils.isWorkerAtSite(this, site.getX(), site.getY(), site.getZ(), range + 1);
     }
 
+    /**
+     * Get the job of the citizen.
+     * @param type of the type.
+     * @param <J> wildcard.
+     * @return the job.
+     */
     @Nullable
     public <J extends AbstractJob> J getColonyJob(@NotNull final Class<J> type)
     {
@@ -377,7 +380,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Change the citizens Rotation to look at said block.
      *
-     * @param block the block he should look at
+     * @param block the block he should look at.
      */
     public void faceBlock(@Nullable final BlockPos block)
     {
@@ -405,10 +408,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Returns the new rotation degree calculated from the current and intended rotation up to a max.
      *
-     * @param currentRotation  the current rotation the citizen has
-     * @param intendedRotation the wanted rotation he should have after applying this
-     * @param maxIncrement     the 'movement speed'
-     * @return a rotation value he should move
+     * @param currentRotation  the current rotation the citizen has.
+     * @param intendedRotation the wanted rotation he should have after applying this.
+     * @param maxIncrement     the 'movement speed.
+     * @return a rotation value he should move.
      */
     private static double updateRotation(final double currentRotation, final double intendedRotation, final double maxIncrement)
     {
@@ -428,21 +431,21 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Collect exp orbs around the entity
+     * Collect exp orbs around the entity.
      */
     public void gatherXp()
     {
         for (@NotNull final EntityXPOrb orb : getXPOrbsOnGrid())
         {
-            addExperience(orb.getXpValue() / 2);
+            addExperience(orb.getXpValue() / 2.0D);
             orb.setDead();
         }
     }
 
     /**
-     * Defines the area in which the citizen automatically gathers experience
+     * Defines the area in which the citizen automatically gathers experience.
      *
-     * @return a list of xp orbs around the entity
+     * @return a list of xp orbs around the entity.
      */
     private List<EntityXPOrb> getXPOrbsOnGrid()
     {
@@ -456,7 +459,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Increases the citizen level if he has sufficient experience.
      * This will reset the experience.
      *
-     * @param xp the amount of points added
+     * @param xp the amount of points added.
      */
     public void addExperience(final double xp)
     {
@@ -471,7 +474,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
         double localXp = xp * skillModifier / EXP_DIVIDER;
         final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
-        final double bonusXp = workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2);
+        final double bonusXp = workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2.0D);
         localXp = localXp * bonusXp;
         if (localXp > maxValue)
         {
@@ -488,7 +491,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Entities treat being on ladders as not on ground; this breaks navigation logic
+     * Entities treat being on ladders as not on ground; this breaks navigation logic.
      */
     @Override
     protected void updateFallState(final double y, final boolean onGroundIn, final IBlockState state, final BlockPos pos)
@@ -531,7 +534,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Called when the mob's health reaches 0.
      *
-     * @param par1DamageSource the attacking entity
+     * @param par1DamageSource the attacking entity.
      */
     @Override
     public void onDeath(final DamageSource par1DamageSource)
@@ -645,7 +648,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Called when a player tries to interact with a citizen.
      *
-     * @param player which interacts with the citizen
+     * @param player which interacts with the citizen.
      * @return If citizen should interact or not.
      */
     @Override
@@ -709,7 +712,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
+     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons.
      * use this to react to sunlight and start to burn.
      */
     @Override
@@ -853,7 +856,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Server-specific update for the EntityCitizen
+     * Server-specific update for the EntityCitizen.
      */
     public void updateColonyServer()
     {
@@ -1042,7 +1045,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Returns false if the newer Entity AI code should be run
+     * Returns false if the newer Entity AI code should be run.
      */
     @Override
     public boolean isAIDisabled()
@@ -1169,7 +1172,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Checks if the citizen should work even when it rains.
      *
-     * @return true if his building level is bigger than 5
+     * @return true if his building level is bigger than 5.
      */
     private boolean shouldWorkWhileRaining()
     {
@@ -1320,7 +1323,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * <p>
      * Will not break the block.
      *
-     * @param blockPos Block position
+     * @param blockPos Block position.
      */
     public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos)
     {
@@ -1337,8 +1340,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * If breakBlock is true then it will break the block (different sound and particles),
      * and damage the tool in the citizens hand.
      *
-     * @param blockPos   Block position
-     * @param breakBlock if we want to break this block
+     * @param blockPos   Block position.
+     * @param breakBlock if we want to break this block.
      */
     private void hitBlockWithToolInHand(@Nullable final BlockPos blockPos, final boolean breakBlock)
     {
@@ -1393,7 +1396,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Damage the current held item.
      *
-     * @param damage amount of damage
+     * @param damage amount of damage.
      */
     public void damageItemInHand(final int damage)
     {
@@ -1419,7 +1422,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * This will break the block (different sound and particles),
      * and damage the tool in the citizens hand.
      *
-     * @param blockPos Block position
+     * @param blockPos Block position.
      */
     public void breakBlockWithToolInHand(@Nullable final BlockPos blockPos)
     {
@@ -1462,9 +1465,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Intelligence getter
+     * Intelligence getter.
      *
-     * @return citizen intelligence value
+     * @return citizen intelligence value.
      */
     public int getIntelligence()
     {
@@ -1472,9 +1475,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Charisma getter
+     * Charisma getter.
      *
-     * @return citizen Charisma value
+     * @return citizen Charisma value.
      */
     public int getCharisma()
     {
@@ -1482,9 +1485,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Strength getter
+     * Strength getter.
      *
-     * @return citizen Strength value
+     * @return citizen Strength value.
      */
     public int getStrength()
     {
@@ -1492,9 +1495,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Endurance getter
+     * Endurance getter.
      *
-     * @return citizen Endurance value
+     * @return citizen Endurance value.
      */
     public int getEndurance()
     {
@@ -1502,9 +1505,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Dexterity getter
+     * Dexterity getter.
      *
-     * @return citizen Dexterity value
+     * @return citizen Dexterity value.
      */
     public int getDexterity()
     {
@@ -1512,9 +1515,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Set the skill modifier which defines how fast a citizen levels in a certain skill
+     * Set the skill modifier which defines how fast a citizen levels in a certain skill.
      *
-     * @param modifier input modifier
+     * @param modifier input modifier.
      */
     public void setSkillModifier(final int modifier)
     {
@@ -1522,9 +1525,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * ExperienceLevel getter
+     * ExperienceLevel getter.
      *
-     * @return citizen ExperienceLevel value
+     * @return citizen ExperienceLevel value.
      */
     public int getExperienceLevel()
     {
@@ -1553,7 +1556,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Used for chat messages, sounds, and other need based interactions
+     * Used for chat messages, sounds, and other need based interactions.
      * Created: June 20, 2014
      *
      * @author Colton

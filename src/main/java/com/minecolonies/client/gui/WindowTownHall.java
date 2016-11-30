@@ -258,9 +258,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private ScrollingList userList;
 
     /**
-     * Constructor for the town hall window
+     * Constructor for the town hall window.
      *
-     * @param townHall {@link BuildingTownHall.View}
+     * @param townHall {@link BuildingTownHall.View}.
      */
     public WindowTownHall(final BuildingTownHall.View townHall)
     {
@@ -295,7 +295,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Clears and resets all users
+     * Clears and resets all users.
      */
     private void updateUsers()
     {
@@ -305,7 +305,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Clears and resets all citizens
+     * Clears and resets all citizens.
      */
     private void updateCitizens()
     {
@@ -380,7 +380,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
     /**
      * Executed when <code>WindowTownHall</code> is opened.
-     * Does tasks like setting buttons
+     * Does tasks like setting buttons.
      */
     @Override
     public void onOpened()
@@ -555,9 +555,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Returns the name of a building
+     * Returns the name of a building.
      *
-     * @return Name of a building
+     * @return Name of a building.
      */
     @Override
     public String getBuildingName()
@@ -568,7 +568,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Toggles the allocation of a certain job. Manual or automatic.
      *
-     * @param button the pressed button
+     * @param button the pressed button.
      */
     private void toggleHiring(@NotNull final Button button)
     {
@@ -587,9 +587,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Sets the clicked tab
+     * Sets the clicked tab.
      *
-     * @param button Tab button clicked on
+     * @param button Tab button clicked on.
      */
     private void onTabClicked(@NotNull final Button button)
     {
@@ -620,7 +620,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Action performed when rename button is clicked
+     * Action performed when rename button is clicked.
      *
      */
     private void renameClicked()
@@ -630,7 +630,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Action performed when add player button is clicked
+     * Action performed when add player button is clicked.
      *
      */
     private void addPlayerCLicked()
@@ -641,9 +641,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Action performed when remove player button is clicked
+     * Action performed when remove player button is clicked.
      *
-     * @param button Button that holds the user clicked on
+     * @param button Button that holds the user clicked on.
      */
     private void removePlayerClicked(final Button button)
     {
@@ -659,9 +659,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Action performed when promote or demote button is clicked
+     * Action performed when promote or demote button is clicked.
      *
-     * @param button Button that holds the  user clicked on
+     * @param button Button that holds the  user clicked on.
      */
     private void promoteDemoteClicked(@NotNull final Button button)
     {

@@ -118,8 +118,8 @@ public class Colony implements IColony
     /**
      * Base constructor.
      *
-     * @param id  The current id for the colony
-     * @param dim The world the colony exists in
+     * @param id  The current id for the colony.
+     * @param dim The world the colony exists in.
      */
     protected Colony(final int id, final int dim)
     {
@@ -133,7 +133,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Load a saved colony
+     * Load a saved colony.
      *
      * @param compound The NBT compound containing the colony's data.
      * @return loaded colony.
@@ -149,9 +149,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Read colony from saved data
+     * Read colony from saved data.
      *
-     * @param compound compount to read from
+     * @param compound compound to read from.
      */
     private void readFromNBT(@NotNull final NBTTagCompound compound)
     {
@@ -241,13 +241,6 @@ public class Colony implements IColony
     private void addField(@NotNull final Field field)
     {
         fields.put(field.getID(), field);
-    }
-
-    private static boolean isCitizenMissingFromWorld(@NotNull final CitizenData citizen)
-    {
-        final EntityCitizen entity = citizen.getCitizenEntity();
-
-        return entity != null && entity.worldObj.getEntityByID(entity.getEntityId()) != entity;
     }
 
     /**
@@ -573,7 +566,7 @@ public class Colony implements IColony
         if (!subscribers.isEmpty())
         {
             //  Determine if any new subscribers were added this pass
-            final boolean hasNewSubscribers = hasNewSubscribers(oldSubscribers, subscribers);
+            final boolean hasNewSubscribers = ColonyUtils.hasNewSubscribers(oldSubscribers, subscribers);
 
             //  Send each type of update packet as appropriate:
             //      - To Subscribers if the data changes
@@ -609,18 +602,6 @@ public class Colony implements IColony
 
         buildings.values().forEach(AbstractBuilding::clearDirty);
         citizens.values().forEach(CitizenData::clearDirty);
-    }
-
-    private static boolean hasNewSubscribers(@NotNull final Set<EntityPlayerMP> oldSubscribers, @NotNull final Set<EntityPlayerMP> subscribers)
-    {
-        for (final EntityPlayerMP player : subscribers)
-        {
-            if (!oldSubscribers.contains(player))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void sendColonyViewPackets(@NotNull final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
@@ -773,7 +754,7 @@ public class Colony implements IColony
             //  Consider handing this in an ChunkUnload Event instead?
             citizens.values()
               .stream()
-              .filter(Colony::isCitizenMissingFromWorld)
+              .filter(ColonyUtils::isCitizenMissingFromWorld)
               .forEach(CitizenData::clearCitizenEntity);
 
             //  Cleanup disappeared citizens
@@ -873,7 +854,7 @@ public class Colony implements IColony
     }
 
     /**
-     * Spawn a brand new Citizen
+     * Spawn a brand new Citizen.
      */
     private void spawnCitizen()
     {
@@ -881,9 +862,9 @@ public class Colony implements IColony
     }
 
     /**
-     * Spawn a citizen with specific citizen data
+     * Spawn a citizen with specific citizen data.
      *
-     * @param data Data to use to spawn citizen
+     * @param data Data to use to spawn citizen.
      */
     public void spawnCitizen(final CitizenData data)
     {
@@ -1123,6 +1104,7 @@ public class Colony implements IColony
      *
      * @return Colony ID.
      */
+    @Override
     public int getID()
     {
         return id;
@@ -1318,8 +1300,8 @@ public class Colony implements IColony
     /**
      * Performed when a building of this colony finished his upgrade state.
      *
-     * @param building The upgraded building
-     * @param level    The new level
+     * @param building The upgraded building.
+     * @param level    The new level.
      */
     public void onBuildingUpgradeComplete(@NotNull final AbstractBuilding building, final int level)
     {

@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Material Data Structure, also keeps note of where this material is stored
+ * Material Data Structure, also keeps note of where this material is stored.
  * Created: December 14, 2015
  *
  * @author Colton
@@ -49,7 +49,7 @@ public class Material
     }
 
     /**
-     * @return An unmodifiable version of locations
+     * @return An unmodifiable version of locations.
      */
     @NotNull
     public Map<MaterialStore, Integer> getLocationsStored()
@@ -60,9 +60,9 @@ public class Material
     /**
      * Returns how much material is at a location.
      *
-     * @param store    Location we are checking
-     * @param material Material that we are checking
-     * @return How many of material is stored at store
+     * @param store    Location we are checking.
+     * @param material Material that we are checking.
+     * @return How many of material is stored at store.
      */
     public int getMaterialCount(@NotNull final MaterialStore store, final Material material)
     {

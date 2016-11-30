@@ -16,147 +16,147 @@ import net.minecraft.client.gui.Gui;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for the citizen
+ * Window for the citizen.
  */
 public class WindowCitizen extends Window implements Button.Handler
 {
     /**
-     * The label to find the inventory button
+     * The label to find the inventory button.
      */
     private static final String INVENTORY_BUTTON_ID     = "inventory";
     /**
-     * The label to find the gui of the citizen
+     * The label to find the gui of the citizen.
      */
     private static final String CITIZEN_RESOURCE_SUFFIX = ":gui/windowCitizen.xml";
     /**
-     * The label to find strength in the gui
+     * The label to find strength in the gui.
      */
     private static final String STRENGTH                = "strength";
     /**
-     * The label to find endurance in the gui
+     * The label to find endurance in the gui.
      */
     private static final String ENDURANCE               = "endurance";
     /**
-     * The label to find charisma in the gui
+     * The label to find charisma in the gui.
      */
     private static final String CHARISMA                = "charisma";
     /**
-     * The label to find intelligence in the gui
+     * The label to find intelligence in the gui.
      */
     private static final String INTELLIGENCE            = "intelligence";
     /**
-     * The label to find dexterity in the gui
+     * The label to find dexterity in the gui.
      */
     private static final String DEXTERITY               = "dexterity";
 
     /**
-     * Xp-bar height
+     * Xp-bar height.
      */
     private static final int XP_HEIGHT                    = 5;
     /**
-     * The x-distance to the left border of the gui of the xpBar
+     * The x-distance to the left border of the gui of the xpBar.
      */
     private static final int LEFT_BORDER_X                = 10;
     /**
-     * The y-distance to the top-left border of the gui of the xpBar
+     * The y-distance to the top-left border of the gui of the xpBar.
      */
     private static final int LEFT_BORDER_Y                = 10;
     /**
-     * The column in which the icon starts
+     * The column in which the icon starts.
      */
     private static final int XP_BAR_ICON_COLUMN           = 0;
     /**
-     * The column where the icon ends
+     * The column where the icon ends.
      */
     private static final int XP_BAR_ICON_COLUMN_END       = 172;
     /**
-     * The width of the end piece of the xpBar
+     * The width of the end piece of the xpBar.
      */
     private static final int XP_BAR_ICON_COLUMN_END_WIDTH = 10;
     /**
-     * The offset where the end should be placed in the GUI
+     * The offset where the end should be placed in the GUI.
      */
     private static final int XP_BAR_ICON_END_OFFSET       = 90;
     /**
-     * The width of the xpBar (Original width is halved to fit in the gui)
+     * The width of the xpBar (Original width is halved to fit in the gui).
      */
     private static final int XP_BAR_WIDTH                 = 182 / 2;
     /**
-     * The row where the empty xpBar starts
+     * The row where the empty xpBar starts.
      */
     private static final int XP_BAR_EMPTY_ROW             = 64;
     /**
-     * The row where the full xpBar starts
+     * The row where the full xpBar starts.
      */
     private static final int XP_BAR_FULL_ROW              = 69;
     /**
-     * X position of the xpLabel
+     * X position of the xpLabel.
      */
     private static final int XP_LABEL_X                   = -20;
     /**
-     * Y position of the xpLabel
+     * Y position of the xpLabel.
      */
     private static final int XP_LABEL_Y                   = 28;
 
     /**
-     * Row position of the empty heart icon
+     * Row position of the empty heart icon.
      */
     private static final int EMPTY_HEART_ICON_ROW_POS = 16;
     /**
-     * Row position of the full heart icon
+     * Row position of the full heart icon.
      */
     private static final int FULL_HEART_ICON_ROW_POS  = 53;
     /**
-     * Row position of the half/full heart icon
+     * Row position of the half/full heart icon.
      */
     private static final int HALF_HEART_ICON_ROW_POS  = 62;
     /**
-     * Column position of the heart icons
+     * Column position of the heart icons.
      */
     private static final int HEART_ICON_COLUMN        = 0;
     /**
-     * Dimension of the hearts
+     * Dimension of the hearts.
      */
     private static final int HEART_ICON_HEIGHT_WIDTH  = 9;
     /**
-     * The position x where the heart is placed
+     * The position x where the heart is placed.
      */
     private static final int HEART_ICON_POS_X         = 10;
     /**
-     * The offset x where the next heart should be placed
+     * The offset x where the next heart should be placed.
      */
     private static final int HEART_ICON_OFFSET_X      = 10;
     /**
-     * The position y where the heart is placed
+     * The position y where the heart is placed.
      */
     private static final int HEART_ICON_POS_Y         = 10;
 
     /**
-     * The label to find name in the gui
+     * The label to find name in the gui.
      */
     private static final String WINDOW_ID_NAME      = "name";
     /**
-     * The label to find xpLabel in the gui
+     * The label to find xpLabel in the gui.
      */
     private static final String WINDOW_ID_XP        = "xpLabel";
     /**
-     * The label to find xpBar in the gui
+     * The label to find xpBar in the gui.
      */
     private static final String WINDOW_ID_XPBAR     = "xpBar";
     /**
-     * The label to find healthBar in the gui
+     * The label to find healthBar in the gui.
      */
     private static final String WINDOW_ID_HEALTHBAR = "healthBar";
 
     /**
-     * The citizenData.View object
+     * The citizenData.View object.
      */
     private CitizenDataView citizen;
 
     /**
-     * Constructor to initiate the citizen windows
+     * Constructor to initiate the citizen windows.
      *
-     * @param citizen citizen to bind the window to
+     * @param citizen citizen to bind the window to.
      */
     public WindowCitizen(final CitizenDataView citizen)
     {
@@ -178,13 +178,13 @@ public class WindowCitizen extends Window implements Button.Handler
     }
 
     /**
-     * Creates an health bar according to the citizen maxHealth and currentHealth
+     * Creates an health bar according to the citizen maxHealth and currentHealth.
      */
     private void createHealthBar()
     {
         findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).setAlignment(Alignment.MiddleRight);
 
-        //MaxHealth (Black hearts)
+        //MaxHealth (Black hearts).
         for (int i = 0; i < citizen.getMaxHealth() / 2; i++)
         {
             @NotNull final Image heart = new Image();
@@ -193,7 +193,7 @@ public class WindowCitizen extends Window implements Button.Handler
             findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
         }
 
-        //Current health (Red hearts)
+        //Current health (Red hearts).
         int heartPos;
         for (heartPos = 0; heartPos < ((int) citizen.getHealth() / 2); heartPos++)
         {
@@ -203,7 +203,7 @@ public class WindowCitizen extends Window implements Button.Handler
             findPaneOfTypeByID(WINDOW_ID_HEALTHBAR, View.class).addChild(heart);
         }
 
-        //Half hearts
+        //Half hearts.
         if (citizen.getHealth() / 2 % 1 > 0)
         {
             @NotNull final Image heart = new Image();
@@ -216,7 +216,7 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * Creates the xp bar for each citizen.
      * Calculates an xpBarCap which is the maximum of xp to fit into the bar.
-     * Then creates an xp bar and fills it up with the available xp
+     * Then creates an xp bar and fills it up with the available xp.
      */
     private void createXpBar()
     {
@@ -264,9 +264,9 @@ public class WindowCitizen extends Window implements Button.Handler
     }
 
     /**
-     * Called when a button in the citizen has been clicked
+     * Called when a button in the citizen has been clicked.
      *
-     * @param button the clicked button
+     * @param button the clicked button.
      */
     @Override
     public void onButtonClicked(@NotNull final Button button)

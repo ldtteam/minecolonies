@@ -44,10 +44,10 @@ public class Window extends View
     }
 
     /**
-     * Window constructor when there is a fixed Width and Height
+     * Window constructor when there is a fixed Width and Height.
      *
-     * @param w Width of the window, in pixels
-     * @param h Height of the window, in pixels
+     * @param w Width of the window, in pixels.
+     * @param h Height of the window, in pixels.
      */
     public Window(final int w, final int h)
     {
@@ -121,9 +121,9 @@ public class Window extends View
     }
 
     /**
-     * Return <tt>true</tt> if the 'lightbox' (default dark background) should be displayed
+     * Return <tt>true</tt> if the 'lightbox' (default dark background) should be displayed.
      *
-     * @return <tt>true</tt> if the 'lightbox' should be displayed
+     * @return <tt>true</tt> if the 'lightbox' should be displayed.
      */
     public boolean hasLightbox()
     {
@@ -131,9 +131,9 @@ public class Window extends View
     }
 
     /**
-     * Return <tt>true</tt> if the game should be paused when the Window is displayed
+     * Return <tt>true</tt> if the game should be paused when the Window is displayed.
      *
-     * @return <tt>true</tt> if the game should be paused when the Window is displayed
+     * @return <tt>true</tt> if the game should be paused when the Window is displayed.
      */
     public boolean doesWindowPauseGame()
     {
@@ -152,9 +152,9 @@ public class Window extends View
     }
 
     /**
-     * Windows wrap a GuiScreen
+     * Windows wrap a GuiScreen.
      *
-     * @return The current GuiScreen
+     * @return The current GuiScreen.
      */
     public GuiScreen getScreen()
     {
@@ -180,9 +180,9 @@ public class Window extends View
      * <p>
      * It is advised not to override this method.
      *
-     * @param ch  Character of key pressed
-     * @param key Keycode of key pressed
-     * @return <tt>true</tt> if the key was handled by a Pane
+     * @param ch  Character of key pressed.
+     * @param key Keycode of key pressed.
+     * @return <tt>true</tt> if the key was handled by a Pane.
      */
     @Override
     public boolean onKeyTyped(final char ch, final int key)
@@ -202,8 +202,8 @@ public class Window extends View
      * <p>
      * Override this to handle key input at the Window level.
      *
-     * @param ch  Character of key pressed
-     * @param key Keycode of key pressed
+     * @param ch  Character of key pressed.
+     * @param key Keycode of key pressed.
      */
     public void onUnhandledKeyTyped(final int ch, final int key)
     {
@@ -214,7 +214,7 @@ public class Window extends View
     }
 
     /**
-     * Close the Window
+     * Close the Window.
      */
     public void close()
     {

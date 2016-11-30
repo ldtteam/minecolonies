@@ -40,7 +40,7 @@ public abstract class AbstractJob
      */
     private static final int TASK_PRIORITY = 3;
 
-    //  Job and View Class Mapping
+    //  Job and View Class Mapping.
     @NotNull
     private static Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
     @NotNull
@@ -73,10 +73,10 @@ public abstract class AbstractJob
     }
 
     /**
-     * Add a given Job mapping
+     * Add a given Job mapping.
      *
-     * @param name     name of job class
-     * @param jobClass class of job
+     * @param name     name of job class.
+     * @param jobClass class of job.
      */
     private static void addMapping(final String name, @NotNull final Class<? extends AbstractJob> jobClass)
     {
@@ -99,11 +99,11 @@ public abstract class AbstractJob
     }
 
     /**
-     * Create a Job from saved NBTTagCompound data
+     * Create a Job from saved NBTTagCompound data.
      *
-     * @param citizen  The citizen that owns the Job
-     * @param compound The NBTTagCompound containing the saved Job data
-     * @return New Job created from the data, or null
+     * @param citizen  The citizen that owns the Job.
+     * @param compound The NBTTagCompound containing the saved Job data.
+     * @return New Job created from the data, or null.
      */
     @Nullable
     public static AbstractJob createFromNBT(final CitizenData citizen, @NotNull final NBTTagCompound compound)
@@ -148,9 +148,9 @@ public abstract class AbstractJob
     }
 
     /**
-     * Restore the Job from an NBTTagCompound
+     * Restore the Job from an NBTTagCompound.
      *
-     * @param compound NBTTagCompound containing saved Job data
+     * @param compound NBTTagCompound containing saved Job data.
      */
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
@@ -163,16 +163,16 @@ public abstract class AbstractJob
     }
 
     /**
-     * Return a Localization textContent for the Job
+     * Return a Localization textContent for the Job.
      *
-     * @return localization textContent String
+     * @return localization textContent String.
      */
     public abstract String getName();
 
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
-     * @return Model of the citizen
+     * @return Model of the citizen.
      */
     public RenderBipedCitizen.Model getModel()
     {
@@ -180,9 +180,9 @@ public abstract class AbstractJob
     }
 
     /**
-     * Get the CitizenData that this Job belongs to
+     * Get the CitizenData that this Job belongs to.
      *
-     * @return CitizenData that owns this Job
+     * @return CitizenData that owns this Job.
      */
     public CitizenData getCitizen()
     {
@@ -190,9 +190,9 @@ public abstract class AbstractJob
     }
 
     /**
-     * Get the Colony that this Job is associated with (shortcut for getCitizen().getColony())
+     * Get the Colony that this Job is associated with (shortcut for getCitizen().getColony()).
      *
-     * @return {@link Colony} of the citizen
+     * @return {@link Colony} of the citizen.
      */
     public Colony getColony()
     {
@@ -200,9 +200,9 @@ public abstract class AbstractJob
     }
 
     /**
-     * Save the Job to an NBTTagCompound
+     * Save the Job to an NBTTagCompound.
      *
-     * @param compound NBTTagCompound to save the Job to
+     * @param compound NBTTagCompound to save the Job to.
      */
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
@@ -229,9 +229,9 @@ public abstract class AbstractJob
     }
 
     /**
-     * Does the Job have _all_ the needed items?
+     * Does the Job have _all_ the needed items.
      *
-     * @return true if the Job has no needed items
+     * @return true if the Job has no needed items.
      */
     public boolean isMissingNeededItem()
     {
@@ -239,9 +239,9 @@ public abstract class AbstractJob
     }
 
     /**
-     * Get the list of items needed by the Job
+     * Get the list of items needed by the Job.
      *
-     * @return List of items needed by the Job
+     * @return List of items needed by the Job.
      */
     @NotNull
     public List<ItemStack> getItemsNeeded()
@@ -258,10 +258,10 @@ public abstract class AbstractJob
     }
 
     /**
-     * Add (or increment) an ItemStack to the items needed by the Job
+     * Add (or increment) an ItemStack to the items needed by the Job.
      * We're not comparing item damage values since i.e a damaged rod is the same as a normal rod for our purpose.
      *
-     * @param stack Item+count needed to do the job
+     * @param stack Item+count needed to do the job.
      */
     public void addItemNeeded(@NotNull final ItemStack stack)
     {
@@ -309,9 +309,9 @@ public abstract class AbstractJob
     }
 
     /**
-     * Override to add Job-specific AI tasks to the given EntityAITask list
+     * Override to add Job-specific AI tasks to the given EntityAITask list.
      *
-     * @param tasks EntityAITasks list to add tasks to
+     * @param tasks EntityAITasks list to add tasks to.
      */
     public void addTasks(@NotNull final EntityAITasks tasks)
     {
@@ -344,7 +344,7 @@ public abstract class AbstractJob
      * Used by the AI skeleton to change a citizens name.
      * Mostly used to update debugging information.
      *
-     * @param nameTag The name tag to display
+     * @param nameTag The name tag to display.
      */
     public final void setNameTag(final String nameTag)
     {

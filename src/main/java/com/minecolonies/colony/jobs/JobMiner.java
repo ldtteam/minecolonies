@@ -66,9 +66,9 @@ public class JobMiner extends AbstractJob
     }
 
     /**
-     * Adds items if job requires items not in inventory
+     * Adds items if job requires items not in inventory.
      *
-     * @param stack Stack to check if it is a required item
+     * @param stack Stack to check if it is a required item.
      */
     public void addItemNeededIfNotAlready(@NotNull final ItemStack stack)
     {

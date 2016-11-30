@@ -23,9 +23,9 @@ public class SwitchView extends View
     }
 
     /**
-     * Constructs a View from PaneParams
+     * Constructs a View from PaneParams.
      *
-     * @param params Params for the Pane
+     * @param params Params for the Pane.
      */
     public SwitchView(final PaneParams params)
     {

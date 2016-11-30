@@ -15,10 +15,13 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+/**
+ * Class which can be used to add text fields to a pane.
+ */
 public class TextField extends Pane
 {
     /**
-     * Texture resource location
+     * Texture resource location.
      */
     private static final ResourceLocation TEXTURE           = new ResourceLocation("textures/gui/widgets.png");
     //  Attributes
@@ -36,12 +39,19 @@ public class TextField extends Pane
     protected int selectionEnd       = 0;
     protected int cursorBlinkCounter = 0;
 
+    /**
+     * Simple public constructor to instantiate.
+     */
     public TextField()
     {
         super();
         //Required
     }
 
+    /**
+     * Public constructor to instantiate the field with params.
+     * @param params
+     */
     public TextField(@NotNull final PaneParams params)
     {
         super(params);
@@ -131,6 +141,10 @@ public class TextField extends Pane
         setSelectionEnd(cursorPosition);
     }
 
+    /**
+     * Move the cursor by an offset.
+     * @param offset the offset.
+     */
     public void moveCursorBy(final int offset)
     {
         setCursorPosition(selectionEnd + offset);
@@ -182,6 +196,12 @@ public class TextField extends Pane
         return text.substring(start, end);
     }
 
+    /**
+     * Handle key event.
+     * @param c the character.
+     * @param key the key.
+     * @return if it should be processed or not.
+     */
     private boolean handleKey(final char c, final int key)
     {
         switch (key)
@@ -294,6 +314,9 @@ public class TextField extends Pane
     }
 
     @Override
+    /**
+     * Draw itself at positions mx and my.
+     */
     protected void drawSelf(final int mx, final int my)
     {
         final int color = enabled ? textColor : textColorDisabled;
@@ -419,7 +442,7 @@ public class TextField extends Pane
         final String trimmedString = mc.fontRendererObj.trimStringToWidth(visibleString, mx);
 
         // Cache and restore scrollOffset when we change focus via click,
-        // because onFocus() sets the cursor (and thus scroll offset) to the end
+        // because onFocus() sets the cursor (and thus scroll offset) to the end.
         final int oldScrollOffset = scrollOffset;
         setFocus();
         scrollOffset = oldScrollOffset;
@@ -460,6 +483,10 @@ public class TextField extends Pane
         cursorBlinkCounter++;
     }
 
+    /**
+     * Write text into the field.
+     * @param str the string to write.
+     */
     public void writeText(final String str)
     {
         final String filteredStr = filter.filter(str);
@@ -495,6 +522,10 @@ public class TextField extends Pane
         moveCursorBy((insertAt - selectionEnd) + insertedLength);
     }
 
+    /**
+     * Delete an amount of words.
+     * @param count the amount.
+     */
     public void deleteWords(final int count)
     {
         if (text.length() != 0)
@@ -510,6 +541,10 @@ public class TextField extends Pane
         }
     }
 
+    /**
+     * Delete amount of words from cursor.
+     * @param count the amount.
+     */
     public void deleteFromCursor(final int count)
     {
         if (text.length() == 0)
@@ -547,6 +582,12 @@ public class TextField extends Pane
         }
     }
 
+    /**
+     * Get the n'th word from a position.
+     * @param count the n.
+     * @param pos the position.
+     * @return the length of the word.
+     */
     public int getNthWordFromPos(final int count, final int pos)
     {
         final boolean reverse = count < 0;
@@ -586,15 +627,33 @@ public class TextField extends Pane
         return position;
     }
 
+    /**
+     * Get n'th word from cursor position.
+     * @param count the n.
+     * @return the length.
+     */
     public int getNthWordFromCursor(final int count)
     {
         return getNthWordFromPos(count, cursorPosition);
     }
 
+    /**
+     * Interface to filter words.
+     */
     public interface Filter
     {
+        /**
+         * Apply the filter.
+         * @param s to the string.
+         * @return the correct String.
+         */
         String filter(String s);
 
+        /**
+         * Check if character is allowed.
+         * @param c character to test.
+         * @return true if so.
+         */
         boolean isAllowedCharacter(char c);
     }
 }

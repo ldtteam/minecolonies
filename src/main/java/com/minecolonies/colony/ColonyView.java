@@ -94,6 +94,7 @@ public final class ColonyView implements IColony
      *
      * @return ID of the view.
      */
+    @Override
     public int getID()
     {
         return id;
@@ -143,10 +144,10 @@ public final class ColonyView implements IColony
     /**
      * Get a AbstractBuilding.View for a given building (by coordinate-id) using raw x,y,z.
      *
-     * @param x x-coordinate
-     * @param y y-coordinate
-     * @param z z-coordinate
-     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
+     * @param x x-coordinate.
+     * @param y y-coordinate.
+     * @param z z-coordinate.
+     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null.
      */
     public AbstractBuilding.View getBuilding(final int x, final int y, final int z)
     {
@@ -156,8 +157,8 @@ public final class ColonyView implements IColony
     /**
      * Get a AbstractBuilding.View for a given building (by coordinate-id) using ChunkCoordinates.
      *
-     * @param buildingId Coordinates/ID of the AbstractBuilding
-     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
+     * @param buildingId Coordinates/ID of the AbstractBuilding.
+     * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null.
      */
     public AbstractBuilding.View getBuilding(final BlockPos buildingId)
     {
@@ -300,8 +301,8 @@ public final class ColonyView implements IColony
      * Update a ColonyView's workOrders given a network data ColonyView update packet.
      * This uses a full-replacement - workOrders do not get updated and are instead overwritten.
      *
-     * @param buf Network data
-     * @return null == no response
+     * @param buf Network data.
+     * @return null == no response.
      */
     public IMessage handleColonyViewWorkOrderMessage(final ByteBuf buf)
     {
@@ -312,12 +313,12 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Update a ColonyView's citizens given a network data ColonyView update packet
-     * This uses a full-replacement - citizens do not get updated and are instead overwritten
+     * Update a ColonyView's citizens given a network data ColonyView update packet.
+     * This uses a full-replacement - citizens do not get updated and are instead overwritten.
      *
-     * @param id  ID of the citizen
-     * @param buf Network data
-     * @return null == no response
+     * @param id  ID of the citizen.
+     * @param buf Network data.
+     * @return null == no response.
      */
     public IMessage handleColonyViewCitizensMessage(final int id, final ByteBuf buf)
     {
@@ -333,8 +334,8 @@ public final class ColonyView implements IColony
     /**
      * Remove a citizen from the ColonyView.
      *
-     * @param citizen citizen ID
-     * @return null == no response
+     * @param citizen citizen ID.
+     * @return null == no response.
      */
     public IMessage handleColonyViewRemoveCitizenMessage(final int citizen)
     {
@@ -346,7 +347,7 @@ public final class ColonyView implements IColony
      * Remove a building from the ColonyView.
      *
      * @param buildingId location of the building.
-     * @return null == no response
+     * @return null == no response.
      */
     public IMessage handleColonyViewRemoveBuildingMessage(final BlockPos buildingId)
     {
@@ -377,7 +378,7 @@ public final class ColonyView implements IColony
      *
      * @param buildingId location of the building.
      * @param buf        buffer containing ColonyBuilding information.
-     * @return null == no response
+     * @return null == no response.
      */
     public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final ByteBuf buf)
     {

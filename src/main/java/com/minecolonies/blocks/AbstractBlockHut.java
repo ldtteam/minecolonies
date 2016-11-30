@@ -31,9 +31,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Abstract class for all minecolonies blocks.
  * <p>
- * The method {@link AbstractBlockHut#getName()} is abstract
+ * The method {@link AbstractBlockHut#getName()} is abstract.
  * <p>
- * All AbstractBlockHut[something] should extend this class
+ * All AbstractBlockHut[something] should extend this class.
  */
 public abstract class AbstractBlockHut extends Block implements ITileEntityProvider
 {
@@ -82,6 +82,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return new TileEntityColonyBuilding();
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @Override
     @Deprecated
     public boolean isFullBlock(final IBlockState state)
@@ -91,6 +94,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 
     /**
      * Convert the given metadata into a BlockState for this Block
+     * @deprecated (Remove this as soon as minecraft offers anything better).
      */
     @NotNull
     @Override
@@ -112,7 +116,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     // =======================================================================
 
     /**
-     * Convert the BlockState into the correct metadata value
+     * Convert the BlockState into the correct metadata value.
      */
     @Override
     public int getMetaFromState(final IBlockState state)
@@ -120,7 +124,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return state.getValue(FACING).getIndex();
     }
 
-    //We unfortunately have to implement these two, to rotate our blocks in the structures.
+    /**
+     * Convert the BlockState into the correct metadata value.
+     */
     @NotNull
     @Override
     @Deprecated
@@ -129,6 +135,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @NotNull
     @Override
     @Deprecated
@@ -137,6 +146,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @Override
     @Deprecated
     public boolean isFullCube(final IBlockState state)
@@ -144,6 +156,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return false;
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @Override
     @Deprecated
     public boolean isOpaqueCube(final IBlockState state)
@@ -151,7 +166,6 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return false;
     }
 
-    // render as a solid block, we don't want transparency here
     @NotNull
     @Override
     @SideOnly(Side.CLIENT)
@@ -208,11 +222,11 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * <p>
      * Override for custom logic.
      *
-     * @param worldIn the word we are in
-     * @param pos     the position where the block was placed
-     * @param state   the state the placed block is in
-     * @param placer  the player placing the block
-     * @param stack   the itemstack from where the block was placed
+     * @param worldIn the word we are in.
+     * @param pos     the position where the block was placed.
+     * @param state   the state the placed block is in.
+     * @param placer  the player placing the block.
+     * @param stack   the itemstack from where the block was placed.
      * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
      */
     @Override

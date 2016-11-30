@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * A View is a Pane which can contain other Panes
+ * A View is a Pane which can contain other Panes.
  */
 public class View extends Pane
 {
@@ -19,7 +19,7 @@ public class View extends Pane
     protected int        padding  = 0;
 
     /**
-     * Constructs a barebones View
+     * Constructs a barebones View.
      */
     public View()
     {
@@ -27,9 +27,9 @@ public class View extends Pane
     }
 
     /**
-     * Constructs a View from PaneParams
+     * Constructs a View from PaneParams.
      *
-     * @param params Params for the View
+     * @param params Params for the View.
      */
     public View(final PaneParams params)
     {
@@ -61,7 +61,7 @@ public class View extends Pane
     @Override
     protected void drawSelf(final int mx, final int my)
     {
-        //  Translate the drawing origin to our x,y
+        //  Translate the drawing origin to our x,y.
         GlStateManager.pushMatrix();
 
         final int paddedX = x + padding;
@@ -127,18 +127,18 @@ public class View extends Pane
     }
 
     /**
-     * Return a Pane that will handle a click action at the specified mouse coordinates
+     * Return a Pane that will handle a click action at the specified mouse coordinates.
      *
-     * @param mx Mouse X, relative to the top-left of this Pane
-     * @param my Mouse Y, relative to the top-left of this Pane
-     * @return a Pane that will handle a click action
+     * @param mx Mouse X, relative to the top-left of this Pane.
+     * @param my Mouse Y, relative to the top-left of this Pane.
+     * @return a Pane that will handle a click action.
      */
     @Nullable
     public Pane findPaneForClick(final int mx, final int my)
     {
         final ListIterator<Pane> it = children.listIterator(children.size());
 
-        //  Iterate in reverse, since Panes later in the list draw on top of earlier panes
+        //  Iterate in reverse, since Panes later in the list draw on top of earlier panes.
         while (it.hasPrevious())
         {
             final Pane child = it.previous();
@@ -194,13 +194,13 @@ public class View extends Pane
         int childWidth = child.getWidth();
         int childHeight = child.getHeight();
 
-        //  Negative width = 100% of parents width minus abs(width)
+        //  Negative width = 100% of parents width minus abs(width).
         if (childWidth < 0)
         {
             childWidth = Math.max(0, getInteriorWidth() + childWidth);
         }
 
-        //  Adjust for horizontal alignment
+        //  Adjust for horizontal alignment.
         if (child.alignment.isRightAligned())
         {
             childX = (getInteriorWidth() - childWidth) - childX;
@@ -210,13 +210,13 @@ public class View extends Pane
             childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
 
-        //  Negative height = 100% of parents height minus abs(height)
+        //  Negative height = 100% of parents height minus abs(height).
         if (childHeight < 0)
         {
             childHeight = Math.max(0, getInteriorHeight() + childHeight);
         }
 
-        //  Adjust for vertical alignment
+        //  Adjust for vertical alignment.
         if (child.alignment.isBottomAligned())
         {
             childY = (getInteriorHeight() - childHeight) - childY;

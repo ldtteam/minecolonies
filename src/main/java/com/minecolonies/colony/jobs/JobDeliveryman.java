@@ -10,11 +10,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Class of the deliveryman job.
+ */
 public class JobDeliveryman extends AbstractJob
 {
     private static final String TAG_DESTINATION = "destination";
     private BlockPos destination;
 
+    /**
+     * Instantiates the job for the deliveryman.
+     * @param entity
+     */
     public JobDeliveryman(final CitizenData entity)
     {
         super(entity);
@@ -67,9 +74,9 @@ public class JobDeliveryman extends AbstractJob
     }
 
     /**
-     * Returns whether or not the job has a destination
+     * Returns whether or not the job has a destination.
      *
-     * @return true if has destination, otherwise false
+     * @return true if has destination, otherwise false.
      */
     public boolean hasDestination()
     {
@@ -83,9 +90,9 @@ public class JobDeliveryman extends AbstractJob
     }
 
     /**
-     * Returns the {@link BlockPos} of the destination
+     * Returns the {@link BlockPos} of the destination.
      *
-     * @return {@link BlockPos} of the destination
+     * @return {@link BlockPos} of the destination.
      */
     public BlockPos getDestination()
     {
@@ -93,9 +100,9 @@ public class JobDeliveryman extends AbstractJob
     }
 
     /**
-     * Sets the destination of the job
+     * Sets the destination of the job.
      *
-     * @param destination {@link BlockPos} of the destination
+     * @param destination {@link BlockPos} of the destination.
      */
     public void setDestination(final BlockPos destination)
     {

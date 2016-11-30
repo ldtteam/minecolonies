@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 
 /**
- * Window for the miner hut
+ * Window for the miner hut.
  */
 public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.View>
 {
@@ -33,9 +33,9 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     private BuildingMiner.View miner;
 
     /**
-     * Constructor for the window of the miner hut
+     * Constructor for the window of the miner hut.
      *
-     * @param building {@link com.minecolonies.colony.buildings.BuildingMiner.View}
+     * @param building {@link com.minecolonies.colony.buildings.BuildingMiner.View}.
      */
     public WindowHutMiner(final BuildingMiner.View building)
     {
@@ -45,7 +45,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     }
 
     /**
-     * Retrieve levels from the building to display in GUI
+     * Retrieve levels from the building to display in GUI.
      */
     private void pullLevelsFromHut()
     {

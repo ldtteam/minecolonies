@@ -8,7 +8,7 @@ import com.minecolonies.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for a town hall name entry
+ * Window for a town hall name entry.
  */
 public class WindowTownHallNameEntry extends Window implements Button.Handler
 {
@@ -20,7 +20,7 @@ public class WindowTownHallNameEntry extends Window implements Button.Handler
     private ColonyView colony;
 
     /**
-     * Constructor for a town hall rename entry window
+     * Constructor for a town hall rename entry window.
      *
      * @param c {@link ColonyView}
      */

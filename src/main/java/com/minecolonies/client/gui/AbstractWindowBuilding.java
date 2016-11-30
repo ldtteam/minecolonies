@@ -43,7 +43,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     }
 
     /**
-     * Action when build button is clicked
+     * Action when build button is clicked.
      */
     private void buildClicked()
     {
@@ -51,7 +51,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     }
 
     /**
-     * Action when repair button is clicked
+     * Action when repair button is clicked.
      */
     private void repairClicked()
     {
@@ -59,7 +59,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     }
 
     /**
-     * Action when a button opening an inventory is clicked
+     * Action when a button opening an inventory is clicked.
      */
     private void inventoryClicked()
     {
@@ -88,9 +88,9 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     }
 
     /**
-     * Returns the name of a building
+     * Returns the name of a building.
      *
-     * @return Name of a building
+     * @return Name of a building.
      */
     public abstract String getBuildingName();
 }

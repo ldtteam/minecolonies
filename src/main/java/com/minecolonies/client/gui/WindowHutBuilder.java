@@ -5,19 +5,19 @@ import com.minecolonies.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for the builder hut
+ * Window for the builder hut.
  */
 public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilder.View>
 {
     /**
-     * The builders gui file
+     * The builders gui file.
      */
     private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowHutBuilder.xml";
 
     /**
-     * Constructor for window builder hut
+     * Constructor for window builder hut.
      *
-     * @param building {@link com.minecolonies.colony.buildings.BuildingBuilder.View}
+     * @param building {@link com.minecolonies.colony.buildings.BuildingBuilder.View}.
      */
     public WindowHutBuilder(final BuildingBuilder.View building)
     {
@@ -25,9 +25,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     }
 
     /**
-     * Returns the name of a building
+     * Returns the name of a building.
      *
-     * @return Name of a building
+     * @return Name of a building.
      */
     @NotNull
     @Override

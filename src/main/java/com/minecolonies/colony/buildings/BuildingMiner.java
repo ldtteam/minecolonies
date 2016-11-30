@@ -30,11 +30,11 @@ import java.util.List;
 public class BuildingMiner extends AbstractBuildingWorker
 {
     /**
-     * The NBT Tag to store the floorBlock
+     * The NBT Tag to store the floorBlock.
      */
     private static final String TAG_FLOOR_BLOCK    = "floorBlock";
     /**
-     * The NBT Tag to store the fenceBlock
+     * The NBT Tag to store the fenceBlock.
      */
     private static final String TAG_FENCE_BLOCK    = "fenceBlock";
     /**
@@ -54,11 +54,11 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private static final String TAG_SLOCATION      = "shaftLocation";
     /**
-     * The NBT Tag to store the vector-x of the shaft
+     * The NBT Tag to store the vector-x of the shaft.
      */
     private static final String TAG_VECTORX        = "vectorx";
     /**
-     * The NBT Tag to store the vector-z of the shaft
+     * The NBT Tag to store the vector-z of the shaft.
      */
     private static final String TAG_VECTORZ        = "vectorz";
     /**
@@ -117,7 +117,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private              int         startingLevelShaft = 0;
     /**
-     * The location of the topmost cobblestone the ladder starts at
+     * The location of the topmost cobblestone the ladder starts at.
      */
     private BlockPos cobbleLocation;
     /**
@@ -137,23 +137,23 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private BlockPos shaftStart;
     /**
-     * Ladder orientation in x
+     * Ladder orientation in x.
      */
     private int vectorX = 1;
     /**
-     * Ladder orientation in y
+     * Ladder orientation in y.
      */
     private int vectorZ = 1;
     /**
-     * The location of the topmost ladder in the shaft
+     * The location of the topmost ladder in the shaft.
      */
     private BlockPos ladderLocation;
     /**
-     * True if a ladder is found
+     * True if a ladder is found.
      */
     private boolean     foundLadder = false;
     /**
-     * Stores the levels of the miners mine. This could be a map<depth,level>
+     * Stores the levels of the miners mine. This could be a map<depth,level>.
      */
     @NotNull
     private List<Level> levels      = new ArrayList<>();
@@ -193,7 +193,7 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * @see AbstractBuilding#onUpgradeComplete(int)
+     * @see AbstractBuilding#onUpgradeComplete(int).
      */
     @Override
     public void onUpgradeComplete(final int newLevel)
@@ -342,9 +342,9 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * Adds a level to the levels list
+     * Adds a level to the levels list.
      *
-     * @param currentLevel {@link Level}to add
+     * @param currentLevel {@link Level}to add.
      */
     public void addLevel(final Level currentLevel)
     {
@@ -362,9 +362,9 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * Returns the current level
+     * Returns the current level.
      *
-     * @return Current level
+     * @return Current level.
      */
     @Nullable
     public Level getCurrentLevel()
@@ -387,15 +387,15 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * Returns the depth limit
-     * Limitted by building level
+     * Returns the depth limit.
+     * Limitted by building level.
      * <pre>
      * - Level 1: 50
      * - Level 2: 30
      * - Level 3: 5
      * </pre>
      *
-     * @return Depth limit
+     * @return Depth limit.
      */
     public int getDepthLimit()
     {

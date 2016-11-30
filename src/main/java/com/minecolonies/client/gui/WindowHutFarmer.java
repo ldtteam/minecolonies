@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Window for the farmer hut
+ * Window for the farmer hut.
  */
 public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer.View>
 {
@@ -115,9 +115,9 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     private ScrollingList fieldList;
 
     /**
-     * Constructor for the window of the farmer
+     * Constructor for the window of the farmer.
      *
-     * @param building {@link com.minecolonies.colony.buildings.BuildingFarmer.View}
+     * @param building {@link com.minecolonies.colony.buildings.BuildingFarmer.View}.
      */
     public WindowHutFarmer(final BuildingFarmer.View building)
     {
@@ -155,7 +155,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     }
 
     /**
-     * Retrieve levels from the building to display in GUI
+     * Retrieve levels from the building to display in GUI.
      */
     private void pullLevelsFromHut()
     {
@@ -258,7 +258,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Calculates the direction the field is from the building.
      *
-     * @param building the building
+     * @param building the building.
      * @param field    the field.
      * @return a string describing the direction.
      */
@@ -299,7 +299,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     }
 
     /**
-     * Action performed when previous button is clicked
+     * Action performed when previous button is clicked.
      */
     private void prevClicked()
     {
@@ -309,7 +309,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     }
 
     /**
-     * Action performed when next button is clicked
+     * Action performed when next button is clicked.
      */
     private void nextClicked()
     {

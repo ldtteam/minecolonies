@@ -84,11 +84,11 @@ public class ScrollingListContainer extends ScrollingContainer
     }
 
     /**
-     * This is an optimized version that relies on the fixed size and order of children to quickly determine
+     * This is an optimized version that relies on the fixed size and order of children to quickly determine.
      *
-     * @param mx Mouse X, relative to the top-left of this Pane
-     * @param my Mouse Y, relative to the top-left of this Pane
-     * @return a Pane that will handle a click action
+     * @param mx Mouse X, relative to the top-left of this Pane.
+     * @param my Mouse Y, relative to the top-left of this Pane.
+     * @return a Pane that will handle a click action.
      */
     @Override
     public Pane findPaneForClick(final int mx, final int my)

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The fisherman's job class,
+ * The fisherman's job class.
  * implements some useful things for him.
  */
 public class JobFisherman extends AbstractJob
@@ -44,7 +44,7 @@ public class JobFisherman extends AbstractJob
     private ArrayList<BlockPos> ponds = new ArrayList<>();
 
     /**
-     * Initializes the job class
+     * Initializes the job class.
      *
      * @param entity The entity which will use this job class.
      */
@@ -54,9 +54,9 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Restore the Job from an NBTTagCompound
+     * Restore the Job from an NBTTagCompound.
      *
-     * @param compound NBTTagCompound containing saved Job data
+     * @param compound NBTTagCompound containing saved Job data.
      */
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
@@ -77,9 +77,9 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Return a Localization textContent for the Job
+     * Return a Localization textContent for the Job.
      *
-     * @return localization textContent String
+     * @return localization textContent String.
      */
     @NotNull
     @Override
@@ -91,7 +91,7 @@ public class JobFisherman extends AbstractJob
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
-     * @return Model of the citizen
+     * @return Model of the citizen.
      */
     @NotNull
     @Override
@@ -101,9 +101,9 @@ public class JobFisherman extends AbstractJob
     }
 
     /**
-     * Save the Job to an NBTTagCompound
+     * Save the Job to an NBTTagCompound.
      *
-     * @param compound NBTTagCompound to save the Job to
+     * @param compound NBTTagCompound to save the Job to.
      */
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
@@ -189,7 +189,7 @@ public class JobFisherman extends AbstractJob
     /**
      * Returns a safe copy of all current ponds.
      *
-     * @return a list of coordinates
+     * @return a list of coordinates.
      */
     @NotNull
     public List<BlockPos> getPonds()
@@ -200,7 +200,7 @@ public class JobFisherman extends AbstractJob
     /**
      * Add one pond to our list of ponds.
      *
-     * @param pond the pond to add
+     * @param pond the pond to add.
      */
     public void addToPonds(final BlockPos pond)
     {
@@ -210,7 +210,7 @@ public class JobFisherman extends AbstractJob
     /**
      * remove one pond from the ponds list.
      *
-     * @param pond the coordinates matching one pond
+     * @param pond the coordinates matching one pond.
      */
     public void removeFromPonds(final BlockPos pond)
     {

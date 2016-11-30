@@ -29,15 +29,9 @@ import java.util.stream.Collectors;
 
 /**
  * BuildTool window.
- *
- * @author Colton
  */
 public class WindowBuildTool extends AbstractWindowSkeleton
 {
-    /*
-    All buttons for the GUI
-     */
-
     /**
      * This button is used to set whether the window is in hut mode or decoration mode.
      */
@@ -161,12 +155,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private int level = 0;
 
     /**
-     * Creates a window build tool
-     * This requires X, Y and Z coordinates
+     * Creates a window build tool.
+     * This requires X, Y and Z coordinates.
      * If a schematic is active, recalculates the X Y Z with offset.
-     * Otherwise the given parameters are used
+     * Otherwise the given parameters are used.
      *
-     * @param pos coordinate
+     * @param pos coordinate.
      */
     public WindowBuildTool(@Nullable final BlockPos pos)
     {

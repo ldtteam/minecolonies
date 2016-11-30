@@ -36,7 +36,7 @@ public class JobFarmer extends AbstractJob
     }
 
     /**
-     * Override to add Job-specific AI tasks to the given EntityAITask list
+     * Override to add Job-specific AI tasks to the given EntityAITask list.
      */
     @NotNull
     @Override

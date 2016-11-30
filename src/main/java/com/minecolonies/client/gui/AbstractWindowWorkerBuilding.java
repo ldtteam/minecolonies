@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Abstract class for window for worker building
+ * Abstract class for window for worker building.
  *
  * @param <B> Class extending {@link AbstractBuildingWorker.View}
  */
@@ -46,10 +46,10 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private static final String BUILDER_HUT_NAME = "com.minecolonies.gui.workerHuts.buildersHut";
 
     /**
-     * Constructor for the window of the worker building
+     * Constructor for the window of the worker building.
      *
-     * @param building class extending {@link AbstractBuildingWorker.View}
-     * @param resource Resource of the window
+     * @param building class extending {@link AbstractBuildingWorker.View}.
+     * @param resource Resource of the window.
      */
     AbstractWindowWorkerBuilding(final B building, final String resource)
     {

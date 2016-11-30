@@ -18,8 +18,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * Created by chris on 10/19/15.
- * StructureProxy class
+ * StructureProxy class.
  */
 public final class Structures
 {
@@ -52,7 +51,7 @@ public final class Structures
     }
 
     /**
-     * Calls {@link #loadStyleMaps()}
+     * Calls {@link #loadStyleMaps()}.
      */
     public static void init()
     {
@@ -60,8 +59,8 @@ public final class Structures
     }
 
     /**
-     * Loads all styles saved in ["/assets/minecolonies/schematics/"]
-     * Puts these in {@link #hutStyleMap}, with key being the name of the hutDec (E.G. Lumberjack)
+     * Loads all styles saved in ["/assets/minecolonies/schematics/"].
+     * Puts these in {@link #hutStyleMap}, with key being the name of the hutDec (E.G. Lumberjack).
      * and the value is a list of styles. Puts decorations in {@link #decorationStyleMap}.
      */
     private static void loadStyleMaps()
@@ -108,6 +107,11 @@ public final class Structures
         }
     }
 
+    /**
+     * Load all style maps from a certain path.
+     * @param basePath the base path.
+     * @throws IOException if nothing found.
+     */
     public static void loadStyleMaps(final Path basePath) throws IOException
     {
         try (Stream<Path> walk = Files.walk(basePath))
@@ -219,9 +223,9 @@ public final class Structures
 
     /**
      * Returns a set of decorations.
-     * This is the key set of {@link #decorationStyleMap}
+     * This is the key set of {@link #decorationStyleMap}.
      *
-     * @return Set of decorations with a schematic
+     * @return Set of decorations with a schematic.
      */
     public static Set<String> getDecorations()
     {
@@ -229,10 +233,10 @@ public final class Structures
     }
 
     /**
-     * Returns a list of styles for one specific decoration
+     * Returns a list of styles for one specific decoration.
      *
-     * @param decoration Decoration to get styles for
-     * @return List of styles
+     * @param decoration Decoration to get styles for.
+     * @return List of styles.
      */
     public static List<String> getStylesForDecoration(final String decoration)
     {
@@ -240,10 +244,10 @@ public final class Structures
     }
 
     /**
-     * For use on client side by the ColonyStylesMessage
+     * For use on client side by the ColonyStylesMessage.
      *
-     * @param hutStyleMap        new hutStyleMap
-     * @param decorationStyleMap new decorationStyleMap
+     * @param hutStyleMap        new hutStyleMap.
+     * @param decorationStyleMap new decorationStyleMap.
      */
     @SideOnly(Side.CLIENT)
     public static void setStyles(final Map<String, List<String>> hutStyleMap, final Map<String, List<String>> decorationStyleMap)

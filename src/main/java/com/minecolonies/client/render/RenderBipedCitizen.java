@@ -95,11 +95,12 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
         /**
          * String describing the citizen.
          * Used by the renderer.
-         * Starts with a capital, and does not contain spaces or other special characters
+         * Starts with a capital, and does not contain spaces or other special characters.
          */
         public final String textureBase;
+
         /**
-         * Amount of different textures available for the renderer
+         * Amount of different textures available for the renderer.
          */
         public final int    numTextures;
 

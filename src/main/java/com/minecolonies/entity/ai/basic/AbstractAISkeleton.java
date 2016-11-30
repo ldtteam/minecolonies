@@ -21,7 +21,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
  * No utility on this level!
  * That's what {@link AbstractEntityAIInteract} is for.
  *
- * @param <J> the job this ai will have
+ * @param <J> the job this ai will have.
  */
 public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAIBase
 {
@@ -45,7 +45,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Sets up some important skeleton stuff for every ai.
      *
-     * @param job the job class
+     * @param job the job class.
      */
     protected AbstractAISkeleton(@NotNull final J job)
     {
@@ -62,7 +62,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Register one target.
      *
-     * @param target the target to register
+     * @param target the target to register.
      */
     private void registerTarget(final AITarget target)
     {
@@ -84,7 +84,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Returns whether the EntityAIBase should begin execution.
      *
-     * @return true if execution is wanted
+     * @return true if execution is wanted.
      */
     @Override
     public final boolean shouldExecute()
@@ -93,7 +93,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Returns whether an in-progress EntityAIBase should continue executing.
      */
     @Override
     public final boolean continueExecuting()
@@ -102,7 +102,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Execute a one shot task or start executing a continuous task
+     * Execute a one shot task or start executing a continuous task.
      */
     @Override
     public final void startExecuting()
@@ -112,7 +112,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Resets the task
+     * Resets the task.
      */
     @Override
     public final void resetTask()
@@ -121,7 +121,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Updates the task
+     * Updates the task.
      */
     @Override
     public final void updateTask()
@@ -179,7 +179,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Handle an exception higher up.
      *
-     * @param e The exception to be handled
+     * @param e The exception to be handled.
      */
     protected void onException(final RuntimeException e)
     {
@@ -219,7 +219,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Get the current state the ai is in.
      *
-     * @return The current AIState
+     * @return The current AIState.
      */
     public final AIState getState()
     {

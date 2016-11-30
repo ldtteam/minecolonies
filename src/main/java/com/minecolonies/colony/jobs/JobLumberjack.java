@@ -10,21 +10,21 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * The Lumberjack job class
+ * The Lumberjack job class.
  */
 public class JobLumberjack extends AbstractJob
 {
     private static final String TAG_TREE = "Tree";
     /**
-     * The tree this lumberjack is currently working on
+     * The tree this lumberjack is currently working on.
      */
     @Nullable
     public Tree tree;
 
     /**
-     * Create a lumberjack job
+     * Create a lumberjack job.
      *
-     * @param entity the lumberjack
+     * @param entity the lumberjack.
      */
     public JobLumberjack(final CitizenData entity)
     {
@@ -32,9 +32,9 @@ public class JobLumberjack extends AbstractJob
     }
 
     /**
-     * Restore the Job from an NBTTagCompound
+     * Restore the Job from an NBTTagCompound.
      *
-     * @param compound NBTTagCompound containing saved Job data
+     * @param compound NBTTagCompound containing saved Job data.
      */
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
@@ -48,9 +48,9 @@ public class JobLumberjack extends AbstractJob
     }
 
     /**
-     * Return a Localization textContent for the Job
+     * Return a Localization textContent for the Job.
      *
-     * @return localization textContent String
+     * @return localization textContent String.
      */
     @NotNull
     @Override
@@ -62,7 +62,7 @@ public class JobLumberjack extends AbstractJob
     /**
      * Get the RenderBipedCitizen.Model to use when the Citizen performs this job role.
      *
-     * @return Model of the citizen
+     * @return Model of the citizen.
      */
     @NotNull
     @Override
@@ -72,9 +72,9 @@ public class JobLumberjack extends AbstractJob
     }
 
     /**
-     * Save the Job to an NBTTagCompound
+     * Save the Job to an NBTTagCompound.
      *
-     * @param compound NBTTagCompound to save the Job to
+     * @param compound NBTTagCompound to save the Job to.
      */
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
