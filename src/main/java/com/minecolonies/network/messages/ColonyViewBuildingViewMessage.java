@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Add or Update a AbstractBuilding.View to a ColonyView on the client
+ * Add or Update a AbstractBuilding.View to a ColonyView on the client.
  */
 public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<ColonyViewBuildingViewMessage, IMessage>
 {
@@ -30,9 +30,9 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     }
 
     /**
-     * Creates a
+     * Creates a message to handle colony views.
      *
-     * @param building AbstractBuilding to add or update a view for
+     * @param building AbstractBuilding to add or update a view.
      */
     public ColonyViewBuildingViewMessage(@NotNull final AbstractBuilding building)
     {

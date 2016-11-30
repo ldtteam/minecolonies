@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Add or Update a ColonyView on the client
+ * Add or Update a ColonyView on the client.
  */
 public class ColonyViewRemoveCitizenMessage implements IMessage, IMessageHandler<ColonyViewRemoveCitizenMessage, IMessage>
 {
@@ -26,10 +26,10 @@ public class ColonyViewRemoveCitizenMessage implements IMessage, IMessageHandler
     }
 
     /**
-     * Creates an object for the remove message for citizen
+     * Creates an object for the remove message for citizen.
      *
-     * @param colony  Colony the citizen is in
-     * @param citizen Citizen ID
+     * @param colony  Colony the citizen is in.
+     * @param citizen Citizen ID.
      */
     public ColonyViewRemoveCitizenMessage(@NotNull final Colony colony, final int citizen)
     {

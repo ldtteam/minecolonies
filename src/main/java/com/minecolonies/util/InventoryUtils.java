@@ -10,14 +10,26 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility methods for the inventories.
+ */
 public class InventoryUtils
 {
+    /**
+     * Private constructor to hide the implicit one.
+     */
+    private InventoryUtils()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     /**
-     * Returns an inventory as list of item stacks
+     * Returns an inventory as list of item stacks.
      *
-     * @param inventory Inventory to convert
-     * @return List of item stacks
+     * @param inventory Inventory to convert.
+     * @return List of item stacks.
      */
     @NotNull
     public static List<ItemStack> getInventoryAsList(@NotNull final IInventory inventory)
@@ -86,11 +98,11 @@ public class InventoryUtils
     }
 
     /**
-     * Compares whether or not the item in an itemstack is equal to a given item
+     * Compares whether or not the item in an itemstack is equal to a given item.
      *
-     * @param itemStack  ItemStack to check
-     * @param targetItem Item to check
-     * @return True when item in item stack is equal to target item
+     * @param itemStack  ItemStack to check.
+     * @param targetItem Item to check.
+     * @return True when item in item stack is equal to target item.
      */
     private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem)
     {
@@ -98,11 +110,11 @@ public class InventoryUtils
     }
 
     /**
-     * Returns the index of the first occurrence of the block in the inventory
+     * Returns the index of the first occurrence of the block in the inventory.
      *
-     * @param inventory Inventory to check
-     * @param block     Block to find
-     * @return Index of the first occurrence
+     * @param inventory Inventory to check.
+     * @param block     Block to find.
+     * @return Index of the first occurrence.
      */
     public static int findFirstSlotInInventoryWith(@NotNull final IInventory inventory, final Block block)
     {
@@ -253,21 +265,22 @@ public class InventoryUtils
     {
         if (receivingInv != null && sendingInv != null && slotID >= 0 && amount >= 0)
         {
-            @Nullable ItemStack stack = sendingInv.decrStackSize(slotID, amount); // gets itemstack in slot, and decreases stacksize
-            if (stack != null) // stack is null if no itemstack was in slot
+            // gets itemstack in slot, and decreases stacksize
+            @Nullable ItemStack stack = sendingInv.decrStackSize(slotID, amount);
+            // stack is null if no itemstack was in slot
+            if (stack != null)
             {
-                stack = setStack(receivingInv, stack); // puts stack in receiving inventory
-                if (stack != null) // checks for leftovers
-                {
-                    setStack(sendingInv, stack); // puts leftovers back in sending inventory
-                    return false;
-                }
-                else
+                // puts stack in receiving inventory
+                stack = setStack(receivingInv, stack);
+                // checks for leftovers
+                if (stack == null)
                 {
                     if (takeAll)
                     {
-                        stack = sendingInv.getStackInSlot(slotID); // gets itemstack in slot
-                        if (stack != null) // checks if itemstack is still in slot
+                        // gets itemstack in slot
+                        stack = sendingInv.getStackInSlot(slotID);
+                        // checks if itemstack is still in slot
+                        if (stack != null)
                         {
                             stack = sendingInv.decrStackSize(slotID, stack.stackSize);
                             stack = setStack(receivingInv, stack);
@@ -275,8 +288,11 @@ public class InventoryUtils
                         }
                     }
 
+                    // puts leftovers back in sending inventory
                     return true;
                 }
+                setStack(sendingInv, stack);
+                return false;
             }
         }
         return false;
@@ -367,10 +383,10 @@ public class InventoryUtils
 
     /**
      * Returns all <code>ItemStack</code>s in an inventory.
-     * Stores this in an array
+     * Stores this in an array.
      *
-     * @param inventory Inventory to return all item stacks from
-     * @return Array of item stacks
+     * @param inventory Inventory to return all item stacks from.
+     * @return Array of item stacks.
      */
     @NotNull
     public static ItemStack[] getAllItemStacks(@NotNull final IInventory inventory)
@@ -384,11 +400,11 @@ public class InventoryUtils
     }
 
     /**
-     * Returns the amount of item stacks in an inventory
-     * This equals {@link #getAllItemStacks(IInventory)}<code>.length();</code>
+     * Returns the amount of item stacks in an inventory.
+     * This equals {@link #getAllItemStacks(IInventory)}<code>.length();</code>.
      *
-     * @param inventory Inventory to count item stacks of
-     * @return Amount of item stacks in inventory
+     * @param inventory Inventory to count item stacks of.
+     * @return Amount of item stacks in inventory.
      */
     public static int getAmountOfStacks(@NotNull final IInventory inventory)
     {
@@ -406,9 +422,9 @@ public class InventoryUtils
     }
 
     /**
-     * Clears an entire inventory
+     * Clears an entire inventory.
      *
-     * @param inventory Inventory to clear
+     * @param inventory Inventory to clear.
      */
     public static void clear(@NotNull final IInventory inventory)
     {
@@ -431,10 +447,8 @@ public class InventoryUtils
         {
             final ItemStack item = inventory.getStackInSlot(i);
             //Only classic fishingRod recognized as a fishingTool
-            if (item != null && (item.getItem().getToolClasses(item).contains(tool) || (tool.equals("hoe") && item.getUnlocalizedName().contains("hoe")) || (tool.equals("rod")
-                                                                                                                                                               && item.getUnlocalizedName()
-                                                                                                                                                                    .contains(
-                                                                                                                                                                      "fishingRod"))))
+            if (item != null && (item.getItem().getToolClasses(item).contains(tool) || ("hoe".equals(tool) && item.getUnlocalizedName().contains("hoe"))
+                    || ("rod".equals(tool) && item.getUnlocalizedName().contains("fishingRod"))))
             {
                 return i;
             }
@@ -443,11 +457,11 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
      *
-     * @param inventory Inventory to add itemstack to
-     * @param itemStack ItemStack to add
-     * @return True if successful, otherwise false
+     * @param inventory Inventory to add itemstack to.
+     * @param itemStack ItemStack to add.
+     * @return True if successful, otherwise false.
      */
     public static boolean addItemStackToInventory(@NotNull final IInventory inventory, @Nullable final ItemStack itemStack)
     {
@@ -498,9 +512,9 @@ public class InventoryUtils
      * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
      * left over items.
      *
-     * @param inventory Inventory to add stack to
-     * @param itemStack Item stack to store in inventory
-     * @return Leftover items in itemstack
+     * @param inventory Inventory to add stack to.
+     * @param itemStack Item stack to store in inventory.
+     * @return Leftover items in itemstack.
      */
     private static int storePartialItemStack(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack)
     {
@@ -581,13 +595,13 @@ public class InventoryUtils
     }
 
     /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storeItemStack(ItemStack)}
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storeItemStack(ItemStack)}.
      * <p>
-     * find a slot to store an ItemStack in
+     * find a slot to store an ItemStack in.
      *
-     * @param inventory Inventory to look in
-     * @param itemStack Item Stack to look for
-     * @return Index of the item stack. If not found, returns -1
+     * @param inventory Inventory to look in.
+     * @param itemStack Item Stack to look for.
+     * @return Index of the item stack. If not found, returns -1.
      */
     private static int findSlotForItemStack(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack)
     {

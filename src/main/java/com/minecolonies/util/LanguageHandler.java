@@ -8,18 +8,27 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * Helper class for localization and sending player messages
+ * Helper class for localization and sending player messages.
  *
  * @author Colton
  */
 public class LanguageHandler
 {
     /**
-     * Send a localized and formatted message to a player
+     * Private constructor to hide implicit one.
+     */
+    private LanguageHandler()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
+    /**
+     * Send a localized and formatted message to a player.
      *
-     * @param player player to send the message to
-     * @param key    unlocalized key
-     * @param args   Objects for String.format()
+     * @param player player to send the message to.
+     * @param key    unlocalized key.
+     * @param args   Objects for String.format().
      */
     public static void sendPlayerLocalizedMessage(@NotNull final EntityPlayer player, final String key, final Object... args)
     {
@@ -34,9 +43,9 @@ public class LanguageHandler
     /**
      * Localize a string and use String.format().
      *
-     * @param key  unlocalized key
-     * @param args Objects for String.format()
-     * @return Localized string
+     * @param key  unlocalized key.
+     * @param args Objects for String.format().
+     * @return Localized string.
      */
     public static String format(final String key, final Object... args)
     {
@@ -46,8 +55,8 @@ public class LanguageHandler
     /**
      * Localize a non-formatted string.
      *
-     * @param key unlocalized key
-     * @return Localized string
+     * @param key unlocalized key.
+     * @return Localized string.
      */
     public static String getString(final String key)
     {
@@ -57,9 +66,9 @@ public class LanguageHandler
     /**
      * Localize a non-formatted string.
      *
-     * @param key          unlocalized key
-     * @param defaultValue the value to return if no key is found
-     * @return Localized string
+     * @param key          unlocalized key.
+     * @param defaultValue the value to return if no key is found.
+     * @return Localized string.
      */
     @SuppressWarnings("deprecation")
     public static String getString(final String key, final String defaultValue)
@@ -70,17 +79,22 @@ public class LanguageHandler
     }
 
     /**
-     * Send a localized and formatted message to multiple players
+     * Send a localized and formatted message to multiple players.
      *
-     * @param players EntityPlayers to send the message to
-     * @param key     unlocalized key
-     * @param args    Objects for String.format()
+     * @param players EntityPlayers to send the message to.
+     * @param key     unlocalized key.
+     * @param args    Objects for String.format().
      */
     public static void sendPlayersLocalizedMessage(final List<EntityPlayer> players, final String key, final Object... args)
     {
         sendPlayersMessage(players, format(key, args));
     }
 
+    /**
+     * Send message to a list of players.
+     * @param players the list of players.
+     * @param message the message.
+     */
     public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String message)
     {
         if (players == null || players.isEmpty())

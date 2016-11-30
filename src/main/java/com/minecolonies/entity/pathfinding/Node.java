@@ -4,6 +4,9 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Nodes used in pathfinding.
+ */
 public class Node implements Comparable<Node>
 {
     @NotNull
@@ -29,10 +32,10 @@ public class Node implements Comparable<Node>
     public boolean isSwimming = false;
 
     /**
-     * Create initial Node
+     * Create initial Node.
      *
-     * @param pos       coordinates of node
-     * @param heuristic heuristic estimate
+     * @param pos       coordinates of node.
+     * @param heuristic heuristic estimate.
      */
     public Node(@NotNull final BlockPos pos, final double heuristic)
     {
@@ -40,19 +43,19 @@ public class Node implements Comparable<Node>
     }
 
     /**
-     * Create a Node that inherits from a parent, and has a Cost and Heuristic estimate
+     * Create a Node that inherits from a parent, and has a Cost and Heuristic estimate.
      *
-     * @param parent    parent node arrives from
-     * @param pos       coordinate of node
-     * @param cost      node cost
-     * @param heuristic heuristic estimate
-     * @param score     node total score
+     * @param parent    parent node arrives from.
+     * @param pos       coordinate of node.
+     * @param cost      node cost.
+     * @param heuristic heuristic estimate.
+     * @param score     node total score.
      */
     public Node(@Nullable final Node parent, @NotNull final BlockPos pos, final double cost, final double heuristic, final double score)
     {
         this.parent = parent;
         this.pos = pos;
-        this.steps = parent != null ? (parent.steps + 1) : 0;
+        this.steps = parent == null ? 0 : (parent.steps + 1);
         this.cost = cost;
         this.heuristic = heuristic;
         this.score = score;
@@ -99,9 +102,9 @@ public class Node implements Comparable<Node>
         if (o != null && o.getClass() == this.getClass())
         {
             @Nullable final Node other = (Node) o;
-            return pos.getX() == other.pos.getX() &&
-                     pos.getY() == other.pos.getY() &&
-                     pos.getZ() == other.pos.getZ();
+            return pos.getX() == other.pos.getX()
+                    && pos.getY() == other.pos.getY()
+                    && pos.getZ() == other.pos.getZ();
         }
 
         return false;

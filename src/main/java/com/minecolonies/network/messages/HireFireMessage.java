@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
 {
     /**
-     * The Colony ID;
+     * The Colony ID.
      */
     private int colonyId;
 
@@ -34,7 +34,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
     private boolean hire;
 
     /**
-     * The citizen to hire/fire
+     * The citizen to hire/fire.
      */
     private int citizenID;
 

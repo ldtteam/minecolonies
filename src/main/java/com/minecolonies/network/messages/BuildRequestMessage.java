@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Adds a entry to the builderRequired map
+ * Adds a entry to the builderRequired map.
  * Created: May 26, 2014
  *
  * @author Colton
@@ -49,10 +49,10 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     }
 
     /**
-     * Creates a build request message
+     * Creates a build request message.
      *
-     * @param building AbstractBuilding of the request
-     * @param mode     Mode of the request, 1 is repair, 0 is build
+     * @param building AbstractBuilding of the request.
+     * @param mode     Mode of the request, 1 is repair, 0 is build.
      */
     public BuildRequestMessage(@NotNull final AbstractBuilding.View building, final int mode)
     {

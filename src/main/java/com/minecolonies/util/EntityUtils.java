@@ -27,7 +27,7 @@ public final class EntityUtils
      */
     private static final int    DEFAULT_MOVE_RANGE       = 3;
     /**
-     * How many blocks the citizen needs to stand safe
+     * How many blocks the citizen needs to stand safe.
      */
     private static final int    AIR_SPACE_ABOVE_TO_CHECK = 2;
     private static final int    TELEPORT_RANGE           = 512;

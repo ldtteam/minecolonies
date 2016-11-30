@@ -26,9 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Interface for using the structure codebase
- *
- * @author Colton
+ * Interface for using the structure codebase.
  */
 public final class StructureWrapper
 {
@@ -387,15 +385,10 @@ public final class StructureWrapper
         return true;
     }
 
-    private boolean isAirBlock()
-    {
-        return getBlock() == Blocks.AIR;
-    }
-
     /**
-     * Calculate the current block in the structure
+     * Calculate the current block in the structure.
      *
-     * @return the current block or null if not initialized
+     * @return the current block or null if not initialized.
      */
     @Nullable
     public Block getBlock()
@@ -559,9 +552,9 @@ public final class StructureWrapper
     }
 
     /**
-     * Calculate the item needed to place the current block in the structure
+     * Calculate the item needed to place the current block in the structure.
      *
-     * @return an item or null if not initialized
+     * @return an item or null if not initialized.
      */
     @Nullable
     public Item getItem()

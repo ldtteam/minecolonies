@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage>
 {
     /**
-     * The Colony ID;
+     * The Colony ID.
      */
     private int     colonyId;
     /**
@@ -34,8 +34,8 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
     /**
      * Creates object for the player to turn manual allocation or or off.
      *
-     * @param colony view of the colony to read data from
-     * @param toggle toggle the job to manually or automatically
+     * @param colony view of the colony to read data from.
+     * @param toggle toggle the job to manually or automatically.
      */
     public ToggleJobMessage(@NotNull final ColonyView colony, final boolean toggle)
     {
@@ -68,6 +68,12 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
         buf.writeBoolean(toggle);
     }
 
+    /**
+     * Executes the message on the server thread.
+     * Only if the player has the permission, toggle message.
+     * @param message the original message.
+     * @param player  the player associated.
+     */
     @Override
     public void messageOnServerThread(final ToggleJobMessage message, final EntityPlayerMP player)
     {

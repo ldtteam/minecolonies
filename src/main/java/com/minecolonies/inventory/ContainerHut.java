@@ -10,7 +10,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 
 /**
- * Handles gui operations on the server
+ * Handles gui operations on the server.
  * Created: June 21, 2014
  *
  * @author Colton
@@ -18,11 +18,11 @@ import net.minecraft.inventory.Container;
 @Deprecated //TODO undepricate when finished
 public class ContainerHut extends Container //ContainerChest in future
 {
-    private TileEntityColonyBuilding hut;
-    private EntityPlayerMP           player;
-    private InventoryPlayer          inventoryPlayer;
+    private final TileEntityColonyBuilding hut;
+    private final EntityPlayerMP           player;
+    private final InventoryPlayer          inventoryPlayer;
 
-    private int lastNumberOfCitizens = 0;
+    private final int lastNumberOfCitizens = 0;
 
     public ContainerHut(final TileEntityColonyBuilding hut, final EntityPlayer player)
     {

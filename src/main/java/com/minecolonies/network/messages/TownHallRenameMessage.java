@@ -11,6 +11,9 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Message to execute the renaiming of the townHall.
+ */
 public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage, IMessage>
 {
     private static final int MAX_NAME_LENGTH  = 25;
@@ -27,10 +30,10 @@ public class TownHallRenameMessage extends AbstractMessage<TownHallRenameMessage
     }
 
     /**
-     * Object creation for the town hall rename message
+     * Object creation for the town hall rename message.
      *
-     * @param colony Colony the rename is going to occur in
-     * @param name   New name of the town hall
+     * @param colony Colony the rename is going to occur in.
+     * @param name   New name of the town hall.
      */
     public TownHallRenameMessage(@NotNull final ColonyView colony, final String name)
     {

@@ -575,7 +575,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     }
 
     /**
-     * Collect one item by walking to it
+     * Collect one item by walking to it.
      */
     private void gatherItems()
     {

@@ -30,7 +30,6 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static com.minecolonies.entity.ai.util.AIState.*;
@@ -383,11 +382,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     /**
-     * Calculates the floor level
+     * Calculates the floor level.
      *
-     * @param position input position
-     * @param depth    the iteration depth
-     * @return returns BlockPos position with air above
+     * @param position input position.
+     * @param depth    the iteration depth.
+     * @return returns BlockPos position with air above.
      */
     @Nullable
     private BlockPos getFloor(@NotNull BlockPos position, int depth)

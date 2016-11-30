@@ -34,11 +34,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * Writes a Chunk Coordinate to an NBT compound, with a specific tag name
+     * Writes a Chunk Coordinate to an NBT compound, with a specific tag name.
      *
-     * @param compound Compound to write to
-     * @param name     Name of the tag
-     * @param pos      Coordinates to write to NBT
+     * @param compound Compound to write to.
+     * @param name     Name of the tag.
+     * @param pos      Coordinates to write to NBT.
      */
     public static void writeToNBT(@NotNull final NBTTagCompound compound, final String name, @NotNull final BlockPos pos)
     {
@@ -50,11 +50,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * Reads Chunk Coordinates from an NBT Compound with a specific tag name
+     * Reads Chunk Coordinates from an NBT Compound with a specific tag name.
      *
-     * @param compound Compound to read data from
-     * @param name     Tag name to read data from
-     * @return Chunk coordinates read from the compound
+     * @param compound Compound to read data from.
+     * @param name     Tag name to read data from.
+     * @return Chunk coordinates read from the compound.
      */
     @NotNull
     public static BlockPos readFromNBT(@NotNull final NBTTagCompound compound, final String name)
@@ -69,8 +69,8 @@ public final class BlockPosUtil
     /**
      * Write a compound with chunk coordinate to a tag list.
      *
-     * @param tagList Tag list to write compound with chunk coordinates to
-     * @param pos     Coordinate to write to the tag list
+     * @param tagList Tag list to write compound with chunk coordinates to.
+     * @param pos     Coordinate to write to the tag list.
      */
     public static void writeToNBTTagList(@NotNull final NBTTagList tagList, @NotNull final BlockPos pos)
     {
@@ -84,9 +84,9 @@ public final class BlockPosUtil
     /**
      * Reads a Chunk Coordinate from a tag list.
      *
-     * @param tagList Tag list to read compound with chunk coordinate from
-     * @param index   Index in the tag list where the required chunk coordinate is
-     * @return Chunk coordinate read from the tag list
+     * @param tagList Tag list to read compound with chunk coordinate from.
+     * @param index   Index in the tag list where the required chunk coordinate is.
+     * @return Chunk coordinate read from the tag list.
      */
     @NotNull
     public static BlockPos readFromNBTTagList(@NotNull final NBTTagList tagList, final int index)
@@ -99,10 +99,10 @@ public final class BlockPosUtil
     }
 
     /**
-     * Writes chunk coordinates to a {@link ByteBuf}
+     * Writes chunk coordinates to a {@link ByteBuf}.
      *
-     * @param buf Buf to write to
-     * @param pos Coordinate to write
+     * @param buf Buf to write to.
+     * @param pos Coordinate to write.
      */
     public static void writeToByteBuf(@NotNull final ByteBuf buf, @NotNull final BlockPos pos)
     {
@@ -112,10 +112,10 @@ public final class BlockPosUtil
     }
 
     /**
-     * Read chunk coordinates from a {@link ByteBuf}
+     * Read chunk coordinates from a {@link ByteBuf}.
      *
-     * @param buf Buf to read from
-     * @return Chunk coordinate that was read
+     * @param buf Buf to read from.
+     * @return Chunk coordinate that was read.
      */
     @NotNull
     public static BlockPos readFromByteBuf(@NotNull final ByteBuf buf)
@@ -127,11 +127,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns if the {@link #getDistanceSquared(BlockPos, BlockPos)} from a coordinate to an citizen is closer than 4.84
+     * Returns if the {@link #getDistanceSquared(BlockPos, BlockPos)} from a coordinate to an citizen is closer than 4.84.
      *
-     * @param coordinate Coordinate you want check distance of
-     * @param citizen    Citizen you want check distance of
-     * @return Whether or not the distance is less than 4.84
+     * @param coordinate Coordinate you want check distance of.
+     * @param citizen    Citizen you want check distance of.
+     * @return Whether or not the distance is less than 4.84.
      */
     public static boolean isClose(@NotNull final BlockPos coordinate, @NotNull final EntityCitizen citizen)
     {
@@ -151,12 +151,18 @@ public final class BlockPosUtil
         final long yDiff = (long) block1.getY() - block2.getY();
         final long zDiff = (long) block1.getZ() - block2.getZ();
 
-        return Math.abs(xDiff + zDiff);
+        final long result = xDiff * xDiff + yDiff * yDiff + zDiff * zDiff;
+        if (result < 0)
+        {
+            throw new IllegalStateException("max-sqrt is to high! Failure to catch overflow with "
+                    + xDiff + " | " + yDiff + " | " + zDiff);
+        }
+        return result;
     }
 
 
     /**
-     * Simple two dimensional distance between two points..
+     * Simple two dimensional distance between two points.
      *
      * @param block1 position one.
      * @param block2 position two.
@@ -208,11 +214,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns the tile entity at a specific chunk coordinate
+     * Returns the tile entity at a specific chunk coordinate.
      *
-     * @param world World the tile entity is in
-     * @param pos   Coordinates of the tile entity
-     * @return Tile entity at the given coordinates
+     * @param world World the tile entity is in.
+     * @param pos   Coordinates of the tile entity.
+     * @return Tile entity at the given coordinates.
      */
     public static TileEntity getTileEntity(@NotNull final World world, @NotNull final BlockPos pos)
     {
@@ -220,12 +226,12 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns a list of drops possible mining a specific block with specific fortune level
+     * Returns a list of drops possible mining a specific block with specific fortune level.
      *
-     * @param world   World the block is in
-     * @param coords  Coordinates of the block
-     * @param fortune Level of fortune on the pickaxe
-     * @return List of {@link ItemStack} with possible drops
+     * @param world   World the block is in.
+     * @param coords  Coordinates of the block.
+     * @param fortune Level of fortune on the pickaxe.
+     * @return List of {@link ItemStack} with possible drops.
      */
     public static List<ItemStack> getBlockDrops(@NotNull final World world, @NotNull final BlockPos coords, final int fortune)
     {
@@ -233,11 +239,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns the block at a specific chunk coordinate
+     * Returns the block at a specific chunk coordinate.
      *
-     * @param world  World the block is in
-     * @param coords Coordinates of the block
-     * @return Block at the given coordinates
+     * @param world  World the block is in.
+     * @param coords Coordinates of the block.
+     * @return Block at the given coordinates.
      */
     public static Block getBlock(@NotNull final World world, @NotNull final BlockPos coords)
     {
@@ -245,11 +251,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns the metadata of a block at a specific chunk coordinate
+     * Returns the metadata of a block at a specific chunk coordinate.
      *
-     * @param world  World the block is in
-     * @param coords Coordinates of the block
-     * @return Metadata of the block at the given coordinates
+     * @param world  World the block is in.
+     * @param coords Coordinates of the block.
+     * @return Metadata of the block at the given coordinates.
      */
     public static IBlockState getBlockState(@NotNull final World world, @NotNull final BlockPos coords)
     {
@@ -257,12 +263,12 @@ public final class BlockPosUtil
     }
 
     /**
-     * Sets a block in the world
+     * Sets a block in the world.
      *
-     * @param world  World the block needs to be set in
-     * @param coords Coordinate to place block
-     * @param block  Block to place
-     * @return True if block is placed, otherwise false
+     * @param world  World the block needs to be set in.
+     * @param coords Coordinate to place block.
+     * @param block  Block to place.
+     * @return True if block is placed, otherwise false.
      */
     public static boolean setBlock(@NotNull final World world, final BlockPos coords, @NotNull final Block block)
     {
@@ -270,13 +276,13 @@ public final class BlockPosUtil
     }
 
     /**
-     * Sets a block in the world, with specific metadata and flags
+     * Sets a block in the world, with specific metadata and flags.
      *
-     * @param worldIn World the block needs to be set in
-     * @param coords  Coordinate to place block
-     * @param state   BlockState to be placed
-     * @param flag    Flag to set
-     * @return True if block is placed, otherwise false
+     * @param worldIn World the block needs to be set in.
+     * @param coords  Coordinate to place block.
+     * @param state   BlockState to be placed.
+     * @param flag    Flag to set.
+     * @return True if block is placed, otherwise false.
      */
     public static boolean setBlock(@NotNull final World worldIn, @NotNull final BlockPos coords, final IBlockState state, final int flag)
     {
@@ -285,11 +291,11 @@ public final class BlockPosUtil
 
     /**
      * Returns whether or not the citizen is heading to a specific location.
-     * {@link EntityUtils#isPathingTo(EntityCitizen, int, int)}
+     * {@link EntityUtils#isPathingTo(EntityCitizen, int, int)}.
      *
-     * @param citizen Citizen you want to check
-     * @param pos     Position you want to check
-     * @return True if citizen heads to pos, otherwise false
+     * @param citizen Citizen you want to check.
+     * @param pos     Position you want to check.
+     * @return True if citizen heads to pos, otherwise false.
      */
     public static boolean isPathingTo(@NotNull final EntityCitizen citizen, @NotNull final BlockPos pos)
     {
@@ -299,9 +305,9 @@ public final class BlockPosUtil
     /**
      * {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int)}.
      *
-     * @param worker Worker to check
-     * @param site   Chunk coordinates of site to check
-     * @return True when worker is at site, otherwise false
+     * @param worker Worker to check.
+     * @param site   Chunk coordinates of site to check.
+     * @return True when worker is at site, otherwise false.
      */
     public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, @NotNull final BlockPos site)
     {
@@ -311,10 +317,10 @@ public final class BlockPosUtil
     /**
      * {@link EntityUtils#isWorkerAtSiteWithMove(EntityCitizen, int, int, int, int)}.
      *
-     * @param worker Worker to check
-     * @param site   Chunk coordinates of site to check
-     * @param range  Range to check in
-     * @return True when within range, otherwise false
+     * @param worker Worker to check.
+     * @param site   Chunk coordinates of site to check.
+     * @param range  Range to check in.
+     * @return True when within range, otherwise false.
      */
     public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, @NotNull final BlockPos site, final int range)
     {
@@ -324,9 +330,9 @@ public final class BlockPosUtil
     /**
      * {@link EntityUtils#tryMoveLivingToXYZ(EntityLiving, int, int, int)}.
      *
-     * @param living      A living entity
-     * @param destination chunk coordinates to check moving to
-     * @return True when XYZ is found, an set moving to, otherwise false
+     * @param living      A living entity.
+     * @param destination chunk coordinates to check moving to.
+     * @return True when XYZ is found, an set moving to, otherwise false.
      */
     public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, @NotNull final BlockPos destination)
     {
@@ -335,11 +341,11 @@ public final class BlockPosUtil
 
     /**
      * Attempt to move to XYZ.
-     * True when found and destination is set
+     * True when found and destination is set.
      *
-     * @param citizen     Citizen to move to XYZ
-     * @param destination Chunk coordinate of the distance
-     * @return True when found, and destination is set, otherwise false
+     * @param citizen     Citizen to move to XYZ.
+     * @param destination Chunk coordinate of the distance.
+     * @return True when found, and destination is set, otherwise false.
      */
     public static PathResult moveLivingToXYZ(@NotNull final EntityCitizen citizen, @NotNull final BlockPos destination)
     {
@@ -358,13 +364,13 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns whether a chunk coordinate is equals to (x, y, z)
+     * Returns whether a chunk coordinate is equals to (x, y, z).
      *
-     * @param coords Chunk Coordinate    (point 1)
-     * @param x      x-coordinate        (point 2)
-     * @param y      y-coordinate        (point 2)
-     * @param z      z-coordinate        (point 2)
-     * @return True when coordinates are equal, otherwise false
+     * @param coords Chunk Coordinate    (point 1).
+     * @param x      x-coordinate        (point 2).
+     * @param y      y-coordinate        (point 2).
+     * @param z      z-coordinate        (point 2).
+     * @return True when coordinates are equal, otherwise false.
      */
     public static boolean isEqual(@NotNull final BlockPos coords, final int x, final int y, final int z)
     {
@@ -372,10 +378,10 @@ public final class BlockPosUtil
     }
 
     /**
-     * Returns the Chunk Coordinate created from an entity
+     * Returns the Chunk Coordinate created from an entity.
      *
-     * @param entity Entity to create chunk coordinates from
-     * @return Chunk Coordinates created from the entity
+     * @param entity Entity to create chunk coordinates from.
+     * @return Chunk Coordinates created from the entity.
      */
     @NotNull
     public static BlockPos fromEntity(@NotNull final Entity entity)

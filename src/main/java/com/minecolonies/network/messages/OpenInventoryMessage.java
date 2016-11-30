@@ -66,7 +66,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     /**
-     * Creates an open inventory message for a building
+     * Creates an open inventory message for a building.
      *
      * @param building {@link AbstractBuilding.View}
      */
@@ -79,7 +79,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     /**
-     * Creates an open inventory message for a field
+     * Creates an open inventory message for a field.
      *
      * @param field    {@link AbstractBuilding.View}
      * @param colonyId the colony associated with the inventory.

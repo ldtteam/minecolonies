@@ -23,11 +23,11 @@ public final class ExperienceUtils
     }
 
     /**
-     * Calculates how much percent of the current level have been completed
+     * Calculates how much percent of the current level have been completed.
      *
-     * @param experience the current amount of xp
-     * @param level      the current level
-     * @return the percentage
+     * @param experience the current amount of xp.
+     * @param level      the current level.
+     * @return the percentage.
      */
     public static double getPercentOfLevelCompleted(final double experience, final int level)
     {

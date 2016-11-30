@@ -8,22 +8,20 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Find and return a path to the nearest tree
+ * Find and return a path to the nearest tree.
  * Created: May 21, 2015
- *
- * @author Colton
  */
 public class PathJobFindTree extends AbstractPathJob
 {
-    private BlockPos hutLocation;
+    private final BlockPos hutLocation;
 
     /**
-     * AbstractPathJob constructor
+     * AbstractPathJob constructor.
      *
-     * @param world the world within which to path
-     * @param start the start position from which to path from
-     * @param home  the position of the workers hut
-     * @param range maximum path range
+     * @param world the world within which to path.
+     * @param start the start position from which to path from.
+     * @param home  the position of the workers hut.
+     * @param range maximum path range.
      */
     public PathJobFindTree(final World world, @NotNull final BlockPos start, final BlockPos home, final int range)
     {
@@ -32,8 +30,14 @@ public class PathJobFindTree extends AbstractPathJob
         hutLocation = home;
     }
 
+    /**
+     * Custom result of the class which contains the position of the tree.
+     */
     public static class TreePathResult extends PathResult
     {
+        /**
+         * Position of the found tree.
+         */
         public BlockPos treeLocation;
     }
 
@@ -63,15 +67,15 @@ public class PathJobFindTree extends AbstractPathJob
 
     private boolean isNearTree(@NotNull final Node n)
     {
-        if (n.pos.getX() != n.parent.pos.getX())
-        {
-            final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
-            return isTree(n.pos.add(-dx, 0, 0)) || isTree(n.pos.add(0, 0, -1)) || isTree(n.pos.add(0, 0, +1));
-        }
-        else
+        if (n.pos.getX() == n.parent.pos.getX())
         {
             final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
             return isTree(n.pos.add(0, 0, dz)) || isTree(n.pos.add(-1, 0, 0)) || isTree(n.pos.add(1, 0, 0));
+        }
+        else
+        {
+            final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
+            return isTree(n.pos.add(-dx, 0, 0)) || isTree(n.pos.add(0, 0, -1)) || isTree(n.pos.add(0, 0, +1));
         }
     }
 

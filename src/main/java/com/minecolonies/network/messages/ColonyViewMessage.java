@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Add or Update a ColonyView on the client
+ * Add or Update a ColonyView on the client.
  */
 public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMessage, IMessage>
 {
@@ -29,10 +29,10 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     }
 
     /**
-     * Add or Update a ColonyView on the client
+     * Add or Update a ColonyView on the client.
      *
-     * @param colony            Colony of the view to update
-     * @param isNewSubscription Boolean whether or not this is a new subscription
+     * @param colony            Colony of the view to update.
+     * @param isNewSubscription Boolean whether or not this is a new subscription.
      */
     public ColonyViewMessage(@NotNull final Colony colony, final boolean isNewSubscription)
     {

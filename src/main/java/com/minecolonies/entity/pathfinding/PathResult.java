@@ -20,9 +20,9 @@ public class PathResult
     }
 
     /**
-     * Get Status of the Path
+     * Get Status of the Path.
      *
-     * @return status
+     * @return status.
      */
     public Status getStatus()
     {
@@ -30,9 +30,9 @@ public class PathResult
     }
 
     /**
-     * For PathNavigate and AbstractPathJob use only
+     * For PathNavigate and AbstractPathJob use only.
      *
-     * @param s status to set
+     * @param s status to set.
      */
     public void setStatus(final Status s)
     {
@@ -40,7 +40,7 @@ public class PathResult
     }
 
     /**
-     * @return true if the path is still computing or being followed
+     * @return true if the path is still computing or being followed.
      */
     public boolean isInProgress()
     {
@@ -53,7 +53,7 @@ public class PathResult
     }
 
     /**
-     * @return true if the no path can be found
+     * @return true if the no path can be found.
      */
     public boolean failedToReachDestination()
     {
@@ -61,7 +61,7 @@ public class PathResult
     }
 
     /**
-     * @return true if the path is computed, and it reaches a desired destination
+     * @return true if the path is computed, and it reaches a desired destination.
      */
     public boolean getPathReachesDestination()
     {
@@ -79,7 +79,7 @@ public class PathResult
     }
 
     /**
-     * @return true if the path was cancelled before being computed or before the entity reached it's destination
+     * @return true if the path was cancelled before being computed or before the entity reached it's destination.
      */
     public boolean isCancelled()
     {
@@ -87,7 +87,7 @@ public class PathResult
     }
 
     /**
-     * @return length of the compute path, in nodes
+     * @return length of the compute path, in nodes.
      */
     public int getPathLength()
     {
@@ -105,7 +105,7 @@ public class PathResult
     }
 
     /**
-     * @return true if the path moves from the current location, useful for checking if a path actually generated
+     * @return true if the path moves from the current location, useful for checking if a path actually generated.
      */
     public boolean didPathGenerate()
     {

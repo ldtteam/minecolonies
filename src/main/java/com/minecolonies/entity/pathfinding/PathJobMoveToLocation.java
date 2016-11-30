@@ -38,9 +38,9 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     /**
-     * Perform the search
+     * Perform the search.
      *
-     * @return Path of a path to the given location, a best-effort, or null
+     * @return Path of a path to the given location, a best-effort, or null.
      */
     @Nullable
     @Override
@@ -72,19 +72,29 @@ public class PathJobMoveToLocation extends AbstractPathJob
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
     }
 
+    /**
+     * Checks if the target has been reached.
+     * @param n Node to test.
+     * @return true if has been reached.
+     */
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
         if (destinationSlack <= DESTINATION_SLACK_NONE)
         {
-            return n.pos.getX() == destination.getX() &&
-                     n.pos.getY() == destination.getY() &&
-                     n.pos.getZ() == destination.getZ();
+            return n.pos.getX() == destination.getX()
+                    && n.pos.getY() == destination.getY()
+                    && n.pos.getZ() == destination.getZ();
         }
 
         return destination.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ()) <= destinationSlack;
     }
 
+    /**
+     * Calculate the distance to the target.
+     * @param n Node to test.
+     * @return double of the distance.
+     */
     @Override
     protected double getNodeResultScore(@NotNull final Node n)
     {

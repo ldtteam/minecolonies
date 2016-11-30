@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Handles the server telling nearby clients to render a particle effect
+ * Handles the server telling nearby clients to render a particle effect.
  * Created: February 10, 2016
  *
  * @author Colton

@@ -174,7 +174,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private WalkToProxy proxy;
     /**
-     * Skill modifier defines how fast a citizen levels in a certain skill
+     * Skill modifier defines how fast a citizen levels in a certain skill.
      */
     private double skillModifier = 0;
     private boolean     female;

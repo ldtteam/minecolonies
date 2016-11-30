@@ -8,7 +8,6 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.EnumFacing;
@@ -44,6 +43,8 @@ public abstract class AbstractPathJob implements Callable<Path>
     private static final   BlockPos BLOCKPOS_SOUTH        = new BlockPos(0, 0, 1);
     private static final   BlockPos BLOCKPOS_EAST         = new BlockPos(1, 0, 0);
     private static final   BlockPos BLOCKPOS_WEST         = new BlockPos(-1, 0, 0);
+    private static final int MAX_Y = 256;
+    private static final int MIN_Y = 0;
     @Nullable
     protected static Set<Node>    lastDebugNodesVisited;
     @Nullable
@@ -75,12 +76,12 @@ public abstract class AbstractPathJob implements Callable<Path>
     private       int                totalNodesVisited            = 0;
 
     /**
-     * AbstractPathJob constructor
+     * AbstractPathJob constructor.
      *
-     * @param world the world within which to path
-     * @param start the start position from which to path from
-     * @param end   the end position to path to
-     * @param range maximum path range
+     * @param world the world within which to path.
+     * @param start the start position from which to path from.
+     * @param end   the end position to path to.
+     * @param range maximum path range.
      */
     public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range)
     {
@@ -88,11 +89,13 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     /**
-     * @param world  the world within which to path
-     * @param start  the start position from which to path from
+     * AbstractPathJob constructor.
+     *
+     * @param world  the world within which to path.
+     * @param start  the start position from which to path from.
      * @param end    the end position to path to
-     * @param range  maximum path range
-     * @param result path result
+     * @param range  maximum path range.
+     * @param result path result.
      * @see AbstractPathJob#AbstractPathJob(World, BlockPos, BlockPos, int)
      */
     public AbstractPathJob(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range, final PathResult result)
@@ -102,7 +105,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         final int maxX = Math.max(start.getX(), end.getX()) + (range / 2);
         final int maxZ = Math.max(start.getZ(), end.getZ()) + (range / 2);
 
-        this.world = new ChunkCache(world, new BlockPos(minX, 0, minZ), new BlockPos(maxX, 256, maxZ), range);
+        this.world = new ChunkCache(world, new BlockPos(minX, MIN_Y, minZ), new BlockPos(maxX, MAX_Y, maxZ), range);
 
         this.start = new BlockPos(start);
         this.maxRange = range;
@@ -127,13 +130,13 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     /**
-     * Generates a good path starting location for the entity to path from, correcting for the following conditions:
-     * - Being in water: pathfinding in water occurs along the surface; adjusts position to surface
-     * - Being in a fence space: finds correct adjacent position which is not a fence space, to prevent starting path
-     * from within the fence block
+     * Generates a good path starting location for the entity to path from, correcting for the following conditions.
+     * - Being in water: pathfinding in water occurs along the surface; adjusts position to surface.
+     * - Being in a fence space: finds correct adjacent position which is not a fence space, to prevent starting path.
+     * from within the fence block.
      *
-     * @param entity Entity for the pathfinding operation
-     * @return ChunkCoordinates for starting location
+     * @param entity Entity for the pathfinding operation.
+     * @return ChunkCoordinates for starting location.
      */
     public static BlockPos prepareStart(@NotNull final EntityLiving entity)
     {
@@ -225,8 +228,9 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private static boolean onALadder(@NotNull final Node node, @Nullable final Node nextInPath, @NotNull final BlockPos pos)
     {
-        return nextInPath != null && node.isLadder &&
-                 (nextInPath.pos.getX() == pos.getX() && nextInPath.pos.getZ() == pos.getZ());
+        return nextInPath != null && node.isLadder
+                &&
+                (nextInPath.pos.getX() == pos.getX() && nextInPath.pos.getZ() == pos.getZ());
     }
 
     /**
@@ -241,18 +245,18 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private static int computeNodeKey(@NotNull final BlockPos pos)
     {
-        return ((pos.getX() & 0xFFF) << 20) |
-                 ((pos.getY() & 0xFF) << 12) |
-                 (pos.getZ() & 0xFFF);
+        return ((pos.getX() & 0xFFF) << 20)
+                | ((pos.getY() & 0xFF) << 12)
+                | (pos.getZ() & 0xFFF);
     }
 
     /**
-     * Compute the cost (immediate 'g' value) of moving from the parent space to the new space,
+     * Compute the cost (immediate 'g' value) of moving from the parent space to the new space.
      *
-     * @param parent     The parent node being moved from
-     * @param dPos       The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1]
+     * @param parent     The parent node being moved from.
+     * @param dPos       The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1].
      * @param isSwimming true is the current node would require the citizen to swim.
-     * @return cost to move from the parent to the new position
+     * @return cost to move from the parent to the new position.
      */
     protected static double computeCost(Node parent, @NotNull BlockPos dPos, boolean isSwimming, boolean onPath)
     {
@@ -295,7 +299,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     private static boolean calculateSwimming(@NotNull final IBlockAccess world, @NotNull final BlockPos pos, @Nullable final Node node)
     {
-        return (node != null) ? node.isSwimming : world.getBlockState(pos.down()).getMaterial().isLiquid();
+        return (node == null) ? world.getBlockState(pos.down()).getMaterial().isLiquid() : node.isSwimming;
     }
 
     public PathResult getResult()
@@ -304,9 +308,9 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     /**
-     * Callable method for initiating asynchronous task
+     * Callable method for initiating asynchronous task.
      *
-     * @return path to follow or null
+     * @return path to follow or null.
      */
     @Override
     public final Path call()
@@ -324,9 +328,9 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     /**
-     * Perform the search
+     * Perform the search.
      *
-     * @return Path of a path to the given location, a best-effort, or null
+     * @return Path of a path to the given location, a best-effort, or null.
      */
     @Nullable
     protected Path search()
@@ -605,24 +609,24 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * Compute the heuristic cost ('h' value) of a given position x,y,z.
      * <p>
-     * Returning a value of 0 performs a breadth-first search
-     * Returning a value less than actual possible cost to goal guarantees shortest path, but at computational expense
-     * Returning a value exactly equal to the cost to the goal guarantees shortest path and least expense (but generally
-     * only works when path is straight and unblocked)
-     * Returning a value greater than the actual cost to goal produces good, but not perfect paths, and is fast
-     * Returning a very high value (such that 'h' is very high relative to 'g') then only 'h' (the heuristic) matters,
-     * as the search will be a very fast greedy best-first-search, ignoring cost weighting and distance
+     * Returning a value of 0 performs a breadth-first search.
+     * Returning a value less than actual possible cost to goal guarantees shortest path, but at computational expense.
+     * Returning a value exactly equal to the cost to the goal guarantees shortest path and least expense (but generally.
+     * only works when path is straight and unblocked).
+     * Returning a value greater than the actual cost to goal produces good, but not perfect paths, and is fast.
+     * Returning a very high value (such that 'h' is very high relative to 'g') then only 'h' (the heuristic) matters
+     * as the search will be a very fast greedy best-first-search, ignoring cost weighting and distance.
      *
-     * @param pos Position to compute heuristic from
+     * @param pos Position to compute heuristic from.
      * @return the heuristic.
      */
     protected abstract double computeHeuristic(BlockPos pos);
 
     /**
-     * Return true if the given node is a viable final destination, and the path should generate to here
+     * Return true if the given node is a viable final destination, and the path should generate to here.
      *
-     * @param n Node to test
-     * @return true if the node is a viable destination
+     * @param n Node to test.
+     * @return true if the node is a viable destination.
      */
     protected abstract boolean isAtDestination(Node n);
 
@@ -630,18 +634,18 @@ public abstract class AbstractPathJob implements Callable<Path>
      * Compute a 'result score' for the Node; if no destination is determined, the node that had the highest
      * 'result' score is used.
      *
-     * @param n Node to test
-     * @return score for the node
+     * @param n Node to test.
+     * @return score for the node.
      */
     protected abstract double getNodeResultScore(Node n);
 
     /**
      * "Walk" from the parent in the direction specified by the delta, determining the new x,y,z position for such a
-     * move and adding or updating a node, as appropriate
+     * move and adding or updating a node, as appropriate.
      *
-     * @param parent Node being walked from
-     * @param dPos   Delta from parent, expected in range of [-1..1]
-     * @return true if a node was added or updated when attempting to move in the given direction
+     * @param parent Node being walked from.
+     * @param dPos   Delta from parent, expected in range of [-1..1].
+     * @return true if a node was added or updated when attempting to move in the given direction.
      */
     protected final boolean walk(@NotNull final Node parent, @NotNull final BlockPos dPos)
     {
@@ -674,24 +678,22 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
 
-        boolean isSwimming = calculateSwimming(world, pos, node);
-        boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos).getBlock());
+        final boolean isSwimming = calculateSwimming(world, pos, node);
+        final boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos).getBlock());
         //  Cost may have changed due to a jump up or drop
-        double stepCost = computeCost(parent, dPos, isSwimming, onRoad);
-        double heuristic = computeHeuristic(pos);
-        double cost = parent.cost + stepCost;
-        double score = cost + heuristic;
+        final double stepCost = computeCost(parent, dPos, isSwimming, onRoad);
+        final double heuristic = computeHeuristic(pos);
+        final double cost = parent.cost + stepCost;
+        final double score = cost + heuristic;
 
-        if (node != null)
-        {
-            if (updateCurrentNode(parent, node, heuristic, cost, score))
-            {
-                return false;
-            }
-        }
-        else
+        if (node == null)
         {
             node = createNode(parent, pos, nodeKey, isSwimming, heuristic, cost, score);
+        }
+        else if (updateCurrentNode(parent, node, heuristic, cost, score))
+        {
+
+            return false;
         }
 
         nodesOpen.offer(node);
@@ -713,7 +715,8 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     @NotNull
-    private Node createNode(final Node parent, @NotNull final BlockPos pos, final int nodeKey, final boolean isSwimming, final double heuristic, final double cost, final double score)
+    private Node createNode(final Node parent, @NotNull final BlockPos pos, final int nodeKey,
+            final boolean isSwimming, final double heuristic, final double cost, final double score)
     {
         final Node node;
         node = new Node(parent, pos, cost, heuristic, score);
@@ -762,8 +765,8 @@ public abstract class AbstractPathJob implements Callable<Path>
      * Get the height of the ground at the given x,z coordinate, within 1 step of y.
      *
      * @param parent parent node.
-     * @param pos    coordinate of block
-     * @return y height of first open, viable block above ground, or -1 if blocked or too far a drop
+     * @param pos    coordinate of block.
+     * @return y height of first open, viable block above ground, or -1 if blocked or too far a drop.
      */
     protected int getGroundHeight(final Node parent, @NotNull final BlockPos pos)
     {
@@ -896,10 +899,10 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     /**
-     * Is the space passable?
+     * Is the space passable.
      *
      * @param block the block we are checking.
-     * @return true if the block does not block movement
+     * @return true if the block does not block movement.
      */
     protected boolean isPassable(@NotNull final IBlockState block)
     {
@@ -907,9 +910,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             if (block.getMaterial().blocksMovement())
             {
-                return block.getBlock() instanceof BlockDoor ||
-                         //  block instanceof BlockTrapDoor ||
-                         block.getBlock() instanceof BlockFenceGate;
+                return block.getBlock() instanceof BlockDoor || block.getBlock() instanceof BlockFenceGate;
             }
             else if (block.getMaterial().isLiquid())
             {
@@ -926,9 +927,9 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     /**
-     * Is the block solid and can be stood upon?
+     * Is the block solid and can be stood upon.
      *
-     * @param blockState Block to check
+     * @param blockState Block to check.
      * @return true if the block at that location can be walked on.
      */
     @NotNull
@@ -952,7 +953,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     }
 
     /**
-     * Is the block a ladder?
+     * Is the block a ladder.
      *
      * @param block block to check.
      * @param pos   location of the block.

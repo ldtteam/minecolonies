@@ -78,8 +78,8 @@ public class EventHandler
     }
 
     /**
-     * Event when a block is broken
-     * Event gets cancelled when there no permission to break a hut
+     * Event when a block is broken.
+     * Event gets cancelled when there no permission to break a hut.
      *
      * @param event {@link net.minecraftforge.event.world.BlockEvent.BreakEvent}
      */
@@ -107,9 +107,9 @@ public class EventHandler
     }
 
     /**
-     * Event when a player right clicks a block, or right clicks with an item
-     * Event gets cancelled when player has no permission
-     * Event gets cancelled when the player has no permission to place a hut, and tried it
+     * Event when a player right clicks a block, or right clicks with an item.
+     * Event gets cancelled when player has no permission.
+     * Event gets cancelled when the player has no permission to place a hut, and tried it.
      *
      * @param event {@link PlayerInteractEvent.RightClickBlock}
      */
@@ -122,14 +122,16 @@ public class EventHandler
         //Only execute for the main hand our colony events.
         if (event.getHand() == EnumHand.MAIN_HAND && !(event.getWorld().isRemote))
         {
-            if (playerRightClickInteract(player, world, event.getPos()) &&
-                  // this was the simple way of doing it, minecraft calls onBlockActivated
-                  // and uses that return value, but I didn't want to call it twice
-                  world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
+            // this was the simple way of doing it, minecraft calls onBlockActivated
+            // and uses that return value, but I didn't want to call it twice
+            if (playerRightClickInteract(player, world, event.getPos())
+                    && world.getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut)
+
+
             {
                 final IColony colony = ColonyManager.getIColony(world, event.getPos());
-                if (colony != null &&
-                      !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+                if (colony != null
+                        && !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
                 {
                     event.setCanceled(true);
                 }
@@ -146,12 +148,24 @@ public class EventHandler
         }
     }
 
+    /**
+     * Called when the player makes a right click.
+     * @param player the player doing it.
+     * @param world the world he is clicking in.
+     * @param pos the position.
+     * @return if should be executed.
+     */
     private static boolean playerRightClickInteract(@NotNull final EntityPlayer player, final World world, final BlockPos pos)
     {
-        return !player.isSneaking() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null ||
-                 player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
+        return !player.isSneaking() || player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null
+                || player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
     }
 
+    /**
+     * Handles the cancellation of a certain event.
+     * @param event the event.
+     * @param player the player causing it.
+     */
     private static void handleEventCancellation(@NotNull final PlayerInteractEvent event, @NotNull final EntityPlayer player)
     {
         final Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());

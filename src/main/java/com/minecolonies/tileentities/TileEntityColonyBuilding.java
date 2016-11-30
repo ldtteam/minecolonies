@@ -81,9 +81,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Returns the position of the tile entity
+     * Returns the position of the tile entity.
      *
-     * @return Block Coordinates of the tile entity
+     * @return Block Coordinates of the tile entity.
      */
     public BlockPos getPosition()
     {
@@ -91,9 +91,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Returns the colony ID
+     * Returns the colony ID.
      *
-     * @return ID of the colony
+     * @return ID of the colony.
      */
     public int getColonyId()
     {
@@ -101,9 +101,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Returns the colony of the tile entity
+     * Returns the colony of the tile entity.
      *
-     * @return Colony of the tile entity
+     * @return Colony of the tile entity.
      */
     public Colony getColony()
     {
@@ -128,7 +128,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Synchronises colony references from the tile entity
+     * Synchronises colony references from the tile entity.
      */
     private void updateColonyReferences()
     {
@@ -173,9 +173,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Sets the colony of the tile entity
+     * Sets the colony of the tile entity.
      *
-     * @param c Colony to set in references
+     * @param c Colony to set in references.
      */
     public void setColony(final Colony c)
     {
@@ -185,9 +185,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Returns the building associated with the tile entity
+     * Returns the building associated with the tile entity.
      *
-     * @return {@link AbstractBuilding} associated with the tile entity
+     * @return {@link AbstractBuilding} associated with the tile entity.
      */
     public AbstractBuilding getBuilding()
     {
@@ -199,9 +199,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Sets the building associated with the tile entity
+     * Sets the building associated with the tile entity.
      *
-     * @param b {@link AbstractBuilding} to associate with the tile entity
+     * @param b {@link AbstractBuilding} to associate with the tile entity.
      */
     public void setBuilding(final AbstractBuilding b)
     {
@@ -209,17 +209,15 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Returns the view of the building associated with the tile entity
+     * Returns the view of the building associated with the tile entity.
      *
-     * @return {@link AbstractBuilding.View} the tile entity is associated with
+     * @return {@link AbstractBuilding.View} the tile entity is associated with.
      */
     public AbstractBuilding.View getBuildingView()
     {
         final ColonyView c = ColonyManager.getColonyView(colonyId);
-        return c != null ? c.getBuilding(getPosition()) : null;
+        return c == null ? null : c.getBuilding(getPosition());
     }
-
-
 
     @Override
     public void readFromNBT(final NBTTagCompound compound)
@@ -255,9 +253,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     /**
-     * Checks if the player has permission to access the hut
+     * Checks if the player has permission to access the hut.
      *
-     * @param player Player to check permission of
+     * @param player Player to check permission of.
      * @return True when player has access, or building doesn't exist, otherwise false.
      */
     public boolean hasAccessPermission(final EntityPlayer player)//TODO This is called every tick the GUI is open. Is that bad?

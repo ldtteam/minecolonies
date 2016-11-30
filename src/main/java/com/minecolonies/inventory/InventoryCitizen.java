@@ -53,6 +53,10 @@ public class InventoryCitizen implements IInventory
      * The returned slot if a slot hasn't been found.
      */
     private static final int    NO_SLOT         = -1;
+    /**
+     * Size of the hotbar.
+     */
+    private static final int HOTBAR_SIZE        = 0;
 
     /**
      * The inventory content.
@@ -72,7 +76,7 @@ public class InventoryCitizen implements IInventory
      */
     private MaterialStore materialStore;
     /**
-     * Updated after the inventory has been changed
+     * Updated after the inventory has been changed.
      */
     private boolean inventoryChanged = false;
     /**
@@ -110,13 +114,13 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Get the size of the citizens hotbar inventory
+     * Get the size of the citizens hotbar inventory.
      *
      * @return the size.
      */
     public int getHotbarSize()
     {
-        return 0;
+        return HOTBAR_SIZE;
     }
 
     /**
@@ -145,9 +149,9 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Returns the item that is currently being held by citizen
+     * Returns the item that is currently being held by citizen.
      *
-     * @return {@link ItemStack} currently being held by citizen
+     * @return {@link ItemStack} currently being held by citizen.
      */
     public ItemStack getHeldItemMainhand()
     {
@@ -155,9 +159,9 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Set item to be held by citizen
+     * Set item to be held by citizen.
      *
-     * @param slot Slot index with item to be held by citizen
+     * @param slot Slot index with item to be held by citizen.
      */
     public void setHeldItem(final int slot)
     {
@@ -165,7 +169,7 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Removes one item of specified Item from inventory (if it is in a stack, the stack size will reduce with 1)
+     * Removes one item of specified Item from inventory (if it is in a stack, the stack size will reduce with 1).
      *
      * @param itemIn the item to consume.
      * @return true if succeed.
@@ -219,16 +223,13 @@ public class InventoryCitizen implements IInventory
                 {
                     final int j = this.getFirstEmptySlot();
 
-                    if (j != NO_SLOT)
-                    {
-                        this.stacks[j] = ItemStack.copyItemStack(itemStackIn);
-                        itemStackIn.stackSize = 0;
-                        return true;
-                    }
-                    else
+                    if (j == NO_SLOT)
                     {
                         return false;
                     }
+                    this.stacks[j] = ItemStack.copyItemStack(itemStackIn);
+                    itemStackIn.stackSize = 0;
+                    return true;
                 }
                 else
                 {
@@ -342,7 +343,7 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * stores an itemstack in the users inventory
+     * stores an itemstack in the users inventory.
      */
     private int storeItemStack(@NotNull final ItemStack itemStackIn)
     {
@@ -361,7 +362,7 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Checks if a specified Item is inside the inventory
+     * Checks if a specified Item is inside the inventory.
      *
      * @param itemIn the item to check for.
      * @return if itemIn in inventory.
@@ -393,6 +394,10 @@ public class InventoryCitizen implements IInventory
         return getStackInSlot(index) == null;
     }
 
+    /**
+     * Create a material store.
+     * @param system the system to use.
+     */
     public void createMaterialStore(@NotNull final MaterialSystem system)
     {
         if (materialStore == null)
@@ -562,16 +567,14 @@ public class InventoryCitizen implements IInventory
     @Override
     public ItemStack removeStackFromSlot(final int index)
     {
-        if (this.stacks[index] != null)
-        {
-            final ItemStack itemstack = this.stacks[index];
-            this.stacks[index] = null;
-            return itemstack;
-        }
-        else
+        if (this.stacks[index] == null)
         {
             return null;
         }
+
+        final ItemStack itemstack = this.stacks[index];
+        this.stacks[index] = null;
+        return itemstack;
     }
 
     /**
@@ -624,7 +627,7 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Do not give this method the name canInteractWith because it clashes with Container
+     * Do not give this method the name canInteractWith because it clashes with Container.
      *
      * @param player the player acessing the inventory.
      * @return if the player is allowed to access.
@@ -649,7 +652,7 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Get the formatted TextComponent that will be used for the sender's username in chat
+     * Get the formatted TextComponent that will be used for the sender's username in chat.
      */
     @NotNull
     @Override
@@ -766,12 +769,6 @@ public class InventoryCitizen implements IInventory
 
         compound.setTag(TAG_INVENTORY, nbttaglist);
     }
-
-
-
-
-
-
 
 
     //-----------------------------Material Handling--------------------------------

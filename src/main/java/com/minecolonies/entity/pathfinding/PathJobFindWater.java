@@ -11,28 +11,25 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * Find and return a path to the nearest water
+ * Find and return a path to the nearest water.
  * Created: March 25, 2016
- *
- * @author Raycoms
  */
-
 public class PathJobFindWater extends AbstractPathJob
 {
     private static final int MIN_DISTANCE = 40;
     private static final int MAX_RANGE    = 250;
-    private BlockPos hutLocation;
+    private final BlockPos hutLocation;
     @NotNull
-    private ArrayList<BlockPos> ponds = new ArrayList<>();
+    private final ArrayList<BlockPos> ponds;
 
     /**
-     * AbstractPathJob constructor
+     * AbstractPathJob constructor.
      *
-     * @param world the world within which to path
-     * @param start the start position from which to path from
-     * @param home  the position of the workers hut
-     * @param range maximum path range
-     * @param ponds already visited fishing places
+     * @param world the world within which to path.
+     * @param start the start position from which to path from.
+     * @param home  the position of the workers hut.
+     * @param range maximum path range.
+     * @param ponds already visited fishing places.
      */
     PathJobFindWater(final World world, @NotNull final BlockPos start, final BlockPos home, final int range, @NotNull final List<BlockPos> ponds)
     {
@@ -94,15 +91,16 @@ public class PathJobFindWater extends AbstractPathJob
             return false;
         }
 
-        if (n.pos.getX() != n.parent.pos.getX())
-        {
-            final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
-            return isWater(n.pos.add(dx, -1, 0)) || isWater(n.pos.add(0, -1, -1)) || isWater(n.pos.add(0, -1, 1));
-        }
-        else//z
+        if (n.pos.getX() == n.parent.pos.getX())
         {
             final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
             return isWater(n.pos.add(0, -1, dz)) || isWater(n.pos.add(-1, -1, 0)) || isWater(n.pos.add(1, -1, 0));
+
+        }
+        else
+        {
+            final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
+            return isWater(n.pos.add(dx, -1, 0)) || isWater(n.pos.add(0, -1, -1)) || isWater(n.pos.add(0, -1, 1));
         }
     }
 

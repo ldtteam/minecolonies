@@ -9,6 +9,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 public abstract class AbstractItemMinecolonies extends Item
 {
+    /**
+     * The name of the item.
+     */
     private final String name;
 
     /**
@@ -27,9 +30,9 @@ public abstract class AbstractItemMinecolonies extends Item
     }
 
     /**
-     * Returns the name of the item
+     * Returns the name of the item.
      *
-     * @return Name of the item
+     * @return Name of the item.
      */
     public final String getName()
     {

@@ -123,7 +123,7 @@ public class Structure
     }
 
     /**
-     * reads a template from an inputstream
+     * Reads a template from an inputstream.
      */
     private static Template readTemplateFromStream(final InputStream stream) throws IOException
     {

@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Add or Update a ColonyView on the client
+ * Add or Update a ColonyView on the client.
  */
 public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandler<ColonyViewRemoveBuildingMessage, IMessage>
 {
@@ -28,10 +28,10 @@ public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandle
     }
 
     /**
-     * Creates an object for the building remove message
+     * Creates an object for the building remove message.
      *
-     * @param colony   Colony the building is in
-     * @param building AbstractBuilding that is removed
+     * @param colony   Colony the building is in.
+     * @param building AbstractBuilding that is removed.
      */
     public ColonyViewRemoveBuildingMessage(@NotNull final Colony colony, final BlockPos building)
     {

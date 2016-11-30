@@ -361,7 +361,7 @@ public final class BlockUtils
     }
 
     /**
-     * Checks if a certain block is a pathBlock (roadBlock)
+     * Checks if a certain block is a pathBlock (roadBlock).
      * @param block the block to analyze.
      * @return true if is so.
      */

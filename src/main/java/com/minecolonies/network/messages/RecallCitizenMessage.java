@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Recalls the citizen to the hut
+ * Recalls the citizen to the hut.
  * Created: May 26, 2014
  *
  * @author Colton
@@ -39,9 +39,9 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
     }
 
     /**
-     * Object creation for the recall
+     * Object creation for the recall.
      *
-     * @param building View of the building the citizen is working in
+     * @param building View of the building the citizen is working in.
      */
     public RecallCitizenMessage(@NotNull final AbstractBuildingWorker.View building)
     {

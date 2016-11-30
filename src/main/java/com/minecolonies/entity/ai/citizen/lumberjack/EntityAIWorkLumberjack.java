@@ -107,7 +107,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private static final int   WAIT_BEFORE_INCREMENT   = 20;
     /**
-     * The amount of time to wait while walking to items
+     * The amount of time to wait while walking to items.
      */
     private static final int   WAIT_WHILE_WALKING      = 5;
     /**

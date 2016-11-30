@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Class used to store
+ * Class used to store.
  */
 public final class Settings
 {
@@ -17,6 +17,9 @@ public final class Settings
      */
     public static final Settings                 instance  = new Settings();
     private final       BlockPos.MutableBlockPos offset    = new BlockPos.MutableBlockPos();
+    /**
+     * The position of the structure.
+     */
     public              BlockPos                 pos       = null;
     private             boolean                  inHutMode = true;
     @Nullable
@@ -66,13 +69,13 @@ public final class Settings
      */
     public void setActiveSchematic(final Structure structure)
     {
-        if (structure != null)
+        if (structure == null)
         {
-            this.structure = structure;
+            reset();
         }
         else
         {
-            reset();
+            this.structure = structure;
         }
     }
 

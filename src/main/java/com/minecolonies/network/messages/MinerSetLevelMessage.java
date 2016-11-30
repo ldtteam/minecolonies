@@ -12,6 +12,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Message to set the level of the miner from the GUI.
+ */
 public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, IMessage>
 {
     private int      colonyId;
@@ -27,10 +30,10 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
     }
 
     /**
-     * Creates object for the miner set level message
+     * Creates object for the miner set level message.
      *
-     * @param building View of the building to read data from
-     * @param level    Level of the miner
+     * @param building View of the building to read data from.
+     * @param level    Level of the miner.
      */
     public MinerSetLevelMessage(@NotNull final BuildingMiner.View building, final int level)
     {
@@ -70,12 +73,9 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
             }
 
             @Nullable final BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
-            if (building != null)
+            if (building != null && message.level >= 0 && message.level < building.getNumberOfLevels())
             {
-                if (message.level >= 0 && message.level < building.getNumberOfLevels())
-                {
-                    building.setCurrentLevel(message.level);
-                }
+                building.setCurrentLevel(message.level);
             }
         }
     }

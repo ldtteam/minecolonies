@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage, IMessage>
 {
     /**
-     * Language key for missing hut message
+     * Language key for missing hut message.
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
     private String   hutDec;
@@ -132,7 +132,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param rotation The number of times the schematic should be rotated.
      * @param buildPos The location the hut is being placed.
      */
-    private static void handleHut(@NotNull final World world, @NotNull final EntityPlayer player, final String hut, final String style, final int rotation, @NotNull final BlockPos buildPos)
+    private static void handleHut(@NotNull final World world, @NotNull final EntityPlayer player,
+            final String hut, final String style, final int rotation, @NotNull final BlockPos buildPos)
     {
         if (Structures.getStylesForHut(hut) == null)
         {
@@ -199,7 +200,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param rotation   The number of times the decoration is rotated.
      * @param buildPos   The location the decoration will be built.
      */
-    private static void handleDecoration(@NotNull final World world, @NotNull final EntityPlayer player, final String decoration, final String style, final int rotation, @NotNull final BlockPos buildPos)
+    private static void handleDecoration(@NotNull final World world, @NotNull final EntityPlayer player,
+            final String decoration, final String style, final int rotation, @NotNull final BlockPos buildPos)
     {
         if (Structures.getStylesForDecoration(decoration) == null)
         {

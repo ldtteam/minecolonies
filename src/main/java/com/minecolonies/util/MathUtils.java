@@ -11,17 +11,17 @@ public final class MathUtils
     private static final int NANO_TIME_DIVIDER = 1000 * 1000 * 1000;
 
     /**
-     * Private constructor to hide the public one
+     * Private constructor to hide the public one.
      */
     private MathUtils()
     {
     }
 
     /**
-     * Returns the square product of a number
+     * Returns the square product of a number.
      *
-     * @param number Number to square
-     * @return Answer of calculation
+     * @param number Number to square.
+     * @return Answer of calculation.
      */
     public static double square(final double number)
     {
@@ -29,10 +29,10 @@ public final class MathUtils
     }
 
     /**
-     * Reduces nanosecond time to seconds
+     * Reduces nanosecond time to seconds.
      *
-     * @param nanoSeconds as input
-     * @return nanoSeconds to seconds
+     * @param nanoSeconds as input.
+     * @return nanoSeconds to seconds.
      */
     public static long nanoSecondsToSeconds(final long nanoSeconds)
     {

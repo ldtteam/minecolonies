@@ -15,10 +15,21 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
 {
     private static final double TIE_BREAKER = 1.001D;
 
+    /**
+     * Position to run to, in order to avoid something.
+     */
     @NotNull
     protected final BlockPos avoid;
+
+    /**
+     * Heuristic point used for calculation.
+     */
     @NotNull
     protected final BlockPos heuristicPoint;
+
+    /**
+     * Required avoidDistance.
+     */
     protected final int      avoidDistance;
 
     /**
@@ -48,9 +59,9 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     }
 
     /**
-     * Perform the search
+     * Perform the search.
      *
-     * @return Path of a path to the given location, a best-effort, or null
+     * @return Path of a path to the given location, a best-effort, or null.
      */
     @Nullable
     @Override
@@ -66,10 +77,10 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
     }
 
     /**
-     * For MoveAwayFromLocation we want our heuristic to weight
+     * For MoveAwayFromLocation we want our heuristic to weight.
      *
-     * @param pos Position to compute heuristic from
-     * @return heuristic as a double - Manhatten Distance with tie-breaker
+     * @param pos Position to compute heuristic from.
+     * @return heuristic as a double - Manhatten Distance with tie-breaker.
      */
     @Override
     protected double computeHeuristic(@NotNull final BlockPos pos)
@@ -82,12 +93,23 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
     }
 
+    /**
+     * Checks if the destination has been reached.
+     * Meaning that the avoid distance has been reached.
+     * @param n Node to test.
+     * @return true if so.
+     */
     @Override
     protected boolean isAtDestination(@NotNull final Node n)
     {
         return getNodeResultScore(n) >= (avoidDistance * avoidDistance);
     }
 
+    /**
+     * Calculate the distance to the target.
+     * @param n Node to test.
+     * @return double amount.
+     */
     @Override
     protected double getNodeResultScore(@NotNull final Node n)
     {
