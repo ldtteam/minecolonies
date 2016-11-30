@@ -165,7 +165,7 @@ public class PaneParams
     {
         return getLocalizedStringAttribute(name, "");
     }
-    
+
     /**
      * Get the localized String attribute from the name and definition.
      * @param name the name.
