@@ -16,7 +16,7 @@ public class JobFarmer extends AbstractJob
      *
      * @param entity the entity to assign to the job.
      */
-    public JobFarmer(CitizenData entity)
+    public JobFarmer(final CitizenData entity)
     {
         super(entity);
     }

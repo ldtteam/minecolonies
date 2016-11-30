@@ -22,13 +22,13 @@ public class BuildingHome extends AbstractBuildingHut
     @NotNull
     private              List<CitizenData> residents     = new ArrayList<>();
 
-    public BuildingHome(Colony c, BlockPos l)
+    public BuildingHome(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -55,13 +55,13 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
         if (!residents.isEmpty())
         {
-            @NotNull int[] residentIds = new int[residents.size()];
+            @NotNull final int[] residentIds = new int[residents.size()];
             for (int i = 0; i < residents.size(); ++i)
             {
                 residentIds[i] = residents.get(i).getId();
@@ -81,7 +81,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void removeCitizen(@NotNull CitizenData citizen)
+    public void removeCitizen(@NotNull final CitizenData citizen)
     {
         if (residents.contains(citizen))
         {
@@ -91,7 +91,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void onWorldTick(@NotNull TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         if (event.phase != TickEvent.Phase.END)
         {
@@ -143,7 +143,7 @@ public class BuildingHome extends AbstractBuildingHut
      *
      * @param citizen Citizen to add
      */
-    private void addResident(@NotNull CitizenData citizen)
+    private void addResident(@NotNull final CitizenData citizen)
     {
         residents.add(citizen);
         citizen.setHomeBuilding(this);
@@ -173,7 +173,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
 
@@ -185,7 +185,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void setBuildingLevel(int level)
+    public void setBuildingLevel(final int level)
     {
         super.setBuildingLevel(level);
         getColony().calculateMaxCitizens();
@@ -197,7 +197,7 @@ public class BuildingHome extends AbstractBuildingHut
      * @param citizen Citizen to check
      * @return True if citizen lives here, otherwise false
      */
-    public boolean hasResident(CitizenData citizen)
+    public boolean hasResident(final CitizenData citizen)
     {
         return residents.contains(citizen);
     }
@@ -215,7 +215,7 @@ public class BuildingHome extends AbstractBuildingHut
          * @param c the colonyView.
          * @param l the position the hut is at.
          */
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -234,7 +234,7 @@ public class BuildingHome extends AbstractBuildingHut
         }
 
         @Override
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
 

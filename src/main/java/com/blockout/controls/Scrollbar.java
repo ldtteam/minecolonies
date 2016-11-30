@@ -17,19 +17,19 @@ public class Scrollbar extends Pane
     protected int     barClickY  = 0;
     protected boolean barClicked = false;
 
-    public Scrollbar(ScrollingContainer container, PaneParams params)
+    public Scrollbar(final ScrollingContainer container, final PaneParams params)
     {
         this(container);
         //  TODO: Parse Scrollbar-specific Params
     }
 
-    public Scrollbar(ScrollingContainer container)
+    public Scrollbar(final ScrollingContainer container)
     {
         super();
         this.container = container;
     }
 
-    public void dragScroll(int my)
+    public void dragScroll(final int my)
     {
         final int barClickYNow = getScrollBarYPos() + barClickY;
         final int deltaFromClickPos = my - barClickYNow;
@@ -49,7 +49,7 @@ public class Scrollbar extends Pane
     }
 
     @Override
-    public void drawSelf(int mx, int my)
+    public void drawSelf(final int mx, final int my)
     {
         barClicked = barClicked && Mouse.isButtonDown(0);
         if (barClicked)
@@ -83,7 +83,7 @@ public class Scrollbar extends Pane
     }
 
     @Override
-    public void handleClick(int mx, int my)
+    public void handleClick(final int mx, final int my)
     {
         if (getContentHeightDiff() <= 0)
         {

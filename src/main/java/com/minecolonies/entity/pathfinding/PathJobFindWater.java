@@ -34,7 +34,7 @@ public class PathJobFindWater extends AbstractPathJob
      * @param range maximum path range
      * @param ponds already visited fishing places
      */
-    PathJobFindWater(World world, @NotNull BlockPos start, BlockPos home, int range, @NotNull List<BlockPos> ponds)
+    PathJobFindWater(final World world, @NotNull final BlockPos start, final BlockPos home, final int range, @NotNull final List<BlockPos> ponds)
     {
         super(world, start, start, range, new WaterPathResult());
         this.ponds = new ArrayList<>(ponds);
@@ -57,7 +57,7 @@ public class PathJobFindWater extends AbstractPathJob
         public boolean  isEmpty;
     }
 
-    private static double squareDistance(@NotNull BlockPos currentPond, @NotNull BlockPos nextPond)
+    private static double squareDistance(@NotNull final BlockPos currentPond, @NotNull final BlockPos nextPond)
     {
         return currentPond.distanceSq(nextPond.getX(), nextPond.getY(), nextPond.getZ());
     }
@@ -70,11 +70,11 @@ public class PathJobFindWater extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(@NotNull BlockPos pos)
+    protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        int dx = pos.getX() - hutLocation.getX();
-        int dy = pos.getY() - hutLocation.getY();
-        int dz = pos.getZ() - hutLocation.getZ();
+        final int dx = pos.getX() - hutLocation.getX();
+        final int dy = pos.getY() - hutLocation.getY();
+        final int dz = pos.getZ() - hutLocation.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.501D;
@@ -82,7 +82,7 @@ public class PathJobFindWater extends AbstractPathJob
 
     //Overrides the Superclass in order to find only ponds of water with follow the wished conditions
     @Override
-    protected boolean isAtDestination(@NotNull Node n)
+    protected boolean isAtDestination(@NotNull final Node n)
     {
         if (n.parent == null)
         {
@@ -96,12 +96,12 @@ public class PathJobFindWater extends AbstractPathJob
 
         if (n.pos.getX() != n.parent.pos.getX())
         {
-            int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
+            final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
             return isWater(n.pos.add(dx, -1, 0)) || isWater(n.pos.add(0, -1, -1)) || isWater(n.pos.add(0, -1, 1));
         }
         else//z
         {
-            int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
+            final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
             return isWater(n.pos.add(0, -1, dz)) || isWater(n.pos.add(-1, -1, 0)) || isWater(n.pos.add(1, -1, 0));
         }
     }
@@ -111,14 +111,14 @@ public class PathJobFindWater extends AbstractPathJob
      * @param newPond the location.
      * @return true if so.
      */
-    private boolean isWater(@NotNull BlockPos newPond)
+    private boolean isWater(@NotNull final BlockPos newPond)
     {
         if (ponds.contains(newPond) || pondsAreNear(ponds, newPond))
         {
             return false;
         }
 
-        @Nullable Pond pond = Pond.createWater(world, newPond);
+        @Nullable final Pond pond = Pond.createWater(world, newPond);
 
         if (pond != null)
         {
@@ -136,7 +136,7 @@ public class PathJobFindWater extends AbstractPathJob
      * @param newPond the pond.
      * @return a predicate of the position.
      */
-    private static Predicate<BlockPos> generateDistanceFrom(int range, @NotNull BlockPos newPond)
+    private static Predicate<BlockPos> generateDistanceFrom(final int range, @NotNull final BlockPos newPond)
     {
         return pond -> squareDistance(pond, newPond) < range;
     }
@@ -147,18 +147,18 @@ public class PathJobFindWater extends AbstractPathJob
      * @param newPond the position.
      * @return true if so.
      */
-    private static boolean pondsAreNear(@NotNull ArrayList<BlockPos> ponds, @NotNull BlockPos newPond)
+    private static boolean pondsAreNear(@NotNull final ArrayList<BlockPos> ponds, @NotNull final BlockPos newPond)
     {
         if (ponds.isEmpty())
         {
             return false;
         }
-        @NotNull Predicate<BlockPos> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
+        @NotNull final Predicate<BlockPos> compare = generateDistanceFrom(MIN_DISTANCE, newPond);
         return ponds.stream().anyMatch(compare);
     }
 
     @Override
-    protected double getNodeResultScore(Node n)
+    protected double getNodeResultScore(final Node n)
     {
         return 0;
     }

@@ -31,9 +31,9 @@ public class DistanceSquaredTest extends AbstractTest
     /**
      * Tests the distance between two BlockPos and checks if it overflows.
      */
-    private void testDistance2D(BlockPos posA, BlockPos posB)
+    private void testDistance2D(final BlockPos posA, final BlockPos posB)
     {
-        long distance = BlockPosUtil.getDistanceSquared2D(posA, posB);
+        final long distance = BlockPosUtil.getDistanceSquared2D(posA, posB);
 
         assertThat("2Dim distance between " + posA + " and " + posB, distance, greaterThanOrEqualTo(0L));
     }
@@ -41,9 +41,9 @@ public class DistanceSquaredTest extends AbstractTest
     /**
      * Tests the distance between two BlockPos and checks if it overflows.
      */
-    private void testDistance3D(BlockPos posA, BlockPos posB)
+    private void testDistance3D(final BlockPos posA, final BlockPos posB)
     {
-        long distance = BlockPosUtil.getDistanceSquared(posA, posB);
+        final long distance = BlockPosUtil.getDistanceSquared(posA, posB);
 
         assertThat("3Dim distance between " + posA + " and " + posB, distance, greaterThanOrEqualTo(0L));
     }
@@ -75,7 +75,7 @@ public class DistanceSquaredTest extends AbstractTest
     @Test
     public void testDistance2DTwoPositionsRandomValues()
     {
-        Random random = this.getRandom();
+        final Random random = this.getRandom();
         for (int i = 0; i < 100; i++)
         {
             final BlockPos posA = new BlockPos(random.nextInt(MAX_POSITION), 0, random.nextInt(MAX_POSITION));
@@ -112,7 +112,7 @@ public class DistanceSquaredTest extends AbstractTest
     @Test
     public void testDistance3DTwoPositionsRandomValues()
     {
-        Random random = this.getRandom();
+        final Random random = this.getRandom();
         for (int i = 0; i < 100; i++)
         {
             final BlockPos posA = new BlockPos(random.nextInt(MAX_POSITION), random.nextInt(MAX_HEIGHT), random.nextInt(MAX_POSITION));

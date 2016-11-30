@@ -31,21 +31,21 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
      * @param nbttagcompound the stream.
      * @param storeAt string describing where to store the scan.
      */
-    public SaveScanMessage(NBTTagCompound nbttagcompound, String storeAt)
+    public SaveScanMessage(final NBTTagCompound nbttagcompound, final String storeAt)
     {
         this.nbttagcompound = nbttagcompound;
         this.storeLocation = storeAt;
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         nbttagcompound = ByteBufUtils.readTag(buf);
         storeLocation = ByteBufUtils.readUTF8String(buf);
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         ByteBufUtils.writeTag(buf, nbttagcompound);
         ByteBufUtils.writeUTF8String(buf, storeLocation);
@@ -53,7 +53,7 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull SaveScanMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull final SaveScanMessage message, final MessageContext ctx)
     {
         ClientStructureWrapper.handleSaveScanMessage(message.nbttagcompound, message.storeLocation);
         return null;

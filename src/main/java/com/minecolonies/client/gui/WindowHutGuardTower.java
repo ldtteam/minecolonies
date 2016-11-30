@@ -143,7 +143,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      *
      * @param building {@link BuildingGuardTower.View}
      */
-    public WindowHutGuardTower(BuildingGuardTower.View building)
+    public WindowHutGuardTower(final BuildingGuardTower.View building)
     {
         super(building, Constants.MOD_ID + HUT_GUARD_TOWER_RESOURCE_SUFFIX);
 
@@ -172,7 +172,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      */
     private void handleButtons()
     {
-        Button buttonJob = this.findPaneOfTypeByID(BUTTON_JOB, Button.class);
+        final Button buttonJob = this.findPaneOfTypeByID(BUTTON_JOB, Button.class);
 
         if(job != null)
         {
@@ -290,7 +290,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      * Send message to player to add scepter to his inventory.
      * @param localTask the task to execute with the scepter.
      */
-    private void givePlayerScepter(BuildingGuardTower.Task localTask)
+    private void givePlayerScepter(final BuildingGuardTower.Task localTask)
     {
         MineColonies.getNetwork().sendToServer(new GuardScepterMessage(localTask.ordinal(), building.getID()));
     }
@@ -399,7 +399,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
                 }
 
                 @Override
-                public void updateElement(int index, @NotNull Pane rowPane)
+                public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
                     final BlockPos pos = patrolTargets.get(index);
                     rowPane.findPaneOfTypeByID("position", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
@@ -417,7 +417,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
                 }
 
                 @Override
-                public void updateElement(int index, @NotNull Pane rowPane)
+                public void updateElement(final int index, @NotNull final Pane rowPane)
                 {
                     final BlockPos pos = building.guardPos;
                     rowPane.findPaneOfTypeByID("position", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
@@ -427,7 +427,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     }
 
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@NotNull final Button button)
     {
         switch (button.getID())
         {
@@ -458,7 +458,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
             patrolList.hide();
         }
 
-        String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_ACTIONS))
         {
             pullInfoFromHut();

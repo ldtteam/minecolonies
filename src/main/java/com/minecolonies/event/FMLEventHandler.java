@@ -18,7 +18,7 @@ public class FMLEventHandler
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
     @SubscribeEvent
-    public void onServerTick(TickEvent.ServerTickEvent event)
+    public void onServerTick(final TickEvent.ServerTickEvent event)
     {
         ColonyManager.onServerTick(event);
     }
@@ -30,7 +30,7 @@ public class FMLEventHandler
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent}
      */
     @SubscribeEvent
-    public void onClientTick(TickEvent.ClientTickEvent event)
+    public void onClientTick(final TickEvent.ClientTickEvent event)
     {
         ColonyManager.onClientTick(event);
     }
@@ -42,7 +42,7 @@ public class FMLEventHandler
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
     @SubscribeEvent
-    public void onWorldTick(TickEvent.WorldTickEvent event)
+    public void onWorldTick(final TickEvent.WorldTickEvent event)
     {
         ColonyManager.onWorldTick(event);
     }
@@ -54,7 +54,7 @@ public class FMLEventHandler
      * @param event {@link net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent}
      */
     @SubscribeEvent
-    public void onPlayerLogin(@NotNull PlayerEvent.PlayerLoggedInEvent event)
+    public void onPlayerLogin(@NotNull final PlayerEvent.PlayerLoggedInEvent event)
     {
         if (event.player instanceof EntityPlayerMP)
         {

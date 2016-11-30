@@ -36,7 +36,7 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
      * @param building       View of the building to read data from.
      * @param assignmentMode assignmentMode of the particular farmer.
      */
-    public AssignmentModeMessage(@NotNull BuildingFarmer.View building, boolean assignmentMode)
+    public AssignmentModeMessage(@NotNull final BuildingFarmer.View building, final boolean assignmentMode)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -45,7 +45,7 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -53,7 +53,7 @@ public class AssignmentModeMessage extends AbstractMessage<AssignmentModeMessage
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);

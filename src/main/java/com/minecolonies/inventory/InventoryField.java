@@ -90,7 +90,7 @@ public class InventoryField implements IInventory
      *
      * @param compound with the give tag.
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         final NBTTagList nbttaglist = compound.getTagList(TAG_ITEMS, Constants.NBT.TAG_COMPOUND);
         this.stackResult = new ItemStack[this.getSizeInventory()];
@@ -125,14 +125,14 @@ public class InventoryField implements IInventory
      * @return the itemStack in it.
      */
     @Override
-    public ItemStack getStackInSlot(int index)
+    public ItemStack getStackInSlot(final int index)
     {
         return this.stackResult[0];
     }
 
     @Nullable
     @Override
-    public ItemStack decrStackSize(int index, int count)
+    public ItemStack decrStackSize(final int index, final int count)
     {
         if (this.stackResult[index] == null)
         {
@@ -181,7 +181,7 @@ public class InventoryField implements IInventory
      * @param stack the itemStack to set.
      */
     @Override
-    public void setInventorySlotContents(int index, @Nullable ItemStack stack)
+    public void setInventorySlotContents(final int index, @Nullable final ItemStack stack)
     {
         this.stackResult[index] = stack;
 
@@ -250,7 +250,7 @@ public class InventoryField implements IInventory
      * @return the value of the field.
      */
     @Override
-    public int getField(int id)
+    public int getField(final int id)
     {
         return 0;
     }
@@ -262,7 +262,7 @@ public class InventoryField implements IInventory
      * @param value some value.
      */
     @Override
-    public void setField(int id, int value)
+    public void setField(final int id, final int value)
     {
         /*
          * We currently need no fields.
@@ -297,7 +297,7 @@ public class InventoryField implements IInventory
      *
      * @param compound with the given tag.
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         @NotNull final NBTTagList nbttaglist = new NBTTagList();
 

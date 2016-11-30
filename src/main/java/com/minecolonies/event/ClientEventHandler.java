@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class ClientEventHandler
 {
     @SubscribeEvent
-    public void renderWorldLastEvent(@NotNull RenderWorldLastEvent event)
+    public void renderWorldLastEvent(@NotNull final RenderWorldLastEvent event)
     {
         Pathfinding.debugDraw(event.getPartialTicks());
     }

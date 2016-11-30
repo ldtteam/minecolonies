@@ -34,7 +34,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the position.
      */
-    public BuildingLumberjack(Colony c, BlockPos l)
+    public BuildingLumberjack(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -100,7 +100,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public AbstractJob createJob(CitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobLumberjack(citizen);
     }
@@ -116,7 +116,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the position.
          */
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

@@ -40,7 +40,7 @@ public class WorkManager
      *
      * @param c Colony the work manager is for.
      */
-    public WorkManager(Colony c)
+    public WorkManager(final Colony c)
     {
         colony = c;
     }
@@ -50,7 +50,7 @@ public class WorkManager
      *
      * @param order {@link AbstractWorkOrder} to remove
      */
-    public void removeWorkOrder(@NotNull AbstractWorkOrder order)
+    public void removeWorkOrder(@NotNull final AbstractWorkOrder order)
     {
         removeWorkOrder(order.getID());
     }
@@ -60,7 +60,7 @@ public class WorkManager
      *
      * @param orderId ID of the order to remove
      */
-    public void removeWorkOrder(int orderId)
+    public void removeWorkOrder(final int orderId)
     {
         workOrders.remove(orderId);
         colony.removeWorkOrder(orderId);
@@ -75,13 +75,13 @@ public class WorkManager
      * @return the work order of the specified id, or null if it was not found or is of an incompatible type
      */
     @Nullable
-    public <W extends AbstractWorkOrder> W getWorkOrder(int id, @NotNull Class<W> type)
+    public <W extends AbstractWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
     {
         try
         {
             return type.cast(getWorkOrder(id));
         }
-        catch (ClassCastException exc)
+        catch (final ClassCastException exc)
         {
             Log.getLogger().catching(exc);
         }
@@ -95,7 +95,7 @@ public class WorkManager
      * @param id the id of the work order
      * @return the work order of the specified id, or null
      */
-    public AbstractWorkOrder getWorkOrder(int id)
+    public AbstractWorkOrder getWorkOrder(final int id)
     {
         return workOrders.get(id);
     }
@@ -108,7 +108,7 @@ public class WorkManager
      * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found
      */
     @Nullable
-    public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(@NotNull Class<W> type)
+    public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
     {
         for (@NotNull final AbstractWorkOrder o : workOrders.values())
         {
@@ -128,7 +128,7 @@ public class WorkManager
      * @param <W>  the type of work order to return.
      * @return a list of all work orders of the given type
      */
-    public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(@NotNull Class<W> type)
+    public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
     {
         return workOrders.values().stream().filter(o -> type.isAssignableFrom(o.getClass())).map(type::cast).collect(Collectors.toList());
     }
@@ -149,7 +149,7 @@ public class WorkManager
      *
      * @param citizen Citizen to unclaim work for.
      */
-    public void clearWorkForCitizen(@NotNull CitizenData citizen)
+    public void clearWorkForCitizen(@NotNull final CitizenData citizen)
     {
         dirty = true;
         workOrders.values().stream().filter(o -> o.isClaimedBy(citizen)).forEach(AbstractWorkOrder::clearClaimedBy);
@@ -160,7 +160,7 @@ public class WorkManager
      *
      * @param compound Compound to save to
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         //  Work Orders
         @NotNull final NBTTagList list = new NBTTagList();
@@ -178,7 +178,7 @@ public class WorkManager
      *
      * @param compound Compound to read from
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         //  Work Orders
         final NBTTagList list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
@@ -208,7 +208,7 @@ public class WorkManager
      *
      * @param order Order to add
      */
-    public void addWorkOrder(@NotNull AbstractWorkOrder order)
+    public void addWorkOrder(@NotNull final AbstractWorkOrder order)
     {
         dirty = true;
 
@@ -227,7 +227,7 @@ public class WorkManager
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
-    public void onWorldTick(@NotNull TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         if (event.phase == TickEvent.Phase.END)
         {

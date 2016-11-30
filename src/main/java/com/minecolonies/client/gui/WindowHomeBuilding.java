@@ -16,7 +16,7 @@ public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View
      *
      * @param building View of the home building
      */
-    public WindowHomeBuilding(BuildingHome.View building)
+    public WindowHomeBuilding(final BuildingHome.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
     }

@@ -28,7 +28,7 @@ public class FakeWorld extends World
      * @param profilerIn profiler.
      * @param client and if is client.
      */
-	public FakeWorld(IBlockState blockState, ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, Profiler profilerIn, boolean client)
+	public FakeWorld(final IBlockState blockState, final ISaveHandler saveHandlerIn, final WorldInfo info, final WorldProvider providerIn, final Profiler profilerIn, final boolean client)
     {
 		super(saveHandlerIn, info, providerIn, profilerIn, client);
 		this.blockState = blockState;
@@ -45,7 +45,7 @@ public class FakeWorld extends World
 	}
 
 	@Override
-	protected boolean isChunkLoaded(int x, int z, boolean allowEmpty)
+	protected boolean isChunkLoaded(final int x, final int z, final boolean allowEmpty)
     {
 		 /*
          * Intentionally left empty.
@@ -54,13 +54,13 @@ public class FakeWorld extends World
 	}
 	
 	@Override
-    public TileEntity getTileEntity(BlockPos pos){
+    public TileEntity getTileEntity(final BlockPos pos){
     	return null;
     }
 	
     @NotNull
     @Override
-    public IBlockState getBlockState(BlockPos pos){
+    public IBlockState getBlockState(final BlockPos pos){
     	return this.blockState;
     }
 }

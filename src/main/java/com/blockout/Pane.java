@@ -50,7 +50,7 @@ public class Pane extends Gui
      *
      * @param params Params for the Pane
      */
-    public Pane(@NotNull PaneParams params)
+    public Pane(@NotNull final PaneParams params)
     {
         super();
         id = params.getStringAttribute("id", id);
@@ -119,7 +119,7 @@ public class Pane extends Gui
         // Can be overloaded
     }
 
-    public void parseChildren(PaneParams params)
+    public void parseChildren(final PaneParams params)
     {
         // Can be overloaded
     }
@@ -130,24 +130,24 @@ public class Pane extends Gui
         return id;
     }
 
-    public final void setID(String id)
+    public final void setID(final String id)
     {
         this.id = id;
     }
 
-    public void setSize(int w, int h)
+    public void setSize(final int w, final int h)
     {
         width = w;
         height = h;
     }
 
-    public void setPosition(int newX, int newY)
+    public void setPosition(final int newX, final int newY)
     {
         x = newX;
         y = newY;
     }
 
-    public void moveBy(int dx, int dy)
+    public void moveBy(final int dx, final int dy)
     {
         x += dx;
         y += dy;
@@ -158,7 +158,7 @@ public class Pane extends Gui
         return alignment;
     }
 
-    public void setAlignment(Alignment alignment)
+    public void setAlignment(final Alignment alignment)
     {
         this.alignment = alignment;
     }
@@ -169,7 +169,7 @@ public class Pane extends Gui
         return visible;
     }
 
-    public void setVisible(boolean v)
+    public void setVisible(final boolean v)
     {
         visible = v;
     }
@@ -190,7 +190,7 @@ public class Pane extends Gui
         return enabled;
     }
 
-    public void setEnabled(boolean e)
+    public void setEnabled(final boolean e)
     {
         enabled = e;
     }
@@ -231,7 +231,7 @@ public class Pane extends Gui
      *
      * @param f Pane to focus, or nil
      */
-    public static synchronized void setFocus(Pane f)
+    public static synchronized void setFocus(final Pane f)
     {
         if (focus != null)
         {
@@ -252,7 +252,7 @@ public class Pane extends Gui
      * @param mx mouse x
      * @param my mouse y
      */
-    public final void draw(int mx, int my)
+    public final void draw(final int mx, final int my)
     {
         if (visible)
         {
@@ -281,7 +281,7 @@ public class Pane extends Gui
      * @param mx Mouse x (relative to parent)
      * @param my Mouse y (relative to parent)
      */
-    protected void drawSelf(int mx, int my)
+    protected void drawSelf(final int mx, final int my)
     {
         // Can be overloaded
     }
@@ -293,7 +293,7 @@ public class Pane extends Gui
      * @param my point y
      * @return true if the point is in the pane
      */
-    protected boolean isPointInPane(int mx, int my)
+    protected boolean isPointInPane(final int mx, final int my)
     {
         return mx >= x && mx < (x + width) &&
                  my >= y && my < (y + height);
@@ -322,14 +322,14 @@ public class Pane extends Gui
      * @param <T>  The type of pane returned
      * @return a Pane of the given ID, if it matches the specified type
      */
-    public final <T extends Pane> T findPaneOfTypeByID(String id, @NotNull Class<T> type)
+    public final <T extends Pane> T findPaneOfTypeByID(final String id, @NotNull final Class<T> type)
     {
         final @Nullable Pane p = findPaneByID(id);
         try
         {
             return type.cast(p);
         }
-        catch (ClassCastException e)
+        catch (final ClassCastException e)
         {
             throw new IllegalArgumentException(String.format("No pane with id %s and type %s was found.", id, type), e);
         }
@@ -345,7 +345,7 @@ public class Pane extends Gui
      * @return a Pane of the given ID
      */
     @Nullable
-    public Pane findPaneByID(String id)
+    public Pane findPaneByID(final String id)
     {
         return this.id.equals(id) ? this : null;
     }
@@ -370,7 +370,7 @@ public class Pane extends Gui
         return window;
     }
 
-    protected void setWindow(Window w)
+    protected void setWindow(final Window w)
     {
         window = w;
     }
@@ -380,7 +380,7 @@ public class Pane extends Gui
      *
      * @param newParent the View to put this Pane into, or null to remove from Parents
      */
-    public void putInside(View newParent)
+    public void putInside(final View newParent)
     {
         if (parent != null)
         {
@@ -410,13 +410,13 @@ public class Pane extends Gui
      * @param mx mouse X coordinate, relative to parent's top-left
      * @param my mouse Y coordinate, relative to parent's top-left
      */
-    public void click(int mx, int my)
+    public void click(final int mx, final int my)
     {
         setLastClickedPane(this);
         handleClick(mx - x, my - y);
     }
 
-    private static synchronized void setLastClickedPane(Pane pane)
+    private static synchronized void setLastClickedPane(final Pane pane)
     {
         lastClickedPane = pane;
     }
@@ -429,17 +429,17 @@ public class Pane extends Gui
      * @param mx mouse X coordinate, relative to Pane's top-left
      * @param my mouse Y coordinate, relative to Pane's top-left
      */
-    public void handleClick(int mx, int my)
+    public void handleClick(final int mx, final int my)
     {
         // Can be overloaded
     }
 
-    public boolean canHandleClick(int mx, int my)
+    public boolean canHandleClick(final int mx, final int my)
     {
         return visible && enabled && isPointInPane(mx, my);
     }
 
-    public boolean onKeyTyped(char ch, int key)
+    public boolean onKeyTyped(final char ch, final int key)
     {
         return false;
     }
@@ -504,7 +504,7 @@ public class Pane extends Gui
         {
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-            ScissorsInfo info = scissorsInfoStack.peek();
+            final ScissorsInfo info = scissorsInfoStack.peek();
             final int scale = Screen.getScale();
             GL11.glScissor(info.x * scale, mc.displayHeight - ((info.y + info.height) * scale), info.width * scale, info.height * scale);
         }
@@ -517,7 +517,7 @@ public class Pane extends Gui
         private int width;
         private int height;
 
-        ScissorsInfo(int x, int y, int w, int h)
+        ScissorsInfo(final int x, final int y, final int w, final int h)
         {
             this.x = x;
             this.y = y;

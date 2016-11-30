@@ -50,7 +50,7 @@ public class MaterialStore
      * @param type   What kind of inventory, Entity(INVENTORY) or AbstractBuilding(CHEST)
      * @param system The MaterialSystem associated with the colony
      */
-    public MaterialStore(Type type, @NotNull MaterialSystem system)
+    public MaterialStore(final Type type, @NotNull final MaterialSystem system)
     {
         this.type = type;
         this.system = system;
@@ -94,9 +94,9 @@ public class MaterialStore
      * @param material Material that we are checking
      * @return How many of material that we have
      */
-    public int getMaterialCount(Material material)
+    public int getMaterialCount(final Material material)
     {
-        Integer count = dontNeed.get(material);
+        final Integer count = dontNeed.get(material);
 
         return count == null ? 0 : count;
     }
@@ -108,22 +108,22 @@ public class MaterialStore
      * @param item     Item that is being added to the MaterialStore
      * @param quantity How much of item is being added
      */
-    public void addMaterial(Item item, int quantity)
+    public void addMaterial(final Item item, final int quantity)
     {
         addMaterial(system.getMaterial(item), quantity);
     }
 
-    private void addMaterial(@Nullable Material material, int quantity)
+    private void addMaterial(@Nullable final Material material, final int quantity)
     {
         if (quantity <= 0 || material == null)
         {
             return;
         }
 
-        Integer count = dontNeed.get(material);
+        final Integer count = dontNeed.get(material);
         if (count == null)
         {
-            Integer needCount = need.get(material);
+            final Integer needCount = need.get(material);
             if (needCount == null)
             {
                 dontNeed.put(material, quantity);
@@ -170,7 +170,7 @@ public class MaterialStore
      * @param block    Block that is being added to the MaterialStore
      * @param quantity How much of block is being added
      */
-    public void addMaterial(Block block, int quantity)
+    public void addMaterial(final Block block, final int quantity)
     {
         addMaterial(system.getMaterial(block), quantity);
     }
@@ -182,22 +182,22 @@ public class MaterialStore
      * @param item     Item that is being removed from the MaterialStore
      * @param quantity How much of item is being removed
      */
-    public void removeMaterial(Item item, int quantity)
+    public void removeMaterial(final Item item, final int quantity)
     {
         removeMaterial(system.getMaterial(item), quantity);
     }
 
-    private void removeMaterial(@Nullable Material material, int quantity)
+    private void removeMaterial(@Nullable final Material material, final int quantity)
     {
         if (quantity <= 0 || material == null)
         {
             return;
         }
 
-        Integer count = dontNeed.get(material);
+        final Integer count = dontNeed.get(material);
         if (count == null || count < quantity)
         {
-            Integer countNeed = haveNeed.get(material);
+            final Integer countNeed = haveNeed.get(material);
             if (count == null)
             {
                 if (countNeed == null || countNeed < quantity)
@@ -218,7 +218,7 @@ public class MaterialStore
             }
             else
             {
-                int countToRemove = quantity - count;
+                final int countToRemove = quantity - count;
                 if (countNeed == null || countNeed < countToRemove)
                 {
                     throw new QuantityNotFound("MaterialStore (dontNeed+haveNeed)", material.getID(), countNeed == null ? count : countNeed + count, quantity);
@@ -251,16 +251,16 @@ public class MaterialStore
         }
     }
 
-    private void removeMaterial(@NotNull Material material)
+    private void removeMaterial(@NotNull final Material material)
     {
-        int count = dontNeed.get(material);
+        final int count = dontNeed.get(material);
 
         dontNeed.remove(material);
 
         removeMaterialFromExternal(material, count);
     }
 
-    private void removeMaterialFromExternal(@NotNull Material material, int count)
+    private void removeMaterialFromExternal(@NotNull final Material material, final int count)
     {
         system.removeMaterial(material, count);
         material.remove(this);
@@ -273,7 +273,7 @@ public class MaterialStore
      * @param block    Block that is being removed from the MaterialStore
      * @param quantity How much of block is being removed
      */
-    public void removeMaterial(Block block, int quantity)
+    public void removeMaterial(final Block block, final int quantity)
     {
         removeMaterial(system.getMaterial(block), quantity);
     }
@@ -284,7 +284,7 @@ public class MaterialStore
      * @param item     Item that you need
      * @param quantity How much you need
      */
-    public void addNeededMaterial(Item item, int quantity)
+    public void addNeededMaterial(final Item item, final int quantity)
     {
         addNeededMaterial(system.getMaterial(item), quantity);
     }
@@ -295,7 +295,7 @@ public class MaterialStore
      * @param block    Block that you need
      * @param quantity How much you need
      */
-    public void addNeededMaterial(Block block, int quantity)
+    public void addNeededMaterial(final Block block, final int quantity)
     {
         addNeededMaterial(system.getMaterial(block), quantity);
     }
@@ -306,19 +306,19 @@ public class MaterialStore
      * @param item     Item that you need
      * @param quantity How much you need
      */
-    public void removeNeededMaterial(Item item, int quantity)
+    public void removeNeededMaterial(final Item item, final int quantity)
     {
         removeNeededMaterial(system.getMaterial(item), quantity);
     }
 
-    private void removeNeededMaterial(@Nullable Material material, int quantity)
+    private void removeNeededMaterial(@Nullable final Material material, final int quantity)
     {
         if (quantity <= 0 || material == null)
         {
             return;
         }
 
-        Integer count = haveNeed.get(material);
+        final Integer count = haveNeed.get(material);
         if (count != null)
         {
             if (count > quantity)
@@ -343,9 +343,9 @@ public class MaterialStore
         }
     }
 
-    private void removeFromNeededMap(@NotNull Material material, int quantity)
+    private void removeFromNeededMap(@NotNull final Material material, final int quantity)
     {
-        Integer count = need.get(material);
+        final Integer count = need.get(material);
         if (count == null || count < quantity)
         {
             throw new QuantityNotFound("MaterialStore (need)", material.getID(), count == null ? 0 : count, quantity);
@@ -366,19 +366,19 @@ public class MaterialStore
      * @param block    Block that you need
      * @param quantity How much you need
      */
-    public void removeNeededMaterial(Block block, int quantity)
+    public void removeNeededMaterial(final Block block, final int quantity)
     {
         removeNeededMaterial(system.getMaterial(block), quantity);
     }
 
-    private void addNeededMaterial(@Nullable Material material, int quantity)
+    private void addNeededMaterial(@Nullable final Material material, final int quantity)
     {
         if (quantity <= 0 || material == null)
         {
             return;
         }
 
-        Integer count = dontNeed.get(material);
+        final Integer count = dontNeed.get(material);
         if (count != null)
         {
             if (count >= quantity)
@@ -414,70 +414,70 @@ public class MaterialStore
      */
     public void clear()
     {
-        for (@NotNull Map.Entry<Material, Integer> entry : dontNeed.entrySet())
+        for (@NotNull final Map.Entry<Material, Integer> entry : dontNeed.entrySet())
         {
             removeMaterialFromExternal(entry.getKey(), entry.getValue());
         }
     }
 
-    public void readFromNBT(@NotNull NBTTagCompound nbtTagCompound)
+    public void readFromNBT(@NotNull final NBTTagCompound nbtTagCompound)
     {
-        NBTTagCompound compound = nbtTagCompound.getCompoundTag(TAG_MATERIAL_STORE);
+        final NBTTagCompound compound = nbtTagCompound.getCompoundTag(TAG_MATERIAL_STORE);
 
-        NBTTagList list = compound.getTagList(TAG_DONT_NEED, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList list = compound.getTagList(TAG_DONT_NEED, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); i++)
         {
-            NBTTagCompound tag = list.getCompoundTagAt(i);
+            final NBTTagCompound tag = list.getCompoundTagAt(i);
 
-            @NotNull Material material = new Material(tag.getInteger(TAG_ID));
+            @NotNull final Material material = new Material(tag.getInteger(TAG_ID));
 
             addMaterial(material, tag.getInteger(TAG_QUANTITY));
         }
 
 
-        NBTTagList listHaveNeed = compound.getTagList(TAG_HAVE_NEED, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList listHaveNeed = compound.getTagList(TAG_HAVE_NEED, Constants.NBT.TAG_COMPOUND);
         readMapFromNBT(listHaveNeed, haveNeed);
 
-        NBTTagList listNeed = compound.getTagList(TAG_NEED, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList listNeed = compound.getTagList(TAG_NEED, Constants.NBT.TAG_COMPOUND);
         readMapFromNBT(listNeed, need);
     }
 
-    private static void readMapFromNBT(@NotNull NBTTagList list, @NotNull Map<Material, Integer> map)
+    private static void readMapFromNBT(@NotNull final NBTTagList list, @NotNull final Map<Material, Integer> map)
     {
         for (int i = 0; i < list.tagCount(); i++)
         {
-            NBTTagCompound tag = list.getCompoundTagAt(i);
+            final NBTTagCompound tag = list.getCompoundTagAt(i);
 
-            Integer id = tag.getInteger(TAG_ID);
+            final Integer id = tag.getInteger(TAG_ID);
 
             map.put(new Material(id), tag.getInteger(TAG_QUANTITY));
         }
     }
 
-    public void writeToNBT(@NotNull NBTTagCompound nbtTagCompound)
+    public void writeToNBT(@NotNull final NBTTagCompound nbtTagCompound)
     {
-        @NotNull NBTTagCompound compound = new NBTTagCompound();
+        @NotNull final NBTTagCompound compound = new NBTTagCompound();
 
-        @NotNull NBTTagList dontNeedList = new NBTTagList();
+        @NotNull final NBTTagList dontNeedList = new NBTTagList();
         writeMapToNBT(dontNeedList, dontNeed);
         compound.setTag(TAG_DONT_NEED, dontNeedList);
 
-        @NotNull NBTTagList haveNeedList = new NBTTagList();
+        @NotNull final NBTTagList haveNeedList = new NBTTagList();
         writeMapToNBT(haveNeedList, haveNeed);
         compound.setTag(TAG_HAVE_NEED, haveNeedList);
 
-        @NotNull NBTTagList needList = new NBTTagList();
+        @NotNull final NBTTagList needList = new NBTTagList();
         writeMapToNBT(needList, need);
         compound.setTag(TAG_NEED, needList);
 
         nbtTagCompound.setTag(TAG_MATERIAL_STORE, compound);
     }
 
-    private static void writeMapToNBT(@NotNull NBTTagList compound, @NotNull Map<Material, Integer> map)
+    private static void writeMapToNBT(@NotNull final NBTTagList compound, @NotNull final Map<Material, Integer> map)
     {
-        for (@NotNull Map.Entry<Material, Integer> entry : map.entrySet())
+        for (@NotNull final Map.Entry<Material, Integer> entry : map.entrySet())
         {
-            @NotNull NBTTagCompound tag = new NBTTagCompound();
+            @NotNull final NBTTagCompound tag = new NBTTagCompound();
 
             tag.setInteger(TAG_ID, entry.getKey().hashCode());//hashCode is item ID
             tag.setInteger(TAG_QUANTITY, entry.getValue());

@@ -29,7 +29,7 @@ public final class ExperienceUtils
      * @param level      the current level
      * @return the percentage
      */
-    public static double getPercentOfLevelCompleted(double experience, int level)
+    public static double getPercentOfLevelCompleted(final double experience, final int level)
     {
         final double thisLvlExp = getXPNeededForOnlyLevel(level);
         final double lastLvlExp = getXPNeededForNextLevel(level) - thisLvlExp;
@@ -49,7 +49,7 @@ public final class ExperienceUtils
      * @param currentLevel the currentLevel of the citizen
      * @return the xp in int
      */
-    public static double getXPNeededForNextLevel(int currentLevel)
+    public static double getXPNeededForNextLevel(final int currentLevel)
     {
         return EXPERIENCE_MULTIPLIER
                  * (currentLevel + 1)
@@ -62,7 +62,7 @@ public final class ExperienceUtils
      * @param currentLevel the currentLevel of the citizen
      * @return the xp in int
      */
-    private static double getXPNeededForOnlyLevel(int currentLevel)
+    private static double getXPNeededForOnlyLevel(final int currentLevel)
     {
         if (currentLevel == 0)
         {

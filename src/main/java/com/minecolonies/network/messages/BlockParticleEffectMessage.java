@@ -44,7 +44,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
      * @param state Block State
      * @param side  Side of the block causing effect
      */
-    public BlockParticleEffectMessage(BlockPos pos, @NotNull IBlockState state, int side)
+    public BlockParticleEffectMessage(final BlockPos pos, @NotNull final IBlockState state, final int side)
     {
         this.pos = pos;
         this.block = state.getBlock();
@@ -53,7 +53,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         pos = BlockPosUtil.readFromByteBuf(buf);
         block = Block.getBlockById(buf.readInt());
@@ -62,7 +62,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         BlockPosUtil.writeToByteBuf(buf, pos);
         buf.writeInt(Block.getIdFromBlock(block));
@@ -72,7 +72,7 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull BlockParticleEffectMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull final BlockParticleEffectMessage message, final MessageContext ctx)
     {
         if (message.side == BREAK_BLOCK)
         {

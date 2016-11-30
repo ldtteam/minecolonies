@@ -44,14 +44,14 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
      *
      * @param renderManagerIn the RenderManager for this Renderer.
      */
-    public RenderBipedCitizen(RenderManager renderManagerIn)
+    public RenderBipedCitizen(final RenderManager renderManagerIn)
     {
         super(renderManagerIn, defaultModelMale, 0.5F);
         this.addLayer(new LayerBipedArmor(this));
     }
 
     @Override
-    public void doRender(@NotNull EntityCitizen citizen, double d, double d1, double d2, float f, float f1)
+    public void doRender(@NotNull final EntityCitizen citizen, final double d, final double d1, final double d2, final float f, final float f1)
     {
         modelBipedMain = citizen.isFemale() ?
                            idToFemaleModelMap.get(citizen.getModelID()) :
@@ -68,7 +68,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     }
 
     @Override
-    protected ResourceLocation getEntityTexture(@NotNull EntityCitizen entity)
+    protected ResourceLocation getEntityTexture(@NotNull final EntityCitizen entity)
     {
         return entity.getTexture();
     }
@@ -103,7 +103,7 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
          */
         public final int    numTextures;
 
-        Model(String textureBase, int numTextures)
+        Model(final String textureBase, final int numTextures)
         {
             this.textureBase = textureBase;
             this.numTextures = numTextures;

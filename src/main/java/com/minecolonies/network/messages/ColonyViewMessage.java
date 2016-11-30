@@ -34,7 +34,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
      * @param colony            Colony of the view to update
      * @param isNewSubscription Boolean whether or not this is a new subscription
      */
-    public ColonyViewMessage(@NotNull Colony colony, boolean isNewSubscription)
+    public ColonyViewMessage(@NotNull final Colony colony, final boolean isNewSubscription)
     {
         this.colonyId = colony.getID();
         this.isNewSubscription = isNewSubscription;
@@ -43,7 +43,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         isNewSubscription = buf.readBoolean();
@@ -51,7 +51,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(isNewSubscription);
@@ -60,7 +60,7 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull ColonyViewMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull final ColonyViewMessage message, final MessageContext ctx)
     {
         return ColonyManager.handleColonyViewMessage(message.colonyId, message.colonyBuffer, message.isNewSubscription);
     }

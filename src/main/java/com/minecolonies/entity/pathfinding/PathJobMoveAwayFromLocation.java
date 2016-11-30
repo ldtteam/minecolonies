@@ -30,7 +30,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @param avoidDistance how far to move away.
      * @param range         max range to search.
      */
-    public PathJobMoveAwayFromLocation(World world, @NotNull BlockPos start, @NotNull BlockPos avoid, int avoidDistance, int range)
+    public PathJobMoveAwayFromLocation(final World world, @NotNull final BlockPos start, @NotNull final BlockPos avoid, final int avoidDistance, final int range)
     {
         super(world, start, avoid, range);
 
@@ -40,7 +40,7 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
         double dx = (double) (start.getX() - avoid.getX());
         double dz = (double) (start.getZ() - avoid.getZ());
 
-        double scalar = avoidDistance / Math.sqrt(dx * dx + dz * dz);
+        final double scalar = avoidDistance / Math.sqrt(dx * dx + dz * dz);
         dx *= scalar;
         dz *= scalar;
 
@@ -72,24 +72,24 @@ public class PathJobMoveAwayFromLocation extends AbstractPathJob
      * @return heuristic as a double - Manhatten Distance with tie-breaker
      */
     @Override
-    protected double computeHeuristic(@NotNull BlockPos pos)
+    protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        int dx = pos.getX() - heuristicPoint.getX();
-        int dy = pos.getY() - heuristicPoint.getY();
-        int dz = pos.getZ() - heuristicPoint.getZ();
+        final int dx = pos.getX() - heuristicPoint.getX();
+        final int dy = pos.getY() - heuristicPoint.getY();
+        final int dz = pos.getZ() - heuristicPoint.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
     }
 
     @Override
-    protected boolean isAtDestination(@NotNull Node n)
+    protected boolean isAtDestination(@NotNull final Node n)
     {
         return getNodeResultScore(n) >= (avoidDistance * avoidDistance);
     }
 
     @Override
-    protected double getNodeResultScore(@NotNull Node n)
+    protected double getNodeResultScore(@NotNull final Node n)
     {
         return avoid.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ());
     }

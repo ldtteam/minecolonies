@@ -26,7 +26,7 @@ public class Material
      */
     private Integer id;
 
-    Material(Integer id)
+    Material(final Integer id)
     {
         this.id = id;
     }
@@ -43,7 +43,7 @@ public class Material
     }
 
     @Override
-    public boolean equals(@Nullable Object material)
+    public boolean equals(@Nullable final Object material)
     {
         return material != null && material.getClass() == this.getClass() && id.equals(((Material) material).id);
     }
@@ -64,7 +64,7 @@ public class Material
      * @param material Material that we are checking
      * @return How many of material is stored at store
      */
-    public int getMaterialCount(@NotNull MaterialStore store, Material material)
+    public int getMaterialCount(@NotNull final MaterialStore store, final Material material)
     {
         if (locations.containsKey(store))
         {
@@ -74,9 +74,9 @@ public class Material
         return 0;
     }
 
-    void add(MaterialStore store, int quantity)
+    void add(final MaterialStore store, final int quantity)
     {
-        Integer count = locations.get(store);
+        final Integer count = locations.get(store);
         if (count == null)
         {
             locations.put(store, quantity);
@@ -87,9 +87,9 @@ public class Material
         }
     }
 
-    void remove(MaterialStore store, int quantity)
+    void remove(final MaterialStore store, final int quantity)
     {
-        Integer count = locations.get(store);
+        final Integer count = locations.get(store);
         if (count == null || count < quantity)
         {
             throw new QuantityNotFound("MaterialStore (Material)", getID(), count == null ? 0 : count, quantity);
@@ -109,7 +109,7 @@ public class Material
         return id;
     }
 
-    void remove(MaterialStore store)
+    void remove(final MaterialStore store)
     {
         locations.remove(store);
     }

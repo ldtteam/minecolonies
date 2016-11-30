@@ -24,7 +24,7 @@ public enum Alignment
     private boolean horizontalCentered;
     private boolean verticalCentered;
 
-    Alignment(@NotNull String attributes)
+    Alignment(@NotNull final String attributes)
     {
         rightAligned = attributes.contains("right");
         bottomAligned = attributes.contains("bottom");

@@ -158,7 +158,7 @@ public class WindowCitizen extends Window implements Button.Handler
      *
      * @param citizen citizen to bind the window to
      */
-    public WindowCitizen(CitizenDataView citizen)
+    public WindowCitizen(final CitizenDataView citizen)
     {
         super(Constants.MOD_ID + CITIZEN_RESOURCE_SUFFIX);
         this.citizen = citizen;
@@ -269,7 +269,7 @@ public class WindowCitizen extends Window implements Button.Handler
      * @param button the clicked button
      */
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@NotNull final Button button)
     {
         if (button.getID().equals(INVENTORY_BUTTON_ID))
         {

@@ -173,7 +173,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      *
      * @param job the lumberjackjob
      */
-    public EntityAIWorkLumberjack(@NotNull JobLumberjack job)
+    public EntityAIWorkLumberjack(@NotNull final JobLumberjack job)
     {
 
         super(job);
@@ -417,7 +417,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param location the location to plant the sapling at
      * @return true if a sapling was planted
      */
-    private boolean plantSapling(@NotNull BlockPos location)
+    private boolean plantSapling(@NotNull final BlockPos location)
     {
         final Block worldBlock = world.getBlockState(location).getBlock();
         if (worldBlock != Blocks.AIR && !(worldBlock instanceof BlockSapling))
@@ -499,7 +499,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
     //todo: we need to use a different way to get Metadata
     @SuppressWarnings("deprecation")
-    private void placeSaplings(int saplingSlot, @NotNull ItemStack stack, @NotNull Block block)
+    private void placeSaplings(final int saplingSlot, @NotNull final ItemStack stack, @NotNull final Block block)
     {
         while (!job.tree.getStumpLocations().isEmpty())
         {
@@ -526,7 +526,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param stack incoming stack.
      * @return true if so.
      */
-    private boolean isCorrectSapling(ItemStack stack)
+    private boolean isCorrectSapling(final ItemStack stack)
     {
         return isStackSapling(stack) && job.tree.getVariant() == ((ItemBlock) stack.getItem()).getBlock().getStateFromMeta(stack.getMetadata()).getValue(BlockSapling.TYPE);
     }
@@ -537,7 +537,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param stack the stack to check
      * @return true if sapling
      */
-    private static boolean isStackSapling(@Nullable ItemStack stack)
+    private static boolean isStackSapling(@Nullable final ItemStack stack)
     {
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock() instanceof BlockSapling;
     }
@@ -587,7 +587,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         worker.setCanPickUpLoot(true);
         if (worker.getNavigator().noPath())
         {
-            BlockPos pos = getAndRemoveClosestItem();
+            final BlockPos pos = getAndRemoveClosestItem();
             worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);
             return;
         }
@@ -597,7 +597,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return;
         }
 
-        int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
+        final int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
         //We moved a bit, not stuck
         if (currentIndex != previousIndex)
         {
@@ -627,7 +627,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         for (int i = 0; i < items.size(); i++)
         {
-            double tempDistance = items.get(i).distanceSq(worker.getPosition());
+            final double tempDistance = items.get(i).distanceSq(worker.getPosition());
             if (tempDistance < distance)
             {
                 index = i;
@@ -700,7 +700,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param stack the stack to check
      * @return true if an axe
      */
-    private static boolean isStackAxe(@Nullable ItemStack stack)
+    private static boolean isStackAxe(@Nullable final ItemStack stack)
     {
         return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
     }
@@ -728,7 +728,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * @param stack the stack to check
      * @return true if it is a log type
      */
-    private static boolean isStackLog(@Nullable ItemStack stack)
+    private static boolean isStackLog(@Nullable final ItemStack stack)
     {
         return stack != null && stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).getBlock().isWood(null, new BlockPos(0, 0, 0));
     }

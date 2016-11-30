@@ -61,7 +61,7 @@ public final class Utils
      * @return the coordinates of the found block
      */
     @Nullable
-    public static BlockPos scanForBlockNearPoint(@NotNull World world, @NotNull BlockPos point, int radiusX, int radiusY, int radiusZ, int height, Block... blocks)
+    public static BlockPos scanForBlockNearPoint(@NotNull final World world, @NotNull final BlockPos point, final int radiusX, final int radiusY, final int radiusZ, final int height, final Block... blocks)
     {
         @Nullable BlockPos closestCoords = null;
         double minDistance = Double.MAX_VALUE;
@@ -74,9 +74,9 @@ public final class Utils
                 {
                     if (checkHeight(world, i, j, k, height, blocks))
                     {
-                        @NotNull BlockPos tempCoords = new BlockPos(i, j, k);
+                        @NotNull final BlockPos tempCoords = new BlockPos(i, j, k);
 
-                        double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
+                        final double distance = BlockPosUtil.getDistanceSquared(tempCoords, point);
                         if (closestCoords == null || distance < minDistance)
                         {
                             closestCoords = tempCoords;
@@ -100,7 +100,7 @@ public final class Utils
      * @param blocks the block types required
      * @return true if all blocks are of that type
      */
-    private static boolean checkHeight(@NotNull World world, int x, int y, int z, int height, @NotNull Block... blocks)
+    private static boolean checkHeight(@NotNull final World world, final int x, final int y, final int z, final int height, @NotNull final Block... blocks)
     {
         for (int dy = 0; dy < height; dy++)
         {
@@ -119,9 +119,9 @@ public final class Utils
      * @param key   Object to look for
      * @return True if found, otherwise false
      */
-    private static boolean arrayContains(@NotNull Object[] array, Object key)
+    private static boolean arrayContains(@NotNull final Object[] array, final Object key)
     {
-        for (Object o : array)
+        for (final Object o : array)
         {
             if (Objects.equals(key, o))
             {
@@ -137,7 +137,7 @@ public final class Utils
      * @param stack the stack to analyze.
      * @return true if it is a tool or sword.
      */
-    public static boolean doesItemServeAsWeapon(@NotNull ItemStack stack)
+    public static boolean doesItemServeAsWeapon(@NotNull final ItemStack stack)
     {
         return stack.getItem() instanceof ItemSword || stack.getItem() instanceof ItemTool;
     }
@@ -153,7 +153,7 @@ public final class Utils
      * @param range the range to check around the point
      * @return true if he found the block
      */
-    public static boolean isBlockInRange(@NotNull World world, Block block, int posX, int posY, int posZ, int range)
+    public static boolean isBlockInRange(@NotNull final World world, final Block block, final int posX, final int posY, final int posZ, final int range)
     {
         for (int x = posX - range; x < posX + range; x++)
         {
@@ -179,7 +179,7 @@ public final class Utils
      * @param z     z coordinate
      * @return yCoordinate
      */
-    public static int findTopGround(@NotNull World world, int x, int z)
+    public static int findTopGround(@NotNull final World world, final int x, final int z)
     {
         int yHolder = 1;
         while (!world.canBlockSeeSky(new BlockPos(x, yHolder, z)))
@@ -208,7 +208,7 @@ public final class Utils
      * @param flag Flag to check whether it is set or not
      * @return True if flag is set, otherwise false.
      */
-    public static boolean testFlag(int data, int flag)
+    public static boolean testFlag(final int data, final int flag)
     {
         return mask(data, flag) == flag;
     }
@@ -224,7 +224,7 @@ public final class Utils
      * @param mask Mask to check
      * @return Byte in which both data bits and mask bits are set
      */
-    public static int mask(int data, int mask)
+    public static int mask(final int data, final int mask)
     {
         return data & mask;
     }
@@ -240,7 +240,7 @@ public final class Utils
      * @param flag Flag to set
      * @return Data with flags set
      */
-    public static int setFlag(int data, int flag)
+    public static int setFlag(final int data, final int flag)
     {
         return data | flag;
     }
@@ -256,7 +256,7 @@ public final class Utils
      * @param flag Flag to remove
      * @return Data with flag unset
      */
-    public static int unsetFlag(int data, int flag)
+    public static int unsetFlag(final int data, final int flag)
     {
         return data & ~flag;
     }
@@ -272,7 +272,7 @@ public final class Utils
      * @param flag Flag to toggle
      * @return Data with flag toggled
      */
-    public static int toggleFlag(int data, int flag)
+    public static int toggleFlag(final int data, final int flag)
     {
         return data ^ flag;
     }
@@ -286,7 +286,7 @@ public final class Utils
      * @param metadata Metadata of the block that makes sound
      * @param citizen  the citizen breaking this block
      */
-    public static void blockBreakSoundAndEffect(@NotNull World world, BlockPos pos, Block block, int metadata, EntityCitizen citizen)
+    public static void blockBreakSoundAndEffect(@NotNull final World world, final BlockPos pos, final Block block, final int metadata, final EntityCitizen citizen)
     {
         final SoundType soundType = block.getSoundType(world.getBlockState(pos), world, pos, citizen);
         world.playSound(null, pos, soundType.getBreakSound(), SoundCategory.BLOCKS, soundType.getVolume(), soundType.getPitch());
@@ -299,7 +299,7 @@ public final class Utils
      * @param level    the level it has
      * @return whether the pickaxe qualifies
      */
-    public static boolean checkIfPickaxeQualifies(int minlevel, int level)
+    public static boolean checkIfPickaxeQualifies(final int minlevel, final int level)
     {
         return checkIfPickaxeQualifies(minlevel, level, false);
     }
@@ -315,7 +315,7 @@ public final class Utils
      * @param beEfficient if he should stop using diamond picks on stone
      * @return whether the pickaxe qualifies
      */
-    public static boolean checkIfPickaxeQualifies(int minlevel, int level, boolean beEfficient)
+    public static boolean checkIfPickaxeQualifies(final int minlevel, final int level, final boolean beEfficient)
     {
         //Minecraft handles this as "everything is allowed"
         if (minlevel < 0)
@@ -336,7 +336,7 @@ public final class Utils
      * @param itemStack Item to check
      * @return True if mining tool, otherwise false
      */
-    public static boolean isMiningTool(@Nullable ItemStack itemStack)
+    public static boolean isMiningTool(@Nullable final ItemStack itemStack)
     {
         return isPickaxe(itemStack) || isShovel(itemStack);
     }
@@ -347,7 +347,7 @@ public final class Utils
      * @param itemStack Item to check
      * @return True if item is shovel, otherwise false
      */
-    public static boolean isShovel(@Nullable ItemStack itemStack)
+    public static boolean isShovel(@Nullable final ItemStack itemStack)
     {
         return isTool(itemStack, SHOVEL);
     }
@@ -358,7 +358,7 @@ public final class Utils
      * @param itemStack Item to check
      * @return True if item is hoe, otherwise false
      */
-    public static boolean isHoe(@Nullable ItemStack itemStack)
+    public static boolean isHoe(@Nullable final ItemStack itemStack)
     {
         return isTool(itemStack, HOE);
     }
@@ -370,7 +370,7 @@ public final class Utils
      * @param toolType  Type of the tool
      * @return true if item can be used, otherwise false
      */
-    public static boolean isTool(@Nullable ItemStack itemStack, String toolType)
+    public static boolean isTool(@Nullable final ItemStack itemStack, final String toolType)
     {
         return getMiningLevel(itemStack, toolType) >= 0 || (itemStack != null && itemStack.getItem() instanceof ItemHoe && "hoe".equals(toolType));
     }
@@ -383,7 +383,7 @@ public final class Utils
      * @return integer value for mining level &gt;= 0 is okay
      */
     @SuppressWarnings("deprecation")
-    public static int getMiningLevel(@Nullable ItemStack stack, @Nullable String tool)
+    public static int getMiningLevel(@Nullable final ItemStack stack, @Nullable final String tool)
     {
         if (tool == null)
         {
@@ -408,7 +408,7 @@ public final class Utils
      * @param itemStack Item to check
      * @return True if item is axe, otherwise false
      */
-    public static boolean isAxe(@Nullable ItemStack itemStack)
+    public static boolean isAxe(@Nullable final ItemStack itemStack)
     {
         return isTool(itemStack, AXE);
     }
@@ -419,7 +419,7 @@ public final class Utils
      * @param itemStack Item to check
      * @return True if item is a pick axe, otherwise false
      */
-    public static boolean isPickaxe(@Nullable ItemStack itemStack)
+    public static boolean isPickaxe(@Nullable final ItemStack itemStack)
     {
         return isTool(itemStack, PICKAXE);
     }
@@ -430,7 +430,7 @@ public final class Utils
      * @param tool the tool to check
      * @return fortune level
      */
-    public static int getFortuneOf(@Nullable ItemStack tool)
+    public static int getFortuneOf(@Nullable final ItemStack tool)
     {
         if (tool == null)
         {
@@ -440,11 +440,11 @@ public final class Utils
         int fortune = 0;
         if (tool.isItemEnchanted())
         {
-            NBTTagList t = tool.getEnchantmentTagList();
+            final NBTTagList t = tool.getEnchantmentTagList();
 
             for (int i = 0; i < t.tagCount(); i++)
             {
-                short id = t.getCompoundTagAt(i).getShort("id");
+                final short id = t.getCompoundTagAt(i).getShort("id");
                 if (id == FORTUNE_ENCHANT_ID)
                 {
                     fortune = t.getCompoundTagAt(i).getShort("lvl");

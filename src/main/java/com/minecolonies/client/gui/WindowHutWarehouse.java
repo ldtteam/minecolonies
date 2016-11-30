@@ -40,7 +40,7 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
      *
      * @param building {@link com.minecolonies.colony.buildings.BuildingWarehouse.View}
      */
-    public WindowHutWarehouse(@NotNull BuildingWarehouse.View building)
+    public WindowHutWarehouse(@NotNull final BuildingWarehouse.View building)
     {
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
         super.registerButton(BUTTON_BLACKSMITH_GOLD, b -> building.blacksmithGold = !building.blacksmithGold);
@@ -98,13 +98,13 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
      * @param bool Boolean value to check
      * @return String depending on boolean value
      */
-    private static String getYesOrNo(boolean bool)
+    private static String getYesOrNo(final boolean bool)
     {
         return bool ? LanguageHandler.format("gui.yes") : LanguageHandler.format("gui.no");
     }
 
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@NotNull final Button button)
     {
         switch (button.getID())
         {

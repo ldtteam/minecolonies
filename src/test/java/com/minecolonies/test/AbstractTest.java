@@ -37,7 +37,7 @@ public abstract class AbstractTest
 
         doNothing().when(LanguageHandler.class, "sendPlayerLocalizedMessage", anyObject(), anyString());
 
-        Logger logger = LogManager.getLogger(getTestName());
+        final Logger logger = LogManager.getLogger(getTestName());
         random = new Random(getTestName().hashCode());
 
         doReturn(logger).when(Log.class, "getLogger");

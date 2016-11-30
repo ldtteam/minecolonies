@@ -31,7 +31,7 @@ public final class Render
      * @param y2    upper y
      * @param color color
      */
-    public static void drawOutlineRect(int x1, int y1, int x2, int y2, int color)
+    public static void drawOutlineRect(final int x1, final int y1, final int x2, final int y2, final int color)
     {
         drawOutlineRect(x1, y1, x2, y2, 1.0F, color);
     }
@@ -46,7 +46,7 @@ public final class Render
      * @param lineWidth line thickness, default of 1.0
      * @param color     color
      */
-    public static void drawOutlineRect(int x1, int y1, int x2, int y2, float lineWidth, int color)
+    public static void drawOutlineRect(final int x1, final int y1, final int x2, final int y2, final float lineWidth, final int color)
     {
         final float a = (float) (((color >> ALPHA_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
         final float r = (float) (((color >> RED_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);

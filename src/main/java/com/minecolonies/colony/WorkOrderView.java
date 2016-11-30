@@ -58,7 +58,7 @@ public class WorkOrderView
      *
      * @param priority the new priority.
      */
-    public void setPriority(int priority)
+    public void setPriority(final int priority)
     {
         this.priority = priority;
     }
@@ -98,7 +98,7 @@ public class WorkOrderView
      *
      * @param id the id to set.
      */
-    public void setId(int id)
+    public void setId(final int id)
     {
         this.id = id;
     }
@@ -118,7 +118,7 @@ public class WorkOrderView
      *
      * @param claimedBy sets a citizen who claims the workOrder.
      */
-    public void setClaimedBy(int claimedBy)
+    public void setClaimedBy(final int claimedBy)
     {
         this.claimedBy = claimedBy;
     }
@@ -129,7 +129,7 @@ public class WorkOrderView
      *
      * @param buf Byte buffer to deserialize.
      */
-    public void deserialize(@NotNull ByteBuf buf)
+    public void deserialize(@NotNull final ByteBuf buf)
     {
         id = buf.readInt();
         priority = buf.readInt();

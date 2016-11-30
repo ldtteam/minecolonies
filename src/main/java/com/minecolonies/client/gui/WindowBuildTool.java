@@ -168,7 +168,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param pos coordinate
      */
-    public WindowBuildTool(@Nullable BlockPos pos)
+    public WindowBuildTool(@Nullable final BlockPos pos)
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
@@ -202,7 +202,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
     }
 
-    private static boolean inventoryHasHut(@NotNull InventoryPlayer inventory, String hut)
+    private static boolean inventoryHasHut(@NotNull final InventoryPlayer inventory, final String hut)
     {
         return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
     }
@@ -305,7 +305,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void placementModeClicked(Button button)
+    private void placementModeClicked(final Button button)
     {
         Settings.instance.setActiveSchematic(null);
         hutDec.clear();
@@ -329,7 +329,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void hutDecClicked(@NotNull Button button)
+    private void hutDecClicked(@NotNull final Button button)
     {
         if (hutDec.size() == 1)
         {
@@ -351,7 +351,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             Structures.loadStyleMaps(new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/decorations").toPath());
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             Log.getLogger().warn("No additional files found", e);
         }
@@ -400,7 +400,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void styleClicked(@NotNull Button button)
+    private void styleClicked(@NotNull final Button button)
     {
         final  List<String> styles = getStyles();
 
@@ -421,7 +421,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void levelClicked(Button button)
+    private void levelClicked(final Button button)
     {
         final int maxLevel = Structures.getMaxLevelForHut(hutDec.get(hutDecIndex));
         if (maxLevel > 1)
@@ -452,7 +452,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void confirmClicked(Button button)
+    private void confirmClicked(final Button button)
     {
         if (hutDecIndex < hutDec.size())
         {
@@ -477,7 +477,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void cancelClicked(Button button)
+    private void cancelClicked(final Button button)
     {
         Settings.instance.reset();
         close();
@@ -488,7 +488,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void moveLeftClicked(Button button)
+    private void moveLeftClicked(final Button button)
     {
         Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
     }
@@ -498,7 +498,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void moveRightClicked(Button button)
+    private void moveRightClicked(final Button button)
     {
         Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
     }
@@ -508,7 +508,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void moveForwardClicked(Button button)
+    private void moveForwardClicked(final Button button)
     {
         Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing()));
     }
@@ -518,7 +518,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void moveBackClicked(Button button)
+    private void moveBackClicked(final Button button)
     {
         Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
     }
@@ -528,7 +528,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private static void moveUpClicked(Button button)
+    private static void moveUpClicked(final Button button)
     {
         Settings.instance.moveTo(new BlockPos(0, 1, 0));
     }
@@ -538,7 +538,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private static void moveDownClicked(Button button)
+    private static void moveDownClicked(final Button button)
     {
         Settings.instance.moveTo(new BlockPos(0, -1, 0));
     }
@@ -548,7 +548,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void rotateRightClicked(Button button)
+    private void rotateRightClicked(final Button button)
     {
         rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);
@@ -560,7 +560,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private static void updateRotation(final int rotation)
     {
-        PlacementSettings settings = new PlacementSettings();
+        final PlacementSettings settings = new PlacementSettings();
         switch (rotation)
         {
             case 1:
@@ -589,7 +589,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void rotateLeftClicked(Button button)
+    private void rotateLeftClicked(final Button button)
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);

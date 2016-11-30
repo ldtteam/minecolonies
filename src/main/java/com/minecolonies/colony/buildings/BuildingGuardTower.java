@@ -132,7 +132,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
      * @param c Colony the building is in.
      * @param l Location of the building.
      */
-    public BuildingGuardTower(Colony c, BlockPos l)
+    public BuildingGuardTower(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -142,7 +142,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
      * Sets the job/ai of the guard.
      * @param job the job to set.
      */
-    public void setJob(GuardJob job)
+    public void setJob(final GuardJob job)
     {
         this.job = job;
         this.markDirty();
@@ -173,7 +173,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
      * Sets the player to follow.
      * @param player the player to follow.
      */
-    public void setPlayerToFollow(EntityPlayer player)
+    public void setPlayerToFollow(final EntityPlayer player)
     {
         this.followPlayer = player;
     }
@@ -337,7 +337,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public AbstractJob createJob(CitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobGuard(citizen);
     }
@@ -375,7 +375,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     {
         super.readFromNBT(compound);
         task = Task.values()[compound.getInteger(TAG_TASK)];
-        int jobId = compound.getInteger(TAG_JOB);
+        final int jobId = compound.getInteger(TAG_JOB);
         job = jobId == -1 ? null : GuardJob.values()[jobId];
         assignManually = compound.getBoolean(TAG_ASSIGN);
         retrieveOnLowHealth = compound.getBoolean(TAG_RETRIEVE);
@@ -384,7 +384,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         final NBTTagList wayPointTagList = compound.getTagList(TAG_PATROL_TARGETS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.tagCount(); ++i)
         {
-            NBTTagCompound blockAtPos = wayPointTagList.getCompoundTagAt(i);
+            final NBTTagCompound blockAtPos = wayPointTagList.getCompoundTagAt(i);
             final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, TAG_TARGET);
             patrolTargets.add(pos);
         }
@@ -427,7 +427,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         buf.writeInt(job == null ? -1 : job.ordinal());
         buf.writeInt(patrolTargets.size());
 
-        for(BlockPos pos: patrolTargets)
+        for(final BlockPos pos: patrolTargets)
         {
             BlockPosUtil.writeToByteBuf(buf, pos);
         }
@@ -522,7 +522,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
          * @param c The ColonyView the building is in.
          * @param l The location of the building.
          */
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -547,10 +547,10 @@ public class BuildingGuardTower extends AbstractBuildingWorker
             retrieveOnLowHealth = buf.readBoolean();
             patrolManually = buf.readBoolean();
             task = Task.values()[buf.readInt()];
-            int jobId = buf.readInt();
+            final int jobId = buf.readInt();
             job = jobId == -1 ? null : GuardJob.values()[jobId];
 
-            int size = buf.readInt();
+            final int size = buf.readInt();
             patrolTargets = new ArrayList<>();
 
             for(int i = 0; i < size; i++)

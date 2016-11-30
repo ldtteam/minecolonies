@@ -91,7 +91,7 @@ public class CitizenData
      * @param id     ID of the Citizen
      * @param colony Colony the Citizen belongs to
      */
-    public CitizenData(int id, Colony colony)
+    public CitizenData(final int id, final Colony colony)
     {
         this.id = id;
         this.colony = colony;
@@ -105,7 +105,7 @@ public class CitizenData
      * @return CitizenData
      */
     @NotNull
-    public static CitizenData createFromNBT(@NotNull NBTTagCompound compound, Colony colony)
+    public static CitizenData createFromNBT(@NotNull final NBTTagCompound compound, final Colony colony)
     {
         final int id = compound.getInteger(TAG_ID);
         final @NotNull CitizenData citizen = new CitizenData(id, colony);
@@ -118,7 +118,7 @@ public class CitizenData
      *
      * @param compound NBT-Tag compound
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         name = compound.getString(TAG_NAME);
         female = compound.getBoolean(TAG_FEMALE);
@@ -160,7 +160,7 @@ public class CitizenData
      *
      * @param citizen {@link EntityCitizen} instance of the citizen data
      */
-    public void setCitizenEntity(EntityCitizen citizen)
+    public void setCitizenEntity(final EntityCitizen citizen)
     {
         entity = citizen;
         markDirty();
@@ -183,7 +183,7 @@ public class CitizenData
      * @return View object of the citizen
      */
     @Nullable
-    public static CitizenDataView createCitizenDataView(int id, ByteBuf buf)
+    public static CitizenDataView createCitizenDataView(final int id, final ByteBuf buf)
     {
         @Nullable CitizenDataView citizenDataView = new CitizenDataView(id);
 
@@ -191,7 +191,7 @@ public class CitizenData
         {
             citizenDataView.deserialize(buf);
         }
-        catch (RuntimeException ex)
+        catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A CitizenData.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
               citizenDataView.getID()), ex);
@@ -206,7 +206,7 @@ public class CitizenData
      *
      * @param entity Entity to initialize from
      */
-    public void initializeFromEntity(@NotNull EntityCitizen entity)
+    public void initializeFromEntity(@NotNull final EntityCitizen entity)
     {
         final Random rand = entity.getRNG();
 
@@ -239,9 +239,9 @@ public class CitizenData
      * @param rand Random object
      * @return Name of the citizen
      */
-    private String generateName(@NotNull Random rand)
+    private String generateName(@NotNull final Random rand)
     {
-        String firstName;
+        final String firstName;
         if (!female)
         {
             firstName = getRandomElement(rand, Configurations.maleFirstNames);
@@ -260,7 +260,7 @@ public class CitizenData
      * @param array Array to select from
      * @return Random element from array
      */
-    private static String getRandomElement(@NotNull Random rand, @NotNull String[] array)
+    private static String getRandomElement(@NotNull final Random rand, @NotNull final String[] array)
     {
         return array[rand.nextInt(array.length)];
     }
@@ -271,7 +271,7 @@ public class CitizenData
      * @param rand Random object
      * @return Random capital letter
      */
-    private static char getRandomLetter(@NotNull Random rand)
+    private static char getRandomLetter(@NotNull final Random rand)
     {
         return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
     }
@@ -331,7 +331,7 @@ public class CitizenData
      *
      * @param xp the amount of xp to add.
      */
-    public void addExperience(double xp)
+    public void addExperience(final double xp)
     {
         this.experience += xp;
     }
@@ -368,7 +368,7 @@ public class CitizenData
      *
      * @param building building that is destroyed
      */
-    public void onRemoveBuilding(AbstractBuilding building)
+    public void onRemoveBuilding(final AbstractBuilding building)
     {
         if (getHomeBuilding() == building)
         {
@@ -397,7 +397,7 @@ public class CitizenData
      *
      * @param building home building
      */
-    public void setHomeBuilding(@Nullable BuildingHome building)
+    public void setHomeBuilding(@Nullable final BuildingHome building)
     {
         if (homeBuilding != null && building != null && homeBuilding != building)
         {
@@ -426,7 +426,7 @@ public class CitizenData
      *
      * @param building work building
      */
-    public void setWorkBuilding(@Nullable AbstractBuildingWorker building)
+    public void setWorkBuilding(@Nullable final AbstractBuildingWorker building)
     {
         if (workBuilding != null && building != null && workBuilding != building)
         {
@@ -448,7 +448,7 @@ public class CitizenData
             }
             else if (job != null)
             {
-                EntityCitizen citizen = getCitizenEntity();
+                final EntityCitizen citizen = getCitizenEntity();
                 if(citizen != null)
                 {
                     citizen.tasks.removeTask(citizen.tasks.taskEntries.stream().filter(task -> task.action instanceof AbstractAISkeleton).findFirst().orElse(null).action);
@@ -485,7 +485,7 @@ public class CitizenData
      *
      * @param job Job of the citizen
      */
-    public void setJob(AbstractJob job)
+    public void setJob(final AbstractJob job)
     {
         this.job = job;
 
@@ -506,13 +506,13 @@ public class CitizenData
      * @return the job this citizen has
      */
     @Nullable
-    public <J extends AbstractJob> J getJob(@NotNull Class<J> type)
+    public <J extends AbstractJob> J getJob(@NotNull final Class<J> type)
     {
         try
         {
             return type.cast(job);
         }
-        catch (ClassCastException ignored)
+        catch (final ClassCastException ignored)
         {
             return null;
         }
@@ -523,7 +523,7 @@ public class CitizenData
      *
      * @param compound NBT-Tag compound
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         compound.setInteger(TAG_ID, id);
         compound.setString(TAG_NAME, name);
@@ -558,7 +558,7 @@ public class CitizenData
      *
      * @param buf Buffer to write to
      */
-    public void serializeViewNetworkData(@NotNull ByteBuf buf)
+    public void serializeViewNetworkData(@NotNull final ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, name);
         buf.writeBoolean(female);
@@ -617,7 +617,7 @@ public class CitizenData
      *
      * @param lvl the new level for the citizen.
      */
-    public void setLevel(int lvl)
+    public void setLevel(final int lvl)
     {
         this.level = lvl;
     }

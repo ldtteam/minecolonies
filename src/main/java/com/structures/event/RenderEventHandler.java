@@ -20,9 +20,9 @@ public class RenderEventHandler
      * @param event Object containing event details.
      */
     @SubscribeEvent
-    public void onRenderWorldLast(RenderWorldLastEvent event)
+    public void onRenderWorldLast(final RenderWorldLastEvent event)
     {
-        Structure structure = Settings.instance.getActiveStructure();
+        final Structure structure = Settings.instance.getActiveStructure();
         if (structure != null)
         {
             BlockPos size = structure.getSize(BlockUtils.getRotation(Settings.instance.getRotation()));
@@ -40,7 +40,7 @@ public class RenderEventHandler
             {
                 size = new BlockPos(size.getX(), size.getY(), -size.getZ());
             }
-            BlockPos offset = Settings.instance.getOffset(new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+            final BlockPos offset = Settings.instance.getOffset(new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
 
             if(offset.equals(new BlockPos(0,0,0)))
             {

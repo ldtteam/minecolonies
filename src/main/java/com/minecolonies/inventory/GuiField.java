@@ -51,7 +51,7 @@ public class GuiField extends GuiContainer
      * @param world              the world the field is in.
      * @param location           the location the field is at.
      */
-    protected GuiField(InventoryPlayer parInventoryPlayer, ScarecrowTileEntity tileEntity, World world, BlockPos location)
+    protected GuiField(final InventoryPlayer parInventoryPlayer, final ScarecrowTileEntity tileEntity, final World world, final BlockPos location)
     {
         super(new Field(tileEntity, parInventoryPlayer, world, location));
         this.tileEntity = tileEntity;
@@ -64,7 +64,7 @@ public class GuiField extends GuiContainer
      * @param layer2 the second layer.
      */
     @Override
-    protected void drawGuiContainerForegroundLayer(int layer1, int layer2)
+    protected void drawGuiContainerForegroundLayer(final int layer1, final int layer2)
     {
         this.fontRendererObj.drawString(tileEntity.getDesc(), X_OFFSET, Y_OFFSET, TEXT_COLOR);
     }
@@ -77,7 +77,7 @@ public class GuiField extends GuiContainer
      * @param mouseY       the mouseY position.
      */
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    protected void drawGuiContainerBackgroundLayer(final float partialTicks, final int mouseX, final int mouseY)
     {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         mc.getTextureManager().bindTexture(TEXTURE);

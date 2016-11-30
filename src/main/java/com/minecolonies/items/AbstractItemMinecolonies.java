@@ -16,7 +16,7 @@ public abstract class AbstractItemMinecolonies extends Item
      *
      * @param name The name of this item
      */
-    public AbstractItemMinecolonies(String name)
+    public AbstractItemMinecolonies(final String name)
     {
         super();
         this.name = name;

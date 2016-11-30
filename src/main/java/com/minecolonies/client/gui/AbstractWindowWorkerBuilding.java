@@ -51,7 +51,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      * @param building class extending {@link AbstractBuildingWorker.View}
      * @param resource Resource of the window
      */
-    AbstractWindowWorkerBuilding(B building, String resource)
+    AbstractWindowWorkerBuilding(final B building, final String resource)
     {
         super(building, resource);
 
@@ -66,7 +66,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      *
      * @param button the clicked button.
      */
-    private void hireClicked(@NotNull Button button)
+    private void hireClicked(@NotNull final Button button)
     {
         if (building.getColony().isManualHiring())
         {
@@ -78,7 +78,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
             if (building.getWorkerId() == 0)
             {
-                @NotNull WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
+                @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
                 window.open();
             }
             else
@@ -99,7 +99,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      * @param ignored Parameter is ignored, since some actions require a button.
      *                This method does not
      */
-    private void recallClicked(Button ignored)
+    private void recallClicked(final Button ignored)
     {
         MineColonies.getNetwork().sendToServer(new RecallCitizenMessage(building));
     }
@@ -116,7 +116,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
         if (building.getWorkerId() != 0)
         {
-            CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId());
+            final CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId());
             if (worker != null)
             {
                 workerName = worker.getName();

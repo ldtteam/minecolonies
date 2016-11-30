@@ -41,7 +41,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
     public boolean guardWeapon          = false;
     public boolean citizenVisit         = false;
 
-    public BuildingWarehouse(Colony c, BlockPos l)
+    public BuildingWarehouse(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -68,13 +68,13 @@ public class BuildingWarehouse extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public AbstractJob createJob(CitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobDeliveryman(citizen);
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -102,7 +102,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
@@ -135,7 +135,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
     }
 
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
 
@@ -172,7 +172,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
         public boolean guardWeapon          = false;
         public boolean citizenVisit         = false;
 
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -184,7 +184,7 @@ public class BuildingWarehouse extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
 

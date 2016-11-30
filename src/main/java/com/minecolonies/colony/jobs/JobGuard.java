@@ -26,7 +26,7 @@ public class JobGuard extends AbstractJob
      *
      * @param entity the entity to assign to the job.
      */
-    public JobGuard(CitizenData entity)
+    public JobGuard(final CitizenData entity)
     {
         super(entity);
     }

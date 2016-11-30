@@ -34,7 +34,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      * @param farSpeed           how fast we should move when we are far away.
      * @param nearSpeed          how fast we should move when we are close.
      */
-    public EntityAICitizenAvoidEntity(EntityCitizen entity, Class<? extends Entity> targetEntityClass, float distanceFromEntity, double farSpeed, double nearSpeed)
+    public EntityAICitizenAvoidEntity(final EntityCitizen entity, final Class<? extends Entity> targetEntityClass, final float distanceFromEntity, final double farSpeed, final double nearSpeed)
     {
         super();
         this.theEntity = entity;
@@ -68,7 +68,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
         }
         else
         {
-            Optional<Entity> entityOptional = theEntity.worldObj.getEntitiesInAABBexcluding(
+            final Optional<Entity> entityOptional = theEntity.worldObj.getEntitiesInAABBexcluding(
               theEntity,
               theEntity.getEntityBoundingBox().expand(
                 (double) distanceFromEntity,
@@ -124,7 +124,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     @Override
     public void updateTask()
     {
-        @Nullable Entity newClosest = getClosestToAvoid();
+        @Nullable final Entity newClosest = getClosestToAvoid();
         if (newClosest != null && newClosest != closestLivingEntity)
         {
             closestLivingEntity = newClosest;

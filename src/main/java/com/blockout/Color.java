@@ -45,7 +45,7 @@ public final class Color
      * @param def  default to use if the name doesn't exist.
      * @return the color as an integer.
      */
-    public static int getByName(String name, int def)
+    public static int getByName(final String name, final int def)
     {
         final Integer i = nameToColorMap.get(name.toLowerCase());
         return i != null ? i : def;

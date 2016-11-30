@@ -40,7 +40,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public EnumActionResult onItemUse(ItemStack scepter, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(final ItemStack scepter, final EntityPlayer playerIn, final World worldIn, final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ)
     {
         //todo watch how interaction with server is, might facilitate this.
         // if server world, do nothing
@@ -53,11 +53,11 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         {
             scepter.setTagCompound(new NBTTagCompound());
         }
-        NBTTagCompound compound = scepter.getTagCompound();
+        final NBTTagCompound compound = scepter.getTagCompound();
 
         if(compound.hasKey(TAG_LAST_POS))
         {
-            BlockPos lastPos = BlockPosUtil.readFromNBT(compound, TAG_LAST_POS);
+            final BlockPos lastPos = BlockPosUtil.readFromNBT(compound, TAG_LAST_POS);
             if(lastPos.equals(pos))
             {
                 playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
@@ -77,22 +77,22 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
      * @return if it has been successful.
      */
     @NotNull
-    private static EnumActionResult handleItemUsage(World worldIn, BlockPos pos, NBTTagCompound compound, EntityPlayer playerIn)
+    private static EnumActionResult handleItemUsage(final World worldIn, final BlockPos pos, final NBTTagCompound compound, final EntityPlayer playerIn)
     {
-        Colony colony = ColonyManager.getClosestColony(worldIn, pos);
+        final Colony colony = ColonyManager.getClosestColony(worldIn, pos);
         if(colony == null)
         {
             return EnumActionResult.FAIL;
         }
 
-        BlockPos guardTower = BlockPosUtil.readFromNBT(compound, "pos");
-        AbstractBuilding hut = colony.getBuilding(guardTower);
+        final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, "pos");
+        final AbstractBuilding hut = colony.getBuilding(guardTower);
         if(hut == null || !(hut instanceof BuildingGuardTower))
         {
             return EnumActionResult.FAIL;
         }
 
-        BuildingGuardTower.Task task = BuildingGuardTower.Task.values()[compound.getInteger("task")];
+        final BuildingGuardTower.Task task = BuildingGuardTower.Task.values()[compound.getInteger("task")];
         final CitizenData citizen = ((BuildingGuardTower) hut).getWorker();
 
         String name = "";

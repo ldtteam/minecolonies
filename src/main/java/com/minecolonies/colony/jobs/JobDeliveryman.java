@@ -15,13 +15,13 @@ public class JobDeliveryman extends AbstractJob
     private static final String TAG_DESTINATION = "destination";
     private BlockPos destination;
 
-    public JobDeliveryman(CitizenData entity)
+    public JobDeliveryman(final CitizenData entity)
     {
         super(entity);
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_DESTINATION))
@@ -45,7 +45,7 @@ public class JobDeliveryman extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         if (hasDestination())
@@ -97,7 +97,7 @@ public class JobDeliveryman extends AbstractJob
      *
      * @param destination {@link BlockPos} of the destination
      */
-    public void setDestination(BlockPos destination)
+    public void setDestination(final BlockPos destination)
     {
         this.destination = destination;
     }

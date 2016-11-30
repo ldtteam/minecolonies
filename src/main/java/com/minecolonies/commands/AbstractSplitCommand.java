@@ -24,7 +24,7 @@ public abstract class AbstractSplitCommand implements ISubCommand
      *
      * @param parents an array of all the parents.
      */
-    public AbstractSplitCommand(@NotNull String... parents)
+    public AbstractSplitCommand(@NotNull final String... parents)
     {
         super();
         this.parents = parents;

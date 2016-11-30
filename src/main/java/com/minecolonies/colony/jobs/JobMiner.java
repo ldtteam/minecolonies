@@ -22,13 +22,13 @@ public class JobMiner extends AbstractJob
      * Creates a new instance of the miner job.
      * @param entity the entity to add the job to.
      */
-    public JobMiner(CitizenData entity)
+    public JobMiner(final CitizenData entity)
     {
         super(entity);
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
     }
@@ -48,7 +48,7 @@ public class JobMiner extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
     }
@@ -70,12 +70,12 @@ public class JobMiner extends AbstractJob
      *
      * @param stack Stack to check if it is a required item
      */
-    public void addItemNeededIfNotAlready(@NotNull ItemStack stack)
+    public void addItemNeededIfNotAlready(@NotNull final ItemStack stack)
     {
-        List<ItemStack> itemsNeeded = super.getItemsNeeded();
+        final List<ItemStack> itemsNeeded = super.getItemsNeeded();
 
         //check if stack is already in itemsNeeded
-        for (ItemStack neededItem : itemsNeeded)
+        for (final ItemStack neededItem : itemsNeeded)
         {
             if (stack.isItemEqual(neededItem))
             {
@@ -90,7 +90,7 @@ public class JobMiner extends AbstractJob
         return schematic;
     }
 
-    public void setStructure(StructureWrapper schematic)
+    public void setStructure(final StructureWrapper schematic)
     {
         this.schematic = schematic;
     }

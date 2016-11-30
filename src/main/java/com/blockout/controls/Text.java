@@ -30,7 +30,7 @@ public class Text extends AbstractTextElement
      *
      * @param params xml parameters.
      */
-    public Text(PaneParams params)
+    public Text(final PaneParams params)
     {
         super(params);
 
@@ -39,7 +39,7 @@ public class Text extends AbstractTextElement
     }
 
     @Override
-    public void setScale(float s)
+    public void setScale(final float s)
     {
         super.setScale(s);
         formattedText = null;
@@ -50,7 +50,7 @@ public class Text extends AbstractTextElement
         return textContent;
     }
 
-    public void setTextContent(String s)
+    public void setTextContent(final String s)
     {
         textContent = s;
         formattedText = null;
@@ -61,7 +61,7 @@ public class Text extends AbstractTextElement
         return linespace;
     }
 
-    public void setLineSpace(int l)
+    public void setLineSpace(final int l)
     {
         linespace = l;
     }
@@ -84,7 +84,7 @@ public class Text extends AbstractTextElement
      * @param s string to calculated width of.
      * @return the width of the string, in pixels.
      */
-    public int getStringWidth(String s)
+    public int getStringWidth(final String s)
     {
         return (int) (mc.fontRendererObj.getStringWidth(s) * scale);
     }
@@ -106,10 +106,10 @@ public class Text extends AbstractTextElement
                     .collect(Collectors.toList()));
             }
 
-            int numLines = formattedText.size();
+            final int numLines = formattedText.size();
             if (numLines > 0)
             {
-                int scaledLinespace = (int) (linespace * scale);
+                final int scaledLinespace = (int) (linespace * scale);
                 textHeight = (numLines * (getLineHeight() + scaledLinespace)) - scaledLinespace;
             }
             else
@@ -122,14 +122,14 @@ public class Text extends AbstractTextElement
     }
 
     @Override
-    public void drawSelf(int mx, int my)
+    public void drawSelf(final int mx, final int my)
     {
-        int scaledLinespace = (int) (linespace * scale);
+        final int scaledLinespace = (int) (linespace * scale);
         int offsetY = 0;
 
         if (textAlignment.isBottomAligned() || textAlignment.isVerticalCentered())
         {
-            int maxVisibleLines = (getHeight() + scaledLinespace) / (getLineHeight() + scaledLinespace);
+            final int maxVisibleLines = (getHeight() + scaledLinespace) / (getLineHeight() + scaledLinespace);
             int maxVisibleSize = (maxVisibleLines * (getLineHeight() + scaledLinespace)) - scaledLinespace;
 
             if (getTextHeight() < maxVisibleSize)
@@ -145,7 +145,7 @@ public class Text extends AbstractTextElement
             }
         }
 
-        for (String s : getFormattedText())
+        for (final String s : getFormattedText())
         {
             int offsetX = 0;
             if (textAlignment.isRightAligned() || textAlignment.isHorizontalCentered())

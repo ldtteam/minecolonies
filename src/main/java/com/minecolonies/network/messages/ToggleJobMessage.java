@@ -37,7 +37,7 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
      * @param colony view of the colony to read data from
      * @param toggle toggle the job to manually or automatically
      */
-    public ToggleJobMessage(@NotNull ColonyView colony, boolean toggle)
+    public ToggleJobMessage(@NotNull final ColonyView colony, final boolean toggle)
     {
         super();
         this.colonyId = colony.getID();
@@ -50,7 +50,7 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         toggle = buf.readBoolean();
@@ -62,7 +62,7 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeBoolean(toggle);
@@ -71,7 +71,7 @@ public class ToggleJobMessage extends AbstractMessage<ToggleJobMessage, IMessage
     @Override
     public void messageOnServerThread(final ToggleJobMessage message, final EntityPlayerMP player)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
 

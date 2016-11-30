@@ -13,7 +13,7 @@ public class PacketUtils
      * @param buf  Buf to write in
      * @param uuid UUID to write
      */
-    public static void writeUUID(@NotNull ByteBuf buf, @NotNull UUID uuid)
+    public static void writeUUID(@NotNull final ByteBuf buf, @NotNull final UUID uuid)
     {
         buf.writeLong(uuid.getLeastSignificantBits());
         buf.writeLong(uuid.getMostSignificantBits());
@@ -26,10 +26,10 @@ public class PacketUtils
      * @return The read UUID
      */
     @NotNull
-    public static UUID readUUID(@NotNull ByteBuf buf)
+    public static UUID readUUID(@NotNull final ByteBuf buf)
     {
-        long lsb = buf.readLong();
-        long msb = buf.readLong();
+        final long lsb = buf.readLong();
+        final long msb = buf.readLong();
         return new UUID(msb, lsb);
     }
 }

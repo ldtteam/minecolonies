@@ -32,7 +32,7 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      * @param entityLivingIn the registering entity
      * @param shouldClose    should the entity close the gate?
      */
-    public EntityAIOpenFenceGate(@NotNull EntityLiving entityLivingIn, boolean shouldClose)
+    public EntityAIOpenFenceGate(@NotNull final EntityLiving entityLivingIn, final boolean shouldClose)
     {
         super(entityLivingIn);
         this.theEntity = entityLivingIn;
@@ -65,9 +65,9 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      *
      * @param open if open or close
      */
-    private void toggleDoor(boolean open)
+    private void toggleDoor(final boolean open)
     {
-        IBlockState iblockstate = this.theEntity.worldObj.getBlockState(this.gatePosition);
+        final IBlockState iblockstate = this.theEntity.worldObj.getBlockState(this.gatePosition);
         if (iblockstate.getBlock() == this.gateBlock && (iblockstate.getValue(BlockFenceGate.OPEN)) != open)
         {
             this.theEntity.worldObj.setBlockState(this.gatePosition, iblockstate.withProperty(BlockFenceGate.OPEN, open), 2);

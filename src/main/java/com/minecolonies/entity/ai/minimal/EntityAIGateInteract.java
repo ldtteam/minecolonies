@@ -65,7 +65,7 @@ public class EntityAIGateInteract extends EntityAIBase
      *
      * @param entityIn the registering entity
      */
-    public EntityAIGateInteract(@NotNull EntityLiving entityIn)
+    public EntityAIGateInteract(@NotNull final EntityLiving entityIn)
     {
         super();
         this.gatePosition = BlockPos.ORIGIN;
@@ -94,8 +94,8 @@ public class EntityAIGateInteract extends EntityAIBase
      */
     private boolean checkPath()
     {
-        @NotNull PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
-        Path Path = pathnavigateground.getPath();
+        @NotNull final PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
+        final Path Path = pathnavigateground.getPath();
         return Path != null && !Path.isFinished() && pathnavigateground.getEnterDoors() && checkFenceGate(Path);
     }
 
@@ -105,12 +105,12 @@ public class EntityAIGateInteract extends EntityAIBase
      * @param Path the path through the fence.
      * @return true if the gate can be passed
      */
-    private boolean checkFenceGate(@NotNull Path Path)
+    private boolean checkFenceGate(@NotNull final Path Path)
     {
-        int maxLengthToCheck = Math.min(Path.getCurrentPathIndex() + LENGTH_TO_CHECK, Path.getCurrentPathLength());
+        final int maxLengthToCheck = Math.min(Path.getCurrentPathIndex() + LENGTH_TO_CHECK, Path.getCurrentPathLength());
         for (int i = 0; i < maxLengthToCheck; ++i)
         {
-            PathPoint pathpoint = Path.getPathPointFromIndex(i);
+            final PathPoint pathpoint = Path.getPathPointFromIndex(i);
             for (int level = 0; level < HEIGHT_TO_CHECK; level++)
             {
                 this.gatePosition = new BlockPos(pathpoint.xCoord, pathpoint.yCoord + level, pathpoint.zCoord);
@@ -136,9 +136,9 @@ public class EntityAIGateInteract extends EntityAIBase
      * @param pos the position to be searched
      * @return fenceBlock or null
      */
-    private BlockFenceGate getBlockFence(@NotNull BlockPos pos)
+    private BlockFenceGate getBlockFence(@NotNull final BlockPos pos)
     {
-        IBlockState blockState = this.theEntity.worldObj.getBlockState(pos);
+        final IBlockState blockState = this.theEntity.worldObj.getBlockState(pos);
         Block block = blockState.getBlock();
         if (!(block instanceof BlockFenceGate && blockState.getMaterial() == Material.WOOD))
         {
@@ -176,9 +176,9 @@ public class EntityAIGateInteract extends EntityAIBase
     @Override
     public void updateTask()
     {
-        double entityDistX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.posX;
-        double entityDistZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.posZ;
-        double totalDist = this.entityPositionX * entityDistX + this.entityPositionZ * entityDistZ;
+        final double entityDistX = this.gatePosition.getX() + HALF_BLOCK - this.theEntity.posX;
+        final double entityDistZ = this.gatePosition.getZ() + HALF_BLOCK - this.theEntity.posZ;
+        final double totalDist = this.entityPositionX * entityDistX + this.entityPositionZ * entityDistZ;
         if (totalDist < 0.0D)
         {
             this.hasStoppedFenceInteraction = true;

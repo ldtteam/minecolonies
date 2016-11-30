@@ -22,7 +22,7 @@ public class WindowHutWorkerPlaceholder<B extends AbstractBuildingWorker.View> e
      * @param building AbstractBuilding extending {@link AbstractBuildingWorker.View}
      * @param name     Name of the the view (resource)
      */
-    public WindowHutWorkerPlaceholder(B building, String name)
+    public WindowHutWorkerPlaceholder(final B building, final String name)
     {
         super(building, Constants.MOD_ID + WORKER_PLACEHOLDER_RESOURCE_SUFFIX);
         this.name = name;

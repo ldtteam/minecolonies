@@ -32,7 +32,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
      * @param building View of the building to read data from
      * @param level    Level of the miner
      */
-    public MinerSetLevelMessage(@NotNull BuildingMiner.View building, int level)
+    public MinerSetLevelMessage(@NotNull final BuildingMiner.View building, final int level)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -41,7 +41,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -49,7 +49,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -59,7 +59,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
     @Override
     public void messageOnServerThread(final MinerSetLevelMessage message, final EntityPlayerMP player)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
 
@@ -69,7 +69,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
                 return;
             }
 
-            @Nullable BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
+            @Nullable final BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
             if (building != null)
             {
                 if (message.level >= 0 && message.level < building.getNumberOfLevels())
