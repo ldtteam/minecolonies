@@ -17,6 +17,7 @@ public final class Settings
      */
     public static final Settings                 instance  = new Settings();
     private final       BlockPos.MutableBlockPos offset    = new BlockPos.MutableBlockPos();
+    public              BlockPos                 pos       = null;
     private             boolean                  inHutMode = true;
     @Nullable
     private             Structure                structure = null;
@@ -24,8 +25,6 @@ public final class Settings
     private             String                   hutDec    = "";
     private             String                   style     = "";
     private             int                      level     = 0;
-    public             BlockPos                  pos = null;
-
     private boolean isPendingReset = false;
 
     private Settings()
@@ -52,7 +51,7 @@ public final class Settings
     @Nullable
     public Structure getActiveStructure()
     {
-        if(structure != null && structure.isTemplateNull())
+        if (structure != null && structure.isTemplateNull())
         {
 
             this.structure = null;
@@ -84,7 +83,7 @@ public final class Settings
     {
         structure = null;
         isPendingReset = false;
-        offset.setPos(0,0,0);
+        offset.setPos(0, 0, 0);
         rotation = 0;
     }
 
@@ -153,6 +152,16 @@ public final class Settings
     }
 
     /**
+     * Sets the rotation.
+     *
+     * @param rotation the rotation to set.
+     */
+    public void setRotation(final int rotation)
+    {
+        this.rotation = rotation;
+    }
+
+    /**
      * Call reset next tick.
      */
     public void markDirty()
@@ -170,13 +179,14 @@ public final class Settings
 
     /**
      * Calculates the offset regarding the blockHut.
+     *
      * @param settings depending on the rotation.
      * @return the offset a blockPos.
      */
     @NotNull
     public BlockPos getOffset(final PlacementSettings settings)
     {
-        if(structure != null)
+        if (structure != null)
         {
             for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(settings))
             {
@@ -187,15 +197,6 @@ public final class Settings
                 }
             }
         }
-        return new BlockPos(0,0,0);
-    }
-
-    /**
-     * Sets the rotation.
-     * @param rotation the rotation to set.
-     */
-    public void setRotation(final int rotation)
-    {
-        this.rotation = rotation;
+        return new BlockPos(0, 0, 0);
     }
 }

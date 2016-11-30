@@ -622,10 +622,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Action performed when rename button is clicked
      *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void renameClicked(final Button ignored)
+    private void renameClicked()
     {
         @NotNull final WindowTownHallNameEntry window = new WindowTownHallNameEntry(townHall.getColony());
         window.open();
@@ -634,10 +632,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Action performed when add player button is clicked
      *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void addPlayerCLicked(final Button ignored)
+    private void addPlayerCLicked()
     {
         final TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townHall.getColony(), input.getText()));

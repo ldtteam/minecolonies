@@ -35,12 +35,12 @@ public final class StructureWrapper
     /**
      * The position we use as our uninitialized value.
      */
-    private static final BlockPos                 NULL_POS            = new BlockPos(-1, -1, -1);
+    private static final BlockPos NULL_POS = new BlockPos(-1, -1, -1);
 
     /**
      * The Structure position we are at. Defaulted to NULL_POS.
      */
-    private final        BlockPos.MutableBlockPos progressPos         = new BlockPos.MutableBlockPos(-1, -1, -1);
+    private final BlockPos.MutableBlockPos progressPos = new BlockPos.MutableBlockPos(-1, -1, -1);
     /**
      * The minecraft world this struture is displayed in.
      */
@@ -60,20 +60,6 @@ public final class StructureWrapper
     private String         name;
 
     /**
-     * Create a new StructureProxy.
-     *
-     * @param worldObj       the world to show it in
-     * @param structure the structure it comes from
-     * @param name           the name this structure has
-     */
-    private StructureWrapper(final World worldObj, final StructureProxy structure, final String name)
-    {
-        world = worldObj;
-        this.structure = structure;
-        this.name = name;
-    }
-
-    /**
      * Load a structure into this world.
      *
      * @param worldObj the world to load in
@@ -82,6 +68,20 @@ public final class StructureWrapper
     public StructureWrapper(final World worldObj, final String name)
     {
         this(worldObj, new StructureProxy(worldObj, name), name);
+    }
+
+    /**
+     * Create a new StructureProxy.
+     *
+     * @param worldObj  the world to show it in
+     * @param structure the structure it comes from
+     * @param name      the name this structure has
+     */
+    private StructureWrapper(final World worldObj, final StructureProxy structure, final String name)
+    {
+        world = worldObj;
+        this.structure = structure;
+        this.name = name;
     }
 
     /**
@@ -145,6 +145,16 @@ public final class StructureWrapper
     }
 
     /**
+     * Rotates the structure x times.
+     *
+     * @param times times to rotate.
+     */
+    public void rotate(final int times)
+    {
+        structure.rotate(times);
+    }
+
+    /**
      * Place a structure into the world.
      *
      * @param pos coordinates
@@ -155,7 +165,7 @@ public final class StructureWrapper
 
         @NotNull final List<BlockPos> delayedBlocks = new ArrayList<>();
 
-            //structure.getBlockInfo()[0].pos
+        //structure.getBlockInfo()[0].pos
 
         for (int j = 0; j < structure.getHeight(); j++)
         {
@@ -201,15 +211,6 @@ public final class StructureWrapper
 
             placeBlock(localState, localBlock, newWorldPos);
         }
-    }
-
-    /**
-     * Rotates the structure x times.
-     * @param times times to rotate.
-     */
-    public void rotate(final int times)
-    {
-        structure.rotate(times);
     }
 
     private void placeBlock(final IBlockState localState, @NotNull final Block localBlock, @NotNull final BlockPos worldPos)
@@ -540,9 +541,9 @@ public final class StructureWrapper
      */
     public BlockPos getPosition()
     {
-        if(position == null)
+        if (position == null)
         {
-            return new BlockPos(0,0,0);
+            return new BlockPos(0, 0, 0);
         }
         return position;
     }

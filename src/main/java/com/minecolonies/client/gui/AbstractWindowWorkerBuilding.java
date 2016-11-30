@@ -96,10 +96,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     /**
      * Action when a recall button is clicked.
      *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void recallClicked(final Button ignored)
+    private void recallClicked()
     {
         MineColonies.getNetwork().sendToServer(new RecallCitizenMessage(building));
     }

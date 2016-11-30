@@ -40,7 +40,16 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public EnumActionResult onItemUse(final ItemStack scepter, final EntityPlayer playerIn, final World worldIn, final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ)
+    public EnumActionResult onItemUse(
+                                       final ItemStack scepter,
+                                       final EntityPlayer playerIn,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
     {
         //todo watch how interaction with server is, might facilitate this.
         // if server world, do nothing
@@ -55,10 +64,10 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         final NBTTagCompound compound = scepter.getTagCompound();
 
-        if(compound.hasKey(TAG_LAST_POS))
+        if (compound.hasKey(TAG_LAST_POS))
         {
             final BlockPos lastPos = BlockPosUtil.readFromNBT(compound, TAG_LAST_POS);
-            if(lastPos.equals(pos))
+            if (lastPos.equals(pos))
             {
                 playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
                 LanguageHandler.sendPlayerMessage(playerIn, LanguageHandler.format("com.minecolonies.job.guard.toolDoubleClick"));
@@ -70,8 +79,9 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
     /**
      * Handles the usage of the item.
-     * @param worldIn the world it is used in.
-     * @param pos the position.
+     *
+     * @param worldIn  the world it is used in.
+     * @param pos      the position.
      * @param compound the compound.
      * @param playerIn the player using it.
      * @return if it has been successful.
@@ -80,14 +90,14 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     private static EnumActionResult handleItemUsage(final World worldIn, final BlockPos pos, final NBTTagCompound compound, final EntityPlayer playerIn)
     {
         final Colony colony = ColonyManager.getClosestColony(worldIn, pos);
-        if(colony == null)
+        if (colony == null)
         {
             return EnumActionResult.FAIL;
         }
 
         final BlockPos guardTower = BlockPosUtil.readFromNBT(compound, "pos");
         final AbstractBuilding hut = colony.getBuilding(guardTower);
-        if(hut == null || !(hut instanceof BuildingGuardTower))
+        if (hut == null || !(hut instanceof BuildingGuardTower))
         {
             return EnumActionResult.FAIL;
         }
@@ -96,12 +106,12 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         final CitizenData citizen = ((BuildingGuardTower) hut).getWorker();
 
         String name = "";
-        if(citizen != null)
+        if (citizen != null)
         {
             name = " " + citizen.getName();
         }
 
-        if(task.equals(BuildingGuardTower.Task.GUARD))
+        if (task.equals(BuildingGuardTower.Task.GUARD))
         {
             LanguageHandler.sendPlayerMessage(playerIn, LanguageHandler.format("com.minecolonies.job.guard.toolClickGuard", pos, name));
             ((BuildingGuardTower) hut).setGuardTarget(pos);
@@ -109,7 +119,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
         }
         else
         {
-            if(!compound.hasKey(TAG_LAST_POS))
+            if (!compound.hasKey(TAG_LAST_POS))
             {
                 ((BuildingGuardTower) hut).resetPatrolTargets();
             }

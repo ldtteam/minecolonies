@@ -16,51 +16,60 @@ import org.jetbrains.annotations.NotNull;
  */
 public class FakeWorld extends World
 {
-	
-	private IBlockState blockState;
+
+    private IBlockState blockState;
 
     /**
      * Creates a fake world.
-     * @param blockState with the blockState.
+     *
+     * @param blockState    with the blockState.
      * @param saveHandlerIn a saveHandler.
-     * @param info additional info.
-     * @param providerIn worldProvider.
-     * @param profilerIn profiler.
-     * @param client and if is client.
+     * @param info          additional info.
+     * @param providerIn    worldProvider.
+     * @param profilerIn    profiler.
+     * @param client        and if is client.
      */
-	public FakeWorld(final IBlockState blockState, final ISaveHandler saveHandlerIn, final WorldInfo info, final WorldProvider providerIn, final Profiler profilerIn, final boolean client)
+    public FakeWorld(
+                      final IBlockState blockState,
+                      final ISaveHandler saveHandlerIn,
+                      final WorldInfo info,
+                      final WorldProvider providerIn,
+                      final Profiler profilerIn,
+                      final boolean client)
     {
-		super(saveHandlerIn, info, providerIn, profilerIn, client);
-		this.blockState = blockState;
-	}
-
-	@NotNull
-    @Override
-	protected IChunkProvider createChunkProvider()
-    {
-		 /*
-         * Intentionally left empty.
-         */
-		return null;
-	}
-
-	@Override
-	protected boolean isChunkLoaded(final int x, final int z, final boolean allowEmpty)
-    {
-		 /*
-         * Intentionally left empty.
-         */
-		return false;
-	}
-	
-	@Override
-    public TileEntity getTileEntity(final BlockPos pos){
-    	return null;
+        super(saveHandlerIn, info, providerIn, profilerIn, client);
+        this.blockState = blockState;
     }
-	
+
     @NotNull
     @Override
-    public IBlockState getBlockState(final BlockPos pos){
-    	return this.blockState;
+    protected IChunkProvider createChunkProvider()
+    {
+         /*
+         * Intentionally left empty.
+         */
+        return null;
+    }
+
+    @Override
+    protected boolean isChunkLoaded(final int x, final int z, final boolean allowEmpty)
+    {
+		 /*
+         * Intentionally left empty.
+         */
+        return false;
+    }
+
+    @NotNull
+    @Override
+    public IBlockState getBlockState(final BlockPos pos)
+    {
+        return this.blockState;
+    }
+
+    @Override
+    public TileEntity getTileEntity(final BlockPos pos)
+    {
+        return null;
     }
 }

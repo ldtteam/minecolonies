@@ -259,9 +259,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
     /**
      * Sets the target for patrolling or guarding of the guard.
-     * @param button clicked button.
      */
-    private void setTarget(final Button button)
+    private void setTarget()
     {
         final EntityPlayerSP player = this.mc.thePlayer;
         final int emptySlot = player.inventory.getFirstEmptyStack();
@@ -306,9 +305,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
     /**
      * Switch the retrieval mode.
-     * @param button clicked button
      */
-    private void switchRetrievalMode(final Button button)
+    private void switchRetrievalMode()
     {
         building.retrieveOnLowHealth = !building.retrieveOnLowHealth;
         pullInfoFromHut();
@@ -318,9 +316,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
     /**
      * Switch the patrol mode.
-     * @param button clicked button
      */
-    private void switchPatrolMode(final Button button)
+    private void switchPatrolMode()
     {
         building.patrolManually = !building.patrolManually;
         pullInfoFromHut();
@@ -330,9 +327,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
     /**
      * Switch the job.
-     * @param button clicked button
      */
-    private void switchJob(final Button button)
+    private void switchJob()
     {
         if(building.job == null)
         {
@@ -355,9 +351,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
     /**
      * Switch the assignment mode.
-     * @param button clicked button.
      */
-    private void switchAssignmentMode(final Button button)
+    private void switchAssignmentMode()
     {
         building.assignManually = !building.assignManually;
         pullInfoFromHut();

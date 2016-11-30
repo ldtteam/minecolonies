@@ -303,9 +303,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Change placement modes. Hut or Decoration.
      *
-     * @param button required parameter.
+     *
      */
-    private void placementModeClicked(final Button button)
+    private void placementModeClicked()
     {
         Settings.instance.setActiveSchematic(null);
         hutDec.clear();
@@ -327,7 +327,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Change to the next hut/decoration.
      *
-     * @param button required parameter.
+     *
      */
     private void hutDecClicked(@NotNull final Button button)
     {
@@ -381,11 +381,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         final String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
         final Structure structure = new Structure(null,
-                labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""),
-                new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+                                                   labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""),
+                                                   new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
         Settings.instance.setActiveSchematic(structure);
 
-        if(Settings.instance.pos == null)
+        if (Settings.instance.pos == null)
         {
             Settings.instance.pos = this.pos;
         }
@@ -398,11 +398,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Change to the next style.
      *
-     * @param button required parameter.
+     *
      */
     private void styleClicked(@NotNull final Button button)
     {
-        final  List<String> styles = getStyles();
+        final List<String> styles = getStyles();
 
         if (styles.size() == 1)
         {
@@ -419,9 +419,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Change to the next level building.
      *
-     * @param button required parameter.
+     *
      */
-    private void levelClicked(final Button button)
+    private void levelClicked()
     {
         final int maxLevel = Structures.getMaxLevelForHut(hutDec.get(hutDecIndex));
         if (maxLevel > 1)
@@ -450,18 +450,18 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Send a packet telling the server to place the current schematic.
      *
-     * @param button required parameter.
+     *
      */
-    private void confirmClicked(final Button button)
+    private void confirmClicked()
     {
         if (hutDecIndex < hutDec.size())
         {
             MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                    hutDec.get(hutDecIndex),
-                    getStyles().get(styleIndex),
-                    Settings.instance.pos,
-                    Settings.instance.getRotation(),
-                    Settings.instance.isInHutMode()));
+                                                                              hutDec.get(hutDecIndex),
+                                                                              getStyles().get(styleIndex),
+                                                                              Settings.instance.pos,
+                                                                              Settings.instance.getRotation(),
+                                                                              Settings.instance.isInHutMode()));
         }
         else
         {
@@ -475,9 +475,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Cancel the current schematic.
      *
-     * @param button required parameter.
+     *
      */
-    private void cancelClicked(final Button button)
+    private void cancelClicked()
     {
         Settings.instance.reset();
         close();
@@ -486,49 +486,49 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Move the schematic left.
      *
-     * @param button required parameter.
+     *
      */
-    private void moveLeftClicked(final Button button)
+    private void moveLeftClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
     }
 
     /**
      * Move the schematic right.
      *
-     * @param button required parameter.
+     *
      */
-    private void moveRightClicked(final Button button)
+    private void moveRightClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
     }
 
     /**
      * Move the schematic forward.
      *
-     * @param button required parameter.
+     *
      */
-    private void moveForwardClicked(final Button button)
+    private void moveForwardClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing()));
     }
 
     /**
      * Move the schematic back.
      *
-     * @param button required parameter.
+     *
      */
-    private void moveBackClicked(final Button button)
+    private void moveBackClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0,0,0).offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
     }
 
     /**
      * Move the schmatic up.
      *
-     * @param button required parameter.
+     *
      */
-    private static void moveUpClicked(final Button button)
+    private static void moveUpClicked()
     {
         Settings.instance.moveTo(new BlockPos(0, 1, 0));
     }
@@ -536,19 +536,17 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Move the schematic down.
      *
-     * @param button required parameter.
+     *
      */
-    private static void moveDownClicked(final Button button)
+    private static void moveDownClicked()
     {
         Settings.instance.moveTo(new BlockPos(0, -1, 0));
     }
 
     /**
      * Rotate the schematic clockwise.
-     *
-     * @param button required parameter.
      */
-    private void rotateRightClicked(final Button button)
+    private void rotateRightClicked()
     {
         rotation = (rotation + ROTATE_RIGHT) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);
@@ -556,6 +554,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Updates the rotation of the structure depending on the input.
+     *
      * @param rotation the rotation to be set.
      */
     private static void updateRotation(final int rotation)
@@ -574,11 +573,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 break;
             default:
                 settings.setRotation(Rotation.NONE);
-
         }
         Settings.instance.setRotation(rotation);
 
-        if(Settings.instance.getActiveStructure() != null)
+        if (Settings.instance.getActiveStructure() != null)
         {
             Settings.instance.getActiveStructure().setPlacementSettings(settings);
         }
@@ -586,10 +584,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Rotate the schematic counter clockwise.
-     *
-     * @param button required parameter.
      */
-    private void rotateLeftClicked(final Button button)
+    private void rotateLeftClicked()
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);

@@ -44,33 +44,24 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
 
     /**
      * Action when build button is clicked
-     *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void buildClicked(final Button ignored)
+    private void buildClicked()
     {
         MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
     }
 
     /**
      * Action when repair button is clicked
-     *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void repairClicked(final Button ignored)
+    private void repairClicked()
     {
         MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
     }
 
     /**
      * Action when a button opening an inventory is clicked
-     *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void inventoryClicked(final Button ignored)
+    private void inventoryClicked()
     {
         MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
     }

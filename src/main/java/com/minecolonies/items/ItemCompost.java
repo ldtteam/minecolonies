@@ -27,7 +27,15 @@ public class ItemCompost extends AbstractItemMinecolonies
     }
 
     //whenever player right click a block with this "compost item", call this method
-    public boolean onItemUse(final ItemStack stack, final EntityPlayer playerIn, final World worldIn, final BlockPos pos, final EnumFacing side, final float hitX, final float hitY, final float hitZ)
+    public boolean onItemUse(
+                              final ItemStack stack,
+                              final EntityPlayer playerIn,
+                              final World worldIn,
+                              final BlockPos pos,
+                              final EnumFacing side,
+                              final float hitX,
+                              final float hitY,
+                              final float hitZ)
     {
 
         final IBlockState iblockstate = worldIn.getBlockState(pos);

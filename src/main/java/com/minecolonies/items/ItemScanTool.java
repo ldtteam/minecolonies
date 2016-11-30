@@ -42,7 +42,16 @@ public class ItemScanTool extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public EnumActionResult onItemUse(final ItemStack stack, final EntityPlayer playerIn, final World worldIn, final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ)
+    public EnumActionResult onItemUse(
+                                       final ItemStack stack,
+                                       final EntityPlayer playerIn,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
     {
         if (!stack.hasTagCompound())
         {
@@ -95,9 +104,9 @@ public class ItemScanTool extends AbstractItemMinecolonies
     /**
      * Scan the structure and save it to the disk.
      *
-     * @param world Current world.
-     * @param from  First corner.
-     * @param to    Second corner.
+     * @param world  Current world.
+     * @param from   First corner.
+     * @param to     Second corner.
      * @param player causing this action.
      */
     private static void saveStructure(@Nullable final World world, @Nullable final BlockPos from, @Nullable final BlockPos to, @NotNull final EntityPlayer player)
@@ -108,9 +117,9 @@ public class ItemScanTool extends AbstractItemMinecolonies
         }
 
         final BlockPos blockpos =
-                new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
+          new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
         final BlockPos blockpos1 =
-                new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
+          new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
         final BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
 
         final WorldServer worldserver = (WorldServer) world;

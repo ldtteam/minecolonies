@@ -20,5 +20,4 @@ public class BlockHutBuilder extends AbstractBlockHut
     {
         return "blockHutBuilder";
     }
-
 }

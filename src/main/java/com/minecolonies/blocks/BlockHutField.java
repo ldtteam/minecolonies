@@ -190,7 +190,15 @@ public class BlockHutField extends BlockContainer
     // ======================= Rendering & IBlockState =======================
     // =======================================================================
     @Override
-    public IBlockState onBlockPlaced(final World worldIn, final BlockPos pos, final EnumFacing facing, final float hitX, final float hitY, final float hitZ, final int meta, @Nullable final EntityLivingBase placer)
+    public IBlockState onBlockPlaced(
+                                      final World worldIn,
+                                      final BlockPos pos,
+                                      final EnumFacing facing,
+                                      final float hitX,
+                                      final float hitY,
+                                      final float hitZ,
+                                      final int meta,
+                                      @Nullable final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);

@@ -51,18 +51,18 @@ public class Colony implements IColony
     private static final String TAG_MAX_CITIZENS               = "maxCitizens";
     private static final String TAG_BUILDINGS                  = "buildings";
     private static final String TAG_CITIZENS                   = "citizens";
-    private static final String TAG_ACHIEVEMENT            = "achievement";
-    private static final String TAG_ACHIEVEMENT_LIST       = "achievementlist";
-    private static final String TAG_WORK                   = "work";
-    private static final String TAG_MANUAL_HIRING          = "manualHiring";
+    private static final String TAG_ACHIEVEMENT                = "achievement";
+    private static final String TAG_ACHIEVEMENT_LIST           = "achievementlist";
+    private static final String TAG_WORK                       = "work";
+    private static final String TAG_MANUAL_HIRING              = "manualHiring";
     //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS                 = "fields";
-    private static final String TAG_MOB_KILLS              = "mobKills";
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST = 1;
-    private static final int    NUM_MOBS_ACHIEVEMENT_SECOND = 25;
-    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD = 100;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH = 500;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH = 1000;
+    private static final String TAG_FIELDS                     = "fields";
+    private static final String TAG_MOB_KILLS                  = "mobKills";
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST     = 1;
+    private static final int    NUM_MOBS_ACHIEVEMENT_SECOND    = 25;
+    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD     = 100;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH    = 500;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH     = 1000;
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -366,6 +366,44 @@ public class Colony implements IColony
         isDirty = true;
     }
 
+    @NotNull
+    @Override
+    public Permissions getPermissions()
+    {
+        return permissions;
+    }
+
+    @Override
+    public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
+    {
+        //  Perform a 2D distance calculation, so pass center.posY as the Y
+        return w.equals(getWorld()) &&
+                 BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
+    }
+
+    /**
+     * Returns the world the colony is in.
+     *
+     * @return World the colony is in.
+     */
+    @Nullable
+    public World getWorld()
+    {
+        return world;
+    }
+
+    @Override
+    public long getDistanceSquared(@NotNull final BlockPos pos)
+    {
+        return BlockPosUtil.getDistanceSquared2D(center, pos);
+    }
+
+    @Override
+    public boolean hasTownHall()
+    {
+        return townHall != null;
+    }
+
     /**
      * Increment the mobs killed by this colony.
      * <p>
@@ -407,42 +445,23 @@ public class Colony implements IColony
         return killedMobs;
     }
 
-    @NotNull
-    @Override
-    public Permissions getPermissions()
-    {
-        return permissions;
-    }
-
-    @Override
-    public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
-    {
-        //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.equals(getWorld()) &&
-                 BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
-    }
-
     /**
-     * Returns the world the colony is in.
+     * Triggers an achievement on this colony.
+     * <p>
+     * Will automatically sync to all players.
      *
-     * @return World the colony is in.
+     * @param achievement The achievement to trigger
      */
-    @Nullable
-    public World getWorld()
+    public void triggerAchievement(@NotNull final Achievement achievement)
     {
-        return world;
-    }
+        if (this.colonyAchievements.contains(achievement))
+        {
+            return;
+        }
 
-    @Override
-    public long getDistanceSquared(@NotNull final BlockPos pos)
-    {
-        return BlockPosUtil.getDistanceSquared2D(center, pos);
-    }
+        this.colonyAchievements.add(achievement);
 
-    @Override
-    public boolean hasTownHall()
-    {
-        return townHall != null;
+        AchievementUtils.syncAchievements(this);
     }
 
     /**
@@ -1311,25 +1330,6 @@ public class Colony implements IColony
     public List<EntityPlayer> getMessageEntityPlayers()
     {
         return ServerUtils.getPlayersFromUUID(this.world, this.getPermissions().getMessagePlayers());
-    }
-
-    /**
-     * Triggers an achievement on this colony.
-     * <p>
-     * Will automatically sync to all players.
-     *
-     * @param achievement The achievement to trigger
-     */
-    public void triggerAchievement(@NotNull final Achievement achievement)
-    {
-        if (this.colonyAchievements.contains(achievement))
-        {
-            return;
-        }
-
-        this.colonyAchievements.add(achievement);
-
-        AchievementUtils.syncAchievements(this);
     }
 
     @NotNull

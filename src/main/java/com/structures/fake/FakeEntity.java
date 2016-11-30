@@ -13,36 +13,36 @@ public class FakeEntity extends Entity
 
     /**
      * Create the fake entity.
+     *
      * @param worldIn at the position.
      */
-	public FakeEntity(final World worldIn)
+    public FakeEntity(final World worldIn)
     {
-		super(worldIn);
-		this.setPosition(0, 0, 0);
-	}
+        super(worldIn);
+        this.setPosition(0, 0, 0);
+    }
 
-	@Override
-	protected void entityInit()
+    @Override
+    protected void entityInit()
+    {
+         /*
+         * Intentionally left empty.
+         */
+    }
+
+    @Override
+    protected void readEntityFromNBT(@NotNull final NBTTagCompound compound)
     {
 		 /*
          * Intentionally left empty.
          */
-	}
+    }
 
-	@Override
-	protected void readEntityFromNBT(@NotNull final NBTTagCompound compound)
+    @Override
+    protected void writeEntityToNBT(@NotNull final NBTTagCompound compound)
     {
 		 /*
          * Intentionally left empty.
          */
-	}
-
-	@Override
-	protected void writeEntityToNBT(@NotNull final NBTTagCompound compound)
-    {
-		 /*
-         * Intentionally left empty.
-         */
-	}
-
+    }
 }

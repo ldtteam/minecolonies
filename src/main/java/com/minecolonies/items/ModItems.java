@@ -4,12 +4,11 @@ import net.minecraft.item.Item;
 
 public final class ModItems
 {
-    public static final Item supplyChest = new ItemSupplyChestDeployer();
-    public static final Item buildTool   = new ItemBuildTool();
-    public static final Item scanTool    = new ItemScanTool();
-    public static final Item caliper     = new ItemCaliper();
-    public static final Item scepterGuard     = new ItemScepterGuard();
-
+    public static final Item supplyChest  = new ItemSupplyChestDeployer();
+    public static final Item buildTool    = new ItemBuildTool();
+    public static final Item scanTool     = new ItemScanTool();
+    public static final Item caliper      = new ItemCaliper();
+    public static final Item scepterGuard = new ItemScepterGuard();
 
     public static final Item itemAchievementProxySettlement = new ItemAchievementProxy("sizeSettlement");
     public static final Item itemAchievementProxyTown       = new ItemAchievementProxy("sizeTown");

@@ -50,7 +50,11 @@ public class Structure
     /**
      * Rotation by 90 degree.
      */
-    private static final double  NINETY_DEGREE = 90D;
+    private static final double NINETY_DEGREE = 90D;
+    private static final int COLOR_A = 255;
+    private static final int COLOR_R = 255;
+    private static final int COLOR_G = 255;
+    private static final int COLOR_B = 255;
     /**
      * Template of the structure.
      */
@@ -58,35 +62,31 @@ public class Structure
     private Minecraft         mc;
     private PlacementSettings settings;
 
-    private static final int   COLOR_A    = 255;
-    private static final int   COLOR_R    = 255;
-    private static final int   COLOR_G    = 255;
-    private static final int   COLOR_B    = 255;
-
     /**
      * Constuctor of Structure, tries to create a new structure.
-     * @param world with world.
+     *
+     * @param world         with world.
      * @param structureName name of the structure (at stored location).
-     * @param settings it's settings.
+     * @param settings      it's settings.
      */
     public Structure(@Nullable final World world, final String structureName, final PlacementSettings settings)
     {
         InputStream inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
 
-        if(world == null || world.isRemote)
+        if (world == null || world.isRemote)
         {
             this.settings = settings;
             this.mc = Minecraft.getMinecraft();
         }
 
         //Might be at a different location!
-        if(inputstream == null)
+        if (inputstream == null)
         {
             try
             {
                 final File decorationFolder;
 
-                if(FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+                if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
                 {
                     decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
                 }
@@ -149,21 +149,6 @@ public class Structure
         return blockList;
     }
 
-    public Template.BlockInfo[] getBlockInfoWithSettings(final PlacementSettings settings)
-    {
-        Template.BlockInfo[] blockList = new Template.BlockInfo[template.blocks.size()];
-        blockList = template.blocks.toArray(blockList);
-
-        for (int i = 0; i < blockList.length; i++)
-        {
-            final IBlockState finalState = blockList[i].blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());
-            final BlockPos finalPos = Template.transformedBlockPos(settings, blockList[i].pos);
-            final Template.BlockInfo finalInfo = new Template.BlockInfo(finalPos, finalState, blockList[i].tileentityData);
-            blockList[i] = finalInfo;
-        }
-        return blockList;
-    }
-
     public Entity[] getEntityInfo(final World world, final BlockPos pos)
     {
         Template.EntityInfo[] entityInfoList = new Template.EntityInfo[template.entities.size()];
@@ -181,30 +166,6 @@ public class Structure
         return entityList;
     }
 
-    public Entity[] getEntityInfoWithSettings(final World world, final BlockPos pos, final PlacementSettings settings)
-    {
-        Template.EntityInfo[] entityInfoList = new Template.EntityInfo[template.entities.size()];
-        entityInfoList = template.entities.toArray(entityInfoList);
-
-        final Entity[] entityList = new Entity[entityInfoList.length];
-
-        for (int i = 0; i < entityInfoList.length; i++)
-        {
-            final Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
-            final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfoList[i].pos).add(new Vec3d(pos));
-
-            if(finalEntity != null)
-            {
-                finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREE);
-                final double rotation = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double)finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
-                finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, (float) rotation, finalEntity.rotationPitch);
-            }
-            entityList[i] = finalEntity;
-        }
-
-        return entityList;
-    }
-
     public BlockPos getSize(final Rotation rotation)
     {
         return this.template.transformedSize(rotation);
@@ -215,45 +176,12 @@ public class Structure
         this.settings = settings;
     }
 
-    private static Vec3d transformedVec3d(final PlacementSettings settings, final Vec3d vec)
-    {
-        final Mirror mirrorIn = settings.getMirror();
-        final Rotation rotationIn = settings.getRotation();
-        double xCoord = vec.xCoord;
-        final double yCoord = vec.yCoord;
-        double zCoord = vec.zCoord;
-        boolean flag = true;
-
-        switch (mirrorIn)
-        {
-            case LEFT_RIGHT:
-                zCoord = 1.0D - zCoord;
-                break;
-            case FRONT_BACK:
-                xCoord = 1.0D - xCoord;
-                break;
-            default:
-                flag = false;
-        }
-
-        switch (rotationIn)
-        {
-            case COUNTERCLOCKWISE_90:
-                return new Vec3d(zCoord, yCoord, 1.0D - xCoord);
-            case CLOCKWISE_90:
-                return new Vec3d(1.0D - zCoord, yCoord, xCoord);
-            case CLOCKWISE_180:
-                return new Vec3d(1.0D - xCoord, yCoord, 1.0D - zCoord);
-            default:
-                return flag ? new Vec3d(xCoord, yCoord, zCoord) : vec;
-        }
-    }
-
     /**
      * Renders the structure.
-     * @param startingPos the start pos to render.
-     * @param clientWorld the world of the client.
-     * @param player the player object.
+     *
+     * @param startingPos  the start pos to render.
+     * @param clientWorld  the world of the client.
+     * @param player       the player object.
      * @param partialTicks the partial ticks.
      */
     public void renderStructure(@NotNull final BlockPos startingPos, @NotNull final World clientWorld, @NotNull final EntityPlayer player, final float partialTicks)
@@ -282,6 +210,71 @@ public class Structure
         for (final Entity anEntityList : entityList)
         {
             Minecraft.getMinecraft().getRenderManager().renderEntityStatic(anEntityList, 0.0F, true);
+        }
+    }
+
+    public Template.BlockInfo[] getBlockInfoWithSettings(final PlacementSettings settings)
+    {
+        Template.BlockInfo[] blockList = new Template.BlockInfo[template.blocks.size()];
+        blockList = template.blocks.toArray(blockList);
+
+        for (int i = 0; i < blockList.length; i++)
+        {
+            final IBlockState finalState = blockList[i].blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());
+            final BlockPos finalPos = Template.transformedBlockPos(settings, blockList[i].pos);
+            final Template.BlockInfo finalInfo = new Template.BlockInfo(finalPos, finalState, blockList[i].tileentityData);
+            blockList[i] = finalInfo;
+        }
+        return blockList;
+    }
+
+    public Entity[] getEntityInfoWithSettings(final World world, final BlockPos pos, final PlacementSettings settings)
+    {
+        Template.EntityInfo[] entityInfoList = new Template.EntityInfo[template.entities.size()];
+        entityInfoList = template.entities.toArray(entityInfoList);
+
+        final Entity[] entityList = new Entity[entityInfoList.length];
+
+        for (int i = 0; i < entityInfoList.length; i++)
+        {
+            final Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
+            final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfoList[i].pos).add(new Vec3d(pos));
+
+            if (finalEntity != null)
+            {
+                finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREE);
+                final double rotation =
+                  (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
+                finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, (float) rotation, finalEntity.rotationPitch);
+            }
+            entityList[i] = finalEntity;
+        }
+
+        return entityList;
+    }
+
+    private static void getQuads(final ModelHolder holder, final List<BakedQuad> quads)
+    {
+        if (holder.actualState.getRenderType() == EnumBlockRenderType.MODEL)
+        {
+            final BlockRenderLayer originalLayer = MinecraftForgeClient.getRenderLayer();
+
+            for (final BlockRenderLayer layer : BlockRenderLayer.values())
+            {
+                if (holder.actualState.getBlock().canRenderInLayer(holder.actualState, layer))
+                {
+                    ForgeHooksClient.setRenderLayer(layer);
+
+                    for (final EnumFacing facing : EnumFacing.values())
+                    {
+                        quads.addAll(holder.model.getQuads(holder.extendedState, facing, 0));
+                    }
+
+                    quads.addAll(holder.model.getQuads(holder.extendedState, null, 0));
+                }
+            }
+
+            ForgeHooksClient.setRenderLayer(originalLayer);
         }
     }
 
@@ -322,11 +315,11 @@ public class Structure
             {
                 final TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
                 terd.func_190056_a(fakeWorld,
-                        Minecraft.getMinecraft().renderEngine,
-                        Minecraft.getMinecraft().fontRendererObj,
-                        new FakeEntity(fakeWorld),
-                        (RayTraceResult) null,
-                        0.0F);
+                  Minecraft.getMinecraft().renderEngine,
+                  Minecraft.getMinecraft().fontRendererObj,
+                  new FakeEntity(fakeWorld),
+                  (RayTraceResult) null,
+                  0.0F);
                 GL11.glPushMatrix();
                 terd.renderEngine = Minecraft.getMinecraft().renderEngine;
                 terd.preDrawBatch();
@@ -338,7 +331,47 @@ public class Structure
         }
     }
 
-    private void renderGhostBlock(final World world, final ModelHolder holder, final EntityPlayer player, final BlockRenderLayer layer, final boolean existingModel, final float partialTicks)
+    private static Vec3d transformedVec3d(final PlacementSettings settings, final Vec3d vec)
+    {
+        final Mirror mirrorIn = settings.getMirror();
+        final Rotation rotationIn = settings.getRotation();
+        double xCoord = vec.xCoord;
+        final double yCoord = vec.yCoord;
+        double zCoord = vec.zCoord;
+        boolean flag = true;
+
+        switch (mirrorIn)
+        {
+            case LEFT_RIGHT:
+                zCoord = 1.0D - zCoord;
+                break;
+            case FRONT_BACK:
+                xCoord = 1.0D - xCoord;
+                break;
+            default:
+                flag = false;
+        }
+
+        switch (rotationIn)
+        {
+            case COUNTERCLOCKWISE_90:
+                return new Vec3d(zCoord, yCoord, 1.0D - xCoord);
+            case CLOCKWISE_90:
+                return new Vec3d(1.0D - zCoord, yCoord, xCoord);
+            case CLOCKWISE_180:
+                return new Vec3d(1.0D - xCoord, yCoord, 1.0D - zCoord);
+            default:
+                return flag ? new Vec3d(xCoord, yCoord, zCoord) : vec;
+        }
+    }
+
+    private void renderGhostBlock(
+                                   final World world,
+                                   final ModelHolder holder,
+                                   final EntityPlayer player,
+                                   final BlockRenderLayer layer,
+                                   final boolean existingModel,
+                                   final float partialTicks)
     {
         final double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
         final double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
@@ -393,31 +426,6 @@ public class Structure
         }
 
         this.renderQuads(world, holder.actualState, pos, holder.model.getQuads(holder.extendedState, null, 0), alpha);
-    }
-
-    private static void getQuads(final ModelHolder holder, final List<BakedQuad> quads)
-    {
-        if (holder.actualState.getRenderType() == EnumBlockRenderType.MODEL)
-        {
-            final BlockRenderLayer originalLayer = MinecraftForgeClient.getRenderLayer();
-
-            for (final BlockRenderLayer layer : BlockRenderLayer.values())
-            {
-                if (holder.actualState.getBlock().canRenderInLayer(holder.actualState, layer))
-                {
-                    ForgeHooksClient.setRenderLayer(layer);
-
-                    for (final EnumFacing facing : EnumFacing.values())
-                    {
-                        quads.addAll(holder.model.getQuads(holder.extendedState, facing, 0));
-                    }
-
-                    quads.addAll(holder.model.getQuads(holder.extendedState, null, 0));
-                }
-            }
-
-            ForgeHooksClient.setRenderLayer(originalLayer);
-        }
     }
 
     private void renderQuads(final World world, final IBlockState actualState, final BlockPos pos, final List<BakedQuad> quads, final int alpha)

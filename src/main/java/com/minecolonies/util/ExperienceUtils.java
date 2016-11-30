@@ -49,19 +49,6 @@ public final class ExperienceUtils
      * @param currentLevel the currentLevel of the citizen
      * @return the xp in int
      */
-    public static double getXPNeededForNextLevel(final int currentLevel)
-    {
-        return EXPERIENCE_MULTIPLIER
-                 * (currentLevel + 1)
-                 * (currentLevel + 1);
-    }
-
-    /**
-     * Calculates the xp needed for the next level.
-     *
-     * @param currentLevel the currentLevel of the citizen
-     * @return the xp in int
-     */
     private static double getXPNeededForOnlyLevel(final int currentLevel)
     {
         if (currentLevel == 0)
@@ -70,5 +57,18 @@ public final class ExperienceUtils
         }
         return getXPNeededForNextLevel(currentLevel)
                  - getXPNeededForNextLevel(currentLevel - 1);
+    }
+
+    /**
+     * Calculates the xp needed for the next level.
+     *
+     * @param currentLevel the currentLevel of the citizen
+     * @return the xp in int
+     */
+    public static double getXPNeededForNextLevel(final int currentLevel)
+    {
+        return EXPERIENCE_MULTIPLIER
+                 * (currentLevel + 1)
+                 * (currentLevel + 1);
     }
 }

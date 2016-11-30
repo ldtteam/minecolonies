@@ -28,8 +28,9 @@ public final class ClientStructureWrapper
 
     /**
      * Handles the save message of scans.
+     *
      * @param nbttagcompound compound to store.
-     * @param storeLocation where to store it at.
+     * @param storeLocation  where to store it at.
      */
     public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final String storeLocation)
     {
@@ -47,12 +48,12 @@ public final class ClientStructureWrapper
         }
 
         LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer,
-                LanguageHandler.format("item.scepterSteel.scanSuccess", storeLocation));
-
+          LanguageHandler.format("item.scepterSteel.scanSuccess", storeLocation));
     }
 
     /**
      * Creates the scan directories for the scanTool.
+     *
      * @param world the worldIn.
      */
     private static void createScanDirectory(@NotNull final World world)
@@ -65,7 +66,7 @@ public final class ClientStructureWrapper
         else
         {
             final MinecraftServer server = world.getMinecraftServer();
-            if(server != null)
+            if (server != null)
             {
                 minecolonies = server.getFile("minecolonies/");
             }
@@ -82,6 +83,7 @@ public final class ClientStructureWrapper
 
     /**
      * Checks if directory exists, else creates it.
+     *
      * @param directory the directory to check.
      */
     private static void checkDirectory(@NotNull final File directory)
@@ -91,5 +93,4 @@ public final class ClientStructureWrapper
             Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
     }
-
 }

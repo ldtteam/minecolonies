@@ -61,7 +61,14 @@ public final class Utils
      * @return the coordinates of the found block
      */
     @Nullable
-    public static BlockPos scanForBlockNearPoint(@NotNull final World world, @NotNull final BlockPos point, final int radiusX, final int radiusY, final int radiusZ, final int height, final Block... blocks)
+    public static BlockPos scanForBlockNearPoint(
+                                                  @NotNull final World world,
+                                                  @NotNull final BlockPos point,
+                                                  final int radiusX,
+                                                  final int radiusY,
+                                                  final int radiusZ,
+                                                  final int height,
+                                                  final Block... blocks)
     {
         @Nullable BlockPos closestCoords = null;
         double minDistance = Double.MAX_VALUE;

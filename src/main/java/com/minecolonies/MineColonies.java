@@ -150,7 +150,6 @@ public class MineColonies
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, 50, Side.CLIENT);
         getNetwork().registerMessage(SaveScanMessage.class, SaveScanMessage.class, 51, Side.CLIENT);
-
     }
 
     public static SimpleNetworkWrapper getNetwork()

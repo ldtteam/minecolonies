@@ -82,6 +82,12 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return new TileEntityColonyBuilding();
     }
 
+    @Override
+    public boolean isFullBlock(final IBlockState state)
+    {
+        return false;
+    }
+
     /**
      * Convert the given metadata into a BlockState for this Block
      */
@@ -99,6 +105,10 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
+    // =======================================================================
+    // ======================= Rendering & IBlockState =======================
+    // =======================================================================
+
     /**
      * Convert the BlockState into the correct metadata value
      */
@@ -108,9 +118,32 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         return state.getValue(FACING).getIndex();
     }
 
-    // =======================================================================
-    // ======================= Rendering & IBlockState =======================
-    // =======================================================================
+    //We unfortunately have to implement these two, to rotate our blocks in the structures.
+    @NotNull
+    @Override
+    public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
+    {
+        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
+    }
+
+    @NotNull
+    @Override
+    public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
+    {
+        return state.withRotation(mirrorIn.toRotation((EnumFacing) state.getValue(FACING)));
+    }
+
+    @Override
+    public boolean isFullCube(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube(final IBlockState state)
+    {
+        return false;
+    }
 
     // render as a solid block, we don't want transparency here
     @NotNull
@@ -148,27 +181,20 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
         return true;
     }
-    
+
     @Override
-    public IBlockState onBlockPlaced(final World worldIn, final BlockPos pos, final EnumFacing facing, final float hitX, final float hitY, final float hitZ, final int meta, @Nullable final EntityLivingBase placer)
+    public IBlockState onBlockPlaced(
+                                      final World worldIn,
+                                      final BlockPos pos,
+                                      final EnumFacing facing,
+                                      final float hitX,
+                                      final float hitY,
+                                      final float hitZ,
+                                      final int meta,
+                                      @Nullable final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
-    }
-
-    //We unfortunately have to implement these two, to rotate our blocks in the structures.
-    @NotNull
-    @Override
-    public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
-    {
-        return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
-    }
-
-    @NotNull
-    @Override
-    public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
-    {
-        return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
     }
 
     /**
@@ -209,35 +235,17 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
     }
 
+    @NotNull
     @Override
-    public boolean isFullCube(final IBlockState state)
+    protected BlockStateContainer createBlockState()
     {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(final IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isFullBlock(final IBlockState state)
-    {
-        return false;
+        return new BlockStateContainer(this, FACING);
     }
 
     @Override
     public boolean doesSideBlockRendering(final IBlockState state, final IBlockAccess world, final BlockPos pos, final EnumFacing face)
     {
         return false;
-    }
-
-    @NotNull
-    @Override
-    protected BlockStateContainer createBlockState()
-    {
-        return new BlockStateContainer(this, FACING);
     }
 
     // =======================================================================

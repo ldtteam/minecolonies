@@ -212,7 +212,15 @@ public class BlockBarrel extends Block
         return new BlockStateContainer(this, BARRELSTATE);
     }
 
-    public boolean onBlockActivated(final World worldIn, final BlockPos pos, final IBlockState state, final EntityPlayer playerIn, final EnumFacing side, final float hitX, final float hitY, final float hitZ)
+    public boolean onBlockActivated(
+                                     final World worldIn,
+                                     final BlockPos pos,
+                                     final IBlockState state,
+                                     final EntityPlayer playerIn,
+                                     final EnumFacing side,
+                                     final float hitX,
+                                     final float hitY,
+                                     final float hitZ)
     {
         Log.getLogger().info("block right-clicked");
 

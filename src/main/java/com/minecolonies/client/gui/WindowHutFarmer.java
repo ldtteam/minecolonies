@@ -300,11 +300,8 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
     /**
      * Action performed when previous button is clicked
-     *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void prevClicked(final Button ignored)
+    private void prevClicked()
     {
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
         buttonPrevPage.setEnabled(false);
@@ -313,11 +310,8 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
     /**
      * Action performed when next button is clicked
-     *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void nextClicked(final Button ignored)
+    private void nextClicked()
     {
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
         buttonPrevPage.setEnabled(true);
