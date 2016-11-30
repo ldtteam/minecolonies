@@ -25,7 +25,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
@@ -51,10 +50,12 @@ public class Structure
      * Rotation by 90 degree.
      */
     private static final double NINETY_DEGREE = 90D;
-    private static final int COLOR_A = 255;
-    private static final int COLOR_R = 255;
-    private static final int COLOR_G = 255;
-    private static final int COLOR_B = 255;
+
+    /**
+     * Used for scale.
+     */
+    private static final double SCALE = 1.001;
+
     /**
      * Template of the structure.
      */
@@ -137,6 +138,10 @@ public class Structure
         return template == null;
     }
 
+    /**
+     * Checks if the template is null.
+     * @return true if it's not.
+     */
     public boolean doesExist()
     {
         return template == null ? false : true;
@@ -149,6 +154,12 @@ public class Structure
         return blockList;
     }
 
+    /**
+     * Get entity array at position in world.
+     * @param world the world.
+     * @param pos the position.
+     * @return the entity array.
+     */
     public Entity[] getEntityInfo(final World world, final BlockPos pos)
     {
         Template.EntityInfo[] entityInfoList = new Template.EntityInfo[template.entities.size()];
@@ -166,6 +177,11 @@ public class Structure
         return entityList;
     }
 
+    /**
+     * Get size of structure.
+     * @param rotation with rotation.
+     * @return size as blockPos (x = length, z = width, y = height).
+     */
     public BlockPos getSize(final Rotation rotation)
     {
         return this.template.transformedSize(rotation);
@@ -213,6 +229,11 @@ public class Structure
         }
     }
 
+    /**
+     * Get blockInfo of structure with a specific setting.
+     * @param settings the setting.
+     * @return the block info array.
+     */
     public Template.BlockInfo[] getBlockInfoWithSettings(final PlacementSettings settings)
     {
         Template.BlockInfo[] blockList = new Template.BlockInfo[template.blocks.size()];
@@ -228,6 +249,13 @@ public class Structure
         return blockList;
     }
 
+    /**
+     * Get entity info with specific setting.
+     * @param world world the entity is in.
+     * @param pos the position it is at.
+     * @param settings the settings.
+     * @return the entity info aray.
+     */
     public Entity[] getEntityInfoWithSettings(final World world, final BlockPos pos, final PlacementSettings settings)
     {
         Template.EntityInfo[] entityInfoList = new Template.EntityInfo[template.entities.size()];
@@ -323,7 +351,7 @@ public class Structure
                 GL11.glPushMatrix();
                 terd.renderEngine = Minecraft.getMinecraft().renderEngine;
                 terd.preDrawBatch();
-                GL11.glColor4f(1f, 1f, 1f, 1f);
+                GL11.glColor4f(1F, 1F, 1F, 1F);
                 terd.renderTileEntity(te, partialTicks, -1);
                 terd.drawBatch(pass);
                 GL11.glPopMatrix();
@@ -383,7 +411,7 @@ public class Structure
 
         if (existingModel)
         {
-            GlStateManager.scale(1.001, 1.001, 1.001);
+            GlStateManager.scale(SCALE, SCALE, SCALE);
         }
 
         RenderHelper.disableStandardItemLighting();
@@ -393,9 +421,9 @@ public class Structure
             this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
         }
 
-        GlStateManager.color(1f, 1f, 1f, 1f);
+        GlStateManager.color(1F, 1F, 1F, 1F);
 
-        final int alpha = ((int) (1.0F * 0xFF)) << 24;
+        final int alpha = ((int) (1.0D * 0xFF)) << 24;
 
         GlStateManager.enableBlend();
         GlStateManager.enableTexture2D();

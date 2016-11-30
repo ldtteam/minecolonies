@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -41,9 +42,10 @@ public final class ClientStructureWrapper
         {
             CompressedStreamTools.writeCompressed(nbttagcompound, outputstream);
         }
-        catch (final Exception e)
+        catch (final IOException e)
         {
             LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("item.scepterSteel.scanFailure"));
+            Log.getLogger().warn("Exception while trying to scan.", e);
             return;
         }
 
@@ -66,14 +68,11 @@ public final class ClientStructureWrapper
         else
         {
             final MinecraftServer server = world.getMinecraftServer();
-            if (server != null)
-            {
-                minecolonies = server.getFile("minecolonies/");
-            }
-            else
+            if (server == null)
             {
                 return;
             }
+            minecolonies = server.getFile("minecolonies/");
         }
         checkDirectory(minecolonies);
 
