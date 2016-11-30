@@ -31,21 +31,59 @@ import java.util.Map;
  */
 public abstract class AbstractBuilding
 {
+    /**
+     * The tag to store the building type.
+     */
     private static final String                  TAG_BUILDING_TYPE            = "type";
-    // Location is unique (within a Colony) and so can double as the Id
+
+    /**
+     * The tag to store the building location.
+     * Location is unique (within a Colony) and so can double as the Id.
+     */
     private static final String                  TAG_LOCATION                 = "location";
+
+    /**
+     * The tag to store the level of the building.
+     */
     private static final String                  TAG_BUILDING_LEVEL           = "level";
+
+    /**
+     * The tag to store the rotation of the building.
+     */
     private static final String                  TAG_ROTATION                 = "rotation";
+
+    /**
+     * The tag to store the style of the building.
+     */
     private static final String                  TAG_STYLE                    = "style";
-    // AbstractBuilding and View Class Mapping
+
+    /**
+     * Map to resolve names to class.
+     */
     @NotNull
     private static       Map<String, Class<?>>   nameToClassMap               = new HashMap<>();
+
+    /**
+     * Map to resolve classes to name.
+     */
     @NotNull
     private static       Map<Class<?>, String>   classToNameMap               = new HashMap<>();
+
+    /**
+     * Map to resolve block to building class.
+     */
     @NotNull
     private static       Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<>();
+
+    /**
+     * Map to resolve classNameHash to class.
+     */
     @NotNull
     private static       Map<Integer, Class<?>>  classNameHashToClassMap      = new HashMap<>();
+
+    /**
+     * Add all the mappings.
+     */
     static
     {
         addMapping("Baker", BuildingBaker.class, BlockHutBaker.class);
@@ -62,16 +100,45 @@ public abstract class AbstractBuilding
         addMapping("GuardTower", BuildingGuardTower.class, BlockHutGuardTower.class);
     }
 
+    /**
+     * The location of the building.
+     */
     private final BlockPos                 location;
+
+    /**
+     * The colony the building belongs to.
+     */
     @NotNull
     private final Colony                   colony;
-    private       MaterialStore            materialStore;
+
+    /**
+     * The material store of the colony (WIP).
+     */
+    private final MaterialStore            materialStore;
+
+    /**
+     * The tileEntity of the building.
+     */
     private       TileEntityColonyBuilding tileEntity;
-    // Attributes
+
+    /**
+     * The level of the building.
+     */
     private int     buildingLevel = 0;
+
+    /**
+     * The rotation of the building.
+     */
     private int     rotation      = 0;
+
+    /**
+     * The building style.
+     */
     private String  style         = "default";
-    //  State
+
+    /**
+     * Made to check if the building has to update the server/client.
+     */
     private boolean dirty         = false;
 
     /**
@@ -162,22 +229,21 @@ public abstract class AbstractBuilding
             Log.getLogger().error(exception);
         }
 
-        if (building != null)
-        {
-            try
-            {
-                building.readFromNBT(compound);
-            }
-            catch (final RuntimeException ex)
-            {
-                Log.getLogger().error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-                  compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
-                building = null;
-            }
-        }
-        else
+        if (building == null)
         {
             Log.getLogger().warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
+            return building;
+        }
+
+        try
+        {
+            building.readFromNBT(compound);
+        }
+        catch (final RuntimeException ex)
+        {
+            Log.getLogger().error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
+                    compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
+            building = null;
         }
 
         return building;
@@ -224,16 +290,15 @@ public abstract class AbstractBuilding
         {
             oclass = blockClassToBuildingClassMap.get(parent.getBlockType().getClass());
 
-            if (oclass != null)
-            {
-                final BlockPos loc = parent.getPosition();
-                final Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
-                building = (AbstractBuilding) constructor.newInstance(colony, loc);
-            }
-            else
+            if (oclass == null)
             {
                 Log.getLogger().error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
+                return building;
             }
+
+            final BlockPos loc = parent.getPosition();
+            final Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
+            building = (AbstractBuilding) constructor.newInstance(colony, loc);
         }
         catch (@NotNull NoSuchMethodException | InstantiationException | InvocationTargetException | IllegalAccessException exception)
         {
@@ -280,23 +345,22 @@ public abstract class AbstractBuilding
             Log.getLogger().error(exception);
         }
 
-        if (view != null)
-        {
-            try
-            {
-                view.deserialize(buf);
-            }
-            catch (final IndexOutOfBoundsException ex)
-            {
-                Log.getLogger().error(
-                  String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
-                    oclass.getName()), ex);
-                view = null;
-            }
-        }
-        else
+        if (view == null)
         {
             Log.getLogger().warn("Unknown AbstractBuilding type, missing View subclass, or missing constructor of proper format.");
+            return view;
+        }
+
+        try
+        {
+            view.deserialize(buf);
+        }
+        catch (final IndexOutOfBoundsException ex)
+        {
+            Log.getLogger().error(
+                    String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
+                            oclass.getName()), ex);
+            view = null;
         }
 
         return view;
@@ -494,9 +558,9 @@ public abstract class AbstractBuilding
     public abstract int getMaxBuildingLevel();
 
     /**
-     * Adds work orders to the {@link Colony#workManager}
+     * Adds work orders to the {@link Colony#workManager}.
      *
-     * @param level Desired level
+     * @param level Desired level.
      */
     private void requestWorkOrder(final int level)
     {

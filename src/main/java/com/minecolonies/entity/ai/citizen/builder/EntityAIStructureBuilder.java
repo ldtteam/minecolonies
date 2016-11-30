@@ -40,7 +40,7 @@ import static com.minecolonies.entity.ai.util.AIState.*;
 public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuilder>
 {
     /**
-     * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally)
+     * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
      */
     private static final double   XP_EACH_BUILDING              = 2.5;
     /**
@@ -52,26 +52,31 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      */
     private static final int      STRENGTH_MULTIPLIER           = 1;
     /**
-     * The maximum range to keep from the current building place
+     * The maximum range to keep from the current building place.
      */
     private static final int      MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
     /**
      * The standard range the builder should reach until his target.
      */
-    private static final int      STANDARD_WORKING_RANGE        = 5;
+    private static final int      STANDARD_WORKING_RANGE = 5;
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int      MIN_WORKING_RANGE             = 7;
+    private static final int      MIN_WORKING_RANGE      = 7;
     /**
      * After how many actions should the builder dump his inventory.
      */
-    private static final int      ACTIONS_UNTIL_DUMP            = 1024;
+    private static final int      ACTIONS_UNTIL_DUMP     = 1024;
+
+    /**
+     * Speed the builder should run away when he castles himself in.
+     */
+    private static final double RUN_AWAY_SPEED           = 4.1D;
     /**
      * Position where the Builders constructs from.
      */
     @Nullable
-    private              BlockPos workFrom                      = null;
+    private              BlockPos workFrom               = null;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -313,7 +318,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         if (workFrom == null)
         {
-            workFrom = getWorkingPosition();
+            workFrom = getPositionToWorkFrom();
         }
 
         return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
@@ -325,9 +330,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      *
      * @return BlockPos position to work from.
      */
-    private BlockPos getWorkingPosition()
+    private BlockPos getPositionToWorkFrom()
     {
-        return getWorkingPosition(0);
+        return getPositionToWorkFrom(0);
     }
 
     /**
@@ -337,7 +342,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * @param offset the extra distance to apply away from the building
      * @return BlockPos position to work from.
      */
-    private BlockPos getWorkingPosition(final int offset)
+    private BlockPos getPositionToWorkFrom(final int offset)
     {
         if (offset > MAX_ADDITIONAL_RANGE_TO_BUILD)
         {
@@ -359,15 +364,15 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
         }
 
-        //if necessary we can could implement calling getWorkingPosition recursively and add some "offset" to the sides.
-        return getWorkingPosition(offset + 1);
+        //if necessary we can could implement calling getPositionToWorkFrom recursively and add some "offset" to the sides.
+        return getPositionToWorkFrom(offset + 1);
     }
 
     /**
-     * Gets a floorPosition in a particular direction
+     * Gets a floorPosition in a particular direction.
      *
-     * @param facing   the direction
-     * @param distance the distance
+     * @param facing   the direction.
+     * @param distance the distance.
      * @return a BlockPos position.
      */
     @NotNull
@@ -377,10 +382,10 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     /**
-     * Calculates the floor level
+     * Calculates the floor level.
      *
-     * @param position input position
-     * @return returns BlockPos position with air above
+     * @param position input position.
+     * @return returns BlockPos position with air above.
      */
     @NotNull
     private BlockPos getFloor(@NotNull final BlockPos position)
@@ -506,11 +511,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     /**
-     * Defines blocks that can be built for free
+     * Defines blocks that can be built for free.
      *
-     * @param block    The block to check if it is free
-     * @param metadata The metadata of the block
-     * @return true or false
+     * @param block    The block to check if it is free.
+     * @param metadata The metadata of the block.
+     * @return true or false.
      */
     private static boolean isBlockFree(@Nullable final Block block, final int metadata)
     {
@@ -547,12 +552,11 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         worker.faceBlock(job.getStructure().getBlockPosition());
 
-        @Nullable final Block block = job.getStructure().getBlock();
-        @Nullable final IBlockState blockState = job.getStructure().getBlockState();
+
 
         final BlockPos coordinates = job.getStructure().getBlockPosition();
-
-        final Block worldBlock = world.getBlockState(coordinates).getBlock();
+        @Nullable final Block block = job.getStructure().getBlock();
+        @Nullable final IBlockState blockState = job.getStructure().getBlockState();
 
         //should never happen
         if (block == null)
@@ -563,6 +567,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return this.getState();
         }
 
+        final Block worldBlock = world.getBlockState(coordinates).getBlock();
         //don't overwrite huts or bedrock, nor place huts
         if (worldBlock instanceof AbstractBlockHut
               || worldBlock == Blocks.BEDROCK
@@ -654,7 +659,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         else
         {
             final Item item = Item.getItemFromBlock(block);
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item != null ? new ItemStack(item, 1) : null);
+            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
 
             if (placeBlock(coords, block, blockState))
             {
@@ -697,7 +702,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             else if (entity instanceof EntityMinecart)
             {
                 @Nullable final EntityMinecart minecart = (EntityMinecart) entity;
-                //todo is this important? minecart.riddenByEntity = null;
                 minecart.posX += pos.getX();
                 minecart.posY += pos.getY();
                 minecart.posZ += pos.getZ();
@@ -734,7 +738,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
               && MathHelper.floor_double(worker.posZ) == pos.getZ()
               && worker.getNavigator().noPath())
         {
-            worker.getNavigator().moveAwayFromXYZ(pos, 4.1, 1.0);
+            worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
         }
 
         //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
@@ -873,31 +877,31 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
           structureName);
 
         final WorkOrderBuild wo = job.getWorkOrder();
-        if (wo != null)
+        if (wo == null)
+        {
+            Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
+                    worker.getColony().getID(),
+                    worker.getCitizenData().getId(),
+                    job.getWorkOrderId()));
+        }
+        else
         {
             if (!(wo instanceof WorkOrderBuildDecoration))
             {
                 final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
-                if (building != null)
+                if (building == null)
                 {
-                    building.setBuildingLevel(wo.getUpgradeLevel());
+                    Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
+                            worker.getColony().getID(),
+                            worker.getCitizenData().getId(),
+                            wo.getBuildingLocation()));
                 }
                 else
                 {
-                    Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                      worker.getColony().getID(),
-                      worker.getCitizenData().getId(),
-                      wo.getBuildingLocation()));
+                    building.setBuildingLevel(wo.getUpgradeLevel());
                 }
             }
             job.complete();
-        }
-        else
-        {
-            Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
-              worker.getColony().getID(),
-              worker.getCitizenData().getId(),
-              job.getWorkOrderId()));
         }
 
         resetTask();

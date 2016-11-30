@@ -54,6 +54,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private static final String TAG_ASSIGN_MANUALLY = "assign";
 
     /**
+     * Flag used to be notified about block updates.
+     */
+    private static final int BLOCK_UPDATE_FLAG      = 3;
+
+    /**
      * The list of the fields the farmer manages.
      */
     private final ArrayList<Field> farmerFields = new ArrayList<>();
@@ -257,7 +262,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                   .notifyBlockUpdate(scarecrowTileEntity.getPos(),
                     getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                     getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                    3);
+                          BLOCK_UPDATE_FLAG);
                 scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
             }
         }
@@ -347,7 +352,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                     scarecrow.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
                     getColony().getWorld()
                       .notifyBlockUpdate(scarecrow.getPos(), getColony().getWorld().getBlockState(scarecrow.getPos()), getColony().getWorld().getBlockState(scarecrow
-                                                                                                                                                              .getPos()), 3);
+                              .getPos()), BLOCK_UPDATE_FLAG);
                     field.setInventoryField(scarecrow.getInventoryField());
                     if (currentField != null && currentField.getID() == field.getID())
                     {
@@ -401,7 +406,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
               .notifyBlockUpdate(scarecrowTileEntity.getPos(),
                 getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                 getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                3);
+                BLOCK_UPDATE_FLAG);
             scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         }
     }
@@ -451,7 +456,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         private String workerName;
 
         /**
-         * The amount of fields the farmer owns;
+         * The amount of fields the farmer owns.
          */
         private int amountOfFields;
 

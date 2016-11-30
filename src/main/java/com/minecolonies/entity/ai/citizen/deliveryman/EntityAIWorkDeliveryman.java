@@ -5,7 +5,7 @@ import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Performs deliveryman work
+ * Performs deliveryman work.
  * Created: July 18, 2014
  *
  * @author MrIbby

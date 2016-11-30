@@ -33,19 +33,54 @@ import java.util.*;
  */
 public final class ColonyManager
 {
+    /**
+     * The file name of the minecolonies path.
+     */
     private static final String                     FILENAME_MINECOLONIES_PATH = "minecolonies";
+
+    /**
+     * The file name of the minecolonies.
+     */
     private static final String                     FILENAME_MINECOLONIES      = "colonies.dat";
+
+    /**
+     * The tag of the colonies.
+     */
     private static final String                     TAG_COLONIES               = "colonies";
+
+    /**
+     * The list of all colonies.
+     */
     @NotNull
     private static       Map<Integer, Colony>       colonies                   = new HashMap<>();
+
+    /**
+     * The list of all colonies by world.
+     */
     @NotNull
     private static       Map<Integer, List<Colony>> coloniesByWorld            = new HashMap<>();
+
+    /**
+     * The last colony id.
+     */
     private static       int                        topColonyId                = 0;
+
+    /**
+     * The list of colony views.
+     */
     @NotNull
     private static       Map<Integer, ColonyView>   colonyViews                = new HashMap<>();
-    // Used to trigger loading/unloading colonies
+
+    /**
+     * Amount of worlds loaded.
+     */
     private static int     numWorldsLoaded;
+
+    /**
+     * Whether the colonyManager should persist data.
+     */
     private static boolean saveNeeded;
+
     /**
      * The damage source used to kill citizens.
      */
@@ -292,11 +327,11 @@ public final class ColonyManager
     }
 
     /**
-     * Get Colony that contains a given (x, y, z)
+     * Get Colony that contains a given (x, y, z).
      *
-     * @param w   World
-     * @param pos coordinates
-     * @return returns the view belonging to the colony at x, y, z,
+     * @param w   World.
+     * @param pos coordinates.
+     * @return returns the view belonging to the colony at x, y, z.
      */
     private static ColonyView getColonyView(@NotNull final World w, @NotNull final BlockPos pos)
     {
@@ -673,7 +708,7 @@ public final class ColonyManager
     }
 
     /**
-     * Saves data when world is saved
+     * Saves data when world is saved.
      *
      * @param world World.
      */
@@ -757,14 +792,14 @@ public final class ColonyManager
     public static IMessage handlePermissionsViewMessage(final int colonyID, @NotNull final ByteBuf data)
     {
         final ColonyView view = getColonyView(colonyID);
-        if (view != null)
-        {
-            return view.handlePermissionsViewMessage(data);
-        }
-        else
+        if (view == null)
         {
             Log.getLogger().error(String.format("Colony view does not exist for ID #%d", colonyID));
             return null;
+        }
+        else
+        {
+            return view.handlePermissionsViewMessage(data);
         }
     }
 
@@ -780,12 +815,11 @@ public final class ColonyManager
     public static IMessage handleColonyViewCitizensMessage(final int colonyId, final int citizenId, final ByteBuf buf)
     {
         final ColonyView view = getColonyView(colonyId);
-        if (view != null)
+        if (view == null)
         {
-            return view.handleColonyViewCitizensMessage(citizenId, buf);
+            return null;
         }
-
-        return null;
+        return view.handleColonyViewCitizensMessage(citizenId, buf);
     }
 
     /**
@@ -799,12 +833,11 @@ public final class ColonyManager
     public static IMessage handleColonyViewWorkOrderMessage(final int colonyId, final ByteBuf buf)
     {
         final ColonyView view = getColonyView(colonyId);
-        if (view != null)
+        if (view == null)
         {
-            return view.handleColonyViewWorkOrderMessage(buf);
+            return null;
         }
-
-        return null;
+        return view.handleColonyViewWorkOrderMessage(buf);
     }
 
     /**

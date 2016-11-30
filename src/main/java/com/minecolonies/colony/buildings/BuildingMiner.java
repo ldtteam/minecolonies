@@ -100,8 +100,29 @@ public class BuildingMiner extends AbstractBuildingWorker
      * Defines the material used for the floor of the shaft.
      */
     private static final IBlockState floorBlock         = Blocks.WOODEN_SLAB.getDefaultState().withProperty(BlockSlab.HALF, BlockSlab.EnumBlockHalf.TOP);
+
     /**
-     * True if shaft is at bottom limit
+     * Max depth the miner reaches at level 0.
+     */
+    private static final int MAX_DEPTH_LEVEL_0          = 70;
+
+    /**
+     * Max depth the miner reaches at level 1.
+     */
+    private static final int MAX_DEPTH_LEVEL_1          = 50;
+
+    /**
+     * Max depth the miner reaches at level 2.
+     */
+    private static final int MAX_DEPTH_LEVEL_2          = 30;
+
+    /**
+     * Max depth the miner reaches at level 3.
+     */
+    private static final int MAX_DEPTH_LEVEL_3          = 5;
+
+    /**
+     * True if shaft is at bottom limit.
      */
     public               boolean     clearedShaft       = false;
     /**
@@ -113,7 +134,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private              Block       fenceBlock         = Blocks.OAK_FENCE;
     /**
-     * Here we can detect multiples of 5
+     * Here we can detect multiples of 5.
      */
     private              int         startingLevelShaft = 0;
     /**
@@ -153,10 +174,10 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private boolean     foundLadder = false;
     /**
-     * Stores the levels of the miners mine. This could be a map<depth,level>.
+     * Stores the levels of the miners mine. This could be a map with (depth,level).
      */
     @NotNull
-    private List<Level> levels      = new ArrayList<>();
+    private final List<Level> levels      = new ArrayList<>();
 
     /**
      * Required constructor.
@@ -401,18 +422,18 @@ public class BuildingMiner extends AbstractBuildingWorker
     {
         if (this.getBuildingLevel() == 1)
         {
-            return 50;
+            return MAX_DEPTH_LEVEL_1;
         }
         else if (this.getBuildingLevel() == 2)
         {
-            return 30;
+            return MAX_DEPTH_LEVEL_2;
         }
         else if (this.getBuildingLevel() >= 3)
         {
-            return 5;
+            return MAX_DEPTH_LEVEL_3;
         }
 
-        return 70;
+        return MAX_DEPTH_LEVEL_0;
     }
 
     /**

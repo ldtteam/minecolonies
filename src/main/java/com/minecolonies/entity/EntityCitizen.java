@@ -141,13 +141,29 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Building level at which the workers work even if it is raining.
      */
-    private static final int    BONUS_BUILDING_LEVEL   = 5;
+    private static final int    BONUS_BUILDING_LEVEL = 5;
+    /**
+     * The speed the citizen has to rotate.
+     */
+    private static final double ROTATION_MOVEMENT    = 30;
+    /**
+     * 20 ticks or also: once a second.
+     */
+    private static final int TICKS_20                = 20;
+    /**
+     * This times the citizen id is the personal offset of the citizen.
+     */
+    private static final int OFFSET_TICK_MULTIPLIER  = 7;
+    /**
+     * Range required for the citizen to be home.
+     */
+    private static final double RANGE_TO_BE_HOME     = 16;
     private static Field navigatorField;
     protected Status                   status  = Status.IDLE;
     private   RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
     private String           renderMetadata;
     private ResourceLocation texture;
-    private InventoryCitizen inventory;
+    private final InventoryCitizen inventory;
     private int              colonyId;
     private int citizenId = 0;
     private int level;
@@ -162,8 +178,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Nullable
     private CitizenData citizenData;
     @NotNull
-    private Map<String, Integer> statusMessages = new HashMap<>();
-    private PathNavigate newNavigator;
+    private final Map<String, Integer> statusMessages = new HashMap<>();
+    private final PathNavigate newNavigator;
 
     /**
      * Citizen constructor.
@@ -245,7 +261,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     public AbstractJob getColonyJob()
     {
-        return citizenData != null ? citizenData.getJob() : null;
+        return citizenData == null ? null : citizenData.getJob();
     }
 
     /**
@@ -256,11 +272,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public void onJobChanged(@Nullable final AbstractJob job)
     {
         //  Model
-        if (job != null)
-        {
-            modelId = job.getModel();
-        }
-        else
+        if (job == null)
         {
             switch (getLevel())
             {
@@ -277,6 +289,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
                     modelId = RenderBipedCitizen.Model.SETTLER;
                     break;
             }
+        }
+        else
+        {
+            modelId = job.getModel();
         }
 
         dataManager.set(DATA_MODEL, modelId.name());
@@ -337,7 +353,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Nullable
     public AbstractBuildingWorker getWorkBuilding()
     {
-        return (citizenData != null) ? citizenData.getWorkBuilding() : null;
+        return (citizenData == null) ? null : citizenData.getWorkBuilding();
     }
 
     public Status getStatus()
@@ -374,7 +390,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Nullable
     public <J extends AbstractJob> J getColonyJob(@NotNull final Class<J> type)
     {
-        return citizenData != null ? citizenData.getJob(type) : null;
+        return citizenData == null ? null : citizenData.getJob(type);
     }
 
     /**
@@ -396,7 +412,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
         final double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
         final double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
-        this.setRotation((float) updateRotation(this.rotationYaw, intendedRotationYaw, 30), (float) updateRotation(this.rotationPitch, intendedRotationPitch, 30));
+        this.setRotation((float) updateRotation(this.rotationYaw, intendedRotationYaw, ROTATION_MOVEMENT), (float) updateRotation(this.rotationPitch, intendedRotationPitch, ROTATION_MOVEMENT));
 
         final double goToX = xDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
@@ -638,10 +654,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
+    /**
+     * For the time being we don't want any childrens of our colonists.
+     * @param var1 the ageable entity.
+     * @return the child.
+     */
     @Override
     public EntityAgeable createChild(final EntityAgeable var1)
     {
-        //TODO ???
         return null;
     }
 
@@ -800,12 +820,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private void cleanupChatMessages()
     {
         //Only check if there are messages and once a second
-        if (statusMessages.size() > 0 && ticksExisted % 20 == 0)
+        if (statusMessages.size() > 0 && ticksExisted % TICKS_20 == 0)
         {
             @NotNull final Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
             while (it.hasNext())
             {
-                if (ticksExisted - it.next().getValue() > 20 * Configurations.chatFrequency)
+                if (ticksExisted - it.next().getValue() > TICKS_20 * Configurations.chatFrequency)
                 {
                     it.remove();
                 }
@@ -826,7 +846,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Sets the textures of all citizens and distinguishes between male and female
+     * Sets the textures of all citizens and distinguishes between male and female.
      */
     private void setTexture()
     {
@@ -837,8 +857,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         final RenderBipedCitizen.Model model = getModelID();
 
-        String textureBase = "textures/entity/";
-        textureBase += model.textureBase;
+        String textureBase = "textures/entity/" + model.textureBase;
         textureBase += female ? "Female" : "Male";
 
         final int moddedTextureId = (textureId % model.numTextures) + 1;
@@ -847,7 +866,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     public int getOffsetTicks()
     {
-        return this.ticksExisted + 7 * this.getEntityId();
+        return this.ticksExisted + OFFSET_TICK_MULTIPLIER * this.getEntityId();
     }
 
     public RenderBipedCitizen.Model getModelID()
@@ -916,13 +935,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
           colonyId,
           citizenId,
           existingCitizen.getUniqueID()));
-        if (!existingCitizen.getUniqueID().equals(this.getUniqueID()))
+        if (existingCitizen.getUniqueID().equals(this.getUniqueID()))
         {
-            setDead();
+            data.setCitizenEntity(this);
         }
         else
         {
-            data.setCitizenEntity(this);
+            setDead();
         }
     }
 
@@ -972,7 +991,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void updateLevel()
     {
-        level = citizenData != null ? citizenData.getLevel() : 0;
+        level = citizenData == null ? 0 : citizenData.getLevel();
         dataManager.set(DATA_LEVEL, level);
     }
 
@@ -1095,11 +1114,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public boolean isAtHome()
     {
         @Nullable final BlockPos homePosition = getHomePosition();
-        return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= 16;
+        return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
     }
 
     /**
-     * Returns the home position of each citizen (His house or town hall)
+     * Returns the home position of each citizen (His house or town hall).
      *
      * @return location
      */
@@ -1122,7 +1141,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     private BuildingHome getHomeBuilding()
     {
-        return (citizenData != null) ? citizenData.getHomeBuilding() : null;
+        return (citizenData == null) ? null : citizenData.getHomeBuilding();
     }
 
     @Nullable

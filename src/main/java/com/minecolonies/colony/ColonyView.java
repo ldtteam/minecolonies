@@ -37,15 +37,15 @@ public final class ColonyView implements IColony
     private boolean          manualHiring = false;
     //  Administration/permissions
     @NotNull
-    private Permissions.View permissions  = new Permissions.View();
+    private final Permissions.View permissions  = new Permissions.View();
     //  Buildings
     @Nullable
     private BuildingTownHall.View townHall;
     @NotNull
-    private Map<BlockPos, AbstractBuilding.View> buildings   = new HashMap<>();
+    private final Map<BlockPos, AbstractBuilding.View> buildings   = new HashMap<>();
     //  Citizenry
     @NotNull
-    private Map<Integer, CitizenDataView>        citizens    = new HashMap<>();
+    private final Map<Integer, CitizenDataView>        citizens    = new HashMap<>();
     private int                                  maxCitizens = 0;
 
     /**
@@ -259,11 +259,11 @@ public final class ColonyView implements IColony
     }
 
     /**
-     * Populate a ColonyView from the network data
+     * Populate a ColonyView from the network data.
      *
-     * @param buf               {@link ByteBuf} to read from
-     * @param isNewSubscription Whether this is a new subscription of not
-     * @return null == no response
+     * @param buf               {@link ByteBuf} to read from.
+     * @param isNewSubscription Whether this is a new subscription of not.
+     * @return null == no response.
      */
     public IMessage handleColonyViewMessage(@NotNull final ByteBuf buf, final boolean isNewSubscription)
     {
@@ -450,8 +450,8 @@ public final class ColonyView implements IColony
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.provider.getDimension() == dimensionId &&
-                 BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
+        return w.provider.getDimension() == dimensionId
+                && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
     }
 
     @Override

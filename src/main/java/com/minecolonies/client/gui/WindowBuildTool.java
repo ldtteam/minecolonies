@@ -112,12 +112,28 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private static final String HUT_PREFIX = ":blockHut";
 
+    /**
+     * All possible rotations.
+     */
     private static final int POSSIBLE_ROTATIONS = 4;
+
+    /**
+     * Rotation to rotate right.
+     */
     private static final int ROTATE_RIGHT       = 1;
+
+    /**
+     * Rotation to rotate 180 degree.
+     */
+    private static final int ROTATE_180         = 2;
+
+    /**
+     * Rotation to rotate left.
+     */
     private static final int ROTATE_LEFT        = 3;
 
     /**
-     * Language key for missing hut message
+     * Language key for missing hut message.
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
 
@@ -125,7 +141,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * List of huts or decorations possible to make.
      */
     @NotNull
-    private List<String> hutDec = new ArrayList<>();
+    private final List<String> hutDec = new ArrayList<>();
 
     /**
      * Index of the rendered hutDec/decoration.
@@ -180,6 +196,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             Settings.instance.setRotation(0);
         }
 
+        //Register all necessary buttons with the window.
         registerButton(BUTTON_TYPE_ID, this::placementModeClicked);
         registerButton(BUTTON_HUT_DEC_ID, this::hutDecClicked);
         registerButton(BUTTON_STYLE_ID, this::styleClicked);
@@ -196,6 +213,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
     }
 
+    /**
+     * Check if the player inventory has a certain hut.
+     * @param inventory the player inventory.
+     * @param hut the hut.
+     * @return true if so.
+     */
     private static boolean inventoryHasHut(@NotNull final InventoryPlayer inventory, final String hut)
     {
         return inventory.hasItemStack(new ItemStack(Block.getBlockFromName(Constants.MOD_ID + HUT_PREFIX + hut)));
@@ -235,6 +258,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
+    /**
+     * Loads the decoration mode of the build tool.
+     */
     private void loadDecorationMode()
     {
         findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.decoration"));
@@ -244,6 +270,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         setupButtons();
     }
 
+    /**
+     * Loads the hut mode of the build tool.
+     */
     private void loadHutMode()
     {
         findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
@@ -258,6 +287,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         setupButtons();
     }
 
+    /**
+     * Setup all buttons, enable, disable them if required.
+     */
     private void setupButtons()
     {
         if (hutDec.isEmpty())
@@ -339,6 +371,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         changeSchematic();
     }
 
+    /**
+     * Get all styles from the folders.
+     * @return list of style strings.
+     */
     private List<String> getStyles()
     {
         try
@@ -427,6 +463,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
+    /**
+     * Switch to another level of the structure.
+     */
     private void updateLevelButton()
     {
         final Button buttonLevel = findPaneOfTypeByID(BUTTON_LEVEL_ID, Button.class);
@@ -468,8 +507,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Cancel the current schematic.
-     *
-     *
      */
     private void cancelClicked()
     {
@@ -479,8 +516,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Move the schematic left.
-     *
-     *
      */
     private void moveLeftClicked()
     {
@@ -489,8 +524,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Move the schematic right.
-     *
-     *
      */
     private void moveRightClicked()
     {
@@ -499,8 +532,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Move the schematic forward.
-     *
-     *
      */
     private void moveForwardClicked()
     {
@@ -509,8 +540,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Move the schematic back.
-     *
-     *
      */
     private void moveBackClicked()
     {
@@ -519,8 +548,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Move the schmatic up.
-     *
-     *
      */
     private static void moveUpClicked()
     {
@@ -529,8 +556,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Move the schematic down.
-     *
-     *
      */
     private static void moveDownClicked()
     {
@@ -556,13 +581,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         final PlacementSettings settings = new PlacementSettings();
         switch (rotation)
         {
-            case 1:
+            case ROTATE_RIGHT:
                 settings.setRotation(Rotation.CLOCKWISE_90);
                 break;
-            case 2:
+            case ROTATE_180:
                 settings.setRotation(Rotation.CLOCKWISE_180);
                 break;
-            case 3:
+            case ROTATE_LEFT:
                 settings.setRotation(Rotation.COUNTERCLOCKWISE_90);
                 break;
             default:

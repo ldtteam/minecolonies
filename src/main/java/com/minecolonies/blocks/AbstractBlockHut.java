@@ -53,6 +53,9 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         initBlock();
     }
 
+    /**
+     * Initiates the basic block variables.
+     */
     private void initBlock()
     {
         setRegistryName(getName());
@@ -93,7 +96,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     /**
-     * Convert the given metadata into a BlockState for this Block
+     * Convert the given metadata into a BlockState for this Block.
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
     @NotNull
@@ -126,6 +129,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 
     /**
      * Convert the BlockState into the correct metadata value.
+     * @deprecated (Remove this as soon as minecraft offers anything better).
      */
     @NotNull
     @Override

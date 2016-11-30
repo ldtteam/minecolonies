@@ -25,14 +25,14 @@ import java.util.stream.Collectors;
 import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
- * The lumberjack AI class
+ * The lumberjack AI class.
  */
 public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberjack>
 {
     private static final String TOOL_TYPE_AXE = "axe";
 
     /**
-     * The render name to render logs
+     * The render name to render logs.
      */
     private static final String RENDER_META_LOGS = "Logs";
 
@@ -42,7 +42,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private static final int SEARCH_RANGE = 50;
 
     /**
-     * If no trees are found, increment the range
+     * If no trees are found, increment the range.
      */
     private static final int SEARCH_INCREMENT = 5;
 
@@ -52,24 +52,23 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private static final int SEARCH_LIMIT = 150;
 
     /**
-     * Number of ticks to wait before coming
-     * to the conclusion of being stuck
+     * Number of ticks to wait before coming to the conclusion of being stuck.
      */
     private static final int STUCK_WAIT_TIME = 10;
 
     /**
      * Number of ticks until he gives up destroying leaves
-     * and walks a bit back to try a new path
+     * and walks a bit back to try a new path.
      */
     private static final int WALKING_BACK_WAIT_TIME = 60;
 
     /**
-     * How much he backs away when really not finding any path
+     * How much he backs away when really not finding any path.
      */
     private static final double WALK_BACK_RANGE = 3.0;
 
     /**
-     * The speed in which he backs away
+     * The speed in which he backs away.
      */
     private static final double WALK_BACK_SPEED = 1.0;
 
@@ -100,7 +99,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Time in ticks to wait before rechecking
      * if there are trees in the
-     * range of the lumberjack
+     * range of the lumberjack.
      */
     private static final int   WAIT_BEFORE_SEARCH      = 100;
     /**
@@ -112,11 +111,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private static final int   WAIT_WHILE_WALKING      = 5;
     /**
-     * Horizontal range in which the lumberjack picks up items
+     * Horizontal range in which the lumberjack picks up items.
      */
     private static final float RANGE_HORIZONTAL_PICKUP = 45.0F;
     /**
-     * Vertical range in which the lumberjack picks up items
+     * Vertical range in which the lumberjack picks up items.
      */
     private static final float RANGE_VERTICAL_PICKUP   = 3.0F;
     /**
@@ -128,7 +127,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private static final int   CHARISMA_MULTIPLIER     = 1;
     /**
-     * Return to chest after half a stack
+     * Return to chest after half a stack.
      */
     private static final int   MAX_BLOCKS_MINED        = 32;
     /**
@@ -137,17 +136,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private              int   timeWaited              = 0;
     /**
-     * Number of ticks the lumberjack is standing still
+     * Number of ticks the lumberjack is standing still.
      */
     private              int   stillTicks              = 0;
     /**
      * Used to store the walk distance
-     * to check if the lumberjack is still walking
+     * to check if the lumberjack is still walking.
      */
     private              int   previousDistance        = 0;
     /**
      * Used to store the path index
-     * to check if the lumberjack is still walking
+     * to check if the lumberjack is still walking.
      */
     private              int   previousIndex           = 0;
 
@@ -158,7 +157,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private List<BlockPos> items;
 
     /**
-     * The active pathfinding job used to walk to trees
+     * The active pathfinding job used to walk to trees.
      */
     @Nullable
     private PathJobFindTree.TreePathResult pathResult;
@@ -169,9 +168,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private int searchIncrement = 0;
 
     /**
-     * Create a new LumberjackAI
+     * Create a new LumberjackAI.
      *
-     * @param job the lumberjackjob
+     * @param job the lumberJackJob
      */
     public EntityAIWorkLumberjack(@NotNull final JobLumberjack job)
     {
@@ -193,7 +192,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Walk to own building to check for tools.
      *
-     * @return PREPARING once at the building
+     * @return PREPARING once at the building.
      */
     private AIState startWorkingAtOwnBuilding()
     {
@@ -205,9 +204,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Checks if lumberjack has all necessary tools
+     * Checks if lumberjack has all necessary tools.
      *
-     * @return next AIState
+     * @return next AIState.
      */
     private AIState prepareForWoodcutting()
     {
@@ -223,7 +222,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * we have to wait dome time before
      * searching again.
      *
-     * @return LUMBERJACK_SEARCHING_TREE once waited enough
+     * @return LUMBERJACK_SEARCHING_TREE once waited enough.
      */
     private AIState waitBeforeCheckingAgain()
     {
@@ -249,9 +248,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Search for a tree
+     * Search for a tree.
      *
-     * @return LUMBERJACK_GATHERING if job was canceled
+     * @return LUMBERJACK_GATHERING if job was canceled.
      */
     private AIState findTree()
     {
@@ -274,12 +273,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
     private AIState setNewTree()
     {
-        if (pathResult.treeLocation != null)
-        {
-            job.tree = new Tree(world, pathResult.treeLocation);
-            job.tree.findLogs(world);
-        }
-        else
+        if (pathResult.treeLocation == null)
         {
             setDelay(WAIT_BEFORE_INCREMENT);
             if (searchIncrement + SEARCH_RANGE > SEARCH_LIMIT)
@@ -287,6 +281,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 return LUMBERJACK_NO_TREES_FOUND;
             }
             searchIncrement += SEARCH_INCREMENT;
+        }
+        else
+        {
+            job.tree = new Tree(world, pathResult.treeLocation);
+            job.tree.findLogs(world);
         }
         pathResult = null;
 
@@ -353,9 +352,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
     /**
      * Check if distance to block changed and
-     * if we are not moving for too long, try to get unstuck
+     * if we are not moving for too long, try to get unstuck.
      *
-     * @param location the block we want to go to
+     * @param location the block we want to go to.
      */
     private void checkIfStuckOnLeaves(@NotNull final BlockPos location)
     {
@@ -390,9 +389,9 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * We are stuck, remove some leaves and try to get unstuck
+     * We are stuck, remove some leaves and try to get unstuck.
      * <p>
-     * if this takes too long, try backing up a bit
+     * if this takes too long, try backing up a bit.
      */
     private void tryGettingUnstuckFromLeaves()
     {
@@ -522,7 +521,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     //todo: we need to use a different way to get Metadata
     @SuppressWarnings("deprecation")
     /**
-     * Checks if this is the correct Sapling. Please stop that @NotNull stuff. You put it where it doesn't belong!!!
+     * Checks if this is the correct Sapling.
      * @param stack incoming stack.
      * @return true if so.
      */
@@ -532,10 +531,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Checks if a stack is a type of sapling
+     * Checks if a stack is a type of sapling.
      *
-     * @param stack the stack to check
-     * @return true if sapling
+     * @param stack the stack to check.
+     * @return true if sapling.
      */
     private static boolean isStackSapling(@Nullable final ItemStack stack)
     {
@@ -564,8 +563,8 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Search for all items around the Lumberjack
-     * and store them in the items list
+     * Search for all items around the Lumberjack.
+     * and store them in the items list.
      */
     private void searchForItems()
     {
@@ -580,7 +579,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Collect one item by walking to it
+     * Collect one item by walking to it.
      */
     private void gatherItems()
     {
@@ -694,11 +693,11 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Check if a stack is an axe
+     * Check if a stack is an axe.
      * todo: use parent code
      *
-     * @param stack the stack to check
-     * @return true if an axe
+     * @param stack the stack to check.
+     * @return true if an axe.
      */
     private static boolean isStackAxe(@Nullable final ItemStack stack)
     {
@@ -708,7 +707,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * Checks if the lumberjack has logs in it's inventory.
      *
-     * @return true if he has logs
+     * @return true if he has logs.
      */
     private boolean hasLogs()
     {
@@ -723,10 +722,10 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     }
 
     /**
-     * Checks if a stack is a type of log
+     * Checks if a stack is a type of log.
      *
-     * @param stack the stack to check
-     * @return true if it is a log type
+     * @param stack the stack to check.
+     * @return true if it is a log type.
      */
     private static boolean isStackLog(@Nullable final ItemStack stack)
     {

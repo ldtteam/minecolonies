@@ -17,7 +17,7 @@ public final class Pond
     private static final int    WATER_POOL_WIDTH_REQUIREMENT  = 6;
     private static final int    WATER_POOL_HEIGHT_REQUIREMENT = 3;
 
-    private BlockPos location;
+    private final BlockPos location;
 
     private Pond(final BlockPos water)
     {
@@ -25,11 +25,11 @@ public final class Pond
     }
 
     /**
-     * Creates a new Pond iff water is a valid water block
+     * Creates a new Pond iff water is a valid water block.
      *
-     * @param world The world the player is in
-     * @param water the coordinates to check
-     * @return a Pond object if the pond is valid, else null
+     * @param world The world the player is in.
+     * @param water the coordinates to check.
+     * @return a Pond object if the pond is valid, else null.
      */
     public static Pond createWater(@NotNull final IBlockAccess world, @NotNull final BlockPos water)
     {
@@ -41,10 +41,10 @@ public final class Pond
     }
 
     /**
-     * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough ( > 20)
+     * Checks if on position "water" really is water, if the water is connected to land and if the pond is big enough ( > 20).
      *
-     * @param world The world the player is in
-     * @param water The coordinate to check
+     * @param world The world the player is in.
+     * @param water The coordinate to check.
      */
     private static boolean checkWater(@NotNull final IBlockAccess world, @NotNull final BlockPos water)
     {
@@ -65,15 +65,15 @@ public final class Pond
     }
 
     /**
-     * Checks if all blocks in direction X are water and if yes from the middle to both sides in
+     * Checks if all blocks in direction X are water and if yes from the middle to both sides in.
      * direction Z all blocks are also water.
      *
-     * @param world  World
-     * @param x      posX
-     * @param y      posY
-     * @param z      posZ
-     * @param vector direction
-     * @return true if all blocks are water, else false
+     * @param world  World.
+     * @param x      posX.
+     * @param y      posY.
+     * @param z      posZ.
+     * @param vector direction.
+     * @return true if all blocks are water, else false.
      */
     private static boolean checkWaterPoolInDirectionXThenZ(@NotNull final IBlockAccess world, final int x, final int y, final int z, final int vector)
     {
@@ -94,12 +94,12 @@ public final class Pond
      * Checks if all blocks in direction Z are water and if yes from the middle to both sides in
      * direction X all blocks are also water.
      *
-     * @param world  World
-     * @param x      posX
-     * @param y      posY
-     * @param z      posZ
-     * @param vector direction
-     * @return true if all blocks are water, else false
+     * @param world  World.
+     * @param x      posX.
+     * @param y      posY.
+     * @param z      posZ.
+     * @param vector direction.
+     * @return true if all blocks are water, else false.
      */
     private static boolean checkWaterPoolInDirectionZThenX(@NotNull final IBlockAccess world, final int x, final int y, final int z, final int vector)
     {
@@ -117,14 +117,14 @@ public final class Pond
     }
 
     /**
-     * Checks if all blocks in direction Z are Pond
+     * Checks if all blocks in direction Z are Pond.
      *
-     * @param world  World
-     * @param x      posX
-     * @param y      posY
-     * @param z      posZ
-     * @param vector direction
-     * @return true if all blocks are water, else false
+     * @param world  World.
+     * @param x      posX.
+     * @param y      posY.
+     * @param z      posZ.
+     * @param vector direction.
+     * @return true if all blocks are water, else false.
      */
     private static boolean checkWaterPoolInDirectionZ(@NotNull final IBlockAccess world, final int x, final int y, final int z, final int vector)
     {
@@ -140,14 +140,14 @@ public final class Pond
     }
 
     /**
-     * Checks if all blocks in direction X are Pond
+     * Checks if all blocks in direction X are Pond.
      *
-     * @param world  World
-     * @param x      posX
-     * @param y      posY
-     * @param z      posZ
-     * @param vector direction
-     * @return true if all blocks are water, else false
+     * @param world  World.
+     * @param x      posX.
+     * @param y      posY.
+     * @param z      posZ.
+     * @param vector direction.
+     * @return true if all blocks are water, else false.
      */
     private static boolean checkWaterPoolInDirectionX(@NotNull final IBlockAccess world, final int x, final int y, final int z, final int vector)
     {

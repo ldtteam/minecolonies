@@ -33,7 +33,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     private static final String PAGE_ACTIONS    = "levelActions";
 
     /**
-     * Id of the previous page button in the GUI
+     * Id of the previous page button in the GUI.
      */
     private static final String BUTTON_PREVPAGE = "prevPage";
 

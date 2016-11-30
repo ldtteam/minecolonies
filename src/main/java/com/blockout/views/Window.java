@@ -16,12 +16,29 @@ import org.lwjgl.input.Keyboard;
  */
 public class Window extends View
 {
+    /**
+     * The default width.
+     */
     private static final int DEFAULT_WIDTH  = 420;
+
+    /**
+     * The default height.
+     */
     private static final int DEFAULT_HEIGHT = 240;
 
+    /**
+     * The screen of the window.
+     */
     protected Screen screen;
 
+    /**
+     * Defines if the window should pause the game.
+     */
     protected boolean windowPausesGame = true;
+
+    /**
+     * Defines if the window should have a lightbox.
+     */
     protected boolean lightbox         = true;
 
     /**
@@ -84,15 +101,15 @@ public class Window extends View
         }
 
         final PaneParams.SizePair size = params.getSizePairAttribute("size", null, null);
-        if (size != null)
-        {
-            setSize(size.getX(), size.getY());
-        }
-        else
+        if (size == null)
         {
             final int w = params.getIntegerAttribute("width", width);
             final int h = params.getIntegerAttribute("height", height);
             setSize(w, h);
+        }
+        else
+        {
+            setSize(size.getX(), size.getY());
         }
 
         lightbox = params.getBooleanAttribute("lightbox", lightbox);
@@ -115,9 +132,9 @@ public class Window extends View
 
     private static void updateDebugging()
     {
-        debugging = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
-                      Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) &&
-                      Keyboard.isKeyDown(Keyboard.KEY_LMENU);
+        debugging = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)
+                && Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
+                && Keyboard.isKeyDown(Keyboard.KEY_LMENU);
     }
 
     /**
@@ -141,7 +158,7 @@ public class Window extends View
     }
 
     /**
-     * Open the window
+     * Open the window.
      */
     public void open()
     {

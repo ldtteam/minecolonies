@@ -24,6 +24,9 @@ import java.util.stream.Collectors;
  */
 public class Permissions implements IPermissions
 {
+    /**
+     * All tags to store and retrieve data from nbt.
+     */
     private static final String TAG_OWNERS      = "owners";
     private static final String TAG_ID          = "id";
     private static final String TAG_RANK        = "rank";
@@ -32,8 +35,15 @@ public class Permissions implements IPermissions
     private static final String TAG_OWNER       = "owner";
     private static final String TAG_OWNER_ID    = "ownerid";
 
+    /**
+     * All promotion rank possibilities.
+     */
     @NotNull
     private static Map<Rank, RankPair> promotionRanks = new EnumMap<>(Rank.class);
+
+    /**
+     * Fill the promotion ranks.
+     */
     static
     {
         setPromotionRanks(Rank.OFFICER, Rank.OFFICER, Rank.FRIEND);
@@ -42,13 +52,28 @@ public class Permissions implements IPermissions
         setPromotionRanks(Rank.HOSTILE, Rank.NEUTRAL, Rank.HOSTILE);
     }
 
+    /**
+     * The colony the permissions belong to.
+     */
     @NotNull
     private final Colony colony;
+
+    /**
+     * Players registered to the colony.
+     */
     @NotNull
-    private Map<UUID, Player>  players       = new HashMap<>();
+    private final Map<UUID, Player>  players       = new HashMap<>();
+
+    /**
+     * Permissions of these players.
+     */
     @NotNull
-    private Map<Rank, Integer> permissionMap = new EnumMap<>(Rank.class);
-    private boolean            dirty         = false;
+    private final Map<Rank, Integer> permissionMap = new EnumMap<>(Rank.class);
+
+    /**
+     * Used to check if the permissions have to by synchronized.
+     */
+    private boolean dirty = false;
 
     /**
      * The name of the owner.
@@ -234,6 +259,14 @@ public class Permissions implements IPermissions
             }
         }
 
+        restoreOwnerIfNull();
+    }
+
+    /**
+     * Restores the owner from other variables if he is null on loading.
+     */
+    private void restoreOwnerIfNull()
+    {
         final Map.Entry<UUID, Player> owner = getOwnerEntry();
         if(owner == null && ownerUUID != null)
         {
@@ -304,6 +337,10 @@ public class Permissions implements IPermissions
         }
     }
 
+    /**
+     * Returns an unmodifiable map of the players list.
+     * @return
+     */
     @NotNull
     public Map<UUID, Player> getPlayers()
     {
@@ -607,9 +644,9 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Returns if the instance is dirty
+     * Returns if the instance is dirty.
      *
-     * @return True if dirty, otherise false.
+     * @return True if dirty, otherwise false.
      */
     public boolean isDirty()
     {
@@ -768,7 +805,14 @@ public class Permissions implements IPermissions
 
     private static class RankPair
     {
+        /**
+         * The rank if promoted.
+         */
         private Rank promote;
+
+        /**
+         * The rank if demoted.
+         */
         private Rank demote;
 
         /**
@@ -791,9 +835,9 @@ public class Permissions implements IPermissions
     {
         private Rank               userRank    = Rank.NEUTRAL;
         @NotNull
-        private Map<UUID, Player>  players     = new HashMap<>();
+        private final Map<UUID, Player>  players     = new HashMap<>();
         @NotNull
-        private Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
+        private final Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
 
         public Rank getUserRank()
         {
@@ -958,7 +1002,7 @@ public class Permissions implements IPermissions
         public Rank getRank(final UUID id)
         {
             final Player player = players.get(id);
-            return player != null ? player.rank : Rank.NEUTRAL;
+            return player == null ?  Rank.NEUTRAL : player.rank;
         }
 
         @Override

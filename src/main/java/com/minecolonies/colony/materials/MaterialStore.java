@@ -30,19 +30,19 @@ public class MaterialStore
      * These are Materials we have that we don't need right now. So they could be used for something else.
      */
     @NotNull
-    private              Map<Material, Integer> dontNeed           = new HashMap<>();
+    private final Map<Material, Integer> dontNeed           = new HashMap<>();
     /**
      * These are Materials we have that we currently need. So we don't tell anyone else about them.
      */
     @NotNull
-    private              Map<Material, Integer> haveNeed           = new HashMap<>();
+    private final Map<Material, Integer> haveNeed           = new HashMap<>();
     /**
      * These are Materials that we don't have, but we need. The deliveryman try to keep this list empty.
      */
     @NotNull
-    private              Map<Material, Integer> need               = new HashMap<>();
-    private Type           type;
-    private MaterialSystem system;
+    private final Map<Material, Integer> need               = new HashMap<>();
+    private final Type           type;
+    private final MaterialSystem system;
 
     /**
      * Constructor for MaterialStore.
@@ -496,8 +496,8 @@ public class MaterialStore
     }
 
     /**
-     * INVENTORY is Entity
-     * CHEST is AbstractBuilding
+     * INVENTORY is Entity.
+     * CHEST is AbstractBuilding.
      */
     public enum Type
     {

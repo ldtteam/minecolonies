@@ -19,12 +19,12 @@ public class Material
      * Map of where each Material is stored and how much is there.
      */
     @NotNull
-    private Map<MaterialStore, Integer> locations = new HashMap<>();
+    private final Map<MaterialStore, Integer> locations = new HashMap<>();
 
     /**
-     * Universal Item/Block ID
+     * Universal Item/Block ID.
      */
-    private Integer id;
+    private final Integer id;
 
     Material(final Integer id)
     {
