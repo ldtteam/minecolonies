@@ -203,7 +203,7 @@ public class Structure
                 tileentity.readFromNBT(aBlockList.tileentityData);
             }
             final ModelHolder models = new ModelHolder(blockpos, iblockstate, iBlockExtendedState, tileentity, ibakedmodel);
-            this.getQuads(models, models.quads);
+            getQuads(models, models.quads);
             this.renderGhost(clientWorld, models, player, partialTicks);
         }
 
@@ -318,12 +318,12 @@ public class Structure
                   Minecraft.getMinecraft().renderEngine,
                   Minecraft.getMinecraft().fontRendererObj,
                   new FakeEntity(fakeWorld),
-                  (RayTraceResult) null,
+                  null,
                   0.0F);
                 GL11.glPushMatrix();
                 terd.renderEngine = Minecraft.getMinecraft().renderEngine;
                 terd.preDrawBatch();
-                GL11.glColor4f((float) (this.COLOR_R / COLOR_R), (float) (this.COLOR_G / COLOR_G), (float) (this.COLOR_B / COLOR_B), (this.COLOR_A / COLOR_A));
+                GL11.glColor4f(1f, 1f, 1f, 1f);
                 terd.renderTileEntity(te, partialTicks, -1);
                 terd.drawBatch(pass);
                 GL11.glPopMatrix();

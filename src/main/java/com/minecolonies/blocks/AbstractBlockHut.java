@@ -83,6 +83,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     @Override
+    @Deprecated
     public boolean isFullBlock(final IBlockState state)
     {
         return false;
@@ -93,6 +94,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      */
     @NotNull
     @Override
+    @Deprecated
     public IBlockState getStateFromMeta(final int meta)
     {
         EnumFacing enumfacing = EnumFacing.getFront(meta);
@@ -121,6 +123,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     //We unfortunately have to implement these two, to rotate our blocks in the structures.
     @NotNull
     @Override
+    @Deprecated
     public IBlockState withRotation(@NotNull final IBlockState state, final Rotation rot)
     {
         return state.withProperty(FACING, rot.rotate(state.getValue(FACING)));
@@ -128,18 +131,21 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 
     @NotNull
     @Override
+    @Deprecated
     public IBlockState withMirror(@NotNull final IBlockState state, final Mirror mirrorIn)
     {
-        return state.withRotation(mirrorIn.toRotation((EnumFacing) state.getValue(FACING)));
+        return state.withRotation(mirrorIn.toRotation(state.getValue(FACING)));
     }
 
     @Override
+    @Deprecated
     public boolean isFullCube(final IBlockState state)
     {
         return false;
     }
 
     @Override
+    @Deprecated
     public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
