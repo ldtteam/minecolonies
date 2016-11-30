@@ -323,8 +323,8 @@ public class Pane extends Gui
      */
     protected boolean isPointInPane(final int mx, final int my)
     {
-        return mx >= x && mx < (x + width) &&
-                 my >= y && my < (y + height);
+        return mx >= x && mx < (x + width)
+                && my >= y && my < (y + height);
     }
 
     //  Dimensions

@@ -214,14 +214,14 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockDoor)
         {
-            final Item item = blockState.getBlock() == Blocks.IRON_DOOR ? Items.IRON_DOOR :
-                                                                                            (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
-                                                                                               : (blockState.getBlock() == Blocks.BIRCH_DOOR ? Items.BIRCH_DOOR
-                                                                                                    : (blockState.getBlock() == Blocks.JUNGLE_DOOR ? Items.JUNGLE_DOOR
-                                                                                                         : (blockState.getBlock() == Blocks.ACACIA_DOOR ? Items.ACACIA_DOOR
-                                                                                                              : (blockState.getBlock() == Blocks.DARK_OAK_DOOR
-                                                                                                                   ? Items.DARK_OAK_DOOR
-                                                                                                                   : Items.OAK_DOOR)))));
+            final Item item = blockState.getBlock() == Blocks.IRON_DOOR ? Items.IRON_DOOR
+                    : (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
+                            : (blockState.getBlock() == Blocks.BIRCH_DOOR ? Items.BIRCH_DOOR
+                                    : (blockState.getBlock() == Blocks.JUNGLE_DOOR ? Items.JUNGLE_DOOR
+                                            : (blockState.getBlock() == Blocks.ACACIA_DOOR ? Items.ACACIA_DOOR
+                                                    : (blockState.getBlock() == Blocks.DARK_OAK_DOOR
+                                                            ? Items.DARK_OAK_DOOR
+                                                            : Items.OAK_DOOR)))));
 
             return item == null ? Item.getItemFromBlock(blockState.getBlock()) : item;
         }

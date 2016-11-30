@@ -502,7 +502,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                       && !(worldBlock instanceof AbstractBlockHut)
                       && !isBlockFree(block, 0))
                 {
-                    @NotNull final IBlockState blockState = job.getStructure().getBlockState();;
+                    @NotNull final IBlockState blockState = job.getStructure().getBlockState();
                     if(blockState instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
                     {
                         continue;
@@ -848,9 +848,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * Reduces the needed resources by 1.
      * @param block the block which has been used now.
      */
-    private void reduceNeededResources(Block block)
+    private void reduceNeededResources(final Block block)
     {
-        AbstractBuilding workerBuilding = this.getOwnBuilding();
+        final AbstractBuilding workerBuilding = this.getOwnBuilding();
         if(workerBuilding instanceof BuildingBuilder)
         {
             ((BuildingBuilder) workerBuilding).reduceNeededResource(block, 1);
@@ -941,7 +941,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             job.complete();
         }
 
-        AbstractBuilding workerBuilding = getOwnBuilding();
+        final AbstractBuilding workerBuilding = getOwnBuilding();
         if(workerBuilding instanceof BuildingBuilder)
         {
             ((BuildingBuilder) workerBuilding).resetNeededResources();

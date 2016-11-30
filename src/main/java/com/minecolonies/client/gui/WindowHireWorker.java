@@ -143,11 +143,11 @@ public class WindowHireWorker extends Window implements Button.Handler
                 final CitizenDataView citizen = citizens.get(index);
 
                 //Creates the list of attributes for each citizen
-                @NotNull final String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()) + " " +
-                                               LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.getCharisma()) + " " +
-                                               LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.getDexterity()) + " " +
-                                               LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.getEndurance()) + " " +
-                                               LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.getIntelligence());
+                @NotNull final String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()) + " "
+                        + LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.getCharisma()) + " "
+                        + LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.getDexterity()) + " "
+                        + LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.getEndurance()) + " "
+                        + LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.getIntelligence());
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes);

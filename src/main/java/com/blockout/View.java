@@ -159,10 +159,10 @@ public class View extends Pane
 
     protected boolean childIsVisible(final Pane child)
     {
-        return child.getX() < getInteriorWidth() &&
-                 child.getY() < getInteriorHeight() &&
-                 (child.getX() + child.getWidth()) >= 0 &&
-                 (child.getY() + child.getHeight()) >= 0;
+        return child.getX() < getInteriorWidth()
+                && child.getY() < getInteriorHeight()
+                && (child.getX() + child.getWidth()) >= 0
+                && (child.getY() + child.getHeight()) >= 0;
     }
 
     public int getInteriorWidth()

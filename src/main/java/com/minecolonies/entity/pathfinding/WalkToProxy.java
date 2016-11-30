@@ -89,7 +89,7 @@ public class WalkToProxy
      */
     public boolean walkToBlock(@NotNull BlockPos target, int range, boolean onMove)
     {
-        double distanceToPath = BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
+        final double distanceToPath = BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
@@ -111,10 +111,10 @@ public class WalkToProxy
             currentProxy = fillProxyList(target, distanceToPath);
         }
 
-        double distanceToProxy = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), currentProxy);
-        double distanceToNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target)
+        final double distanceToProxy = BlockPosUtil.getDistanceSquared2D(worker.getPosition(), currentProxy);
+        final double distanceToNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target)
                         : BlockPosUtil.getDistanceSquared2D(worker.getPosition(), proxyList.get(0));
-        double distanceProxyNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared2D(currentProxy, target)
+        final double distanceProxyNextProxy = proxyList.isEmpty() ? BlockPosUtil.getDistanceSquared2D(currentProxy, target)
                 : BlockPosUtil.getDistanceSquared2D(currentProxy, proxyList.get(0));
         if (distanceToProxy < MIN_DISTANCE || distanceToNextProxy < distanceProxyNextProxy)
         {
@@ -186,7 +186,7 @@ public class WalkToProxy
     @NotNull
     private BlockPos getMinerProxy(final BlockPos target, final double distanceToPath)
     {
-        AbstractBuildingWorker building =  worker.getWorkBuilding();
+        final AbstractBuildingWorker building =  worker.getWorkBuilding();
         if(building == null || !(building instanceof BuildingMiner))
         {
             return getProxy(target, worker.getPosition(), distanceToPath);
@@ -194,15 +194,15 @@ public class WalkToProxy
 
         ((BuildingMiner) building).getLadderLocation();
 
-        Level level = ((BuildingMiner) building).getCurrentLevel();
-        BlockPos ladderPos = ((BuildingMiner) building).getLadderLocation();
+        final Level level = ((BuildingMiner) building).getCurrentLevel();
+        final BlockPos ladderPos = ((BuildingMiner) building).getLadderLocation();
 
         //If his current working level is null, we have nothing to worry about.
         if(level != null)
         {
-            int levelDepth = level.getDepth() + 2;
-            int targetY = target.getY();
-            int workerY = worker.getPosition().getY();
+            final int levelDepth = level.getDepth() + 2;
+            final int targetY = target.getY();
+            final int workerY = worker.getPosition().getY();
 
             //Check if miner is underground in shaft and his target is overground.
             if (workerY <= levelDepth && targetY > levelDepth)
@@ -215,7 +215,7 @@ public class WalkToProxy
             //Check if target is underground in shaft and miner is over it.
             else if (targetY <= levelDepth && workerY > levelDepth)
             {
-                BlockPos buildingPos = building.getLocation();
+                final BlockPos buildingPos = building.getLocation();
                 BlockPos newProxy;
 
                 //First calculate way to miner building.
@@ -254,8 +254,8 @@ public class WalkToProxy
 
         for(BlockPos wayPoint: worker.getColony().getWayPoints(position, target))
         {
-            double simpleDistance = BlockPosUtil.getDistanceSquared(position, wayPoint);
-            double currentWeight = simpleDistance*simpleDistance + BlockPosUtil.getDistanceSquared(wayPoint, target);
+            final double simpleDistance = BlockPosUtil.getDistanceSquared(position, wayPoint);
+            final double currentWeight = simpleDistance*simpleDistance + BlockPosUtil.getDistanceSquared(wayPoint, target);
             if(currentWeight < weight
                     && BlockPosUtil.getDistanceSquared2D(wayPoint, target) < distanceToPath
                     && simpleDistance > MIN_DISTANCE

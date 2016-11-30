@@ -230,7 +230,7 @@ public class Colony implements IColony
         final NBTTagList wayPointTagList = compound.getTagList(TAG_WAYPOINT, NBT.TAG_COMPOUND);
         for (int i = 0; i < wayPointTagList.tagCount(); ++i)
         {
-            NBTTagCompound blockAtPos = wayPointTagList.getCompoundTagAt(i);
+            final NBTTagCompound blockAtPos = wayPointTagList.getCompoundTagAt(i);
             final BlockPos pos = BlockPosUtil.readFromNBT(blockAtPos, TAG_WAYPOINT);
             final IBlockState state = NBTUtil.readBlockState(blockAtPos);
             wayPoints.put(pos, state);
@@ -403,8 +403,8 @@ public class Colony implements IColony
     public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.equals(getWorld()) &&
-                 BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
+        return w.equals(getWorld())
+                && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
     }
 
     /**
@@ -585,8 +585,8 @@ public class Colony implements IColony
                     }
 
                     final double distance = player.getDistanceSq(center);
-                    if (distance < MathUtils.square(Configurations.workingRangeTownHall + 16D) ||
-                          (oldSubscribers.contains(player) && distance < MathUtils.square(Configurations.workingRangeTownHall * 2D)))
+                    if (distance < MathUtils.square(Configurations.workingRangeTownHall + 16D)
+                            ||  (oldSubscribers.contains(player) && distance < MathUtils.square(Configurations.workingRangeTownHall * 2D)))
                     {
                         // Players become subscribers if they come within 16 blocks of the edge of the colony
                         // Players remain subscribers while they remain within double the colony's radius
@@ -827,17 +827,17 @@ public class Colony implements IColony
             building.onWorldTick(event);
         }
 
-        Random rand = new Random();
+        final Random rand = new Random();
         if(rand.nextInt(CHECK_WAYPOINT_EVERY) <= 1 && wayPoints.size() > 0)
         {
-            Object[] entries = wayPoints.entrySet().toArray();
-            int stopAt = rand.nextInt(entries.length);
-            Object obj = entries[stopAt];
+            final Object[] entries = wayPoints.entrySet().toArray();
+            final int stopAt = rand.nextInt(entries.length);
+            final Object obj = entries[stopAt];
 
             if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof BlockPos && ((Map.Entry) obj).getValue() instanceof IBlockState)
             {
-                @NotNull  BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
-                @NotNull IBlockState value = (IBlockState) ((Map.Entry) obj).getValue();
+                @NotNull final BlockPos key = (BlockPos) ((Map.Entry) obj).getKey();
+                @NotNull final IBlockState value = (IBlockState) ((Map.Entry) obj).getValue();
                 if (world != null && world.getBlockState(key).getBlock() != (value.getBlock()))
                 {
                     wayPoints.remove(key);
@@ -1170,8 +1170,7 @@ public class Colony implements IColony
 
         for (final AbstractBuilding b : buildings.values())
         {
-            if (b instanceof BuildingHome &&
-                  b.getBuildingLevel() > 0)
+            if (b instanceof BuildingHome && b.getBuildingLevel() > 0)
             {
                 newMaxCitizens += ((BuildingHome) b).getMaxInhabitants();
             }
@@ -1399,23 +1398,23 @@ public class Colony implements IColony
      * @return list of wayPoints.
      */
     @NotNull
-    public List<BlockPos> getWayPoints(@NotNull BlockPos position,@NotNull BlockPos target)
+    public List<BlockPos> getWayPoints(@NotNull final BlockPos position,@NotNull final BlockPos target)
     {
-        List<BlockPos> tempWayPoints = new ArrayList<>();
+        final List<BlockPos> tempWayPoints = new ArrayList<>();
         tempWayPoints.addAll(wayPoints.keySet());
         tempWayPoints.addAll(getBuildings().keySet());
 
-        double maxX = Math.max(position.getX(), target.getX());
-        double maxZ = Math.max(position.getZ(), target.getZ());
+        final double maxX = Math.max(position.getX(), target.getX());
+        final double maxZ = Math.max(position.getZ(), target.getZ());
 
-        double minX = Math.min(position.getX(), target.getX());
-        double minZ = Math.min(position.getZ(), target.getZ());
+        final double minX = Math.min(position.getX(), target.getX());
+        final double minZ = Math.min(position.getZ(), target.getZ());
 
-        List<BlockPos> wayPointsCopy = new ArrayList<>(tempWayPoints);
-        for(BlockPos p: wayPointsCopy)
+        final List<BlockPos> wayPointsCopy = new ArrayList<>(tempWayPoints);
+        for(final BlockPos p: wayPointsCopy)
         {
-            int x = p.getX();
-            int z = p.getZ();
+            final int x = p.getX();
+            final int z = p.getZ();
             if(x < minX || x > maxX || z < minZ || z > maxZ)
             {
                 tempWayPoints.remove(p);
