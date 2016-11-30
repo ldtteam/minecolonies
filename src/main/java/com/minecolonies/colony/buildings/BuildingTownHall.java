@@ -11,7 +11,7 @@ public class BuildingTownHall extends AbstractBuildingHut
 {
     private static final String TOWN_HALL = "TownHall";
 
-    public BuildingTownHall(Colony c, BlockPos l)
+    public BuildingTownHall(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -46,7 +46,7 @@ public class BuildingTownHall extends AbstractBuildingHut
 
     public static class View extends AbstractBuildingHut.View
     {
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

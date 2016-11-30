@@ -30,7 +30,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      * @param c the colony.
      * @param l the position.
      */
-    public BuildingFisherman(Colony c, BlockPos l)
+    public BuildingFisherman(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -96,7 +96,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public AbstractJob createJob(CitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobFisherman(citizen);
     }
@@ -112,7 +112,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the position.
          */
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

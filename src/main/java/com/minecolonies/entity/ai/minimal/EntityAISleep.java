@@ -12,7 +12,7 @@ public class EntityAISleep extends EntityAIBase
 {
     private EntityCitizen citizen;
 
-    public EntityAISleep(EntityCitizen citizen)
+    public EntityAISleep(final EntityCitizen citizen)
     {
         super();
         this.setMutexBits(1);

@@ -77,14 +77,14 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     @NotNull
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(final ItemStack stack, final EntityPlayer playerIn, final World worldIn, final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX, final float hitY, final float hitZ)
     {
         if (worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
         {
             return EnumActionResult.FAIL;
         }
 
-        @NotNull EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
+        @NotNull final EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
         if (enumfacing != EnumFacing.DOWN)
         {
             spawnShip(worldIn, pos, enumfacing);
@@ -104,7 +104,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param player the player.
      * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
      */
-    private static boolean isFirstPlacing(@NotNull EntityPlayer player)
+    private static boolean isFirstPlacing(@NotNull final EntityPlayer player)
     {
         if (Configurations.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
         {
@@ -129,7 +129,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return facings it can be placed at.
      */
     @NotNull
-    private static EnumFacing canShipBePlaced(@NotNull World world, @NotNull BlockPos pos)
+    private static EnumFacing canShipBePlaced(@NotNull final World world, @NotNull final BlockPos pos)
     {
         if (check(world, pos.west(), true, false))
         {
@@ -156,7 +156,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param world        world obj.
      * @param pos          coordinate clicked.
      */
-    private void spawnShip(@NotNull World world, @NotNull BlockPos pos, @NotNull EnumFacing chestFacing)
+    private void spawnShip(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing chestFacing)
     {
         world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
 
@@ -174,13 +174,13 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false).
      * @return whether the space in the I shape is free or not.
      */
-    private static boolean check(@NotNull World world, @NotNull BlockPos pos, boolean shouldCheckX, boolean isCoordPositivelyAdded)
+    private static boolean check(@NotNull final World world, @NotNull final BlockPos pos, final boolean shouldCheckX, final boolean isCoordPositivelyAdded)
     {
-        int k = isCoordPositivelyAdded ? 1 : -1;
+        final int k = isCoordPositivelyAdded ? 1 : -1;
 
-        int spaceRightK = SPACE_RIGHT * k;
-        int spaceLeftK = SPACE_LEFT * k;
-        int widthK = WIDTH * k;
+        final int spaceRightK = SPACE_RIGHT * k;
+        final int spaceLeftK = SPACE_LEFT * k;
+        final int widthK = WIDTH * k;
 
         if (shouldCheckX)
         {
@@ -201,18 +201,18 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param isCoordPositivelyAdded if is positive or not.
      * @return true if it can be placed.
      */
-    private static boolean checkZ(World world, BlockPos pos, int k, int spaceRightK, int spaceLeftK, int widthK, boolean isCoordPositivelyAdded)
+    private static boolean checkZ(final World world, final BlockPos pos, final int k, final int spaceRightK, final int spaceLeftK, final int widthK, final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
-            int j = k * i;
+            final int j = k * i;
             if (!checkIfWater(world, pos.add(0, 0, j), pos.add(-spaceRightK, 0, j), pos.add(spaceLeftK, 0, j)))
             {
                 return false;
             }
         }
 
-        int horizontalZ = isCoordPositivelyAdded ? SPACE_RIGHT : SPACE_LEFT;
+        final int horizontalZ = isCoordPositivelyAdded ? SPACE_RIGHT : SPACE_LEFT;
 
         for (int i = 0; i < LENGTH; i++)
         {
@@ -235,19 +235,19 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param isCoordPositivelyAdded if is positive or not.
      * @return true if it can be placed.
      */
-    private static boolean checkX(World world, BlockPos pos, int k, int spaceRightK, int spaceLeftK, int widthK, boolean isCoordPositivelyAdded)
+    private static boolean checkX(final World world, final BlockPos pos, final int k, final int spaceRightK, final int spaceLeftK, final int widthK, final boolean isCoordPositivelyAdded)
     {
         for (int i = DISTANCE; i < WIDTH; i++)
         {
-            int j = k * i;
+            final int j = k * i;
             if (!checkIfWater(world, pos.add(j, 0, 0), pos.add(j, 0, spaceRightK), pos.add(j, 0, -spaceLeftK)))
             {
                 return false;
             }
         }
 
-        int horizontalX = isCoordPositivelyAdded ? SPACE_LEFT : SPACE_RIGHT;
-        int widthKHalf = widthK / 2;
+        final int horizontalX = isCoordPositivelyAdded ? SPACE_LEFT : SPACE_RIGHT;
+        final int widthKHalf = widthK / 2;
 
         for (int i = 0; i < LENGTH; i++)
         {
@@ -267,12 +267,12 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param pos3 the third position.
      * @return true if is water
      */
-    private static boolean checkIfWater(World world, BlockPos pos1, BlockPos pos2, BlockPos pos3)
+    private static boolean checkIfWater(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
     {
         return BlockUtils.isWater(world.getBlockState(pos1)) && BlockUtils.isWater(world.getBlockState(pos2)) && BlockUtils.isWater(world.getBlockState(pos3));
     }
 
-    private void placeSupplyShip(World world, @NotNull BlockPos pos, @NotNull EnumFacing direction)
+    private void placeSupplyShip(final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing direction)
     {
         switch (direction)
         {
@@ -298,7 +298,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      *
      * @param chest the chest to fill.
      */
-    private static void fillChest(@Nullable TileEntityChest chest)
+    private static void fillChest(@Nullable final TileEntityChest chest)
     {
         if (chest == null)
         {

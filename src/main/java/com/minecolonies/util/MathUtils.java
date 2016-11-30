@@ -23,7 +23,7 @@ public final class MathUtils
      * @param number Number to square
      * @return Answer of calculation
      */
-    public static double square(double number)
+    public static double square(final double number)
     {
         return number * number;
     }
@@ -34,7 +34,7 @@ public final class MathUtils
      * @param nanoSeconds as input
      * @return nanoSeconds to seconds
      */
-    public static long nanoSecondsToSeconds(long nanoSeconds)
+    public static long nanoSecondsToSeconds(final long nanoSeconds)
     {
         return nanoSeconds / NANO_TIME_DIVIDER;
     }
@@ -46,7 +46,7 @@ public final class MathUtils
      * @param target   the end position.
      * @return the distance.
      */
-    public static double twoDimDistance(@NotNull BlockPos position, @NotNull BlockPos target)
+    public static double twoDimDistance(@NotNull final BlockPos position, @NotNull final BlockPos target)
     {
         final int x1 = position.getX();
         final int x2 = target.getX();

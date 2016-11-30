@@ -50,7 +50,7 @@ public final class ModSoundEvents
      * @param soundName The SoundEvent's name without the minecolonies prefix
      * @return The SoundEvent
      */
-    public static SoundEvent getSoundID(String soundName)
+    public static SoundEvent getSoundID(final String soundName)
     {
         return new SoundEvent(new ResourceLocation(Constants.MOD_ID, soundName)).setRegistryName(soundName);
     }

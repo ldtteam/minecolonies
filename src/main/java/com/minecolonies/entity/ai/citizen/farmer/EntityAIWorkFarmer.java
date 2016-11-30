@@ -84,7 +84,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      *
      * @param job a farmer job to use.
      */
-    public EntityAIWorkFarmer(@NotNull JobFarmer job)
+    public EntityAIWorkFarmer(@NotNull final JobFarmer job)
     {
         super(job);
         super.registerTargets(
@@ -621,7 +621,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param item     the crop.
      * @param position the location.
      */
-    private boolean plantCrop(Item item, @NotNull BlockPos position)
+    private boolean plantCrop(final Item item, @NotNull final BlockPos position)
     {
         final int slot = worker.findFirstSlotInInventoryWith(item);
         if (slot == -1)

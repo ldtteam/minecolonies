@@ -30,7 +30,7 @@ public class Button extends Pane
      *
      * @param params PaneParams from xml file.
      */
-    public Button(@NotNull PaneParams params)
+    public Button(@NotNull final PaneParams params)
     {
         super(params);
         label = params.getLocalizedStringAttribute("label", label);
@@ -51,7 +51,7 @@ public class Button extends Pane
      *
      * @param s new textContent.
      */
-    public void setLabel(String s)
+    public void setLabel(final String s)
     {
         label = s;
     }
@@ -61,7 +61,7 @@ public class Button extends Pane
      *
      * @param h The new handler.
      */
-    public void setHandler(Handler h)
+    public void setHandler(final Handler h)
     {
         handler = h;
     }
@@ -73,7 +73,7 @@ public class Button extends Pane
      * @param my mouse Y coordinate, relative to Pane's top-left
      */
     @Override
-    public void handleClick(int mx, int my)
+    public void handleClick(final int mx, final int my)
     {
         mc.getSoundHandler().playSound(PositionedSoundRecord.getMusicRecord(SoundEvents.UI_BUTTON_CLICK));
 

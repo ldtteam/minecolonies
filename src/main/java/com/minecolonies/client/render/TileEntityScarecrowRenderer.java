@@ -78,7 +78,7 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
     }
 
     @Override
-    public void renderTileEntityAt(@NotNull ScarecrowTileEntity te, double posX, double posY, double posZ, float partialTicks, int destroyStage)
+    public void renderTileEntityAt(@NotNull final ScarecrowTileEntity te, final double posX, final double posY, final double posZ, final float partialTicks, final int destroyStage)
     {
         //Store the transformation
         GlStateManager.pushMatrix();
@@ -123,9 +123,9 @@ public class TileEntityScarecrowRenderer extends TileEntitySpecialRenderer<Scare
      * @return the location.
      */
     @NotNull
-    private static ResourceLocation getResourceLocation(@NotNull ScarecrowTileEntity tileEntity)
+    private static ResourceLocation getResourceLocation(@NotNull final ScarecrowTileEntity tileEntity)
     {
-        String loc;
+        final String loc;
 
         if (tileEntity.getType() == ScarecrowTileEntity.ScareCrowType.PUMPKINHEAD)
         {

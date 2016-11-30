@@ -119,7 +119,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      *
      * @param building {@link com.minecolonies.colony.buildings.BuildingFarmer.View}
      */
-    public WindowHutFarmer(BuildingFarmer.View building)
+    public WindowHutFarmer(final BuildingFarmer.View building)
     {
         super(building, Constants.MOD_ID + HUT_FARMER_RESOURCE_SUFFIX);
         registerButton(BUTTON_PREV_PAGE, this::prevClicked);
@@ -133,7 +133,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      *
      * @param button clicked button.
      */
-    private void assignClicked(@NotNull Button button)
+    private void assignClicked(@NotNull final Button button)
     {
         final int row = fieldList.getListElementIndexByPane(button);
         final FieldView field = fields.get(row);
@@ -167,7 +167,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      *
      * @param button clicked button.
      */
-    private void assignmentModeClicked(@NotNull Button button)
+    private void assignmentModeClicked(@NotNull final Button button)
     {
         if (button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
         {
@@ -217,7 +217,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
             }
 
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final FieldView field = fields.get(index);
                 @NotNull final String distance = Integer.toString((int) Math.sqrt(BlockPosUtil.getDistanceSquared(field.getId(), building.getLocation())));
@@ -262,7 +262,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      * @param field    the field.
      * @return a string describing the direction.
      */
-    private static String calcDirection(@NotNull BlockPos building, @NotNull BlockPos field)
+    private static String calcDirection(@NotNull final BlockPos building, @NotNull final BlockPos field)
     {
         String dist = "";
 
@@ -304,7 +304,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      * @param ignored Parameter is ignored, since some actions require a button.
      *                This method does not
      */
-    private void prevClicked(Button ignored)
+    private void prevClicked(final Button ignored)
     {
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
         buttonPrevPage.setEnabled(false);
@@ -317,7 +317,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      * @param ignored Parameter is ignored, since some actions require a button.
      *                This method does not
      */
-    private void nextClicked(Button ignored)
+    private void nextClicked(final Button ignored)
     {
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
         buttonPrevPage.setEnabled(true);

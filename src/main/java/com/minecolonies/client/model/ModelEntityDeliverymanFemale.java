@@ -299,14 +299,14 @@ public class ModelEntityDeliverymanFemale extends ModelBiped
         bipedHeadwear.isHidden = true;
     }
 
-    private void setRotation(@NotNull ModelRenderer model, float x, float y, float z)
+    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
 
-    public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
+    public void render(final Entity entity, final float f, final float f1, final float f2, final float f3, final float f4, final float f5)
     {
         super.render(entity, f, f1, f2, f3, f4, f5);
 
@@ -343,10 +343,10 @@ public class ModelEntityDeliverymanFemale extends ModelBiped
     }
 
     @Override
-    public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn)
+    public void setRotationAngles(final float limbSwing, final float limbSwingAmount, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scaleFactor, final Entity entityIn)
     {
-        float bodyX = bipedBody.rotateAngleX;
-        float headX = bipedHead.rotateAngleX;
+        final float bodyX = bipedBody.rotateAngleX;
+        final float headX = bipedHead.rotateAngleX;
 
         super.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entityIn);
 

@@ -54,7 +54,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
      * @param building AbstractBuilding of the request
      * @param mode     Mode of the request, 1 is repair, 0 is build
      */
-    public BuildRequestMessage(@NotNull AbstractBuilding.View building, int mode)
+    public BuildRequestMessage(@NotNull final AbstractBuilding.View building, final int mode)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -63,7 +63,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -71,7 +71,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -81,13 +81,13 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     @Override
     public void messageOnServerThread(final BuildRequestMessage message, final EntityPlayerMP player)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony == null)
         {
             return;
         }
 
-        AbstractBuilding building = colony.getBuilding(message.buildingId);
+        final AbstractBuilding building = colony.getBuilding(message.buildingId);
         if (building == null)
         {
             return;

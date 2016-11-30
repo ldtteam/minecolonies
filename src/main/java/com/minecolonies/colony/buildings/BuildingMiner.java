@@ -164,7 +164,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param c colony containing the building.
      * @param l location of the building.
      */
-    public BuildingMiner(Colony c, BlockPos l)
+    public BuildingMiner(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -230,7 +230,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public AbstractJob createJob(CitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobMiner(citizen);
     }
@@ -241,7 +241,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param compound the compound key.
      */
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -286,7 +286,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param compound the compound key.
      */
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
@@ -329,7 +329,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeInt(currentLevel);
@@ -346,7 +346,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param currentLevel {@link Level}to add
      */
-    public void addLevel(Level currentLevel)
+    public void addLevel(final Level currentLevel)
     {
         levels.add(currentLevel);
     }
@@ -381,7 +381,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param currentLevel the level to set.
      */
-    public void setCurrentLevel(int currentLevel)
+    public void setCurrentLevel(final int currentLevel)
     {
         this.currentLevel = currentLevel;
     }
@@ -430,7 +430,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param ladderLocation the new ladder location.
      */
-    public void setLadderLocation(BlockPos ladderLocation)
+    public void setLadderLocation(final BlockPos ladderLocation)
     {
         this.ladderLocation = ladderLocation;
     }
@@ -450,7 +450,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param foundLadder the boolean.
      */
-    public void setFoundLadder(boolean foundLadder)
+    public void setFoundLadder(final boolean foundLadder)
     {
         this.foundLadder = foundLadder;
     }
@@ -470,7 +470,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param vectorX the vector to set +1 or -1.
      */
-    public void setVectorX(int vectorX)
+    public void setVectorX(final int vectorX)
     {
         this.vectorX = vectorX;
     }
@@ -490,7 +490,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param vectorZ the vector to set +1 or -1.
      */
-    public void setVectorZ(int vectorZ)
+    public void setVectorZ(final int vectorZ)
     {
         this.vectorZ = vectorZ;
     }
@@ -510,7 +510,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param pos the location to set.
      */
-    public void setCobbleLocation(BlockPos pos)
+    public void setCobbleLocation(final BlockPos pos)
     {
         this.cobbleLocation = pos;
     }
@@ -520,7 +520,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param pos the location.
      */
-    public void setShaftStart(BlockPos pos)
+    public void setShaftStart(final BlockPos pos)
     {
         this.shaftStart = pos;
     }
@@ -601,7 +601,7 @@ public class BuildingMiner extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the position.
          */
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -614,7 +614,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
             current = buf.readInt();

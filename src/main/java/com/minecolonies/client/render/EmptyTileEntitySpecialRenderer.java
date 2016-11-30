@@ -21,7 +21,7 @@ public class EmptyTileEntitySpecialRenderer extends TileEntitySpecialRenderer<Ti
      * @param destroyStage don't know, doesn't really matter
      */
     @Override
-    public void renderTileEntityAt(TileEntityColonyBuilding tileEntity, double x, double y, double z, float partialTicks, int destroyStage)
+    public void renderTileEntityAt(final TileEntityColonyBuilding tileEntity, final double x, final double y, final double z, final float partialTicks, final int destroyStage)
     {
         /*
          * Intentionally left empty.

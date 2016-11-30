@@ -48,7 +48,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
      * @param ignored Parameter is ignored, since some actions require a button.
      *                This method does not
      */
-    private void buildClicked(Button ignored)
+    private void buildClicked(final Button ignored)
     {
         MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
     }
@@ -59,7 +59,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
      * @param ignored Parameter is ignored, since some actions require a button.
      *                This method does not
      */
-    private void repairClicked(Button ignored)
+    private void repairClicked(final Button ignored)
     {
         MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
     }
@@ -70,7 +70,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
      * @param ignored Parameter is ignored, since some actions require a button.
      *                This method does not
      */
-    private void inventoryClicked(Button ignored)
+    private void inventoryClicked(final Button ignored)
     {
         MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
     }
@@ -90,7 +90,7 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         }
         else if (building.isBuildingMaxLevel())
         {
-            Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+            final Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
             button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
             button.disable();
         }

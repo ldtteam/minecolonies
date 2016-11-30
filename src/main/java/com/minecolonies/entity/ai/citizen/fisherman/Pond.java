@@ -19,7 +19,7 @@ public final class Pond
 
     private BlockPos location;
 
-    private Pond(BlockPos water)
+    private Pond(final BlockPos water)
     {
         this.location = water;
     }
@@ -31,7 +31,7 @@ public final class Pond
      * @param water the coordinates to check
      * @return a Pond object if the pond is valid, else null
      */
-    public static Pond createWater(@NotNull IBlockAccess world, @NotNull BlockPos water)
+    public static Pond createWater(@NotNull final IBlockAccess world, @NotNull final BlockPos water)
     {
         if (checkWater(world, water))
         {
@@ -46,7 +46,7 @@ public final class Pond
      * @param world The world the player is in
      * @param water The coordinate to check
      */
-    private static boolean checkWater(@NotNull IBlockAccess world, @NotNull BlockPos water)
+    private static boolean checkWater(@NotNull final IBlockAccess world, @NotNull final BlockPos water)
     {
         if (world.getBlockState(water).getBlock() != Blocks.WATER || !world.isAirBlock(water.up()))
         {
@@ -75,7 +75,7 @@ public final class Pond
      * @param vector direction
      * @return true if all blocks are water, else false
      */
-    private static boolean checkWaterPoolInDirectionXThenZ(@NotNull IBlockAccess world, int x, int y, int z, int vector)
+    private static boolean checkWaterPoolInDirectionXThenZ(@NotNull final IBlockAccess world, final int x, final int y, final int z, final int vector)
     {
         //Check 6 blocks in direction +/- x
         for (int dx = x + WATER_POOL_WIDTH_REQUIREMENT * vector; dx <= x + WATER_POOL_WIDTH_REQUIREMENT * vector; dx++)
@@ -101,7 +101,7 @@ public final class Pond
      * @param vector direction
      * @return true if all blocks are water, else false
      */
-    private static boolean checkWaterPoolInDirectionZThenX(@NotNull IBlockAccess world, int x, int y, int z, int vector)
+    private static boolean checkWaterPoolInDirectionZThenX(@NotNull final IBlockAccess world, final int x, final int y, final int z, final int vector)
     {
         //Check 6 blocks in direction +/- z
         for (int dz = z + WATER_POOL_WIDTH_REQUIREMENT * vector; dz <= z + WATER_POOL_WIDTH_REQUIREMENT * vector; dz++)
@@ -126,7 +126,7 @@ public final class Pond
      * @param vector direction
      * @return true if all blocks are water, else false
      */
-    private static boolean checkWaterPoolInDirectionZ(@NotNull IBlockAccess world, int x, int y, int z, int vector)
+    private static boolean checkWaterPoolInDirectionZ(@NotNull final IBlockAccess world, final int x, final int y, final int z, final int vector)
     {
         //Check 3 blocks in direction +/- z
         for (int dz = z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz <= z + WATER_POOL_HEIGHT_REQUIREMENT * vector; dz++)
@@ -149,7 +149,7 @@ public final class Pond
      * @param vector direction
      * @return true if all blocks are water, else false
      */
-    private static boolean checkWaterPoolInDirectionX(@NotNull IBlockAccess world, int x, int y, int z, int vector)
+    private static boolean checkWaterPoolInDirectionX(@NotNull final IBlockAccess world, final int x, final int y, final int z, final int vector)
     {
         //Check 3 blocks in direction +/- x
         for (int dx = x + WATER_POOL_HEIGHT_REQUIREMENT * vector; dx <= x + WATER_POOL_HEIGHT_REQUIREMENT * vector; dx++)
@@ -169,7 +169,7 @@ public final class Pond
      * @return new Pond instance.
      */
     @NotNull
-    public static Pond readFromNBT(@NotNull NBTTagCompound compound)
+    public static Pond readFromNBT(@NotNull final NBTTagCompound compound)
     {
         return new Pond(BlockPosUtil.readFromNBT(compound, TAG_LOCATION));
     }
@@ -181,7 +181,7 @@ public final class Pond
     }
 
     @Override
-    public boolean equals(@Nullable Object obj)
+    public boolean equals(@Nullable final Object obj)
     {
         if (obj == null || obj.getClass() != this.getClass())
         {
@@ -202,7 +202,7 @@ public final class Pond
      *
      * @param compound nbt tag compound to write to.
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
     }

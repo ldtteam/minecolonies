@@ -21,12 +21,12 @@ public class LanguageHandler
      * @param key    unlocalized key
      * @param args   Objects for String.format()
      */
-    public static void sendPlayerLocalizedMessage(@NotNull EntityPlayer player, String key, Object... args)
+    public static void sendPlayerLocalizedMessage(@NotNull final EntityPlayer player, final String key, final Object... args)
     {
         sendPlayerMessage(player, format(key, args));
     }
 
-    public static void sendPlayerMessage(@NotNull EntityPlayer player, String message)
+    public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String message)
     {
         player.addChatComponentMessage(new TextComponentString(message));
     }
@@ -38,7 +38,7 @@ public class LanguageHandler
      * @param args Objects for String.format()
      * @return Localized string
      */
-    public static String format(String key, Object... args)
+    public static String format(final String key, final Object... args)
     {
         return String.format(getString(key), args);
     }
@@ -49,7 +49,7 @@ public class LanguageHandler
      * @param key unlocalized key
      * @return Localized string
      */
-    public static String getString(String key)
+    public static String getString(final String key)
     {
         return getString(key, key);
     }
@@ -62,7 +62,7 @@ public class LanguageHandler
      * @return Localized string
      */
     @SuppressWarnings("deprecation")
-    public static String getString(String key, String defaultValue)
+    public static String getString(final String key, final String defaultValue)
     {
         //todo: use TextComponentTranslation like mojang wants us to
         //using fully qualified name to remove deprecation warning on import
@@ -76,18 +76,18 @@ public class LanguageHandler
      * @param key     unlocalized key
      * @param args    Objects for String.format()
      */
-    public static void sendPlayersLocalizedMessage(List<EntityPlayer> players, String key, Object... args)
+    public static void sendPlayersLocalizedMessage(final List<EntityPlayer> players, final String key, final Object... args)
     {
         sendPlayersMessage(players, format(key, args));
     }
 
-    public static void sendPlayersMessage(@Nullable List<EntityPlayer> players, String message)
+    public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String message)
     {
         if (players == null || players.isEmpty())
         {
             return;
         }
-        for (@NotNull EntityPlayer player : players)
+        for (@NotNull final EntityPlayer player : players)
         {
             sendPlayerMessage(player, message);
         }

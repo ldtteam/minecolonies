@@ -53,7 +53,7 @@ public class ScrollingView extends View
      *
      * @param params xml parameters.
      */
-    public ScrollingView(PaneParams params)
+    public ScrollingView(final PaneParams params)
     {
         super(params);
         setup();
@@ -70,7 +70,7 @@ public class ScrollingView extends View
      * @param params the xml parameters.
      */
     @Override
-    public void parseChildren(PaneParams params)
+    public void parseChildren(final PaneParams params)
     {
         container.parseChildren(params);
     }
@@ -80,7 +80,7 @@ public class ScrollingView extends View
      * to be visible: the ScrollingContainer and the Scrollbar
      */
     @Override
-    protected boolean childIsVisible(Pane child)
+    protected boolean childIsVisible(final Pane child)
     {
         return true;
     }
@@ -90,7 +90,7 @@ public class ScrollingView extends View
         return container.getScrollY();
     }
 
-    public void setScrollY(int offset)
+    public void setScrollY(final int offset)
     {
         container.setScrollY(offset);
     }

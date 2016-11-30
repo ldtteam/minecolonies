@@ -164,7 +164,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @param job a fisherman job to use.
      */
-    public EntityAIWorkFisherman(@NotNull JobFisherman job)
+    public EntityAIWorkFisherman(@NotNull final JobFisherman job)
     {
         super(job);
         super.registerTargets(

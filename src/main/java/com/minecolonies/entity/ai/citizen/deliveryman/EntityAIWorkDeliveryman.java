@@ -17,7 +17,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @param deliveryman the job he has.
      */
-    public EntityAIWorkDeliveryman(@NotNull JobDeliveryman deliveryman)
+    public EntityAIWorkDeliveryman(@NotNull final JobDeliveryman deliveryman)
     {
         super(deliveryman);
     }

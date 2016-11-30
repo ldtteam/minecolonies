@@ -16,7 +16,7 @@ public class ItemIcon extends Pane
         super();
     }
 
-    public ItemIcon(PaneParams params)
+    public ItemIcon(final PaneParams params)
     {
         super(params);
 
@@ -31,13 +31,13 @@ public class ItemIcon extends Pane
         }
     }
 
-    public void setItem(ItemStack itemStack)
+    public void setItem(final ItemStack itemStack)
     {
         this.itemStack = itemStack;
     }
 
     @Override
-    protected void drawSelf(int mx, int my)
+    protected void drawSelf(final int mx, final int my)
     {
         mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
         mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, itemStack, x, y);

@@ -24,7 +24,7 @@ public class ContainerHut extends Container //ContainerChest in future
 
     private int lastNumberOfCitizens = 0;
 
-    public ContainerHut(TileEntityColonyBuilding hut, EntityPlayer player)
+    public ContainerHut(final TileEntityColonyBuilding hut, final EntityPlayer player)
     {
         super();
         this.hut = hut;
@@ -39,7 +39,7 @@ public class ContainerHut extends Container //ContainerChest in future
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player)
+    public boolean canInteractWith(final EntityPlayer player)
     {
         assert !hut.getWorld().isRemote;
 
@@ -49,7 +49,7 @@ public class ContainerHut extends Container //ContainerChest in future
         }
         else
         {
-            Colony colony = hut.getColony();
+            final Colony colony = hut.getColony();
 
             if (colony != null && !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
             {

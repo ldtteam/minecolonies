@@ -29,7 +29,7 @@ public class Window extends View
      *
      * @param resource ResourceLocation to get file from.
      */
-    public Window(ResourceLocation resource)
+    public Window(final ResourceLocation resource)
     {
         this();
         Loader.createFromXMLFile(resource, this);
@@ -49,7 +49,7 @@ public class Window extends View
      * @param w Width of the window, in pixels
      * @param h Height of the window, in pixels
      */
-    public Window(int w, int h)
+    public Window(final int w, final int h)
     {
         super();
         width = w;
@@ -64,7 +64,7 @@ public class Window extends View
      *
      * @param resource location to get file from.
      */
-    public Window(String resource)
+    public Window(final String resource)
     {
         this();
         Loader.createFromXMLFile(resource, this);
@@ -75,23 +75,23 @@ public class Window extends View
      *
      * @param params xml parameters.
      */
-    public void loadParams(@NotNull PaneParams params)
+    public void loadParams(@NotNull final PaneParams params)
     {
-        String inherit = params.getStringAttribute("inherit", null);
+        final String inherit = params.getStringAttribute("inherit", null);
         if (inherit != null)
         {
             Loader.createFromXMLFile(new ResourceLocation(inherit), this);
         }
 
-        PaneParams.SizePair size = params.getSizePairAttribute("size", null, null);
+        final PaneParams.SizePair size = params.getSizePairAttribute("size", null, null);
         if (size != null)
         {
             setSize(size.getX(), size.getY());
         }
         else
         {
-            int w = params.getIntegerAttribute("width", width);
-            int h = params.getIntegerAttribute("height", height);
+            final int w = params.getIntegerAttribute("width", width);
+            final int h = params.getIntegerAttribute("height", height);
             setSize(w, h);
         }
 
@@ -100,13 +100,13 @@ public class Window extends View
     }
 
     @Override
-    public void parseChildren(PaneParams params)
+    public void parseChildren(final PaneParams params)
     {
         // Can be overridden
     }
 
     @Override
-    protected void drawSelf(int mx, int my)
+    protected void drawSelf(final int mx, final int my)
     {
         updateDebugging();
 
@@ -169,7 +169,7 @@ public class Window extends View
      * @param mx Mouse X position
      * @param my Mouse Y position
      */
-    public void onMouseReleased(int mx, int my)
+    public void onMouseReleased(final int mx, final int my)
     {
         // Can be overridden
     }
@@ -185,7 +185,7 @@ public class Window extends View
      * @return <tt>true</tt> if the key was handled by a Pane
      */
     @Override
-    public boolean onKeyTyped(char ch, int key)
+    public boolean onKeyTyped(final char ch, final int key)
     {
         if (getFocus() != null && getFocus().onKeyTyped(ch, key))
         {
@@ -205,7 +205,7 @@ public class Window extends View
      * @param ch  Character of key pressed
      * @param key Keycode of key pressed
      */
-    public void onUnhandledKeyTyped(int ch, int key)
+    public void onUnhandledKeyTyped(final int ch, final int key)
     {
         if (key == Keyboard.KEY_ESCAPE)
         {

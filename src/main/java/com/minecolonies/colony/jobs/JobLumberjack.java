@@ -26,7 +26,7 @@ public class JobLumberjack extends AbstractJob
      *
      * @param entity the lumberjack
      */
-    public JobLumberjack(CitizenData entity)
+    public JobLumberjack(final CitizenData entity)
     {
         super(entity);
     }
@@ -37,7 +37,7 @@ public class JobLumberjack extends AbstractJob
      * @param compound NBTTagCompound containing saved Job data
      */
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -77,11 +77,11 @@ public class JobLumberjack extends AbstractJob
      * @param compound NBTTagCompound to save the Job to
      */
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
-        @NotNull NBTTagCompound treeTag = new NBTTagCompound();
+        @NotNull final NBTTagCompound treeTag = new NBTTagCompound();
 
         if (tree != null)
         {

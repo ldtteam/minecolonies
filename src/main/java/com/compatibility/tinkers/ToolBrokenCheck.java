@@ -23,7 +23,7 @@ public final class ToolBrokenCheck
      * @param stack the item in question.
      * @return boolean whether the stack is broken or not.
      */
-    public static boolean checkTinkersBroken(@Nullable ItemStack stack)
+    public static boolean checkTinkersBroken(@Nullable final ItemStack stack)
     {
         if (stack.hasTagCompound())
         {

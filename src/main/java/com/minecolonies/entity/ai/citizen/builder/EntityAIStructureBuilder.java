@@ -78,7 +78,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      *
      * @param job the job he has.
      */
-    public EntityAIStructureBuilder(@NotNull JobBuilder job)
+    public EntityAIStructureBuilder(@NotNull final JobBuilder job)
     {
         super(job);
         super.registerTargets(
@@ -238,7 +238,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             job.setStructure(new StructureWrapper(world, workOrder.getStructureName()));
         }
-        catch (RuntimeException e)
+        catch (final RuntimeException e)
         {
             Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", workOrder.getStructureName()), e);
             job.setStructure(null);
@@ -254,7 +254,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             if(workOrder.getRotation() == 0)
             {
-                IBlockState blockState = world.getBlockState(pos);
+                final IBlockState blockState = world.getBlockState(pos);
                 if (blockState.getBlock() instanceof AbstractBlockHut)
                 {
                     job.getStructure().rotate(getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING)));
@@ -274,7 +274,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * @param facing the block facing.
      * @return the int rotation.
      */
-    private static int getRotationFromFacing(EnumFacing facing)
+    private static int getRotationFromFacing(final EnumFacing facing)
     {
         switch (facing)
         {
@@ -337,7 +337,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * @param offset the extra distance to apply away from the building
      * @return BlockPos position to work from.
      */
-    private BlockPos getWorkingPosition(int offset)
+    private BlockPos getWorkingPosition(final int offset)
     {
         if (offset > MAX_ADDITIONAL_RANGE_TO_BUILD)
         {
@@ -371,7 +371,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * @return a BlockPos position.
      */
     @NotNull
-    private BlockPos getPositionInDirection(EnumFacing facing, int distance)
+    private BlockPos getPositionInDirection(final EnumFacing facing, final int distance)
     {
         return getFloor(job.getStructure().getPosition().offset(facing, distance));
     }
@@ -383,7 +383,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * @return returns BlockPos position with air above
      */
     @NotNull
-    private BlockPos getFloor(@NotNull BlockPos position)
+    private BlockPos getFloor(@NotNull final BlockPos position)
     {
         //If the position is floating in Air go downwards
         if (!EntityUtils.solidOrLiquid(world, position))
@@ -512,7 +512,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * @param metadata The metadata of the block
      * @return true or false
      */
-    private static boolean isBlockFree(@Nullable Block block, int metadata)
+    private static boolean isBlockFree(@Nullable final Block block, final int metadata)
     {
         return block == null
                  || BlockUtils.isWater(block.getDefaultState())
@@ -639,7 +639,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return findNextBlockNonSolid();
     }
 
-    private void placeBlockAt(@NotNull Block block, @NotNull IBlockState blockState, @NotNull BlockPos coords)
+    private void placeBlockAt(@NotNull final Block block, @NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
         if (block == Blocks.AIR)
         {
@@ -670,7 +670,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     //TODO handle resources
-    private void spawnEntity(@Nullable Entity entity)
+    private void spawnEntity(@Nullable final Entity entity)
     {
         if (entity != null)
         {
@@ -678,7 +678,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (entity instanceof EntityHanging)
             {
-                @NotNull EntityHanging entityHanging = (EntityHanging) entity;
+                @NotNull final EntityHanging entityHanging = (EntityHanging) entity;
 
                 entityHanging.posX += pos.getX();
                 entityHanging.posY += pos.getY();
@@ -696,7 +696,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             }
             else if (entity instanceof EntityMinecart)
             {
-                @Nullable EntityMinecart minecart = (EntityMinecart) entity;
+                @Nullable final EntityMinecart minecart = (EntityMinecart) entity;
                 //todo is this important? minecart.riddenByEntity = null;
                 minecart.posX += pos.getX();
                 minecart.posY += pos.getY();
@@ -710,7 +710,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
     }
 
-    private boolean handleMaterials(@NotNull Block block, @NotNull IBlockState blockState)
+    private boolean handleMaterials(@NotNull final Block block, @NotNull final IBlockState blockState)
     {
         //Breaking blocks doesn't require taking materials from the citizens inventory
         if (block == Blocks.AIR)
@@ -726,7 +726,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return !checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState));
     }
 
-    private boolean placeBlock(@NotNull BlockPos pos, Block block, @NotNull IBlockState blockState)
+    private boolean placeBlock(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState blockState)
     {
         //Move out of the way when placing blocks
         if (MathHelper.floor_double(worker.posX) == pos.getX()
@@ -749,8 +749,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         //We need to deal with materials
         if (!Configurations.builderInfiniteResources && world.getBlockState(pos).getBlock() != Blocks.AIR)
         {
-            List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
-            for (ItemStack item : items)
+            final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
+            for (final ItemStack item : items)
             {
                 InventoryUtils.setStack(worker.getInventoryCitizen(), item);
             }
@@ -766,7 +766,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         else if (block instanceof BlockBed)
         {
             world.setBlockState(pos, blockState, 0x03);
-            EnumFacing facing = blockState.getValue(BlockBed.FACING);
+            final EnumFacing facing = blockState.getValue(BlockBed.FACING);
 
             //Set other part of the bed, to the opposite PartType
             if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
@@ -807,7 +807,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return true;
         }
 
-        @Nullable ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
+        @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
         if (stack == null)
         {
             Log.getLogger().error("Block causes NPE: " + blockState.getBlock());
@@ -822,7 +822,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return true;
     }
 
-    private void setTileEntity(@NotNull BlockPos pos)
+    private void setTileEntity(@NotNull final BlockPos pos)
     {
         //TODO do we need to load TileEntities when building?
         @Nullable final TileEntity tileEntity = job.getStructure().getTileEntity();

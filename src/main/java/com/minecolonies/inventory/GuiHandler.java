@@ -13,7 +13,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public class GuiHandler implements IGuiHandler
 {
     @Override
-    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
+    public Object getServerGuiElement(final int id, final EntityPlayer player, final World world, final int x, final int y, final int z)
     {
         final BlockPos pos = new BlockPos(x, y, z);
         final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);
@@ -21,7 +21,7 @@ public class GuiHandler implements IGuiHandler
     }
 
     @Override
-    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z)
+    public Object getClientGuiElement(final int id, final EntityPlayer player, final World world, final int x, final int y, final int z)
     {
         final BlockPos pos = new BlockPos(x, y, z);
         final ScarecrowTileEntity tileEntity = (ScarecrowTileEntity) world.getTileEntity(pos);

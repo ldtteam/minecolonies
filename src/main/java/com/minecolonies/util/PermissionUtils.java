@@ -32,7 +32,7 @@ public final class PermissionUtils
      * @return The list with online players that has the rank or higher
      */
     @NotNull
-    public static List<Permissions.Player> getPlayersWithAtLeastRank(@NotNull Colony colony, @NotNull Permissions.Rank rank)
+    public static List<Permissions.Player> getPlayersWithAtLeastRank(@NotNull final Colony colony, @NotNull final Permissions.Rank rank)
     {
         @NotNull final List<Permissions.Player> playersWithAtLeastRank = new ArrayList<>();
 

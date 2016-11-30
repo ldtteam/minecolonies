@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class JobPlaceholder extends AbstractJob
 {
-    public JobPlaceholder(CitizenData entity)
+    public JobPlaceholder(final CitizenData entity)
     {
         super(entity);
     }

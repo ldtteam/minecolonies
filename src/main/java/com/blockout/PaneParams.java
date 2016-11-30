@@ -21,7 +21,7 @@ public class PaneParams
     private Node node;
     private View parentView;
 
-    public PaneParams(Node n)
+    public PaneParams(final Node n)
     {
         node = n;
     }
@@ -36,7 +36,7 @@ public class PaneParams
         return parentView;
     }
 
-    public void setParentView(View parent)
+    public void setParentView(final View parent)
     {
         parentView = parent;
     }
@@ -87,7 +87,7 @@ public class PaneParams
     }
 
     @Nullable
-    private static String localize(String str)
+    private static String localize(final String str)
     {
         if (str == null)
         {
@@ -121,40 +121,40 @@ public class PaneParams
         return s;
     }
 
-    public String getStringAttribute(String name)
+    public String getStringAttribute(final String name)
     {
         return getStringAttribute(name, "");
     }
 
-    public String getStringAttribute(String name, String def)
+    public String getStringAttribute(final String name, final String def)
     {
         final Node attr = getAttribute(name);
         return (attr != null) ? attr.getNodeValue() : def;
     }
 
-    private Node getAttribute(String name)
+    private Node getAttribute(final String name)
     {
         return node.getAttributes().getNamedItem(name);
     }
 
     @Nullable
-    public String getLocalizedStringAttribute(String name)
+    public String getLocalizedStringAttribute(final String name)
     {
         return getLocalizedStringAttribute(name, "");
     }
 
     @Nullable
-    public String getLocalizedStringAttribute(String name, String def)
+    public String getLocalizedStringAttribute(final String name, final String def)
     {
         return localize(getStringAttribute(name, def));
     }
 
-    public int getIntegerAttribute(String name)
+    public int getIntegerAttribute(final String name)
     {
         return getIntegerAttribute(name, 0);
     }
 
-    public int getIntegerAttribute(String name, int def)
+    public int getIntegerAttribute(final String name, final int def)
     {
         final String attr = getStringAttribute(name, null);
         if (attr != null)
@@ -164,12 +164,12 @@ public class PaneParams
         return def;
     }
 
-    public float getFloatAttribute(String name)
+    public float getFloatAttribute(final String name)
     {
         return getFloatAttribute(name, 0);
     }
 
-    public float getFloatAttribute(String name, float def)
+    public float getFloatAttribute(final String name, final float def)
     {
         final String attr = getStringAttribute(name, null);
         if (attr != null)
@@ -179,12 +179,12 @@ public class PaneParams
         return def;
     }
 
-    public double getDoubleAttribute(String name)
+    public double getDoubleAttribute(final String name)
     {
         return getDoubleAttribute(name, 0);
     }
 
-    public double getDoubleAttribute(String name, double def)
+    public double getDoubleAttribute(final String name, final double def)
     {
         final String attr = getStringAttribute(name, null);
         if (attr != null)
@@ -195,12 +195,12 @@ public class PaneParams
         return def;
     }
 
-    public boolean getBooleanAttribute(String name)
+    public boolean getBooleanAttribute(final String name)
     {
         return getBooleanAttribute(name, false);
     }
 
-    public boolean getBooleanAttribute(String name, boolean def)
+    public boolean getBooleanAttribute(final String name, final boolean def)
     {
         final String attr = getStringAttribute(name, null);
         if (attr != null)
@@ -210,7 +210,7 @@ public class PaneParams
         return def;
     }
 
-    public <T extends Enum<T>> T getEnumAttribute(String name, Class<T> clazz, T def)
+    public <T extends Enum<T>> T getEnumAttribute(final String name, final Class<T> clazz, final T def)
     {
         final String attr = getStringAttribute(name, null);
         if (attr != null)
@@ -220,12 +220,12 @@ public class PaneParams
         return def;
     }
 
-    public int getScalableIntegerAttribute(String name, int def, int scale)
+    public int getScalableIntegerAttribute(final String name, final int def, final int scale)
     {
         final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            Matcher m = PERCENTAGE_PATTERN.matcher(attr);
+            final Matcher m = PERCENTAGE_PATTERN.matcher(attr);
             if (m.find())
             {
                 return parseScalableIntegerRegexMatch(m, def, scale);
@@ -235,7 +235,7 @@ public class PaneParams
         return def;
     }
 
-    private static int parseScalableIntegerRegexMatch(Matcher m, int def, int scale)
+    private static int parseScalableIntegerRegexMatch(final Matcher m, final int def, final int scale)
     {
         try
         {
@@ -260,7 +260,7 @@ public class PaneParams
     }
 
     @Nullable
-    public SizePair getSizePairAttribute(String name, SizePair def, SizePair scale)
+    public SizePair getSizePairAttribute(final String name, final SizePair def, final SizePair scale)
     {
         final String attr = getStringAttribute(name, null);
         if (attr != null)
@@ -286,7 +286,7 @@ public class PaneParams
         return def;
     }
 
-    public int getColorAttribute(String name, int def)
+    public int getColorAttribute(final String name, final int def)
     {
         final String attr = getStringAttribute(name, null);
         if (attr == null)
@@ -312,7 +312,7 @@ public class PaneParams
         }
     }
 
-    private static int getRGBA(String attr, Matcher m)
+    private static int getRGBA(final String attr, final Matcher m)
     {
         final int r = MathHelper.clamp_int(Integer.parseInt(m.group(1)), 0, 255);
         final int g = MathHelper.clamp_int(Integer.parseInt(m.group(2)), 0, 255);
@@ -329,13 +329,13 @@ public class PaneParams
         return color;
     }
 
-    private static int getColorByNumberOrName(int def, String attr)
+    private static int getColorByNumberOrName(final int def, final String attr)
     {
         try
         {
             return Integer.parseInt(attr);
         }
-        catch (NumberFormatException ex)
+        catch (final NumberFormatException ex)
         {
             return Color.getByName(attr, def);
         }
@@ -346,7 +346,7 @@ public class PaneParams
         private int x;
         private int y;
 
-        public SizePair(int w, int h)
+        public SizePair(final int w, final int h)
         {
             x = w;
             y = h;

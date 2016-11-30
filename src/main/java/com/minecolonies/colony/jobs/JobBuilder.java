@@ -28,13 +28,13 @@ public class JobBuilder extends AbstractJob
     private   BlockPos         schematicPos;
     private   BlockPos         schematicProgress;
 
-    public JobBuilder(CitizenData entity)
+    public JobBuilder(final CitizenData entity)
     {
         super(entity);
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_WORK_ORDER))
@@ -66,7 +66,7 @@ public class JobBuilder extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         if (workOrderId != 0)
@@ -138,7 +138,7 @@ public class JobBuilder extends AbstractJob
      *
      * @param schematic {@link StructureWrapper} object
      */
-    public void setStructure(StructureWrapper schematic)
+    public void setStructure(final StructureWrapper schematic)
     {
         this.schematic = schematic;
     }
@@ -189,7 +189,7 @@ public class JobBuilder extends AbstractJob
      *
      * @param order Work Order to associate with this job, or null
      */
-    public void setWorkOrder(@Nullable WorkOrderBuild order)
+    public void setWorkOrder(@Nullable final WorkOrderBuild order)
     {
         if (order == null)
         {

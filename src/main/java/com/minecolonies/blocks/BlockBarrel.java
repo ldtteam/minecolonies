@@ -71,13 +71,13 @@ public class BlockBarrel extends Block
         setResistance(RESISTANCE);
     }
 
-    public void AddItemToBarrel(World worldIn, EntityPlayer playerIn, ItemStack itemStack, IBlockState state, BlockPos pos)
+    public void AddItemToBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemStack, final IBlockState state, final BlockPos pos)
     {
         UseBarrel(worldIn, playerIn, itemStack, state, pos);
     }
 
     //whenever player right click to barrel call this.
-    public boolean UseBarrel(World worldIn, EntityPlayer playerIn, ItemStack itemstack, IBlockState state, BlockPos pos)
+    public boolean UseBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemstack, final IBlockState state, final BlockPos pos)
     {
         Log.getLogger().info("block activated");
 
@@ -126,7 +126,7 @@ public class BlockBarrel extends Block
         return true;
     }
 
-    public void GetItemFromBarrel(World worldIn, EntityPlayer playerIn, ItemStack itemStack, IBlockState state, BlockPos pos)
+    public void GetItemFromBarrel(final World worldIn, final EntityPlayer playerIn, final ItemStack itemStack, final IBlockState state, final BlockPos pos)
     {
         final int bs = state.getValue(BARRELSTATE);
         if (bs == 2)
@@ -157,13 +157,13 @@ public class BlockBarrel extends Block
     //todo: remove once we no longer need to support this
     @SuppressWarnings("deprecation")
     @Override
-    public boolean isOpaqueCube(IBlockState state)
+    public boolean isOpaqueCube(final IBlockState state)
     {
         return true;
     }
 
     @Override
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand)
+    public void updateTick(final World worldIn, final BlockPos pos, final IBlockState state, final Random rand)
     {
         Log.getLogger().info("UpdateTick called");
 
@@ -183,7 +183,7 @@ public class BlockBarrel extends Block
         }
     }
 
-    private static void checkIfBarrelFull(World world, BlockPos pos, IBlockState state)
+    private static void checkIfBarrelFull(final World world, final BlockPos pos, final IBlockState state)
     {
         final int fullness = fillings.getOrDefault(pos, 0);
         if (fullness >= MAX_FULLNESS)
@@ -193,7 +193,7 @@ public class BlockBarrel extends Block
         }
     }
 
-    private static void doBarrelCompostTick(World world, BlockPos pos, IBlockState state)
+    private static void doBarrelCompostTick(final World world, final BlockPos pos, final IBlockState state)
     {
         int timer = timers.getOrDefault(pos, 0);
         timer++;
@@ -212,7 +212,7 @@ public class BlockBarrel extends Block
         return new BlockStateContainer(this, BARRELSTATE);
     }
 
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(final World worldIn, final BlockPos pos, final IBlockState state, final EntityPlayer playerIn, final EnumFacing side, final float hitX, final float hitY, final float hitZ)
     {
         Log.getLogger().info("block right-clicked");
 

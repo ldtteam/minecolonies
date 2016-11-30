@@ -67,7 +67,7 @@ public abstract class AbstractJob
      *
      * @param entity the citizen data.
      */
-    public AbstractJob(CitizenData entity)
+    public AbstractJob(final CitizenData entity)
     {
         citizen = entity;
     }
@@ -78,7 +78,7 @@ public abstract class AbstractJob
      * @param name     name of job class
      * @param jobClass class of job
      */
-    private static void addMapping(String name, @NotNull Class<? extends AbstractJob> jobClass)
+    private static void addMapping(final String name, @NotNull final Class<? extends AbstractJob> jobClass)
     {
         if (nameToClassMap.containsKey(name))
         {
@@ -92,7 +92,7 @@ public abstract class AbstractJob
                 classToNameMap.put(jobClass, name);
             }
         }
-        catch (NoSuchMethodException exception)
+        catch (final NoSuchMethodException exception)
         {
             throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Job class mapping", exception);
         }
@@ -106,7 +106,7 @@ public abstract class AbstractJob
      * @return New Job created from the data, or null
      */
     @Nullable
-    public static AbstractJob createFromNBT(CitizenData citizen, @NotNull NBTTagCompound compound)
+    public static AbstractJob createFromNBT(final CitizenData citizen, @NotNull final NBTTagCompound compound)
     {
         @Nullable AbstractJob job = null;
         @Nullable Class<? extends AbstractJob> oclass = null;
@@ -117,7 +117,7 @@ public abstract class AbstractJob
 
             if (oclass != null)
             {
-                Constructor<?> constructor = oclass.getDeclaredConstructor(CitizenData.class);
+                final Constructor<?> constructor = oclass.getDeclaredConstructor(CitizenData.class);
                 job = (AbstractJob) constructor.newInstance(citizen);
             }
         }
@@ -132,7 +132,7 @@ public abstract class AbstractJob
             {
                 job.readFromNBT(compound);
             }
-            catch (RuntimeException ex)
+            catch (final RuntimeException ex)
             {
                 Log.getLogger().error(String.format("A Job %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                   compound.getString(TAG_TYPE), oclass.getName()), ex);
@@ -152,12 +152,12 @@ public abstract class AbstractJob
      *
      * @param compound NBTTagCompound containing saved Job data
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        NBTTagList itemsNeededTag = compound.getTagList(TAG_ITEMS_NEEDED, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList itemsNeededTag = compound.getTagList(TAG_ITEMS_NEEDED, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < itemsNeededTag.tagCount(); i++)
         {
-            NBTTagCompound itemCompound = itemsNeededTag.getCompoundTagAt(i);
+            final NBTTagCompound itemCompound = itemsNeededTag.getCompoundTagAt(i);
             itemsNeeded.add(ItemStack.loadItemStackFromNBT(itemCompound));
         }
     }
@@ -204,9 +204,9 @@ public abstract class AbstractJob
      *
      * @param compound NBTTagCompound to save the Job to
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        String s = classToNameMap.get(this.getClass());
+        final String s = classToNameMap.get(this.getClass());
 
         if (s == null)
         {
@@ -217,10 +217,10 @@ public abstract class AbstractJob
 
         if (!itemsNeeded.isEmpty())
         {
-            @NotNull NBTTagList itemsNeededTag = new NBTTagList();
-            for (@NotNull ItemStack itemstack : itemsNeeded)
+            @NotNull final NBTTagList itemsNeededTag = new NBTTagList();
+            for (@NotNull final ItemStack itemstack : itemsNeeded)
             {
-                @NotNull NBTTagCompound itemCompound = new NBTTagCompound();
+                @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
                 itemstack.writeToNBT(itemCompound);
                 itemsNeededTag.appendTag(itemCompound);
             }
@@ -263,9 +263,9 @@ public abstract class AbstractJob
      *
      * @param stack Item+count needed to do the job
      */
-    public void addItemNeeded(@NotNull ItemStack stack)
+    public void addItemNeeded(@NotNull final ItemStack stack)
     {
-        for (@NotNull ItemStack neededItem : itemsNeeded)
+        for (@NotNull final ItemStack neededItem : itemsNeeded)
         {
             if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
             {
@@ -285,14 +285,14 @@ public abstract class AbstractJob
      * @return modified ItemStack with remaining items (or null).
      */
     @Nullable
-    public ItemStack removeItemNeeded(@NotNull ItemStack stack)
+    public ItemStack removeItemNeeded(@NotNull final ItemStack stack)
     {
-        @NotNull ItemStack stackCopy = stack.copy();
-        for (@NotNull ItemStack neededItem : itemsNeeded)
+        @NotNull final ItemStack stackCopy = stack.copy();
+        for (@NotNull final ItemStack neededItem : itemsNeeded)
         {
             if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
             {
-                int itemsToRemove = Math.min(neededItem.stackSize, stackCopy.stackSize);
+                final int itemsToRemove = Math.min(neededItem.stackSize, stackCopy.stackSize);
                 neededItem.stackSize -= itemsToRemove;
                 stackCopy.stackSize -= itemsToRemove;
 
@@ -313,9 +313,9 @@ public abstract class AbstractJob
      *
      * @param tasks EntityAITasks list to add tasks to
      */
-    public void addTasks(@NotNull EntityAITasks tasks)
+    public void addTasks(@NotNull final EntityAITasks tasks)
     {
-        AbstractAISkeleton<? extends AbstractJob> aiTask = generateAI();
+        final AbstractAISkeleton<? extends AbstractJob> aiTask = generateAI();
         if (aiTask != null)
         {
             tasks.addTask(TASK_PRIORITY, aiTask);

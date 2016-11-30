@@ -16,7 +16,7 @@ public class EntityAICitizenWander extends EntityAIBase
     private double        zPosition;
     private double        speed;
 
-    public EntityAICitizenWander(EntityCitizen citizen, double speed)
+    public EntityAICitizenWander(final EntityCitizen citizen, final double speed)
     {
         super();
         this.citizen = citizen;
@@ -73,7 +73,7 @@ public class EntityAICitizenWander extends EntityAIBase
      * @param position Current position of the entity
      * @return Ground level at (position.x, position.z)
      */
-    private double getValidHeight(@NotNull Vec3d position)
+    private double getValidHeight(@NotNull final Vec3d position)
     {
         double returnHeight = position.yCoord;
         if (position.yCoord < 0)

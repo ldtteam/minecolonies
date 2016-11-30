@@ -36,7 +36,7 @@ public class ItemStorage
      * @param amount            optional amount.
      * @param ignoreDamageValue should the damage value be ignored?
      */
-    public ItemStorage(@NotNull Item item, int damageValue, int amount, boolean ignoreDamageValue)
+    public ItemStorage(@NotNull final Item item, final int damageValue, final int amount, final boolean ignoreDamageValue)
     {
         this.item = item;
         this.damageValue = damageValue;

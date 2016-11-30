@@ -110,7 +110,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param nextState          the next state to change to once done iterating.
      * @return the new state this AI will be in after one pass
      */
-    private Supplier<AIState> generateSchematicIterator(@NotNull Function<Structure.SchematicBlock, Boolean> evaluationFunction, @NotNull AIState nextState)
+    private Supplier<AIState> generateSchematicIterator(@NotNull final Function<Structure.SchematicBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
     {
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
@@ -182,7 +182,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param offset the extra distance to apply away from the building
      * @return BlockPos position to work from.
      */
-    private BlockPos getWorkingPosition(int offset)
+    private BlockPos getWorkingPosition(final int offset)
     {
         if (offset > MAX_ADDITIONAL_RANGE_TO_BUILD)
         {
@@ -213,7 +213,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @return the next step once done
      */
-    private boolean clearStep(@NotNull Structure.SchematicBlock currentBlock)
+    private boolean clearStep(@NotNull final Structure.SchematicBlock currentBlock)
     {
 
         //Don't break bedrock etc.
@@ -255,7 +255,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return a BlockPos position.
      */
     @NotNull
-    private BlockPos getPositionInDirection(EnumFacing facing, int distance)
+    private BlockPos getPositionInDirection(final EnumFacing facing, final int distance)
     {
         return getFloor(currentStructure.getCurrentBlockPosition().offset(facing, distance));
     }
@@ -267,7 +267,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return returns BlockPos position with air above
      */
     @NotNull
-    private BlockPos getFloor(@NotNull BlockPos position)
+    private BlockPos getFloor(@NotNull final BlockPos position)
     {
         //If the position is floating in Air go downwards
         if (!EntityUtils.solidOrLiquid(world, position))

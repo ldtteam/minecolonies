@@ -64,7 +64,7 @@ public class BlockSubstitution extends Block
     //todo: remove once we no longer need to support this
     @SuppressWarnings("deprecation")
     @Override
-    public boolean isOpaqueCube(IBlockState state)
+    public boolean isOpaqueCube(final IBlockState state)
     {
         return true;
     }

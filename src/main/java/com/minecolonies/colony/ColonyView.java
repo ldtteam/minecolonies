@@ -53,7 +53,7 @@ public final class ColonyView implements IColony
      *
      * @param id The current id for the colony.
      */
-    private ColonyView(int id)
+    private ColonyView(final int id)
     {
         this.id = id;
     }
@@ -65,7 +65,7 @@ public final class ColonyView implements IColony
      * @return the new colony view.
      */
     @NotNull
-    public static ColonyView createFromNetwork(int id)
+    public static ColonyView createFromNetwork(final int id)
     {
         return new ColonyView(id);
     }
@@ -77,7 +77,7 @@ public final class ColonyView implements IColony
      * @param buf               {@link ByteBuf} to write data in.
      * @param isNewSubScription true if this is a new subscription.
      */
-    public static void serializeNetworkData(@NotNull Colony colony, @NotNull ByteBuf buf, boolean isNewSubScription)
+    public static void serializeNetworkData(@NotNull final Colony colony, @NotNull final ByteBuf buf, final boolean isNewSubScription)
     {
         //  General Attributes
         ByteBufUtils.writeUTF8String(buf, colony.getName());
@@ -124,7 +124,7 @@ public final class ColonyView implements IColony
      *
      * @param manualHiring true if manually.
      */
-    public void setManualHiring(boolean manualHiring)
+    public void setManualHiring(final boolean manualHiring)
     {
         this.manualHiring = manualHiring;
     }
@@ -148,7 +148,7 @@ public final class ColonyView implements IColony
      * @param z z-coordinate
      * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
      */
-    public AbstractBuilding.View getBuilding(int x, int y, int z)
+    public AbstractBuilding.View getBuilding(final int x, final int y, final int z)
     {
         return getBuilding(new BlockPos(x, y, z));
     }
@@ -159,7 +159,7 @@ public final class ColonyView implements IColony
      * @param buildingId Coordinates/ID of the AbstractBuilding
      * @return {@link AbstractBuilding.View} of a AbstractBuilding for the given Coordinates/ID, or null
      */
-    public AbstractBuilding.View getBuilding(BlockPos buildingId)
+    public AbstractBuilding.View getBuilding(final BlockPos buildingId)
     {
         return buildings.get(buildingId);
     }
@@ -182,7 +182,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to get the permission.
      * @param action Permission to get.
      */
-    public void setPermission(Permissions.Rank rank, @NotNull Permissions.Action action)
+    public void setPermission(final Permissions.Rank rank, @NotNull final Permissions.Action action)
     {
         if (permissions.setPermission(rank, action))
         {
@@ -196,7 +196,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to remove permission from.
      * @param action Action to remove permission of.
      */
-    public void removePermission(Permissions.Rank rank, @NotNull Permissions.Action action)
+    public void removePermission(final Permissions.Rank rank, @NotNull final Permissions.Action action)
     {
         if (permissions.removePermission(rank, action))
         {
@@ -210,7 +210,7 @@ public final class ColonyView implements IColony
      * @param rank   Rank to toggle permission of.
      * @param action Action to toggle permission of.
      */
-    public void togglePermission(Permissions.Rank rank, @NotNull Permissions.Action action)
+    public void togglePermission(final Permissions.Rank rank, @NotNull final Permissions.Action action)
     {
         permissions.togglePermission(rank, action);
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(this, PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
@@ -252,7 +252,7 @@ public final class ColonyView implements IColony
      * @param id the citizen id.
      * @return CitizenDataView for the citizen.
      */
-    public CitizenDataView getCitizen(int id)
+    public CitizenDataView getCitizen(final int id)
     {
         return citizens.get(id);
     }
@@ -264,7 +264,7 @@ public final class ColonyView implements IColony
      * @param isNewSubscription Whether this is a new subscription of not
      * @return null == no response
      */
-    public IMessage handleColonyViewMessage(@NotNull ByteBuf buf, boolean isNewSubscription)
+    public IMessage handleColonyViewMessage(@NotNull final ByteBuf buf, final boolean isNewSubscription)
     {
         //  General Attributes
         name = ByteBufUtils.readUTF8String(buf);
@@ -290,7 +290,7 @@ public final class ColonyView implements IColony
      * @param buf buffer containing permissions.
      * @return null == no response
      */
-    public IMessage handlePermissionsViewMessage(@NotNull ByteBuf buf)
+    public IMessage handlePermissionsViewMessage(@NotNull final ByteBuf buf)
     {
         permissions.deserialize(buf);
         return null;
@@ -303,7 +303,7 @@ public final class ColonyView implements IColony
      * @param buf Network data
      * @return null == no response
      */
-    public IMessage handleColonyViewWorkOrderMessage(ByteBuf buf)
+    public IMessage handleColonyViewWorkOrderMessage(final ByteBuf buf)
     {
         @Nullable final WorkOrderView workOrder = AbstractWorkOrder.createWorkOrderView(buf);
         workOrders.put(workOrder.getId(), workOrder);
@@ -319,7 +319,7 @@ public final class ColonyView implements IColony
      * @param buf Network data
      * @return null == no response
      */
-    public IMessage handleColonyViewCitizensMessage(int id, ByteBuf buf)
+    public IMessage handleColonyViewCitizensMessage(final int id, final ByteBuf buf)
     {
         final CitizenDataView citizen = CitizenData.createCitizenDataView(id, buf);
         if (citizen != null)
@@ -336,7 +336,7 @@ public final class ColonyView implements IColony
      * @param citizen citizen ID
      * @return null == no response
      */
-    public IMessage handleColonyViewRemoveCitizenMessage(int citizen)
+    public IMessage handleColonyViewRemoveCitizenMessage(final int citizen)
     {
         citizens.remove(citizen);
         return null;
@@ -348,7 +348,7 @@ public final class ColonyView implements IColony
      * @param buildingId location of the building.
      * @return null == no response
      */
-    public IMessage handleColonyViewRemoveBuildingMessage(BlockPos buildingId)
+    public IMessage handleColonyViewRemoveBuildingMessage(final BlockPos buildingId)
     {
         final AbstractBuilding.View building = buildings.remove(buildingId);
         if (townHall == building)
@@ -379,7 +379,7 @@ public final class ColonyView implements IColony
      * @param buf        buffer containing ColonyBuilding information.
      * @return null == no response
      */
-    public IMessage handleColonyBuildingViewMessage(BlockPos buildingId, @NotNull ByteBuf buf)
+    public IMessage handleColonyBuildingViewMessage(final BlockPos buildingId, @NotNull final ByteBuf buf)
     {
         @Nullable final AbstractBuilding.View building = AbstractBuilding.createBuildingView(this, buildingId, buf);
         if (building != null)
@@ -400,7 +400,7 @@ public final class ColonyView implements IColony
      *
      * @param player player username.
      */
-    public void addPlayer(String player)
+    public void addPlayer(final String player)
     {
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(this, player));
     }
@@ -410,7 +410,7 @@ public final class ColonyView implements IColony
      *
      * @param player the UUID of the player to remove.
      */
-    public void removePlayer(UUID player)
+    public void removePlayer(final UUID player)
     {
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(this, player));
     }
@@ -432,7 +432,7 @@ public final class ColonyView implements IColony
      *
      * @param name Name of the view.
      */
-    public void setName(String name)
+    public void setName(final String name)
     {
         this.name = name;
         MineColonies.getNetwork().sendToServer(new TownHallRenameMessage(this, name));
@@ -446,7 +446,7 @@ public final class ColonyView implements IColony
     }
 
     @Override
-    public boolean isCoordInColony(@NotNull World w, @NotNull BlockPos pos)
+    public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
     {
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.provider.getDimension() == dimensionId &&
@@ -454,7 +454,7 @@ public final class ColonyView implements IColony
     }
 
     @Override
-    public long getDistanceSquared(@NotNull BlockPos pos)
+    public long getDistanceSquared(@NotNull final BlockPos pos)
     {
         return BlockPosUtil.getDistanceSquared2D(center, pos);
     }

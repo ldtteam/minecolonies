@@ -63,7 +63,7 @@ public class ButtonImage extends Button
      *
      * @param params PaneParams provided in the xml.
      */
-    public ButtonImage(PaneParams params)
+    public ButtonImage(final PaneParams params)
     {
         super(params);
 
@@ -79,7 +79,7 @@ public class ButtonImage extends Button
      *
      * @param params PaneParams provided in the xml.
      */
-    private void loadImageInfo(PaneParams params)
+    private void loadImageInfo(final PaneParams params)
     {
         final String path = params.getStringAttribute("source", null);
         if (path != null)
@@ -108,7 +108,7 @@ public class ButtonImage extends Button
      *
      * @param params PaneParams provided in the xml.
      */
-    private void loadHighlightInfo(PaneParams params)
+    private void loadHighlightInfo(final PaneParams params)
     {
         final String path = params.getStringAttribute("highlight", null);
         if (path != null)
@@ -137,7 +137,7 @@ public class ButtonImage extends Button
      *
      * @param params PaneParams provided in the xml.
      */
-    private void loadDisabledInfo(PaneParams params)
+    private void loadDisabledInfo(final PaneParams params)
     {
         final String path = params.getStringAttribute("disabled", null);
         if (path != null)
@@ -166,7 +166,7 @@ public class ButtonImage extends Button
      *
      * @param params PaneParams provided in the xml.
      */
-    private void loadTextInfo(PaneParams params)
+    private void loadTextInfo(final PaneParams params)
     {
         textScale = params.getDoubleAttribute("scale", textScale);
         textAlignment = params.getEnumAttribute("textalign", Alignment.class, textAlignment);
@@ -220,7 +220,7 @@ public class ButtonImage extends Button
      *
      * @param source String path.
      */
-    public void setImage(String source)
+    public void setImage(final String source)
     {
         setImage(source, 0, 0, 0, 0);
     }
@@ -234,7 +234,7 @@ public class ButtonImage extends Button
      * @param w       image width.
      * @param h       image height.
      */
-    public void setImage(String source, int offsetX, int offsetY, int w, int h)
+    public void setImage(final String source, final int offsetX, final int offsetY, final int w, final int h)
     {
         setImage(source != null ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
     }
@@ -248,7 +248,7 @@ public class ButtonImage extends Button
      * @param w       image width.
      * @param h       image height.
      */
-    public void setImage(ResourceLocation loc, int offsetX, int offsetY, int w, int h)
+    public void setImage(final ResourceLocation loc, final int offsetX, final int offsetY, final int w, final int h)
     {
         image = loc;
         imageOffsetX = offsetX;
@@ -264,7 +264,7 @@ public class ButtonImage extends Button
      *
      * @param loc ResourceLocation for the image.
      */
-    public void setImage(ResourceLocation loc)
+    public void setImage(final ResourceLocation loc)
     {
         setImage(loc, 0, 0, 0, 0);
     }
@@ -274,7 +274,7 @@ public class ButtonImage extends Button
      *
      * @param source String path.
      */
-    public void setImageHighlight(String source)
+    public void setImageHighlight(final String source)
     {
         setImageHighlight(source, 0, 0, 0, 0);
     }
@@ -288,7 +288,7 @@ public class ButtonImage extends Button
      * @param w       image width.
      * @param h       image height.
      */
-    public void setImageHighlight(String source, int offsetX, int offsetY, int w, int h)
+    public void setImageHighlight(final String source, final int offsetX, final int offsetY, final int w, final int h)
     {
         setImageHighlight(source != null ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
     }
@@ -302,7 +302,7 @@ public class ButtonImage extends Button
      * @param w       image width.
      * @param h       image height.
      */
-    public void setImageHighlight(ResourceLocation loc, int offsetX, int offsetY, int w, int h)
+    public void setImageHighlight(final ResourceLocation loc, final int offsetX, final int offsetY, final int w, final int h)
     {
         imageHighlight = loc;
         highlightOffsetX = offsetX;
@@ -318,7 +318,7 @@ public class ButtonImage extends Button
      *
      * @param loc ResourceLocation for the image.
      */
-    public void setImageHighlight(ResourceLocation loc)
+    public void setImageHighlight(final ResourceLocation loc)
     {
         setImageHighlight(loc, 0, 0, 0, 0);
     }
@@ -328,7 +328,7 @@ public class ButtonImage extends Button
      *
      * @param source String path.
      */
-    public void setImageDisabled(String source)
+    public void setImageDisabled(final String source)
     {
         setImageHighlight(source, 0, 0, 0, 0);
     }
@@ -342,7 +342,7 @@ public class ButtonImage extends Button
      * @param w       image width.
      * @param h       image height.
      */
-    public void setImageDisabled(String source, int offsetX, int offsetY, int w, int h)
+    public void setImageDisabled(final String source, final int offsetX, final int offsetY, final int w, final int h)
     {
         setImageHighlight(source != null ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
     }
@@ -352,7 +352,7 @@ public class ButtonImage extends Button
      *
      * @param loc ResourceLocation for the image.
      */
-    public void setImageDisabled(ResourceLocation loc)
+    public void setImageDisabled(final ResourceLocation loc)
     {
         setImageHighlight(loc, 0, 0, 0, 0);
     }
@@ -366,7 +366,7 @@ public class ButtonImage extends Button
      * @param w       image width.
      * @param h       image height.
      */
-    public void setImageDisabled(ResourceLocation loc, int offsetX, int offsetY, int w, int h)
+    public void setImageDisabled(final ResourceLocation loc, final int offsetX, final int offsetY, final int w, final int h)
     {
         imageDisabled = loc;
         disabledOffsetX = offsetX;
@@ -390,7 +390,7 @@ public class ButtonImage extends Button
      *
      * @param c New textContent color.
      */
-    public void setTextColor(int c)
+    public void setTextColor(final int c)
     {
         setTextColor(c, c, c);
     }
@@ -402,7 +402,7 @@ public class ButtonImage extends Button
      * @param d Disabled textContent color.
      * @param h Hover textContent color.
      */
-    public void setTextColor(int c, int d, int h)
+    public void setTextColor(final int c, final int d, final int h)
     {
         textColor = c;
         textDisabledColor = d;
@@ -438,7 +438,7 @@ public class ButtonImage extends Button
      *
      * @param s true to enable shadow.
      */
-    public void setShadow(boolean s)
+    public void setShadow(final boolean s)
     {
         shadow = s;
     }
@@ -456,7 +456,7 @@ public class ButtonImage extends Button
      *
      * @param align textContent alignment.
      */
-    public void setTextAlignment(Alignment align)
+    public void setTextAlignment(final Alignment align)
     {
         textAlignment = align;
     }
@@ -474,7 +474,7 @@ public class ButtonImage extends Button
      *
      * @param s New textContent scale.
      */
-    public void setTextScale(float s)
+    public void setTextScale(final float s)
     {
         textScale = s;
     }
@@ -487,7 +487,7 @@ public class ButtonImage extends Button
      * @param my Mouse y (relative to parent)
      */
     @Override
-    protected void drawSelf(int mx, int my)
+    protected void drawSelf(final int mx, final int my)
     {
         final boolean mouseOver = isPointInPane(mx, my);
 
@@ -500,7 +500,7 @@ public class ButtonImage extends Button
      *
      * @param mouseOver Is the mouse hovering over the button.
      */
-    private void drawImage(boolean mouseOver)
+    private void drawImage(final boolean mouseOver)
     {
         ResourceLocation bind = image;
         int offsetX = imageOffsetX;
@@ -556,7 +556,7 @@ public class ButtonImage extends Button
      *
      * @param mouseOver If the mouse hovering over the button.
      */
-    private void drawlabel(boolean mouseOver)
+    private void drawlabel(final boolean mouseOver)
     {
         if (label != null)
         {
@@ -595,7 +595,7 @@ public class ButtonImage extends Button
      *
      * @param texture The texture to bind.
      */
-    private void setupOpenGL(ResourceLocation texture)
+    private void setupOpenGL(final ResourceLocation texture)
     {
         this.mc.getTextureManager().bindTexture(texture);
         if (this.enabled || this.imageDisabled != null)

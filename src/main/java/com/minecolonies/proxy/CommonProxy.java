@@ -35,7 +35,7 @@ public class CommonProxy implements IProxy
      * @param name     player UUID + Properties name, HashMap key
      * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties data only
      */
-    public static void storeEntityData(String name, NBTTagCompound compound)
+    public static void storeEntityData(final String name, final NBTTagCompound compound)
     {
         playerPropertiesData.put(name, compound);
     }
@@ -46,7 +46,7 @@ public class CommonProxy implements IProxy
      * @param name player UUID + Properties name, HashMap key
      * @return NBTTagCompound PlayerProperties NBT compound
      */
-    public static NBTTagCompound getEntityData(String name)
+    public static NBTTagCompound getEntityData(final String name)
     {
         return playerPropertiesData.remove(name);
     }
@@ -112,7 +112,7 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void showCitizenWindow(CitizenDataView citizen)
+    public void showCitizenWindow(final CitizenDataView citizen)
     {
         /*
          * Intentionally left empty.
@@ -120,7 +120,7 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void openBuildToolWindow(BlockPos pos)
+    public void openBuildToolWindow(final BlockPos pos)
     {
         /*
          * Intentionally left empty.

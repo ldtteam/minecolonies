@@ -32,7 +32,7 @@ public class ModelHolder
      * @param te tileEntity.
      * @param model model.
      */
-    public ModelHolder(BlockPos pos, IBlockState actualState, IBlockState extendedState, @Nullable TileEntity te, IBakedModel model)
+    public ModelHolder(final BlockPos pos, final IBlockState actualState, final IBlockState extendedState, @Nullable final TileEntity te, final IBakedModel model)
     {
         this.pos = pos;
         this.actualState = actualState;

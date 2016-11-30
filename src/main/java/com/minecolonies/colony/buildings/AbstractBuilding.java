@@ -80,7 +80,7 @@ public abstract class AbstractBuilding
      * @param colony Colony the building belongs to
      * @param pos    Location of the building (it's Hut Block)
      */
-    protected AbstractBuilding(@NotNull Colony colony, BlockPos pos)
+    protected AbstractBuilding(@NotNull final Colony colony, final BlockPos pos)
     {
         location = pos;
         this.colony = colony;
@@ -96,7 +96,7 @@ public abstract class AbstractBuilding
      * @param buildingClass subclass of AbstractBuilding, located in {@link com.minecolonies.colony.buildings}
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.blocks}
      */
-    private static void addMapping(String name, @NotNull Class<? extends AbstractBuilding> buildingClass, @NotNull Class<? extends AbstractBlockHut> parentBlock)
+    private static void addMapping(final String name, @NotNull final Class<? extends AbstractBuilding> buildingClass, @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
         if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(buildingClass.getName().hashCode()))
         {
@@ -116,7 +116,7 @@ public abstract class AbstractBuilding
                     classNameHashToClassMap.put(buildingClass.getName().hashCode(), buildingClass);
                 }
             }
-            catch (NoSuchMethodException exception)
+            catch (final NoSuchMethodException exception)
             {
                 throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding AbstractBuilding class mapping", exception);
             }
@@ -141,7 +141,7 @@ public abstract class AbstractBuilding
      * @return {@link AbstractBuilding} created from the compound.
      */
     @Nullable
-    public static AbstractBuilding createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
+    public static AbstractBuilding createFromNBT(final Colony colony, @NotNull final NBTTagCompound compound)
     {
         @Nullable AbstractBuilding building = null;
         @Nullable Class<?> oclass = null;
@@ -168,7 +168,7 @@ public abstract class AbstractBuilding
             {
                 building.readFromNBT(compound);
             }
-            catch (RuntimeException ex)
+            catch (final RuntimeException ex)
             {
                 Log.getLogger().error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
                   compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
@@ -189,7 +189,7 @@ public abstract class AbstractBuilding
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to read data from
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         buildingLevel = compound.getInteger(TAG_BUILDING_LEVEL);
 
@@ -215,10 +215,10 @@ public abstract class AbstractBuilding
      * @return {@link AbstractBuilding} instance, without NBTTags applied.
      */
     @Nullable
-    public static AbstractBuilding create(Colony colony, @NotNull TileEntityColonyBuilding parent)
+    public static AbstractBuilding create(final Colony colony, @NotNull final TileEntityColonyBuilding parent)
     {
         @Nullable AbstractBuilding building = null;
-        Class<?> oclass;
+        final Class<?> oclass;
 
         try
         {
@@ -252,7 +252,7 @@ public abstract class AbstractBuilding
      * @return {@link AbstractBuilding.View} created from reading the buf
      */
     @Nullable
-    public static View createBuildingView(ColonyView colony, BlockPos id, @NotNull ByteBuf buf)
+    public static View createBuildingView(final ColonyView colony, final BlockPos id, @NotNull final ByteBuf buf)
     {
         @Nullable View view = null;
         @Nullable Class<?> oclass = null;
@@ -286,7 +286,7 @@ public abstract class AbstractBuilding
             {
                 view.deserialize(buf);
             }
-            catch (IndexOutOfBoundsException ex)
+            catch (final IndexOutOfBoundsException ex)
             {
                 Log.getLogger().error(
                   String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
@@ -315,7 +315,7 @@ public abstract class AbstractBuilding
      * @param block Block you want to know whether it matches this class or not
      * @return True if the block matches this class, otherwise false
      */
-    public boolean isMatchingBlock(@NotNull Block block)
+    public boolean isMatchingBlock(@NotNull final Block block)
     {
         final Class<?> c = blockClassToBuildingClassMap.get(block.getClass());
         return getClass().equals(c);
@@ -327,7 +327,7 @@ public abstract class AbstractBuilding
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         final String s = classToNameMap.get(this.getClass());
 
@@ -390,7 +390,7 @@ public abstract class AbstractBuilding
      *
      * @param te {@link TileEntityColonyBuilding} that will fill the {@link #tileEntity} field
      */
-    public void setTileEntity(TileEntityColonyBuilding te)
+    public void setTileEntity(final TileEntityColonyBuilding te)
     {
         tileEntity = te;
     }
@@ -450,7 +450,7 @@ public abstract class AbstractBuilding
      *
      * @param citizen Citizen to be removed
      */
-    public void removeCitizen(CitizenData citizen)
+    public void removeCitizen(final CitizenData citizen)
     {
         // Can be overridden by other buildings.
     }
@@ -460,7 +460,7 @@ public abstract class AbstractBuilding
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
-    public void onServerTick(TickEvent.ServerTickEvent event)
+    public void onServerTick(final TickEvent.ServerTickEvent event)
     {
         // Can be overridden by other buildings.
     }
@@ -470,7 +470,7 @@ public abstract class AbstractBuilding
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
      */
-    public void onWorldTick(TickEvent.WorldTickEvent event)
+    public void onWorldTick(final TickEvent.WorldTickEvent event)
     {
         // Can be overridden by other buildings.
     }
@@ -498,7 +498,7 @@ public abstract class AbstractBuilding
      *
      * @param level Desired level
      */
-    private void requestWorkOrder(int level)
+    private void requestWorkOrder(final int level)
     {
         for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {
@@ -549,7 +549,7 @@ public abstract class AbstractBuilding
      *
      * @param rotation integer value of the rotation
      */
-    public void setRotation(int rotation)
+    public void setRotation(final int rotation)
     {
         this.rotation = rotation;
     }
@@ -569,7 +569,7 @@ public abstract class AbstractBuilding
      *
      * @param style String value of the style
      */
-    public void setStyle(String style)
+    public void setStyle(final String style)
     {
         this.style = style;
     }
@@ -589,7 +589,7 @@ public abstract class AbstractBuilding
      *
      * @param newLevel The new level
      */
-    public void onUpgradeComplete(int newLevel)
+    public void onUpgradeComplete(final int newLevel)
     {
         // Does nothing here
     }
@@ -603,7 +603,7 @@ public abstract class AbstractBuilding
      *
      * @param buf ByteBuf to write to
      */
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         buf.writeInt(this.getClass().getName().hashCode());
         buf.writeInt(getBuildingLevel());
@@ -625,7 +625,7 @@ public abstract class AbstractBuilding
      *
      * @param level Level of the building
      */
-    public void setBuildingLevel(int level)
+    public void setBuildingLevel(final int level)
     {
         if (level > getMaxBuildingLevel())
         {
@@ -666,7 +666,7 @@ public abstract class AbstractBuilding
          * @param c ColonyView the building is in.
          * @param l The location of the building.
          */
-        protected View(ColonyView c, @NotNull BlockPos l)
+        protected View(final ColonyView c, @NotNull final BlockPos l)
         {
             colony = c;
             location = new BlockPos(l);
@@ -763,7 +763,7 @@ public abstract class AbstractBuilding
          *
          * @param buf The buffer to read this view from.
          */
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@NotNull final ByteBuf buf)
         {
             buildingLevel = buf.readInt();
             buildingMaxLevel = buf.readInt();

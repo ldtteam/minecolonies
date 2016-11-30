@@ -75,7 +75,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * @param c the colony the building is in.
      * @param l the position it has been placed (it's id).
      */
-    public BuildingFarmer(Colony c, BlockPos l)
+    public BuildingFarmer(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -106,7 +106,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param field the field to add.
      */
-    public void addFarmerFields(Field field)
+    public void addFarmerFields(final Field field)
     {
         field.calculateSize(getColony().getWorld(), field.getLocation().down());
         farmerFields.add(field);
@@ -190,7 +190,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public AbstractJob createJob(@NotNull CitizenData citizen)
+    public AbstractJob createJob(@NotNull final CitizenData citizen)
     {
         if (!farmerFields.isEmpty())
         {
@@ -209,7 +209,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     //we have to update our field from the colony!
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
@@ -226,7 +226,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         @NotNull final NBTTagList fieldTagList = new NBTTagList();
@@ -269,7 +269,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(assignManually);
@@ -325,7 +325,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param world the world the building is in.
      */
-    public void syncWithColony(@NotNull World world)
+    public void syncWithColony(@NotNull final World world)
     {
         if (!farmerFields.isEmpty())
         {
@@ -385,7 +385,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param position id of the field.
      */
-    public void freeField(BlockPos position)
+    public void freeField(final BlockPos position)
     {
         //Get the field with matching id, if none found return null.
         final Field tempField = farmerFields.stream().filter(field -> field.getID().equals(position)).findFirst().orElse(null);
@@ -411,7 +411,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param position id of the field.
      */
-    public void assignField(BlockPos position)
+    public void assignField(final BlockPos position)
     {
         final Field field = getColony().getField(position);
         field.setTaken(true);
@@ -461,7 +461,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the position.
          */
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -473,7 +473,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@NotNull final ByteBuf buf)
         {
             fields = new ArrayList<>();
             super.deserialize(buf);
@@ -544,7 +544,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
             this.assignFieldManually = assignFieldManually;
         }
 
-        public void changeFields(final BlockPos id, boolean addNewField, int row)
+        public void changeFields(final BlockPos id, final boolean addNewField, final int row)
         {
             MineColonies.getNetwork().sendToServer(new AssignFieldMessage(this, addNewField, id));
             fields.get(row).setTaken(addNewField);

@@ -31,16 +31,16 @@ public final class ClientStructureWrapper
      * @param nbttagcompound compound to store.
      * @param storeLocation where to store it at.
      */
-    public static void handleSaveScanMessage(NBTTagCompound nbttagcompound, String storeLocation)
+    public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final String storeLocation)
     {
-        File file = new File(Minecraft.getMinecraft().mcDataDir, storeLocation);
+        final File file = new File(Minecraft.getMinecraft().mcDataDir, storeLocation);
         createScanDirectory(Minecraft.getMinecraft().theWorld);
 
         try (OutputStream outputstream = new FileOutputStream(file))
         {
             CompressedStreamTools.writeCompressed(nbttagcompound, outputstream);
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("item.scepterSteel.scanFailure"));
             return;
@@ -55,16 +55,16 @@ public final class ClientStructureWrapper
      * Creates the scan directories for the scanTool.
      * @param world the worldIn.
      */
-    private static void createScanDirectory(@NotNull World world)
+    private static void createScanDirectory(@NotNull final World world)
     {
-        File minecolonies;
+        final File minecolonies;
         if (world.isRemote)
         {
             minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
         }
         else
         {
-            MinecraftServer server = world.getMinecraftServer();
+            final MinecraftServer server = world.getMinecraftServer();
             if(server != null)
             {
                 minecolonies = server.getFile("minecolonies/");
@@ -76,7 +76,7 @@ public final class ClientStructureWrapper
         }
         checkDirectory(minecolonies);
 
-        @NotNull File scans = new File(minecolonies, "scans/");
+        @NotNull final File scans = new File(minecolonies, "scans/");
         checkDirectory(scans);
     }
 
@@ -84,7 +84,7 @@ public final class ClientStructureWrapper
      * Checks if directory exists, else creates it.
      * @param directory the directory to check.
      */
-    private static void checkDirectory(@NotNull File directory)
+    private static void checkDirectory(@NotNull final File directory)
     {
         if (!directory.exists() && !directory.mkdirs())
         {

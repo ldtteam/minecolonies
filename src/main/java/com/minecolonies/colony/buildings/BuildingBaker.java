@@ -26,7 +26,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      * @param c Colony the building is in.
      * @param l Location of the building.
      */
-    public BuildingBaker(Colony c, BlockPos l)
+    public BuildingBaker(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -74,7 +74,7 @@ public class BuildingBaker extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public AbstractJob createJob(CitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobPlaceholder(citizen); //TODO Implement Later
     }
@@ -90,7 +90,7 @@ public class BuildingBaker extends AbstractBuildingWorker
          * @param c The ColonyView the building is in.
          * @param l The location of the building.
          */
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

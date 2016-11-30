@@ -37,7 +37,7 @@ public final class Settings
      *
      * @param pos location to render.
      */
-    public void moveTo(BlockPos pos)
+    public void moveTo(final BlockPos pos)
     {
         if (this.structure == null)
         {
@@ -65,7 +65,7 @@ public final class Settings
      *
      * @param structure structure to render.
      */
-    public void setActiveSchematic(Structure structure)
+    public void setActiveSchematic(final Structure structure)
     {
         if (structure != null)
         {
@@ -99,7 +99,7 @@ public final class Settings
     /**
      * @param mode true if in hut mode, false if in decoration mode.
      */
-    public void setInHutMode(boolean mode)
+    public void setInHutMode(final boolean mode)
     {
         inHutMode = mode;
     }
@@ -112,7 +112,7 @@ public final class Settings
      * @param level    AbstractBuilding level.
      * @param rotation The number of times the building is rotated.
      */
-    public void setSchematicInfo(String hutDec, String style, int level, int rotation)
+    public void setSchematicInfo(final String hutDec, final String style, final int level, final int rotation)
     {
         this.hutDec = hutDec;
         this.style = style;
@@ -174,11 +174,11 @@ public final class Settings
      * @return the offset a blockPos.
      */
     @NotNull
-    public BlockPos getOffset(PlacementSettings settings)
+    public BlockPos getOffset(final PlacementSettings settings)
     {
         if(structure != null)
         {
-            for (Template.BlockInfo info : structure.getBlockInfoWithSettings(settings))
+            for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(settings))
             {
                 if (info.blockState.getBlock() instanceof AbstractBlockHut)
                 {

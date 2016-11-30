@@ -38,7 +38,7 @@ public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IM
      * @param taskId the task id.
      * @param buildingId the position of the building.
      */
-    public GuardScepterMessage(int taskId, BlockPos buildingId)
+    public GuardScepterMessage(final int taskId, final BlockPos buildingId)
     {
         super();
         this.taskId = taskId;
@@ -46,14 +46,14 @@ public class GuardScepterMessage extends AbstractMessage<GuardScepterMessage, IM
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         this.taskId = buf.readInt();
         this.buildingId = BlockPosUtil.readFromByteBuf(buf);
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(taskId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);

@@ -141,7 +141,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
      * @param count    number of citizens.
      * @param halfPage the halfPage.
      */
-    private static void drawPageSwitcher(@NotNull final ICommandSender sender, int page, int count, int halfPage)
+    private static void drawPageSwitcher(@NotNull final ICommandSender sender, final int page, final int count, final int halfPage)
     {
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (count / CITIZENS_ON_PAGE) + halfPage);

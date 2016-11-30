@@ -37,7 +37,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
      *
      * @param building {@link com.minecolonies.colony.buildings.BuildingMiner.View}
      */
-    public WindowHutMiner(BuildingMiner.View building)
+    public WindowHutMiner(final BuildingMiner.View building)
     {
         super(building, Constants.MOD_ID + HUT_MINER_RESOURCE_SUFFIX);
         this.miner = building;
@@ -75,7 +75,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
             }
 
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(final int index, @NotNull final Pane rowPane)
             {
 
                 if (index == miner.current)
@@ -94,7 +94,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     }
 
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@NotNull final Button button)
     {
         switch (button.getID())
         {
@@ -109,7 +109,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
                 buttonNextPage.setEnabled(false);
                 break;
             case BUTTON_CURRENTLEVEL:
-                int row = levelList.getListElementIndexByPane(button);
+                final int row = levelList.getListElementIndexByPane(button);
                 if (row != miner.current && row >= 0 && row < levels.length)
                 {
                     miner.current = row;
@@ -125,7 +125,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     @Override
     public void onUpdate()
     {
-        String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_LEVELS))
         {
             pullLevelsFromHut();

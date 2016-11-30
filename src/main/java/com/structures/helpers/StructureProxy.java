@@ -40,7 +40,7 @@ public class StructureProxy
     public StructureProxy(final World worldObj, final String name)
     {
         this.structure = new Structure(worldObj, name, new PlacementSettings());
-        BlockPos size = structure.getSize(Rotation.NONE);
+        final BlockPos size = structure.getSize(Rotation.NONE);
 
         this.width = size.getX();
         this.height = size.getY();
@@ -49,9 +49,9 @@ public class StructureProxy
         this.blocks = new Block[width][height][length];
         this.metadata = new IBlockState[width][height][length];
 
-        for(Template.BlockInfo info: structure.getBlockInfo())
+        for(final Template.BlockInfo info: structure.getBlockInfo())
         {
-            BlockPos tempPos = info.pos;
+            final BlockPos tempPos = info.pos;
             blocks[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info.blockState.getBlock();
             metadata[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info.blockState;
 
@@ -77,7 +77,7 @@ public class StructureProxy
      * Setter of the offset.
      * @param pos the new offset.
      */
-    public void setOffset(BlockPos pos)
+    public void setOffset(final BlockPos pos)
     {
         offset = pos;
     }
@@ -280,7 +280,7 @@ public class StructureProxy
      */
     public void rotate(final int times)
     {
-        Rotation rotation;
+        final Rotation rotation;
         switch (times)
         {
             case 1:
@@ -337,12 +337,12 @@ public class StructureProxy
         minZ = Math.abs(minZ);
         boolean foundHut = false;
 
-        for(Template.BlockInfo info: structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
+        for(final Template.BlockInfo info: structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
         {
-            BlockPos tempPos = info.pos;
-            int x = tempPos.getX() + minX;
-            int y = tempPos.getY() + minY;
-            int z = tempPos.getZ() + minZ;
+            final BlockPos tempPos = info.pos;
+            final int x = tempPos.getX() + minX;
+            final int y = tempPos.getY() + minY;
+            final int z = tempPos.getZ() + minZ;
 
             this.blocks[x][y][z] = info.blockState.getBlock();
             this.metadata[x][y][z] = info.blockState;
@@ -360,7 +360,7 @@ public class StructureProxy
      * Updates the offset if the structure is a decoration.
      * @param foundHut if false update.
      */
-    private void updateOffSetIfDecoration(boolean foundHut, BlockPos size)
+    private void updateOffSetIfDecoration(final boolean foundHut, final BlockPos size)
     {
         if(!foundHut)
         {

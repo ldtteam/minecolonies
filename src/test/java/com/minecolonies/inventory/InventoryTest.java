@@ -28,9 +28,9 @@ public class InventoryTest extends AbstractTest
     public void setupInventories()
     {
         this.materialSystem = new MaterialSystem();
-        TileEntityColonyBuilding colonyBuilding = new TileEntityColonyBuilding();
+        final TileEntityColonyBuilding colonyBuilding = new TileEntityColonyBuilding();
         this.materialStore = new MaterialStore(MaterialStore.Type.CHEST, materialSystem);
-        AbstractBuilding mockBuilding = mock(AbstractBuilding.class);
+        final AbstractBuilding mockBuilding = mock(AbstractBuilding.class);
         when(mockBuilding.getMaterialStore()).thenReturn(this.materialStore);
         colonyBuilding.setBuilding(mockBuilding);
         this.inventory = colonyBuilding;
@@ -48,7 +48,7 @@ public class InventoryTest extends AbstractTest
     @Test
     public void addStackTest()
     {
-        Item            testItem = mock(Item.class);
+        final Item            testItem = mock(Item.class);
         final ItemStack stuff    = new ItemStack(testItem, 3);
         inventory.setInventorySlotContents(0, stuff);
         //assertThat(inventory.getStackInSlot(0), is(stuff));

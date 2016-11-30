@@ -11,7 +11,7 @@ public class PathPointExtended extends PathPoint
     //Should be instantiated to something he doesn't recognize as climbable.
     public EnumFacing ladderFacing = EnumFacing.DOWN;
 
-    public PathPointExtended(@NotNull BlockPos pos)
+    public PathPointExtended(@NotNull final BlockPos pos)
     {
         super(pos.getX(), pos.getY(), pos.getZ());
     }

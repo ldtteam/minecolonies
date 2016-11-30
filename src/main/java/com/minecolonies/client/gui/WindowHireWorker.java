@@ -86,7 +86,7 @@ public class WindowHireWorker extends Window implements Button.Handler
      * @param c          the colony view
      * @param buildingId the building position
      */
-    public WindowHireWorker(ColonyView c, BlockPos buildingId)
+    public WindowHireWorker(final ColonyView c, final BlockPos buildingId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.colony = c;
@@ -138,7 +138,7 @@ public class WindowHireWorker extends Window implements Button.Handler
              * @param rowPane the parent Pane for the row, containing the elements to update
              */
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final CitizenDataView citizen = citizens.get(index);
 
@@ -171,7 +171,7 @@ public class WindowHireWorker extends Window implements Button.Handler
      * @param button the clicked button.
      */
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@NotNull final Button button)
     {
         if (button.getID().equals(BUTTON_DONE))
         {

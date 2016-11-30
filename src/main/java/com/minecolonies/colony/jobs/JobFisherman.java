@@ -48,7 +48,7 @@ public class JobFisherman extends AbstractJob
      *
      * @param entity The entity which will use this job class.
      */
-    public JobFisherman(CitizenData entity)
+    public JobFisherman(final CitizenData entity)
     {
         super(entity);
     }
@@ -59,7 +59,7 @@ public class JobFisherman extends AbstractJob
      * @param compound NBTTagCompound containing saved Job data
      */
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -106,7 +106,7 @@ public class JobFisherman extends AbstractJob
      * @param compound NBTTagCompound to save the Job to
      */
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
@@ -181,7 +181,7 @@ public class JobFisherman extends AbstractJob
      *
      * @param water New location for the current water block.
      */
-    public void setWater(BlockPos water)
+    public void setWater(final BlockPos water)
     {
         this.water = water;
     }
@@ -202,7 +202,7 @@ public class JobFisherman extends AbstractJob
      *
      * @param pond the pond to add
      */
-    public void addToPonds(BlockPos pond)
+    public void addToPonds(final BlockPos pond)
     {
         this.ponds.add(pond);
     }
@@ -212,7 +212,7 @@ public class JobFisherman extends AbstractJob
      *
      * @param pond the coordinates matching one pond
      */
-    public void removeFromPonds(BlockPos pond)
+    public void removeFromPonds(final BlockPos pond)
     {
         this.ponds.remove(pond);
     }

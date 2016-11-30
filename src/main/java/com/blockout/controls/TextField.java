@@ -42,7 +42,7 @@ public class TextField extends Pane
         //Required
     }
 
-    public TextField(@NotNull PaneParams params)
+    public TextField(@NotNull final PaneParams params)
     {
         super(params);
         maxTextLength = params.getIntegerAttribute("maxlength", maxTextLength);
@@ -58,7 +58,7 @@ public class TextField extends Pane
         return filter;
     }
 
-    public void setFilter(Filter f)
+    public void setFilter(final Filter f)
     {
         filter = f;
     }
@@ -68,7 +68,7 @@ public class TextField extends Pane
         return text;
     }
 
-    public void setText(@NotNull String s)
+    public void setText(@NotNull final String s)
     {
         text = s.length() <= maxTextLength ? s : s.substring(0, maxTextLength);
         setCursorPosition(text.length());
@@ -84,7 +84,7 @@ public class TextField extends Pane
         return maxTextLength;
     }
 
-    public void setMaxTextLength(int m)
+    public void setMaxTextLength(final int m)
     {
         maxTextLength = m;
     }
@@ -94,7 +94,7 @@ public class TextField extends Pane
         return textColor;
     }
 
-    public void setTextColor(int c)
+    public void setTextColor(final int c)
     {
         textColor = c;
     }
@@ -104,7 +104,7 @@ public class TextField extends Pane
         return textColorDisabled;
     }
 
-    public void setTextColorDisabled(int c)
+    public void setTextColorDisabled(final int c)
     {
         textColorDisabled = c;
     }
@@ -115,7 +115,7 @@ public class TextField extends Pane
         return tabNextPaneID;
     }
 
-    public void setTabNextPaneID(String nextID)
+    public void setTabNextPaneID(final String nextID)
     {
         tabNextPaneID = nextID;
     }
@@ -125,13 +125,13 @@ public class TextField extends Pane
         return cursorPosition;
     }
 
-    public void setCursorPosition(int pos)
+    public void setCursorPosition(final int pos)
     {
         cursorPosition = MathHelper.clamp_int(pos, 0, text.length());
         setSelectionEnd(cursorPosition);
     }
 
-    public void moveCursorBy(int offset)
+    public void moveCursorBy(final int offset)
     {
         setCursorPosition(selectionEnd + offset);
     }
@@ -141,7 +141,7 @@ public class TextField extends Pane
         return selectionEnd;
     }
 
-    public void setSelectionEnd(int pos)
+    public void setSelectionEnd(final int pos)
     {
         selectionEnd = MathHelper.clamp_int(pos, 0, text.length());
 
@@ -182,7 +182,7 @@ public class TextField extends Pane
         return text.substring(start, end);
     }
 
-    private boolean handleKey(char c, int key)
+    private boolean handleKey(final char c, final int key)
     {
         switch (key)
         {
@@ -206,7 +206,7 @@ public class TextField extends Pane
         }
     }
 
-    private boolean handleChar(char c)
+    private boolean handleChar(final char c)
     {
         if (filter.isAllowedCharacter(c))
         {
@@ -229,7 +229,7 @@ public class TextField extends Pane
         return true;
     }
 
-    private boolean handleArrowKeys(int key)
+    private boolean handleArrowKeys(final int key)
     {
         final int direction = (key == Keyboard.KEY_LEFT) ? -1 : 1;
 
@@ -255,7 +255,7 @@ public class TextField extends Pane
         return true;
     }
 
-    private boolean handleHomeEnd(int key)
+    private boolean handleHomeEnd(final int key)
     {
         final int position = (key == Keyboard.KEY_HOME) ? 0 : text.length();
 
@@ -270,7 +270,7 @@ public class TextField extends Pane
         return true;
     }
 
-    private boolean handleDelete(int key)
+    private boolean handleDelete(final int key)
     {
         final int direction = (key == Keyboard.KEY_BACK) ? -1 : 1;
 
@@ -294,7 +294,7 @@ public class TextField extends Pane
     }
 
     @Override
-    protected void drawSelf(int mx, int my)
+    protected void drawSelf(final int mx, final int my)
     {
         final int color = enabled ? textColor : textColorDisabled;
         final int drawWidth = getInternalWidth();
@@ -399,7 +399,7 @@ public class TextField extends Pane
     }
 
     @Override
-    public void putInside(View view)
+    public void putInside(final View view)
     {
         super.putInside(view);
 
@@ -408,7 +408,7 @@ public class TextField extends Pane
     }
 
     @Override
-    public void handleClick(int mx, int my)
+    public void handleClick(final int mx, final int my)
     {
         if (mx < 0)
         {
@@ -427,7 +427,7 @@ public class TextField extends Pane
     }
 
     @Override
-    public boolean onKeyTyped(char c, int key)
+    public boolean onKeyTyped(final char c, final int key)
     {
         switch (c)
         {
@@ -460,7 +460,7 @@ public class TextField extends Pane
         cursorBlinkCounter++;
     }
 
-    public void writeText(String str)
+    public void writeText(final String str)
     {
         final String filteredStr = filter.filter(str);
 
@@ -474,7 +474,7 @@ public class TextField extends Pane
             result = text.substring(0, insertAt);
         }
 
-        int insertedLength;
+        final int insertedLength;
         if (availableChars < filteredStr.length())
         {
             result = result + filteredStr.substring(0, availableChars);
@@ -495,7 +495,7 @@ public class TextField extends Pane
         moveCursorBy((insertAt - selectionEnd) + insertedLength);
     }
 
-    public void deleteWords(int count)
+    public void deleteWords(final int count)
     {
         if (text.length() != 0)
         {
@@ -510,7 +510,7 @@ public class TextField extends Pane
         }
     }
 
-    public void deleteFromCursor(int count)
+    public void deleteFromCursor(final int count)
     {
         if (text.length() == 0)
         {
@@ -547,7 +547,7 @@ public class TextField extends Pane
         }
     }
 
-    public int getNthWordFromPos(int count, int pos)
+    public int getNthWordFromPos(final int count, final int pos)
     {
         final boolean reverse = count < 0;
         int position = pos;
@@ -586,7 +586,7 @@ public class TextField extends Pane
         return position;
     }
 
-    public int getNthWordFromCursor(int count)
+    public int getNthWordFromCursor(final int count)
     {
         return getNthWordFromPos(count, cursorPosition);
     }

@@ -39,7 +39,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
      * @param building       View of the building to read data from.
      * @param assignmentMode assignmentMode of the particular farmer.
      */
-    public GuardTaskMessage(@NotNull BuildingGuardTower.View building, int job, boolean assignmentMode, boolean patrollingMode, boolean retrieval, int task )
+    public GuardTaskMessage(@NotNull final BuildingGuardTower.View building, final int job, final boolean assignmentMode, final boolean patrollingMode, final boolean retrieval, final int task )
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -52,7 +52,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -64,7 +64,7 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);

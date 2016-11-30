@@ -15,7 +15,7 @@ public class FakeEntity extends Entity
      * Create the fake entity.
      * @param worldIn at the position.
      */
-	public FakeEntity(World worldIn)
+	public FakeEntity(final World worldIn)
     {
 		super(worldIn);
 		this.setPosition(0, 0, 0);
@@ -30,7 +30,7 @@ public class FakeEntity extends Entity
 	}
 
 	@Override
-	protected void readEntityFromNBT(@NotNull NBTTagCompound compound)
+	protected void readEntityFromNBT(@NotNull final NBTTagCompound compound)
     {
 		 /*
          * Intentionally left empty.
@@ -38,7 +38,7 @@ public class FakeEntity extends Entity
 	}
 
 	@Override
-	protected void writeEntityToNBT(@NotNull NBTTagCompound compound)
+	protected void writeEntityToNBT(@NotNull final NBTTagCompound compound)
     {
 		 /*
          * Intentionally left empty.

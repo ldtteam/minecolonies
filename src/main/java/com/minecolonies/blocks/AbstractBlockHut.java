@@ -76,7 +76,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 
     @NotNull
     @Override
-    public TileEntity createNewTileEntity(World world, int meta)
+    public TileEntity createNewTileEntity(final World world, final int meta)
     {
         //Creates a tile entity for our building
         return new TileEntityColonyBuilding();
@@ -87,7 +87,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      */
     @NotNull
     @Override
-    public IBlockState getStateFromMeta(int meta)
+    public IBlockState getStateFromMeta(final int meta)
     {
         EnumFacing enumfacing = EnumFacing.getFront(meta);
 
@@ -103,7 +103,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * Convert the BlockState into the correct metadata value
      */
     @Override
-    public int getMetaFromState(IBlockState state)
+    public int getMetaFromState(final IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
@@ -123,16 +123,16 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 
     @Override
     public boolean onBlockActivated(
-                                     World worldIn,
-                                     BlockPos pos,
-                                     IBlockState state,
-                                     EntityPlayer playerIn,
-                                     EnumHand hand,
-                                     @Nullable ItemStack heldItem,
-                                     EnumFacing side,
-                                     float hitX,
-                                     float hitY,
-                                     float hitZ)
+                                     final World worldIn,
+                                     final BlockPos pos,
+                                     final IBlockState state,
+                                     final EntityPlayer playerIn,
+                                     final EnumHand hand,
+                                     @Nullable final ItemStack heldItem,
+                                     final EnumFacing side,
+                                     final float hitX,
+                                     final float hitY,
+                                     final float hitZ)
     {
         /*
         If the world is client, open the gui of the building
@@ -150,7 +150,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
     
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nullable EntityLivingBase placer)
+    public IBlockState onBlockPlaced(final World worldIn, final BlockPos pos, final EnumFacing facing, final float hitX, final float hitY, final float hitZ, final int meta, @Nullable final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
@@ -184,7 +184,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
      */
     @Override
-    public void onBlockPlacedBy(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 

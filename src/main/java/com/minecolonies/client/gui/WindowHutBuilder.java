@@ -19,7 +19,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      *
      * @param building {@link com.minecolonies.colony.buildings.BuildingBuilder.View}
      */
-    public WindowHutBuilder(BuildingBuilder.View building)
+    public WindowHutBuilder(final BuildingBuilder.View building)
     {
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
     }

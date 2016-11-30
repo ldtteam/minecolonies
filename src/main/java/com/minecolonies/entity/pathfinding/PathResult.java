@@ -34,7 +34,7 @@ public class PathResult
      *
      * @param s status to set
      */
-    public void setStatus(Status s)
+    public void setStatus(final Status s)
     {
         status = s;
     }
@@ -73,7 +73,7 @@ public class PathResult
      *
      * @param value new value for pathReachesDestination.
      */
-    public void setPathReachesDestination(boolean value)
+    public void setPathReachesDestination(final boolean value)
     {
         pathReachesDestination = value;
     }
@@ -99,7 +99,7 @@ public class PathResult
      *
      * @param l new value for pathLength.
      */
-    public void setPathLength(int l)
+    public void setPathLength(final int l)
     {
         pathLength = l;
     }

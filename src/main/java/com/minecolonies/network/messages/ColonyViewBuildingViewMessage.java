@@ -34,7 +34,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
      *
      * @param building AbstractBuilding to add or update a view for
      */
-    public ColonyViewBuildingViewMessage(@NotNull AbstractBuilding building)
+    public ColonyViewBuildingViewMessage(@NotNull final AbstractBuilding building)
     {
         this.colonyId = building.getColony().getID();
         this.buildingId = building.getID();
@@ -43,7 +43,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -52,7 +52,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -61,7 +61,7 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull ColonyViewBuildingViewMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull final ColonyViewBuildingViewMessage message, final MessageContext ctx)
     {
         return ColonyManager.handleColonyBuildingViewMessage(message.colonyId, message.buildingId, message.buildingData);
     }

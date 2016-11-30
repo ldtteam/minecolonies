@@ -51,7 +51,7 @@ public class CitizenDataView
      *
      * @param id the id to set.
      */
-    protected CitizenDataView(int id)
+    protected CitizenDataView(final int id)
     {
         this.id = id;
     }
@@ -223,7 +223,7 @@ public class CitizenDataView
      *
      * @param buf Byte buffer to deserialize
      */
-    public void deserialize(@NotNull ByteBuf buf)
+    public void deserialize(@NotNull final ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
         female = buf.readBoolean();

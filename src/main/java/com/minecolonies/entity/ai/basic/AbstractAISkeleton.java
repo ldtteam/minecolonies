@@ -64,7 +64,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      *
      * @param target the target to register
      */
-    private void registerTarget(AITarget target)
+    private void registerTarget(final AITarget target)
     {
         targetList.add(target);
     }
@@ -76,7 +76,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      *
      * @param targets a number of targets that need registration
      */
-    protected final void registerTargets(AITarget... targets)
+    protected final void registerTargets(final AITarget... targets)
     {
         Arrays.asList(targets).forEach(this::registerTarget);
     }
@@ -137,7 +137,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * @param mutexBits the bits to flag this with.
      */
     @Override
-    public final void setMutexBits(int mutexBits)
+    public final void setMutexBits(final int mutexBits)
     {
         super.setMutexBits(mutexBits);
     }
@@ -154,7 +154,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * @param target the target to check
      * @return true if this target worked and we should stop executing this tick
      */
-    private boolean checkOnTarget(@NotNull AITarget target)
+    private boolean checkOnTarget(@NotNull final AITarget target)
     {
         if (state != target.getState() && target.getState() != null)
         {
@@ -167,7 +167,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
                 return false;
             }
         }
-        catch (RuntimeException e)
+        catch (final RuntimeException e)
         {
             Log.getLogger().warn("Condition check for target " + target + " threw an exception:", e);
             this.onException(e);
@@ -181,7 +181,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      *
      * @param e The exception to be handled
      */
-    protected void onException(RuntimeException e)
+    protected void onException(final RuntimeException e)
     {
 
     }
@@ -195,14 +195,14 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * @param target the target.
      * @return true if it worked.
      */
-    private boolean applyTarget(@NotNull AITarget target)
+    private boolean applyTarget(@NotNull final AITarget target)
     {
-        AIState newState;
+        final AIState newState;
         try
         {
             newState = target.apply();
         }
-        catch (RuntimeException e)
+        catch (final RuntimeException e)
         {
             Log.getLogger().warn("Action for target " + target + " threw an exception:", e);
             this.onException(e);

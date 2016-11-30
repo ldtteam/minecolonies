@@ -20,7 +20,7 @@ class QuantityNotFound extends RuntimeException
      * @param count    the number of items currently there
      * @param quantity the quantity needed/requested
      */
-    public QuantityNotFound(String location, int id, int count, int quantity)
+    public QuantityNotFound(final String location, final int id, final int count, final int quantity)
     {
         super(location + " doesn't contain enough items: " + count + " < " + quantity + ". For material: " + id
                 + " Block: " + GameData.getBlockRegistry().getObjectById(id)

@@ -22,7 +22,7 @@ public class EntityAIGoHome extends EntityAIBase
      */
     private EntityCitizen citizen;
 
-    public EntityAIGoHome(EntityCitizen citizen)
+    public EntityAIGoHome(final EntityCitizen citizen)
     {
         super();
         setMutexBits(1);
@@ -46,7 +46,7 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public void startExecuting()
     {
-        BlockPos pos = citizen.getHomePosition();
+        final BlockPos pos = citizen.getHomePosition();
         if (pos == null)
         {
             //todo: do something about this instead of spamming console

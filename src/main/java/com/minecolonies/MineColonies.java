@@ -76,7 +76,7 @@ public class MineColonies
      * @param event the forge pre init event.
      */
     @Mod.EventHandler
-    public void preInit(@NotNull FMLPreInitializationEvent event)
+    public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
         proxy.registerSounds();
@@ -91,7 +91,7 @@ public class MineColonies
      * @param event the forge init event.
      */
     @Mod.EventHandler
-    public void init(FMLInitializationEvent event)
+    public void init(final FMLInitializationEvent event)
     {
         initializeNetwork();
 
@@ -159,13 +159,13 @@ public class MineColonies
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event)
+    public void postInit(final FMLPostInitializationEvent event)
     {
         // Load unimportant resources
     }
 
     @Mod.EventHandler
-    public void serverLoad(FMLServerStartingEvent event)
+    public void serverLoad(final FMLServerStartingEvent event)
     {
         // register server commands
         event.registerServerCommand(new CommandEntryPoint());

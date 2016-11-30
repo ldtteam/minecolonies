@@ -14,7 +14,7 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
      *
      * @param building {@link com.minecolonies.colony.buildings.BuildingFisherman.View}
      */
-    public WindowHutFisherman(BuildingFisherman.View building)
+    public WindowHutFisherman(final BuildingFisherman.View building)
     {
         super(building, Constants.MOD_ID + ":gui/windowHutFisherman.xml");
     }

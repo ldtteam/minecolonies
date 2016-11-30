@@ -52,7 +52,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     @Override
     public SPacketUpdateTileEntity getUpdatePacket()
     {
-        NBTTagCompound compound = new NBTTagCompound();
+        final NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger(TAG_COLONY, colonyId);
         return new SPacketUpdateTileEntity(this.getPosition(), 0, compound);
     }
@@ -65,9 +65,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet)
+    public void onDataPacket(final NetworkManager net, final SPacketUpdateTileEntity packet)
     {
-        NBTTagCompound compound = packet.getNbtCompound();
+        final NBTTagCompound compound = packet.getNbtCompound();
         colonyId = compound.getInteger(TAG_COLONY);
     }
 
@@ -177,7 +177,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @param c Colony to set in references
      */
-    public void setColony(Colony c)
+    public void setColony(final Colony c)
     {
         colony = c;
         colonyId = c.getID();
@@ -203,7 +203,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      *
      * @param b {@link AbstractBuilding} to associate with the tile entity
      */
-    public void setBuilding(AbstractBuilding b)
+    public void setBuilding(final AbstractBuilding b)
     {
         building = b;
     }
@@ -215,14 +215,14 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     public AbstractBuilding.View getBuildingView()
     {
-        ColonyView c = ColonyManager.getColonyView(colonyId);
+        final ColonyView c = ColonyManager.getColonyView(colonyId);
         return c != null ? c.getBuilding(getPosition()) : null;
     }
 
 
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_COLONY))
@@ -235,7 +235,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
     @NotNull
     @Override
-    public NBTTagCompound writeToNBT(@NotNull NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         /*
@@ -249,7 +249,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public boolean isUseableByPlayer(@NotNull EntityPlayer player)
+    public boolean isUseableByPlayer(@NotNull final EntityPlayer player)
     {
         return super.isUseableByPlayer(player) && this.hasAccessPermission(player);
     }
@@ -260,7 +260,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * @param player Player to check permission of
      * @return True when player has access, or building doesn't exist, otherwise false.
      */
-    public boolean hasAccessPermission(EntityPlayer player)//TODO This is called every tick the GUI is open. Is that bad?
+    public boolean hasAccessPermission(final EntityPlayer player)//TODO This is called every tick the GUI is open. Is that bad?
     {
         return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
@@ -271,9 +271,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * Makes sure ItemStacks inside of the inventory aren't affected by changes to the returned stack.
      */
     @Override
-    public ItemStack getStackInSlot(int index)
+    public ItemStack getStackInSlot(final int index)
     {
-        ItemStack stack = super.getStackInSlot(index);
+        final ItemStack stack = super.getStackInSlot(index);
         if (stack == null)
         {
             return null;
@@ -282,9 +282,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public ItemStack decrStackSize(int index, int quantity)
+    public ItemStack decrStackSize(final int index, final int quantity)
     {
-        ItemStack removed = super.decrStackSize(index, quantity);
+        final ItemStack removed = super.decrStackSize(index, quantity);
 
         removeStackFromMaterialStore(removed);
 
@@ -292,9 +292,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public ItemStack removeStackFromSlot(int index)
+    public ItemStack removeStackFromSlot(final int index)
     {
-        ItemStack removed = super.removeStackFromSlot(index);
+        final ItemStack removed = super.removeStackFromSlot(index);
 
         removeStackFromMaterialStore(removed);
 
@@ -302,9 +302,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public void setInventorySlotContents(int index, ItemStack stack)
+    public void setInventorySlotContents(final int index, final ItemStack stack)
     {
-        ItemStack previous = getStackInSlot(index);
+        final ItemStack previous = getStackInSlot(index);
         removeStackFromMaterialStore(previous);
 
         super.setInventorySlotContents(index, stack);
@@ -312,7 +312,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         addStackToMaterialStore(stack);
     }
 
-    private void addStackToMaterialStore(ItemStack stack)
+    private void addStackToMaterialStore(final ItemStack stack)
     {
         if (stack == null)
         {
@@ -325,7 +325,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
     }
 
-    private void removeStackFromMaterialStore(ItemStack stack)
+    private void removeStackFromMaterialStore(final ItemStack stack)
     {
         if (stack == null)
         {

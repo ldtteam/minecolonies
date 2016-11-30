@@ -29,7 +29,7 @@ public class RenderFishHook extends Render<EntityFishHook>
      *
      * @param renderManagerIn RenderManager that we use.
      */
-    public RenderFishHook(RenderManager renderManagerIn)
+    public RenderFishHook(final RenderManager renderManagerIn)
     {
         super(renderManagerIn);
     }
@@ -46,7 +46,7 @@ public class RenderFishHook extends Render<EntityFishHook>
      * @param entityYaw the angle thrown
      */
     @Override
-    public void doRender(@NotNull EntityFishHook entity, double x, double y, double z, float entityYaw, float partialTicks)
+    public void doRender(@NotNull final EntityFishHook entity, final double x, final double y, final double z, final float entityYaw, final float partialTicks)
     {
         GlStateManager.pushMatrix();
         GlStateManager.translate((float) x, (float) y, (float) z);
@@ -138,7 +138,7 @@ public class RenderFishHook extends Render<EntityFishHook>
      */
     @NotNull
     @Override
-    protected ResourceLocation getEntityTexture(EntityFishHook entity)
+    protected ResourceLocation getEntityTexture(final EntityFishHook entity)
     {
         return getTexture();
     }

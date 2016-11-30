@@ -49,7 +49,7 @@ public class FieldView
      *
      * @param field the field.
      */
-    public FieldView(@NotNull Field field)
+    public FieldView(@NotNull final Field field)
     {
         this.id = field.getID();
         this.taken = field.isTaken();
@@ -112,7 +112,7 @@ public class FieldView
      *
      * @param buf Buffer to write to.
      */
-    public void serializeViewNetworkData(@NotNull ByteBuf buf)
+    public void serializeViewNetworkData(@NotNull final ByteBuf buf)
     {
         BlockPosUtil.writeToByteBuf(buf, id);
         buf.writeBoolean(taken);
@@ -128,7 +128,7 @@ public class FieldView
      * @return FieldView return an instance of the fieldView.
      */
     @NotNull
-    public FieldView deserialize(@NotNull ByteBuf buf)
+    public FieldView deserialize(@NotNull final ByteBuf buf)
     {
         id = BlockPosUtil.readFromByteBuf(buf);
         taken = buf.readBoolean();

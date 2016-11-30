@@ -25,7 +25,7 @@ public class PathJobFindTree extends AbstractPathJob
      * @param home  the position of the workers hut
      * @param range maximum path range
      */
-    public PathJobFindTree(World world, @NotNull BlockPos start, BlockPos home, int range)
+    public PathJobFindTree(final World world, @NotNull final BlockPos start, final BlockPos home, final int range)
     {
         super(world, start, start, range, new TreePathResult());
 
@@ -45,37 +45,37 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(@NotNull BlockPos pos)
+    protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        int dx = pos.getX() - hutLocation.getX();
-        int dy = pos.getY() - hutLocation.getY();
-        int dz = pos.getZ() - hutLocation.getZ();
+        final int dx = pos.getX() - hutLocation.getX();
+        final int dy = pos.getY() - hutLocation.getY();
+        final int dz = pos.getZ() - hutLocation.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker - halved
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * 0.951D;
     }
 
     @Override
-    protected boolean isAtDestination(@NotNull Node n)
+    protected boolean isAtDestination(@NotNull final Node n)
     {
         return n.parent != null && isNearTree(n);
     }
 
-    private boolean isNearTree(@NotNull Node n)
+    private boolean isNearTree(@NotNull final Node n)
     {
         if (n.pos.getX() != n.parent.pos.getX())
         {
-            int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
+            final int dx = n.pos.getX() > n.parent.pos.getX() ? 1 : -1;
             return isTree(n.pos.add(-dx, 0, 0)) || isTree(n.pos.add(0, 0, -1)) || isTree(n.pos.add(0, 0, +1));
         }
         else
         {
-            int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
+            final int dz = n.pos.getZ() > n.parent.pos.getZ() ? 1 : -1;
             return isTree(n.pos.add(0, 0, dz)) || isTree(n.pos.add(-1, 0, 0)) || isTree(n.pos.add(1, 0, 0));
         }
     }
 
-    private boolean isTree(BlockPos pos)
+    private boolean isTree(final BlockPos pos)
     {
         if (Tree.checkTree(world, pos))
         {
@@ -87,13 +87,13 @@ public class PathJobFindTree extends AbstractPathJob
     }
 
     @Override
-    protected double getNodeResultScore(Node n)
+    protected double getNodeResultScore(final Node n)
     {
         return 0;
     }
 
     @Override
-    protected boolean isPassable(@NotNull IBlockState block)
+    protected boolean isPassable(@NotNull final IBlockState block)
     {
         return super.isPassable(block) || block.getMaterial() == Material.LEAVES;
     }
