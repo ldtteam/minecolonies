@@ -41,9 +41,12 @@ public class PermissionsMessage
         private int     colonyID;
         private ByteBuf data;
 
+        /**
+         * Empty constructor used when registering the message.
+         */
         public View()
         {
-            //Required
+            super();
         }
 
         public View(@NotNull Colony colony, @NotNull Permissions.Rank viewerRank)

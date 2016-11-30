@@ -17,7 +17,13 @@ public class ColonyViewRemoveCitizenMessage implements IMessage, IMessageHandler
     private int colonyId;
     private int citizenId;
 
-    public ColonyViewRemoveCitizenMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ColonyViewRemoveCitizenMessage()
+    {
+        super();
+    }
 
     /**
      * Creates an object for the remove message for citizen

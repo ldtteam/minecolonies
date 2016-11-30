@@ -20,7 +20,13 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     private int     citizenId;
     private ByteBuf citizenBuffer;
 
-    public ColonyViewCitizenViewMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ColonyViewCitizenViewMessage()
+    {
+        super();
+    }
 
     /**
      * Updates a {@link com.minecolonies.colony.CitizenDataView} of the citizens.

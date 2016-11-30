@@ -11,24 +11,34 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Class used for variables regarding his job.
+ */
 public class JobMiner extends AbstractJob
 {
     protected StructureWrapper schematic;
 
+    /**
+     * Creates a new instance of the miner job.
+     * @param entity the entity to add the job to.
+     */
     public JobMiner(CitizenData entity)
     {
         super(entity);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         super.readFromNBT(compound);
     }
 
     @NotNull
     @Override
-    public String getName() { return "com.minecolonies.job.Miner"; }
+    public String getName()
+    {
+        return "com.minecolonies.job.Miner";
+    }
 
     @NotNull
     @Override
@@ -38,7 +48,7 @@ public class JobMiner extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound compound)
+    public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         super.writeToNBT(compound);
     }

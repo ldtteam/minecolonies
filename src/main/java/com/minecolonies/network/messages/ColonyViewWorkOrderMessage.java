@@ -21,13 +21,11 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     private ByteBuf workOrderBuffer;
 
     /**
-     * Empty public constructor.
+     * Empty constructor used when registering the message.
      */
     public ColonyViewWorkOrderMessage()
     {
-        /**
-         * Intentionally left empty.
-         **/
+        super();
     }
 
     /**

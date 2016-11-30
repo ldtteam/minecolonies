@@ -19,7 +19,13 @@ public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandle
     private int      colonyId;
     private BlockPos buildingId;
 
-    public ColonyViewRemoveBuildingMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ColonyViewRemoveBuildingMessage()
+    {
+        super();
+    }
 
     /**
      * Creates an object for the building remove message

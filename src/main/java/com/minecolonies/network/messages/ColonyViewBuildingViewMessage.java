@@ -21,7 +21,13 @@ public class ColonyViewBuildingViewMessage implements IMessage, IMessageHandler<
     private BlockPos buildingId;
     private ByteBuf  buildingData;
 
-    public ColonyViewBuildingViewMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ColonyViewBuildingViewMessage()
+    {
+        super();
+    }
 
     /**
      * Creates a

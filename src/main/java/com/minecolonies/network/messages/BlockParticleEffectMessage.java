@@ -29,7 +29,13 @@ public class BlockParticleEffectMessage implements IMessage, IMessageHandler<Blo
     private int      metadata;
     private int      side;
 
-    public BlockParticleEffectMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public BlockParticleEffectMessage()
+    {
+        super();
+    }
 
     /**
      * Sends a message for particle effect.

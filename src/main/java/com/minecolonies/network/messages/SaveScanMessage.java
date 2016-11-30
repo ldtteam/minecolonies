@@ -23,9 +23,7 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
      */
     public SaveScanMessage()
     {
-        /*
-         * Intentionally left empty.
-         */
+        super();
     }
     /**
      * Send a scan compound to the client.

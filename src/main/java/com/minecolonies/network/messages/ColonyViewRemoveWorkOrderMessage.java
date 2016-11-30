@@ -19,13 +19,11 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage, IMessageHandl
     private int workOrderId;
 
     /**
-     * Empty public constructor.
+     * Empty constructor used when registering the message.
      */
     public ColonyViewRemoveWorkOrderMessage()
     {
-        /**
-         * Intentionally left empty.
-         **/
+        super();
     }
 
     /**

@@ -41,9 +41,19 @@ public class PathJobFindWater extends AbstractPathJob
         hutLocation = home;
     }
 
+    /**
+     * Contains the result of the path job to find water.
+     */
     public static class WaterPathResult extends PathResult
     {
+        /**
+         * The position of the pond.
+         */
         public BlockPos pond;
+
+        /**
+         * If the pond is empty.
+         */
         public boolean  isEmpty;
     }
 
@@ -54,7 +64,10 @@ public class PathJobFindWater extends AbstractPathJob
 
     @NotNull
     @Override
-    public WaterPathResult getResult() { return (WaterPathResult) super.getResult(); }
+    public WaterPathResult getResult()
+    {
+        return (WaterPathResult) super.getResult();
+    }
 
     @Override
     protected double computeHeuristic(@NotNull BlockPos pos)
@@ -93,6 +106,11 @@ public class PathJobFindWater extends AbstractPathJob
         }
     }
 
+    /**
+     * Checks if a certain location is water.
+     * @param newPond the location.
+     * @return true if so.
+     */
     private boolean isWater(@NotNull BlockPos newPond)
     {
         if (ponds.contains(newPond) || pondsAreNear(ponds, newPond))
@@ -112,12 +130,24 @@ public class PathJobFindWater extends AbstractPathJob
         return false;
     }
 
-    private static Predicate<BlockPos> generateDistanceFrom(int range, @NotNull BlockPos newpond)
+    /**
+     * Creates the distance to calculate it in a stream.
+     * @param range the range.
+     * @param newPond the pond.
+     * @return a predicate of the position.
+     */
+    private static Predicate<BlockPos> generateDistanceFrom(int range, @NotNull BlockPos newPond)
     {
-        return pond -> squareDistance(pond, newpond) < range;
+        return pond -> squareDistance(pond, newPond) < range;
     }
 
-    private boolean pondsAreNear(@NotNull ArrayList<BlockPos> ponds, @NotNull BlockPos newPond)
+    /**
+     * Checks if there are close ponds to a position.
+     * @param ponds all ponds.
+     * @param newPond the position.
+     * @return true if so.
+     */
+    private static boolean pondsAreNear(@NotNull ArrayList<BlockPos> ponds, @NotNull BlockPos newPond)
     {
         if (ponds.isEmpty())
         {

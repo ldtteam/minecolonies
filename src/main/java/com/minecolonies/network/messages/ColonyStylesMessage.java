@@ -17,7 +17,13 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     private Map<String, List<String>> hutStyleMap;
     private Map<String, List<String>> decorationStyleMap;
 
-    public ColonyStylesMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ColonyStylesMessage()
+    {
+        super();
+    }
 
     @Override
     public void fromBytes(@NotNull ByteBuf buf)

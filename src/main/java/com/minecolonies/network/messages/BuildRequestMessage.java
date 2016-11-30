@@ -41,7 +41,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     private int      mode;
 
     /**
-     * Empty constructor
+     * Empty constructor used when registering the message.
      */
     public BuildRequestMessage()
     {

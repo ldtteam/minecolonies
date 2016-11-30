@@ -90,7 +90,12 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void registerEntityRendering() {}
+    public void registerEntityRendering()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     @Override
     public void registerSounds()
@@ -99,16 +104,36 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void registerTileEntityRendering() {}
+    public void registerTileEntityRendering()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     @Override
-    public void showCitizenWindow(CitizenDataView citizen) {}
+    public void showCitizenWindow(CitizenDataView citizen)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     @Override
-    public void openBuildToolWindow(BlockPos pos) {}
+    public void openBuildToolWindow(BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     @Override
-    public void registerRenderer() { }
+    public void registerRenderer()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     /**
      * Used for entity IDs, starts at 0 & increments for each call

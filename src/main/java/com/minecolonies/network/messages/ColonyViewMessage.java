@@ -20,7 +20,13 @@ public class ColonyViewMessage implements IMessage, IMessageHandler<ColonyViewMe
     private boolean isNewSubscription;
     private ByteBuf colonyBuffer;
 
-    public ColonyViewMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ColonyViewMessage()
+    {
+        super();
+    }
 
     /**
      * Add or Update a ColonyView on the client

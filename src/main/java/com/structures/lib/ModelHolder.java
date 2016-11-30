@@ -1,9 +1,9 @@
 package com.structures.lib;
-/**
+
+/*
  * Class based on the work by Maruohon
  * https://github.com/maruohon/placementpreview
  */
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -14,8 +14,8 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModelHolder{
-	
+public class ModelHolder
+{
     public final BlockPos pos;
     public final IBlockState actualState;
     public final IBlockState extendedState;
@@ -24,6 +24,14 @@ public class ModelHolder{
     public final List<BakedQuad> quads;
     public boolean rendered = false;
 
+    /**
+     * Creates a model holder.
+     * @param pos at position.
+     * @param actualState actual state.
+     * @param extendedState extended state.
+     * @param te tileEntity.
+     * @param model model.
+     */
     public ModelHolder(BlockPos pos, IBlockState actualState, IBlockState extendedState, @Nullable TileEntity te, IBakedModel model)
     {
         this.pos = pos;
@@ -31,7 +39,7 @@ public class ModelHolder{
         this.extendedState = extendedState;
         this.te = te;
         this.model = model;
-        this.quads = new ArrayList<BakedQuad>();
+        this.quads = new ArrayList<>();
         this.rendered = false;
     }
 }

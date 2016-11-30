@@ -3,27 +3,46 @@ package com.structures.fake;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 
-public class FakeEntity extends Entity{
+/**
+ * Holds a fake entity.
+ */
+public class FakeEntity extends Entity
+{
 
-	public FakeEntity(World worldIn){
+    /**
+     * Create the fake entity.
+     * @param worldIn at the position.
+     */
+	public FakeEntity(World worldIn)
+    {
 		super(worldIn);
 		this.setPosition(0, 0, 0);
 	}
 
 	@Override
-	protected void entityInit(){
-		//Not needed
+	protected void entityInit()
+    {
+		 /*
+         * Intentionally left empty.
+         */
 	}
 
 	@Override
-	protected void readEntityFromNBT(NBTTagCompound compound){
-		//Not needed
+	protected void readEntityFromNBT(@NotNull NBTTagCompound compound)
+    {
+		 /*
+         * Intentionally left empty.
+         */
 	}
 
 	@Override
-	protected void writeEntityToNBT(NBTTagCompound compound){
-		//Not needed
+	protected void writeEntityToNBT(@NotNull NBTTagCompound compound)
+    {
+		 /*
+         * Intentionally left empty.
+         */
 	}
 
 }
