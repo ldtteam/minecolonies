@@ -15,7 +15,11 @@ import java.util.Optional;
 public class EntityAICitizenAvoidEntity extends EntityAIBase
 {
     /**
-     * The entity we are attached to
+     * Defines how close the entity has to be to the mob to run away.
+     */
+    private static final double        TOO_CLOSE_TO_MOB = 49D;
+    /**
+     * The entity we are attached to.
      */
     private EntityCitizen           theEntity;
     private double                  farSpeed;
@@ -34,7 +38,8 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      * @param farSpeed           how fast we should move when we are far away.
      * @param nearSpeed          how fast we should move when we are close.
      */
-    public EntityAICitizenAvoidEntity(final EntityCitizen entity, final Class<? extends Entity> targetEntityClass, final float distanceFromEntity, final double farSpeed, final double nearSpeed)
+    public EntityAICitizenAvoidEntity(final EntityCitizen entity, final Class<? extends Entity> targetEntityClass,
+            final float distanceFromEntity, final double farSpeed, final double nearSpeed)
     {
         super();
         this.theEntity = entity;
@@ -46,7 +51,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
-     * Returns whether the EntityAIBase should begin execution of avoiding
+     * Returns whether the EntityAIBase should begin execution of avoiding.
      */
     @Override
     public boolean shouldExecute()
@@ -56,9 +61,9 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
-     * Returns the closest entity to avoid
+     * Returns the closest entity to avoid.
      *
-     * @return Entity to avoid
+     * @return Entity to avoid.
      */
     private Entity getClosestToAvoid()
     {
@@ -84,7 +89,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Returns whether an in-progress EntityAIBase should continue executing.
      */
     @Override
     public boolean continueExecuting()
@@ -93,7 +98,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
-     * Execute a one shot task or start executing a continuous task
+     * Execute a one shot task or start executing a continuous task.
      */
     @Override
     public void startExecuting()
@@ -102,7 +107,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
-     * Makes entity move away from {@link #closestLivingEntity}
+     * Makes entity move away from {@link #closestLivingEntity}.
      */
     private void performMoveAway()
     {
@@ -110,7 +115,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
-     * Resets the task
+     * Resets the task.
      */
     @Override
     public void resetTask()
@@ -119,7 +124,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     }
 
     /**
-     * Updates the task
+     * Updates the task.
      */
     @Override
     public void updateTask()
@@ -132,7 +137,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
             return;
         }
 
-        if (theEntity.getDistanceSqToEntity(closestLivingEntity) < 49.0D)
+        if (theEntity.getDistanceSqToEntity(closestLivingEntity) < TOO_CLOSE_TO_MOB)
         {
             theEntity.getNavigator().setSpeed(nearSpeed);
         }

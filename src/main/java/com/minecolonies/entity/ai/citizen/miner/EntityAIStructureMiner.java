@@ -36,7 +36,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private static final String     RENDER_META_TORCH         = "Torch";
     private static final int        NODE_DISTANCE             = 7;
     /**
-     * Return to chest after 3 stacks
+     * Return to chest after 3 stacks.
      */
     private static final int        MAX_BLOCKS_MINED          = 3 * 64;
     /*
@@ -115,9 +115,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     /**
-     * Walking to the ladder to check out the mine
+     * Walking to the ladder to check out the mine.
      *
-     * @return next AIState
+     * @return next AIState.
      */
     @NotNull
     private AIState goToLadder()
@@ -1000,14 +1000,14 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return false;
         }
         //don't overwrite huts or bedrock, nor place huts
-        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK ||
-              block instanceof AbstractBlockHut)
+        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK
+                || block instanceof AbstractBlockHut)
         {
             findNextBlockNonSolid();
             return false;
         }
         final Item item = Item.getItemFromBlock(block);
-        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item != null ? new ItemStack(item, 1) : null);
+        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
 
         setBlockFromInventory(new BlockPos(x, y, z), block, metadata);
 
@@ -1054,17 +1054,17 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
 
         //don't overwrite huts or bedrock, nor place huts
-        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK ||
-              block instanceof AbstractBlockHut || job.getStructure().getBlock() == Blocks.STONE)
+        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK
+                || block instanceof AbstractBlockHut || job.getStructure().getBlock() == Blocks.STONE)
         {
             findNextBlockSolid();
             return false;
         }
 
-        if (!(block == Blocks.AIR))
+        if (block != Blocks.AIR)
         {
             final Item item = Item.getItemFromBlock(block);
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item != null ? new ItemStack(item, 1) : null);
+            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
             setBlockFromInventory(new BlockPos(x, y, z), block, metadata);
         }
 

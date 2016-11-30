@@ -8,8 +8,6 @@ import net.minecraft.util.math.BlockPos;
 /**
  * EntityCitizen go home AI
  * Created: May 25, 2014
- *
- * @author Colton
  */
 public class EntityAIGoHome extends EntityAIBase
 {
@@ -22,6 +20,10 @@ public class EntityAIGoHome extends EntityAIBase
      */
     private EntityCitizen citizen;
 
+    /**
+     * Instantiates the go home task.
+     * @param citizen
+     */
     public EntityAIGoHome(final EntityCitizen citizen)
     {
         super();
@@ -76,12 +78,9 @@ public class EntityAIGoHome extends EntityAIBase
     {
         final int chance = citizen.getRandom().nextInt(CHANCE);
 
-        if (chance <= 1)
+        if (chance <= 1 && citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
         {
-            if (citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
-            {
-                SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
-            }
+            SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
             //add further workers as soon as available.
         }
     }

@@ -8,6 +8,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Entity action to wander randomly around.
+ */
 public class EntityAICitizenWander extends EntityAIBase
 {
     private EntityCitizen citizen;
@@ -16,6 +19,11 @@ public class EntityAICitizenWander extends EntityAIBase
     private double        zPosition;
     private double        speed;
 
+    /**
+     * Instantiates this task.
+     * @param citizen the citizen.
+     * @param speed the speed.
+     */
     public EntityAICitizenWander(final EntityCitizen citizen, final double speed)
     {
         super();
@@ -52,10 +60,10 @@ public class EntityAICitizenWander extends EntityAIBase
     }
 
     /**
-     * Returns whether or not the citizen is too old to wander
-     * True when age >= 100;
+     * Returns whether or not the citizen is too old to wander.
+     * True when age >= 100.
      *
-     * @return True when age => 100, otherwise false
+     * @return True when age => 100, otherwise false.
      */
     private boolean isToOld()
     {
@@ -68,10 +76,10 @@ public class EntityAICitizenWander extends EntityAIBase
     }
 
     /**
-     * Returns the right height for the given position (ground block)
+     * Returns the right height for the given position (ground block).
      *
-     * @param position Current position of the entity
-     * @return Ground level at (position.x, position.z)
+     * @param position Current position of the entity.
+     * @return Ground level at (position.x, position.z).
      */
     private double getValidHeight(@NotNull final Vec3d position)
     {
@@ -97,7 +105,7 @@ public class EntityAICitizenWander extends EntityAIBase
 
     /**
      * {@inheritDoc}
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Returns whether an in-progress EntityAIBase should continue executing.
      */
     @Override
     public boolean continueExecuting()
@@ -107,7 +115,7 @@ public class EntityAICitizenWander extends EntityAIBase
 
     /**
      * {@inheritDoc}
-     * Execute a one shot task or start executing a continuous task
+     * Execute a one shot task or start executing a continuous task.
      */
     @Override
     public void startExecuting()

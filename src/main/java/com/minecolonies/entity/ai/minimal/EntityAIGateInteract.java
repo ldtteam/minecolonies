@@ -31,7 +31,7 @@ public class EntityAIGateInteract extends EntityAIBase
      */
     private static final double HALF_BLOCK      = 0.5D;
     /**
-     * The min distance the gate has to be from the citizen
+     * The min distance the gate has to be from the citizen.
      */
     private static final double MIN_DISTANCE    = 2.25D;
     /**
@@ -61,9 +61,9 @@ public class EntityAIGateInteract extends EntityAIBase
     private   double         entityPositionZ;
 
     /**
-     * Constructor called to register the AI class with an entity
+     * Constructor called to register the AI class with an entity.
      *
-     * @param entityIn the registering entity
+     * @param entityIn the registering entity.
      */
     public EntityAIGateInteract(@NotNull final EntityLiving entityIn)
     {
@@ -77,9 +77,9 @@ public class EntityAIGateInteract extends EntityAIBase
     }
 
     /**
-     * Checks if the Interaction should be executed
+     * Checks if the Interaction should be executed.
      *
-     * @return true or false depending on the conditions
+     * @return true or false depending on the conditions.
      */
     @Override
     public boolean shouldExecute()
@@ -88,29 +88,29 @@ public class EntityAIGateInteract extends EntityAIBase
     }
 
     /**
-     * Checks if there exists a path..
+     * Checks if there exists a path.
      *
      * @return true if the fence gate can be passed.
      */
     private boolean checkPath()
     {
         @NotNull final PathNavigateGround pathnavigateground = (PathNavigateGround) this.theEntity.getNavigator();
-        final Path Path = pathnavigateground.getPath();
-        return Path != null && !Path.isFinished() && pathnavigateground.getEnterDoors() && checkFenceGate(Path);
+        final Path path = pathnavigateground.getPath();
+        return path != null && !path.isFinished() && pathnavigateground.getEnterDoors() && checkFenceGate(path);
     }
 
     /**
      * Checks if the citizen is close enough to an existing fence gate.
      *
-     * @param Path the path through the fence.
+     * @param path the path through the fence.
      * @return true if the gate can be passed
      */
-    private boolean checkFenceGate(@NotNull final Path Path)
+    private boolean checkFenceGate(@NotNull final Path path)
     {
-        final int maxLengthToCheck = Math.min(Path.getCurrentPathIndex() + LENGTH_TO_CHECK, Path.getCurrentPathLength());
+        final int maxLengthToCheck = Math.min(path.getCurrentPathIndex() + LENGTH_TO_CHECK, path.getCurrentPathLength());
         for (int i = 0; i < maxLengthToCheck; ++i)
         {
-            final PathPoint pathpoint = Path.getPathPointFromIndex(i);
+            final PathPoint pathpoint = path.getPathPointFromIndex(i);
             for (int level = 0; level < HEIGHT_TO_CHECK; level++)
             {
                 this.gatePosition = new BlockPos(pathpoint.xCoord, pathpoint.yCoord + level, pathpoint.zCoord);
@@ -131,10 +131,10 @@ public class EntityAIGateInteract extends EntityAIBase
     }
 
     /**
-     * Returns a fenceBlock if available
+     * Returns a fenceBlock if available.
      *
-     * @param pos the position to be searched
-     * @return fenceBlock or null
+     * @param pos the position to be searched.
+     * @return fenceBlock or null.
      */
     private BlockFenceGate getBlockFence(@NotNull final BlockPos pos)
     {
@@ -149,9 +149,9 @@ public class EntityAIGateInteract extends EntityAIBase
     }
 
     /**
-     * Checks if the execution is still ongoing
+     * Checks if the execution is still ongoing.
      *
-     * @return true or false
+     * @return true or false.
      */
     @Override
     public boolean continueExecuting()
@@ -160,7 +160,7 @@ public class EntityAIGateInteract extends EntityAIBase
     }
 
     /**
-     * Starts the execution
+     * Starts the execution.
      */
     @Override
     public void startExecuting()

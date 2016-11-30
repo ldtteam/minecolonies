@@ -13,11 +13,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Miner Level Data Structure
+ * Miner Level Data Structure.
  * <p>
- * A Level contains all the nodes for one level of the mine
- *
- * @author Colton, Kostronor
+ * A Level contains all the nodes for one level of the mine.
  */
 public class Level
 {
@@ -26,7 +24,7 @@ public class Level
     private static final String TAG_LADDERX = "LadderX";
     private static final String TAG_LADDERZ = "LadderZ";
     /**
-     * The depth of the level stored as the y coordinate
+     * The depth of the level stored as the y coordinate.
      */
     private int depth;
     @NotNull
@@ -91,6 +89,11 @@ public class Level
         nodes.add(ladderNode);
     }
 
+    /**
+     * Create a level from nbt.
+     * @param compound compound to use.
+     * @return a new level.
+     */
     @NotNull
     public static Level createFromNBT(@NotNull final NBTTagCompound compound)
     {
@@ -128,6 +131,10 @@ public class Level
         return sb.toString();
     }
 
+    /**
+     * Store the level to nbt.
+     * @param compound compound to use.
+     */
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         compound.setInteger(TAG_DEPTH, depth);
@@ -167,8 +174,12 @@ public class Level
         return ladderNode;
     }
 
-    public void addNode(final Node newnode)
+    /**
+     * Add a new node to the level.
+     * @param newNode the node to add.
+     */
+    public void addNode(final Node newNode)
     {
-        nodes.add(newnode);
+        nodes.add(newNode);
     }
 }
