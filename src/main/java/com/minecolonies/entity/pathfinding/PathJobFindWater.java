@@ -112,7 +112,7 @@ public class PathJobFindWater extends AbstractPathJob
         return false;
     }
 
-    private Predicate<BlockPos> generateDistanceFrom(int range, @NotNull BlockPos newpond)
+    private static Predicate<BlockPos> generateDistanceFrom(int range, @NotNull BlockPos newpond)
     {
         return pond -> squareDistance(pond, newpond) < range;
     }

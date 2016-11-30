@@ -2,7 +2,6 @@ package com.minecolonies;
 
 import com.minecolonies.achievements.ModAchievements;
 import com.minecolonies.colony.Structures;
-import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.commands.CommandEntryPoint;
 import com.minecolonies.configuration.ConfigurationHandler;
 import com.minecolonies.configuration.Configurations;

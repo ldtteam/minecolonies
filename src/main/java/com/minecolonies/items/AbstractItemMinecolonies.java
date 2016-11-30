@@ -18,6 +18,7 @@ public abstract class AbstractItemMinecolonies extends Item
      */
     public AbstractItemMinecolonies(String name)
     {
+        super();
         this.name = name;
 
         super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + this.name);

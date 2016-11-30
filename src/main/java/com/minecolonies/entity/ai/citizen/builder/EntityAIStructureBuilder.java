@@ -512,7 +512,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * @param metadata The metadata of the block
      * @return true or false
      */
-    private boolean isBlockFree(@Nullable Block block, int metadata)
+    private static boolean isBlockFree(@Nullable Block block, int metadata)
     {
         return block == null
                  || BlockUtils.isWater(block.getDefaultState())

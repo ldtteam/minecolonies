@@ -4,16 +4,15 @@ package com.structures.lib;
  * https://github.com/maruohon/placementpreview
  */
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModelHolder{
 	

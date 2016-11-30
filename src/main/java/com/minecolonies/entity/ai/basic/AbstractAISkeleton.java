@@ -49,6 +49,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     protected AbstractAISkeleton(@NotNull final J job)
     {
+        super();
         this.targetList = new ArrayList<>();
         setMutexBits(MUTEX_MASK);
         this.job = job;

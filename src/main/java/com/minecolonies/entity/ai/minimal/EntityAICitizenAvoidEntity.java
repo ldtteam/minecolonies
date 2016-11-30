@@ -36,6 +36,7 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
      */
     public EntityAICitizenAvoidEntity(EntityCitizen entity, Class<? extends Entity> targetEntityClass, float distanceFromEntity, double farSpeed, double nearSpeed)
     {
+        super();
         this.theEntity = entity;
         this.targetEntityClass = targetEntityClass;
         this.distanceFromEntity = distanceFromEntity;

@@ -152,7 +152,7 @@ public class EventHandler
                  player.getHeldItemMainhand().getItem().doesSneakBypassUse(player.getHeldItemMainhand(), world, pos, player);
     }
 
-    private void handleEventCancellation(@NotNull PlayerInteractEvent event, @NotNull EntityPlayer player)
+    private static void handleEventCancellation(@NotNull PlayerInteractEvent event, @NotNull EntityPlayer player)
     {
         Block heldBlock = Block.getBlockFromItem(player.getHeldItemMainhand().getItem());
         if (heldBlock instanceof AbstractBlockHut)

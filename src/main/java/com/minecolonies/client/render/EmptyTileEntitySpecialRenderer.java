@@ -1,14 +1,7 @@
 package com.minecolonies.client.render;
 
-import com.minecolonies.colony.buildings.BuildingTownHall;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-
-import java.util.List;
 
 /**
  * Renderer for a normal tile entity (Nothing special with rendering).

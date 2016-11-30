@@ -14,6 +14,7 @@ public class Label extends AbstractTextElement
 
     public Label()
     {
+        super();
         // Required default constructor.
     }
 

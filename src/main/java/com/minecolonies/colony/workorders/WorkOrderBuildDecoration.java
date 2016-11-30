@@ -26,6 +26,7 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
      */
     public WorkOrderBuildDecoration(String decoration, String style, int rotation, BlockPos location)
     {
+        super();
         this.structureName = style + '/' + decoration;
         this.buildingRotation = rotation;
         this.buildingLocation = location;

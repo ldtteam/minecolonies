@@ -18,6 +18,7 @@ public class EntityAICitizenWander extends EntityAIBase
 
     public EntityAICitizenWander(EntityCitizen citizen, double speed)
     {
+        super();
         this.citizen = citizen;
         this.speed = speed;
         this.setMutexBits(1);

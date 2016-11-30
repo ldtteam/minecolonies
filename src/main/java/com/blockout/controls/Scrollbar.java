@@ -25,6 +25,7 @@ public class Scrollbar extends Pane
 
     public Scrollbar(ScrollingContainer container)
     {
+        super();
         this.container = container;
     }
 

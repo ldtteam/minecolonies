@@ -18,6 +18,7 @@ public abstract class AbstractTextElement extends Pane
 
     public AbstractTextElement()
     {
+        super();
         //Required
     }
 

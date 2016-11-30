@@ -10,8 +10,6 @@ import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.util.BlockPosUtil;
 import com.minecolonies.util.Log;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;

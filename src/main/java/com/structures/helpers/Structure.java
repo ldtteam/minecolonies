@@ -1,23 +1,10 @@
 package com.structures.helpers;
 
-import java.io.*;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.blockout.Log;
 import com.minecolonies.lib.Constants;
 import com.structures.fake.FakeEntity;
-import com.structures.lib.ModelHolder;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import org.apache.commons.io.IOUtils;
-import org.jetbrains.annotations.NotNull;
-import org.lwjgl.opengl.GL11;
-
 import com.structures.fake.FakeWorld;
-
+import com.structures.lib.ModelHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -32,13 +19,11 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -48,6 +33,14 @@ import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
+
+import javax.annotation.Nullable;
+import java.io.*;
+import java.util.List;
 
 /**
  * Structure class, used to store, create, get structures.
@@ -402,7 +395,7 @@ public class Structure
         this.renderQuads(world, holder.actualState, pos, holder.model.getQuads(holder.extendedState, null, 0), alpha);
     }
 
-    private void getQuads(ModelHolder holder, List<BakedQuad> quads)
+    private static void getQuads(ModelHolder holder, List<BakedQuad> quads)
     {
         if (holder.actualState.getRenderType() == EnumBlockRenderType.MODEL)
         {

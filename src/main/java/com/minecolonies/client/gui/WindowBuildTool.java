@@ -2,14 +2,14 @@ package com.minecolonies.client.gui;
 
 import com.blockout.Log;
 import com.blockout.controls.Button;
-import com.minecolonies.util.BlockUtils;
-import com.structures.helpers.Structure;
 import com.minecolonies.MineColonies;
 import com.minecolonies.colony.Structures;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BuildToolPlaceMessage;
+import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.LanguageHandler;
 import com.structures.helpers.Settings;
+import com.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -196,8 +196,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_RIGHT, this::moveRightClicked);
         registerButton(BUTTON_BACK, this::moveBackClicked);
         registerButton(BUTTON_FORWARD, this::moveForwardClicked);
-        registerButton(BUTTON_UP, this::moveUpClicked);
-        registerButton(BUTTON_DOWN, this::moveDownClicked);
+        registerButton(BUTTON_UP, WindowBuildTool::moveUpClicked);
+        registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
     }
@@ -528,7 +528,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void moveUpClicked(Button button)
+    private static void moveUpClicked(Button button)
     {
         Settings.instance.moveTo(new BlockPos(0, 1, 0));
     }
@@ -538,7 +538,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      *
      * @param button required parameter.
      */
-    private void moveDownClicked(Button button)
+    private static void moveDownClicked(Button button)
     {
         Settings.instance.moveTo(new BlockPos(0, -1, 0));
     }
@@ -558,7 +558,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * Updates the rotation of the structure depending on the input.
      * @param rotation the rotation to be set.
      */
-    private void updateRotation(final int rotation)
+    private static void updateRotation(final int rotation)
     {
         PlacementSettings settings = new PlacementSettings();
         switch (rotation)

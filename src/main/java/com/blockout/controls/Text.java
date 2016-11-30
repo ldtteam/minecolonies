@@ -21,6 +21,7 @@ public class Text extends AbstractTextElement
 
     public Text()
     {
+        super();
         // Required default constructor.
     }
 

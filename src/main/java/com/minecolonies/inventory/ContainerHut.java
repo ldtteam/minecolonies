@@ -26,6 +26,7 @@ public class ContainerHut extends Container //ContainerChest in future
 
     public ContainerHut(TileEntityColonyBuilding hut, EntityPlayer player)
     {
+        super();
         this.hut = hut;
         this.player = (EntityPlayerMP) player;
         this.inventoryPlayer = player.inventory;

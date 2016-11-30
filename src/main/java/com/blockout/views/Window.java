@@ -51,6 +51,7 @@ public class Window extends View
      */
     public Window(int w, int h)
     {
+        super();
         width = w;
         height = h;
 

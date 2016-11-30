@@ -46,9 +46,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     public TileEntityColonyBuilding()
     {
-        /**
-         * Intentionally left empty.
-         */
+        super();
     }
 
     @Override

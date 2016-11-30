@@ -31,6 +31,7 @@ public class ButtonVanilla extends Button
      */
     public ButtonVanilla()
     {
+        super();
         width = DEFAULT_BUTTON_WIDTH;
         height = DEFAULT_BUTTON_HEIGHT;
     }

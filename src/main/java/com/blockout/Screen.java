@@ -24,6 +24,7 @@ public class Screen extends GuiScreen
      */
     public Screen(Window w)
     {
+        super();
         window = w;
     }
 

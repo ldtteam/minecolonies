@@ -41,6 +41,7 @@ public class Pane extends Gui
      */
     public Pane()
     {
+        super();
         //Required for panes.
     }
 
@@ -51,6 +52,7 @@ public class Pane extends Gui
      */
     public Pane(@NotNull PaneParams params)
     {
+        super();
         id = params.getStringAttribute("id", id);
 
         final @NotNull PaneParams.SizePair parentSizePair = new PaneParams.SizePair(params.getParentWidth(), params.getParentHeight());

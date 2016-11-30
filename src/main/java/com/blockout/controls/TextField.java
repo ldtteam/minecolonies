@@ -38,6 +38,7 @@ public class TextField extends Pane
 
     public TextField()
     {
+        super();
         //Required
     }
 

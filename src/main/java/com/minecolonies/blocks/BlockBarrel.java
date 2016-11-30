@@ -16,6 +16,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -182,7 +183,7 @@ public class BlockBarrel extends Block
         }
     }
 
-    private void checkIfBarrelFull(World world, BlockPos pos, IBlockState state)
+    private static void checkIfBarrelFull(World world, BlockPos pos, IBlockState state)
     {
         final int fullness = fillings.getOrDefault(pos, 0);
         if (fullness >= MAX_FULLNESS)
@@ -192,7 +193,7 @@ public class BlockBarrel extends Block
         }
     }
 
-    private void doBarrelCompostTick(World world, BlockPos pos, IBlockState state)
+    private static void doBarrelCompostTick(World world, BlockPos pos, IBlockState state)
     {
         int timer = timers.getOrDefault(pos, 0);
         timer++;
@@ -204,6 +205,7 @@ public class BlockBarrel extends Block
         timers.put(pos, timer);
     }
 
+    @NotNull
     @Override
     protected BlockStateContainer createBlockState()
     {

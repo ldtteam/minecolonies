@@ -1,6 +1,8 @@
 package com.minecolonies.items;
 
-import com.minecolonies.colony.*;
+import com.minecolonies.colony.CitizenData;
+import com.minecolonies.colony.Colony;
+import com.minecolonies.colony.ColonyManager;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.util.BlockPosUtil;

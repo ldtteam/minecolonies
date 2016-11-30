@@ -709,7 +709,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
     }
 
-    private boolean isOre(Block block)
+    private static boolean isOre(Block block)
     {
         //TODO make this more sophisticated
         return block instanceof BlockOre;
@@ -1175,7 +1175,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return true;
     }
 
-    private void setNodeStatusForDirection(@NotNull Node node, int direction, Node.NodeStatus status)
+    private static void setNodeStatusForDirection(@NotNull Node node, int direction, Node.NodeStatus status)
     {
         if (direction == 1)
         {
@@ -1195,7 +1195,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
     }
 
-    private Node.NodeStatus getNodeStatusForDirection(@NotNull Node node, int direction)
+    private static Node.NodeStatus getNodeStatusForDirection(@NotNull Node node, int direction)
     {
         if (direction == 1)
         {
@@ -1217,7 +1217,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return Node.NodeStatus.LADDER;
     }
 
-    private int invertDirection(int direction)
+    private static int invertDirection(int direction)
     {
         if (direction == 1)
         {
@@ -1243,7 +1243,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return start.getX() + getXDistance(direction) == check.getX() && start.getZ() + getZDistance(direction) == check.getZ();
     }
 
-    private int getXDistance(int direction)
+    private static int getXDistance(int direction)
     {
         if (direction == 1)
         {
@@ -1256,7 +1256,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return 0;
     }
 
-    private int getZDistance(int direction)
+    private static int getZDistance(int direction)
     {
         if (direction == 3)
         {
@@ -1307,7 +1307,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     @NotNull
-    private Node.NodeType getRandomNodeType()
+    private static Node.NodeType getRandomNodeType()
     {
         int roll = new Random().nextInt(100);
         if (roll > 50)

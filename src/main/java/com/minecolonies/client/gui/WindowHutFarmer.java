@@ -262,7 +262,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
      * @param field    the field.
      * @return a string describing the direction.
      */
-    private String calcDirection(@NotNull BlockPos building, @NotNull BlockPos field)
+    private static String calcDirection(@NotNull BlockPos building, @NotNull BlockPos field)
     {
         String dist = "";
 

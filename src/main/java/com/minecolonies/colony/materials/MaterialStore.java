@@ -442,7 +442,7 @@ public class MaterialStore
         readMapFromNBT(listNeed, need);
     }
 
-    private void readMapFromNBT(@NotNull NBTTagList list, @NotNull Map<Material, Integer> map)
+    private static void readMapFromNBT(@NotNull NBTTagList list, @NotNull Map<Material, Integer> map)
     {
         for (int i = 0; i < list.tagCount(); i++)
         {
@@ -473,7 +473,7 @@ public class MaterialStore
         nbtTagCompound.setTag(TAG_MATERIAL_STORE, compound);
     }
 
-    private void writeMapToNBT(@NotNull NBTTagList compound, @NotNull Map<Material, Integer> map)
+    private static void writeMapToNBT(@NotNull NBTTagList compound, @NotNull Map<Material, Integer> map)
     {
         for (@NotNull Map.Entry<Material, Integer> entry : map.entrySet())
         {

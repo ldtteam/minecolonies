@@ -20,6 +20,7 @@ public class ScrollingContainer extends View
 
     ScrollingContainer(ScrollingView owner)
     {
+        super();
         this.owner = owner;
     }
 

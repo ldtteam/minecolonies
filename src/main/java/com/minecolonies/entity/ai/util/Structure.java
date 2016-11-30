@@ -266,7 +266,7 @@ public class Structure
      * @param blocksToTest the blocks to test
      * @return true if they are the same
      */
-    private boolean checkBlocksEqual(@NotNull SchematicBlock blocksToTest)
+    private static boolean checkBlocksEqual(@NotNull SchematicBlock blocksToTest)
     {
         return blocksToTest.block == blocksToTest.worldBlock
                  && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);

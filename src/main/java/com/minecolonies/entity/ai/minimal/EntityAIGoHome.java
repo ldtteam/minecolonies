@@ -24,6 +24,7 @@ public class EntityAIGoHome extends EntityAIBase
 
     public EntityAIGoHome(EntityCitizen citizen)
     {
+        super();
         setMutexBits(1);
         this.citizen = citizen;
     }

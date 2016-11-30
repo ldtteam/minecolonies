@@ -1,10 +1,9 @@
 package com.structures.event;
 
 import com.minecolonies.util.BlockUtils;
-import com.structures.helpers.Structure;
 import com.structures.helpers.Settings;
+import com.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.client.event.RenderWorldLastEvent;

@@ -18,6 +18,7 @@ public class TextFieldVanilla extends TextField
      */
     public TextFieldVanilla()
     {
+        super();
         filter = new FilterVanilla();
     }
 

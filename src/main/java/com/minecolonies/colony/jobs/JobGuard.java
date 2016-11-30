@@ -8,6 +8,7 @@ import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.guard.EntityAIMeleeGuard;
 import com.minecolonies.entity.ai.citizen.guard.EntityAIRangeGuard;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.Random;
 
 /**
