@@ -324,7 +324,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private AIState chopTree()
     {
-        BlockPos location = job.tree.getLocation();
+        final BlockPos location = job.tree.getLocation();
         if (walkToBlock(location))
         {
             checkIfStuckOnLeaves(location);
@@ -342,7 +342,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
 
         //take first log from queue
-        BlockPos log = job.tree.peekNextLog();
+        final BlockPos log = job.tree.peekNextLog();
         if (!mineBlock(log))
         {
             return getState();
@@ -359,7 +359,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private void checkIfStuckOnLeaves(@NotNull final BlockPos location)
     {
-        int distance = (int) location.distanceSq(worker.getPosition());
+        final int distance = (int) location.distanceSq(worker.getPosition());
         if (previousDistance != distance)
         {
             //something is moving, reset counters
@@ -396,7 +396,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private void tryGettingUnstuckFromLeaves()
     {
-        @Nullable BlockPos nextLeaves = findNearLeaves();
+        @Nullable final BlockPos nextLeaves = findNearLeaves();
         //If the worker gets too stuck he moves around a bit
         if (nextLeaves == null || stillTicks > WALKING_BACK_WAIT_TIME)
         {
@@ -425,12 +425,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return false;
         }
 
-        int saplingSlot = findSaplingSlot();
+        final int saplingSlot = findSaplingSlot();
 
         if (saplingSlot != -1)
         {
-            ItemStack stack = getInventory().getStackInSlot(saplingSlot);
-            Block block = ((ItemBlock) stack.getItem()).getBlock();
+            final ItemStack stack = getInventory().getStackInSlot(saplingSlot);
+            final Block block = ((ItemBlock) stack.getItem()).getBlock();
             worker.setHeldItem(saplingSlot);
 
             placeSaplings(saplingSlot, stack, block);
@@ -463,17 +463,17 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private BlockPos findNearLeaves()
     {
-        int playerX = worker.getPosition().getX();
-        int playerY = worker.getPosition().getY() + 1;
-        int playerZ = worker.getPosition().getZ();
-        int radius = LEAVES_RADIUS;
+        final int playerX = worker.getPosition().getX();
+        final int playerY = worker.getPosition().getY() + 1;
+        final int playerZ = worker.getPosition().getZ();
+        final int radius = LEAVES_RADIUS;
         for (int x = playerX - radius; x < playerX + radius; x++)
         {
             for (int y = playerY - radius; y < playerY + radius; y++)
             {
                 for (int z = playerZ - radius; z < playerZ + radius; z++)
                 {
-                    @NotNull BlockPos pos = new BlockPos(x, y, z);
+                    @NotNull final BlockPos pos = new BlockPos(x, y, z);
                     if (world.getBlockState(pos).getBlock().isLeaves(world.getBlockState(pos), world, pos))
                     {
                         return pos;
@@ -488,7 +488,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
         {
-            ItemStack stack = getInventory().getStackInSlot(slot);
+            final ItemStack stack = getInventory().getStackInSlot(slot);
             if (isCorrectSapling(stack))
             {
                 return slot;
@@ -503,7 +503,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     {
         while (!job.tree.getStumpLocations().isEmpty())
         {
-            BlockPos pos = job.tree.getStumpLocations().get(0);
+            final BlockPos pos = job.tree.getStumpLocations().get(0);
 
             if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
                   || Objects.equals(world.getBlockState(pos), block.getStateFromMeta(stack.getMetadata())))

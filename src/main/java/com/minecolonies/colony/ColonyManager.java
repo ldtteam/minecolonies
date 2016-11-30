@@ -68,7 +68,7 @@ public final class ColonyManager
     public static Colony createColony(@NotNull World w, BlockPos pos, @NotNull EntityPlayer player)
     {
         ++topColonyId;
-        @NotNull Colony colony = new Colony(topColonyId, w, pos);
+        @NotNull final Colony colony = new Colony(topColonyId, w, pos);
         colonies.put(colony.getID(), colony);
 
         if (!coloniesByWorld.containsKey(colony.getDimension()))
@@ -78,7 +78,7 @@ public final class ColonyManager
 
         coloniesByWorld.get(colony.getDimension()).add(colony);
 
-        String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayNameString());
+        final String colonyName = LanguageHandler.format("com.minecolonies.gui.townHall.defaultName", player.getDisplayNameString());
         colony.setName(colonyName);
         colony.getPermissions().setPlayerRank(player.getGameProfile().getId(), Permissions.Rank.OWNER, w);
 
@@ -110,7 +110,7 @@ public final class ColonyManager
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizens().values()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                World world = citizenData.getCitizenEntity().getEntityWorld();
+                final World world = citizenData.getCitizenEntity().getEntityWorld();
                 citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
                 colonyWorlds.add(world);
             }
@@ -175,10 +175,10 @@ public final class ColonyManager
      */
     public static AbstractBuilding getBuilding(@NotNull World w, @NotNull BlockPos pos)
     {
-        @Nullable Colony colony = getColony(w, pos);
+        @Nullable final Colony colony = getColony(w, pos);
         if (colony != null)
         {
-            AbstractBuilding building = colony.getBuilding(pos);
+            final AbstractBuilding building = colony.getBuilding(pos);
             if (building != null)
             {
                 return building;
@@ -188,9 +188,9 @@ public final class ColonyManager
         //  Fallback - there might be a AbstractBuilding for this block, but it's outside of it's owning colony's radius
         if (coloniesByWorld.containsKey(w.provider.getDimension()))
         {
-            for (@NotNull Colony otherColony : coloniesByWorld.get(w.provider.getDimension()))
+            for (@NotNull final Colony otherColony : coloniesByWorld.get(w.provider.getDimension()))
             {
-                AbstractBuilding building = otherColony.getBuilding(pos);
+                final AbstractBuilding building = otherColony.getBuilding(pos);
                 if (building != null)
                 {
                     return building;
@@ -210,13 +210,13 @@ public final class ColonyManager
      */
     public static Colony getColony(@NotNull World w, @NotNull BlockPos pos)
     {
-        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
+        final List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
         if (coloniesInWorld == null)
         {
             return null;
         }
 
-        for (@NotNull Colony c : coloniesInWorld)
+        for (@NotNull final Colony c : coloniesInWorld)
         {
             if (c.isCoordInColony(w, pos))
             {
@@ -264,9 +264,9 @@ public final class ColonyManager
     public static AbstractBuilding.View getBuildingView(BlockPos pos)
     {
         //  On client we will just check all known views
-        for (@NotNull ColonyView colony : colonyViews.values())
+        for (@NotNull final ColonyView colony : colonyViews.values())
         {
-            AbstractBuilding.View building = colony.getBuilding(pos);
+            final AbstractBuilding.View building = colony.getBuilding(pos);
             if (building != null)
             {
                 return building;
@@ -300,7 +300,7 @@ public final class ColonyManager
      */
     private static ColonyView getColonyView(@NotNull World w, @NotNull BlockPos pos)
     {
-        for (@NotNull ColonyView c : colonyViews.values())
+        for (@NotNull final ColonyView c : colonyViews.values())
         {
             if (c.isCoordInColony(w, pos))
             {
@@ -340,11 +340,11 @@ public final class ColonyManager
         @Nullable ColonyView closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
-        for (@NotNull ColonyView c : colonyViews.values())
+        for (@NotNull final ColonyView c : colonyViews.values())
         {
             if (c.getDimension() == w.provider.getDimension())
             {
-                long dist = c.getDistanceSquared(pos);
+                final long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
                 {
                     closestColony = c;
@@ -365,7 +365,7 @@ public final class ColonyManager
      */
     public static Colony getClosestColony(@NotNull World w, @NotNull BlockPos pos)
     {
-        List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
+        final List<Colony> coloniesInWorld = coloniesByWorld.get(w.provider.getDimension());
         if (coloniesInWorld == null)
         {
             return null;
@@ -374,11 +374,11 @@ public final class ColonyManager
         @Nullable Colony closestColony = null;
         long closestDist = Long.MAX_VALUE;
 
-        for (@NotNull Colony c : coloniesInWorld)
+        for (@NotNull final Colony c : coloniesInWorld)
         {
             if (c.getDimension() == w.provider.getDimension())
             {
-                long dist = c.getDistanceSquared(pos);
+                final long dist = c.getDistanceSquared(pos);
                 if (dist < closestDist)
                 {
                     closestColony = c;
@@ -432,9 +432,9 @@ public final class ColonyManager
      */
     private static IColony getColonyViewByOwner(UUID owner)
     {
-        for (@NotNull ColonyView c : colonyViews.values())
+        for (@NotNull final ColonyView c : colonyViews.values())
         {
-            Permissions.Player p = c.getPlayers().get(owner);
+            final Permissions.Player p = c.getPlayers().get(owner);
             if (p != null && p.getRank().equals(Permissions.Rank.OWNER))
             {
                 return c;
@@ -484,7 +484,7 @@ public final class ColonyManager
      */
     public static void onServerTick(@NotNull TickEvent.ServerTickEvent event)
     {
-        for (@NotNull Colony c : colonies.values())
+        for (@NotNull final Colony c : colonies.values())
         {
             c.onServerTick(event);
         }
@@ -500,10 +500,10 @@ public final class ColonyManager
      */
     private static void saveColonies()
     {
-        @NotNull NBTTagCompound compound = new NBTTagCompound();
+        @NotNull final NBTTagCompound compound = new NBTTagCompound();
         writeToNBT(compound);
 
-        @NotNull File file = getSaveLocation();
+        @NotNull final File file = getSaveLocation();
         saveNBTToPath(file, compound);
 
         saveNeeded = false;
@@ -516,10 +516,10 @@ public final class ColonyManager
      */
     public static void writeToNBT(@NotNull NBTTagCompound compound)
     {
-        @NotNull NBTTagList colonyTagList = new NBTTagList();
-        for (@NotNull Colony colony : colonies.values())
+        @NotNull final NBTTagList colonyTagList = new NBTTagList();
+        for (@NotNull final Colony colony : colonies.values())
         {
-            @NotNull NBTTagCompound colonyTagCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound colonyTagCompound = new NBTTagCompound();
             colony.writeToNBT(colonyTagCompound);
             colonyTagList.appendTag(colonyTagCompound);
         }
@@ -534,7 +534,7 @@ public final class ColonyManager
     @NotNull
     private static File getSaveLocation()
     {
-        @NotNull File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
     }
 
@@ -602,8 +602,8 @@ public final class ColonyManager
         {
             if (numWorldsLoaded == 0)
             {
-                @NotNull File file = getSaveLocation();
-                @Nullable NBTTagCompound data = loadNBTFromPath(file);
+                @NotNull final File file = getSaveLocation();
+                @Nullable final NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)
                 {
                     readFromNBT(data);
@@ -611,10 +611,10 @@ public final class ColonyManager
             }
             ++numWorldsLoaded;
 
-            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimension());
+            final List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimension());
             if (worldColonies != null)
             {
-                for (@NotNull Colony c : worldColonies)
+                for (@NotNull final Colony c : worldColonies)
                 {
                     c.onWorldLoad(world);
                 }
@@ -654,10 +654,10 @@ public final class ColonyManager
      */
     public static void readFromNBT(@NotNull NBTTagCompound compound)
     {
-        NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
+        final NBTTagList colonyTags = compound.getTagList(TAG_COLONIES, NBT.TAG_COMPOUND);
         for (int i = 0; i < colonyTags.tagCount(); ++i)
         {
-            @NotNull Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i));
+            @NotNull final Colony colony = Colony.loadColony(colonyTags.getCompoundTagAt(i));
             colonies.put(colony.getID(), colony);
 
             if (!coloniesByWorld.containsKey(colony.getDimension()))
@@ -696,10 +696,10 @@ public final class ColonyManager
     {
         if (!world.isRemote)
         {
-            List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimension());
+            final List<Colony> worldColonies = coloniesByWorld.get(world.provider.getDimension());
             if (worldColonies != null)
             {
-                for (@NotNull Colony c : worldColonies)
+                for (@NotNull final Colony c : worldColonies)
                 {
                     c.onWorldUnload(world);
                 }

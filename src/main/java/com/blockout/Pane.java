@@ -53,7 +53,7 @@ public class Pane extends Gui
     {
         id = params.getStringAttribute("id", id);
 
-        @NotNull PaneParams.SizePair parentSizePair = new PaneParams.SizePair(params.getParentWidth(), params.getParentHeight());
+        final @NotNull PaneParams.SizePair parentSizePair = new PaneParams.SizePair(params.getParentWidth(), params.getParentHeight());
         PaneParams.SizePair sizePair = params.getSizePairAttribute("size", null, parentSizePair);
         if (sizePair != null)
         {
@@ -257,14 +257,14 @@ public class Pane extends Gui
             drawSelf(mx, my);
             if (debugging)
             {
-                boolean isMouseOver = isPointInPane(mx, my);
-                int color = isMouseOver ? 0xFF00FF00 : 0xFF0000FF;
+                final boolean isMouseOver = isPointInPane(mx, my);
+                final int color = isMouseOver ? 0xFF00FF00 : 0xFF0000FF;
 
                 Render.drawOutlineRect(x, y, x + getWidth(), y + getHeight(), color);
 
                 if (isMouseOver && !id.isEmpty())
                 {
-                    int stringWidth = mc.fontRendererObj.getStringWidth(id);
+                    final int stringWidth = mc.fontRendererObj.getStringWidth(id);
                     mc.fontRendererObj.drawString(id, x + getWidth() - stringWidth, y + getHeight() - mc.fontRendererObj.FONT_HEIGHT, color);
                 }
             }
@@ -322,7 +322,7 @@ public class Pane extends Gui
      */
     public final <T extends Pane> T findPaneOfTypeByID(String id, @NotNull Class<T> type)
     {
-        @Nullable Pane p = findPaneByID(id);
+        final @Nullable Pane p = findPaneByID(id);
         try
         {
             return type.cast(p);
@@ -449,7 +449,7 @@ public class Pane extends Gui
 
     protected synchronized void scissorsStart()
     {
-        FloatBuffer fb = BufferUtils.createFloatBuffer(16 * 4);
+        final FloatBuffer fb = BufferUtils.createFloatBuffer(16 * 4);
         GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, fb);
 
         int scissorsX = (int) fb.get(12) + getX();
@@ -459,11 +459,11 @@ public class Pane extends Gui
 
         if (!scissorsInfoStack.isEmpty())
         {
-            ScissorsInfo parentInfo = scissorsInfoStack.peek();
-            int right = scissorsX + w;
-            int bottom = scissorsY + h;
-            int parentRight = parentInfo.x + parentInfo.width;
-            int parentBottom = parentInfo.y + parentInfo.height;
+            final ScissorsInfo parentInfo = scissorsInfoStack.peek();
+            final int right = scissorsX + w;
+            final int bottom = scissorsY + h;
+            final int parentRight = parentInfo.x + parentInfo.width;
+            final int parentBottom = parentInfo.y + parentInfo.height;
 
             scissorsX = Math.max(scissorsX, parentInfo.x);
             scissorsY = Math.max(scissorsY, parentInfo.y);
@@ -474,10 +474,10 @@ public class Pane extends Gui
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        @NotNull ScissorsInfo info = new ScissorsInfo(scissorsX, scissorsY, w, h);
+        @NotNull final ScissorsInfo info = new ScissorsInfo(scissorsX, scissorsY, w, h);
         scissorsInfoStack.push(info);
 
-        int scale = Screen.getScale();
+        final int scale = Screen.getScale();
         GL11.glScissor(info.x * scale, mc.displayHeight - ((info.y + info.height) * scale), info.width * scale, info.height * scale);
     }
 
@@ -503,7 +503,7 @@ public class Pane extends Gui
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
             ScissorsInfo info = scissorsInfoStack.peek();
-            int scale = Screen.getScale();
+            final int scale = Screen.getScale();
             GL11.glScissor(info.x * scale, mc.displayHeight - ((info.y + info.height) * scale), info.width * scale, info.height * scale);
         }
     }

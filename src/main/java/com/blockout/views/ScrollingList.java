@@ -60,7 +60,7 @@ public class ScrollingList extends ScrollingView
     @Override
     public void parseChildren(@NotNull PaneParams params)
     {
-        List<PaneParams> childNodes = params.getChildren();
+        final List<PaneParams> childNodes = params.getChildren();
         if (childNodes == null)
         {
             return;

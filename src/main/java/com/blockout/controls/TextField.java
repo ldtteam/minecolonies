@@ -144,7 +144,7 @@ public class TextField extends Pane
     {
         selectionEnd = MathHelper.clamp_int(pos, 0, text.length());
 
-        int internalWidth = getInternalWidth();
+        final int internalWidth = getInternalWidth();
         if (internalWidth > 0)
         {
             if (scrollOffset > text.length())
@@ -152,8 +152,8 @@ public class TextField extends Pane
                 scrollOffset = text.length();
             }
 
-            String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), internalWidth);
-            int rightmostVisibleChar = visibleString.length() + scrollOffset;
+            final String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), internalWidth);
+            final int rightmostVisibleChar = visibleString.length() + scrollOffset;
 
             if (selectionEnd == scrollOffset)
             {
@@ -176,8 +176,8 @@ public class TextField extends Pane
     @NotNull
     public String getSelectedText()
     {
-        int start = Math.min(cursorPosition, selectionEnd);
-        int end = Math.max(cursorPosition, selectionEnd);
+        final int start = Math.min(cursorPosition, selectionEnd);
+        final int end = Math.max(cursorPosition, selectionEnd);
         return text.substring(start, end);
     }
 
@@ -219,7 +219,7 @@ public class TextField extends Pane
     {
         if (tabNextPaneID != null)
         {
-            Pane next = getWindow().findPaneByID(tabNextPaneID);
+            final Pane next = getWindow().findPaneByID(tabNextPaneID);
             if (next != null)
             {
                 next.setFocus();
@@ -230,7 +230,7 @@ public class TextField extends Pane
 
     private boolean handleArrowKeys(int key)
     {
-        int direction = (key == Keyboard.KEY_LEFT) ? -1 : 1;
+        final int direction = (key == Keyboard.KEY_LEFT) ? -1 : 1;
 
         if (GuiScreen.isShiftKeyDown())
         {
@@ -256,7 +256,7 @@ public class TextField extends Pane
 
     private boolean handleHomeEnd(int key)
     {
-        int position = (key == Keyboard.KEY_HOME) ? 0 : text.length();
+        final int position = (key == Keyboard.KEY_HOME) ? 0 : text.length();
 
         if (GuiScreen.isShiftKeyDown())
         {
@@ -271,7 +271,7 @@ public class TextField extends Pane
 
     private boolean handleDelete(int key)
     {
-        int direction = (key == Keyboard.KEY_BACK) ? -1 : 1;
+        final int direction = (key == Keyboard.KEY_BACK) ? -1 : 1;
 
         if (GuiScreen.isCtrlKeyDown())
         {
@@ -295,18 +295,18 @@ public class TextField extends Pane
     @Override
     protected void drawSelf(int mx, int my)
     {
-        int color = enabled ? textColor : textColorDisabled;
-        int drawWidth = getInternalWidth();
-        int drawX = x;
-        int drawY = y;
+        final int color = enabled ? textColor : textColorDisabled;
+        final int drawWidth = getInternalWidth();
+        final int drawX = x;
+        final int drawY = y;
 
         //  Determine the portion of the string that is visible on screen
-        String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), drawWidth);
+        final String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), drawWidth);
 
-        int relativeCursorPosition = cursorPosition - scrollOffset;
+        final int relativeCursorPosition = cursorPosition - scrollOffset;
         int relativeSelectionEnd = selectionEnd - scrollOffset;
-        boolean cursorVisible = relativeCursorPosition >= 0 && relativeCursorPosition <= visibleString.length();
-        boolean cursorBeforeEnd = cursorPosition < text.length() || text.length() >= maxTextLength;
+        final boolean cursorVisible = relativeCursorPosition >= 0 && relativeCursorPosition <= visibleString.length();
+        final boolean cursorBeforeEnd = cursorPosition < text.length() || text.length() >= maxTextLength;
 
         //  Enforce selection to the length limit of the visible string
         if (relativeSelectionEnd > visibleString.length())
@@ -318,7 +318,7 @@ public class TextField extends Pane
         int textX = drawX;
         if (visibleString.length() > 0)
         {
-            @NotNull String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
+            @NotNull final String s1 = cursorVisible ? visibleString.substring(0, relativeCursorPosition) : visibleString;
             mc.renderEngine.bindTexture(TEXTURE);
             textX = mc.fontRendererObj.drawString(s1, textX, drawY, color, shadow);
         }
@@ -361,7 +361,7 @@ public class TextField extends Pane
         //  Draw selection
         if (relativeSelectionEnd != relativeCursorPosition)
         {
-            int selectedDrawX = drawX + mc.fontRendererObj.getStringWidth(visibleString.substring(0, relativeSelectionEnd));
+            final int selectedDrawX = drawX + mc.fontRendererObj.getStringWidth(visibleString.substring(0, relativeSelectionEnd));
 
             int selectionStartX = Math.min(cursorX, selectedDrawX - 1);
             int selectionEndX = Math.max(cursorX, selectedDrawX - 1);
@@ -376,22 +376,21 @@ public class TextField extends Pane
                 selectionEndX = x + width;
             }
 
-            Tessellator tessellator = Tessellator.getInstance();
+            final Tessellator tessellator = Tessellator.getInstance();
             GlStateManager.color(0.0F, 0.0F, 255.0F, 255.0F);
             GlStateManager.disableTexture2D();
             GlStateManager.enableColorLogic();
             GlStateManager.colorLogicOp(GL11.GL_OR_REVERSE);
-            VertexBuffer VertexBuffer = tessellator.getBuffer();
+            final VertexBuffer vertexBuffer = tessellator.getBuffer();
 
             // There are several to choose from, look at DefaultVertexFormats for more info
-            //todo may need to choose a different Format
-            VertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            vertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
             //Since our points do not have any u,v this seems to be the correct code
-            VertexBuffer.pos((double) selectionStartX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
-            VertexBuffer.pos((double) selectionEndX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
-            VertexBuffer.pos((double) selectionEndX, (double) drawY - 1, 0.0D).endVertex();
-            VertexBuffer.pos((double) selectionStartX, (double) drawY - 1, 0.0D).endVertex();
+            vertexBuffer.pos((double) selectionStartX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            vertexBuffer.pos((double) selectionEndX, (double) drawY + 1 + mc.fontRendererObj.FONT_HEIGHT, 0.0D).endVertex();
+            vertexBuffer.pos((double) selectionEndX, (double) drawY - 1, 0.0D).endVertex();
+            vertexBuffer.pos((double) selectionStartX, (double) drawY - 1, 0.0D).endVertex();
             tessellator.draw();
             GlStateManager.disableColorLogic();
             GlStateManager.enableTexture2D();
@@ -415,12 +414,12 @@ public class TextField extends Pane
             return;
         }
 
-        String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), getInternalWidth());
-        String trimmedString = mc.fontRendererObj.trimStringToWidth(visibleString, mx);
+        final String visibleString = mc.fontRendererObj.trimStringToWidth(text.substring(scrollOffset), getInternalWidth());
+        final String trimmedString = mc.fontRendererObj.trimStringToWidth(visibleString, mx);
 
         // Cache and restore scrollOffset when we change focus via click,
         // because onFocus() sets the cursor (and thus scroll offset) to the end
-        int oldScrollOffset = scrollOffset;
+        final int oldScrollOffset = scrollOffset;
         setFocus();
         scrollOffset = oldScrollOffset;
         setCursorPosition(trimmedString.length() + scrollOffset);
@@ -462,11 +461,11 @@ public class TextField extends Pane
 
     public void writeText(String str)
     {
-        String filteredStr = filter.filter(str);
+        final String filteredStr = filter.filter(str);
 
-        int insertAt = Math.min(cursorPosition, selectionEnd);
-        int insertEnd = Math.max(cursorPosition, selectionEnd);
-        int availableChars = (maxTextLength - text.length()) + (insertEnd - insertAt);
+        final int insertAt = Math.min(cursorPosition, selectionEnd);
+        final int insertEnd = Math.max(cursorPosition, selectionEnd);
+        final int availableChars = (maxTextLength - text.length()) + (insertEnd - insertAt);
 
         @NotNull String result = "";
         if (text.length() > 0 && insertAt > 0)
@@ -523,9 +522,9 @@ public class TextField extends Pane
         }
         else
         {
-            boolean backwards = count < 0;
-            int start = backwards ? (this.cursorPosition + count) : this.cursorPosition;
-            int end = backwards ? this.cursorPosition : (this.cursorPosition + count);
+            final boolean backwards = count < 0;
+            final int start = backwards ? (this.cursorPosition + count) : this.cursorPosition;
+            final int end = backwards ? this.cursorPosition : (this.cursorPosition + count);
             @NotNull String result = "";
 
             if (start > 0)
@@ -549,7 +548,7 @@ public class TextField extends Pane
 
     public int getNthWordFromPos(int count, int pos)
     {
-        boolean reverse = count < 0;
+        final boolean reverse = count < 0;
         int position = pos;
 
         for (int i1 = 0; i1 < Math.abs(count); ++i1)

@@ -109,8 +109,8 @@ public class CitizenData
     @NotNull
     public static CitizenData createFromNBT(@NotNull NBTTagCompound compound, Colony colony)
     {
-        int id = compound.getInteger(TAG_ID);
-        @NotNull CitizenData citizen = new CitizenData(id, colony);
+        final int id = compound.getInteger(TAG_ID);
+        final @NotNull CitizenData citizen = new CitizenData(id, colony);
         citizen.readFromNBT(compound);
         return citizen;
     }
@@ -133,7 +133,7 @@ public class CitizenData
         maxHealth = compound.getFloat(TAG_MAX_HEALTH);
 
 
-        NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
+        final NBTTagCompound nbtTagSkillsCompound = compound.getCompoundTag("skills");
         strength = nbtTagSkillsCompound.getInteger("strength");
         endurance = nbtTagSkillsCompound.getInteger("endurance");
         charisma = nbtTagSkillsCompound.getInteger("charisma");
@@ -210,7 +210,7 @@ public class CitizenData
      */
     public void initializeFromEntity(@NotNull EntityCitizen entity)
     {
-        Random rand = entity.getRNG();
+        final Random rand = entity.getRNG();
 
         this.entity = entity;
 
@@ -223,7 +223,7 @@ public class CitizenData
         maxHealth = entity.getMaxHealth();
         experience = 0;
         level = 0;
-        @NotNull Random random = new Random();
+        final @NotNull Random random = new Random();
 
         //Initialize the citizen skills and make sure they are never 0
         intelligence = random.nextInt(LEVEL_CAP - 1) + 1;
@@ -491,7 +491,7 @@ public class CitizenData
     {
         this.job = job;
 
-        @Nullable EntityCitizen localEntity = getCitizenEntity();
+        @Nullable final EntityCitizen localEntity = getCitizenEntity();
         if (localEntity != null)
         {
             localEntity.onJobChanged(job);
@@ -539,7 +539,7 @@ public class CitizenData
         compound.setDouble(TAG_MAX_HEALTH, maxHealth);
 
 
-        @NotNull NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound nbtTagSkillsCompound = new NBTTagCompound();
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STRENGTH, strength);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_STAMINA, endurance);
         nbtTagSkillsCompound.setInteger(TAG_SKILL_SPEED, charisma);
@@ -549,7 +549,7 @@ public class CitizenData
 
         if (job != null)
         {
-            @NotNull NBTTagCompound jobCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound jobCompound = new NBTTagCompound();
             job.writeToNBT(jobCompound);
             compound.setTag("job", jobCompound);
         }

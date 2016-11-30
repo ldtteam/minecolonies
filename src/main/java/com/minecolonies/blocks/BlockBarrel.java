@@ -80,7 +80,7 @@ public class BlockBarrel extends Block
     {
         Log.getLogger().info("block activated");
 
-        int barrelState = state.getValue(BARRELSTATE);
+        final int barrelState = state.getValue(BARRELSTATE);
         int fullness = fillings.getOrDefault(pos, 0);
 
         Log.getLogger().info("At this moment bs= " + barrelState + " and fl=" + fullness);
@@ -102,7 +102,7 @@ public class BlockBarrel extends Block
             return true;
         }
 
-        Item item = itemstack.getItem();
+        final Item item = itemstack.getItem();
 
         if (item == Items.ROTTEN_FLESH && barrelState == BARRELSTATE_FILLING)
         {
@@ -166,7 +166,7 @@ public class BlockBarrel extends Block
     {
         Log.getLogger().info("UpdateTick called");
 
-        int barrelState = state.getValue(BARRELSTATE);
+        final int barrelState = state.getValue(BARRELSTATE);
 
         Log.getLogger().info("now BARRELSTATE = " + barrelState);
         switch (state.getValue(BARRELSTATE))
@@ -184,7 +184,7 @@ public class BlockBarrel extends Block
 
     private void checkIfBarrelFull(World world, BlockPos pos, IBlockState state)
     {
-        int fullness = fillings.getOrDefault(pos, 0);
+        final int fullness = fillings.getOrDefault(pos, 0);
         if (fullness >= MAX_FULLNESS)
         {
             Log.getLogger().info("Barrel is full.");
@@ -214,7 +214,7 @@ public class BlockBarrel extends Block
     {
         Log.getLogger().info("block right-clicked");
 
-        ItemStack itemstack = playerIn.inventory.getCurrentItem();
+        final ItemStack itemstack = playerIn.inventory.getCurrentItem();
         UseBarrel(worldIn, playerIn, itemstack, state, pos);
         return true;
     }

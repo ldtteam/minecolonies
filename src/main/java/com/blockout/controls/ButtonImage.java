@@ -81,7 +81,7 @@ public class ButtonImage extends Button
      */
     private void loadImageInfo(PaneParams params)
     {
-        String path = params.getStringAttribute("source", null);
+        final String path = params.getStringAttribute("source", null);
         if (path != null)
         {
             image = new ResourceLocation(path);
@@ -110,7 +110,7 @@ public class ButtonImage extends Button
      */
     private void loadHighlightInfo(PaneParams params)
     {
-        String path = params.getStringAttribute("highlight", null);
+        final String path = params.getStringAttribute("highlight", null);
         if (path != null)
         {
             imageHighlight = new ResourceLocation(path);
@@ -139,7 +139,7 @@ public class ButtonImage extends Button
      */
     private void loadDisabledInfo(PaneParams params)
     {
-        String path = params.getStringAttribute("disabled", null);
+        final String path = params.getStringAttribute("disabled", null);
         if (path != null)
         {
             imageDisabled = new ResourceLocation(path);
@@ -177,7 +177,7 @@ public class ButtonImage extends Button
         textDisabledColor = params.getColorAttribute("textdisabledcolor", textColor);
         shadow = params.getBooleanAttribute("shadow", shadow);
 
-        PaneParams.SizePair size = params.getSizePairAttribute("textoffset", null, null);
+        final PaneParams.SizePair size = params.getSizePairAttribute("textoffset", null, null);
         if (size != null)
         {
             textOffsetX = size.getX();
@@ -190,7 +190,7 @@ public class ButtonImage extends Button
      */
     private void loadImageDimensions()
     {
-        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(image);
+        final Tuple<Integer, Integer> dimensions = Image.getImageDimensions(image);
         imageMapWidth = dimensions.getFirst();
         imageMapHeight = dimensions.getSecond();
     }
@@ -200,7 +200,7 @@ public class ButtonImage extends Button
      */
     private void loadImageHighlightDimensions()
     {
-        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageHighlight);
+        final Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageHighlight);
         highlightMapWidth = dimensions.getFirst();
         highlightMapHeight = dimensions.getSecond();
     }
@@ -210,7 +210,7 @@ public class ButtonImage extends Button
      */
     private void loadImageDisabledDimensions()
     {
-        Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageDisabled);
+        final Tuple<Integer, Integer> dimensions = Image.getImageDimensions(imageDisabled);
         disabledMapWidth = dimensions.getFirst();
         disabledMapHeight = dimensions.getSecond();
     }
@@ -489,7 +489,7 @@ public class ButtonImage extends Button
     @Override
     protected void drawSelf(int mx, int my)
     {
-        boolean mouseOver = isPointInPane(mx, my);
+        final boolean mouseOver = isPointInPane(mx, my);
 
         drawImage(mouseOver);
         drawlabel(mouseOver);
@@ -560,7 +560,7 @@ public class ButtonImage extends Button
     {
         if (label != null)
         {
-            int color = enabled ? (mouseOver ? textHoverColor : textColor) : textDisabledColor;
+            final int color = enabled ? (mouseOver ? textHoverColor : textColor) : textDisabledColor;
 
             int offsetX = textOffsetX;
             int offsetY = textOffsetY;

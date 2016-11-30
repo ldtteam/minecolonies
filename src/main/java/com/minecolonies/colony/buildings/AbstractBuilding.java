@@ -152,8 +152,8 @@ public abstract class AbstractBuilding
 
             if (oclass != null)
             {
-                @NotNull BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
-                Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
+                @NotNull final BlockPos pos = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
+                final Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
                 building = (AbstractBuilding) constructor.newInstance(colony, pos);
             }
         }
@@ -226,8 +226,8 @@ public abstract class AbstractBuilding
 
             if (oclass != null)
             {
-                BlockPos loc = parent.getPosition();
-                Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
+                final BlockPos loc = parent.getPosition();
+                final Constructor<?> constructor = oclass.getDeclaredConstructor(Colony.class, BlockPos.class);
                 building = (AbstractBuilding) constructor.newInstance(colony, loc);
             }
             else
@@ -259,16 +259,16 @@ public abstract class AbstractBuilding
 
         try
         {
-            int typeHash = buf.readInt();
+            final int typeHash = buf.readInt();
             oclass = classNameHashToClassMap.get(typeHash);
 
             if (oclass != null)
             {
-                for (@NotNull Class<?> c : oclass.getDeclaredClasses())
+                for (@NotNull final Class<?> c : oclass.getDeclaredClasses())
                 {
                     if (c.getName().endsWith("$View"))
                     {
-                        Constructor<?> constructor = c.getDeclaredConstructor(ColonyView.class, BlockPos.class);
+                        final Constructor<?> constructor = c.getDeclaredConstructor(ColonyView.class, BlockPos.class);
                         view = (View) constructor.newInstance(colony, id);
                         break;
                     }
@@ -317,7 +317,7 @@ public abstract class AbstractBuilding
      */
     public boolean isMatchingBlock(@NotNull Block block)
     {
-        Class<?> c = blockClassToBuildingClassMap.get(block.getClass());
+        final Class<?> c = blockClassToBuildingClassMap.get(block.getClass());
         return getClass().equals(c);
     }
 
@@ -329,7 +329,7 @@ public abstract class AbstractBuilding
      */
     public void writeToNBT(@NotNull NBTTagCompound compound)
     {
-        String s = classToNameMap.get(this.getClass());
+        final String s = classToNameMap.get(this.getClass());
 
         if (s == null)
         {
@@ -370,7 +370,7 @@ public abstract class AbstractBuilding
     {
         if (tileEntity == null && colony.getWorld().getBlockState(location).getBlock() != null)
         {
-            TileEntity te = getColony().getWorld().getTileEntity(location);
+            final TileEntity te = getColony().getWorld().getTileEntity(location);
             if (te instanceof TileEntityColonyBuilding)
             {
                 tileEntity = (TileEntityColonyBuilding) te;
@@ -500,7 +500,7 @@ public abstract class AbstractBuilding
      */
     private void requestWorkOrder(int level)
     {
-        for (@NotNull WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
         {
             if (o.getBuildingLocation().equals(getID()))
             {
@@ -740,7 +740,7 @@ public abstract class AbstractBuilding
          */
         public void openGui()
         {
-            @Nullable com.blockout.views.Window window = getWindow();
+            @Nullable final com.blockout.views.Window window = getWindow();
             if (window != null)
             {
                 window.open();

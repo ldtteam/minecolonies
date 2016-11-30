@@ -110,7 +110,7 @@ public class WorkManager
     @Nullable
     public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(@NotNull Class<W> type)
     {
-        for (@NotNull AbstractWorkOrder o : workOrders.values())
+        for (@NotNull final AbstractWorkOrder o : workOrders.values())
         {
             if (!o.isClaimed() && type.isAssignableFrom(o.getClass()))
             {
@@ -163,10 +163,10 @@ public class WorkManager
     public void writeToNBT(@NotNull NBTTagCompound compound)
     {
         //  Work Orders
-        @NotNull NBTTagList list = new NBTTagList();
-        for (@NotNull AbstractWorkOrder o : workOrders.values())
+        @NotNull final NBTTagList list = new NBTTagList();
+        for (@NotNull final AbstractWorkOrder o : workOrders.values())
         {
-            @NotNull NBTTagCompound orderCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound orderCompound = new NBTTagCompound();
             o.writeToNBT(orderCompound);
             list.appendTag(orderCompound);
         }
@@ -181,11 +181,11 @@ public class WorkManager
     public void readFromNBT(@NotNull NBTTagCompound compound)
     {
         //  Work Orders
-        NBTTagList list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
+        final NBTTagList list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); ++i)
         {
-            NBTTagCompound orderCompound = list.getCompoundTagAt(i);
-            @Nullable AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound);
+            final NBTTagCompound orderCompound = list.getCompoundTagAt(i);
+            @Nullable final AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound);
             if (o != null)
             {
                 addWorkOrder(o);
@@ -231,10 +231,10 @@ public class WorkManager
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            @NotNull Iterator<AbstractWorkOrder> iter = workOrders.values().iterator();
+            @NotNull final Iterator<AbstractWorkOrder> iter = workOrders.values().iterator();
             while (iter.hasNext())
             {
-                AbstractWorkOrder o = iter.next();
+                final AbstractWorkOrder o = iter.next();
                 if (!o.isValid(colony))
                 {
                     iter.remove();

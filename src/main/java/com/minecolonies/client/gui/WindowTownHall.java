@@ -434,10 +434,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         workers += deliverymen + builders;
 
-        String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
-        String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townHall.population.unemployed", citizensSize - workers);
-        String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townHall.population.builders", builders);
-        String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townHall.population.deliverymen", deliverymen);
+        final String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
+        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townHall.population.unemployed", citizensSize - workers);
+        final String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townHall.population.builders", builders);
+        final String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townHall.population.deliverymen", deliverymen);
 
         findPaneOfTypeByID(CURRENT_SPEC_LABEL, Label.class).setLabelText("<Industrial>");
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
@@ -463,7 +463,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @Override
             public void updateElement(int index, @NotNull Pane rowPane)
             {
-                Permissions.Player player = users.get(index);
+                final Permissions.Player player = users.get(index);
                 String rank = player.getRank().name();
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(player.getName());
@@ -489,7 +489,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @Override
             public void updateElement(int index, @NotNull Pane rowPane)
             {
-                CitizenDataView citizen = citizens.get(index);
+                final CitizenDataView citizen = citizens.get(index);
 
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(citizen.getName());
             }
@@ -593,7 +593,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void onTabClicked(@NotNull Button button)
     {
-        String page = tabsToPages.get(button.getID());
+        final String page = tabsToPages.get(button.getID());
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(page);
 
         lastTabButton.setEnabled(true);
@@ -604,7 +604,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     @Override
     public void onUpdate()
     {
-        String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_PERMISSIONS))
         {
             updateUsers();
@@ -627,7 +627,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void renameClicked(Button ignored)
     {
-        @NotNull WindowTownHallNameEntry window = new WindowTownHallNameEntry(townHall.getColony());
+        @NotNull final WindowTownHallNameEntry window = new WindowTownHallNameEntry(townHall.getColony());
         window.open();
     }
 
@@ -639,7 +639,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void addPlayerCLicked(Button ignored)
     {
-        TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
+        final TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townHall.getColony(), input.getText()));
         input.setText("");
     }
@@ -651,10 +651,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void removePlayerClicked(Button button)
     {
-        int row = userList.getListElementIndexByPane(button);
+        final int row = userList.getListElementIndexByPane(button);
         if (row >= 0 && row < users.size())
         {
-            Permissions.Player user = users.get(row);
+            final Permissions.Player user = users.get(row);
             if (user.getRank() != Permissions.Rank.OWNER)
             {
                 MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
@@ -669,10 +669,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void promoteDemoteClicked(@NotNull Button button)
     {
-        int row = userList.getListElementIndexByPane(button);
+        final int row = userList.getListElementIndexByPane(button);
         if (row >= 0 && row < users.size())
         {
-            Permissions.Player user = users.get(row);
+            final Permissions.Player user = users.get(row);
 
             if (button.getID().equals(BUTTON_PROMOTE))
             {

@@ -82,8 +82,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     protected final boolean mineBlock(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
-        IBlockState curBlockState = world.getBlockState(blockToMine);
-        @Nullable Block curBlock = curBlockState.getBlock();
+        final IBlockState curBlockState = world.getBlockState(blockToMine);
+        @Nullable final Block curBlock = curBlockState.getBlock();
         if (curBlock == null
               || curBlock.equals(Blocks.AIR)
               || BlockUtils.shouldNeverBeMessedWith(curBlock))
@@ -106,16 +106,16 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         final ItemStack tool = worker.getHeldItemMainhand();
 
         //calculate fortune enchantment
-        int fortune = Utils.getFortuneOf(tool);
+        final int fortune = Utils.getFortuneOf(tool);
 
         //get all item drops
-        List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
+        final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
 
         //Break the block
         worker.breakBlockWithToolInHand(blockToMine);
 
         //add the drops to the citizen
-        for (ItemStack item : items)
+        for (final ItemStack item : items)
         {
             InventoryUtils.setStack(worker.getInventoryCitizen(), item);
         }
@@ -133,7 +133,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      */
     private boolean checkMiningLocation(@NotNull final BlockPos blockToMine, @NotNull final BlockPos safeStand)
     {
-        Block curBlock = world.getBlockState(blockToMine).getBlock();
+        final Block curBlock = world.getBlockState(blockToMine).getBlock();
 
         if (!holdEfficientTool(curBlock))
         {
@@ -141,7 +141,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             return true;
         }
 
-        ItemStack tool = worker.getHeldItemMainhand();
+        final ItemStack tool = worker.getHeldItemMainhand();
 
         if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK)
         {

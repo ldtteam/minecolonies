@@ -48,24 +48,24 @@ public final class Render
      */
     public static void drawOutlineRect(int x1, int y1, int x2, int y2, float lineWidth, int color)
     {
-        float a = (float) (((color >> ALPHA_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
-        float r = (float) (((color >> RED_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
-        float g = (float) (((color >> GREEN_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
-        float b = (float) ((color & COLOR_MASK) / COLOR_DIVISOR);
+        final float a = (float) (((color >> ALPHA_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
+        final float r = (float) (((color >> RED_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
+        final float g = (float) (((color >> GREEN_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
+        final float b = (float) ((color & COLOR_MASK) / COLOR_DIVISOR);
 
-        Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer VertexBuffer = tessellator.getBuffer();
+        final Tessellator tessellator = Tessellator.getInstance();
+        final VertexBuffer vertexBuffer = tessellator.getBuffer();
 
-        VertexBuffer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
+        vertexBuffer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
         GlStateManager.disableTexture2D();
         GL11.glLineWidth(lineWidth);
         GlStateManager.color(r, g, b, a);
 
         //Since our points do not have any u,v this seems to be the correct code
-        VertexBuffer.pos(x1, y2, 0.0D).endVertex();
-        VertexBuffer.pos(x2, y2, 0.0D).endVertex();
-        VertexBuffer.pos(x2, y1, 0.0D).endVertex();
-        VertexBuffer.pos(x1, y1, 0.0D).endVertex();
+        vertexBuffer.pos(x1, y2, 0.0D).endVertex();
+        vertexBuffer.pos(x2, y2, 0.0D).endVertex();
+        vertexBuffer.pos(x2, y1, 0.0D).endVertex();
+        vertexBuffer.pos(x1, y1, 0.0D).endVertex();
 
         tessellator.draw();
         GlStateManager.enableTexture2D();

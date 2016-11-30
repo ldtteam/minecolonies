@@ -75,7 +75,7 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     {
         if (entity instanceof EntityCitizen)
         {
-            CitizenData citizen = ((EntityCitizen) entity).getCitizenData();
+            final CitizenData citizen = ((EntityCitizen) entity).getCitizenData();
             if (citizen != null)
             {
                 citizen.setCitizenEntity(null);

@@ -272,10 +272,10 @@ public class BuildingMiner extends AbstractBuildingWorker
 
         startingLevelNode = compound.getInteger(TAG_SN);
 
-        NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.tagCount(); i++)
         {
-            Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
+            final Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
             this.levels.add(level);
         }
     }
@@ -313,10 +313,10 @@ public class BuildingMiner extends AbstractBuildingWorker
             BlockPosUtil.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
         }
 
-        @NotNull NBTTagList levelTagList = new NBTTagList();
-        for (@NotNull Level level : levels)
+        @NotNull final NBTTagList levelTagList = new NBTTagList();
+        for (@NotNull final Level level : levels)
         {
-            @NotNull NBTTagCompound levelCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound levelCompound = new NBTTagCompound();
             level.writeToNBT(levelCompound);
             levelTagList.appendTag(levelCompound);
         }
@@ -335,7 +335,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());
 
-        for (@NotNull Level level : levels)
+        for (@NotNull final Level level : levels)
         {
             buf.writeInt(level.getNumberOfNodes());
         }
@@ -618,7 +618,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         {
             super.deserialize(buf);
             current = buf.readInt();
-            int size = buf.readInt();
+            final int size = buf.readInt();
             levels = new int[size];
 
             for (int i = 0; i < size; i++)

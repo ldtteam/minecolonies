@@ -78,7 +78,7 @@ public class JobDeliveryman extends AbstractJob
 
     public boolean isNeeded()
     {
-        Colony colony = getCitizen().getColony();
+        final Colony colony = getCitizen().getColony();
         return colony != null && !colony.getDeliverymanRequired().isEmpty();
     }
 

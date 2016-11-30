@@ -172,7 +172,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         super(Constants.MOD_ID + BUILD_TOOL_RESOURCE_SUFFIX);
 
-        @Nullable Structure structure = Settings.instance.getActiveStructure();
+        @Nullable final Structure structure = Settings.instance.getActiveStructure();
 
         if (structure != null)
         {
@@ -254,7 +254,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.gui.buildtool.hut"));
 
-        InventoryPlayer inventory = this.mc.thePlayer.inventory;
+        final InventoryPlayer inventory = this.mc.thePlayer.inventory;
 
         //Add possible hutDec (has item) to list, if it has a schematic, and player has the block
         hutDec.addAll(Structures.getHuts().stream()
@@ -268,7 +268,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if (hutDec.isEmpty())
         {
-            Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
+            final Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
             buttonHutDec.setLabel(LanguageHandler.getString(
               Settings.instance.isInHutMode() ? "com.minecolonies.gui.buildtool.nohut" : "com.minecolonies.gui.buildtool.nodecoration"));
             buttonHutDec.setEnabled(false);
@@ -282,11 +282,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 styleIndex = Math.max(0, getStyles().indexOf(Settings.instance.getStyle()));
             }
 
-            Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
+            final Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
             buttonHutDec.setLabel(hutDec.get(hutDecIndex));
             buttonHutDec.setEnabled(true);
 
-            Button buttonStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
+            final Button buttonStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
             buttonStyle.setVisible(true);
             buttonStyle.setLabel(getStyles().get(styleIndex));
             if (Settings.instance.getActiveStructure() == null)
@@ -377,10 +377,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void changeSchematic()
     {
-        String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
-        String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+        final String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
+        final String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
 
-        Structure structure = new Structure(null,
+        final Structure structure = new Structure(null,
                 labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""),
                 new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
         Settings.instance.setActiveSchematic(structure);
@@ -402,7 +402,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void styleClicked(@NotNull Button button)
     {
-        List<String> styles = getStyles();
+        final  List<String> styles = getStyles();
 
         if (styles.size() == 1)
         {
@@ -423,7 +423,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void levelClicked(Button button)
     {
-        int maxLevel = Structures.getMaxLevelForHut(hutDec.get(hutDecIndex));
+        final int maxLevel = Structures.getMaxLevelForHut(hutDec.get(hutDecIndex));
         if (maxLevel > 1)
         {
             level = (level + 1) % maxLevel;
@@ -435,7 +435,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private void updateLevelButton()
     {
-        Button buttonLevel = findPaneOfTypeByID(BUTTON_LEVEL_ID, Button.class);
+        final Button buttonLevel = findPaneOfTypeByID(BUTTON_LEVEL_ID, Button.class);
         if (Settings.instance.isInHutMode())
         {
             buttonLevel.setVisible(true);

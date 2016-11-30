@@ -98,14 +98,14 @@ public class PaneParams
         int index = s.indexOf("$(");
         while (index != -1)
         {
-            int endIndex = s.indexOf(')', index);
+            final int endIndex = s.indexOf(')', index);
 
             if (endIndex == -1)
             {
                 break;
             }
 
-            String key = s.substring(index + 2, endIndex);
+            final String key = s.substring(index + 2, endIndex);
             String replacement = I18n.format(key);
 
             if (replacement.equals(key))
@@ -128,7 +128,7 @@ public class PaneParams
 
     public String getStringAttribute(String name, String def)
     {
-        Node attr = getAttribute(name);
+        final Node attr = getAttribute(name);
         return (attr != null) ? attr.getNodeValue() : def;
     }
 
@@ -156,7 +156,7 @@ public class PaneParams
 
     public int getIntegerAttribute(String name, int def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             return Integer.parseInt(attr);
@@ -171,7 +171,7 @@ public class PaneParams
 
     public float getFloatAttribute(String name, float def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             return Float.parseFloat(attr);
@@ -186,7 +186,7 @@ public class PaneParams
 
     public double getDoubleAttribute(String name, double def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             return Double.parseDouble(attr);
@@ -202,7 +202,7 @@ public class PaneParams
 
     public boolean getBooleanAttribute(String name, boolean def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             return Boolean.parseBoolean(attr);
@@ -212,7 +212,7 @@ public class PaneParams
 
     public <T extends Enum<T>> T getEnumAttribute(String name, Class<T> clazz, T def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             return Enum.valueOf(clazz, attr);
@@ -222,7 +222,7 @@ public class PaneParams
 
     public int getScalableIntegerAttribute(String name, int def, int scale)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             Matcher m = PERCENTAGE_PATTERN.matcher(attr);
@@ -262,13 +262,13 @@ public class PaneParams
     @Nullable
     public SizePair getSizePairAttribute(String name, SizePair def, SizePair scale)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             int w = def != null ? def.x : 0;
             int h = def != null ? def.y : 0;
 
-            Matcher m = PERCENTAGE_PATTERN.matcher(attr);
+            final Matcher m = PERCENTAGE_PATTERN.matcher(attr);
             if (m.find())
             {
                 w = parseScalableIntegerRegexMatch(m, w, scale != null ? scale.x : 0);
@@ -288,13 +288,13 @@ public class PaneParams
 
     public int getColorAttribute(String name, int def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr == null)
         {
             return def;
         }
 
-        Matcher m = RGBA_PATTERN.matcher(attr);
+        final Matcher m = RGBA_PATTERN.matcher(attr);
 
         if (attr.startsWith("#"))
         {
@@ -314,15 +314,15 @@ public class PaneParams
 
     private static int getRGBA(String attr, Matcher m)
     {
-        int r = MathHelper.clamp_int(Integer.parseInt(m.group(1)), 0, 255);
-        int g = MathHelper.clamp_int(Integer.parseInt(m.group(2)), 0, 255);
-        int b = MathHelper.clamp_int(Integer.parseInt(m.group(3)), 0, 255);
+        final int r = MathHelper.clamp_int(Integer.parseInt(m.group(1)), 0, 255);
+        final int g = MathHelper.clamp_int(Integer.parseInt(m.group(2)), 0, 255);
+        final int b = MathHelper.clamp_int(Integer.parseInt(m.group(3)), 0, 255);
 
         int color = ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
 
         if (attr.startsWith("rgba"))
         {
-            int alpha = (int) (Double.parseDouble(m.group(4)) * 255.0F);
+            final int alpha = (int) (Double.parseDouble(m.group(4)) * 255.0F);
             color |= MathHelper.clamp_int(alpha, 0, 255) << 24;
         }
 

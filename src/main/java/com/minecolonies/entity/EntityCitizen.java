@@ -196,8 +196,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (navigatorField == null)
         {
-            Field[] fields = EntityLiving.class.getDeclaredFields();
-            for (@NotNull Field field : fields)
+            final Field[] fields = EntityLiving.class.getDeclaredFields();
+            for (@NotNull final Field field : fields)
             {
                 if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
                 {
@@ -287,8 +287,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
 
         //  AI Tasks
-        @NotNull Object[] currentTasks = this.tasks.taskEntries.toArray();
-        for (@NotNull Object task : currentTasks)
+        @NotNull final Object[] currentTasks = this.tasks.taskEntries.toArray();
+        for (@NotNull final Object task : currentTasks)
         {
             if (((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIInteract)
             {
@@ -432,7 +432,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void gatherXp()
     {
-        for (@NotNull EntityXPOrb orb : getXPOrbsOnGrid())
+        for (@NotNull final EntityXPOrb orb : getXPOrbsOnGrid())
         {
             addExperience(orb.getXpValue() / 2);
             orb.setDead();
@@ -446,7 +446,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private List<EntityXPOrb> getXPOrbsOnGrid()
     {
-        @NotNull AxisAlignedBB bb = new AxisAlignedBB(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
+        @NotNull final AxisAlignedBB bb = new AxisAlignedBB(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
 
         return worldObj.getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
@@ -495,9 +495,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (!onGround)
         {
-            int px = MathHelper.floor_double(posX);
-            int py = (int) posY;
-            int pz = MathHelper.floor_double(posZ);
+            final int px = MathHelper.floor_double(posX);
+            final int py = (int) posY;
+            final int pz = MathHelper.floor_double(posZ);
 
             this.onGround =
               worldObj.getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(worldObj.getBlockState(new BlockPos(px, py, pz)), worldObj, new BlockPos(px, py, pz),
@@ -573,7 +573,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
             while (experience > 0)
             {
-                int j = EntityXPOrb.getXPSplit(experience);
+                final int j = EntityXPOrb.getXPSplit(experience);
                 experience -= j;
                 this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
             }
@@ -582,9 +582,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //Spawn particle explosion of xp orbs on death
         for (int i = 0; i < 20; ++i)
         {
-            double d2 = this.rand.nextGaussian() * 0.02D;
-            double d0 = this.rand.nextGaussian() * 0.02D;
-            double d1 = this.rand.nextGaussian() * 0.02D;
+            final double d2 = this.rand.nextGaussian() * 0.02D;
+            final double d0 = this.rand.nextGaussian() * 0.02D;
+            final double d1 = this.rand.nextGaussian() * 0.02D;
             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
               this.posX + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
               this.posY + (this.rand.nextDouble() * this.height),
@@ -653,7 +653,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (worldObj.isRemote)
         {
-            CitizenDataView citizenDataView = getCitizenDataView();
+            final CitizenDataView citizenDataView = getCitizenDataView();
             if (citizenDataView != null)
             {
                 MineColonies.proxy.showCitizenWindow(citizenDataView);
@@ -777,9 +777,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void pickupItems()
     {
-        @NotNull List<EntityItem> retList = new ArrayList<>();
+        @NotNull final List<EntityItem> retList = new ArrayList<>();
         //I know streams look better but they are flawed in type erasure
-        for (Object o : worldObj.getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(2.0F, 0.0F, 2.0F)))
+        for (final Object o : worldObj.getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(2.0F, 0.0F, 2.0F)))
         {
             if (o instanceof EntityItem)
             {
@@ -799,7 +799,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //Only check if there are messages and once a second
         if (statusMessages.size() > 0 && ticksExisted % 20 == 0)
         {
-            @NotNull Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
+            @NotNull final Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
             while (it.hasNext())
             {
                 if (ticksExisted - it.next().getValue() > 20 * Configurations.chatFrequency)
@@ -832,13 +832,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        RenderBipedCitizen.Model model = getModelID();
+        final RenderBipedCitizen.Model model = getModelID();
 
         String textureBase = "textures/entity/";
         textureBase += model.textureBase;
         textureBase += female ? "Female" : "Male";
 
-        int moddedTextureId = (textureId % model.numTextures) + 1;
+        final int moddedTextureId = (textureId % model.numTextures) + 1;
         texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
     }
 
@@ -874,7 +874,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void handleNullColony()
     {
-        Colony c = ColonyManager.getColony(colonyId);
+        final Colony c = ColonyManager.getColony(colonyId);
 
         if (c == null)
         {
@@ -883,7 +883,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        CitizenData data = c.getCitizen(citizenId);
+        final CitizenData data = c.getCitizen(citizenId);
         if (data == null)
         {
             //  Citizen does not exist in the Colony
@@ -895,7 +895,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        @Nullable EntityCitizen existingCitizen = data.getCitizenEntity();
+        @Nullable final EntityCitizen existingCitizen = data.getCitizenEntity();
         if (existingCitizen != null && existingCitizen != this)
         {
             // This Citizen already has a different Entity registered to it
@@ -982,7 +982,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (colonyId != 0 && citizenId != 0)
         {
-            ColonyView colonyView = ColonyManager.getColonyView(colonyId);
+            final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
             if (colonyView != null)
             {
                 return colonyView.getCitizen(citizenId);
@@ -1033,7 +1033,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //Drop actual inventory
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack itemstack = inventory.getStackInSlot(i);
+            final ItemStack itemstack = inventory.getStackInSlot(i);
             if (itemstack != null && itemstack.stackSize > 0)
             {
                 entityDropItem(itemstack);
@@ -1091,7 +1091,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     public boolean isAtHome()
     {
-        @Nullable BlockPos homePosition = getHomePosition();
+        @Nullable final BlockPos homePosition = getHomePosition();
         return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= 16;
     }
 
@@ -1104,7 +1104,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public BlockPos getHomePosition()
     {
-        @Nullable BuildingHome homeBuilding = getHomeBuilding();
+        @Nullable final BuildingHome homeBuilding = getHomeBuilding();
         if (homeBuilding != null)
         {
             return homeBuilding.getLocation();
@@ -1275,9 +1275,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 return;
             }
 
-            ItemStack itemStack = entityItem.getEntityItem();
+            final ItemStack itemStack = entityItem.getEntityItem();
 
-            int i = itemStack.stackSize;
+            final int i = itemStack.stackSize;
             if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventoryCitizen(), itemStack))
             {
                 this.worldObj.playSound((EntityPlayer) null,
@@ -1351,8 +1351,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         this.swingArm(this.getActiveHand());
 
-        IBlockState blockState = worldObj.getBlockState(blockPos);
-        Block block = blockState.getBlock();
+        final IBlockState blockState = worldObj.getBlockState(blockPos);
+        final Block block = blockState.getBlock();
         if (breakBlock)
         {
             if (!worldObj.isRemote)

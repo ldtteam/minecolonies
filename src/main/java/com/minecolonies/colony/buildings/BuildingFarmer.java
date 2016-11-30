@@ -128,7 +128,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param currentField the field to work on.
      */
-    public void setCurrentField(final Field currentField)
+    public void setCurrentField(@Nullable final Field currentField)
     {
         this.currentField = currentField;
     }
@@ -276,7 +276,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
         int size = 0;
 
-        for (@NotNull Field field : getColony().getFields().values())
+        for (@NotNull final Field field : getColony().getFields().values())
         {
             if (field.isTaken())
             {
@@ -393,7 +393,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         if (tempField != null)
         {
             farmerFields.remove(tempField);
-            Field field = getColony().getField(position);
+            final Field field = getColony().getField(position);
             field.setTaken(false);
             field.setOwner("");
             @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());

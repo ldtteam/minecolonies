@@ -47,7 +47,7 @@ public final class Color
      */
     public static int getByName(String name, int def)
     {
-        Integer i = nameToColorMap.get(name.toLowerCase());
+        final Integer i = nameToColorMap.get(name.toLowerCase());
         return i != null ? i : def;
     }
 }

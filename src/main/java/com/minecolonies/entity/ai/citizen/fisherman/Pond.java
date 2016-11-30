@@ -53,9 +53,9 @@ public final class Pond
             return false;
         }
 
-        int x = water.getX();
-        int y = water.getY();
-        int z = water.getZ();
+        final int x = water.getX();
+        final int y = water.getY();
+        final int z = water.getZ();
 
         //If not one direction contains a pool with length at least 6 and width 7
         return checkWaterPoolInDirectionXThenZ(world, x, y, z, 1)
@@ -188,7 +188,7 @@ public final class Pond
             return false;
         }
 
-        @NotNull Pond wobj = (Pond) obj;
+        @NotNull final Pond wobj = (Pond) obj;
         return location.equals(wobj.getLocation());
     }
 

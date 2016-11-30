@@ -69,7 +69,7 @@ public class JobFisherman extends AbstractJob
         }
 
         ponds = new ArrayList<>();
-        NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList listOfPonds = compound.getTagList(TAG_PONDS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < listOfPonds.tagCount(); i++)
         {
             ponds.add(BlockPosUtil.readFromNBTTagList(listOfPonds, i));
@@ -110,14 +110,14 @@ public class JobFisherman extends AbstractJob
     {
         super.writeToNBT(compound);
 
-        @NotNull NBTTagCompound waterTag = new NBTTagCompound();
+        @NotNull final NBTTagCompound waterTag = new NBTTagCompound();
         if (water != null)
         {
             BlockPosUtil.writeToNBT(waterTag, TAG_WATER, water);
         }
 
-        @NotNull NBTTagList lakes = new NBTTagList();
-        for (@NotNull BlockPos pond : ponds)
+        @NotNull final NBTTagList lakes = new NBTTagList();
+        for (@NotNull final BlockPos pond : ponds)
         {
             BlockPosUtil.writeToNBTTagList(lakes, pond);
         }

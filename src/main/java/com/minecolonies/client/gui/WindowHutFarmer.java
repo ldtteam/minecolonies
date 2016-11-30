@@ -230,7 +230,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
 
                 rowPane.findPaneOfTypeByID(TAG_DIRECTION, Label.class).setLabelText(direction);
 
-                Button assignButton = rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class);
+                final Button assignButton = rowPane.findPaneOfTypeByID(TAG_BUTTON_ASSIGN, Button.class);
 
                 assignButton.setEnabled(building.assignFieldManually());
 

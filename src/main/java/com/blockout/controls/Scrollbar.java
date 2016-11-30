@@ -30,15 +30,15 @@ public class Scrollbar extends Pane
 
     public void dragScroll(int my)
     {
-        int barClickYNow = getScrollBarYPos() + barClickY;
-        int deltaFromClickPos = my - barClickYNow;
+        final int barClickYNow = getScrollBarYPos() + barClickY;
+        final int deltaFromClickPos = my - barClickYNow;
 
         if (deltaFromClickPos == 0)
         {
             return;
         }
 
-        int scaledY = deltaFromClickPos * container.getMaxScrollY() / getHeight();
+        final int scaledY = deltaFromClickPos * container.getMaxScrollY() / getHeight();
         container.scrollBy(scaledY);
 
         if (container.getScrollY() == 0 || container.getScrollY() == container.getMaxScrollY())
@@ -62,15 +62,15 @@ public class Scrollbar extends Pane
             return;
         }
 
-        int scrollBarBackX1 = x;
-        int scrollBarBackX2 = scrollBarBackX1 + (getWidth() - 2);
+        final int scrollBarBackX1 = x;
+        final int scrollBarBackX2 = scrollBarBackX1 + (getWidth() - 2);
 
         //  Scroll Area Back
         drawGradientRect(scrollBarBackX2, y + getHeight(), scrollBarBackX1, y,
           scrollbarBackground, scrollbarBackground);
 
-        int scrollBarStartY = y + getScrollBarYPos();
-        int scrollBarEndY = scrollBarStartY + getBarHeight();
+        final int scrollBarStartY = y + getScrollBarYPos();
+        final int scrollBarEndY = scrollBarStartY + getBarHeight();
 
         //  Scroll Bar (Bottom/Right Edge line) - Fill whole Scroll area
         drawGradientRect(scrollBarBackX2, scrollBarEndY, scrollBarBackX1, scrollBarStartY,
@@ -89,10 +89,10 @@ public class Scrollbar extends Pane
             return;
         }
 
-        int barHeight = getBarHeight();
+        final int barHeight = getBarHeight();
 
-        int scrollBarStartY = getScrollBarYPos();
-        int scrollBarEndY = scrollBarStartY + barHeight;
+        final int scrollBarStartY = getScrollBarYPos();
+        final int scrollBarEndY = scrollBarStartY + barHeight;
 
         if (my < scrollBarStartY)
         {

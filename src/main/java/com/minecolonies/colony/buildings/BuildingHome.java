@@ -37,10 +37,10 @@ public class BuildingHome extends AbstractBuildingHut
 
         residents.clear();
 
-        int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
-        for (int citizenId : residentIds)
+        final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
+        for (final int citizenId : residentIds)
         {
-            CitizenData citizen = getColony().getCitizen(citizenId);
+            final CitizenData citizen = getColony().getCitizen(citizenId);
             if (citizen != null)
             {
                 // Bypass addResident (which marks dirty)
@@ -120,7 +120,7 @@ public class BuildingHome extends AbstractBuildingHut
      */
     private void addHomelessCitizens()
     {
-        for (@NotNull CitizenData citizen : getColony().getCitizens().values())
+        for (@NotNull final CitizenData citizen : getColony().getCitizens().values())
         {
             // Move the citizen to a better hut
             if (citizen.getHomeBuilding() != null &&
@@ -165,8 +165,6 @@ public class BuildingHome extends AbstractBuildingHut
     {
         super.onUpgradeComplete(newLevel);
 
-        @Nullable final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner(), getColony().getWorld());
-
         if (newLevel == 1)
         {
             this.getColony().triggerAchievement(ModAchievements.achievementBuildingColonist);
@@ -183,7 +181,7 @@ public class BuildingHome extends AbstractBuildingHut
         super.serializeToView(buf);
 
         buf.writeInt(residents.size());
-        for (@NotNull CitizenData citizen : residents)
+        for (@NotNull final CitizenData citizen : residents)
         {
             buf.writeInt(citizen.getId());
         }
@@ -207,11 +205,19 @@ public class BuildingHome extends AbstractBuildingHut
         return residents.contains(citizen);
     }
 
+    /**
+     * The view of the citizen hut.
+     */
     public static class View extends AbstractBuildingHut.View
     {
         @NotNull
         private List<Integer> residents = new ArrayList<>();
 
+        /**
+         * Creates an instance of the citizen hut window.
+         * @param c the colonyView.
+         * @param l the position the hut is at.
+         */
         public View(ColonyView c, BlockPos l)
         {
             super(c, l);
@@ -224,6 +230,7 @@ public class BuildingHome extends AbstractBuildingHut
         }
 
         @NotNull
+        @Override
         public com.blockout.views.Window getWindow()
         {
             return new WindowHomeBuilding(this);
@@ -234,7 +241,7 @@ public class BuildingHome extends AbstractBuildingHut
         {
             super.deserialize(buf);
 
-            int numResidents = buf.readInt();
+            final int numResidents = buf.readInt();
             for (int i = 0; i < numResidents; ++i)
             {
                 residents.add(buf.readInt());

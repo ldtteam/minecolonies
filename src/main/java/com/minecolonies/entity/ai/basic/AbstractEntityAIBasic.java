@@ -864,7 +864,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         else
         {
             final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
-            ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
+            final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
             if (tempStack == null || tempStack.stackSize == 0)
             {
                 return false;
@@ -934,7 +934,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return null;
         }
         alreadyKept.put(tempStorage, shouldKeep.get(tempStorage));
-        int dump = tempStorage.getAmount() + amountKept - shouldKeep.get(tempStorage);
+        final int dump = tempStorage.getAmount() + amountKept - shouldKeep.get(tempStorage);
 
         //Create tempStack with the amount of items that should be dumped.
         return new ItemStack(tempStorage.getItem(), dump, tempStorage.getDamageValue());
@@ -1076,7 +1076,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int required = target.getHarvestLevel(target.getDefaultState());
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
-        @NotNull InventoryCitizen inventory = worker.getInventoryCitizen();
+        @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             final ItemStack item = inventory.getStackInSlot(i);

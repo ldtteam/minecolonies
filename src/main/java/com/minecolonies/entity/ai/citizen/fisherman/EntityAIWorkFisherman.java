@@ -452,7 +452,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private AIState doFishing()
     {
         worker.gatherXp();
-        @Nullable AIState notReadyState = isReadyToFish();
+        @Nullable final AIState notReadyState = isReadyToFish();
         if (notReadyState != null)
         {
             return notReadyState;
@@ -556,7 +556,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     {
         //+1 since the level may be 0
         setDelay(FISHING_TIMEOUT);
-        double chance = random.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
+        final double chance = random.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
         return chance >= CHANCE;
     }
 
@@ -644,7 +644,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private void retrieveRod()
     {
         worker.swingArm(worker.getActiveHand());
-        int i = entityFishHook.getDamage(this.getCitizen());
+        final int i = entityFishHook.getDamage(this.getCitizen());
         worker.damageItemInHand(i);
         entityFishHook = null;
     }

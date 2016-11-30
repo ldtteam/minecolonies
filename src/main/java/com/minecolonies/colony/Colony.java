@@ -141,9 +141,9 @@ public class Colony implements IColony
     @NotNull
     public static Colony loadColony(@NotNull NBTTagCompound compound)
     {
-        int id = compound.getInteger(TAG_ID);
-        int dimensionId = compound.getInteger(TAG_DIMENSION);
-        @NotNull Colony c = new Colony(id, dimensionId);
+        final int id = compound.getInteger(TAG_ID);
+        final int dimensionId = compound.getInteger(TAG_DIMENSION);
+        @NotNull final Colony c = new Colony(id, dimensionId);
         c.readFromNBT(compound);
         return c;
     }
@@ -245,7 +245,7 @@ public class Colony implements IColony
 
     private static boolean isCitizenMissingFromWorld(@NotNull CitizenData citizen)
     {
-        EntityCitizen entity = citizen.getCitizenEntity();
+        final EntityCitizen entity = citizen.getCitizenEntity();
 
         return entity != null && entity.worldObj.getEntityByID(entity.getEntityId()) != entity;
     }
@@ -496,7 +496,7 @@ public class Colony implements IColony
      */
     public void onServerTick(@NotNull TickEvent.ServerTickEvent event)
     {
-        for (@NotNull AbstractBuilding b : buildings.values())
+        for (@NotNull final AbstractBuilding b : buildings.values())
         {
             b.onServerTick(event);
         }
@@ -514,7 +514,7 @@ public class Colony implements IColony
     {
         //  Recompute subscribers every frame (for now)
         //  Subscribers = Owners + Players within (double working town hall range)
-        @NotNull Set<EntityPlayerMP> oldSubscribers = subscribers;
+        @NotNull final Set<EntityPlayerMP> oldSubscribers = subscribers;
         subscribers = new HashSet<>();
 
         // Add owners
@@ -527,11 +527,11 @@ public class Colony implements IColony
         //  Add nearby players
         if (world != null)
         {
-            for (EntityPlayer o : world.playerEntities)
+            for (final EntityPlayer o : world.playerEntities)
             {
                 if (o instanceof EntityPlayerMP)
                 {
-                    @NotNull EntityPlayerMP player = (EntityPlayerMP) o;
+                    @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
 
                     if (subscribers.contains(player))
                     {
@@ -539,7 +539,7 @@ public class Colony implements IColony
                         continue;
                     }
 
-                    double distance = player.getDistanceSq(center);
+                    final double distance = player.getDistanceSq(center);
                     if (distance < MathUtils.square(Configurations.workingRangeTownHall + 16D) ||
                           (oldSubscribers.contains(player) && distance < MathUtils.square(Configurations.workingRangeTownHall * 2D)))
                     {
@@ -554,7 +554,7 @@ public class Colony implements IColony
         if (!subscribers.isEmpty())
         {
             //  Determine if any new subscribers were added this pass
-            boolean hasNewSubscribers = hasNewSubscribers(oldSubscribers, subscribers);
+            final boolean hasNewSubscribers = hasNewSubscribers(oldSubscribers, subscribers);
 
             //  Send each type of update packet as appropriate:
             //      - To Subscribers if the data changes
@@ -594,7 +594,7 @@ public class Colony implements IColony
 
     private static boolean hasNewSubscribers(@NotNull Set<EntityPlayerMP> oldSubscribers, @NotNull Set<EntityPlayerMP> subscribers)
     {
-        for (EntityPlayerMP player : subscribers)
+        for (final EntityPlayerMP player : subscribers)
         {
             if (!oldSubscribers.contains(player))
             {
@@ -608,9 +608,9 @@ public class Colony implements IColony
     {
         if (isDirty || hasNewSubscribers)
         {
-            for (EntityPlayerMP player : subscribers)
+            for (final EntityPlayerMP player : subscribers)
             {
-                boolean isNewSubscriber = !oldSubscribers.contains(player);
+                final boolean isNewSubscriber = !oldSubscribers.contains(player);
                 if (isDirty || isNewSubscriber)
                 {
                     MineColonies.getNetwork().sendTo(new ColonyViewMessage(this, isNewSubscriber), player);
@@ -633,7 +633,7 @@ public class Colony implements IColony
               .stream()
               .filter(player -> permissions.isDirty() || !oldSubscribers.contains(player)).forEach(player ->
             {
-                Permissions.Rank rank = getPermissions().getRank(player);
+                final Permissions.Rank rank = getPermissions().getRank(player);
                 MineColonies.getNetwork().sendTo(new PermissionsMessage.View(this, rank), player);
             });
         }
@@ -649,7 +649,7 @@ public class Colony implements IColony
     {
         if (getWorkManager().isDirty() || hasNewSubscribers)
         {
-            for (AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
+            for (final AbstractWorkOrder workOrder : getWorkManager().getWorkOrders().values())
             {
                 subscribers.stream().filter(player -> workManager.isDirty() || !oldSubscribers.contains(player))
                   .forEach(player -> MineColonies.getNetwork().sendTo(new ColonyViewWorkOrderMessage(this, workOrder), player));
@@ -669,7 +669,7 @@ public class Colony implements IColony
     {
         if (isCitizensDirty || hasNewSubscribers)
         {
-            for (@NotNull CitizenData citizen : citizens.values())
+            for (@NotNull final CitizenData citizen : citizens.values())
             {
                 if (citizen.isDirty() || hasNewSubscribers)
                 {
@@ -691,7 +691,7 @@ public class Colony implements IColony
     {
         if (isBuildingsDirty || hasNewSubscribers)
         {
-            for (@NotNull AbstractBuilding building : buildings.values())
+            for (@NotNull final AbstractBuilding building : buildings.values())
             {
                 if (building.isDirty() || hasNewSubscribers)
                 {
@@ -711,9 +711,9 @@ public class Colony implements IColony
      */
     private void sendFieldPackets(Set<EntityPlayerMP> oldSubscribers, boolean hasNewSubscribers)
     {
-        if (isFieldsDirty && !isBuildingsDirty || hasNewSubscribers)
+        if ((isFieldsDirty && !isBuildingsDirty) || hasNewSubscribers)
         {
-            for (AbstractBuilding building : buildings.values())
+            for (final AbstractBuilding building : buildings.values())
             {
                 if (building instanceof BuildingFarmer)
                 {
@@ -799,7 +799,7 @@ public class Colony implements IColony
 
     private boolean areAllColonyChunksLoaded(@NotNull TickEvent.WorldTickEvent event)
     {
-        int distanceFromCenter = Configurations.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
+        final int distanceFromCenter = Configurations.workingRangeTownHall + 48 /* 3 chunks */ + 15 /* round up a chunk */;
         for (int x = -distanceFromCenter; x <= distanceFromCenter; x += 16)
         {
             for (int z = -distanceFromCenter; z <= distanceFromCenter; z += 16)
@@ -818,9 +818,9 @@ public class Colony implements IColony
         @Nullable final List<AbstractBuilding> removedBuildings = new ArrayList<>();
 
         //Need this list, we may enter he while we add a building in the real world.
-        List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
+        final List<AbstractBuilding> tempBuildings = new ArrayList<>(buildings.values());
 
-        for (@NotNull AbstractBuilding building : tempBuildings)
+        for (@NotNull final AbstractBuilding building : tempBuildings)
         {
             final BlockPos loc = building.getLocation();
             if (event.world.isBlockLoaded(loc) && !building.isMatchingBlock(event.world.getBlockState(loc).getBlock()))
@@ -874,11 +874,11 @@ public class Colony implements IColony
             return;
         }
 
-        @Nullable BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, center, 1, 1, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
+        @Nullable final BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, center, 1, 1, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
 
         if (spawnPoint != null)
         {
-            @Nullable EntityCitizen entity = new EntityCitizen(world);
+            @Nullable final EntityCitizen entity = new EntityCitizen(world);
 
             CitizenData citizenData = data;
             if (citizenData == null)
@@ -1116,7 +1116,7 @@ public class Colony implements IColony
     {
         int newMaxCitizens = 0;
 
-        for (AbstractBuilding b : buildings.values())
+        for (final AbstractBuilding b : buildings.values())
         {
             if (b instanceof BuildingHome &&
                   b.getBuildingLevel() > 0)
@@ -1142,7 +1142,7 @@ public class Colony implements IColony
     {
         if (buildings.remove(building.getID()) != null)
         {
-            for (EntityPlayerMP player : subscribers)
+            for (final EntityPlayerMP player : subscribers)
             {
                 MineColonies.getNetwork().sendTo(new ColonyViewRemoveBuildingMessage(this, building.getID()), player);
             }
@@ -1159,7 +1159,7 @@ public class Colony implements IColony
         }
 
         //Allow Citizens to fix up any data that wasn't fixed up by the AbstractBuilding's own onDestroyed
-        for (@NotNull CitizenData citizen : citizens.values())
+        for (@NotNull final CitizenData citizen : citizens.values())
         {
             citizen.onRemoveBuilding(building);
         }
@@ -1222,7 +1222,7 @@ public class Colony implements IColony
         //Remove the Citizen
         citizens.remove(citizen.getId());
 
-        for (@NotNull AbstractBuilding building : buildings.values())
+        for (@NotNull final AbstractBuilding building : buildings.values())
         {
             building.removeCitizen(citizen);
         }
@@ -1230,7 +1230,7 @@ public class Colony implements IColony
         workManager.clearWorkForCitizen(citizen);
 
         //  Inform Subscribers of removed citizen
-        for (EntityPlayerMP player : subscribers)
+        for (final EntityPlayerMP player : subscribers)
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveCitizenMessage(this, citizen.getId()), player);
         }
@@ -1244,7 +1244,7 @@ public class Colony implements IColony
     public void removeWorkOrder(int orderId)
     {
         //  Inform Subscribers of removed workOrder
-        for (EntityPlayerMP player : subscribers)
+        for (final EntityPlayerMP player : subscribers)
         {
             MineColonies.getNetwork().sendTo(new ColonyViewRemoveWorkOrderMessage(this, orderId), player);
         }
@@ -1269,7 +1269,7 @@ public class Colony implements IColony
     @Nullable
     public CitizenData getJoblessCitizen()
     {
-        for (@NotNull CitizenData citizen : citizens.values())
+        for (@NotNull final CitizenData citizen : citizens.values())
         {
             if (citizen.getWorkBuilding() == null)
             {

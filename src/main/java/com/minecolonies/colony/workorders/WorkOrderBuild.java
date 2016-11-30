@@ -147,9 +147,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
         boolean sendMessage = true;
         boolean hasBuilder = false;
 
-        for (@NotNull CitizenData citizen : colony.getCitizens().values())
+        for (@NotNull final CitizenData citizen : colony.getCitizens().values())
         {
-            JobBuilder job = citizen.getJob(JobBuilder.class);
+            final JobBuilder job = citizen.getJob(JobBuilder.class);
 
             if (job == null)
             {

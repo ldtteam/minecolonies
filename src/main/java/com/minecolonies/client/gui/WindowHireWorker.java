@@ -140,10 +140,10 @@ public class WindowHireWorker extends Window implements Button.Handler
             @Override
             public void updateElement(int index, @NotNull Pane rowPane)
             {
-                CitizenDataView citizen = citizens.get(index);
+                final CitizenDataView citizen = citizens.get(index);
 
                 //Creates the list of attributes for each citizen
-                @NotNull String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()) + " " +
+                final @NotNull String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()) + " " +
                                                LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.getCharisma()) + " " +
                                                LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.getDexterity()) + " " +
                                                LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.getEndurance()) + " " +
