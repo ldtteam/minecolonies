@@ -404,7 +404,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                 return getNextPatrollingTarget((BuildingGuardTower) building);
             }
 
-            if (worker.isWorkerAtSiteWithMove(currentPathTarget, PATH_CLOSE))
+            if (worker.isWorkerAtSiteWithMove(currentPathTarget, PATH_CLOSE) || ((BuildingGuardTower) building).getTask().equals(BuildingGuardTower.Task.FOLLOW))
             {
                 return getNextPatrollingTarget((BuildingGuardTower) building);
             }
