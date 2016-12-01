@@ -212,7 +212,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
         {
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(decoration, style, rotation, buildPos));
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(style, decoration, rotation, buildPos));
         }
     }
 }

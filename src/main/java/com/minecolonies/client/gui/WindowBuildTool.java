@@ -499,24 +499,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if (hutDecIndex < hutDec.size())
         {
-            if(Settings.instance.isInHutMode())
-            {
-                MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                        hutDec.get(hutDecIndex),
-                        getStyles().get(styleIndex),
-                        Settings.instance.pos,
-                        Settings.instance.getRotation(),
-                        Settings.instance.isInHutMode()));
-            }
-            else
-            {
-                MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                        getStyles().get(styleIndex),
-                        hutDec.get(hutDecIndex),
-                        Settings.instance.pos,
-                        Settings.instance.getRotation(),
-                        Settings.instance.isInHutMode()));
-            }
+            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                    hutDec.get(hutDecIndex),
+                    getStyles().get(styleIndex),
+                    Settings.instance.pos,
+                    Settings.instance.getRotation(),
+                    Settings.instance.isInHutMode()));
         }
         else
         {
