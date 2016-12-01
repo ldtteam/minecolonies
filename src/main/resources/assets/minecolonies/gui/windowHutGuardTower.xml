@@ -7,16 +7,16 @@
         <view id="levelActions" size="100% 100%" >
 
             <label size="100% 11" pos="0 0"
-                   label="$(com.minecolonies.gui.workerHuts.guardActions)" color="black" textalign="BottomMiddle"/>
+                   label="$(com.minecolonies.gui.workerHuts.guardActions)" color="black" textalign="BOTTOM_MIDDLE"/>
 
             <button id="job" size="50% 15" pos="40 15" label="$(com.minecolonies.gui.workerHuts.knight)"/>
 
-            <label size="50% 11" pos="40 30" label="$(com.minecolonies.gui.workerHuts.assign)" color="black" textalign="BottomMiddle"/>
+            <label size="50% 11" pos="40 30" label="$(com.minecolonies.gui.workerHuts.assign)" color="black" textalign="BOTTOM_MIDDLE"/>
             <button id="assign" size="50% 12" pos="40 45" label="$(com.minecolonies.gui.workerHuts.modeA)"/>
-            <label size="50% 11" pos="40 60" label="$(com.minecolonies.gui.workerHuts.patrol)" color="black" textalign="BottomMiddle"/>
+            <label size="50% 11" pos="40 60" label="$(com.minecolonies.gui.workerHuts.patrol)" color="black" textalign="BOTTOM_MIDDLE"/>
             <button id="patrol" size="50% 12" pos="40 75" label="$(com.minecolonies.gui.workerHuts.modeA)"/>
 
-            <label size="50% 11" pos="40 90" label="$(com.minecolonies.gui.workerHuts.retrieve)" color="black" textalign="BottomMiddle"/>
+            <label size="50% 11" pos="40 90" label="$(com.minecolonies.gui.workerHuts.retrieve)" color="black" textalign="BOTTOM_MIDDLE"/>
             <button id="retrieve" size="50% 12" pos="40 105" label="$(com.minecolonies.gui.workerHuts.retrieveOff)"/>
 
             <button id="patrolling" size="30% 14" pos="10 125" label="$(com.minecolonies.gui.workerHuts.task.patrol)"/>
@@ -28,7 +28,7 @@
 
             <list id="positions" size="78% 50" pos="30 155" >
                 <box size="100% 15" linewidth="2">
-                    <label id="position" size="100 12" pos="5 2" textalign="MiddleLeft" color="black"/>
+                    <label id="position" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
                 </box>
             </list>
 
@@ -36,10 +36,10 @@
 
 
     </switch>
-    <button id="prevPage" align="TopLeft" size="20 20" pos="10 5" label="&lt;&lt;"/>
-    <button id="nextPage" align="TopRight" size="20 20" pos="10 5" label="&gt;&gt;"/>
+    <button id="prevPage" align="TOP_LEFT" size="20 20" pos="10 5" label="&lt;&lt;"/>
+    <button id="nextPage" align="TOP_RIGHT" size="20 20" pos="10 5" label="&gt;&gt;"/>
 
     <button id="inventory"
-            align="BottomMiddle" size="116 20" pos="0 13"
+            align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
             label="$(container.inventory)" />
 </window>

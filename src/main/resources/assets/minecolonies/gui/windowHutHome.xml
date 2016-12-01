@@ -6,6 +6,6 @@
     </view>
 
     <button id="inventory"
-            align="BottomMiddle" size="116 20" pos="0 13"
+            align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
             label="$(container.inventory)" />
 </window>

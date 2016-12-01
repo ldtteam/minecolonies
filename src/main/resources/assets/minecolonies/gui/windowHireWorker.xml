@@ -2,13 +2,13 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
 
-    <label size="100% 11" pos="0 50" textalign="TopMiddle" color="white" label="$(com.minecolonies.gui.hiring.description)"/>
-    <list id="unemployed" size="70% 120" pos="60 70" align="TopMiddle">
+    <label size="100% 11" pos="0 50" textalign="TOP_MIDDLE" color="white" label="$(com.minecolonies.gui.hiring.description)"/>
+    <list id="unemployed" size="70% 120" pos="60 70" align="TOP_MIDDLE">
         <view size="70% 30">
-            <label id="citizen" size="60 12" pos="5 4" textalign="MiddleLeft" color="yellow"/>
+            <label id="citizen" size="60 12" pos="5 4" textalign="MIDDLE_LEFT" color="yellow"/>
             <button id="done" size="45 15" pos="125 3" label="$(com.minecolonies.gui.hiring.buttonHire)"/>
-            <label id="attributes" size="140 12" pos="5 16" textalign="MiddleLeft" color="white" textscale="0.8"/>
-            <label id="id" size="1 1" pos= "90 90" textalign="MiddleLeft" />
+            <label id="attributes" size="140 12" pos="5 16" textalign="MIDDLE_LEFT" color="white" textscale="0.8"/>
+            <label id="id" size="1 1" pos= "90 90" textalign="MIDDLE_LEFT" />
         </view>
     </list>
     <button id="cancel" size="200 20" pos="110 194" label="$(gui.cancel)"/>
