@@ -60,8 +60,6 @@ public class StructureProxy
                 offset = info.pos;
             }
         }
-
-        //updateOffSetIfDecoration(offset != null, size);
     }
 
     /**
@@ -370,7 +368,7 @@ public class StructureProxy
                 offset = info.pos.add(minX, minY, minZ);
             }
         }
-        updateOffSetIfDecoration(foundHut, size);
+        updateOffSetIfDecoration(foundHut, size, times);
     }
 
     /**
@@ -378,23 +376,24 @@ public class StructureProxy
      *
      * @param foundHut if false update.
      */
-    private void updateOffSetIfDecoration(final boolean foundHut, final BlockPos size)
+    private void updateOffSetIfDecoration(final boolean foundHut, final BlockPos size, int rotation)
     {
         if (!foundHut)
         {
             BlockPos tempSize = size;
-            if (Settings.instance.getRotation() == 1)
+            if (rotation == 1)
             {
                 tempSize = new BlockPos(-size.getX(), size.getY(), size.getZ());
             }
-            else if (Settings.instance.getRotation() == 2)
+            if (rotation == 2)
             {
                 tempSize = new BlockPos(-size.getX(), size.getY(), -size.getZ());
             }
-            else if (Settings.instance.getRotation() == 3)
+            if (rotation == 3)
             {
                 tempSize = new BlockPos(size.getX(), size.getY(), -size.getZ());
             }
+
             offset = new BlockPos(tempSize.getX() / 2, 0, tempSize.getZ() / 2);
         }
     }

@@ -472,6 +472,12 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     public boolean shouldReturnToTarget(final BlockPos target, final double range)
     {
         final AbstractBuilding building = getOwnBuilding();
+
+        if(currentPathTarget == null && building instanceof BuildingGuardTower)
+        {
+            getNextPatrollingTarget((BuildingGuardTower) building);
+        }
+
         if (building instanceof BuildingGuardTower && BlockPosUtil.getDistance2D(target, currentPathTarget) > range)
         {
             return true;
