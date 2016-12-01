@@ -45,7 +45,7 @@ public class RenderEventHandler
 
             if (offset.equals(new BlockPos(0, 0, 0)))
             {
-                position = position.add(-size.getX() / 2, 0, 0 - size.getZ() / 2);
+                position = position.subtract(new BlockPos(size.getX() / 2, 0 , size.getZ() / 2));
             }
             else
             {
