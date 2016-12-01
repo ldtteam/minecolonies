@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -409,10 +410,21 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         final String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
         final String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
+        final Structure structure;
 
-        final Structure structure = new Structure(null,
-                                                   labelHutStyle + '/' + labelHutDec + (Settings.instance.isInHutMode() ? (level + 1) : ""),
-                                                   new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+        if(Settings.instance.isInHutMode())
+        {
+             structure = new Structure(null,
+                    labelHutStyle + '/' + labelHutDec +  (level + 1),
+                    new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+        }
+        else
+        {
+            structure = new Structure(null,
+                    labelHutDec + '/' + labelHutStyle,
+                    new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+        }
+
         Settings.instance.setActiveSchematic(structure);
 
         if (Settings.instance.pos == null)
@@ -427,8 +439,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     /**
      * Change to the next style.
-     *
-     *
      */
     private void styleClicked(@NotNull final Button button)
     {
@@ -489,12 +499,24 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if (hutDecIndex < hutDec.size())
         {
-            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                                                                              hutDec.get(hutDecIndex),
-                                                                              getStyles().get(styleIndex),
-                                                                              Settings.instance.pos,
-                                                                              Settings.instance.getRotation(),
-                                                                              Settings.instance.isInHutMode()));
+            if(Settings.instance.isInHutMode())
+            {
+                MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                        hutDec.get(hutDecIndex),
+                        getStyles().get(styleIndex),
+                        Settings.instance.pos,
+                        Settings.instance.getRotation(),
+                        Settings.instance.isInHutMode()));
+            }
+            else
+            {
+                MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                        getStyles().get(styleIndex),
+                        hutDec.get(hutDecIndex),
+                        Settings.instance.pos,
+                        Settings.instance.getRotation(),
+                        Settings.instance.isInHutMode()));
+            }
         }
         else
         {
@@ -572,6 +594,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
+     * Rotate the schematic counter clockwise.
+     */
+    private void rotateLeftClicked()
+    {
+        rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
+        updateRotation(rotation);
+    }
+
+    /**
      * Updates the rotation of the structure depending on the input.
      *
      * @param rotation the rotation to be set.
@@ -599,14 +630,5 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             Settings.instance.getActiveStructure().setPlacementSettings(settings);
         }
-    }
-
-    /**
-     * Rotate the schematic counter clockwise.
-     */
-    private void rotateLeftClicked()
-    {
-        rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
-        updateRotation(rotation);
     }
 }

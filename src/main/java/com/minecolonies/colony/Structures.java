@@ -142,7 +142,7 @@ public final class Structures
                     }
                     else
                     {
-                        addDecorationStyle(filename, style);
+                        addDecorationStyle(style, filename);
                     }
                 }
             }
