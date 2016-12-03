@@ -437,6 +437,15 @@ public abstract class AbstractBuilding
      */
     public void onDestroyed()
     {
+        
+        tileEntity=getTileEntity();
+
+        if(tileEntity instanceof IInventory)
+        {
+            InventoryHelper.dropInventoryItems(colony.getWorld(), this.getLocation(), (IInventory)tileEntity);
+            colony.getWorld().updateComparatorOutputLevel(this.getLocation(), colony.getWorld().getBlockState(location).getBlock());
+        }
+        
         if (MaterialSystem.isEnabled)
         {
             materialStore.destroy();
