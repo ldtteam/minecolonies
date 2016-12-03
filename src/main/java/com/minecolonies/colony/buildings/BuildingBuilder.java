@@ -279,7 +279,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         /**
          * Getter for the needed resources.
-         * @return a copy of the HashMap<String, Object>.
+         * @return a copy of the HashMap(String, Object).
          */
         public Map<String, Integer> getNeededResources()
         {
