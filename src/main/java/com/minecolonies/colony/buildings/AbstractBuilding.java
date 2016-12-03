@@ -17,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -503,6 +504,18 @@ public abstract class AbstractBuilding
      */
     public void onDestroyed()
     {
+
+        final TileEntityColonyBuilding tileEntity = this.getTileEntity();
+        final World world = colony.getWorld();
+        final Block block = world.getBlockState(this.location).getBlock();
+
+        if (tileEntity instanceof IInventory)
+        {
+            InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntity);
+            world.updateComparatorOutputLevel(this.location, block);
+        }
+        
+        
         if (MaterialSystem.isEnabled)
         {
             materialStore.destroy();
