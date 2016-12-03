@@ -16,12 +16,29 @@ import org.lwjgl.input.Keyboard;
  */
 public class Window extends View
 {
+    /**
+     * The default width.
+     */
     private static final int DEFAULT_WIDTH  = 420;
+
+    /**
+     * The default height.
+     */
     private static final int DEFAULT_HEIGHT = 240;
 
+    /**
+     * The screen of the window.
+     */
     protected Screen screen;
 
+    /**
+     * Defines if the window should pause the game.
+     */
     protected boolean windowPausesGame = true;
+
+    /**
+     * Defines if the window should have a lightbox.
+     */
     protected boolean lightbox         = true;
 
     /**
@@ -29,7 +46,7 @@ public class Window extends View
      *
      * @param resource ResourceLocation to get file from.
      */
-    public Window(ResourceLocation resource)
+    public Window(final ResourceLocation resource)
     {
         this();
         Loader.createFromXMLFile(resource, this);
@@ -44,13 +61,14 @@ public class Window extends View
     }
 
     /**
-     * Window constructor when there is a fixed Width and Height
+     * Window constructor when there is a fixed Width and Height.
      *
-     * @param w Width of the window, in pixels
-     * @param h Height of the window, in pixels
+     * @param w Width of the window, in pixels.
+     * @param h Height of the window, in pixels.
      */
-    public Window(int w, int h)
+    public Window(final int w, final int h)
     {
+        super();
         width = w;
         height = h;
 
@@ -63,7 +81,7 @@ public class Window extends View
      *
      * @param resource location to get file from.
      */
-    public Window(String resource)
+    public Window(final String resource)
     {
         this();
         Loader.createFromXMLFile(resource, this);
@@ -74,24 +92,24 @@ public class Window extends View
      *
      * @param params xml parameters.
      */
-    public void loadParams(@NotNull PaneParams params)
+    public void loadParams(@NotNull final PaneParams params)
     {
-        String inherit = params.getStringAttribute("inherit", null);
+        final String inherit = params.getStringAttribute("inherit", null);
         if (inherit != null)
         {
             Loader.createFromXMLFile(new ResourceLocation(inherit), this);
         }
 
-        PaneParams.SizePair size = params.getSizePairAttribute("size", null, null);
-        if (size != null)
+        final PaneParams.SizePair size = params.getSizePairAttribute("size", null, null);
+        if (size == null)
         {
-            setSize(size.getX(), size.getY());
+            final int w = params.getIntegerAttribute("width", width);
+            final int h = params.getIntegerAttribute("height", height);
+            setSize(w, h);
         }
         else
         {
-            int w = params.getIntegerAttribute("width", width);
-            int h = params.getIntegerAttribute("height", height);
-            setSize(w, h);
+            setSize(size.getX(), size.getY());
         }
 
         lightbox = params.getBooleanAttribute("lightbox", lightbox);
@@ -99,13 +117,13 @@ public class Window extends View
     }
 
     @Override
-    public void parseChildren(PaneParams params)
+    public void parseChildren(final PaneParams params)
     {
         // Can be overridden
     }
 
     @Override
-    protected void drawSelf(int mx, int my)
+    protected void drawSelf(final int mx, final int my)
     {
         updateDebugging();
 
@@ -114,15 +132,15 @@ public class Window extends View
 
     private static void updateDebugging()
     {
-        debugging = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) &&
-                      Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) &&
-                      Keyboard.isKeyDown(Keyboard.KEY_LMENU);
+        debugging = Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)
+                && Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
+                && Keyboard.isKeyDown(Keyboard.KEY_LMENU);
     }
 
     /**
-     * Return <tt>true</tt> if the 'lightbox' (default dark background) should be displayed
+     * Return <tt>true</tt> if the 'lightbox' (default dark background) should be displayed.
      *
-     * @return <tt>true</tt> if the 'lightbox' should be displayed
+     * @return <tt>true</tt> if the 'lightbox' should be displayed.
      */
     public boolean hasLightbox()
     {
@@ -130,9 +148,9 @@ public class Window extends View
     }
 
     /**
-     * Return <tt>true</tt> if the game should be paused when the Window is displayed
+     * Return <tt>true</tt> if the game should be paused when the Window is displayed.
      *
-     * @return <tt>true</tt> if the game should be paused when the Window is displayed
+     * @return <tt>true</tt> if the game should be paused when the Window is displayed.
      */
     public boolean doesWindowPauseGame()
     {
@@ -140,7 +158,7 @@ public class Window extends View
     }
 
     /**
-     * Open the window
+     * Open the window.
      */
     public void open()
     {
@@ -151,9 +169,9 @@ public class Window extends View
     }
 
     /**
-     * Windows wrap a GuiScreen
+     * Windows wrap a GuiScreen.
      *
-     * @return The current GuiScreen
+     * @return The current GuiScreen.
      */
     public GuiScreen getScreen()
     {
@@ -168,7 +186,7 @@ public class Window extends View
      * @param mx Mouse X position
      * @param my Mouse Y position
      */
-    public void onMouseReleased(int mx, int my)
+    public void onMouseReleased(final int mx, final int my)
     {
         // Can be overridden
     }
@@ -179,12 +197,12 @@ public class Window extends View
      * <p>
      * It is advised not to override this method.
      *
-     * @param ch  Character of key pressed
-     * @param key Keycode of key pressed
-     * @return <tt>true</tt> if the key was handled by a Pane
+     * @param ch  Character of key pressed.
+     * @param key Keycode of key pressed.
+     * @return <tt>true</tt> if the key was handled by a Pane.
      */
     @Override
-    public boolean onKeyTyped(char ch, int key)
+    public boolean onKeyTyped(final char ch, final int key)
     {
         if (getFocus() != null && getFocus().onKeyTyped(ch, key))
         {
@@ -201,10 +219,10 @@ public class Window extends View
      * <p>
      * Override this to handle key input at the Window level.
      *
-     * @param ch  Character of key pressed
-     * @param key Keycode of key pressed
+     * @param ch  Character of key pressed.
+     * @param key Keycode of key pressed.
      */
-    public void onUnhandledKeyTyped(int ch, int key)
+    public void onUnhandledKeyTyped(final int ch, final int key)
     {
         if (key == Keyboard.KEY_ESCAPE)
         {
@@ -213,7 +231,7 @@ public class Window extends View
     }
 
     /**
-     * Close the Window
+     * Close the Window.
      */
     public void close()
     {

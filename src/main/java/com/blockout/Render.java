@@ -31,7 +31,7 @@ public final class Render
      * @param y2    upper y
      * @param color color
      */
-    public static void drawOutlineRect(int x1, int y1, int x2, int y2, int color)
+    public static void drawOutlineRect(final int x1, final int y1, final int x2, final int y2, final int color)
     {
         drawOutlineRect(x1, y1, x2, y2, 1.0F, color);
     }
@@ -46,26 +46,26 @@ public final class Render
      * @param lineWidth line thickness, default of 1.0
      * @param color     color
      */
-    public static void drawOutlineRect(int x1, int y1, int x2, int y2, float lineWidth, int color)
+    public static void drawOutlineRect(final int x1, final int y1, final int x2, final int y2, final float lineWidth, final int color)
     {
-        float a = (float) (((color >> ALPHA_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
-        float r = (float) (((color >> RED_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
-        float g = (float) (((color >> GREEN_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
-        float b = (float) ((color & COLOR_MASK) / COLOR_DIVISOR);
+        final float a = (float) (((color >> ALPHA_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
+        final float r = (float) (((color >> RED_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
+        final float g = (float) (((color >> GREEN_SHIFT) & COLOR_MASK) / COLOR_DIVISOR);
+        final float b = (float) ((color & COLOR_MASK) / COLOR_DIVISOR);
 
-        Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer VertexBuffer = tessellator.getBuffer();
+        final Tessellator tessellator = Tessellator.getInstance();
+        final VertexBuffer vertexBuffer = tessellator.getBuffer();
 
-        VertexBuffer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
+        vertexBuffer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
         GlStateManager.disableTexture2D();
         GL11.glLineWidth(lineWidth);
         GlStateManager.color(r, g, b, a);
 
         //Since our points do not have any u,v this seems to be the correct code
-        VertexBuffer.pos(x1, y2, 0.0D).endVertex();
-        VertexBuffer.pos(x2, y2, 0.0D).endVertex();
-        VertexBuffer.pos(x2, y1, 0.0D).endVertex();
-        VertexBuffer.pos(x1, y1, 0.0D).endVertex();
+        vertexBuffer.pos(x1, y2, 0.0D).endVertex();
+        vertexBuffer.pos(x2, y2, 0.0D).endVertex();
+        vertexBuffer.pos(x2, y1, 0.0D).endVertex();
+        vertexBuffer.pos(x1, y1, 0.0D).endVertex();
 
         tessellator.draw();
         GlStateManager.enableTexture2D();

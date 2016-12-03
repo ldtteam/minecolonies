@@ -23,7 +23,7 @@ public class InventoryFunctions
      *
      * @param o will be consumed and ignored
      */
-    public static void doNothing(Object... o)
+    public static void doNothing(final Object... o)
     {
         //Intentionally left blank to do nothing.
     }
@@ -37,8 +37,8 @@ public class InventoryFunctions
      * @return true if it found a stack
      */
     public static boolean matchFirstInInventory(
-                                                 IInventory inventory, @NotNull Predicate<ItemStack> tester,
-                                                 @NotNull Consumer<Integer> action)
+                                                 final IInventory inventory, @NotNull final Predicate<ItemStack> tester,
+                                                 @NotNull final Consumer<Integer> action)
     {
         return matchFirstInInventory(inventory, inv -> slot -> stack ->
         {
@@ -59,8 +59,8 @@ public class InventoryFunctions
      * @return true if it found a stack
      */
     private static boolean matchFirstInInventory(
-                                                  IInventory inventory, @NotNull Function<IInventory, Function<Integer,
-                                                                                                                Predicate<ItemStack>>> tester)
+                                                  final IInventory inventory, @NotNull final Function<IInventory, Function<Integer,
+                                                                                                                            Predicate<ItemStack>>> tester)
     {
         return matchInInventory(inventory, tester, true);
     }
@@ -75,18 +75,20 @@ public class InventoryFunctions
      * @return true if it found a stack
      */
     private static boolean matchInInventory(
-                                             @Nullable IInventory inventory, @NotNull Function<IInventory, Function<Integer,
-                                                                                                                     Predicate<ItemStack>>> tester, boolean stopAfterFirst)
+                                             @Nullable final IInventory inventory,
+                                             @NotNull final Function<IInventory, Function<Integer,
+                                                                                           Predicate<ItemStack>>> tester,
+                                             final boolean stopAfterFirst)
     {
         if (inventory == null)
         {
             return false;
         }
-        int size = inventory.getSizeInventory();
+        final int size = inventory.getSizeInventory();
         boolean foundOne = false;
         for (int slot = 0; slot < size; slot++)
         {
-            ItemStack stack = inventory.getStackInSlot(slot);
+            final ItemStack stack = inventory.getStackInSlot(slot);
             //Unchain the function and apply it
             if (tester.apply(inventory).apply(slot).test(stack))
             {
@@ -108,7 +110,7 @@ public class InventoryFunctions
      * @param tester    the function to use for testing slots
      * @return true if it found a stack
      */
-    public static boolean matchFirstInInventory(IInventory inventory, @NotNull BiPredicate<Integer, ItemStack> tester)
+    public static boolean matchFirstInInventory(final IInventory inventory, @NotNull final BiPredicate<Integer, ItemStack> tester)
     {
         return matchFirstInInventory(inventory, inv -> slot -> stack -> tester.test(slot, stack));
     }

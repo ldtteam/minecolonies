@@ -76,7 +76,7 @@ public class ScarecrowTileEntity extends TileEntityChest
      *
      * @param name string to set.
      */
-    public void setName(String name)
+    public void setName(final String name)
     {
         this.name = name;
     }
@@ -93,7 +93,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, @NotNull SPacketUpdateTileEntity pkt)
+    public void onDataPacket(final NetworkManager net, @NotNull final SPacketUpdateTileEntity pkt)
     {
         readFromNBT(pkt.getNbtCompound());
     }
@@ -119,7 +119,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound)
+    public void readFromNBT(final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -129,7 +129,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    public NBTTagCompound writeToNBT(final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 

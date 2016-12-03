@@ -9,20 +9,22 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * The CitizenDataView is the client-side representation of a CitizenData.
- * Views contain the CitizenData's data that is relevant to a Client, in a more client-friendly form
- * Mutable operations on a View result in a message to the server to perform the operation
+ * Views contain the CitizenData's data that is relevant to a Client, in a more client-friendly form.
+ * Mutable operations on a View result in a message to the server to perform the operation.
  */
 public class CitizenDataView
 {
     /**
-     * Attributes
+     * Attributes.
      */
     private final int     id;
     private       int     entityId;
     private       String  name;
     private       boolean female;
 
-    //  Placeholder skills
+    /**
+     * Placeholder skills.
+     */
     private int    level;
     private double experience;
     private double health;
@@ -51,7 +53,7 @@ public class CitizenDataView
      *
      * @param id the id to set.
      */
-    protected CitizenDataView(int id)
+    protected CitizenDataView(final int id)
     {
         this.id = id;
     }
@@ -219,11 +221,11 @@ public class CitizenDataView
     }
 
     /**
-     * Deserialize the attributes and variables from transition
+     * Deserialize the attributes and variables from transition.
      *
-     * @param buf Byte buffer to deserialize
+     * @param buf Byte buffer to deserialize.
      */
-    public void deserialize(@NotNull ByteBuf buf)
+    public void deserialize(@NotNull final ByteBuf buf)
     {
         name = ByteBufUtils.readUTF8String(buf);
         female = buf.readBoolean();

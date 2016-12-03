@@ -8,8 +8,8 @@ import static com.minecolonies.configuration.Configurations.*;
 
 /**
  * Configuration Handler.
- * Reads the config file, and stores them in Configurations.java
- * The file is FMLPreInitializationEvent.getSuggestedConfigurationFile
+ * Reads the config file, and stores them in Configurations.java.
+ * The file is FMLPreInitializationEvent.getSuggestedConfigurationFile.
  */
 public final class ConfigurationHandler
 {
@@ -26,14 +26,14 @@ public final class ConfigurationHandler
 
     /**
      * Initializes the configuration.
-     * Reads all options from the file, and sets those parameters, and saves those in {@link Configurations}
-     * Saves file after reading
+     * Reads all options from the file, and sets those parameters, and saves those in {@link Configurations}.
+     * Saves file after reading.
      *
-     * @param file File to read input from
+     * @param file File to read input from.
      */
-    public static synchronized void init(File file)
+    public static synchronized void init(final File file)
     {
-        Configuration config = new Configuration(file);
+        final Configuration config = new Configuration(file);
 
         try
         {
@@ -73,18 +73,19 @@ public final class ConfigurationHandler
     }
 
     /**
-     * Returns the value in the config for <code>key</code>
+     * Returns the value in the config for <code>key</code>.
      *
-     * @param config       {@link Configuration} object
-     * @param category     Category of the value to read
-     * @param key          Key of the value to read
-     * @param defaultValue Default value for the value to read
-     * @param min          Minimum accepted value
-     * @param max          Maximum accepted vakue
-     * @param comment      Comment in config file
-     * @return Value in the configuration file
+     * @param config       {@link Configuration} object.
+     * @param category     Category of the value to read.
+     * @param key          Key of the value to read.
+     * @param defaultValue Default value for the value to read.
+     * @param min          Minimum accepted value.
+     * @param max          Maximum accepted value.
+     * @param comment      Comment in config file.
+     * @return Value in the configuration file.
      */
-    private static int getClampedInt(Configuration config, String category, String key, int defaultValue, int min, int max, String comment)
+    private static int getClampedInt(final Configuration config, final String category, final String key,
+            final int defaultValue, final int min, final int max, final String comment)
     {
         return config.get(category, key, defaultValue, String.format(FORMAT_RANGE, comment, min, max, defaultValue), min, max).getInt();
     }

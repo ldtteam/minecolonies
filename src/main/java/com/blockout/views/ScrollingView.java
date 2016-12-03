@@ -21,11 +21,22 @@ public class ScrollingView extends View
     protected Scrollbar          scrollbar;
 
     /**
-     * Required defualt constructor.
+     * Required default constructor.
      */
     public ScrollingView()
     {
         super();
+        setup();
+    }
+
+    /**
+     * Load from xml.
+     *
+     * @param params xml parameters.
+     */
+    public ScrollingView(final PaneParams params)
+    {
+        super(params);
         setup();
     }
 
@@ -48,39 +59,28 @@ public class ScrollingView extends View
         return new ScrollingContainer(this);
     }
 
-    /**
-     * Load from xml.
-     *
-     * @param params xml parameters.
-     */
-    public ScrollingView(PaneParams params)
-    {
-        super(params);
-        setup();
-    }
-
     public ScrollingContainer getContainer()
     {
         return container;
     }
 
     /**
-     * Redirect all predefined children into our container
+     * Redirect all predefined children into our container.
      *
      * @param params the xml parameters.
      */
     @Override
-    public void parseChildren(PaneParams params)
+    public void parseChildren(final PaneParams params)
     {
         container.parseChildren(params);
     }
 
     /**
      * Optimized version of childIsVisible, because we only have two immediate children, which are guaranteed
-     * to be visible: the ScrollingContainer and the Scrollbar
+     * to be visible: the ScrollingContainer and the Scrollbar.
      */
     @Override
-    protected boolean childIsVisible(Pane child)
+    protected boolean childIsVisible(final Pane child)
     {
         return true;
     }
@@ -90,7 +90,7 @@ public class ScrollingView extends View
         return container.getScrollY();
     }
 
-    public void setScrollY(int offset)
+    public void setScrollY(final int offset)
     {
         container.setScrollY(offset);
     }

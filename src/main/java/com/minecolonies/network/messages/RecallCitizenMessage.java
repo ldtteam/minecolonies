@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Recalls the citizen to the hut
+ * Recalls the citizen to the hut.
  * Created: May 26, 2014
  *
  * @author Colton
@@ -39,11 +39,11 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
     }
 
     /**
-     * Object creation for the recall
+     * Object creation for the recall.
      *
-     * @param building View of the building the citizen is working in
+     * @param building View of the building the citizen is working in.
      */
-    public RecallCitizenMessage(@NotNull AbstractBuildingWorker.View building)
+    public RecallCitizenMessage(@NotNull final AbstractBuildingWorker.View building)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -51,14 +51,14 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -67,7 +67,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
     @Override
     public void messageOnServerThread(final RecallCitizenMessage message, final EntityPlayerMP player)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
 
@@ -77,12 +77,12 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                 return;
             }
 
-            @Nullable AbstractBuildingWorker building = colony.getBuilding(message.buildingId, AbstractBuildingWorker.class);
+            @Nullable final AbstractBuildingWorker building = colony.getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building != null)
             {
-                BlockPos loc = building.getLocation();
+                final BlockPos loc = building.getLocation();
 
-                @Nullable CitizenData citizenData = building.getWorker();
+                @Nullable final CitizenData citizenData = building.getWorker();
 
                 if (citizenData != null)
                 {
@@ -97,8 +97,8 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                     citizen = citizenData.getCitizenEntity();
                     if (citizen != null)
                     {
-                        @Nullable World world = colony.getWorld();
-                        @Nullable BlockPos spawnPoint =
+                        @Nullable final World world = colony.getWorld();
+                        @Nullable final BlockPos spawnPoint =
                           Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER);
 
                         citizen.setLocationAndAngles(

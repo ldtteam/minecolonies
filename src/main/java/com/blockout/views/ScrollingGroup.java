@@ -24,18 +24,18 @@ public class ScrollingGroup extends ScrollingView
      *
      * @param params xml parameters.
      */
-    public ScrollingGroup(PaneParams params)
+    public ScrollingGroup(final PaneParams params)
     {
         super(params);
     }
 
     @Override
-    public void adjustChild(Pane child)
+    public void adjustChild(final Pane child)
     {
         int childY = 0;
         if (children.size() >= 2)
         {
-            Pane lastChild = children.get(children.size() - 2);
+            final Pane lastChild = children.get(children.size() - 2);
             childY = lastChild.getY() + lastChild.getHeight();
         }
 
@@ -44,14 +44,14 @@ public class ScrollingGroup extends ScrollingView
     }
 
     @Override
-    public void removeChild(Pane child)
+    public void removeChild(final Pane child)
     {
         super.removeChild(child);
 
-        int formerChildY = child.getY();
-        int formerChildHeight = child.getHeight();
+        final int formerChildY = child.getY();
+        final int formerChildHeight = child.getHeight();
 
-        for (Pane c : children)
+        for (final Pane c : children)
         {
             if (c.getY() > formerChildY)
             {

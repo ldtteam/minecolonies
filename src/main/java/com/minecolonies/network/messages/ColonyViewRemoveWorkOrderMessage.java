@@ -19,13 +19,11 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage, IMessageHandl
     private int workOrderId;
 
     /**
-     * Empty public constructor.
+     * Empty constructor used when registering the message.
      */
     public ColonyViewRemoveWorkOrderMessage()
     {
-        /**
-         * Intentionally left empty.
-         **/
+        super();
     }
 
     /**
@@ -34,21 +32,21 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage, IMessageHandl
      * @param colony      colony the workOrder is in.
      * @param workOrderId workOrder ID.
      */
-    public ColonyViewRemoveWorkOrderMessage(@NotNull Colony colony, int workOrderId)
+    public ColonyViewRemoveWorkOrderMessage(@NotNull final Colony colony, final int workOrderId)
     {
         this.colonyId = colony.getID();
         this.workOrderId = workOrderId;
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         workOrderId = buf.readInt();
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(workOrderId);
@@ -56,7 +54,7 @@ public class ColonyViewRemoveWorkOrderMessage implements IMessage, IMessageHandl
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull ColonyViewRemoveWorkOrderMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull final ColonyViewRemoveWorkOrderMessage message, final MessageContext ctx)
     {
         return ColonyManager.handleColonyViewRemoveWorkOrderMessage(message.colonyId, message.workOrderId);
     }

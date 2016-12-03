@@ -38,7 +38,7 @@ public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMes
      * @param assign   assign if true, free if false.
      * @param field    the field to assign or release.
      */
-    public AssignFieldMessage(@NotNull BuildingFarmer.View building, boolean assign, BlockPos field)
+    public AssignFieldMessage(@NotNull final BuildingFarmer.View building, final boolean assign, final BlockPos field)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -48,7 +48,7 @@ public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMes
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -57,7 +57,7 @@ public class AssignFieldMessage extends AbstractMessage<AssignFieldMessage, IMes
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);

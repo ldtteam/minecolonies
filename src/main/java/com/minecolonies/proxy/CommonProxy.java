@@ -21,32 +21,35 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * CommonProxy of the minecolonies mod (Server and Client).
+ */
 public class CommonProxy implements IProxy
 {
     /**
-     * Used to store IExtendedEntityProperties data temporarily between player death and respawn
+     * Used to store IExtendedEntityProperties data temporarily between player death and respawn.
      */
     private static final Map<String, NBTTagCompound> playerPropertiesData = new HashMap<>();
     private              int                         nextEntityId         = 0;
 
     /**
-     * Adds an entity's custom data to the map for temporary storage
+     * Adds an entity's custom data to the map for temporary storage.
      *
-     * @param name     player UUID + Properties name, HashMap key
-     * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties data only
+     * @param name     player UUID + Properties name, HashMap key.
+     * @param compound An NBT Tag Compound that stores the IExtendedEntityProperties data only.
      */
-    public static void storeEntityData(String name, NBTTagCompound compound)
+    public static void storeEntityData(final String name, final NBTTagCompound compound)
     {
         playerPropertiesData.put(name, compound);
     }
 
     /**
-     * Removes the compound from the map and returns the NBT tag stored for name or null if none exists
+     * Removes the compound from the map and returns the NBT tag stored for name or null if none exists.
      *
-     * @param name player UUID + Properties name, HashMap key
-     * @return NBTTagCompound PlayerProperties NBT compound
+     * @param name player UUID + Properties name, HashMap key.
+     * @return NBTTagCompound PlayerProperties NBT compound.
      */
-    public static NBTTagCompound getEntityData(String name)
+    public static NBTTagCompound getEntityData(final String name)
     {
         return playerPropertiesData.remove(name);
     }
@@ -90,7 +93,12 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void registerEntityRendering() {}
+    public void registerEntityRendering()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     @Override
     public void registerSounds()
@@ -99,19 +107,39 @@ public class CommonProxy implements IProxy
     }
 
     @Override
-    public void registerTileEntityRendering() {}
+    public void registerTileEntityRendering()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     @Override
-    public void showCitizenWindow(CitizenDataView citizen) {}
+    public void showCitizenWindow(final CitizenDataView citizen)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     @Override
-    public void openBuildToolWindow(BlockPos pos) {}
+    public void openBuildToolWindow(final BlockPos pos)
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     @Override
-    public void registerRenderer() { }
+    public void registerRenderer()
+    {
+        /*
+         * Intentionally left empty.
+         */
+    }
 
     /**
-     * Used for entity IDs, starts at 0 & increments for each call
+     * Used for entity IDs, starts at 0 & increments for each call.
      */
     private int getNextEntityId()
     {

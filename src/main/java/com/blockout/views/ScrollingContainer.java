@@ -18,13 +18,14 @@ public class ScrollingContainer extends View
     protected int scrollY       = 0;
     protected int contentHeight = 0;
 
-    ScrollingContainer(ScrollingView owner)
+    ScrollingContainer(final ScrollingView owner)
     {
+        super();
         this.owner = owner;
     }
 
     @Override
-    public void parseChildren(PaneParams params)
+    public void parseChildren(final PaneParams params)
     {
         super.parseChildren(params);
         computeContentHeight();
@@ -37,7 +38,7 @@ public class ScrollingContainer extends View
     {
         contentHeight = 0;
 
-        for (@NotNull Pane child : children)
+        for (@NotNull final Pane child : children)
         {
             contentHeight = Math.max(contentHeight, child.getY() + child.getHeight());
         }
@@ -52,7 +53,7 @@ public class ScrollingContainer extends View
     }
 
     @Override
-    public void drawSelf(int mx, int my)
+    public void drawSelf(final int mx, final int my)
     {
         scissorsStart();
 
@@ -66,19 +67,19 @@ public class ScrollingContainer extends View
     }
 
     @Override
-    public void click(int mx, int my)
+    public void click(final int mx, final int my)
     {
         //  Offset click by the scroll amounts; we'll adjust it back on clickSelf
         super.click(mx, my + scrollY);
     }
 
     @Override
-    protected boolean childIsVisible(@NotNull Pane child)
+    protected boolean childIsVisible(@NotNull final Pane child)
     {
-        return child.getX() < getWidth() &&
-                 child.getY() < getHeight() + scrollY &&
-                 (child.getX() + child.getWidth()) >= 0 &&
-                 (child.getY() + child.getHeight()) >= scrollY;
+        return child.getX() < getWidth()
+                && child.getY() < getHeight() + scrollY
+                && (child.getX() + child.getWidth()) >= 0
+                && (child.getY() + child.getHeight()) >= scrollY;
     }
 
     public int getScrollY()
@@ -86,11 +87,11 @@ public class ScrollingContainer extends View
         return scrollY;
     }
 
-    public void setScrollY(int offset)
+    public void setScrollY(final int offset)
     {
         scrollY = offset;
 
-        int maxScrollY = getMaxScrollY();
+        final int maxScrollY = getMaxScrollY();
         if (scrollY > maxScrollY)
         {
             scrollY = maxScrollY;
@@ -117,7 +118,7 @@ public class ScrollingContainer extends View
      *
      * @param deltaY number of pixels to scroll.
      */
-    public void scrollBy(int deltaY)
+    public void scrollBy(final int deltaY)
     {
         setScrollY(scrollY + deltaY);
     }

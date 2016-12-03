@@ -92,7 +92,7 @@ public final class FishermanSounds
      * @param position the position to play the sound at.
      * @param isFemale the gender.
      */
-    public static void playFishermanSound(World worldIn, BlockPos position, boolean isFemale)
+    public static void playFishermanSound(final World worldIn, final BlockPos position, final boolean isFemale)
     {
         //Leaving it as switch-case we may add further random sound categories here (Whistling, singing, etc).
         switch (rand.nextInt(NUMBER_OF_SOUNDS + 1))

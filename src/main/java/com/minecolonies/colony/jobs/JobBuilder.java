@@ -3,6 +3,7 @@ package com.minecolonies.colony.jobs;
 import com.minecolonies.client.render.RenderBipedCitizen;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.buildings.AbstractBuilding;
+import com.minecolonies.colony.buildings.BuildingBuilder;
 import com.minecolonies.colony.workorders.WorkOrderBuild;
 import com.minecolonies.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.entity.ai.citizen.builder.EntityAIStructureBuilder;
@@ -13,6 +14,9 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * The job of the builder.
+ */
 public class JobBuilder extends AbstractJob
 {
     private static final String TAG_WORK_ORDER = "workorder";
@@ -20,7 +24,6 @@ public class JobBuilder extends AbstractJob
     private static final String TAG_NAME       = "name";
     private static final String TAG_POSITION   = "position";
     private static final String TAG_PROGRESS   = "progress";
-    private static final String TAG_STAGE      = "stage";
     protected StructureWrapper schematic;
     //TODO save some of this in building
     private   int              workOrderId;
@@ -28,13 +31,17 @@ public class JobBuilder extends AbstractJob
     private   BlockPos         schematicPos;
     private   BlockPos         schematicProgress;
 
-    public JobBuilder(CitizenData entity)
+    /**
+     * Instantiates builder job.
+     * @param entity citizen.
+     */
+    public JobBuilder(final CitizenData entity)
     {
         super(entity);
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_WORK_ORDER))
@@ -66,7 +73,7 @@ public class JobBuilder extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         if (workOrderId != 0)
@@ -138,7 +145,7 @@ public class JobBuilder extends AbstractJob
      *
      * @param schematic {@link StructureWrapper} object
      */
-    public void setStructure(StructureWrapper schematic)
+    public void setStructure(final StructureWrapper schematic)
     {
         this.schematic = schematic;
     }
@@ -185,15 +192,28 @@ public class JobBuilder extends AbstractJob
     }
 
     /**
+     * Reset the needed items list.
+     */
+    private void resetNeededItems()
+    {
+        final AbstractBuilding workerBuilding = this.getCitizen().getWorkBuilding();
+        if(workerBuilding instanceof BuildingBuilder)
+        {
+            ((BuildingBuilder) workerBuilding).resetNeededResources();
+        }
+    }
+
+    /**
      * Set a Work Order for this Job.
      *
      * @param order Work Order to associate with this job, or null
      */
-    public void setWorkOrder(@Nullable WorkOrderBuild order)
+    public void setWorkOrder(@Nullable final WorkOrderBuild order)
     {
         if (order == null)
         {
             workOrderId = 0;
+            resetNeededItems();
         }
         else
         {

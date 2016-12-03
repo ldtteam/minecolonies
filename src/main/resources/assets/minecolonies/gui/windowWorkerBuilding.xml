@@ -1,32 +1,32 @@
 <window inherit="minecolonies:gui/windowBase.xml">
     <view size="100% 100%" pos="0 7">
         <label id="name" size="100% 11" pos="0 0"
-               textalign="MiddleLeft" textcolor="red"/>
+               textalign="MIDDLE_LEFT" textcolor="red"/>
         <label id="workerName" size="100% 11" pos="0 18"
-               textalign="MiddleLeft" textcolor="black"/>
+               textalign="MIDDLE_LEFT" textcolor="black"/>
         <label size="100% 11" pos="0 28"
                label="$(com.minecolonies.gui.workerHuts.workerAssigned)"
-               textalign="MiddleLeft" textcolor="black"/>
+               textalign="MIDDLE_LEFT" textcolor="black"/>
         <label id="workerLevel" size="100% 11" pos="0 44"
-               textalign="MiddleLeft" textcolor="black"/>
+               textalign="MIDDLE_LEFT" textcolor="black"/>
 
-        <button id="hire" align="TopMiddle" size="116 20" pos="0 64"
+        <button id="hire" align="TOP_MIDDLE" size="116 20" pos="0 64"
                 label="$(com.minecolonies.gui.workerHuts.hire)"/>
-        <button id="recall" align="TopMiddle" size="116 20" pos="0 88"
+        <button id="recall" align="TOP_MIDDLE" size="116 20" pos="0 88"
                 label="$(com.minecolonies.gui.workerHuts.recall)"/>
-        <button id="build" align="TopMiddle" size="116 20" pos="0 120"
+        <button id="build" align="TOP_MIDDLE" size="116 20" pos="0 120"
                 label="$(com.minecolonies.gui.workerHuts.upgrade)"/>
-        <button id="repair" align="TopMiddle" size="116 20" pos="0 144"
+        <button id="repair" align="TOP_MIDDLE" size="116 20" pos="0 144"
                 label="$(com.minecolonies.gui.workerHuts.repair)"/>
 
         <label size="100% 11" pos="0 172"
                label="$(com.minecolonies.gui.workerHuts.buildType)"
-               textalign="MiddleLeft" textcolor="black"/>
+               textalign="MIDDLE_LEFT" textcolor="black"/>
         <label id="type" size="100% 11" pos="0 182"
-               textalign="MiddleLeft" textcolor="black"/>
+               textalign="MIDDLE_LEFT" textcolor="black"/>
     </view>
 
     <button id="inventory"
-            align="BottomMiddle" size="116 20" pos="0 13"
+            align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
             label="$(container.inventory)" />
 </window>

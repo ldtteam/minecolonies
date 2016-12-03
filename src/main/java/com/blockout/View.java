@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.ListIterator;
 
 /**
- * A View is a Pane which can contain other Panes
+ * A View is a Pane which can contain other Panes.
  */
 public class View extends Pane
 {
@@ -19,7 +19,7 @@ public class View extends Pane
     protected int        padding  = 0;
 
     /**
-     * Constructs a barebones View
+     * Constructs a barebones View.
      */
     public View()
     {
@@ -27,11 +27,11 @@ public class View extends Pane
     }
 
     /**
-     * Constructs a View from PaneParams
+     * Constructs a View from PaneParams.
      *
-     * @param params Params for the View
+     * @param params Params for the View.
      */
-    public View(PaneParams params)
+    public View(final PaneParams params)
     {
         super(params);
         padding = params.getIntegerAttribute("padding", padding);
@@ -44,34 +44,34 @@ public class View extends Pane
     }
 
     @Override
-    public void parseChildren(PaneParams params)
+    public void parseChildren(final PaneParams params)
     {
-        List<PaneParams> childNodes = params.getChildren();
+        final List<PaneParams> childNodes = params.getChildren();
         if (childNodes == null)
         {
             return;
         }
 
-        for (PaneParams node : childNodes)
+        for (final PaneParams node : childNodes)
         {
             Loader.createFromPaneParams(node, this);
         }
     }
 
     @Override
-    protected void drawSelf(int mx, int my)
+    protected void drawSelf(final int mx, final int my)
     {
-        //  Translate the drawing origin to our x,y
+        //  Translate the drawing origin to our x,y.
         GlStateManager.pushMatrix();
 
-        int paddedX = x + padding;
-        int paddedY = y + padding;
+        final int paddedX = x + padding;
+        final int paddedY = y + padding;
 
         GlStateManager.translate((float) paddedX, (float) paddedY, 0);
 
         //  Translate Mouse into the View
-        int drawX = mx - paddedX;
-        int drawY = my - paddedY;
+        final int drawX = mx - paddedX;
+        final int drawY = my - paddedY;
 
         children.stream().filter(this::childIsVisible).forEach(child -> child.draw(drawX, drawY));
 
@@ -80,16 +80,16 @@ public class View extends Pane
 
     @Nullable
     @Override
-    public Pane findPaneByID(String id)
+    public Pane findPaneByID(final String id)
     {
         if (this.id.equals(id))
         {
             return this;
         }
 
-        for (Pane child : children)
+        for (final Pane child : children)
         {
-            Pane found = child.findPaneByID(id);
+            final Pane found = child.findPaneByID(id);
             if (found != null)
             {
                 return found;
@@ -100,10 +100,10 @@ public class View extends Pane
     }
 
     @Override
-    protected void setWindow(Window w)
+    protected void setWindow(final Window w)
     {
         super.setWindow(w);
-        for (Pane child : children)
+        for (final Pane child : children)
         {
             child.setWindow(w);
         }
@@ -111,11 +111,11 @@ public class View extends Pane
 
     //  Mouse
     @Override
-    public void click(int mx, int my)
+    public void click(final int mx, final int my)
     {
-        int mxChild = mx - x - padding;
-        int myChild = my - y - padding;
-        Pane clickedPane = findPaneForClick(mxChild, myChild);
+        final int mxChild = mx - x - padding;
+        final int myChild = my - y - padding;
+        final Pane clickedPane = findPaneForClick(mxChild, myChild);
         if (clickedPane != null)
         {
             clickedPane.click(mxChild, myChild);
@@ -127,21 +127,21 @@ public class View extends Pane
     }
 
     /**
-     * Return a Pane that will handle a click action at the specified mouse coordinates
+     * Return a Pane that will handle a click action at the specified mouse coordinates.
      *
-     * @param mx Mouse X, relative to the top-left of this Pane
-     * @param my Mouse Y, relative to the top-left of this Pane
-     * @return a Pane that will handle a click action
+     * @param mx Mouse X, relative to the top-left of this Pane.
+     * @param my Mouse Y, relative to the top-left of this Pane.
+     * @return a Pane that will handle a click action.
      */
     @Nullable
-    public Pane findPaneForClick(int mx, int my)
+    public Pane findPaneForClick(final int mx, final int my)
     {
-        ListIterator<Pane> it = children.listIterator(children.size());
+        final ListIterator<Pane> it = children.listIterator(children.size());
 
-        //  Iterate in reverse, since Panes later in the list draw on top of earlier panes
+        //  Iterate in reverse, since Panes later in the list draw on top of earlier panes.
         while (it.hasPrevious())
         {
-            Pane child = it.previous();
+            final Pane child = it.previous();
             if (child.canHandleClick(mx, my))
             {
                 return child;
@@ -157,12 +157,12 @@ public class View extends Pane
         children.forEach(Pane::onUpdate);
     }
 
-    protected boolean childIsVisible(Pane child)
+    protected boolean childIsVisible(final Pane child)
     {
-        return child.getX() < getInteriorWidth() &&
-                 child.getY() < getInteriorHeight() &&
-                 (child.getX() + child.getWidth()) >= 0 &&
-                 (child.getY() + child.getHeight()) >= 0;
+        return child.getX() < getInteriorWidth()
+                && child.getY() < getInteriorHeight()
+                && (child.getX() + child.getWidth()) >= 0
+                && (child.getY() + child.getHeight()) >= 0;
     }
 
     public int getInteriorWidth()
@@ -180,27 +180,27 @@ public class View extends Pane
      *
      * @param child pane to add.
      */
-    public void addChild(Pane child)
+    public void addChild(final Pane child)
     {
         child.setWindow(getWindow());
         children.add(child);
         adjustChild(child);
     }
 
-    protected void adjustChild(Pane child)
+    protected void adjustChild(final Pane child)
     {
         int childX = child.getX();
         int childY = child.getY();
         int childWidth = child.getWidth();
         int childHeight = child.getHeight();
 
-        //  Negative width = 100% of parents width minus abs(width)
+        //  Negative width = 100% of parents width minus abs(width).
         if (childWidth < 0)
         {
             childWidth = Math.max(0, getInteriorWidth() + childWidth);
         }
 
-        //  Adjust for horizontal alignment
+        //  Adjust for horizontal alignment.
         if (child.alignment.isRightAligned())
         {
             childX = (getInteriorWidth() - childWidth) - childX;
@@ -210,13 +210,13 @@ public class View extends Pane
             childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
 
-        //  Negative height = 100% of parents height minus abs(height)
+        //  Negative height = 100% of parents height minus abs(height).
         if (childHeight < 0)
         {
             childHeight = Math.max(0, getInteriorHeight() + childHeight);
         }
 
-        //  Adjust for vertical alignment
+        //  Adjust for vertical alignment.
         if (child.alignment.isBottomAligned())
         {
             childY = (getInteriorHeight() - childHeight) - childY;
@@ -235,7 +235,7 @@ public class View extends Pane
      *
      * @param child pane to remove.
      */
-    public void removeChild(Pane child)
+    public void removeChild(final Pane child)
     {
         children.remove(child);
     }

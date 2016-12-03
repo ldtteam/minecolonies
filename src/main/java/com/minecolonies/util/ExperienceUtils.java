@@ -23,13 +23,13 @@ public final class ExperienceUtils
     }
 
     /**
-     * Calculates how much percent of the current level have been completed
+     * Calculates how much percent of the current level have been completed.
      *
-     * @param experience the current amount of xp
-     * @param level      the current level
-     * @return the percentage
+     * @param experience the current amount of xp.
+     * @param level      the current level.
+     * @return the percentage.
      */
-    public static double getPercentOfLevelCompleted(double experience, int level)
+    public static double getPercentOfLevelCompleted(final double experience, final int level)
     {
         final double thisLvlExp = getXPNeededForOnlyLevel(level);
         final double lastLvlExp = getXPNeededForNextLevel(level) - thisLvlExp;
@@ -49,11 +49,14 @@ public final class ExperienceUtils
      * @param currentLevel the currentLevel of the citizen
      * @return the xp in int
      */
-    public static double getXPNeededForNextLevel(int currentLevel)
+    private static double getXPNeededForOnlyLevel(final int currentLevel)
     {
-        return EXPERIENCE_MULTIPLIER
-                 * (currentLevel + 1)
-                 * (currentLevel + 1);
+        if (currentLevel == 0)
+        {
+            return getXPNeededForNextLevel(currentLevel);
+        }
+        return getXPNeededForNextLevel(currentLevel)
+                 - getXPNeededForNextLevel(currentLevel - 1);
     }
 
     /**
@@ -62,13 +65,10 @@ public final class ExperienceUtils
      * @param currentLevel the currentLevel of the citizen
      * @return the xp in int
      */
-    private static double getXPNeededForOnlyLevel(int currentLevel)
+    public static double getXPNeededForNextLevel(final int currentLevel)
     {
-        if (currentLevel == 0)
-        {
-            return getXPNeededForNextLevel(currentLevel);
-        }
-        return getXPNeededForNextLevel(currentLevel)
-                 - getXPNeededForNextLevel(currentLevel - 1);
+        return EXPERIENCE_MULTIPLIER
+                 * (currentLevel + 1)
+                 * (currentLevel + 1);
     }
 }

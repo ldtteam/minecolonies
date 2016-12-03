@@ -40,7 +40,7 @@ public class WorkManager
      *
      * @param c Colony the work manager is for.
      */
-    public WorkManager(Colony c)
+    public WorkManager(final Colony c)
     {
         colony = c;
     }
@@ -48,9 +48,9 @@ public class WorkManager
     /**
      * Removes a work order from the work manager.
      *
-     * @param order {@link AbstractWorkOrder} to remove
+     * @param order {@link AbstractWorkOrder} to remove.
      */
-    public void removeWorkOrder(@NotNull AbstractWorkOrder order)
+    public void removeWorkOrder(@NotNull final AbstractWorkOrder order)
     {
         removeWorkOrder(order.getID());
     }
@@ -60,7 +60,7 @@ public class WorkManager
      *
      * @param orderId ID of the order to remove
      */
-    public void removeWorkOrder(int orderId)
+    public void removeWorkOrder(final int orderId)
     {
         workOrders.remove(orderId);
         colony.removeWorkOrder(orderId);
@@ -69,19 +69,19 @@ public class WorkManager
     /**
      * Get a work order of the specified id, as a specific type.
      *
-     * @param id   the id of the work order
-     * @param type the class of the expected type of the work order
+     * @param id   the id of the work order.
+     * @param type the class of the expected type of the work order.
      * @param <W>  the type of work order to return.
-     * @return the work order of the specified id, or null if it was not found or is of an incompatible type
+     * @return the work order of the specified id, or null if it was not found or is of an incompatible type.
      */
     @Nullable
-    public <W extends AbstractWorkOrder> W getWorkOrder(int id, @NotNull Class<W> type)
+    public <W extends AbstractWorkOrder> W getWorkOrder(final int id, @NotNull final Class<W> type)
     {
         try
         {
             return type.cast(getWorkOrder(id));
         }
-        catch (ClassCastException exc)
+        catch (final ClassCastException exc)
         {
             Log.getLogger().catching(exc);
         }
@@ -92,10 +92,10 @@ public class WorkManager
     /**
      * Get a work order of the specified id.
      *
-     * @param id the id of the work order
-     * @return the work order of the specified id, or null
+     * @param id the id of the work order.
+     * @return the work order of the specified id, or null.
      */
-    public AbstractWorkOrder getWorkOrder(int id)
+    public AbstractWorkOrder getWorkOrder(final int id)
     {
         return workOrders.get(id);
     }
@@ -103,14 +103,14 @@ public class WorkManager
     /**
      * Get an unclaimed work order of a specified type.
      *
-     * @param type the class of the type of work order to find
+     * @param type the class of the type of work order to find.
      * @param <W>  the type of work order to return.
-     * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found
+     * @return an unclaimed work order of the given type, or null if no unclaimed work order of the type was found.
      */
     @Nullable
-    public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(@NotNull Class<W> type)
+    public <W extends AbstractWorkOrder> W getUnassignedWorkOrder(@NotNull final Class<W> type)
     {
-        for (@NotNull AbstractWorkOrder o : workOrders.values())
+        for (@NotNull final AbstractWorkOrder o : workOrders.values())
         {
             if (!o.isClaimed() && type.isAssignableFrom(o.getClass()))
             {
@@ -124,11 +124,11 @@ public class WorkManager
     /**
      * Get all work orders of a specified type.
      *
-     * @param type the class of the type of work order to find
+     * @param type the class of the type of work order to find.
      * @param <W>  the type of work order to return.
-     * @return a list of all work orders of the given type
+     * @return a list of all work orders of the given type.
      */
-    public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(@NotNull Class<W> type)
+    public <W extends AbstractWorkOrder> List<W> getWorkOrdersOfType(@NotNull final Class<W> type)
     {
         return workOrders.values().stream().filter(o -> type.isAssignableFrom(o.getClass())).map(type::cast).collect(Collectors.toList());
     }
@@ -145,28 +145,28 @@ public class WorkManager
     }
 
     /**
-     * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen
+     * When a citizen is removed, unclaim any Work Orders that were claimed by that citizen.
      *
      * @param citizen Citizen to unclaim work for.
      */
-    public void clearWorkForCitizen(@NotNull CitizenData citizen)
+    public void clearWorkForCitizen(@NotNull final CitizenData citizen)
     {
         dirty = true;
         workOrders.values().stream().filter(o -> o.isClaimedBy(citizen)).forEach(AbstractWorkOrder::clearClaimedBy);
     }
 
     /**
-     * Save the Work Manager
+     * Save the Work Manager.
      *
-     * @param compound Compound to save to
+     * @param compound Compound to save to.
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         //  Work Orders
-        @NotNull NBTTagList list = new NBTTagList();
-        for (@NotNull AbstractWorkOrder o : workOrders.values())
+        @NotNull final NBTTagList list = new NBTTagList();
+        for (@NotNull final AbstractWorkOrder o : workOrders.values())
         {
-            @NotNull NBTTagCompound orderCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound orderCompound = new NBTTagCompound();
             o.writeToNBT(orderCompound);
             list.appendTag(orderCompound);
         }
@@ -174,18 +174,18 @@ public class WorkManager
     }
 
     /**
-     * Restore the Work Manager
+     * Restore the Work Manager.
      *
-     * @param compound Compound to read from
+     * @param compound Compound to read from.
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         //  Work Orders
-        NBTTagList list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
+        final NBTTagList list = compound.getTagList(TAG_WORK_ORDERS, NBT.TAG_COMPOUND);
         for (int i = 0; i < list.tagCount(); ++i)
         {
-            NBTTagCompound orderCompound = list.getCompoundTagAt(i);
-            @Nullable AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound);
+            final NBTTagCompound orderCompound = list.getCompoundTagAt(i);
+            @Nullable final AbstractWorkOrder o = AbstractWorkOrder.createFromNBT(orderCompound);
             if (o != null)
             {
                 addWorkOrder(o);
@@ -204,11 +204,11 @@ public class WorkManager
     }
 
     /**
-     * Adds work order to the work manager
+     * Adds work order to the work manager.
      *
-     * @param order Order to add
+     * @param order Order to add.
      */
-    public void addWorkOrder(@NotNull AbstractWorkOrder order)
+    public void addWorkOrder(@NotNull final AbstractWorkOrder order)
     {
         dirty = true;
 
@@ -222,19 +222,19 @@ public class WorkManager
     }
 
     /**
-     * Process updates on the World Tick
-     * Currently, does periodic Work Order cleanup
+     * Process updates on the World Tick.
+     * Currently, does periodic Work Order cleanup.
      *
-     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}
+     * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent}.
      */
-    public void onWorldTick(@NotNull TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         if (event.phase == TickEvent.Phase.END)
         {
-            @NotNull Iterator<AbstractWorkOrder> iter = workOrders.values().iterator();
+            @NotNull final Iterator<AbstractWorkOrder> iter = workOrders.values().iterator();
             while (iter.hasNext())
             {
-                AbstractWorkOrder o = iter.next();
+                final AbstractWorkOrder o = iter.next();
                 if (!o.isValid(colony))
                 {
                     iter.remove();

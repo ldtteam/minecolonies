@@ -16,7 +16,7 @@ public class ItemAchievementProxy extends AbstractItemMinecolonies
      *
      * @param name The item name
      */
-    public ItemAchievementProxy(String name)
+    public ItemAchievementProxy(final String name)
     {
         super(name);
 

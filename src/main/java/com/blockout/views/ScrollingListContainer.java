@@ -11,7 +11,7 @@ public class ScrollingListContainer extends ScrollingContainer
 {
     private int listElementHeight = 0;
 
-    ScrollingListContainer(ScrollingList owner)
+    ScrollingListContainer(final ScrollingList owner)
     {
         super(owner);
     }
@@ -22,13 +22,13 @@ public class ScrollingListContainer extends ScrollingContainer
      * @param dataProvider   data provider object, shouldn't be null.
      * @param listNodeParams the xml parameters for this pane.
      */
-    public void refreshElementPanes(ScrollingList.DataProvider dataProvider, PaneParams listNodeParams)
+    public void refreshElementPanes(final ScrollingList.DataProvider dataProvider, final PaneParams listNodeParams)
     {
         if (dataProvider != null)
         {
             for (int i = 0; i < dataProvider.getElementCount(); ++i)
             {
-                Pane child;
+                final Pane child;
                 if (i < children.size())
                 {
                     child = children.get(i);
@@ -52,7 +52,7 @@ public class ScrollingListContainer extends ScrollingContainer
             }
         }
 
-        int numElements = (dataProvider != null) ? dataProvider.getElementCount() : 0;
+        final int numElements = (dataProvider != null) ? dataProvider.getElementCount() : 0;
         while (children.size() > numElements)
         {
             removeChild(children.get(numElements));
@@ -67,7 +67,7 @@ public class ScrollingListContainer extends ScrollingContainer
      * @param pane the pane to find the index of.
      * @return the index.
      */
-    public int getListElementIndexByPane(Pane pane)
+    public int getListElementIndexByPane(final Pane pane)
     {
         Pane parentPane = pane;
         while (parentPane != null && parentPane.getParent() != this)
@@ -84,24 +84,24 @@ public class ScrollingListContainer extends ScrollingContainer
     }
 
     /**
-     * This is an optimized version that relies on the fixed size and order of children to quickly determine
+     * This is an optimized version that relies on the fixed size and order of children to quickly determine.
      *
-     * @param mx Mouse X, relative to the top-left of this Pane
-     * @param my Mouse Y, relative to the top-left of this Pane
-     * @return a Pane that will handle a click action
+     * @param mx Mouse X, relative to the top-left of this Pane.
+     * @param my Mouse Y, relative to the top-left of this Pane.
+     * @return a Pane that will handle a click action.
      */
     @Override
-    public Pane findPaneForClick(int mx, int my)
+    public Pane findPaneForClick(final int mx, final int my)
     {
         if (children.isEmpty() || listElementHeight == 0)
         {
             return null;
         }
 
-        int listElement = my / listElementHeight;
+        final int listElement = my / listElementHeight;
         if (listElement < children.size())
         {
-            Pane child = children.get(listElement);
+            final Pane child = children.get(listElement);
             if (child.canHandleClick(mx, my))
             {
                 return child;

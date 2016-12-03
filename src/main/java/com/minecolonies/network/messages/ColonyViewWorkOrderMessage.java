@@ -21,13 +21,11 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     private ByteBuf workOrderBuffer;
 
     /**
-     * Empty public constructor.
+     * Empty constructor used when registering the message.
      */
     public ColonyViewWorkOrderMessage()
     {
-        /**
-         * Intentionally left empty.
-         **/
+        super();
     }
 
     /**
@@ -36,7 +34,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
      * @param colony    colony of the workOrder.
      * @param workOrder workOrder of the colony to update view.
      */
-    public ColonyViewWorkOrderMessage(@NotNull Colony colony, @NotNull AbstractWorkOrder workOrder)
+    public ColonyViewWorkOrderMessage(@NotNull final Colony colony, @NotNull final AbstractWorkOrder workOrder)
     {
         this.colonyId = colony.getID();
         this.workOrderBuffer = Unpooled.buffer();
@@ -45,7 +43,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         workOrderId = buf.readInt();
@@ -53,7 +51,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(workOrderId);
@@ -62,7 +60,7 @@ public class ColonyViewWorkOrderMessage implements IMessage, IMessageHandler<Col
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull ColonyViewWorkOrderMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull final ColonyViewWorkOrderMessage message, final MessageContext ctx)
     {
         return ColonyManager.handleColonyViewWorkOrderMessage(message.colonyId, message.workOrderBuffer);
     }

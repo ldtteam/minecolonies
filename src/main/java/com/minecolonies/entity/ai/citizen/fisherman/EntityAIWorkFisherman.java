@@ -31,30 +31,28 @@ import java.util.Random;
 import static com.minecolonies.entity.ai.util.AIState.*;
 
 /**
- * Fisherman AI class
+ * Fisherman AI class.
  * <p>
  * A fisherman has some ponds where
  * he randomly selects one and fishes there.
  * <p>
  * To keep it immersive he chooses his place at random around the pond.
- *
- * @author Raycoms, Kostronor
  */
 public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 {
 
     /**
-     * The render name to render logs
+     * The render name to render fish.
      */
     private static final String RENDER_META_FISH = "Fish";
 
     /**
-     * The render name to render logs
+     * The render name to render fish and rod.
      */
     private static final String RENDER_META_FISHANDROD = "RodFish";
 
     /**
-     * The render name to render logs
+     * The render name to render rod.
      */
     private static final String RENDER_META_ROD = "Rod";
 
@@ -164,7 +162,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      *
      * @param job a fisherman job to use.
      */
-    public EntityAIWorkFisherman(@NotNull JobFisherman job)
+    public EntityAIWorkFisherman(@NotNull final JobFisherman job)
     {
         super(job);
         super.registerTargets(
@@ -313,7 +311,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * If the job class has no water object the fisherman should search water.
      *
-     * @return the next AIState the fisherman should switch to, after executing this method
+     * @return the next AIState the fisherman should switch to, after executing this method.
      */
     private AIState getToWater()
     {
@@ -331,7 +329,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * Let's the fisherman walk to the water if the water object in his job class already has been filled.
      *
-     * @return true if the fisherman has arrived at the water
+     * @return true if the fisherman has arrived at the water.
      */
     private boolean walkToWater()
     {
@@ -341,7 +339,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * Rotates the fisherman to guarantee that the fisherman throws his rod in the correct direction.
      *
-     * @return the next AIState the fisherman should switch to, after executing this method
+     * @return the next AIState the fisherman should switch to, after executing this method.
      */
     @NotNull
     private AIState tryDifferentAngles()
@@ -367,7 +365,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * Checks if the fisherman already has found 20 pools, if yes search a water pool out of these 20, else
      * search a new one.
      *
-     * @return the next AIState the fisherman should switch to, after executing this method
+     * @return the next AIState the fisherman should switch to, after executing this method.
      */
     private AIState findWater()
     {
@@ -446,13 +444,13 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * check if all requirements to fish are given.
      * Actually fish, retrieve his rod if stuck or if a fish bites.
      *
-     * @return the next AIState the fisherman should switch to, after executing this method
+     * @return the next AIState the fisherman should switch to, after executing this method.
      */
     @Nullable
     private AIState doFishing()
     {
         worker.gatherXp();
-        @Nullable AIState notReadyState = isReadyToFish();
+        @Nullable final AIState notReadyState = isReadyToFish();
         if (notReadyState != null)
         {
             return notReadyState;
@@ -525,7 +523,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
               SoundEvents.ENTITY_BOBBER_THROW,
               SoundCategory.NEUTRAL,
               0.5F,
-              0.4F / (this.world.rand.nextFloat() * 0.4F + 0.8F));
+                    (float) (0.4D / (this.world.rand.nextFloat() * 0.4D + 0.8D )));
             this.entityFishHook = new EntityFishHook(world, this.getCitizen());
             world.spawnEntityInWorld(this.entityFishHook);
         }
@@ -550,20 +548,20 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * This check depends on his fishing skill.
      * Which in turn depends on intelligence.
      *
-     * @return true if he has to wait
+     * @return true if he has to wait.
      */
     private boolean testRandomChance()
     {
         //+1 since the level may be 0
         setDelay(FISHING_TIMEOUT);
-        double chance = random.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
+        final double chance = random.nextInt(FISHING_DELAY) / (double) (fishingSkill + 1);
         return chance >= CHANCE;
     }
 
     /**
      * Checks if the fisherman has his fishingRod in his hand and is close to the water.
      *
-     * @return true if fisherman meets all requirements to fish, else returns false
+     * @return true if fisherman meets all requirements to fish, else returns false.
      */
     private AIState isReadyToFish()
     {
@@ -616,7 +614,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * Will be called to check if the fisherman caught a fish. If the hook hasn't noticed a fish it will return false.
      * Else the method will pick up the loot and call the method to retrieve the rod.
      *
-     * @return If the fisherman caught a fish
+     * @return If the fisherman caught a fish.
      */
     private boolean caughtFish()
     {
@@ -639,12 +637,12 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
 
     /**
      * Retrieves the previously thrown fishingRod.
-     * If the fishingRod still has a hook connected to it, destroy the hook object
+     * If the fishingRod still has a hook connected to it, destroy the hook object.
      */
     private void retrieveRod()
     {
         worker.swingArm(worker.getActiveHand());
-        int i = entityFishHook.getDamage(this.getCitizen());
+        final int i = entityFishHook.getDamage(this.getCitizen());
         worker.damageItemInHand(i);
         entityFishHook = null;
     }
@@ -652,7 +650,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     /**
      * Returns the fisherman's worker instance. Called from outside this class.
      *
-     * @return citizen object
+     * @return citizen object.
      */
     @Nullable
     public EntityCitizen getCitizen()

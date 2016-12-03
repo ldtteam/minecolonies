@@ -13,7 +13,7 @@
             <!-- Blacksmith -->
             <view size="100% 40" pos="0 0">
                 <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.gui.warehouse.toBlacksmith)" color="black" textalign="BottomMiddle"/>
+                       label="$(com.minecolonies.gui.warehouse.toBlacksmith)" color="black" textalign="BOTTOM_MIDDLE"/>
 
                 <view size="100% 20" pos="0 16">
                     <itemicon size="20 20" pos="33 2"  item="gold_ingot"/>
@@ -26,7 +26,7 @@
             <!-- Stonemason -->
             <view size="100% 64" pos="0 41">
                 <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.gui.warehouse.toStonemason)" color="black" textalign="BottomMiddle"/>
+                       label="$(com.minecolonies.gui.warehouse.toStonemason)" color="black" textalign="BOTTOM_MIDDLE"/>
 
                 <view size="100% 20" pos="0 16">
                     <itemicon size="20 20" pos="33 2"  item="cobblestone"/>
@@ -46,7 +46,7 @@
             <!-- Guards -->
             <view size="100% 40" pos="0 110">
                 <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.gui.warehouse.toGuards)" color="black" textalign="BottomMiddle"/>
+                       label="$(com.minecolonies.gui.warehouse.toGuards)" color="black" textalign="BOTTOM_MIDDLE"/>
 
                 <view size="100% 20" pos="0 16">
                     <itemicon size="20 20" pos="33 2"  item="iron_chestplate"/>
@@ -58,16 +58,16 @@
 
             <view size="100% 35" pos="0 155">
                 <label size="100% 11" pos="0 0"
-                       label="$(com.minecolonies.gui.warehouse.visitCitizenChests)" color="black" textalign="BottomMiddle"/>
+                       label="$(com.minecolonies.gui.warehouse.visitCitizenChests)" color="black" textalign="BOTTOM_MIDDLE"/>
                 <button size="30 20" pos="70 12" id="citizenChests" />
             </view>
         </view>
     </switch>
 
-    <button id="prevPage" align="TopLeft" size="20 20" pos="10 5" label="&lt;&lt;"/>
-    <button id="nextPage" align="TopRight" size="20 20" pos="10 5" label="&gt;&gt;"/>
+    <button id="prevPage" align="TOP_LEFT" size="20 20" pos="10 5" label="&lt;&lt;"/>
+    <button id="nextPage" align="TOP_RIGHT" size="20 20" pos="10 5" label="&gt;&gt;"/>
 
     <button id="inventory"
-            align="BottomMiddle" size="116 20" pos="0 13"
+            align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
             label="$(container.inventory)" />
 </window>

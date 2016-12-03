@@ -16,18 +16,18 @@ import java.util.*;
 public class MaterialSystem
 {
     /**
-     * Temporary variable to disabled MaterialHandling until I have time to complete it - Colton
+     * Temporary variable to disabled MaterialHandling until I have time to complete it - Colton.
      */
     public static final boolean isEnabled = false;
 
     /**
-     * This Map contains keeps track of how many extra materials we have in the colony. (Materials that aren't needed)
+     * This Map contains keeps track of how many extra materials we have in the colony. (Materials that aren't needed).
      */
     @NotNull
     private Map<Material, Integer> materials = new HashMap<>();
 
     /**
-     * Set of MaterialStores inside this MaterialSystem(Colony)
+     * Set of MaterialStores inside this MaterialSystem(Colony).
      */
     @NotNull
     private Set<MaterialStore> stores = new HashSet<>();
@@ -39,7 +39,7 @@ public class MaterialSystem
     private Map<Integer, Material> materialCache = new HashMap<>();
 
     /**
-     * @return An unmodifiable version of the materials map
+     * @return An unmodifiable version of the materials map.
      */
     @NotNull
     public Map<Material, Integer> getMaterials()
@@ -48,7 +48,7 @@ public class MaterialSystem
     }
 
     /**
-     * @return An unmodifiable version of the stores set
+     * @return An unmodifiable version of the stores set.
      */
     @NotNull
     public Set<MaterialStore> getStores()
@@ -59,17 +59,17 @@ public class MaterialSystem
     /**
      * Finds how much extra(unneeded) items we have in the system(colony).
      *
-     * @param item Item you want to know how much of you have
-     * @return The number of unneeded item that is in the colony
+     * @param item Item you want to know how much of you have.
+     * @return The number of unneeded item that is in the colony.
      */
-    public int getMaterialCount(Item item)
+    public int getMaterialCount(final Item item)
     {
         return getMaterialCount(getMaterial(item));
     }
 
-    private int getMaterialCount(@NotNull Material material)
+    private int getMaterialCount(@NotNull final Material material)
     {
-        Integer count = materials.get(material);
+        final Integer count = materials.get(material);
 
         if (count == null)
         {
@@ -81,7 +81,7 @@ public class MaterialSystem
     }
 
     @Nullable
-    Material getMaterial(@Nullable Item item)
+    Material getMaterial(@Nullable final Item item)
     {
         if (item == null)
         {
@@ -91,7 +91,7 @@ public class MaterialSystem
         return getMaterial(Item.getIdFromItem(item));
     }
 
-    private void removeItemFromCache(@NotNull Material material)
+    private void removeItemFromCache(@NotNull final Material material)
     {
         materialCache.remove(material.getID());
     }
@@ -101,7 +101,7 @@ public class MaterialSystem
      *
      * @return Material from cache
      */
-    private Material getMaterial(Integer id)
+    private Material getMaterial(final Integer id)
     {
         Material material = materialCache.get(id);
         if (material == null)
@@ -116,16 +116,16 @@ public class MaterialSystem
     /**
      * Finds how much extra(unneeded) blocks we have in the system(colony).
      *
-     * @param block Block you want to know how much of you have
-     * @return The number of unneeded block that is in the colony
+     * @param block Block you want to know how much of you have.
+     * @return The number of unneeded block that is in the colony.
      */
-    public int getMaterialCount(Block block)
+    public int getMaterialCount(final Block block)
     {
         return getMaterialCount(getMaterial(block));
     }
 
     @Nullable
-    Material getMaterial(@Nullable Block block)
+    Material getMaterial(@Nullable final Block block)
     {
         if (block == null)
         {
@@ -138,12 +138,12 @@ public class MaterialSystem
     /**
      * Adds a material to the system.
      *
-     * @param material What material you're adding
-     * @param quantity How much you're adding
+     * @param material What material you're adding.
+     * @param quantity How much you're adding.
      */
-    void addMaterial(Material material, int quantity)
+    void addMaterial(final Material material, final int quantity)
     {
-        Integer count = materials.get(material);
+        final Integer count = materials.get(material);
         if (count == null)
         {
             materials.put(material, quantity);
@@ -160,9 +160,9 @@ public class MaterialSystem
      * @param material What material you're removing
      * @param quantity How much you're removing
      */
-    void removeMaterial(@NotNull Material material, int quantity)
+    void removeMaterial(@NotNull final Material material, final int quantity)
     {
-        Integer count = materials.get(material);
+        final Integer count = materials.get(material);
         if (count == null || count < quantity)
         {
             throw new QuantityNotFound("MaterialSystem", material.getID(), count == null ? 0 : count, quantity);
@@ -181,7 +181,7 @@ public class MaterialSystem
     /**
      * Adds a MaterialStore to the stores set. Called inside of the MaterialStore constructor.
      */
-    void addStore(MaterialStore store)
+    void addStore(final MaterialStore store)
     {
         stores.add(store);
     }
@@ -189,7 +189,7 @@ public class MaterialSystem
     /**
      * Removes a MaterialStore from the store set. This should be called when a building is destroyed(removed from colony).
      */
-    void removeStore(MaterialStore store)
+    void removeStore(final MaterialStore store)
     {
         stores.remove(store);
     }

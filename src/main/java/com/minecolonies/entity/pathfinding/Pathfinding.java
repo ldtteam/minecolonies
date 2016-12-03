@@ -43,7 +43,7 @@ public final class Pathfinding
      * @param job PathJob
      * @return a Future containing the Path
      */
-    public static Future<Path> enqueue(@NotNull AbstractPathJob job)
+    public static Future<Path> enqueue(@NotNull final AbstractPathJob job)
     {
         return executor.submit(job);
     }
@@ -54,17 +54,17 @@ public final class Pathfinding
      * @param frame entity movement weight.
      */
     @SideOnly(Side.CLIENT)
-    public static void debugDraw(double frame)
+    public static void debugDraw(final double frame)
     {
         if (AbstractPathJob.lastDebugNodesNotVisited == null)
         {
             return;
         }
 
-        Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
-        double dx = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
-        double dy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
-        double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
+        final Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+        final double dx = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * frame;
+        final double dy = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * frame;
+        final double dz = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * frame;
 
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -76,9 +76,9 @@ public final class Pathfinding
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
 
-        Set<Node> debugNodesNotVisited;
-        Set<Node> debugNodesVisited;
-        Set<Node> debugNodesPath;
+        final Set<Node> debugNodesNotVisited;
+        final Set<Node> debugNodesVisited;
+        final Set<Node> debugNodesPath;
 
         synchronized (AbstractPathJob.debugNodeMonitor)
         {
@@ -89,25 +89,25 @@ public final class Pathfinding
 
         try
         {
-            for (@NotNull Node n : debugNodesNotVisited)
+            for (@NotNull final Node n : debugNodesNotVisited)
             {
                 debugDrawNode(n, (byte) 255, (byte) 0, (byte) 0);
             }
 
-            for (@NotNull Node n : debugNodesVisited)
+            for (@NotNull final Node n : debugNodesVisited)
             {
                 debugDrawNode(n, (byte) 0, (byte) 0, (byte) 255);
             }
 
             if (debugNodesPath != null)
             {
-                for (@NotNull Node n : debugNodesPath)
+                for (@NotNull final Node n : debugNodesPath)
                 {
                     debugDrawNode(n, (byte) 0, (byte) 255, (byte) 0);
                 }
             }
         }
-        catch (ConcurrentModificationException exc)
+        catch (final ConcurrentModificationException exc)
         {
             Log.getLogger().catching(exc);
         }
@@ -117,20 +117,20 @@ public final class Pathfinding
     }
 
     @SideOnly(Side.CLIENT)
-    private static void debugDrawNode(@NotNull Node n, byte r, byte g, byte b)
+    private static void debugDrawNode(@NotNull final Node n, final byte r, final byte g, final byte b)
     {
         GL11.glPushMatrix();
         GL11.glTranslated((double) n.pos.getX() + 0.375, (double) n.pos.getY() + 0.375, (double) n.pos.getZ() + 0.375);
 
-        float f = 1.6F;
-        float f1 = (float) (0.016666668D * f / 2);
+        final float f = 1.6F;
+        final float f1 = (float) (0.016666668D * f / 2);
 
         //  Nameplate
 
-        Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
-        double dx = n.pos.getX() - entity.posX;
-        double dy = n.pos.getY() - entity.posY;
-        double dz = n.pos.getZ() - entity.posZ;
+        final Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
+        final double dx = n.pos.getX() - entity.posX;
+        final double dy = n.pos.getY() - entity.posY;
+        final double dz = n.pos.getZ() - entity.posZ;
         if (Math.sqrt(dx * dx + dy * dy + dz * dz) <= 5D)
         {
             renderDebugText(n, f1);
@@ -185,9 +185,9 @@ public final class Pathfinding
             GL11.glBegin(GL11.GL_LINES);
             GL11.glColor3f(0.75F, 0.75F, 0.75F);
 
-            double pdx = n.parent.pos.getX() - n.pos.getX() + 0.125;
-            double pdy = n.parent.pos.getY() - n.pos.getY() + 0.125;
-            double pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125;
+            final double pdx = n.parent.pos.getX() - n.pos.getX() + 0.125;
+            final double pdy = n.parent.pos.getY() - n.pos.getY() + 0.125;
+            final double pdz = n.parent.pos.getZ() - n.pos.getZ() + 0.125;
 
             GL11.glVertex3d(0.5, 0.5, 0.5);
             GL11.glVertex3d(pdx / 0.25, pdy / 0.25, pdz / 0.25);
@@ -199,29 +199,29 @@ public final class Pathfinding
     }
 
     @SideOnly(Side.CLIENT)
-    private static void renderDebugText(@NotNull Node n, float f1)
+    private static void renderDebugText(@NotNull final Node n, final float f1)
     {
-        String s1 = String.format("F: %.3f [%d]", n.cost, n.counterAdded);
-        String s2 = String.format("G: %.3f [%d]", n.score, n.counterVisited);
-        FontRenderer fontrenderer = Minecraft.getMinecraft().fontRendererObj;
+        final String s1 = String.format("F: %.3f [%d]", n.cost, n.counterAdded);
+        final String s2 = String.format("G: %.3f [%d]", n.score, n.counterVisited);
+        final FontRenderer fontrenderer = Minecraft.getMinecraft().fontRendererObj;
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         GL11.glPushMatrix();
         GL11.glTranslatef(0.0F, 0.75F, 0.0F);
         GL11.glNormal3f(0.0F, 1.0F, 0.0F);
 
-        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+        final RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
         GL11.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
         GL11.glRotatef(renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
         GL11.glScalef(-f1, -f1, f1);
         GL11.glTranslatef(0.0F, (float) (0.25D / f1), 0.0F);
         GL11.glDepthMask(false);
 
-        Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer VertexBuffer = tessellator.getBuffer();
+        final Tessellator tessellator = Tessellator.getInstance();
+        final VertexBuffer VertexBuffer = tessellator.getBuffer();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
 
         VertexBuffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        int i = Math.max(fontrenderer.getStringWidth(s1), fontrenderer.getStringWidth(s2)) / 2;
+        final int i = Math.max(fontrenderer.getStringWidth(s1), fontrenderer.getStringWidth(s2)) / 2;
 
         //that should set the colors correctly
         VertexBuffer.pos((double) (-i - 1), -5.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();

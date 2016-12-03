@@ -10,7 +10,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 
 /**
- * Handles gui operations on the server
+ * Handles gui operations on the server.
  * Created: June 21, 2014
  *
  * @author Colton
@@ -18,14 +18,15 @@ import net.minecraft.inventory.Container;
 @Deprecated //TODO undepricate when finished
 public class ContainerHut extends Container //ContainerChest in future
 {
-    private TileEntityColonyBuilding hut;
-    private EntityPlayerMP           player;
-    private InventoryPlayer          inventoryPlayer;
+    private final TileEntityColonyBuilding hut;
+    private final EntityPlayerMP           player;
+    private final InventoryPlayer          inventoryPlayer;
 
-    private int lastNumberOfCitizens = 0;
+    private final int lastNumberOfCitizens = 0;
 
-    public ContainerHut(TileEntityColonyBuilding hut, EntityPlayer player)
+    public ContainerHut(final TileEntityColonyBuilding hut, final EntityPlayer player)
     {
+        super();
         this.hut = hut;
         this.player = (EntityPlayerMP) player;
         this.inventoryPlayer = player.inventory;
@@ -38,7 +39,7 @@ public class ContainerHut extends Container //ContainerChest in future
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer player)
+    public boolean canInteractWith(final EntityPlayer player)
     {
         assert !hut.getWorld().isRemote;
 
@@ -48,7 +49,7 @@ public class ContainerHut extends Container //ContainerChest in future
         }
         else
         {
-            Colony colony = hut.getColony();
+            final Colony colony = hut.getColony();
 
             if (colony != null && !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
             {

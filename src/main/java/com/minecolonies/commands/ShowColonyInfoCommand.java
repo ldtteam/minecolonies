@@ -61,7 +61,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
             {
                 colonyId = Integer.parseInt(args[0]);
             }
-            catch (NumberFormatException e)
+            catch (final NumberFormatException e)
             {
                 mayorID = getUUIDFromName(sender, args);
             }

@@ -215,7 +215,7 @@ public class ModelEntityLumberjackFemale extends ModelBiped
         bipedHeadwear.isHidden = true;
     }
 
-    private void setRotation(@NotNull ModelRenderer model, float x, float y, float z)
+    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;

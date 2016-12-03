@@ -5,26 +5,26 @@ import com.minecolonies.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for the home building
+ * Window for the home building.
  */
 public class WindowHomeBuilding extends AbstractWindowBuilding<BuildingHome.View>
 {
     private static final String HOME_BUILDING_RESOURCE_SUFFIX = ":gui/windowHutHome.xml";
 
     /**
-     * Creates the Window object
+     * Creates the Window object.
      *
-     * @param building View of the home building
+     * @param building View of the home building.
      */
-    public WindowHomeBuilding(BuildingHome.View building)
+    public WindowHomeBuilding(final BuildingHome.View building)
     {
         super(building, Constants.MOD_ID + HOME_BUILDING_RESOURCE_SUFFIX);
     }
 
     /**
-     * Returns the name of a building
+     * Returns the name of a building.
      *
-     * @return Name of a building
+     * @return Name of a building.
      */
     @NotNull
     @Override

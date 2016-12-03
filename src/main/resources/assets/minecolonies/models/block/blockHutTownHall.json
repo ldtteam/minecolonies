@@ -1,5 +1,6 @@
 {
   "textures": {
+    "particle": "blocks/planks_oak",
     "0": "minecolonies:blocks/blockHutTownHallFrontBack",
     "1": "minecolonies:blocks/blockHutTownHallSide",
     "2": "minecolonies:blocks/blockHutTownHallTop",

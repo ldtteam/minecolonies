@@ -5,19 +5,19 @@ import com.minecolonies.client.gui.WindowHomeBuilding;
 import com.minecolonies.colony.CitizenData;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.ColonyView;
-import com.minecolonies.util.ServerUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * The class of the citizen hut.
+ */
 public class BuildingHome extends AbstractBuildingHut
 {
     private static final String            TAG_RESIDENTS = "residents";
@@ -25,22 +25,27 @@ public class BuildingHome extends AbstractBuildingHut
     @NotNull
     private              List<CitizenData> residents     = new ArrayList<>();
 
-    public BuildingHome(Colony c, BlockPos l)
+    /**
+     * Instantiates a new citizen hut.
+     * @param c the colony.
+     * @param l the location.
+     */
+    public BuildingHome(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
         residents.clear();
 
-        int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
-        for (int citizenId : residentIds)
+        final int[] residentIds = compound.getIntArray(TAG_RESIDENTS);
+        for (final int citizenId : residentIds)
         {
-            CitizenData citizen = getColony().getCitizen(citizenId);
+            final CitizenData citizen = getColony().getCitizen(citizenId);
             if (citizen != null)
             {
                 // Bypass addResident (which marks dirty)
@@ -58,13 +63,13 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
         if (!residents.isEmpty())
         {
-            @NotNull int[] residentIds = new int[residents.size()];
+            @NotNull final int[] residentIds = new int[residents.size()];
             for (int i = 0; i < residents.size(); ++i)
             {
                 residentIds[i] = residents.get(i).getId();
@@ -84,7 +89,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void removeCitizen(@NotNull CitizenData citizen)
+    public void removeCitizen(@NotNull final CitizenData citizen)
     {
         if (residents.contains(citizen))
         {
@@ -94,7 +99,7 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void onWorldTick(@NotNull TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         if (event.phase != TickEvent.Phase.END)
         {
@@ -115,16 +120,15 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     /**
-     * Looks for a homeless citizen to add to the current building. Calls
+     * Looks for a homeless citizen to add to the current building Calls.
      * {@link #addResident(CitizenData)}
      */
     private void addHomelessCitizens()
     {
-        for (@NotNull CitizenData citizen : getColony().getCitizens().values())
+        for (@NotNull final CitizenData citizen : getColony().getCitizens().values())
         {
             // Move the citizen to a better hut
-            if (citizen.getHomeBuilding() != null &&
-                  citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
+            if (citizen.getHomeBuilding() != null && citizen.getHomeBuilding().getBuildingLevel() < this.getBuildingLevel())
             {
                 // The citizen can move to this hut to improve conditions
                 citizen.getHomeBuilding().removeCitizen(citizen);
@@ -142,11 +146,11 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     /**
-     * Adds the citizen to the building
+     * Adds the citizen to the building.
      *
-     * @param citizen Citizen to add
+     * @param citizen Citizen to add.
      */
-    private void addResident(@NotNull CitizenData citizen)
+    private void addResident(@NotNull final CitizenData citizen)
     {
         residents.add(citizen);
         citizen.setHomeBuilding(this);
@@ -165,8 +169,6 @@ public class BuildingHome extends AbstractBuildingHut
     {
         super.onUpgradeComplete(newLevel);
 
-        @Nullable final EntityPlayer owner = ServerUtils.getPlayerFromUUID(getColony().getPermissions().getOwner(), getColony().getWorld());
-
         if (newLevel == 1)
         {
             this.getColony().triggerAchievement(ModAchievements.achievementBuildingColonist);
@@ -178,41 +180,49 @@ public class BuildingHome extends AbstractBuildingHut
     }
 
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
 
         buf.writeInt(residents.size());
-        for (@NotNull CitizenData citizen : residents)
+        for (@NotNull final CitizenData citizen : residents)
         {
             buf.writeInt(citizen.getId());
         }
     }
 
     @Override
-    public void setBuildingLevel(int level)
+    public void setBuildingLevel(final int level)
     {
         super.setBuildingLevel(level);
         getColony().calculateMaxCitizens();
     }
 
     /**
-     * Returns whether the citizen has this as home or not
+     * Returns whether the citizen has this as home or not.
      *
-     * @param citizen Citizen to check
-     * @return True if citizen lives here, otherwise false
+     * @param citizen Citizen to check.
+     * @return True if citizen lives here, otherwise false.
      */
-    public boolean hasResident(CitizenData citizen)
+    public boolean hasResident(final CitizenData citizen)
     {
         return residents.contains(citizen);
     }
 
+    /**
+     * The view of the citizen hut.
+     */
     public static class View extends AbstractBuildingHut.View
     {
         @NotNull
         private List<Integer> residents = new ArrayList<>();
 
-        public View(ColonyView c, BlockPos l)
+        /**
+         * Creates an instance of the citizen hut window.
+         * @param c the colonyView.
+         * @param l the position the hut is at.
+         */
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -224,17 +234,18 @@ public class BuildingHome extends AbstractBuildingHut
         }
 
         @NotNull
+        @Override
         public com.blockout.views.Window getWindow()
         {
             return new WindowHomeBuilding(this);
         }
 
         @Override
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
 
-            int numResidents = buf.readInt();
+            final int numResidents = buf.readInt();
             for (int i = 0; i < numResidents; ++i)
             {
                 residents.add(buf.readInt());

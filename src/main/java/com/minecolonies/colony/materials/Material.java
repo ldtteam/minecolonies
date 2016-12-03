@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Material Data Structure, also keeps note of where this material is stored
+ * Material Data Structure, also keeps note of where this material is stored.
  * Created: December 14, 2015
  *
  * @author Colton
@@ -19,14 +19,14 @@ public class Material
      * Map of where each Material is stored and how much is there.
      */
     @NotNull
-    private Map<MaterialStore, Integer> locations = new HashMap<>();
+    private final Map<MaterialStore, Integer> locations = new HashMap<>();
 
     /**
-     * Universal Item/Block ID
+     * Universal Item/Block ID.
      */
-    private Integer id;
+    private final Integer id;
 
-    Material(Integer id)
+    Material(final Integer id)
     {
         this.id = id;
     }
@@ -43,13 +43,13 @@ public class Material
     }
 
     @Override
-    public boolean equals(@Nullable Object material)
+    public boolean equals(@Nullable final Object material)
     {
         return material != null && material.getClass() == this.getClass() && id.equals(((Material) material).id);
     }
 
     /**
-     * @return An unmodifiable version of locations
+     * @return An unmodifiable version of locations.
      */
     @NotNull
     public Map<MaterialStore, Integer> getLocationsStored()
@@ -60,11 +60,11 @@ public class Material
     /**
      * Returns how much material is at a location.
      *
-     * @param store    Location we are checking
-     * @param material Material that we are checking
-     * @return How many of material is stored at store
+     * @param store    Location we are checking.
+     * @param material Material that we are checking.
+     * @return How many of material is stored at store.
      */
-    public int getMaterialCount(@NotNull MaterialStore store, Material material)
+    public int getMaterialCount(@NotNull final MaterialStore store, final Material material)
     {
         if (locations.containsKey(store))
         {
@@ -74,9 +74,9 @@ public class Material
         return 0;
     }
 
-    void add(MaterialStore store, int quantity)
+    void add(final MaterialStore store, final int quantity)
     {
-        Integer count = locations.get(store);
+        final Integer count = locations.get(store);
         if (count == null)
         {
             locations.put(store, quantity);
@@ -87,9 +87,9 @@ public class Material
         }
     }
 
-    void remove(MaterialStore store, int quantity)
+    void remove(final MaterialStore store, final int quantity)
     {
-        Integer count = locations.get(store);
+        final Integer count = locations.get(store);
         if (count == null || count < quantity)
         {
             throw new QuantityNotFound("MaterialStore (Material)", getID(), count == null ? 0 : count, quantity);
@@ -109,7 +109,7 @@ public class Material
         return id;
     }
 
-    void remove(MaterialStore store)
+    void remove(final MaterialStore store)
     {
         locations.remove(store);
     }

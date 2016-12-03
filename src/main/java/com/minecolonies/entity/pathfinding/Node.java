@@ -4,6 +4,9 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Nodes used in pathfinding.
+ */
 public class Node implements Comparable<Node>
 {
     @NotNull
@@ -29,30 +32,30 @@ public class Node implements Comparable<Node>
     public boolean isSwimming = false;
 
     /**
-     * Create initial Node
+     * Create initial Node.
      *
-     * @param pos       coordinates of node
-     * @param heuristic heuristic estimate
+     * @param pos       coordinates of node.
+     * @param heuristic heuristic estimate.
      */
-    public Node(@NotNull BlockPos pos, double heuristic)
+    public Node(@NotNull final BlockPos pos, final double heuristic)
     {
         this(null, pos, 0, heuristic, heuristic);
     }
 
     /**
-     * Create a Node that inherits from a parent, and has a Cost and Heuristic estimate
+     * Create a Node that inherits from a parent, and has a Cost and Heuristic estimate.
      *
-     * @param parent    parent node arrives from
-     * @param pos       coordinate of node
-     * @param cost      node cost
-     * @param heuristic heuristic estimate
-     * @param score     node total score
+     * @param parent    parent node arrives from.
+     * @param pos       coordinate of node.
+     * @param cost      node cost.
+     * @param heuristic heuristic estimate.
+     * @param score     node total score.
      */
-    public Node(@Nullable Node parent, @NotNull BlockPos pos, double cost, double heuristic, double score)
+    public Node(@Nullable final Node parent, @NotNull final BlockPos pos, final double cost, final double heuristic, final double score)
     {
         this.parent = parent;
         this.pos = pos;
-        this.steps = parent != null ? (parent.steps + 1) : 0;
+        this.steps = parent == null ? 0 : (parent.steps + 1);
         this.cost = cost;
         this.heuristic = heuristic;
         this.score = score;
@@ -60,7 +63,7 @@ public class Node implements Comparable<Node>
     }
 
     @Override
-    public int compareTo(Node o)
+    public int compareTo(final Node o)
     {
         //  Comparing doubles and returning value as int; can't simply cast the result
         if (score < o.score)
@@ -94,14 +97,14 @@ public class Node implements Comparable<Node>
     }
 
     @Override
-    public boolean equals(@Nullable Object o)
+    public boolean equals(@Nullable final Object o)
     {
         if (o != null && o.getClass() == this.getClass())
         {
-            @Nullable Node other = (Node) o;
-            return pos.getX() == other.pos.getX() &&
-                     pos.getY() == other.pos.getY() &&
-                     pos.getZ() == other.pos.getZ();
+            @Nullable final Node other = (Node) o;
+            return pos.getX() == other.pos.getX()
+                    && pos.getY() == other.pos.getY()
+                    && pos.getZ() == other.pos.getZ();
         }
 
         return false;

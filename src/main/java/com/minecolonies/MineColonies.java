@@ -76,7 +76,7 @@ public class MineColonies
      * @param event the forge pre init event.
      */
     @Mod.EventHandler
-    public void preInit(@NotNull FMLPreInitializationEvent event)
+    public void preInit(@NotNull final FMLPreInitializationEvent event)
     {
         ConfigurationHandler.init(event.getSuggestedConfigurationFile());
         proxy.registerSounds();
@@ -91,7 +91,7 @@ public class MineColonies
      * @param event the forge init event.
      */
     @Mod.EventHandler
-    public void init(FMLInitializationEvent event)
+    public void init(final FMLInitializationEvent event)
     {
         initializeNetwork();
 
@@ -143,9 +143,13 @@ public class MineColonies
         getNetwork().registerMessage(WorkOrderChangeMessage.class, WorkOrderChangeMessage.class, 29, Side.SERVER);
         getNetwork().registerMessage(AssignFieldMessage.class, AssignFieldMessage.class, 30, Side.SERVER);
         getNetwork().registerMessage(AssignmentModeMessage.class, AssignmentModeMessage.class, 31, Side.SERVER);
+        getNetwork().registerMessage(GuardTaskMessage.class, GuardTaskMessage.class, 32, Side.SERVER);
+        getNetwork().registerMessage(GuardScepterMessage.class, GuardScepterMessage.class, 33, Side.SERVER);
+
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, 50, Side.CLIENT);
+        getNetwork().registerMessage(SaveScanMessage.class, SaveScanMessage.class, 51, Side.CLIENT);
     }
 
     public static SimpleNetworkWrapper getNetwork()
@@ -154,13 +158,13 @@ public class MineColonies
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event)
+    public void postInit(final FMLPostInitializationEvent event)
     {
         // Load unimportant resources
     }
 
     @Mod.EventHandler
-    public void serverLoad(FMLServerStartingEvent event)
+    public void serverLoad(final FMLServerStartingEvent event)
     {
         // register server commands
         event.registerServerCommand(new CommandEntryPoint());

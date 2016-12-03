@@ -107,7 +107,7 @@ public class ColonyPermissionEventHandler
      * @param event ExplosionEvent.Detonate
      */
     @SubscribeEvent
-    public void on(ExplosionEvent.Start event)
+    public void on(final ExplosionEvent.Start event)
     {
         if (colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
         {
@@ -166,7 +166,7 @@ public class ColonyPermissionEventHandler
      * @param event ItemTossEvent
      */
     @SubscribeEvent
-    public void on(ItemTossEvent event)
+    public void on(final ItemTossEvent event)
     {
         final EntityPlayer playerIn = event.getPlayer();
         if (colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))

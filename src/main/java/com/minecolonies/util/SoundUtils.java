@@ -59,7 +59,7 @@ public final class SoundUtils
      * @param worldIn the world to play the sound in.
      * @param citizen the citizen to play the sound for.
      */
-    public static void playRandomSound(@NotNull World worldIn, @NotNull EntityCitizen citizen)
+    public static void playRandomSound(@NotNull final World worldIn, @NotNull final EntityCitizen citizen)
     {
         if (1 >= rand.nextInt(CHANCE_TO_PLAY_SOUND))
         {
@@ -89,7 +89,7 @@ public final class SoundUtils
      * @param position the position to play the sound at.
      * @param event    sound to play.
      */
-    public static void playSoundAtCitizen(@NotNull World worldIn, @NotNull BlockPos position, @NotNull SoundEvent event)
+    public static void playSoundAtCitizen(@NotNull final World worldIn, @NotNull final BlockPos position, @NotNull final SoundEvent event)
     {
         worldIn.playSound((EntityPlayer) null,
           position,
@@ -107,7 +107,7 @@ public final class SoundUtils
      * @param event    sound to play.
      * @param chance   chance in percent.
      */
-    public static void playSoundAtCitizenWithChance(@NotNull World worldIn, @NotNull BlockPos position, @Nullable SoundEvent event, int chance)
+    public static void playSoundAtCitizenWithChance(@NotNull final World worldIn, @NotNull final BlockPos position, @Nullable final SoundEvent event, final int chance)
     {
         if (event == null)
         {

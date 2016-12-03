@@ -51,7 +51,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     private static final String CITIZEN_LIST = "unemployed";
 
     /**
-     * Id of the attributes label in the GUI..
+     * Id of the attributes label in the GUI.
      */
     private static final String ATTRIBUTES_LABEL = "attributes";
 
@@ -83,10 +83,10 @@ public class WindowHireWorker extends Window implements Button.Handler
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
      *
-     * @param c          the colony view
-     * @param buildingId the building position
+     * @param c          the colony view.
+     * @param buildingId the building position.
      */
-    public WindowHireWorker(ColonyView c, BlockPos buildingId)
+    public WindowHireWorker(final ColonyView c, final BlockPos buildingId)
     {
         super(Constants.MOD_ID + BUILDING_NAME_RESOURCE_SUFFIX);
         this.colony = c;
@@ -95,7 +95,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     }
 
     /**
-     * Clears and resets/updates all citizens
+     * Clears and resets/updates all citizens.
      */
     private void updateCitizens()
     {
@@ -134,20 +134,20 @@ public class WindowHireWorker extends Window implements Button.Handler
 
             /**
              * Inserts the elements into each row.
-             * @param index the index of the row/list element
-             * @param rowPane the parent Pane for the row, containing the elements to update
+             * @param index the index of the row/list element.
+             * @param rowPane the parent Pane for the row, containing the elements to update.
              */
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                CitizenDataView citizen = citizens.get(index);
+                final CitizenDataView citizen = citizens.get(index);
 
                 //Creates the list of attributes for each citizen
-                @NotNull String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()) + " " +
-                                               LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.getCharisma()) + " " +
-                                               LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.getDexterity()) + " " +
-                                               LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.getEndurance()) + " " +
-                                               LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.getIntelligence());
+                @NotNull final String attributes = LanguageHandler.format("com.minecolonies.gui.citizen.skills.strength", citizen.getStrength()) + " "
+                        + LanguageHandler.format("com.minecolonies.gui.citizen.skills.charisma", citizen.getCharisma()) + " "
+                        + LanguageHandler.format("com.minecolonies.gui.citizen.skills.dexterity", citizen.getDexterity()) + " "
+                        + LanguageHandler.format("com.minecolonies.gui.citizen.skills.endurance", citizen.getEndurance()) + " "
+                        + LanguageHandler.format("com.minecolonies.gui.citizen.skills.intelligence", citizen.getIntelligence());
 
                 rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
                 rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes);
@@ -171,7 +171,7 @@ public class WindowHireWorker extends Window implements Button.Handler
      * @param button the clicked button.
      */
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@NotNull final Button button)
     {
         if (button.getID().equals(BUTTON_DONE))
         {

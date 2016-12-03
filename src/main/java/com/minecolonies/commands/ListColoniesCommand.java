@@ -71,7 +71,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
             {
                 page = Integer.parseInt(args[0]);
             }
-            catch (NumberFormatException e)
+            catch (final NumberFormatException e)
             {
                 //ignore and keep page 1.
             }
@@ -86,7 +86,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
         final int prevPage = Math.max(0, page - 1);
         final int nextPage = Math.min(page + 1, (colonyCount / COLONIES_ON_PAGE) + halfPage);
 
-        List<Colony> coloniesPage;
+        final List<Colony> coloniesPage;
 
         if (pageStartIndex < 0 || pageStartIndex >= colonyCount)
         {

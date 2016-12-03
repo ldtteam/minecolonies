@@ -24,73 +24,73 @@ import org.jetbrains.annotations.Nullable;
 import static net.minecraft.util.EnumParticleTypes.*;
 
 /**
- * Creates a custom fishHook for the Fisherman to throw
- * This class manages the entity
+ * Creates a custom fishHook for the Fisherman to throw.
+ * This class manages the entity.
  */
 public final class EntityFishHook extends Entity
 {
     /**
-     * Number of seconds to wait before removing a stuck hook
+     * Number of seconds to wait before removing a stuck hook.
      */
     private static final int TTL = 360;
 
     /**
-     * Entity size to scale it down
+     * Entity size to scale it down.
      */
     private static final float ENTITY_SIZE = 0.25F;
 
     /**
-     * 180 degree used in trig. functions
+     * 180 degree used in trig. functions.
      */
     private static final double HALF_CIRCLE = 180.0;
 
     /**
-     * Used as a speed multiplicator for drifting movement
+     * Used as a speed multiplicator for drifting movement.
      */
     private static final double RANDOM_MOVEMENT_OFFSET = 0.007499999832361937;
 
     /**
-     * Limits initial horizontal movement speed
+     * Limits initial horizontal movement speed.
      */
     private static final double INITIAL_MOVEMENT_LIMITER = 0.16;
 
     /**
-     * The hook starts a bit lower
+     * The hook starts a bit lower.
      */
     private static final double SUNKEN_OFFSET = 0.10000000149011612;
 
     /**
-     * Multiplicator to get sum of edges
+     * Multiplicator to get sum of edges.
      */
     private static final double NUM_BOUNDING_BOX_EDGES = 4.0;
 
     /**
-     * factor to scale up to distance
+     * factor to scale up to distance.
      */
     private static final double DISTANCE_FACTOR = 64.0;
 
     /**
-     * Limits horizontal movement speed while bouncing
+     * Limits horizontal movement speed while bouncing.
      */
     private static final double BOUNCE_MOVEMENT_LIMITER = 0.2;
 
     /**
-     * Limits horizontal movement speed while in air
+     * Limits horizontal movement speed while in air.
      */
     private static final float AIR_MOVEMENT_LIMITER = 0.92F;
 
     /**
-     * Limits horizontal movement speed while on the ground
+     * Limits horizontal movement speed while on the ground.
      */
     private static final double GROUND_MOVEMENT_LIMITER = 0.5;
 
     /**
-     * Limits horizontal movement speed while in the water
+     * Limits horizontal movement speed while in the water.
      */
     private static final double WATER_MOVEMENT_LIMITER = 0.03999999910593033;
 
     /**
-     * Chance to slow down fishing while the sky is not visible
+     * Chance to slow down fishing while the sky is not visible.
      */
     private static final double NO_CLEAR_SKY_CHANCE = 0.5;
 
@@ -100,27 +100,27 @@ public final class EntityFishHook extends Entity
     private static final double INCREASE_RARENESS_MODIFIER = 20.0;
 
     /**
-     * The citizen who threw this rod
+     * The citizen who threw this rod.
      */
     private EntityCitizen citizen;
 
     /**
-     * The fishing speed enchantment level on the rod that threw this hook
+     * The fishing speed enchantment level on the rod that threw this hook.
      */
     private int fishingSpeedEnchantment;
 
     /**
-     * The fishing loot enchantment level on the rod that threw this hook
+     * The fishing loot enchantment level on the rod that threw this hook.
      */
     private int fishingLootEnchantment;
 
     /**
-     * If this hook is in the ground
+     * If this hook is in the ground.
      */
     private boolean inGround;
 
     /**
-     * A counter for at what position in the shaking movement the hook is
+     * A counter for at what position in the shaking movement the hook is.
      */
     private int    shake;
     private int    countdownNoFish;
@@ -135,17 +135,17 @@ public final class EntityFishHook extends Entity
     private long creationTime;
 
     /**
-     * When a fish is on the hook, this will be true
+     * When a fish is on the hook, this will be true.
      */
     private boolean isFishCaugth = false;
 
     /**
      * Constructor for throwing out a hook.
      *
-     * @param world   the world the hook lives in
-     * @param citizen the citizen throwing the hook
+     * @param world   the world the hook lives in.
+     * @param citizen the citizen throwing the hook.
      */
-    public EntityFishHook(World world, @NotNull EntityCitizen citizen)
+    public EntityFishHook(final World world, @NotNull final EntityCitizen citizen)
     {
         this(world);
         this.citizen = citizen;
@@ -158,7 +158,7 @@ public final class EntityFishHook extends Entity
         this.posY -= SUNKEN_OFFSET;
         this.posZ -= Math.sin(this.rotationYaw / HALF_CIRCLE * Math.PI) * INITIAL_MOVEMENT_LIMITER;
         this.setPosition(this.posX, this.posY, this.posZ);
-        double f = 0.4;
+        final double f = 0.4;
         this.motionX = -Math.sin(this.rotationYaw / HALF_CIRCLE * Math.PI) * Math.cos(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
         this.motionZ = Math.cos(this.rotationYaw / HALF_CIRCLE * Math.PI) * Math.cos(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
         this.motionY = -Math.sin(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
@@ -168,12 +168,12 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Lowest denominator constructor
-     * Used by other constructors to do general stuff
+     * Lowest denominator constructor.
+     * Used by other constructors to do general stuff.
      *
-     * @param world the world this entity lives in
+     * @param world the world this entity lives in.
      */
-    public EntityFishHook(World world)
+    public EntityFishHook(final World world)
     {
         super(world);
         this.setSize(ENTITY_SIZE, ENTITY_SIZE);
@@ -183,9 +183,9 @@ public final class EntityFishHook extends Entity
         fishingSpeedEnchantment = 0;
     }
 
-    private void setPosition(double x, double y, double z, double yaw, double pitch)
+    private void setPosition(final double x, final double y, final double z, final double yaw, final double pitch)
     {
-        double squareRootXYZ = MathHelper.sqrt_double(x * x + y * y + z * z);
+        final double squareRootXYZ = MathHelper.sqrt_double(x * x + y * y + z * z);
         double newX = x / squareRootXYZ;
         double newY = y / squareRootXYZ;
         double newZ = z / squareRootXYZ;
@@ -205,7 +205,7 @@ public final class EntityFishHook extends Entity
     /**
      * Returns the citizen throwing the hook.
      *
-     * @return a citizen
+     * @return a citizen.
      */
     public EntityCitizen getCitizen()
     {
@@ -213,7 +213,7 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Minecraft may call this method
+     * Minecraft may call this method.
      */
     @Override
     protected void entityInit()
@@ -225,7 +225,7 @@ public final class EntityFishHook extends Entity
     }
 
     @Override
-    public boolean equals(@Nullable Object o)
+    public boolean equals(@Nullable final Object o)
     {
         return !(o == null || getClass() != o.getClass() || !super.equals(o));
     }
@@ -256,15 +256,15 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge
-     * length * 64 * renderDistanceWeight Args: distance
+     * Checks if the entity is in range to render by using the past in distance and comparing it to its average edge.
+     * length * 64 * renderDistanceWeight Args: distance.
      *
-     * @param range the real range
-     * @return true or false
+     * @param range the real range.
+     * @return true or false.
      */
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean isInRangeToRenderDist(double range)
+    public boolean isInRangeToRenderDist(final double range)
     {
         double maxLength = this.getEntityBoundingBox().getAverageEdgeLength() * NUM_BOUNDING_BOX_EDGES;
         maxLength *= DISTANCE_FACTOR;
@@ -275,7 +275,7 @@ public final class EntityFishHook extends Entity
      * If a hook gets loaded, kill it immediately.
      */
     @Override
-    public void readEntityFromNBT(NBTTagCompound unused)
+    public void readEntityFromNBT(final NBTTagCompound unused)
     {
         this.setDead();
     }
@@ -285,7 +285,7 @@ public final class EntityFishHook extends Entity
      * A hook does not need to be saved.
      */
     @Override
-    public void writeEntityToNBT(NBTTagCompound unused)
+    public void writeEntityToNBT(final NBTTagCompound unused)
     {
         //We don't save this
     }
@@ -299,7 +299,7 @@ public final class EntityFishHook extends Entity
      */
     @Override
     @SideOnly(Side.CLIENT)
-    public void setVelocity(double vectorX, double vectorY, double vectorZ)
+    public void setVelocity(final double vectorX, final double vectorY, final double vectorZ)
     {
         this.motionX = vectorX;
         this.motionY = vectorY;
@@ -307,7 +307,7 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Check if a fishhook is there for too long
+     * Check if a fishhook is there for too long.
      * and became bugged.
      * After 360 seconds remove the hook.
      *
@@ -346,7 +346,7 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Main update method thingie
+     * Main update method thingy.
      * hopefully I'm able to reduce it somewhat...
      */
     private void moveSomeStuff()
@@ -359,16 +359,16 @@ public final class EntityFishHook extends Entity
             movementLimiter = GROUND_MOVEMENT_LIMITER;
         }
 
-        byte numSteps = 5;
+        final byte numSteps = 5;
         double waterDensity = 0.0;
 
         //Check how much water is around the hook
         for (int j = 0; j < numSteps; ++j)
         {
-            double d3 = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * j / numSteps;
-            double d4 = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * (j + 1) / numSteps;
+            final double d3 = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * j / numSteps;
+            final double d4 = this.getEntityBoundingBox().minY + (this.getEntityBoundingBox().maxY - this.getEntityBoundingBox().minY) * (j + 1) / numSteps;
 
-            @NotNull AxisAlignedBB axisAlignedBB1 = new AxisAlignedBB(
+            @NotNull final AxisAlignedBB axisAlignedBB1 = new AxisAlignedBB(
                                                                        this.getEntityBoundingBox().minX,
                                                                        d3,
                                                                        this.getEntityBoundingBox().minZ,
@@ -385,7 +385,7 @@ public final class EntityFishHook extends Entity
 
         checkIfFishBites(waterDensity);
 
-        double currentDistance = waterDensity * 2.0D - 1.0;
+        final double currentDistance = waterDensity * 2.0D - 1.0;
         this.motionY += WATER_MOVEMENT_LIMITER * currentDistance;
 
         if (waterDensity > 0.0)
@@ -401,13 +401,13 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Update the fishing hooks motion
+     * Update the fishing hooks motion.
      * and its rotation.
      */
     private void updateMotionAndRotation()
     {
         this.moveEntity(this.motionX, this.motionY, this.motionZ);
-        double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
+        final double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
         this.rotationYaw = (float) (Math.atan2(this.motionY, this.motionZ) * HALF_CIRCLE / Math.PI);
         this.rotationPitch = (float) (Math.atan2(this.motionY, motion) * HALF_CIRCLE / Math.PI);
         while ((double) this.rotationPitch - (double) this.prevRotationPitch < -HALF_CIRCLE)
@@ -435,15 +435,15 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Server side method to do
-     * some animation and movement stuff
-     * when the hook swims in water
+     * Server side method to do.
+     * some animation and movement stuff.
+     * when the hook swims in water.
      * <p>
-     * will set isFishCaught if a fish bites
+     * will set isFishCaught if a fish bites.
      *
-     * @param waterDensity the amount of water around
+     * @param waterDensity the amount of water around.
      */
-    private void checkIfFishBites(double waterDensity)
+    private void checkIfFishBites(final double waterDensity)
     {
         if (!this.worldObj.isRemote && waterDensity > 0.0)
         {
@@ -461,7 +461,7 @@ public final class EntityFishHook extends Entity
                 return;
             }
 
-            @NotNull WorldServer worldServer = (WorldServer) this.worldObj;
+            @NotNull final WorldServer worldServer = (WorldServer) this.worldObj;
 
             if (this.countdownFishNear > 0)
             {
@@ -498,7 +498,7 @@ public final class EntityFishHook extends Entity
         }
     }
 
-    private void renderBubble(int fishingProgressStep, @NotNull WorldServer worldServer)
+    private void renderBubble(final int fishingProgressStep, @NotNull final WorldServer worldServer)
     {
         this.countdownFishNear -= fishingProgressStep;
 
@@ -529,7 +529,7 @@ public final class EntityFishHook extends Entity
         }
     }
 
-    private void renderFishBiteOrSwim(@NotNull WorldServer worldServer)
+    private void renderFishBiteOrSwim(@NotNull final WorldServer worldServer)
     {
         if (this.countdownFishBites <= 0)
         {
@@ -544,18 +544,18 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Render little splashes around the fishing hook
-     * simulating fish movement
+     * Render little splashes around the fishing hook.
+     * simulating fish movement.
      *
-     * @param worldServer the server side world
+     * @param worldServer the server side world.
      */
-    private void renderLittleSplash(@NotNull WorldServer worldServer)
+    private void renderLittleSplash(@NotNull final WorldServer worldServer)
     {
-        double sinYPosition = (double) MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292D;
-        double cosYPosition = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
-        double bubbleX = this.posX + (Math.sin(sinYPosition) * cosYPosition * 0.1);
-        double increasedYPosition = Math.floor(this.getEntityBoundingBox().minY) + 1.0;
-        double bubbleZ = this.posZ + (Math.cos(sinYPosition) * cosYPosition * 0.1);
+        final double sinYPosition = (double) MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292D;
+        final double cosYPosition = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
+        final double bubbleX = this.posX + (Math.sin(sinYPosition) * cosYPosition * 0.1);
+        final double increasedYPosition = Math.floor(this.getEntityBoundingBox().minY) + 1.0;
+        final double bubbleZ = this.posZ + (Math.cos(sinYPosition) * cosYPosition * 0.1);
         worldServer.spawnParticle(WATER_SPLASH,
           bubbleX,
           increasedYPosition,
@@ -571,15 +571,15 @@ public final class EntityFishHook extends Entity
      * Show bubbles towards the hook.
      * Let the hook sink in a bit.
      * Play a sound to signal to the player,
-     * that a fish bit
+     * that a fish bit.
      *
-     * @param worldServer the server side world
+     * @param worldServer the server side world.
      */
     private void showFishBiteAnimation(@NotNull final WorldServer worldServer)
     {
         this.motionY -= 0.20000000298023224D;
         this.playSound(SoundEvents.ENTITY_BOBBER_SPLASH, ENTITY_SIZE, (float) (1.0D + this.rand.nextGaussian() * 0.4D));
-        double bubbleY = Math.floor(this.getEntityBoundingBox().minY);
+        final double bubbleY = Math.floor(this.getEntityBoundingBox().minY);
         worldServer.spawnParticle(WATER_BUBBLE,
           this.posX,
           bubbleY + 1.0,
@@ -603,28 +603,28 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Show bubbles moving towards the hook
-     * make it look like a fish will bite soon
+     * Show bubbles moving towards the hook.
+     * make it look like a fish will bite soon.
      *
-     * @param worldServer the server side world
+     * @param worldServer the server side world.
      */
-    private void showFishSwimmingTowardsHookAnimation(@NotNull WorldServer worldServer)
+    private void showFishSwimmingTowardsHookAnimation(@NotNull final WorldServer worldServer)
     {
         this.relativeRotation = this.relativeRotation + this.rand.nextGaussian() * NUM_BOUNDING_BOX_EDGES;
-        double bubbleY = this.relativeRotation * 0.017453292;
-        double sinYPosition = Math.sin(bubbleY);
-        double cosYPosition = Math.cos(bubbleY);
-        double bubbleX = this.posX + (sinYPosition * this.countdownFishBites * 0.1);
-        double increasedYPosition = Math.floor(this.getEntityBoundingBox().minY) + 1.0;
-        double bubbleZ = this.posZ + (cosYPosition * this.countdownFishBites * 0.1);
+        final double bubbleY = this.relativeRotation * 0.017453292;
+        final double sinYPosition = Math.sin(bubbleY);
+        final double cosYPosition = Math.cos(bubbleY);
+        final double bubbleX = this.posX + (sinYPosition * this.countdownFishBites * 0.1);
+        final double increasedYPosition = Math.floor(this.getEntityBoundingBox().minY) + 1.0;
+        final double bubbleZ = this.posZ + (cosYPosition * this.countdownFishBites * 0.1);
 
         if (this.rand.nextDouble() < 0.15)
         {
             worldServer.spawnParticle(WATER_BUBBLE, bubbleX, increasedYPosition - SUNKEN_OFFSET, bubbleZ, 1, sinYPosition, 0.1D, cosYPosition, 0.0);
         }
 
-        double f3 = sinYPosition * 0.04;
-        double f4 = cosYPosition * 0.04;
+        final double f3 = sinYPosition * 0.04;
+        final double f4 = cosYPosition * 0.04;
         worldServer.spawnParticle(WATER_WAKE, bubbleX, increasedYPosition, bubbleZ, 0, f4, 0.01, -f3, 1.0);
         worldServer.spawnParticle(WATER_WAKE, bubbleX, increasedYPosition, bubbleZ, 0, -f4, 0.01, f3, 1.0);
     }
@@ -633,7 +633,7 @@ public final class EntityFishHook extends Entity
      * Returns a damage value by how much the fishingRod should be damaged.
      * Also spawns loot and exp and destroys the hook.
      *
-     * @param citizen the fisherman fishing
+     * @param citizen the fisherman fishing.
      * @return the number of damage points to be deducted.
      */
     public int getDamage(@NotNull final EntityCitizen citizen)
@@ -662,22 +662,22 @@ public final class EntityFishHook extends Entity
     }
 
     /**
-     * Spawns a random loot from the loot table
+     * Spawns a random loot from the loot table.
      * and some exp orbs.
      * Should be called when retrieving a hook.
      * todo: Perhaps streamline this and directly add the items?
      *
-     * @param citizen the fisherman getting the loot
+     * @param citizen the fisherman getting the loot.
      */
     private void spawnLootAndExp(@NotNull final EntityCitizen citizen)
     {
-        double citizenPosX = citizen.posX;
-        double citizenPosY = citizen.posY;
-        double citizenPosZ = citizen.posZ;
-        @NotNull EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot(citizen));
-        double distanceX = citizenPosX - this.posX;
-        double distanceY = citizenPosY - this.posY;
-        double distanceZ = citizenPosZ - this.posZ;
+        final double citizenPosX = citizen.posX;
+        final double citizenPosY = citizen.posY;
+        final double citizenPosZ = citizen.posZ;
+        @NotNull final EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot(citizen));
+        final double distanceX = citizenPosX - this.posX;
+        final double distanceY = citizenPosY - this.posY;
+        final double distanceZ = citizenPosZ - this.posZ;
 
         entityitem.motionX = distanceX * 0.1;
         entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
@@ -693,11 +693,11 @@ public final class EntityFishHook extends Entity
     /**
      * Determines which loot table should be used.
      * <p>
-     * The selection is somewhat random and depends on enchantments
+     * The selection is somewhat random and depends on enchantments.
      * and the level of the fisherman hut.
      *
-     * @param citizen the fisherman getting the loot
-     * @return an ItemStack randomly from the loot table
+     * @param citizen the fisherman getting the loot.
+     * @return an ItemStack randomly from the loot table.
      */
     private ItemStack getFishingLoot(final EntityCitizen citizen)
     {
@@ -708,14 +708,14 @@ public final class EntityFishHook extends Entity
         //clamp_float gives the values an upper limit
         speedBonus = MathHelper.clamp_float((float) speedBonus, 0.0F, 1.0F);
         lootBonus = MathHelper.clamp_float((float) lootBonus, 0.0F, 1.0F);
-        int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
+        final int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
 
         if (random < speedBonus || buildingLevel == 1)
         {
-            LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer) this.worldObj);
-            for (ItemStack itemstack : this.worldObj.getLootTableManager()
-                                         .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING)
-                                         .generateLootForPools(this.rand, lootcontext$builder.build()))
+            final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
+            for (final ItemStack itemstack : this.worldObj.getLootTableManager()
+                                         .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_FISH)
+                                         .generateLootForPools(this.rand, lootContextBuilder.build()))
             {
                 return itemstack;
             }
@@ -726,20 +726,20 @@ public final class EntityFishHook extends Entity
 
             if (random < lootBonus || buildingLevel == 2)
             {
-                LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer) this.worldObj);
-                for (ItemStack itemstack : this.worldObj.getLootTableManager()
+                final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
+                for (final ItemStack itemstack : this.worldObj.getLootTableManager()
                                              .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_JUNK)
-                                             .generateLootForPools(this.rand, lootcontext$builder.build()))
+                                             .generateLootForPools(this.rand, lootContextBuilder.build()))
                 {
                     return itemstack;
                 }
             }
             else
             {
-                LootContext.Builder lootcontext$builder = new LootContext.Builder((WorldServer) this.worldObj);
-                for (ItemStack itemstack : this.worldObj.getLootTableManager()
+                final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
+                for (final ItemStack itemstack : this.worldObj.getLootTableManager()
                                              .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_TREASURE)
-                                             .generateLootForPools(this.rand, lootcontext$builder.build()))
+                                             .generateLootForPools(this.rand, lootContextBuilder.build()))
                 {
                     return itemstack;
                 }

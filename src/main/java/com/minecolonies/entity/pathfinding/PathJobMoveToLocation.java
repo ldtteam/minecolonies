@@ -30,7 +30,7 @@ public class PathJobMoveToLocation extends AbstractPathJob
      * @param end   target location.
      * @param range max search range.
      */
-    public PathJobMoveToLocation(World world, @NotNull BlockPos start, @NotNull BlockPos end, int range)
+    public PathJobMoveToLocation(final World world, @NotNull final BlockPos start, @NotNull final BlockPos end, final int range)
     {
         super(world, start, end, range);
 
@@ -38,9 +38,9 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     /**
-     * Perform the search
+     * Perform the search.
      *
-     * @return Path of a path to the given location, a best-effort, or null
+     * @return Path of a path to the given location, a best-effort, or null.
      */
     @Nullable
     @Override
@@ -62,31 +62,41 @@ public class PathJobMoveToLocation extends AbstractPathJob
     }
 
     @Override
-    protected double computeHeuristic(@NotNull BlockPos pos)
+    protected double computeHeuristic(@NotNull final BlockPos pos)
     {
-        int dx = pos.getX() - destination.getX();
-        int dy = pos.getY() - destination.getY();
-        int dz = pos.getZ() - destination.getZ();
+        final int dx = pos.getX() - destination.getX();
+        final int dy = pos.getY() - destination.getY();
+        final int dz = pos.getZ() - destination.getZ();
 
         //  Manhattan Distance with a 1/1000th tie-breaker
         return (Math.abs(dx) + Math.abs(dy) + Math.abs(dz)) * TIE_BREAKER;
     }
 
+    /**
+     * Checks if the target has been reached.
+     * @param n Node to test.
+     * @return true if has been reached.
+     */
     @Override
-    protected boolean isAtDestination(@NotNull Node n)
+    protected boolean isAtDestination(@NotNull final Node n)
     {
         if (destinationSlack <= DESTINATION_SLACK_NONE)
         {
-            return n.pos.getX() == destination.getX() &&
-                     n.pos.getY() == destination.getY() &&
-                     n.pos.getZ() == destination.getZ();
+            return n.pos.getX() == destination.getX()
+                    && n.pos.getY() == destination.getY()
+                    && n.pos.getZ() == destination.getZ();
         }
 
         return destination.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ()) <= destinationSlack;
     }
 
+    /**
+     * Calculate the distance to the target.
+     * @param n Node to test.
+     * @return double of the distance.
+     */
     @Override
-    protected double getNodeResultScore(@NotNull Node n)
+    protected double getNodeResultScore(@NotNull final Node n)
     {
         //  For Result Score higher is better - return negative distance so closer to 0 = better
         return -destination.distanceSq(n.pos.getX(), n.pos.getY(), n.pos.getZ());

@@ -68,7 +68,7 @@ public final class CitizenSounds
      * @param position the position to play the sound at.
      * @param isFemale the gender.
      */
-    public static void playCitizenSounds(World worldIn, BlockPos position, boolean isFemale)
+    public static void playCitizenSounds(final World worldIn, final BlockPos position, final boolean isFemale)
     {
         if (isFemale)
         {

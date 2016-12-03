@@ -57,7 +57,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
      *
      * @param citizen {@link CitizenDataView}
      */
-    public OpenInventoryMessage(@NotNull CitizenDataView citizen)
+    public OpenInventoryMessage(@NotNull final CitizenDataView citizen)
     {
         super();
         inventoryType = InventoryType.INVENTORY_CITIZEN;
@@ -66,11 +66,11 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     /**
-     * Creates an open inventory message for a building
+     * Creates an open inventory message for a building.
      *
      * @param building {@link AbstractBuilding.View}
      */
-    public OpenInventoryMessage(@NotNull AbstractBuilding.View building)
+    public OpenInventoryMessage(@NotNull final AbstractBuilding.View building)
     {
         super();
         inventoryType = InventoryType.INVENTORY_CHEST;
@@ -79,12 +79,12 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     /**
-     * Creates an open inventory message for a field
+     * Creates an open inventory message for a field.
      *
      * @param field    {@link AbstractBuilding.View}
      * @param colonyId the colony associated with the inventory.
      */
-    public OpenInventoryMessage(BlockPos field, int colonyId)
+    public OpenInventoryMessage(final BlockPos field, final int colonyId)
     {
         super();
         inventoryType = InventoryType.INVENTORY_FIELD;
@@ -94,7 +94,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         inventoryType = InventoryType.values()[buf.readInt()];
         name = ByteBufUtils.readUTF8String(buf);
@@ -113,7 +113,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(inventoryType.ordinal());
         ByteBufUtils.writeUTF8String(buf, name);

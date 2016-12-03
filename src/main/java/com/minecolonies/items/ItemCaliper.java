@@ -40,17 +40,26 @@ public class ItemCaliper extends AbstractItemMinecolonies
         maxStackSize = 1;
     }
 
-    private static EnumActionResult handleZEqual(@NotNull EntityPlayer playerIn, int a, int a2)
+    private static EnumActionResult handleZEqual(@NotNull final EntityPlayer playerIn, final int a, final int a2)
     {
-        int distance1 = Math.abs(a) + 1;
-        int distance2 = Math.abs(a2) + 1;
+        final int distance1 = Math.abs(a) + 1;
+        final int distance2 = Math.abs(a2) + 1;
 
         LanguageHandler.sendPlayerLocalizedMessage(playerIn, ITEM_CALIPER_MESSAGE_SQUARE, distance1, distance2);
         return EnumActionResult.SUCCESS;
     }
 
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(
+                                       final ItemStack stack,
+                                       final EntityPlayer playerIn,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
     {
         // if client world, do nothing
         if (worldIn.isRemote)
@@ -82,7 +91,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return handlePlayerMessage(playerIn, pos);
     }
 
-    private EnumActionResult handlePlayerMessage(@NotNull EntityPlayer playerIn, @NotNull BlockPos pos)
+    private EnumActionResult handlePlayerMessage(@NotNull final EntityPlayer playerIn, @NotNull final BlockPos pos)
     {
         if (startPosition.getX() == pos.getX())
         {
@@ -97,30 +106,30 @@ public class ItemCaliper extends AbstractItemMinecolonies
             return handleZEqual(playerIn, pos.getX() - startPosition.getX(), pos.getY() - startPosition.getY());
         }
 
-        int distance1 = Math.abs(pos.getX() - startPosition.getX()) + 1;
-        int distance2 = Math.abs(pos.getY() - startPosition.getY()) + 1;
-        int distance3 = Math.abs(pos.getZ() - startPosition.getZ()) + 1;
+        final int distance1 = Math.abs(pos.getX() - startPosition.getX()) + 1;
+        final int distance2 = Math.abs(pos.getY() - startPosition.getY()) + 1;
+        final int distance3 = Math.abs(pos.getZ() - startPosition.getZ()) + 1;
 
         LanguageHandler.sendPlayerLocalizedMessage(playerIn, ITEM_CALIPER_MESSAGE_CUBE, distance1, distance2, distance3);
         return EnumActionResult.SUCCESS;
     }
 
-    private EnumActionResult handleYEqual(@NotNull EntityPlayer playerIn, @NotNull BlockPos pos, int a, int a2)
+    private EnumActionResult handleYEqual(@NotNull final EntityPlayer playerIn, @NotNull final BlockPos pos, final int a, final int a2)
     {
         if (startPosition.getZ() == pos.getZ())
         {
-            int distance = Math.abs(a) + 1;
+            final int distance = Math.abs(a) + 1;
             LanguageHandler.sendPlayerLocalizedMessage(playerIn, ITEM_CALIPER_MESSAGE_LINE, distance);
             return EnumActionResult.SUCCESS;
         }
         return handleZEqual(playerIn, a, a2);
     }
 
-    private EnumActionResult handleXEqual(@NotNull EntityPlayer playerIn, @NotNull BlockPos pos)
+    private EnumActionResult handleXEqual(@NotNull final EntityPlayer playerIn, @NotNull final BlockPos pos)
     {
         if (startPosition.getY() == pos.getY())
         {
-            int distance = Math.abs(pos.getZ() - startPosition.getZ()) + 1;
+            final int distance = Math.abs(pos.getZ() - startPosition.getZ()) + 1;
             LanguageHandler.sendPlayerLocalizedMessage(playerIn, ITEM_CALIPER_MESSAGE_LINE, distance);
             return EnumActionResult.SUCCESS;
         }

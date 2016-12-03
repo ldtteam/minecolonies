@@ -43,10 +43,10 @@ public class Image extends Pane
      *
      * @param params PaneParams loaded from the xml.
      */
-    public Image(PaneParams params)
+    public Image(final PaneParams params)
     {
         super(params);
-        String source = params.getStringAttribute("source", null);
+        final String source = params.getStringAttribute("source", null);
         if (source != null)
         {
             resourceLocation = new ResourceLocation(source);
@@ -70,7 +70,7 @@ public class Image extends Pane
 
     private void loadMapDimensions()
     {
-        Tuple<Integer, Integer> dimensions = getImageDimensions(resourceLocation);
+        final Tuple<Integer, Integer> dimensions = getImageDimensions(resourceLocation);
         mapWidth = dimensions.getFirst();
         mapHeight = dimensions.getSecond();
     }
@@ -81,22 +81,22 @@ public class Image extends Pane
      * @param resourceLocation The {@link ResourceLocation} pointing to the image.
      * @return Width and height.
      */
-    public static Tuple<Integer, Integer> getImageDimensions(ResourceLocation resourceLocation)
+    public static Tuple<Integer, Integer> getImageDimensions(final ResourceLocation resourceLocation)
     {
         int width = 0;
         int height = 0;
 
-        Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
+        final Iterator<ImageReader> it = ImageIO.getImageReadersBySuffix("png");
         if (it.hasNext())
         {
-            ImageReader reader = it.next();
+            final ImageReader reader = it.next();
             try (ImageInputStream stream = ImageIO.createImageInputStream(Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream()))
             {
                 reader.setInput(stream);
                 width = reader.getWidth(reader.getMinIndex());
                 height = reader.getHeight(reader.getMinIndex());
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 getLogger().warn(e);
             }
@@ -114,7 +114,7 @@ public class Image extends Pane
      *
      * @param source String path.
      */
-    public void setImage(String source)
+    public void setImage(final String source)
     {
         setImage(source, 0, 0, 0, 0);
     }
@@ -128,7 +128,7 @@ public class Image extends Pane
      * @param w       image width.
      * @param h       image height.
      */
-    public void setImage(String source, int offsetX, int offsetY, int w, int h)
+    public void setImage(final String source, final int offsetX, final int offsetY, final int w, final int h)
     {
         setImage((source != null) ? new ResourceLocation(source) : null, offsetX, offsetY, w, h);
     }
@@ -142,7 +142,7 @@ public class Image extends Pane
      * @param w       image width.
      * @param h       image height.
      */
-    public void setImage(ResourceLocation loc, int offsetX, int offsetY, int w, int h)
+    public void setImage(final ResourceLocation loc, final int offsetX, final int offsetY, final int w, final int h)
     {
         resourceLocation = loc;
         imageOffsetX = offsetX;
@@ -158,7 +158,7 @@ public class Image extends Pane
      *
      * @param loc ResourceLocation for the image.
      */
-    public void setImage(ResourceLocation loc)
+    public void setImage(final ResourceLocation loc)
     {
         setImage(loc, 0, 0, 0, 0);
     }
@@ -170,7 +170,7 @@ public class Image extends Pane
      * @param my Mouse y (relative to parent)
      */
     @Override
-    protected void drawSelf(int mx, int my)
+    protected void drawSelf(final int mx, final int my)
     {
         // Some other texture must need to be ticked, I tried ticking the current one.
         // This fixes the problem, even if you put it after the draw call. So I guess I'll keep it.

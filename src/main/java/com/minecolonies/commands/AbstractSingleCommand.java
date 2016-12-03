@@ -16,7 +16,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      *
      * @param parents an array of all the parents.
      */
-    public AbstractSingleCommand(@NotNull String... parents)
+    public AbstractSingleCommand(@NotNull final String... parents)
     {
         this.parents = parents;
     }
@@ -29,7 +29,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param def  the default value.
      * @return the argument.
      */
-    public static int getIthArgument(String[] args, int i, int def)
+    public static int getIthArgument(final String[] args, final int i, final int def)
     {
         if (args.length <= i)
         {
@@ -40,7 +40,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         {
             return Integer.parseInt(args[i]);
         }
-        catch (NumberFormatException e)
+        catch (final NumberFormatException e)
         {
             return def;
         }

@@ -18,21 +18,21 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      */
     private static final int TIME_TO_CLOSE_DOOR = 20;
     /**
-     * Checks if the gate should be closed
+     * Checks if the gate should be closed.
      */
-    private boolean closeDoor;
+    private final boolean closeDoor;
     /**
-     * Ticks until the gate should be closed
+     * Ticks until the gate should be closed.
      */
-    private int     closeDoorTemporisation;
+    private int closeDoorTemporisation;
 
     /**
-     * Constructor called to register the AI class with an entity
+     * Constructor called to register the AI class with an entity.
      *
-     * @param entityLivingIn the registering entity
-     * @param shouldClose    should the entity close the gate?
+     * @param entityLivingIn the registering entity.
+     * @param shouldClose    should the entity close the gate.
      */
-    public EntityAIOpenFenceGate(@NotNull EntityLiving entityLivingIn, boolean shouldClose)
+    public EntityAIOpenFenceGate(@NotNull final EntityLiving entityLivingIn, final boolean shouldClose)
     {
         super(entityLivingIn);
         this.theEntity = entityLivingIn;
@@ -40,9 +40,9 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     }
 
     /**
-     * Should the AI continue to execute?
+     * Should the AI continue to execute.
      *
-     * @return true or false
+     * @return true or false.
      */
     @Override
     public boolean continueExecuting()
@@ -51,7 +51,8 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     }
 
     /**
-     * Start the execution
+     * Start the execution.
+     * Initiate time frame until closing.
      */
     @Override
     public void startExecuting()
@@ -61,13 +62,14 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     }
 
     /**
-     * Toggles the door(Opens or closes)
+     * Toggles the door(Opens or closes).
      *
-     * @param open if open or close
+     * @param open if open or close.
      */
-    private void toggleDoor(boolean open)
+    private void toggleDoor(final boolean open)
     {
-        IBlockState iblockstate = this.theEntity.worldObj.getBlockState(this.gatePosition);
+        final IBlockState iblockstate = this.theEntity.worldObj.getBlockState(this.gatePosition);
+        //If the block is a gate block and the fence gate state does not respond to the input open toggle it.
         if (iblockstate.getBlock() == this.gateBlock && (iblockstate.getValue(BlockFenceGate.OPEN)) != open)
         {
             this.theEntity.worldObj.setBlockState(this.gatePosition, iblockstate.withProperty(BlockFenceGate.OPEN, open), 2);
@@ -78,6 +80,8 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
 
     /**
      * Updates the task.
+     * Decrease the time the door is open already.
+     * Door has to stay open enough to let the worker go through it.
      */
     @Override
     public void updateTask()
@@ -87,7 +91,8 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
     }
 
     /**
-     * Reset the action
+     * Reset the action.
+     * Close the door.
      */
     @Override
     public void resetTask()

@@ -37,7 +37,7 @@ public final class ServerUtils
      * @return the Player
      */
     @Nullable
-    public static EntityPlayer getPlayerFromUUID(@NotNull World world, @NotNull UUID id)
+    public static EntityPlayer getPlayerFromUUID(@NotNull final World world, @NotNull final UUID id)
     {
         for (int i = 0; i < world.playerEntities.size(); ++i)
         {
@@ -57,7 +57,7 @@ public final class ServerUtils
      * @return list of EntityPlayers
      */
     @NotNull
-    public static List<EntityPlayer> getPlayersFromUUID(@NotNull World world, @NotNull Collection<UUID> ids)
+    public static List<EntityPlayer> getPlayersFromUUID(@NotNull final World world, @NotNull final Collection<UUID> ids)
     {
         @NotNull final List<EntityPlayer> players = new ArrayList<>();
 
@@ -91,7 +91,7 @@ public final class ServerUtils
      * @return A list of {@link EntityPlayer}s
      */
     @NotNull
-    public static List<EntityPlayer> getPlayersFromPermPlayer(@NotNull List<Permissions.Player> players, @NotNull World world)
+    public static List<EntityPlayer> getPlayersFromPermPlayer(@NotNull final List<Permissions.Player> players, @NotNull final World world)
     {
         @NotNull final List<EntityPlayer> playerList = new ArrayList<>();
 
@@ -114,7 +114,7 @@ public final class ServerUtils
      * @return The {@link EntityPlayer} reference.
      */
     @Nullable
-    public static EntityPlayer getPlayerFromPermPlayer(@NotNull Permissions.Player player, @NotNull World world)
+    public static EntityPlayer getPlayerFromPermPlayer(@NotNull final Permissions.Player player, @NotNull final World world)
     {
         return ServerUtils.getPlayerFromUUID(player.getID(), world);
     }
@@ -128,7 +128,7 @@ public final class ServerUtils
      * @return The player the player if found or null
      */
     @Nullable
-    public static EntityPlayer getPlayerFromUUID(@Nullable UUID uuid, @NotNull World world)
+    public static EntityPlayer getPlayerFromUUID(@Nullable final UUID uuid, @NotNull final World world)
     {
         if (uuid == null)
         {

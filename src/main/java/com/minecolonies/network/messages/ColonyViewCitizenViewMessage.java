@@ -20,7 +20,13 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     private int     citizenId;
     private ByteBuf citizenBuffer;
 
-    public ColonyViewCitizenViewMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ColonyViewCitizenViewMessage()
+    {
+        super();
+    }
 
     /**
      * Updates a {@link com.minecolonies.colony.CitizenDataView} of the citizens.
@@ -28,7 +34,7 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
      * @param colony  Colony of the citizen
      * @param citizen Citizen data of the citizen to update view
      */
-    public ColonyViewCitizenViewMessage(@NotNull Colony colony, @NotNull CitizenData citizen)
+    public ColonyViewCitizenViewMessage(@NotNull final Colony colony, @NotNull final CitizenData citizen)
     {
         this.colonyId = colony.getID();
         this.citizenId = citizen.getId();
@@ -37,7 +43,7 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
@@ -46,7 +52,7 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
@@ -55,7 +61,7 @@ public class ColonyViewCitizenViewMessage implements IMessage, IMessageHandler<C
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull ColonyViewCitizenViewMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull final ColonyViewCitizenViewMessage message, final MessageContext ctx)
     {
         return ColonyManager.handleColonyViewCitizensMessage(message.colonyId, message.citizenId, message.citizenBuffer);
     }

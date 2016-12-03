@@ -18,7 +18,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -88,6 +87,11 @@ public class Field extends Container
     private static final String TAG_OWNER = "owner";
 
     /**
+     * Tag to store if initialized or not.
+     */
+     private static final String TAG_INITIALIZED = "initialized";
+
+    /**
      * Amount of rows in the player inventory.
      */
     private static final int PLAYER_INVENTORY_ROWS = 3;
@@ -141,7 +145,12 @@ public class Field extends Container
     /**
      * Checks if the field needsWork (Hoeig, Seedings, Farming etc).
      */
-    private boolean needsWork = false;
+    private boolean needsWork = true;
+
+    /**
+     * Is the field new or recently reseeded?
+     */
+    private boolean initialized = false;
 
     /**
      * Has the field been planted?
@@ -184,7 +193,7 @@ public class Field extends Container
      *
      * @param colony the colony the field belongs to.
      */
-    private Field(Colony colony)
+    private Field(final Colony colony)
     {
         super();
         this.colony = colony;
@@ -198,7 +207,7 @@ public class Field extends Container
      * @param world               the world.
      * @param location            the position of the field.
      */
-    public Field(@NotNull ScarecrowTileEntity scarecrowTileEntity, InventoryPlayer playerInventory, @NotNull World world, @NotNull BlockPos location)
+    public Field(@NotNull final ScarecrowTileEntity scarecrowTileEntity, final InventoryPlayer playerInventory, @NotNull final World world, @NotNull final BlockPos location)
     {
         super();
         this.colony = ColonyManager.getColony(world, location);
@@ -241,7 +250,7 @@ public class Field extends Container
 
     @Nullable
     @Override
-    public ItemStack transferStackInSlot(@NotNull EntityPlayer playerIn, int slotIndex)
+    public ItemStack transferStackInSlot(@NotNull final EntityPlayer playerIn, final int slotIndex)
     {
         if (slotIndex == 0)
         {
@@ -266,7 +275,7 @@ public class Field extends Container
     }
 
     @Override
-    public boolean canInteractWith(@NotNull EntityPlayer playerIn)
+    public boolean canInteractWith(@NotNull final EntityPlayer playerIn)
     {
         return getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS);
     }
@@ -290,7 +299,7 @@ public class Field extends Container
      * @return {@link Field} created from the compound.
      */
     @NotNull
-    public static Field createFromNBT(Colony colony, @NotNull NBTTagCompound compound)
+    public static Field createFromNBT(final Colony colony, @NotNull final NBTTagCompound compound)
     {
         @NotNull final Field field = new Field(colony);
         field.readFromNBT(compound);
@@ -303,7 +312,7 @@ public class Field extends Container
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         location = BlockPosUtil.readFromNBT(compound, TAG_LOCATION);
         taken = compound.getBoolean(TAG_TAKEN);
@@ -315,6 +324,7 @@ public class Field extends Container
         inventory = new InventoryField("");
         inventory.readFromNBT(compound);
         setOwner(compound.getString(TAG_OWNER));
+        initialized = compound.getBoolean(TAG_INITIALIZED);
     }
 
     /**
@@ -335,7 +345,7 @@ public class Field extends Container
      * @param position the start position.
      * @param world    the world the field is in.
      */
-    public final void calculateSize(@NotNull World world, @NotNull BlockPos position)
+    public final void calculateSize(@NotNull final World world, @NotNull final BlockPos position)
     {
         //Calculate in all 4 directions
         this.lengthPlusX = searchNextBlock(0, position.east(), EnumFacing.EAST, world);
@@ -353,7 +363,7 @@ public class Field extends Container
      * @param world         the world object.
      * @return the distance.
      */
-    private int searchNextBlock(int blocksChecked, @NotNull BlockPos position, EnumFacing direction, @NotNull World world)
+    private int searchNextBlock(final int blocksChecked, @NotNull final BlockPos position, final EnumFacing direction, @NotNull final World world)
     {
         if (blocksChecked >= getMaxRange() || isNoPartOfField(world, position))
         {
@@ -369,7 +379,7 @@ public class Field extends Container
      * @param position the position.
      * @return true if it is.
      */
-    public boolean isNoPartOfField(@NotNull World world, @NotNull BlockPos position)
+    public boolean isNoPartOfField(@NotNull final World world, @NotNull final BlockPos position)
     {
         return world.isAirBlock(position) || world.getBlockState(position.up()).getMaterial().isSolid();
     }
@@ -391,7 +401,7 @@ public class Field extends Container
      *
      * @param compound {@link net.minecraft.nbt.NBTTagCompound} to write data to.
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         BlockPosUtil.writeToNBT(compound, TAG_LOCATION, this.location);
         compound.setBoolean(TAG_TAKEN, taken);
@@ -402,6 +412,7 @@ public class Field extends Container
         compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
         inventory.writeToNBT(compound);
         compound.setString(TAG_OWNER, owner);
+        compound.setBoolean(TAG_INITIALIZED, initialized);
     }
 
     /**
@@ -419,7 +430,7 @@ public class Field extends Container
      *
      * @param taken is field free or not
      */
-    public void setTaken(boolean taken)
+    public void setTaken(final boolean taken)
     {
         this.taken = taken;
     }
@@ -439,7 +450,7 @@ public class Field extends Container
      *
      * @param fieldStage true after planting, false after harvesting.
      */
-    public void setFieldStage(FieldStage fieldStage)
+    public void setFieldStage(final FieldStage fieldStage)
     {
         this.fieldStage = fieldStage;
     }
@@ -459,9 +470,29 @@ public class Field extends Container
      *
      * @param needsWork true if work needed, false after completing the job.
      */
-    public void setNeedsWork(boolean needsWork)
+    public void setNeedsWork(final boolean needsWork)
     {
         this.needsWork = needsWork;
+    }
+
+    /**
+     * Checks if the field is initialized.
+     *
+     * @return true if so.
+     */
+    public boolean isInitialized()
+    {
+        return this.initialized;
+    }
+
+    /**
+     * Sets that the field has been initialized.
+     *
+     * @param initialized true if so.
+     */
+    public void setInitialized(final boolean initialized)
+    {
+        this.initialized = initialized;
     }
 
     /**
@@ -545,7 +576,7 @@ public class Field extends Container
      *
      * @param inventory the inventory to set.
      */
-    public void setInventoryField(InventoryField inventory)
+    public void setInventoryField(final InventoryField inventory)
     {
         this.inventory = inventory;
     }

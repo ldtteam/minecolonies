@@ -50,7 +50,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
      * @param removeWorkOrder remove the workOrder?
      * @param priority        the new priority.
      */
-    public WorkOrderChangeMessage(@NotNull AbstractBuilding.View building, int workOrderId, boolean removeWorkOrder, int priority)
+    public WorkOrderChangeMessage(@NotNull final AbstractBuilding.View building, final int workOrderId, final boolean removeWorkOrder, final int priority)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -65,7 +65,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         workOrderId = buf.readInt();
@@ -79,7 +79,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(workOrderId);
