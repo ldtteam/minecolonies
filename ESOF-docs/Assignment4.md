@@ -139,6 +139,8 @@ Figura 5 - *Avaliação global do projeto medida pela ferramenta Codacy*
 
 Para o tópico de resolução de um bug do presente *assignment*, o grupo passou por três etapas : [identificação do bug](#identificacao), [correção do bug](#correcao) e efetuação do [*pull request*](#pull request). Embora tenham sido passadas algumas dificuldades, conseguimos resolver com sucesso o *bug* em causa, tendo sido aprovado pela equipa do **MineColonies**!
 
+A primeira dificuldade encontrada, ainda antes da identificação do*bug*, passou pela configuração do projeto no inteliJ. Embora um pouco trabalhosas, passamos uma série de [etapas](https://github.com/inesgomes/minecolonies/blob/develop/README.md) para a configuração do projeto. No entanto, esta configuração não foi suficiente devido à não importação das classes necessárias do **Minecraft Forge**. Não sabemos bem como, após várias configurações do gradle conseguimos a sua importação. Entretanto, para fazer debugging foram necessárias novas configurações. Aqui surgiu um problema em que nem todos os computadores conseguiam fazer debugging do **MineColonies**, (este erro nunca chegou a ser corrigido) o que provocou horas de tentativas de correção em vão por alguns elementos do grupo.
+
 <a name="identificacao"/>
 ### Identificação de um bug ###
 
@@ -180,3 +182,5 @@ Verificamos mais uma vez o cuidado intenso que é colocado neste projeto quando 
 * [Mário Fernandes](https://github.com/MarioFernandes73) (up201201705@fe.up.pt) - 25% - horas: 9
 
 * [Manuel Curral](https://github.com/Camolas)  (up201202445@fe.up.pt) - 25% - horas: 9
+
+Mais 5 horas extra para o grupo para configurações do projeto.
