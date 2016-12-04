@@ -17,7 +17,7 @@ A testabilidade no **MineColonies** deve-se focar apenas nas novas funcionalidad
 
 > "How easy it is to provide a program with the needed inputs, in terms of values, operations, and behaviors." - Introduction to Software Testing, page 36, Paul Ammann and Jeff Offputt
 
-Sendo o **MineColonies** uma modificação de um jogo, é natural a existência de diversas interações entre os diferentes objetos. Além das interações possíveis, é necessário ter em conta que cada objeto tem uma panóplia de estados, aumentando o número de combinações para estados de jogo possíveis. Assim, a obtenção de um estado de jogo é fortemente dependente de outros objetos e dos seus estados, ou seja, a sua obtenção nem sempre é direta e fácil de alcançar.  Isto deve-se à existência de regras no jogo, em que para obter um comportamento em particular é necessário uma sucessão de acontecimentos, por vezes, muito específica. 
+Sendo o **MineColonies** uma modificação de um jogo, é natural a existência de diversas interações entre os diferentes objetos. Além das interações possíveis, é necessário ter em conta que cada objeto tem uma panóplia de estados, aumentando o número de combinações possíveis para estados de jogo. Assim, a obtenção de um estado de jogo é fortemente dependente de outros objetos e dos seus estados, o que nem sempre é fácil e direto de alcançar.  Isto deve-se à existência de regras no jogo, em que, para obter um comportamento em particular é necessário uma sucessão de acontecimentos, por vezes, muito específica. 
 Tendo em conta os aspectos referidos, podemos afirmar que, a controlabilidade depende do número de objetos em jogo cujo estado é relevante e o quão direto é obter esse estado em particular.
 
 
