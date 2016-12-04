@@ -8,32 +8,39 @@
 
 ## Testabilidade e Review do Software ##
 
+No **MineColonies**, modificação do jogo Minecraft, podem existir inúmeros estados de jogo possíveis devido à grande quantidade de objetos em jogo. Sendo um estado de jogo caracterizada pelo conjunto de todos os objetos envolventes num estado específico, podemos concluir que, testar todos os estados de jogo possíveis é muito difícil ou até mesmo quase impossível. No entanto, o grau de testabilidade depende de muitos outros factores como: a controlabilidade, observabilidade, isolabilidade, separação de responsabilidades, documentação e facilidade de leitura e da heterogeneidade. Em geral, tendo em conta a informação recolhida, a testabilidade no MineColonies é razoavelmente boa como veremos nos tópicos abaixo.
+
+A testabilidade no **MineColonies** deve-se focar apenas nas novas funcionalidades implementadas, excluindo, portanto, a componente externa que são as funcionalidades bases do Minecraft. Assim sendo, ao testar estas novas funcionalidades, temos que supor que, eventuais problemas que possam aparecer na execução dos testes, não provenham desse componente externo.
+
+
 ### Controlabilidade ###
 
 > "How easy it is to provide a program with the needed inputs, in terms of values, operations, and behaviors." - Introduction to Software Testing, page 36, Paul Ammann and Jeff Offputt
+
+Sendo o **MineColonies** uma modificação de um jogo, é natural a existência de diversas interações entre os diferentes objetos. Além das interações possíveis, é necessário ter em conta que cada objeto tem uma panóplia de estados, aumentando o número de combinações para estados de jogo possíveis. Assim, a obtenção de um estado de jogo é fortemente dependente de outros objetos e dos seus estados, ou seja, a sua obtenção nem sempre é direta e fácil de alcançar.  Isto deve-se à existência de regras no jogo, em que para obter um comportamento em particular é necessário uma sucessão de acontecimentos, por vezes, muito específica. 
+Tendo em conta os aspectos referidos, podemos afirmar que, a controlabilidade depende do número de objetos em jogo cujo estado é relevante e o quão direto é obter esse estado em particular.
+
 
 ### Observabilidade ###
 
 > "How easy it is to observe the behavior of a program in terms of its outputs, effects on the environment, and other hardware and software components." - Introduction to Software Testing, page 36, Paul Ammann and Jeff Offputt
 
-O **MineColonies** utiliza as ferramentas disponibilizadas pelo SonarQube para controlo de qualidade do código, nomeadamente, execução de testes unitários sempre que há um build ou pull request do projeto. No SonarQube temos acesso à informação relacionada com estatísticas sobre o programa onde podemos obter: resultados, gráficos e os pacotes/ficheiros onde essas estatísticas foram aplicadas. A partir da página principal de estatísticas do [SonarQube para o MineColonies](http://home.kk-sc.de:9000/dashboard/index?id=com.minecolonies%3Aminecolonies%3Adevelop) temos acesso a determinada informação, sendo a mais relevante:
+O **MineColonies** utiliza as ferramentas disponibilizadas pelo SonarQube para controlo de qualidade do código, nomeadamente, execução de testes unitários sempre que há um build ou pull request do projeto. No [SonarQube](http://home.kk-sc.de:9000/dashboard/index?id=com.minecolonies%3Aminecolonies%3Adevelop) temos acesso à informação relacionada com estatísticas sobre o programa onde podemos obter: resultados, gráficos e os pacotes/ficheiros onde essas estatísticas foram aplicadas. Esta ferramenta permite que a observabilidade dos resultados dos testes seja boa. Isto acontece porque, a partir da informação disponível (exemplo: bugs), é possível proceder de uma forma eficiente e direta à resolução ou detecção de eventuais problemas ou más implementações no programa. Contudo, a quantidade e cobertura de testes unitários também é um fator decisivo para a obtenção de algumas destas estatísticas, pelo que, este projeto está em falta, devido ao número reduzido de testes.
 
-- Quality Gate - nível de qualidade atribuído pelos parâmetros do SonarQube
-- Critical Issues - problemas no programa de nível crítico
-- Bugs & Vulnerabilities - procura bugs e vulnerabilidades no código
-- Code Smells - quantidade de code smells no programa
-- Coverage - quantidade de linhas de código cobertas pelos testes unitários
-- Duplications - quantidade de código duplicado em todo o projeto
-
-Em suma, a observabilidade dos resultados dos testes é boa porque a partir da informação disponível acima é possível proceder de uma forma eficiente e direta à resolução ou detecção de eventuais problemas ou más implementações no programa. Contudo, a quantidade e cobertura de testes unitários também é um fator decisivo para a obtenção de algumas destas estatísticas, pelo que, este projeto está em falta, devido ao número reduzido de testes.
 
 ### Isolabilidade ###
 
 > "The degree to which the component under test (CUT) can be tested in isolation." - [Software testability, Wikipedia](https://en.wikipedia.org/wiki/Software_testability)
 
+No **Minecolonies** é possível testar algumas classes que, por si só, são independentes, (nomeadamente os seus métodos e atributos) visto que o código é modular. No entanto, em geral, testar um componente isolado acaba por ter o mesmo problema já referido no tópico da controlabilidade. Devido ao facto de existirem várias interações entre os diferentes componentes/objetos em jogo, testar um comportamento em particular pode comprometer testar o comportamento de todos os objetos em jogo cujo estado seja relevante. Assim sendo, o nível de isolabilidade depende do número de objetos/componentes cujo comportamento também é necessário ser testado em isolamento.
+
+
 ### Separação de Responsabilidades ###
 
 > "The degree to which the component under test has a single, well defined responsibility." - [Software testability, Wikipedia](https://en.wikipedia.org/wiki/Software_testability)
+
+A separação de responsabilidades no **MineColonies** está muito bem definida tendo cada módulo um objetivo muito bem explícito. Todavia, existindo módulos de maior complexidade, (como por exemplo a colony) a sua tarefa acaba por ser repartida em tarefas mais pequenas e simples por outros módulos que se encontram no seu interior. Desta forma, a separação de responsabilidades está bem distribuída, pois a separação de pequenas tarefas por pequenos módulos garante a resolução da tarefa principal dentro do módulo mais complexo.
+
 
 ### Documentação e facilidade de leitura ###
 
@@ -42,6 +49,7 @@ Em suma, a observabilidade dos resultados dos testes é boa porque a partir da i
 Em geral, todo o projeto encontra-se documentado e o código é auto-explicativo. No entanto, existem algumas partes em que a documentação de uma determinada classe ou atributo poderia ser mais específica ou explicada, no caso de ser inexistente. Para além da documentação direta no código, também podemos encontrar um ficheiro README.md com mais explicações sobre o pacote em casos que seja necessário para complementar a documentação já existente, como é o caso do package colony.
 
 Em termos de facilidade de leitura, devido à existência de um code style muito bem definido na [wiki](https://github.com/Minecolonies/minecolonies/wiki), a apresentação e organização do código é bem legível e homogénea. A existência da definição do code style a usar é fundamental para a legibilidade do código visto que existem muito colaboradores. Por vezes, a leitura pode ser um bocado cansativa devido à grande extensão de algumas classes, o que não se consegue evitar por ser, em si, um projeto grande e complexo.
+
 
 ### Heterogeneidade ###
 
@@ -58,6 +66,7 @@ O funcionamento do projeto é garantido pelas ferramentas de controlo de qualida
 * a ferramente [Travis CI](https://travis-ci.org/Minecolonies/minecolonies) garante a automatização dos testes de integração (por exemplo: verifica que não existem erros de compilação e javadoc não tem erros); 
 * o [CLA assistant](https://cla-assistant.io/Minecolonies/minecolonies?pullRequest=314) garante que todos os contribuidores consentem que as suas implementações serão usadas pelo **Minecolonies**; 
 * a ferramenta [PullApprove](https://pullapprove.com/Minecolonies/minecolonies/pull-request/314/) garante que pelo menos 2 dos 3 *maintainers* verificaram o código e aprovaram-no.
+
 
 ## Estatísticas de testes ##
 
@@ -91,10 +100,10 @@ Verificamos mais uma vez o cuidado intenso que é colocado neste projeto quando 
 
 ## Contribuições ##
 
-* [Inês Gomes](https://github.com/inesgomes) (up201405778@fe.up.pt) - X% - horas: X
+* [Inês Gomes](https://github.com/inesgomes) (up201405778@fe.up.pt) - 25% - horas: 9
 
-* [Catarina Ramos](https://github.com/catramos96) (up201406219@fe.up.pt) - X% - horas: X
+* [Catarina Ramos](https://github.com/catramos96) (up201406219@fe.up.pt) - 25% - horas: 9
 
-* [Mário Fernandes](https://github.com/MarioFernandes73) (up201201705@fe.up.pt) - X% - horas: X
+* [Mário Fernandes](https://github.com/MarioFernandes73) (up201201705@fe.up.pt) - 25% - horas: 9
 
-* [Manuel Curral](https://github.com/Camolas)  (up201202445@fe.up.pt) - X% - horas: X
+* [Manuel Curral](https://github.com/Camolas)  (up201202445@fe.up.pt) - 25% - horas: 9
