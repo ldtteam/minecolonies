@@ -4,14 +4,17 @@
 
 ## Introdução ##
 
-Verificação e Validação:é a etapa que está entre a implementação e a evolução ou manutenção de software.
-O objectivo é garantir que se atinjam os padrões de qualidade especificados: satisfação dos requisitos funcionais (salvaguardar a consistência e a não redundância da sua recolha e negociação) de desempenho e normas.
+A etapa de verificação e validação está entre a fase de implementação e a de evolução ou manutenção no desenvolvimento de um sistema de software.
+	O objectivo é garantir que se atinjam os padrões de qualidade especificados: satisfação dos requisitos funcionais (salvaguardar a consistência e a não redundância da sua recolha e negociação) de desempenho e normas.
 
 A Validação tem a missão de assegurar o cumprimento dos requisitos pré-estabelecidos (completamente e corretamente ou seja o artefacto correto foi produzido).
+
 A Verificação vem garantir que o artefacto foi construído corretamente, completamente e consistentemente em cada e entre fases consecutivas do ciclo de vida do software. Para esta verificação usa-se  duas técnicas de modo a aferir o cumprimento dos requisitos:
+
 -Uma é estática consiste em análises e inspeções, sem recorrer a execução, do código.  
+
 -A dinâmica, são os chamados Testes que examinam o comportamento do software através da sua execução .
-Este processo permite encontrar defeitos que é uma atividade fundamental para garantir qualidade do software, pois revelam erros ainda não descobertos. 
+	Este processo permite encontrar *bugs* que é uma atividade fundamental para garantir qualidade do software, pois revelam erros ainda não descobertos.
 
 ## Testabilidade e Review do Software ##
 
