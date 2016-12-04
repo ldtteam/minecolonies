@@ -1,10 +1,17 @@
-# Assignment 3 - Software Design #
+# Assignment 4 - Verification and Validation #
 
 ![alt tag](resources/minecolonies.png)
 
 ## Introdução ##
 
-(Manuel José)
+Verificação e Validação:é a etapa que está entre a implementação e a evolução ou manutenção de software.
+O objectivo é garantir que se atinjam os padrões de qualidade especificados: satisfação dos requisitos funcionais (salvaguardar a consistência e a não redundância da sua recolha e negociação) de desempenho e normas.
+
+A Validação tem a missão de assegurar o cumprimento dos requisitos pré-estabelecidos (completamente e corretamente ou seja o artefacto correto foi produzido).
+A Verificação vem garantir que o artefacto foi construído corretamente, completamente e consistentemente em cada e entre fases consecutivas do ciclo de vida do software. Para esta verificação usa-se  duas técnicas de modo a aferir o cumprimento dos requisitos:
+-Uma é estática consiste em análises e inspeções, sem recorrer a execução, do código.  
+-A dinâmica, são os chamados Testes que examinam o comportamento do software através da sua execução .
+Este processo permite encontrar defeitos que é uma atividade fundamental para garantir qualidade do software, pois revelam erros ainda não descobertos. 
 
 ## Testabilidade e Review do Software ##
 
@@ -83,7 +90,7 @@ Como já foi referido no tópico da [observabilidade](#observabilidade) do prese
 	
 Destes dados estatísticos,os mais relevantes são:
 
-* Nº Total de linhas: 30 533
+* Nº Total de linhas: 32 615
 * Coverage Total: 1.1%
 * Nº Testes unitários: 26
 
