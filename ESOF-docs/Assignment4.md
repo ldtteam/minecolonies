@@ -4,6 +4,8 @@
 
 ## Introdução ##
 
+(Manuel José)
+
 ## Testabilidade e Review do Software ##
 
 ### Controlabilidade ###
@@ -41,31 +43,47 @@ Em geral, todo o projeto encontra-se documentado e o código é auto-explicativo
 
 Em termos de facilidade de leitura, devido à existência de um code style muito bem definido na [wiki](https://github.com/Minecolonies/minecolonies/wiki), a apresentação e organização do código é bem legível e homogénea. A existência da definição do code style a usar é fundamental para a legibilidade do código visto que existem muito colaboradores. Por vezes, a leitura pode ser um bocado cansativa devido à grande extensão de algumas classes, o que não se consegue evitar por ser, em si, um projeto grande e complexo.
 
-### Heterogeneidade de tecnologias e métodos ###
+### Heterogeneidade ###
 
 > "The degree to which the use of diverse technologies requires to use diverse test methods and tools in parallel." - [Software testability, Wikipedia](https://en.wikipedia.org/wiki/Software_testability)
 
+O **MineColonies** é um projeto que demonstra grande heterogeneidade, visto que integra várias ferramentas que garantem quer o desenvolvimento quer o funcionamento da modificação. 
+
+O desenvolvimento desta modificação é garantido pelas suas bibliotecas. Pelas dependências do *build.gradle* chegamos à conclusão que o **Minecolonies** usa três bibliotecas para a automatização de testes unitários: **Junit**, **mockito** e **powermock**. Para além destas bibliotecas, o **Minecolonies** utilizada ainda a API **Forge**, que facilita a integração com o jogo original, **Minecraft**.
+
+> "Forge is a modding API made to make the process of Minecraft modding easier. It involves many useful hooks that many modders now use as a standard for modding, therefore making Forge a requirement" - [Zombie Killer](http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/mods-discussion/1394448-what-is-forge)
+
+O funcionamento do projeto é garantido pelas ferramentas de controlo de qualidade. Estas ferramentas são essenciais pois é necessário garantir que, a cada *pull request*, a incorporação do novo código não afeta o funcionamento do projeto. O facto do projeto apresentado ter grandes dimensões, dificulta muitas vezes que este funcionamento seja garantido. Para tal, o **Minecolonies** apresenta uma estratégia de *pull request* em vários passos: 
+
+* a ferramente [Travis CI](https://travis-ci.org/Minecolonies/minecolonies) garante a automatização dos testes de integração (por exemplo: verifica que não existem erros de compilação e javadoc não tem erros); 
+* o [CLA assistant](https://cla-assistant.io/Minecolonies/minecolonies?pullRequest=314) garante que todos os contribuidores consentem que as suas implementações serão usadas pelo **Minecolonies**; 
+* a ferramenta [PullApprove](https://pullapprove.com/Minecolonies/minecolonies/pull-request/314/) garante que pelo menos 2 dos 3 *maintainers* verificaram o código e aprovaram-no.
+
 ## Estatísticas de testes ##
+
+()
 
 ## Bug Report ##
 
-- Pesquisa de um bug
+### Identificação de um bug ###
 
-Na etapa de identificação de novos bugs, o grupo começou por instalar o Minecraft com a modificação Minecolonies, na expectativa de, utilizando a técnica dinâmica, conseguir encontrar um novo bug. Nesta fase o grupo contactou a equipa responsável para tentar testar algumas partes mais sensíveis e susceptíveis a problemas. No entanto, o esforço foi um pouco em vão, tendo em conta que a última release tinha apenas poucos dias, e as novas modificações estariam relacionadas com conteúdos mais avançados da modificação.Na nossa opinião, encontrar um bug num projeto tão maturo e complexo em termos de etapas de jogo, é uma tarefa bastante difícil e por vezes um mero acaso, pelo que pode demorar horas de jogo para ser encontrado. Dito isto, o grupo decidiu resolver um bug já reportado nas issues do projeto.
+Na etapa de identificação de novos *bugs*, o grupo começou por instalar o **Minecraft** com a modificação **Minecolonies**, na expectativa de, utilizando a técnica dinâmica, conseguir encontrar um novo *bug*. Nesta fase o grupo contactou a equipa responsável para tentar testar algumas partes mais sensíveis e susceptíveis a problemas. No entanto, o esforço foi um pouco em vão, tendo em conta que a última *release* tinha apenas poucos dias, e as novas modificações estariam relacionadas com conteúdos mais avançados da modificação.Na nossa opinião, encontrar um *bug* num projeto tão maturo e complexo em termos de etapas de jogo, é uma tarefa bastante difícil e por vezes um mero acaso, pelo que pode demorar horas de jogo para ser encontrado. Dito isto, o grupo decidiu resolver um *bug* já reportado nas [issues](https://github.com/Minecolonies/minecolonies/issues) do projeto.
 
-- Correção do [bug](https://github.com/Minecolonies/minecolonies/issues/241)
+### Correção do bug ### 
 
-Com isto em mente, o grupo resolveu tratar de um bug já reportado anteriormente (issue #241). No minecraft existem uns blocos específicos que têm a funcionalidade de armazenar diversos itens e, na sua destruição, todos os itens que residem no interior desses mesmos devem cair ao chão. No minecolonies foram criados novos blocos que, para além de várias funcionalidades (como criar casas, recrutar trabalhadores etc.) também têm esta capacidade de servir de cofre ao utilizador. Na destruição destes blocos, todos os itens armazenados nestes blocos eram destruídos ao invés de cair ao chão. Após o tratamento do bug por parte do grupo, estes blocos têm já apresentam a funcionalidade pretendida.
-A correção do bug começou pela identificação do método responsável pela destruição de blocos. Este método, “destroy()”, está definido na classe abstrata “AbstractBuilding”, e invoca um outro,”onDestroyed()” , que gere os eventos relacionados com a sua destruição. 
-Ao longo da correção do bug, o grupo deparou-se com algumas dificuldades sendo a principal o desconhecimento do código base. Tendo em conta a extensão do projeto, teria sido impossível o reconhecimento do bug. O facto de já conhecermos o funcionamento geral do projeto (dados adquiridos ao longo do desenvolvimento da cadeira), facilitou a tarefa. Outra dificuldade encontrada foi o facto de o MineCraft Forge ter uma documentação muito pobre. O desconhecimento total do source code do Minecraft (não é open source), deixou-nos como única opção a análise de código puro da versão descompilada do MineCraft Forge.
-Por fim, o bug foi resolvido utilizando dois métodos já implementados pelo minecraft: o primeiro que remove o bloco do mundo, criando os itens dentro dele armazenados em coordenadas ao acaso no espaço do antigo bloco, e outro que dá um update ao mundo para registar o evento.
+Tendo em conta o tópico anterior, foi decidido por unânimidade a resolução do *bug* [#241](https://github.com/Minecolonies/minecolonies/issues/241). No **Minecraft** existem uns blocos específicos que têm a funcionalidade de armazenar diversos itens e, na sua destruição, todos os itens que residem no interior dos mesmos devem cair ao chão. No **Minecolonies** foram criados novos blocos que, para além de várias funcionalidades (como criar casas, recrutar trabalhadores etc.) também têm esta capacidade de servir de cofre ao utilizador. Na destruição destes blocos, todos os itens armazenados nos mesmos eram destruídos ao invés de cair ao chão. Após o tratamento do *bug* por parte do grupo, estes blocos já apresentam a funcionalidade pretendida.
 
-- [Pull request](https://github.com/Minecolonies/minecolonies/pull/314)
+A correção do *bug* começou pela identificação do método responsável pela destruição de blocos. Este método, “destroy()”, está definido na classe abstrata “AbstractBuilding”, e invoca um outro,”onDestroyed()” , que gere os eventos relacionados com a sua destruição.
 
-Após a correção do bug, o grupo fez um pull request para o branch “develop” (branch que contém sempre a versão funcional da modificação). A pedido dos developers do projeto, foi criado um branch no projeto original (não no fork do grupo) com a correção do bug. O pull request foi depois realizado a partir desse branch. Este passo foi necessário para evitar conflitos com as verificações do Travis CI. Verificamos mais uma vez o cuidado intenso que é colocado neste projeto quando tivemos de fazer alterações ao código para corresponder a todos os parâmetros (tais como remover uma condição que iria dar sempre verdade, alterações de code style e ainda de documentação com o javadoc). Por fim o pull request passou no último parâmetro (já descrito na secção não sei o que), onde kostronor e raycoms aceitaram o nosso pull request.
+Ao longo da correção do *bug*, o grupo deparou-se com algumas dificuldades sendo a principal o desconhecimento do código base. Tendo em conta a extensão do projeto, teria sido impossível o reconhecimento do *bug*. O facto de já conhecermos o funcionamento geral do projeto (dados adquiridos ao longo do desenvolvimento da cadeira), facilitou a tarefa. Outra dificuldade encontrada foi o facto de o **Minecraft Forge** ter uma documentação muito pobre. O desconhecimento total do *source code* do **Minecraft** (não é *open source*), deixou-nos como única opção a análise de código puro da versão descompilada do **MineCraft Forge**.
 
+Por fim, o *bug* foi resolvido utilizando dois métodos já implementados pelo **Minecraft**: o primeiro que remove o bloco do mundo, criando os itens dentro dele armazenados em coordenadas ao acaso no espaço do antigo bloco, e outro que dá um update ao mundo para registar o evento.
 
+### O Pull Request ###
 
+Após a correção do *bug*, o grupo fez um *pull request* para o branch *develop* (branch que contém sempre a versão funcional da modificação). A pedido dos *developers do projeto*, foi criado um branch no projeto original (não no fork do grupo) com a correção do *bug*. O *pull request* foi depois realizado a partir desse branch, procendo então ás várias etapas já mencionadas na secção de heterogeneidade deste relatório. Este passo foi necessário para evitar conflitos com as verificações do [Travis CI](https://travis-ci.org/Minecolonies/minecolonies/builds/180970448). 
+
+Verificamos mais uma vez o cuidado intenso que é colocado neste projeto quando tivemos de fazer alterações ao código para corresponder a todos os parâmetros (tais como remover uma condição que iria dar sempre verdade, alterações de *code style* e ainda de documentação com o javadoc). Por fim o [*pull request*](https://github.com/Minecolonies/minecolonies/pull/314) passou no último parâmetro de [*pull aprove*](https://pullapprove.com/Minecolonies/minecolonies/pull-request/314/), onde [kostronor](https://github.com/kostronor) e [raycoms](https://github.com/Raycoms) aceitaram o nosso *pull request*, fazendo merge com o branch *develop*!
 
 ## Bibliografia ##
 
