@@ -49,6 +49,24 @@ Em termos de facilidade de leitura, devido à existência de um code style muito
 
 ## Bug Report ##
 
+- Pesquisa de um bug
+
+Na etapa de identificação de novos bugs, o grupo começou por instalar o Minecraft com a modificação Minecolonies, na expectativa de, utilizando a técnica dinâmica, conseguir encontrar um novo bug. Nesta fase o grupo contactou a equipa responsável para tentar testar algumas partes mais sensíveis e susceptíveis a problemas. No entanto, o esforço foi um pouco em vão, tendo em conta que a última release tinha apenas poucos dias, e as novas modificações estariam relacionadas com conteúdos mais avançados da modificação.Na nossa opinião, encontrar um bug num projeto tão maturo e complexo em termos de etapas de jogo, é uma tarefa bastante difícil e por vezes um mero acaso, pelo que pode demorar horas de jogo para ser encontrado. Dito isto, o grupo decidiu resolver um bug já reportado nas issues do projeto.
+
+- Correção do [bug](https://github.com/Minecolonies/minecolonies/issues/241)
+
+Com isto em mente, o grupo resolveu tratar de um bug já reportado anteriormente (issue #241). No minecraft existem uns blocos específicos que têm a funcionalidade de armazenar diversos itens e, na sua destruição, todos os itens que residem no interior desses mesmos devem cair ao chão. No minecolonies foram criados novos blocos que, para além de várias funcionalidades (como criar casas, recrutar trabalhadores etc.) também têm esta capacidade de servir de cofre ao utilizador. Na destruição destes blocos, todos os itens armazenados nestes blocos eram destruídos ao invés de cair ao chão. Após o tratamento do bug por parte do grupo, estes blocos têm já apresentam a funcionalidade pretendida.
+A correção do bug começou pela identificação do método responsável pela destruição de blocos. Este método, “destroy()”, está definido na classe abstrata “AbstractBuilding”, e invoca um outro,”onDestroyed()” , que gere os eventos relacionados com a sua destruição. 
+Ao longo da correção do bug, o grupo deparou-se com algumas dificuldades sendo a principal o desconhecimento do código base. Tendo em conta a extensão do projeto, teria sido impossível o reconhecimento do bug. O facto de já conhecermos o funcionamento geral do projeto (dados adquiridos ao longo do desenvolvimento da cadeira), facilitou a tarefa. Outra dificuldade encontrada foi o facto de o MineCraft Forge ter uma documentação muito pobre. O desconhecimento total do source code do Minecraft (não é open source), deixou-nos como única opção a análise de código puro da versão descompilada do MineCraft Forge.
+Por fim, o bug foi resolvido utilizando dois métodos já implementados pelo minecraft: o primeiro que remove o bloco do mundo, criando os itens dentro dele armazenados em coordenadas ao acaso no espaço do antigo bloco, e outro que dá um update ao mundo para registar o evento.
+
+- [Pull request](https://github.com/Minecolonies/minecolonies/pull/314)
+
+Após a correção do bug, o grupo fez um pull request para o branch “develop” (branch que contém sempre a versão funcional da modificação). A pedido dos developers do projeto, foi criado um branch no projeto original (não no fork do grupo) com a correção do bug. O pull request foi depois realizado a partir desse branch. Este passo foi necessário para evitar conflitos com as verificações do Travis CI. Verificamos mais uma vez o cuidado intenso que é colocado neste projeto quando tivemos de fazer alterações ao código para corresponder a todos os parâmetros (tais como remover uma condição que iria dar sempre verdade, alterações de code style e ainda de documentação com o javadoc). Por fim o pull request passou no último parâmetro (já descrito na secção não sei o que), onde kostronor e raycoms aceitaram o nosso pull request.
+
+
+
+
 ## Bibliografia ##
 
 ## Contribuições ##
