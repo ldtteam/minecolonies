@@ -256,6 +256,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      * @param parent     The parent node being moved from.
      * @param dPos       The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1].
      * @param isSwimming true is the current node would require the citizen to swim.
+     * @param onPath     checks if the node is on a path.
      * @return cost to move from the parent to the new position.
      */
     protected static double computeCost(Node parent, @NotNull BlockPos dPos, boolean isSwimming, boolean onPath)

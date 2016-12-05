@@ -34,10 +34,13 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
     }
 
     /**
-     * Creates object for the assignmentMode message.
-     *
-     * @param building       View of the building to read data from.
-     * @param assignmentMode assignmentMode of the particular farmer.
+     * Creates an instance of the guard task message.
+     * @param building the building.
+     * @param job the new job.
+     * @param assignmentMode the new assignment mode.
+     * @param patrollingMode the new patrolling mode.
+     * @param retrieval the new retrievel mode.
+     * @param task the new task.
      */
     public GuardTaskMessage(
                              @NotNull final BuildingGuardTower.View building,
