@@ -298,11 +298,11 @@ public class PaneParams
 
     /**
      * Get the boolean attribute from name and class and definition..
-     *
-     * @param name  the name.
+     * @param name the name.
      * @param clazz the class.
-     * @param def   the definition.
-     * @return the boolean.
+     * @param def the definition.
+     * @param <T> the type of class.
+     * @return
      */
     public <T extends Enum<T>> T getEnumAttribute(final String name, final Class<T> clazz, final T def)
     {

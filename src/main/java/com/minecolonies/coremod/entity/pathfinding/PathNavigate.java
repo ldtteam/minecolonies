@@ -394,7 +394,6 @@ public class PathNavigate extends PathNavigateGround
      * @param speed walking speed.
      * @return the result of the search.
      */
-    @NotNull
     public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed)
     {
         @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
@@ -407,6 +406,7 @@ public class PathNavigate extends PathNavigateGround
      *
      * @param range in the range.
      * @param speed walking speed.
+     * @param ponds a list of ponds.
      * @return the result of the search.
      */
     @Nullable

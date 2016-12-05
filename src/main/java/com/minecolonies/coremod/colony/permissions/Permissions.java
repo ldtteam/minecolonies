@@ -358,6 +358,7 @@ public class Permissions implements IPermissions
 
     /**
      * Returns an unmodifiable map of the players list.
+     * @return map of UUIDs and player objects.
      */
     @NotNull
     public Map<UUID, Player> getPlayers()
