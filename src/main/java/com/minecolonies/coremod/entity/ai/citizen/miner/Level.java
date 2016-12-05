@@ -19,22 +19,39 @@ import java.util.List;
  */
 public class Level
 {
+    /**
+     * Tags used to store and retrieve level data from NBT.
+     */
     private static final String TAG_DEPTH   = "Depth";
     private static final String TAG_NODES   = "Nodes";
     private static final String TAG_LADDERX = "LadderX";
     private static final String TAG_LADDERZ = "LadderZ";
+
     /**
      * The depth of the level stored as the y coordinate.
      */
     private int depth;
+
+    /**
+     * The list of nodes which are part of the level.
+     */
     @NotNull
     private List<Node> nodes      = new ArrayList<>();
+
+    /**
+     * The node of the ladder.
+     */
     @Nullable
     private Node       ladderNode = null;
 
-    //TODO document class
+    /**
+     * Private constructor, used to create the level from NBT.
+     */
     private Level()
     {
+        /*
+         * Intentionally left empty.
+         */
     }
 
     /**
@@ -108,12 +125,12 @@ public class Level
             @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
             level.nodes.add(node);
         }
-        final int ladderx = compound.getInteger(TAG_LADDERX);
-        final int ladderz = compound.getInteger(TAG_LADDERZ);
+        final int ladderX = compound.getInteger(TAG_LADDERX);
+        final int ladderZ = compound.getInteger(TAG_LADDERZ);
 
         level.ladderNode = level.nodes
                              .stream()
-                             .filter(node -> node.getX() == ladderx && node.getZ() == ladderz)
+                             .filter(node -> node.getX() == ladderX && node.getZ() == ladderZ)
                              .findFirst()
                              .orElseThrow(() -> new IllegalStateException("No ladder node found."));
 
@@ -124,12 +141,7 @@ public class Level
     @Override
     public String toString()
     {
-        @NotNull final StringBuilder sb = new StringBuilder("Level{");
-        sb.append("depth=").append(depth);
-        sb.append(", nodes=").append(nodes);
-        sb.append(", ladderNode=").append(ladderNode);
-        sb.append('}');
-        return sb.toString();
+        return "Level{" + "depth=" + depth + ", nodes=" + nodes + ", ladderNode=" + ladderNode + '}';
     }
 
     /**

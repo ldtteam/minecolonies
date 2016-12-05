@@ -10,29 +10,60 @@ import org.jetbrains.annotations.NotNull;
  * also note that we don't want node (0, -1) because there will be a ladder on the back
  * wall of the initial node, and we cant put the connection through the ladder
  *
- * @author Colton, Kostronor
  */
 public class Node
 {
+    /**
+     * Tags used to save and retrieve data from NBT.
+     */
     private static final String TAG_X                 = "idX";
-    private static final String TAG_Z                 = "idZ";//TODO change to z, but will break saves
+    private static final String TAG_Z                 = "idZ";
     private static final String TAG_STYLE             = "Style";
     private static final String TAG_STATUS            = "Status";
     private static final String TAG_STATUS_POSITIVE_X = "positiveX";
     private static final String TAG_STATUS_NEGATIVE_X = "negativeX";
     private static final String TAG_STATUS_POSITIVE_Z = "positiveZ";
     private static final String TAG_STATUS_NEGATIVE_Z = "negativeZ";
+
     /**
-     * Location of the node.
+     * X position of the Node.
      */
     private int        x;
+
+    /**
+     * Z position of the node.
+     */
     private int        z;
+
+    /**
+     * Style of the node.
+     */
     private NodeType   style;
+
+    /**
+     * Status of the node.
+     */
     private NodeStatus status;
-    private NodeStatus directionPosX; //+X
-    private NodeStatus directionNegX; //-X
-    private NodeStatus directionPosZ; //+Z
-    private NodeStatus directionNegZ; //-Z
+
+    /**
+     * Status in positive x direction.
+     */
+    private NodeStatus directionPosX;
+
+    /**
+     * Status in negative x direction.
+     */
+    private NodeStatus directionNegX;
+
+    /**
+     * Status in positive z direction.
+     */
+    private NodeStatus directionPosZ;
+
+    /**
+     * Status in negative z direction.
+     */
+    private NodeStatus directionNegZ;
 
     /**
      * Initializes the node.
@@ -70,6 +101,7 @@ public class Node
 
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
+        //Set the node status in all directions.
         final NodeStatus directionPosX = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_X));
         final NodeStatus directionNegX = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_X));
         final NodeStatus directionPosZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_Z));
@@ -230,17 +262,16 @@ public class Node
     @Override
     public String toString()
     {
-        @NotNull final StringBuilder sb = new StringBuilder("Node{");
-        sb.append("x=").append(x);
-        sb.append(", z=").append(z);
-        sb.append(", style=").append(style);
-        sb.append(", status=").append(status);
-        sb.append(", directionPosX=").append(directionPosX);
-        sb.append(", directionNegX=").append(directionNegX);
-        sb.append(", directionPosZ=").append(directionPosZ);
-        sb.append(", directionNegZ=").append(directionNegZ);
-        sb.append('}');
-        return sb.toString();
+        return "Node{" + "x=" + x +
+                ", z=" + z +
+                ", style=" + style +
+                ", status=" + status +
+                ", directionPosX=" + directionPosX +
+                ", directionNegX=" + directionNegX +
+                ", directionPosZ=" + directionPosZ +
+                ", directionNegZ=" + directionNegZ +
+                '}';
+
     }
 
     /**
@@ -268,7 +299,6 @@ public class Node
      * AVAILABLE means it can be mined
      * IN_PROGRESS means it is currently being mined
      * COMPLETED means it has been mined and all torches/wood structure has been placed
-     * //TODO WALL?
      * LADDER means this side has the ladder and must not be mined
      */
     enum NodeStatus
@@ -282,14 +312,18 @@ public class Node
 
     /**
      * Sets the node style used.
-     * //TODO document the types
      */
     enum NodeType
     {
+        //Main shaft
         SHAFT,
+        //Node on the back of the ladder (Don't mine the ladder)
         LADDER_BACK,
+        //Simple straight tunnle.
         TUNNEL,
+        //Crossroad structure
         CROSSROAD,
+        //Bending tunnle
         BEND
     }
 }
