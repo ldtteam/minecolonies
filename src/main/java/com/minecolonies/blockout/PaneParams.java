@@ -302,7 +302,7 @@ public class PaneParams
      * @param clazz the class.
      * @param def the definition.
      * @param <T> the type of class.
-     * @return
+     * @return the enum attribute.
      */
     public <T extends Enum<T>> T getEnumAttribute(final String name, final Class<T> clazz, final T def)
     {
