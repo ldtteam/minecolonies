@@ -9,7 +9,7 @@
 
         <view id="resourceActions" size="100% 100%">
             <label size="100% 11" pos="0 0"
-                   label="$(com.minecolonies.gui.workerHuts.resourceList)" color="black" textalign="BOTTOM_MIDDLE"/>
+                   label="$(com.minecolonies.coremod.gui.workerHuts.resourceList)" color="black" textalign="BOTTOM_MIDDLE"/>
             <list id="resources" size="78% 85%" pos="30 20">
                 <box size="100% 30" linewidth="2">
                     <label id="resource" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>

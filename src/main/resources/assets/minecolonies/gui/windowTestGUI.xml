@@ -5,7 +5,7 @@
            size="100% 11" pos="0 9"
            textalign="TOP_MIDDLE"
            color="0"
-           label="$(com.minecolonies.gui.citizen.skills)"/>
+           label="$(com.minecolonies.coremod.gui.citizen.skills)"/>
     <group width="100" height="55" x="30" y="30">
         <label id="strength"
                width="100%" height="11"
