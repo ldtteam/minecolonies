@@ -27,7 +27,7 @@ public final class Pathfinding
 {
     private static final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
     private static final ResourceLocation        TEXTURE  = new ResourceLocation("textures/gui/widgets.png");
-    private static ThreadPoolExecutor executor;
+    private static final ThreadPoolExecutor executor;
     static
     {
         executor = new ThreadPoolExecutor(1, Configurations.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);

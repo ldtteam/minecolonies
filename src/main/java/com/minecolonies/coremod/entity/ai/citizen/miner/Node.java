@@ -28,12 +28,12 @@ public class Node
     /**
      * X position of the Node.
      */
-    private int        x;
+    private final int x;
 
     /**
      * Z position of the node.
      */
-    private int        z;
+    private final int z;
 
     /**
      * Style of the node.

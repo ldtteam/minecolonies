@@ -27,7 +27,7 @@ public final class BlockUtils
      * Predicated to determine if a block is free to place.
      */
     @NotNull
-    private static List<BiPredicate<Block, IBlockState>> freeToPlaceBlocks =
+    private static final List<BiPredicate<Block, IBlockState>> freeToPlaceBlocks =
       Arrays.asList(
         (block, iBlockState) -> block.equals(Blocks.AIR),
         (block, iBlockState) -> iBlockState.getMaterial().isLiquid(),

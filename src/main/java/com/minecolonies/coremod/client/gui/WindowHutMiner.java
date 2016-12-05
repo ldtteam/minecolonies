@@ -26,11 +26,11 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     private static final String BUTTON_CURRENTLEVEL       = "changeToLevel";
     private static final String VIEW_PAGES                = "pages";
     private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/windowHutMiner.xml";
-    private Button             buttonPrevPage;
-    private Button             buttonNextPage;
-    private int[]              levels;
-    private ScrollingList      levelList;
-    private BuildingMiner.View miner;
+    private       Button             buttonPrevPage;
+    private       Button             buttonNextPage;
+    private       int[]              levels;
+    private       ScrollingList      levelList;
+    private final BuildingMiner.View miner;
 
     /**
      * Constructor for the window of the miner hut.

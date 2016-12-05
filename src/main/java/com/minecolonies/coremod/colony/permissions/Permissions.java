@@ -39,7 +39,7 @@ public class Permissions implements IPermissions
      * All promotion rank possibilities.
      */
     @NotNull
-    private static Map<Rank, RankPair> promotionRanks = new EnumMap<>(Rank.class);
+    private static final Map<Rank, RankPair> promotionRanks = new EnumMap<>(Rank.class);
     /**
      * Fill the promotion ranks.
      */
@@ -758,9 +758,9 @@ public class Permissions implements IPermissions
      */
     public static class Player
     {
-        private UUID   id;
-        private String name;
-        private Rank   rank;
+        private final UUID   id;
+        private final String name;
+        private       Rank   rank;
 
         /**
          * Instantiates our own player object.
@@ -806,12 +806,12 @@ public class Permissions implements IPermissions
         /**
          * The rank if promoted.
          */
-        private Rank promote;
+        private final Rank promote;
 
         /**
          * The rank if demoted.
          */
-        private Rank demote;
+        private final Rank demote;
 
         /**
          * Links promotion and demotion.

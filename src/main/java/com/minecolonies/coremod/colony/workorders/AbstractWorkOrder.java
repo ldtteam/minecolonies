@@ -25,9 +25,9 @@ public abstract class AbstractWorkOrder
     private static final String                                          TAG_CLAIMED_BY = "claimedBy";
     //  Job and View Class Mapping
     @NotNull
-    private static       Map<String, Class<? extends AbstractWorkOrder>> nameToClassMap = new HashMap<>();
+    private static final Map<String, Class<? extends AbstractWorkOrder>> nameToClassMap = new HashMap<>();
     @NotNull
-    private static       Map<Class<? extends AbstractWorkOrder>, String> classToNameMap = new HashMap<>();
+    private static final Map<Class<? extends AbstractWorkOrder>, String> classToNameMap = new HashMap<>();
     static
     {
         addMapping("build", WorkOrderBuild.class);

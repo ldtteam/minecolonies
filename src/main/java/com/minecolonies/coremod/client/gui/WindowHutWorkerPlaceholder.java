@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class WindowHutWorkerPlaceholder<B extends AbstractBuildingWorker.View> extends AbstractWindowWorkerBuilding<B>
 {
     private static final String WORKER_PLACEHOLDER_RESOURCE_SUFFIX = ":gui/windowHutWorkerPlaceholder.xml";
-    private String name;
+    private final String name;
 
     /**
      * Window for worker placeholder.

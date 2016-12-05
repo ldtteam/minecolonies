@@ -46,30 +46,30 @@ public final class ColonyManager
     /**
      * The tag of the colonies.
      */
-    private static final String TAG_COLONIES = "colonies";
+    private static final String                     TAG_COLONIES          = "colonies";
     /**
      * The damage source used to kill citizens.
      */
-    private static final DamageSource CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
+    private static final DamageSource               CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
     /**
      * The list of all colonies.
      */
     @NotNull
-    private static Map<Integer, Colony> colonies = new HashMap<>();
+    private static final Map<Integer, Colony>       colonies              = new HashMap<>();
     /**
      * The list of all colonies by world.
      */
     @NotNull
-    private static Map<Integer, List<Colony>> coloniesByWorld = new HashMap<>();
+    private static final Map<Integer, List<Colony>> coloniesByWorld       = new HashMap<>();
     /**
      * The last colony id.
      */
-    private static int topColonyId = 0;
+    private static       int                        topColonyId           = 0;
     /**
      * The list of colony views.
      */
     @NotNull
-    private static Map<Integer, ColonyView> colonyViews = new HashMap<>();
+    private static final Map<Integer, ColonyView>   colonyViews           = new HashMap<>();
     /**
      * Amount of worlds loaded.
      */

@@ -24,7 +24,7 @@ public class BuildingHome extends AbstractBuildingHut
     private static final String            TAG_RESIDENTS = "residents";
     private static final String            CITIZEN       = "Citizen";
     @NotNull
-    private              List<CitizenData> residents     = new ArrayList<>();
+    private final        List<CitizenData> residents     = new ArrayList<>();
 
     /**
      * Instantiates a new citizen hut.
@@ -217,7 +217,7 @@ public class BuildingHome extends AbstractBuildingHut
     public static class View extends AbstractBuildingHut.View
     {
         @NotNull
-        private List<Integer> residents = new ArrayList<>();
+        private final List<Integer> residents = new ArrayList<>();
 
         /**
          * Creates an instance of the citizen hut window.

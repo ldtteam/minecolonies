@@ -21,8 +21,8 @@ public class PaneParams
     private static final Pattern PERCENTAGE_PATTERN = Pattern.compile("([-+]?\\d+)(%|px)?", Pattern.CASE_INSENSITIVE);
     private static final Pattern RGBA_PATTERN       =
       Pattern.compile("rgba?\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*,\\s*(\\d+)\\s*(?:,\\s*([01]\\.\\d+)\\s*)?\\)", Pattern.CASE_INSENSITIVE);
-    private Node node;
-    private View parentView;
+    private final Node node;
+    private       View parentView;
 
     /**
      * Instantiates the pane parameters.
@@ -463,8 +463,8 @@ public class PaneParams
      */
     public static class SizePair
     {
-        private int x;
-        private int y;
+        private final int x;
+        private final int y;
 
         /**
          * Instantiates a SizePair object.

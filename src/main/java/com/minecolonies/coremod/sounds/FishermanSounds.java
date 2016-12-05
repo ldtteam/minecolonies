@@ -27,7 +27,7 @@ public final class FishermanSounds
     /**
      * Random generator.
      */
-    private static       Random rand               = new Random();
+    private static final Random rand               = new Random();
 
     /**
      * Containing the female fisherman sounds.

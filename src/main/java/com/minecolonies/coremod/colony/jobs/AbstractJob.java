@@ -42,9 +42,9 @@ public abstract class AbstractJob
 
     //  Job and View Class Mapping.
     @NotNull
-    private static Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
+    private static final Map<String, Class<? extends AbstractJob>> nameToClassMap = new HashMap<>();
     @NotNull
-    private static Map<Class<? extends AbstractJob>, String> classToNameMap = new HashMap<>();
+    private static final Map<Class<? extends AbstractJob>, String> classToNameMap = new HashMap<>();
     static
     {
         addMapping(MAPPING_PLACEHOLDER, JobPlaceholder.class);
@@ -59,8 +59,8 @@ public abstract class AbstractJob
 
     private final CitizenData citizen;
     @NotNull
-    private List<ItemStack> itemsNeeded = new ArrayList<>();
-    private String          nameTag     = "";
+    private final List<ItemStack> itemsNeeded = new ArrayList<>();
+    private       String          nameTag     = "";
 
     /**
      * Initialize citizen data.

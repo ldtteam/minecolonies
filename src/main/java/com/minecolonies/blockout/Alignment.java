@@ -22,10 +22,10 @@ public enum Alignment
     BOTTOM_MIDDLE("bottom horizontal"),
     BOTTOM_RIGHT("bottom right");
 
-    private boolean rightAligned;
-    private boolean bottomAligned;
-    private boolean horizontalCentered;
-    private boolean verticalCentered;
+    private final boolean rightAligned;
+    private final boolean bottomAligned;
+    private final boolean horizontalCentered;
+    private final boolean verticalCentered;
 
     Alignment(@NotNull final String attributes)
     {
