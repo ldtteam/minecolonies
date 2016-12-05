@@ -239,3 +239,4 @@ com.minecolonies.coremod.job.guard.toolClickGuard=Set position %s as new guardin
 
 com.minecolonies.coremod.job.guard.toolDoubleClick=Finished adding new patrol-targets.
 
+com.minecolonies.coremod.workerHuts.recallFail=Recall failed - Please make more space around the location.

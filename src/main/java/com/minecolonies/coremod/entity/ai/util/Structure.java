@@ -51,14 +51,39 @@ public class Structure
         }
     }
 
-    public static final class SchematicBlock
+    /**
+     * Class used to describe a certain structure block of the structure.
+     */
+    public static final class StructureBlock
     {
-
+        /**
+         * The block.
+         */
         public final Block       block;
+
+        /**
+         * The position of the block.
+         */
         public final BlockPos    blockPosition;
+
+        /**
+         * The metadata of the block.
+         */
         public final IBlockState metadata;
+
+        /**
+         * The item of the block.
+         */
         public final Item        item;
+
+        /**
+         * The world block at the same position.
+         */
         public final Block       worldBlock;
+
+        /**
+         * The metadata of the world block at the same position.
+         */
         public final IBlockState worldMetadata;
 
         /**
@@ -71,7 +96,7 @@ public class Structure
          * @param worldBlock    the block to be replaced with the schematic block
          * @param worldMetadata the metadata of the world block
          */
-        public SchematicBlock(final Block block, final BlockPos blockPosition, final IBlockState metadata, final Item item, final Block worldBlock, final IBlockState worldMetadata)
+        public StructureBlock(final Block block, final BlockPos blockPosition, final IBlockState metadata, final Item item, final Block worldBlock, final IBlockState worldMetadata)
         {
             this.block = block;
             this.blockPosition = blockPosition;
@@ -179,12 +204,12 @@ public class Structure
     }
 
     /**
-     * Check if the worldBlock equals the schematicBlock
+     * Check if the worldBlock equals the schematicBlock.
      *
-     * @param blocksToTest the blocks to test
-     * @return true if they are the same
+     * @param blocksToTest the blocks to test.
+     * @return true if they are the same.
      */
-    private static boolean checkBlocksEqual(@NotNull final SchematicBlock blocksToTest)
+    public static boolean checkBlocksEqual(@NotNull final StructureBlock blocksToTest)
     {
         return blocksToTest.block == blocksToTest.worldBlock
                  && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);
@@ -224,12 +249,11 @@ public class Structure
         {
             case CLEAR:
                 return advanceBlocks(this.schematic::decrementBlock,
-                  schematicBlock -> schematicBlock.blockPosition.getX() <= 0
-                                      || this.targetWorld.isAirBlock(schematicBlock.blockPosition));
+                  structureBlock -> structureBlock.blockPosition.getX() <= 0
+                                      || this.targetWorld.isAirBlock(structureBlock.blockPosition));
             case BUILD:
-                return advanceBlocks(this.schematic::incrementBlock, schematicBlock -> false);
             case DECORATE:
-                return advanceBlocks(this.schematic::incrementBlock, schematicBlock -> false);
+                return advanceBlocks(this.schematic::incrementBlock, structureBlock -> false);
             default:
                 return Result.NEW_BLOCK;
         }
@@ -244,7 +268,7 @@ public class Structure
      * @return a Result enum specifying the result
      */
     @NotNull
-    private Result advanceBlocks(@NotNull final Supplier<Boolean> moveOneBlock, @NotNull final Function<SchematicBlock, Boolean> checkIfApplies)
+    private Result advanceBlocks(@NotNull final Supplier<Boolean> moveOneBlock, @NotNull final Function<StructureBlock, Boolean> checkIfApplies)
     {
         for (int i = 0; i < Configurations.maxBlocksCheckedByBuilder; i++)
         {
@@ -263,12 +287,12 @@ public class Structure
     /**
      * Gather all information needed to evaluate one block.
      *
-     * @return a SchematicBlock having all information for the current block.
+     * @return a StructureBlock having all information for the current block.
      */
     @NotNull
-    public SchematicBlock getCurrentBlock()
+    public StructureBlock getCurrentBlock()
     {
-        return new SchematicBlock(
+        return new StructureBlock(
                                    this.schematic.getBlock(),
                                    this.schematic.getBlockPosition(),
                                    this.schematic.getBlockState(),

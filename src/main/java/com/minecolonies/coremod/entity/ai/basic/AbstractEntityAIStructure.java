@@ -110,16 +110,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param nextState          the next state to change to once done iterating.
      * @return the new state this AI will be in after one pass.
      */
-    private Supplier<AIState> generateSchematicIterator(@NotNull final Function<Structure.SchematicBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
+    private Supplier<AIState> generateSchematicIterator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
     {
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
-        @NotNull final Supplier<Structure.SchematicBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
+        @NotNull final Supplier<Structure.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
         @NotNull final Supplier<Structure.Result> advanceBlock = () -> currentStructure.advanceBlock();
 
         return () ->
         {
-            final Structure.SchematicBlock currentBlock = getCurrentBlock.get();
+            final Structure.StructureBlock currentBlock = getCurrentBlock.get();
             /*
             check if we have not found a block (when block == null
             if we have a block, apply the eval function
@@ -213,7 +213,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @return the next step once done.
      */
-    private boolean clearStep(@NotNull final Structure.SchematicBlock currentBlock)
+    private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
 
         //Don't break bedrock etc.

@@ -248,7 +248,7 @@ public class PathNavigate extends PathNavigateGround
         {
             @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
 
-            if (pEx.isOnLadder)
+            if (pEx.isOnLadder())
             {
                 final Vec3d vec3 = this.getPath().getPosition(this.entity);
 
@@ -256,7 +256,7 @@ public class PathNavigate extends PathNavigateGround
                 {
                     //This way he is less nervous and gets up the ladder
                     double newSpeed = 0.05;
-                    switch (pEx.ladderFacing)
+                    switch (pEx.getLadderFacing())
                     {
                         //  Any of these values is climbing, so adjust our direction of travel towards the ladder
                         case NORTH:
@@ -342,8 +342,8 @@ public class PathNavigate extends PathNavigateGround
 
             //  If current node is bottom of a ladder, then stay on this node until
             //  the entity reaches the bottom, otherwise they will try to head out early
-            if (pEx.isOnLadder && pEx.ladderFacing == EnumFacing.DOWN
-                  && !pExNext.isOnLadder)
+            if (pEx.isOnLadder() && pEx.getLadderFacing() == EnumFacing.DOWN
+                  && !pExNext.isOnLadder())
             {
                 final Vec3d vec3 = getEntityPosition();
                 if ((vec3.yCoord - (double) pEx.yCoord) < 0.001)

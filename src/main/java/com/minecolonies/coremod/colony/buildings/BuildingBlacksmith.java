@@ -10,11 +10,31 @@ import com.minecolonies.coremod.colony.jobs.JobPlaceholder;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Creates a new building for the blacksmith.
+ */
 public class BuildingBlacksmith extends AbstractBuildingWorker
 {
+    /**
+     * Description of the job executed in the hut.
+     */
     private static final String BLACKSMITH          = "Blacksmith";
+
+    /**
+     * Description of the block used to set this block.
+     */
     private static final String BLACKSMITH_HUT_NAME = "blacksmithHut";
 
+    /**
+     * Max building level of the hut.
+     */
+    private static final int MAX_BUILDING_LEVEL = 3;
+
+    /**
+     * Instantiates the building.
+     * @param c the colony.
+     * @param l the location.
+     */
     public BuildingBlacksmith(final Colony c, final BlockPos l)
     {
         super(c, l);
@@ -30,7 +50,7 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
     @Override
     public int getMaxBuildingLevel()
     {
-        return 3;
+        return MAX_BUILDING_LEVEL;
     }
 
     @NotNull
@@ -40,15 +60,24 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
         return BLACKSMITH;
     }
 
+    //TODO Implement Later
     @NotNull
     @Override
     public AbstractJob createJob(final CitizenData citizen)
     {
-        return new JobPlaceholder(citizen); //TODO Implement Later
+        return new JobPlaceholder(citizen);
     }
 
+    /**
+     * ClientSide representation of the building.
+     */
     public static class View extends AbstractBuildingWorker.View
     {
+        /**
+         * Instantiates the view of the building.
+         * @param c the colonyView.
+         * @param l the location of the block.
+         */
         public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);

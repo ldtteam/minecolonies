@@ -39,12 +39,48 @@ public abstract class AbstractPathJob implements Callable<Path>
     private static final   BlockPos BLOCKPOS_IDENTITY     = new BlockPos(0, 0, 0);
     private static final   BlockPos BLOCKPOS_UP           = new BlockPos(0, 1, 0);
     private static final   BlockPos BLOCKPOS_DOWN         = new BlockPos(0, -1, 0);
-    private static final   BlockPos BLOCKPOS_NORTH        = new BlockPos(0, 0, -1);
-    private static final   BlockPos BLOCKPOS_SOUTH        = new BlockPos(0, 0, 1);
-    private static final   BlockPos BLOCKPOS_EAST         = new BlockPos(1, 0, 0);
-    private static final   BlockPos BLOCKPOS_WEST         = new BlockPos(-1, 0, 0);
-    private static final   int      MAX_Y                 = 256;
-    private static final   int      MIN_Y                 = 0;
+    private static final   BlockPos BLOCKPOS_NORTH = new BlockPos(0, 0, -1);
+    private static final   BlockPos BLOCKPOS_SOUTH = new BlockPos(0, 0, 1);
+    private static final   BlockPos BLOCKPOS_EAST  = new BlockPos(1, 0, 0);
+    private static final   BlockPos BLOCKPOS_WEST  = new BlockPos(-1, 0, 0);
+    private static final   int      MAX_Y          = 256;
+    private static final   int      MIN_Y          = 0;
+
+    /**
+     * Additional cost of jumping and dropping - base 1.
+     */
+    private static final double JUMP_DROP_COST = 1.1D;
+
+    /**
+     * Cost improvement of paths - base 1.
+     */
+    private static final double ON_PATH_COST = 0.75D;
+
+    /**
+     * Additional cost of swimming - base 1.
+     */
+    private static final double SWIM_COST       = 5D;
+
+    /**
+     * Distance which is considered to be too close to a fence.
+     */
+    private static final double TOO_CLOSE_TO_FENCE = 0.1D;
+
+    /**
+     * Distance which is considered to be too far from a fence.
+     */
+    private static final double TOO_FAR_FROM_FENCE = 0.9D;
+
+    /**
+     * Shift x by this value to calculate the node key..
+     */
+    private static final int SHIFT_X_BY = 20;
+
+    /**
+     * Shift the y value by this to calculate the node key..
+     */
+    private static final int SHIFT_Y_BY = 12;
+
     @Nullable
     protected static Set<Node>    lastDebugNodesVisited;
     @Nullable
@@ -126,7 +162,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     private static boolean onLadderGoingUp(@NotNull final Node currentNode, @NotNull final BlockPos dPos)
     {
-        return currentNode.isLadder && (dPos.getY() >= 0 || dPos.getX() != 0 || dPos.getZ() != 0);
+        return currentNode.isLadder() && (dPos.getY() >= 0 || dPos.getX() != 0 || dPos.getZ() != 0);
     }
 
     /**
@@ -160,20 +196,20 @@ public abstract class AbstractPathJob implements Callable<Path>
             final double dX = entity.posX - Math.floor(entity.posX);
             final double dZ = entity.posZ - Math.floor(entity.posZ);
 
-            if (dX < 0.1)
+            if (dX < TOO_CLOSE_TO_FENCE)
             {
                 pos.setPos(pos.getX() - 1, pos.getY(), pos.getZ());
             }
-            else if (dX > 0.9)
+            else if (dX > TOO_FAR_FROM_FENCE)
             {
                 pos.setPos(pos.getX() + 1, pos.getY(), pos.getZ());
             }
 
-            if (dZ < 0.1)
+            if (dZ < TOO_CLOSE_TO_FENCE)
             {
                 pos.setPos(pos.getX(), pos.getY(), pos.getZ() - 1);
             }
-            else if (dZ > 0.9)
+            else if (dZ > TOO_FAR_FROM_FENCE)
             {
                 pos.setPos(pos.getX(), pos.getY(), pos.getZ() + 1);
             }
@@ -197,24 +233,24 @@ public abstract class AbstractPathJob implements Callable<Path>
 
             if (((meta >>> SHIFT_SOUTH) & 1) != 0)
             {
-                p.ladderFacing = EnumFacing.SOUTH;
+                p.setLadderFacing(EnumFacing.SOUTH);
             }
             else if (((meta >>> SHIFT_WEST) & 1) != 0)
             {
-                p.ladderFacing = EnumFacing.WEST;
+                p.setLadderFacing(EnumFacing.WEST);
             }
             else if (((meta >>> SHIFT_NORTH) & 1) != 0)
             {
-                p.ladderFacing = EnumFacing.NORTH;
+                p.setLadderFacing(EnumFacing.NORTH);
             }
             else if (((meta >>> SHIFT_EAST) & 1) != 0)
             {
-                p.ladderFacing = EnumFacing.EAST;
+                p.setLadderFacing(EnumFacing.EAST);
             }
         }
         else
         {
-            p.ladderFacing = world.getBlockState(pos).getValue(BlockLadder.FACING);
+            p.setLadderFacing(world.getBlockState(pos).getValue(BlockLadder.FACING));
         }
     }
 
@@ -228,7 +264,7 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private static boolean onALadder(@NotNull final Node node, @Nullable final Node nextInPath, @NotNull final BlockPos pos)
     {
-        return nextInPath != null && node.isLadder
+        return nextInPath != null && node.isLadder()
                  &&
                  (nextInPath.pos.getX() == pos.getX() && nextInPath.pos.getZ() == pos.getZ());
     }
@@ -245,38 +281,36 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     private static int computeNodeKey(@NotNull final BlockPos pos)
     {
-        return ((pos.getX() & 0xFFF) << 20)
-                 | ((pos.getY() & 0xFF) << 12)
+        return ((pos.getX() & 0xFFF) << SHIFT_X_BY)
+                 | ((pos.getY() & 0xFF) << SHIFT_Y_BY)
                  | (pos.getZ() & 0xFFF);
     }
 
     /**
      * Compute the cost (immediate 'g' value) of moving from the parent space to the new space.
-     *
-     * @param parent     The parent node being moved from.
      * @param dPos       The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1].
      * @param isSwimming true is the current node would require the citizen to swim.
      * @param onPath     checks if the node is on a path.
      * @return cost to move from the parent to the new position.
      */
-    protected static double computeCost(Node parent, @NotNull BlockPos dPos, boolean isSwimming, boolean onPath)
+    protected static double computeCost(@NotNull BlockPos dPos, boolean isSwimming, boolean onPath)
     {
         double cost = 1D;
 
         if (dPos.getY() != 0 && (dPos.getX() != 0 || dPos.getZ() != 0))
         {
             //  Tax the cost for jumping, dropping (warning: also taxes stairs)
-            cost *= 1.1D;
+            cost *= JUMP_DROP_COST;
         }
 
         if (onPath)
         {
-            cost *= 0.75D;
+            cost *= ON_PATH_COST;
         }
 
         if (isSwimming)
         {
-            cost *= 5D;
+            cost *= SWIM_COST;
         }
 
         return cost;
@@ -295,12 +329,12 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     private static boolean nodeClosed(@Nullable final Node node)
     {
-        return node != null && node.closed;
+        return node != null && node.isClosed();
     }
 
     private static boolean calculateSwimming(@NotNull final IBlockAccess world, @NotNull final BlockPos pos, @Nullable final Node node)
     {
-        return (node == null) ? world.getBlockState(pos.down()).getMaterial().isLiquid() : node.isSwimming;
+        return (node == null) ? world.getBlockState(pos.down()).getMaterial().isLiquid() : node.isSwimming();
     }
 
     public PathResult getResult()
@@ -350,20 +384,9 @@ public abstract class AbstractPathJob implements Callable<Path>
             final Node currentNode = nodesOpen.poll();
 
             totalNodesVisited++;
-            currentNode.counterVisited = totalNodesVisited;
+            currentNode.setCounterVisited(totalNodesVisited);
 
-            if (debugDrawEnabled)
-            {
-                addNodeToDebug(currentNode);
-            }
-
-            currentNode.closed = true;
-
-            if (Configurations.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
-            {
-                Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
-                  currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.cost, currentNode.score));
-            }
+            handleDebugOptions(currentNode);
 
             if (isAtDestination(currentNode))
             {
@@ -380,7 +403,7 @@ public abstract class AbstractPathJob implements Callable<Path>
                 bestNodeResultScore = nodeResultScore;
             }
 
-            if (currentNode.steps <= maxRange)
+            if (currentNode.getSteps() <= maxRange)
             {
                 walkCurrentNode(currentNode);
             }
@@ -396,6 +419,22 @@ public abstract class AbstractPathJob implements Callable<Path>
         handleDebugDraw();
 
         return path;
+    }
+
+    private void handleDebugOptions(Node currentNode)
+    {
+        if (debugDrawEnabled)
+        {
+            addNodeToDebug(currentNode);
+        }
+
+        currentNode.setClosed();
+
+        if (Configurations.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
+        {
+            Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
+                    currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.getCost(), currentNode.getScore()));
+        }
     }
 
     private void addNodeToDebug(final Node currentNode)
@@ -502,11 +541,11 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (isLadder(start))
         {
-            startNode.isLadder = true;
+            startNode.setLadder();
         }
         else if (world.getBlockState(start).getMaterial().isLiquid())
         {
-            startNode.isSwimming = true;
+            startNode.setSwimming();
         }
 
         nodesOpen.offer(startNode);
@@ -552,7 +591,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
             @NotNull final BlockPos pos = node.pos;
 
-            if (node.isSwimming)
+            if (node.isSwimming())
             {
                 //  Not truly necessary but helps prevent them spinning in place at swimming nodes
                 pos.add(BLOCKPOS_DOWN);
@@ -563,7 +602,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             //  Climbing on a ladder?
             if (nextInPath != null && onALadder(node, nextInPath, pos))
             {
-                p.isOnLadder = true;
+                p.setOnLadder(true);
                 if (nextInPath.pos.getY() > pos.getY())
                 {
                     //  We only care about facing if going up
@@ -573,7 +612,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             }
             else if (onALadder(node.parent, node.parent, pos))
             {
-                p.isOnLadder = true;
+                p.setOnLadder(true);
             }
 
             points[pathLength] = p;
@@ -682,9 +721,9 @@ public abstract class AbstractPathJob implements Callable<Path>
         final boolean isSwimming = calculateSwimming(world, pos, node);
         final boolean onRoad = BlockUtils.isPathBlock(world.getBlockState(pos).getBlock());
         //  Cost may have changed due to a jump up or drop
-        final double stepCost = computeCost(parent, dPos, isSwimming, onRoad);
+        final double stepCost = computeCost(dPos, isSwimming, onRoad);
         final double heuristic = computeHeuristic(pos);
-        final double cost = parent.cost + stepCost;
+        final double cost = parent.getCost() + stepCost;
         final double score = cost + heuristic;
 
         if (node == null)
@@ -709,7 +748,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     private void performJumpPointSearch(@NotNull final Node parent, @NotNull final BlockPos dPos, @NotNull final Node node)
     {
-        if (allowJumpPointSearchTypeWalk && node.heuristic <= parent.heuristic)
+        if (allowJumpPointSearchTypeWalk && node.getHeuristic() <= parent.getHeuristic())
         {
             walk(node, dPos);
         }
@@ -730,22 +769,22 @@ public abstract class AbstractPathJob implements Callable<Path>
 
         if (isLadder(pos))
         {
-            node.isLadder = true;
+            node.setLadder();
         }
         else if (isSwimming)
         {
-            node.isSwimming = true;
+            node.setSwimming();
         }
 
         totalNodesAdded++;
-        node.counterAdded = totalNodesAdded;
+        node.setCounterAdded(totalNodesAdded);
         return node;
     }
 
     private boolean updateCurrentNode(@NotNull final Node parent, @NotNull final Node node, final double heuristic, final double cost, final double score)
     {
         //  This node already exists
-        if (score >= node.score)
+        if (score >= node.getScore())
         {
             return true;
         }
@@ -756,10 +795,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         }
 
         node.parent = parent;
-        node.steps = parent.steps + 1;
-        node.cost = cost;
-        node.heuristic = heuristic;
-        node.score = score;
+        node.setSteps(parent.getSteps() + 1);
+        node.setCost(cost);
+        node.setHeuristic(heuristic);
+        node.setScore(score);
         return false;
     }
 
@@ -804,7 +843,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     private int handleNotStanding(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final IBlockState below)
     {
-        final boolean isSwimming = parent != null && parent.isSwimming;
+        final boolean isSwimming = parent != null && parent.isSwimming();
 
         if (below.getMaterial().isLiquid())
         {
@@ -821,7 +860,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     private int checkDrop(@Nullable final Node parent, @NotNull final BlockPos pos, final boolean isSwimming)
     {
-        final boolean canDrop = parent != null && !parent.isLadder;
+        final boolean canDrop = parent != null && !parent.isLadder();
         //  Nothing to stand on
         if (!canDrop || isSwimming)
         {
@@ -859,7 +898,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     private int handleTargeNotPassable(@Nullable final Node parent, @NotNull final BlockPos pos, @NotNull final IBlockState target)
     {
-        final boolean canJump = parent != null && !parent.isLadder && !parent.isSwimming;
+        final boolean canJump = parent != null && !parent.isLadder() && !parent.isSwimming();
         //  Need to try jumping up one, if we can
         if (!canJump || isWalkableSurface(target) != SurfaceType.WALKABLE)
         {

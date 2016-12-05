@@ -12,6 +12,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.function.Function;
 
+/**
+ * Class handling the colony styles messages.
+ */
 public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStylesMessage, IMessage>
 {
     private Map<String, List<String>> hutStyleMap;

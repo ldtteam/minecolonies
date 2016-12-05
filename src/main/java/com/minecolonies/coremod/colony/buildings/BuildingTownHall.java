@@ -8,10 +8,26 @@ import com.minecolonies.coremod.colony.ColonyView;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Class used to manage the townHall building block.
+ */
 public class BuildingTownHall extends AbstractBuildingHut
 {
+    /**
+     * Description of the block used to set this block.
+     */
     private static final String TOWN_HALL = "TownHall";
 
+    /**
+     * Max building level of the hut.
+     */
+    private static final int MAX_BUILDING_LEVEL = 4;
+
+    /**
+     * Instantiates the building.
+     * @param c the colony.
+     * @param l the location.
+     */
     public BuildingTownHall(final Colony c, final BlockPos l)
     {
         super(c, l);
@@ -27,7 +43,7 @@ public class BuildingTownHall extends AbstractBuildingHut
     @Override
     public int getMaxBuildingLevel()
     {
-        return 4;
+        return MAX_BUILDING_LEVEL;
     }
 
     @Override
@@ -45,8 +61,16 @@ public class BuildingTownHall extends AbstractBuildingHut
         }
     }
 
+    /**
+     * ClientSide representation of the building.
+     */
     public static class View extends AbstractBuildingHut.View
     {
+        /**
+         * Instantiates the view of the building.
+         * @param c the colonyView.
+         * @param l the location of the block.
+         */
         public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);

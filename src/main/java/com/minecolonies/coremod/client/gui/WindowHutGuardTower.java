@@ -16,6 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Window for the guardTower hut.
@@ -104,23 +105,23 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     /**
      * Retrieve the guard ON low health.
      */
-    private boolean retrieveOnLowHealth = false;
+    private boolean                     retrieveOnLowHealth = false;
     /**
      * Patrol manually or automatically.
      */
-    private boolean patrolManually = false;
+    private boolean                     patrolManually      = false;
     /**
      * The task of the guard, following the Task enum.
      */
-    private BuildingGuardTower.Task task = BuildingGuardTower.Task.GUARD;
+    private BuildingGuardTower.Task     task                = BuildingGuardTower.Task.GUARD;
     /**
      * The job of the guard, following the GuardJob enum.
      */
-    private BuildingGuardTower.GuardJob job = null;
+    private BuildingGuardTower.GuardJob job                 = null;
     /**
      * The list of MANUAL patrol targets.
      */
-    private ArrayList<BlockPos> patrolTargets = new ArrayList<>();
+    private List<BlockPos>              patrolTargets       = new ArrayList<>();
     /**
      * The patrol list.
      */
