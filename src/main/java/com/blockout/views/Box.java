@@ -26,7 +26,7 @@ public class Box extends View
      *
      * @param params xml parameters.
      */
-    public Box(@NotNull PaneParams params)
+    public Box(@NotNull final PaneParams params)
     {
         super(params);
         lineWidth = params.getFloatAttribute("linewidth", lineWidth);
@@ -34,7 +34,7 @@ public class Box extends View
     }
 
     @Override
-    protected void drawSelf(int mx, int my)
+    protected void drawSelf(final int mx, final int my)
     {
         Render.drawOutlineRect(x, y, x + getWidth(), y + getHeight(), lineWidth, color);
 

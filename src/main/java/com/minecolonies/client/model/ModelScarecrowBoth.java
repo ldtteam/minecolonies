@@ -98,14 +98,14 @@ public class ModelScarecrowBoth extends ModelBase
         setRotation(LeftLeg, 0F, 0F, -0.0872665F);
     }
 
-    private void setRotation(@NotNull ModelRenderer model, float x, float y, float z)
+    private void setRotation(@NotNull final ModelRenderer model, final float x, final float y, final float z)
     {
         model.rotateAngleX = x;
         model.rotateAngleY = y;
         model.rotateAngleZ = z;
     }
 
-    public void render(float scaleFactor)
+    public void render(final float scaleFactor)
     {
         Head.render(scaleFactor);
         Post.render(scaleFactor);

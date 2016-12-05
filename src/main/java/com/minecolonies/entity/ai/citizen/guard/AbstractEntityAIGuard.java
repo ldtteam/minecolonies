@@ -1,16 +1,19 @@
 package com.minecolonies.entity.ai.citizen.guard;
 
+import com.blockout.Log;
 import com.minecolonies.colony.Colony;
 import com.minecolonies.colony.buildings.AbstractBuilding;
 import com.minecolonies.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.colony.buildings.BuildingGuardTower;
 import com.minecolonies.colony.jobs.JobGuard;
 import com.minecolonies.colony.permissions.Permissions;
+import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAISkill;
 import com.minecolonies.entity.ai.util.AIState;
 import com.minecolonies.entity.ai.util.AITarget;
 import com.minecolonies.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.LanguageHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -44,7 +47,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Distance the guard starts searching.
      */
-    private static final int START_SEARCH_DISTANCE = 5;
+    protected static final int START_SEARCH_DISTANCE = 5;
 
     /**
      * Basic delay after operations.
@@ -64,19 +67,19 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Path that close to the patrol target.
      */
-    private static final int PATH_CLOSE      = 3;
+    private static final int PATH_CLOSE      = 2;
 
     /**
      * Worker gets this distance times building level away from his building to patrol.
      */
-    private static final int PATROL_DISTANCE = 20;
+    public static final int PATROL_DISTANCE = 40;
 
     /**
-     * Horizontal range in which the guard picks up items
+     * Horizontal range in which the guard picks up items.
      */
     private static final double RANGE_HORIZONTAL_PICKUP = 20.0D;
     /**
-     * Vertical range in which the guard picks up items
+     * Vertical range in which the guard picks up items.
      */
     private static final double RANGE_VERTICAL_PICKUP   = 2.0D;
 
@@ -86,7 +89,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     private static final int   STUCK_WAIT_TICKS        = 20;
 
     /**
-     * The amount of time to wait while walking to items
+     * The amount of time to wait while walking to items.
      */
     private static final int   WAIT_WHILE_WALKING      = 5;
 
@@ -96,9 +99,19 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     private static final int ITEM_PICKUP_RANGE = 3;
 
     /**
+     * The dump base of actions, will increase depending on level.
+     */
+    private static final int DUMP_BASE = 20;
+
+    /**
+     * Follow the player if farther than this.
+     */
+    public static final int FOLLOW_RANGE = 10;
+
+    /**
      * Checks if the guard should dump its inventory.
      */
-    private static final int DUMP_AFTER_ACTIONS = 10;
+    private int dumpAfterActions = DUMP_BASE;
 
     /**
      * The current target.
@@ -111,11 +124,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * The distance the guard is searching entities in currently.
      */
-    private int currentSearchDistance = START_SEARCH_DISTANCE;
+    protected int currentSearchDistance = START_SEARCH_DISTANCE;
     /**
      * Current goTo task.
      */
-    private BlockPos currentPatrolTarget;
+    private BlockPos     currentPathTarget;
     /**
      * Containing all close entities.
      */
@@ -128,13 +141,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     private List<BlockPos> items;
 
     /**
-     * Number of ticks the guard is standing still
+     * Number of ticks the guard is standing still.
      */
     private              int   stillTicks              = 0;
 
     /**
      * Used to store the path index
-     * to check if the guard is still walking
+     * to check if the guard is still walking.
      */
     private              int   previousIndex           = 0;
 
@@ -147,10 +160,37 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, () -> START_WORKING),
-          new AITarget(START_WORKING, () -> GUARD_RESTOCK),
-          new AITarget(GUARD_GATHERING, this::gathering)
+                new AITarget(this::checkIfExecute, this::getState),
+                new AITarget(IDLE, () -> START_WORKING),
+                new AITarget(START_WORKING, () -> GUARD_RESTOCK),
+                new AITarget(GUARD_GATHERING, this::gathering)
         );
+    }
+
+    /**
+     * Checks if the worker is in a state where he can execute well.
+     * @return true if so.
+     */
+    private boolean checkIfExecute()
+    {
+        final AbstractBuilding building = getOwnBuilding();
+        if(!(building instanceof BuildingGuardTower))
+        {
+            return true;
+        }
+
+        if(!((BuildingGuardTower) building).shallRetrieveOnLowHealth())
+        {
+            return false;
+        }
+
+        if(worker.getHealth() > 2)
+        {
+            return false;
+        }
+
+        worker.isWorkerAtSiteWithMove(building.getLocation(), PATH_CLOSE);
+        return true;
     }
 
     /**
@@ -198,44 +238,46 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     protected AIState goToBuilding()
     {
-        if (!walkToBuilding())
+        if (walkToBuilding())
         {
-            final AbstractBuildingWorker workBuilding = getOwnBuilding();
-            if (workBuilding != null)
+            return AIState.GUARD_RESTOCK;
+        }
+
+        final AbstractBuildingWorker workBuilding = getOwnBuilding();
+        if (workBuilding != null)
+        {
+            final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
+
+            for (int i = 0; i < workBuilding.getTileEntity().getSizeInventory(); i++)
             {
-                final TileEntityColonyBuilding chest = workBuilding.getTileEntity();
+                final ItemStack stack = chest.getStackInSlot(i);
 
-                for (int i = 0; i < workBuilding.getTileEntity().getSizeInventory(); i++)
+                if (stack == null)
                 {
-                    final ItemStack stack = chest.getStackInSlot(i);
+                    continue;
+                }
 
-                    if (stack == null)
+                if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
+                {
+                    final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
+
+                    if (emptySlot != -1)
                     {
-                        continue;
-                    }
-
-                    if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
-                    {
-                        final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
-
-                        if (emptySlot != -1)
-                        {
-                            worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
-                            chest.setInventorySlotContents(i, null);
-                        }
+                        worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
+                        chest.setInventorySlotContents(i, null);
                     }
                 }
+                dumpAfterActions = DUMP_BASE * workBuilding.getBuildingLevel();
             }
-            attacksExecuted = 0;
-            return AIState.GUARD_SEARCH_TARGET;
         }
-        return AIState.GUARD_RESTOCK;
+        attacksExecuted = 0;
+        return AIState.GUARD_SEARCH_TARGET;
     }
 
     @Override
     protected int getActionsDoneUntilDumping()
     {
-        return DUMP_AFTER_ACTIONS;
+        return dumpAfterActions;
     }
 
     /**
@@ -250,34 +292,40 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             return AIState.GUARD_PATROL;
         }
 
-        if (entityList.get(0) instanceof EntityPlayer)
+        final Entity entity = entityList.get(0);
+
+        final BlockPos buildingLocation = getOwnBuilding().getLocation();
+
+        //Only attack entities in max patrol distance.
+        if (BlockPosUtil.getDistance2D(entity.getPosition(), buildingLocation) < getPatrolDistance())
         {
-            if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entityList.get(0), Permissions.Action.GUARDS_ATTACK))
+            if (entity instanceof EntityPlayer)
             {
-                targetEntity = (EntityLivingBase) entityList.get(0);
+                if (worker.getColony() != null && worker.getColony().getPermissions().hasPermission((EntityPlayer) entity, Permissions.Action.GUARDS_ATTACK))
+                {
+                    targetEntity = (EntityLivingBase) entity;
+                    worker.getNavigator().clearPathEntity();
+                    return AIState.GUARD_HUNT_DOWN_TARGET;
+                }
+                entityList.remove(0);
+                setDelay(BASE_DELAY);
+                return AIState.GUARD_GET_TARGET;
+            }
+            else if (worker.getEntitySenses().canSee(entity) && (entityList.get(0)).isEntityAlive())
+            {
                 worker.getNavigator().clearPathEntity();
+                targetEntity = (EntityLivingBase) entity;
                 return AIState.GUARD_HUNT_DOWN_TARGET;
             }
-            entityList.remove(0);
-            setDelay(BASE_DELAY);
-            return AIState.GUARD_GET_TARGET;
         }
-        else if (worker.getEntitySenses().canSee(entityList.get(0)) && (entityList.get(0)).isEntityAlive())
-        {
-            worker.getNavigator().clearPathEntity();
-            targetEntity = (EntityLivingBase) entityList.get(0);
-            return AIState.GUARD_HUNT_DOWN_TARGET;
-        }
-        else
-        {
-            entityList.remove(0);
-            setDelay(BASE_DELAY);
-            return AIState.GUARD_GET_TARGET;
-        }
+
+        entityList.remove(0);
+        setDelay(BASE_DELAY);
+        return AIState.GUARD_GET_TARGET;
     }
 
     /**
-     * Searches for the next taget.
+     * Searches for the next target.
      *
      * @return the next AIState.
      */
@@ -286,6 +334,11 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         entityList = this.worker.worldObj.getEntitiesWithinAABB(EntityMob.class, this.getTargetableArea(currentSearchDistance));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntitySlime.class, this.getTargetableArea(currentSearchDistance)));
         entityList.addAll(this.worker.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.getTargetableArea(currentSearchDistance)));
+
+        if(targetEntity != null && targetEntity.isEntityAlive() && worker.getEntitySenses().canSee(targetEntity))
+        {
+            return AIState.GUARD_HUNT_DOWN_TARGET;
+        }
 
         setDelay(BASE_DELAY);
         if (entityList.isEmpty())
@@ -305,7 +358,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         return AIState.GUARD_GET_TARGET;
     }
 
-    private AxisAlignedBB getTargetableArea(double range)
+    private AxisAlignedBB getTargetableArea(final double range)
     {
         return this.worker.getEntityBoundingBox().expand(range, HEIGHT_DETECTION_RANGE, range);
     }
@@ -340,18 +393,96 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     protected AIState patrol()
     {
         worker.setAIMoveSpeed(1);
+        final AbstractBuilding building = getOwnBuilding();
 
-        if (currentPatrolTarget == null)
+        if (building instanceof BuildingGuardTower)
         {
-            currentPatrolTarget = getRandomBuilding();
-        }
+            if (currentPathTarget == null
+                    || BlockPosUtil.getDistance2D(building.getColony().getCenter(), currentPathTarget) > Configurations.workingRangeTownHall + Configurations.townHallPadding
+                    || currentPathTarget.getY() < 2)
+            {
+                return getNextPatrollingTarget((BuildingGuardTower) building);
+            }
 
-        if (worker.isWorkerAtSiteWithMove(currentPatrolTarget, PATH_CLOSE))
-        {
-            currentPatrolTarget = null;
+            if (worker.isWorkerAtSiteWithMove(currentPathTarget, PATH_CLOSE) || ((BuildingGuardTower) building).getTask().equals(BuildingGuardTower.Task.FOLLOW))
+            {
+                return getNextPatrollingTarget((BuildingGuardTower) building);
+            }
         }
 
         return AIState.GUARD_SEARCH_TARGET;
+    }
+
+    /**
+     * Retrieves the next patrolling target from the guard tower.
+     * @param building his building.
+     * @return the next state to go to.
+     */
+    private AIState getNextPatrollingTarget(final BuildingGuardTower building)
+    {
+        if (building.shallPatrolManually() && building.getTask().equals(BuildingGuardTower.Task.PATROL))
+        {
+            final BlockPos pos = building.getNextPatrolTarget(currentPathTarget);
+            if (pos != null)
+            {
+                currentPathTarget = pos;
+                return AIState.GUARD_SEARCH_TARGET;
+            }
+        }
+        else if(building.getTask().equals(BuildingGuardTower.Task.GUARD))
+        {
+            BlockPos pos = building.getGuardPos();
+            if(pos == null)
+            {
+                pos = building.getLocation();
+            }
+            currentPathTarget = pos;
+            return AIState.GUARD_SEARCH_TARGET;
+        }
+        else if(building.getTask().equals(BuildingGuardTower.Task.FOLLOW))
+        {
+            BlockPos pos = building.getPlayerToFollow();
+            if(pos == null || BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()) > Configurations.workingRangeTownHall + Configurations.townHallPadding)
+            {
+                if(pos != null)
+                {
+                    Log.getLogger().info(BlockPosUtil.getDistance2D(pos, building.getColony().getCenter()));
+                }
+                final EntityPlayer player = building.getPlayer();
+                if(player != null)
+                {
+                    LanguageHandler.sendPlayerMessage(building.getPlayer(), LanguageHandler.format("com.minecolonies.job.guard.switch"));
+                }
+                pos = building.getLocation();
+                building.setTask(BuildingGuardTower.Task.GUARD);
+            }
+            currentPathTarget = pos;
+            return AIState.GUARD_SEARCH_TARGET;
+        }
+        currentPathTarget = getRandomBuilding();
+        return AIState.GUARD_SEARCH_TARGET;
+    }
+
+    /**
+     * Checks if the the worker is too far from his patrol/guard/follow target.
+     * @param target an attack target.
+     * @param range the range allowed to be from the patrol/guard/follow target.
+     * @return true if too far.
+     */
+    public boolean shouldReturnToTarget(final BlockPos target, final double range)
+    {
+        final AbstractBuilding building = getOwnBuilding();
+
+        if(currentPathTarget == null && building instanceof BuildingGuardTower)
+        {
+            getNextPatrollingTarget((BuildingGuardTower) building);
+        }
+
+        if (building instanceof BuildingGuardTower && BlockPosUtil.getDistance2D(target, currentPathTarget) > range)
+        {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -391,6 +522,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         final Colony colony = this.getOwnBuilding().getColony();
         colony.incrementMobsKilled();
         incrementActionsDone();
+        worker.getNavigator().clearPathEntity();
     }
 
     /**
@@ -449,14 +581,14 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     }
 
     /**
-     * Collect one item by walking to it
+     * Collect one item by walking to it.
      */
     private void gatherItems()
     {
         worker.setCanPickUpLoot(true);
         if (worker.getNavigator().noPath())
         {
-            BlockPos pos = getAndRemoveClosestItem();
+            final BlockPos pos = getAndRemoveClosestItem();
             worker.isWorkerAtSiteWithMove(pos, ITEM_PICKUP_RANGE);
             return;
         }
@@ -466,7 +598,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             return;
         }
 
-        int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
+        final int currentIndex = worker.getNavigator().getPath().getCurrentPathIndex();
         //We moved a bit, not stuck
         if (currentIndex != previousIndex)
         {
@@ -491,12 +623,17 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     private BlockPos getAndRemoveClosestItem()
     {
+        if(items == null)
+        {
+            return worker.getPosition();
+        }
+
         int index = 0;
         double distance = Double.MAX_VALUE;
 
         for (int i = 0; i < items.size(); i++)
         {
-            double tempDistance = items.get(i).distanceSq(worker.getPosition());
+            final double tempDistance = items.get(i).distanceSq(worker.getPosition());
             if (tempDistance < distance)
             {
                 index = i;

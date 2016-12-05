@@ -21,7 +21,7 @@ import static com.minecolonies.entity.EntityCitizen.Status.IDLE;
  * No utility on this level!
  * That's what {@link AbstractEntityAIInteract} is for.
  *
- * @param <J> the job this ai will have
+ * @param <J> the job this ai will have.
  */
 public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAIBase
 {
@@ -45,10 +45,11 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Sets up some important skeleton stuff for every ai.
      *
-     * @param job the job class
+     * @param job the job class.
      */
     protected AbstractAISkeleton(@NotNull final J job)
     {
+        super();
         this.targetList = new ArrayList<>();
         setMutexBits(MUTEX_MASK);
         this.job = job;
@@ -61,9 +62,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Register one target.
      *
-     * @param target the target to register
+     * @param target the target to register.
      */
-    private void registerTarget(AITarget target)
+    private void registerTarget(final AITarget target)
     {
         targetList.add(target);
     }
@@ -75,7 +76,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      *
      * @param targets a number of targets that need registration
      */
-    protected final void registerTargets(AITarget... targets)
+    protected final void registerTargets(final AITarget... targets)
     {
         Arrays.asList(targets).forEach(this::registerTarget);
     }
@@ -83,7 +84,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Returns whether the EntityAIBase should begin execution.
      *
-     * @return true if execution is wanted
+     * @return true if execution is wanted.
      */
     @Override
     public final boolean shouldExecute()
@@ -92,7 +93,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Returns whether an in-progress EntityAIBase should continue executing.
      */
     @Override
     public final boolean continueExecuting()
@@ -101,7 +102,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Execute a one shot task or start executing a continuous task
+     * Execute a one shot task or start executing a continuous task.
      */
     @Override
     public final void startExecuting()
@@ -111,7 +112,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Resets the task
+     * Resets the task.
      */
     @Override
     public final void resetTask()
@@ -120,7 +121,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     }
 
     /**
-     * Updates the task
+     * Updates the task.
      */
     @Override
     public final void updateTask()
@@ -136,7 +137,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * @param mutexBits the bits to flag this with.
      */
     @Override
-    public final void setMutexBits(int mutexBits)
+    public final void setMutexBits(final int mutexBits)
     {
         super.setMutexBits(mutexBits);
     }
@@ -153,7 +154,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * @param target the target to check
      * @return true if this target worked and we should stop executing this tick
      */
-    private boolean checkOnTarget(@NotNull AITarget target)
+    private boolean checkOnTarget(@NotNull final AITarget target)
     {
         if (state != target.getState() && target.getState() != null)
         {
@@ -166,7 +167,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
                 return false;
             }
         }
-        catch (RuntimeException e)
+        catch (final RuntimeException e)
         {
             Log.getLogger().warn("Condition check for target " + target + " threw an exception:", e);
             this.onException(e);
@@ -178,9 +179,9 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Handle an exception higher up.
      *
-     * @param e The exception to be handled
+     * @param e The exception to be handled.
      */
-    protected void onException(RuntimeException e)
+    protected void onException(final RuntimeException e)
     {
 
     }
@@ -194,14 +195,14 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * @param target the target.
      * @return true if it worked.
      */
-    private boolean applyTarget(@NotNull AITarget target)
+    private boolean applyTarget(@NotNull final AITarget target)
     {
-        AIState newState;
+        final AIState newState;
         try
         {
             newState = target.apply();
         }
-        catch (RuntimeException e)
+        catch (final RuntimeException e)
         {
             Log.getLogger().warn("Action for target " + target + " threw an exception:", e);
             this.onException(e);
@@ -218,7 +219,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     /**
      * Get the current state the ai is in.
      *
-     * @return The current AIState
+     * @return The current AIState.
      */
     public final AIState getState()
     {

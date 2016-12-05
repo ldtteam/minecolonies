@@ -1,27 +1,27 @@
 <layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
     <label id="name" size="100% 11" pos="0 0"
-           textalign="Middle" color="red"/>
+           textalign="MIDDLE" color="red"/>
     <label size="100% 11" pos="0 18"
            label="$(com.minecolonies.gui.workerHuts.workerAssigned)"
-           textalign="Middle" color="black"/>
+           textalign="MIDDLE" color="black"/>
     <label id="workerName" size="100% 11" pos="0 28"
-           textalign="Middle" color="black"/>
+           textalign="MIDDLE" color="black"/>
     <label id="workerLevel" size="100% 11" pos="0 44"
-           textalign="Middle" color="black"/>
+           textalign="MIDDLE" color="black"/>
 
-    <button id="hire" align="TopMiddle" size="116 20" pos="0 64"
+    <button id="hire" align="TOP_MIDDLE" size="116 20" pos="0 64"
             label="$(com.minecolonies.gui.workerHuts.hire)"/>
-    <button id="recall" align="TopMiddle" size="116 20" pos="0 88"
+    <button id="recall" align="TOP_MIDDLE" size="116 20" pos="0 88"
             label="$(com.minecolonies.gui.workerHuts.recall)"/>
-    <button id="build" align="TopMiddle" size="116 20" pos="0 120"
+    <button id="build" align="TOP_MIDDLE" size="116 20" pos="0 120"
             label="$(com.minecolonies.gui.workerHuts.upgrade)"/>
-    <button id="repair" align="TopMiddle" size="116 20" pos="0 144"
+    <button id="repair" align="TOP_MIDDLE" size="116 20" pos="0 144"
             label="$(com.minecolonies.gui.workerHuts.repair)"/>
 
     <label size="100% 11" pos="0 172"
            label="$(com.minecolonies.gui.workerHuts.buildType)"
-           textalign="Middle" color="black"/>
+           textalign="MIDDLE" color="black"/>
     <label id="type" size="100% 11" pos="0 182"
-           textalign="Middle" color="black"/>
+           textalign="MIDDLE" color="black"/>
 </layout>

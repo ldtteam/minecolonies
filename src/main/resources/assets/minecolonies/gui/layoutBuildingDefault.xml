@@ -1,10 +1,10 @@
 <layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
     <label id="name" size="100% 11" pos="0 0"
-           textalign="Middle" color="red"/>
+           textalign="MIDDLE" color="red"/>
 
-    <button id="build" align="TopMiddle" size="116 20" pos="0 64"
+    <button id="build" align="TOP_MIDDLE" size="116 20" pos="0 64"
             label="$(com.minecolonies.gui.workerHuts.upgrade)"/>
-    <button id="repair" align="TopMiddle" size="116 20" pos="0 88"
+    <button id="repair" align="TOP_MIDDLE" size="116 20" pos="0 88"
             label="$(com.minecolonies.gui.workerHuts.repair)"/>
 </layout>

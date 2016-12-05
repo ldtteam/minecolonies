@@ -54,7 +54,7 @@ public abstract class AbstractWorkOrder
      * @param name       name of work order
      * @param orderClass class of work order
      */
-    private static void addMapping(String name, @NotNull Class<? extends AbstractWorkOrder> orderClass)
+    private static void addMapping(final String name, @NotNull final Class<? extends AbstractWorkOrder> orderClass)
     {
         if (nameToClassMap.containsKey(name))
         {
@@ -69,7 +69,7 @@ public abstract class AbstractWorkOrder
                 classToNameMap.put(orderClass, name);
             }
         }
-        catch (NoSuchMethodException exception)
+        catch (final NoSuchMethodException exception)
         {
             throw new IllegalArgumentException("Missing constructor for type '" + name + "' when adding Work Order class mapping", exception);
         }
@@ -81,7 +81,7 @@ public abstract class AbstractWorkOrder
      * @param compound the compound that contains the data for the Work Order
      * @return {@link AbstractWorkOrder} from the NBT
      */
-    public static AbstractWorkOrder createFromNBT(@NotNull NBTTagCompound compound)
+    public static AbstractWorkOrder createFromNBT(@NotNull final NBTTagCompound compound)
     {
         @Nullable AbstractWorkOrder order = null;
         @Nullable Class<? extends AbstractWorkOrder> oclass = null;
@@ -110,7 +110,7 @@ public abstract class AbstractWorkOrder
         {
             order.readFromNBT(compound);
         }
-        catch (RuntimeException ex)
+        catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
               compound.getString(TAG_TYPE), oclass.getName()), ex);
@@ -125,7 +125,7 @@ public abstract class AbstractWorkOrder
      *
      * @param compound NBT Tag compound
      */
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         id = compound.getInteger(TAG_ID);
         claimedBy = compound.getInteger(TAG_CLAIMED_BY);
@@ -138,7 +138,7 @@ public abstract class AbstractWorkOrder
      * @return View object of the workOrder
      */
     @Nullable
-    public static WorkOrderView createWorkOrderView(ByteBuf buf)
+    public static WorkOrderView createWorkOrderView(final ByteBuf buf)
     {
         @Nullable WorkOrderView workOrderView = new WorkOrderView();
 
@@ -146,7 +146,7 @@ public abstract class AbstractWorkOrder
         {
             workOrderView.deserialize(buf);
         }
-        catch (RuntimeException ex)
+        catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A WorkOrder.View for #%d has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
               workOrderView.getId()), ex);
@@ -171,7 +171,7 @@ public abstract class AbstractWorkOrder
      *
      * @param priority the new priority.
      */
-    public void setPriority(int priority)
+    public void setPriority(final int priority)
     {
         this.priority = priority;
     }
@@ -204,7 +204,7 @@ public abstract class AbstractWorkOrder
         return id;
     }
 
-    public void setID(int id)
+    public void setID(final int id)
     {
         this.id = id;
     }
@@ -225,7 +225,7 @@ public abstract class AbstractWorkOrder
      * @param citizen The citizen to check
      * @return true if the Work Order is claimed by this Citizen
      */
-    public boolean isClaimedBy(@NotNull CitizenData citizen)
+    public boolean isClaimedBy(@NotNull final CitizenData citizen)
     {
         return citizen.getId() == claimedBy;
     }
@@ -245,7 +245,7 @@ public abstract class AbstractWorkOrder
      *
      * @param citizen {@link CitizenData}
      */
-    void setClaimedBy(@Nullable CitizenData citizen)
+    void setClaimedBy(@Nullable final CitizenData citizen)
     {
         changed = true;
         claimedBy = (citizen != null) ? citizen.getId() : 0;
@@ -265,7 +265,7 @@ public abstract class AbstractWorkOrder
      *
      * @param compound NBT tag compount
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         final String s = classToNameMap.get(this.getClass());
 
@@ -288,7 +288,7 @@ public abstract class AbstractWorkOrder
      * @param colony The colony that owns the Work Order
      * @return True if the WorkOrder is still valid, or False if it should be deleted
      */
-    public boolean isValid(Colony colony)
+    public boolean isValid(final Colony colony)
     {
         return true;
     }
@@ -306,7 +306,7 @@ public abstract class AbstractWorkOrder
      *
      * @param buf Buffer to write to
      */
-    public void serializeViewNetworkData(@NotNull ByteBuf buf)
+    public void serializeViewNetworkData(@NotNull final ByteBuf buf)
     {
         buf.writeInt(id);
         buf.writeInt(priority);

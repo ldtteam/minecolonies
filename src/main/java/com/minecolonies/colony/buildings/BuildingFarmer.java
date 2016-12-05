@@ -54,6 +54,11 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private static final String TAG_ASSIGN_MANUALLY = "assign";
 
     /**
+     * Flag used to be notified about block updates.
+     */
+    private static final int BLOCK_UPDATE_FLAG      = 3;
+
+    /**
      * The list of the fields the farmer manages.
      */
     private final ArrayList<Field> farmerFields = new ArrayList<>();
@@ -65,7 +70,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private Field currentField;
 
     /**
-     * Fields should be assigned manually to the farmer?
+     * Fields should be assigned manually to the farmer.
      */
     private boolean assignManually = false;
 
@@ -75,7 +80,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * @param c the colony the building is in.
      * @param l the position it has been placed (it's id).
      */
-    public BuildingFarmer(Colony c, BlockPos l)
+    public BuildingFarmer(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -106,7 +111,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param field the field to add.
      */
-    public void addFarmerFields(Field field)
+    public void addFarmerFields(final Field field)
     {
         field.calculateSize(getColony().getWorld(), field.getLocation().down());
         farmerFields.add(field);
@@ -128,7 +133,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param currentField the field to work on.
      */
-    public void setCurrentField(final Field currentField)
+    public void setCurrentField(@Nullable final Field currentField)
     {
         this.currentField = currentField;
     }
@@ -190,7 +195,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public AbstractJob createJob(@NotNull CitizenData citizen)
+    public AbstractJob createJob(@NotNull final CitizenData citizen)
     {
         if (!farmerFields.isEmpty())
         {
@@ -209,7 +214,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
 
     //we have to update our field from the colony!
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         final NBTTagList fieldTagList = compound.getTagList(TAG_FIELDS, Constants.NBT.TAG_COMPOUND);
@@ -226,7 +231,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         @NotNull final NBTTagList fieldTagList = new NBTTagList();
@@ -257,7 +262,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                   .notifyBlockUpdate(scarecrowTileEntity.getPos(),
                     getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                     getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                    3);
+                          BLOCK_UPDATE_FLAG);
                 scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
             }
         }
@@ -269,14 +274,14 @@ public class BuildingFarmer extends AbstractBuildingWorker
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeBoolean(assignManually);
 
         int size = 0;
 
-        for (@NotNull Field field : getColony().getFields().values())
+        for (@NotNull final Field field : getColony().getFields().values())
         {
             if (field.isTaken())
             {
@@ -325,7 +330,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param world the world the building is in.
      */
-    public void syncWithColony(@NotNull World world)
+    public void syncWithColony(@NotNull final World world)
     {
         if (!farmerFields.isEmpty())
         {
@@ -347,7 +352,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
                     scarecrow.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", getWorker().getName()));
                     getColony().getWorld()
                       .notifyBlockUpdate(scarecrow.getPos(), getColony().getWorld().getBlockState(scarecrow.getPos()), getColony().getWorld().getBlockState(scarecrow
-                                                                                                                                                              .getPos()), 3);
+                              .getPos()), BLOCK_UPDATE_FLAG);
                     field.setInventoryField(scarecrow.getInventoryField());
                     if (currentField != null && currentField.getID() == field.getID())
                     {
@@ -385,7 +390,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param position id of the field.
      */
-    public void freeField(BlockPos position)
+    public void freeField(final BlockPos position)
     {
         //Get the field with matching id, if none found return null.
         final Field tempField = farmerFields.stream().filter(field -> field.getID().equals(position)).findFirst().orElse(null);
@@ -393,7 +398,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         if (tempField != null)
         {
             farmerFields.remove(tempField);
-            Field field = getColony().getField(position);
+            final Field field = getColony().getField(position);
             field.setTaken(false);
             field.setOwner("");
             @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
@@ -401,7 +406,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
               .notifyBlockUpdate(scarecrowTileEntity.getPos(),
                 getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
                 getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                3);
+                BLOCK_UPDATE_FLAG);
             scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.gui.scarecrow.user.noone")));
         }
     }
@@ -411,7 +416,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
      *
      * @param position id of the field.
      */
-    public void assignField(BlockPos position)
+    public void assignField(final BlockPos position)
     {
         final Field field = getColony().getField(position);
         field.setTaken(true);
@@ -451,7 +456,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         private String workerName;
 
         /**
-         * The amount of fields the farmer owns;
+         * The amount of fields the farmer owns.
          */
         private int amountOfFields;
 
@@ -461,11 +466,12 @@ public class BuildingFarmer extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the position.
          */
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }
 
+        @Override
         @NotNull
         public com.blockout.views.Window getWindow()
         {
@@ -473,7 +479,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@NotNull final ByteBuf buf)
         {
             fields = new ArrayList<>();
             super.deserialize(buf);
@@ -493,7 +499,7 @@ public class BuildingFarmer extends AbstractBuildingWorker
         }
 
         /**
-         * Should the farmer be assigned manually to the fields?
+         * Should the farmer be assigned manually to the fields.
          *
          * @return true if yes.
          */
@@ -544,7 +550,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
             this.assignFieldManually = assignFieldManually;
         }
 
-        public void changeFields(final BlockPos id, boolean addNewField, int row)
+        /**
+         * Change a field at a certain position.
+         * @param id the position of the field.
+         * @param addNewField should new field be added.
+         * @param row the row of the field.
+         */
+        public void changeFields(final BlockPos id, final boolean addNewField, final int row)
         {
             MineColonies.getNetwork().sendToServer(new AssignFieldMessage(this, addNewField, id));
             fields.get(row).setTaken(addNewField);

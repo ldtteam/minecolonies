@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Abstract class for window for worker building
+ * Abstract class for window for worker building.
  *
  * @param <B> Class extending {@link AbstractBuildingWorker.View}
  */
@@ -46,12 +46,12 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     private static final String BUILDER_HUT_NAME = "com.minecolonies.gui.workerHuts.buildersHut";
 
     /**
-     * Constructor for the window of the worker building
+     * Constructor for the window of the worker building.
      *
-     * @param building class extending {@link AbstractBuildingWorker.View}
-     * @param resource Resource of the window
+     * @param building class extending {@link AbstractBuildingWorker.View}.
+     * @param resource Resource of the window.
      */
-    AbstractWindowWorkerBuilding(B building, String resource)
+    AbstractWindowWorkerBuilding(final B building, final String resource)
     {
         super(building, resource);
 
@@ -66,7 +66,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
      *
      * @param button the clicked button.
      */
-    private void hireClicked(@NotNull Button button)
+    private void hireClicked(@NotNull final Button button)
     {
         if (building.getColony().isManualHiring())
         {
@@ -78,7 +78,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
             if (building.getWorkerId() == 0)
             {
-                @NotNull WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
+                @NotNull final WindowHireWorker window = new WindowHireWorker(building.getColony(), building.getLocation());
                 window.open();
             }
             else
@@ -96,10 +96,8 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
     /**
      * Action when a recall button is clicked.
      *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void recallClicked(Button ignored)
+    private void recallClicked()
     {
         MineColonies.getNetwork().sendToServer(new RecallCitizenMessage(building));
     }
@@ -116,7 +114,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
 
         if (building.getWorkerId() != 0)
         {
-            CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId());
+            final CitizenDataView worker = building.getColony().getCitizen(building.getWorkerId());
             if (worker != null)
             {
                 workerName = worker.getName();

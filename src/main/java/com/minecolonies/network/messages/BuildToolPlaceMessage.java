@@ -33,7 +33,7 @@ import org.jetbrains.annotations.Nullable;
 public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage, IMessage>
 {
     /**
-     * Language key for missing hut message
+     * Language key for missing hut message.
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.gui.buildtool.nohutininventory";
     private String   hutDec;
@@ -60,7 +60,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param rotation int representation of the rotation
      * @param isHut    true if hut, false if decoration
      */
-    public BuildToolPlaceMessage(String hutDec, String style, BlockPos pos, int rotation, boolean isHut)
+    public BuildToolPlaceMessage(final String hutDec, final String style, final BlockPos pos, final int rotation, final boolean isHut)
     {
         super();
         this.hutDec = hutDec;
@@ -76,7 +76,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param buf The buffer begin read from.
      */
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         hutDec = ByteBufUtils.readUTF8String(buf);
         style = ByteBufUtils.readUTF8String(buf);
@@ -94,7 +94,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param buf The buffer being written to.
      */
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         ByteBufUtils.writeUTF8String(buf, hutDec);
         ByteBufUtils.writeUTF8String(buf, style);
@@ -111,7 +111,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     @Override
     public void messageOnServerThread(final BuildToolPlaceMessage message, final EntityPlayerMP player)
     {
-        World world = player.worldObj;
+        final World world = player.worldObj;
         if (message.isHut)
         {
             handleHut(world, player, message.hutDec, message.style, message.rotation, message.pos);
@@ -132,7 +132,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param rotation The number of times the schematic should be rotated.
      * @param buildPos The location the hut is being placed.
      */
-    private static void handleHut(@NotNull World world, @NotNull EntityPlayer player, String hut, String style, int rotation, @NotNull BlockPos buildPos)
+    private static void handleHut(@NotNull final World world, @NotNull final EntityPlayer player,
+            final String hut, final String style, final int rotation, @NotNull final BlockPos buildPos)
     {
         if (Structures.getStylesForHut(hut) == null)
         {
@@ -140,13 +141,13 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             return;
         }
 
-        Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
+        final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null && !tempColony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
         {
                 return;
         }
 
-        Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
+        final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
 
         if (block != null && player.inventory.hasItemStack(new ItemStack(block)))
         {
@@ -158,7 +159,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
 
                 player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);
 
-                @Nullable AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
+                @Nullable final AbstractBuilding building = ColonyManager.getBuilding(world, buildPos);
 
                 if (building == null)
                 {
@@ -199,7 +200,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * @param rotation   The number of times the decoration is rotated.
      * @param buildPos   The location the decoration will be built.
      */
-    private static void handleDecoration(@NotNull World world, @NotNull EntityPlayer player, String decoration, String style, int rotation, @NotNull BlockPos buildPos)
+    private static void handleDecoration(@NotNull final World world, @NotNull final EntityPlayer player,
+            final String decoration, final String style, final int rotation, @NotNull final BlockPos buildPos)
     {
         if (Structures.getStylesForDecoration(decoration) == null)
         {
@@ -207,10 +209,10 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             return;
         }
 
-        @Nullable Colony colony = ColonyManager.getColony(world, buildPos);
+        @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
         {
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(decoration, style, rotation, buildPos));
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(style, decoration, rotation, buildPos));
         }
     }
 }

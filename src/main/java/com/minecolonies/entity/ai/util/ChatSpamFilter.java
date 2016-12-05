@@ -64,7 +64,7 @@ public class ChatSpamFilter
      *
      * @param chat the Item Name
      */
-    public void requestWithoutSpam(@NotNull String chat)
+    public void requestWithoutSpam(@NotNull final String chat)
     {
         talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
     }
@@ -77,9 +77,9 @@ public class ChatSpamFilter
      * @param key  the translation key
      * @param chat the chat message
      */
-    public void talkWithoutSpam(String key, String... chat)
+    public void talkWithoutSpam(final String key, final String... chat)
     {
-        @NotNull String curstring = key + Arrays.toString(chat);
+        @NotNull final String curstring = key + Arrays.toString(chat);
         if (Objects.equals(speechDelayString, curstring))
         {
             if (speechDelay > worker.getOffsetTicks())

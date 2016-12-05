@@ -30,11 +30,11 @@ import java.util.List;
 public class BuildingMiner extends AbstractBuildingWorker
 {
     /**
-     * The NBT Tag to store the floorBlock
+     * The NBT Tag to store the floorBlock.
      */
     private static final String TAG_FLOOR_BLOCK    = "floorBlock";
     /**
-     * The NBT Tag to store the fenceBlock
+     * The NBT Tag to store the fenceBlock.
      */
     private static final String TAG_FENCE_BLOCK    = "fenceBlock";
     /**
@@ -54,11 +54,11 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private static final String TAG_SLOCATION      = "shaftLocation";
     /**
-     * The NBT Tag to store the vector-x of the shaft
+     * The NBT Tag to store the vector-x of the shaft.
      */
     private static final String TAG_VECTORX        = "vectorx";
     /**
-     * The NBT Tag to store the vector-z of the shaft
+     * The NBT Tag to store the vector-z of the shaft.
      */
     private static final String TAG_VECTORZ        = "vectorz";
     /**
@@ -100,8 +100,29 @@ public class BuildingMiner extends AbstractBuildingWorker
      * Defines the material used for the floor of the shaft.
      */
     private static final IBlockState floorBlock         = Blocks.WOODEN_SLAB.getDefaultState().withProperty(BlockSlab.HALF, BlockSlab.EnumBlockHalf.TOP);
+
     /**
-     * True if shaft is at bottom limit
+     * Max depth the miner reaches at level 0.
+     */
+    private static final int MAX_DEPTH_LEVEL_0          = 70;
+
+    /**
+     * Max depth the miner reaches at level 1.
+     */
+    private static final int MAX_DEPTH_LEVEL_1          = 50;
+
+    /**
+     * Max depth the miner reaches at level 2.
+     */
+    private static final int MAX_DEPTH_LEVEL_2          = 30;
+
+    /**
+     * Max depth the miner reaches at level 3.
+     */
+    private static final int MAX_DEPTH_LEVEL_3          = 5;
+
+    /**
+     * True if shaft is at bottom limit.
      */
     public               boolean     clearedShaft       = false;
     /**
@@ -113,11 +134,11 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private              Block       fenceBlock         = Blocks.OAK_FENCE;
     /**
-     * Here we can detect multiples of 5
+     * Here we can detect multiples of 5.
      */
     private              int         startingLevelShaft = 0;
     /**
-     * The location of the topmost cobblestone the ladder starts at
+     * The location of the topmost cobblestone the ladder starts at.
      */
     private BlockPos cobbleLocation;
     /**
@@ -137,26 +158,26 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private BlockPos shaftStart;
     /**
-     * Ladder orientation in x
+     * Ladder orientation in x.
      */
     private int vectorX = 1;
     /**
-     * Ladder orientation in y
+     * Ladder orientation in y.
      */
     private int vectorZ = 1;
     /**
-     * The location of the topmost ladder in the shaft
+     * The location of the topmost ladder in the shaft.
      */
     private BlockPos ladderLocation;
     /**
-     * True if a ladder is found
+     * True if a ladder is found.
      */
     private boolean     foundLadder = false;
     /**
-     * Stores the levels of the miners mine. This could be a map<depth,level>
+     * Stores the levels of the miners mine. This could be a map with (depth,level).
      */
     @NotNull
-    private List<Level> levels      = new ArrayList<>();
+    private final List<Level> levels      = new ArrayList<>();
 
     /**
      * Required constructor.
@@ -164,7 +185,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param c colony containing the building.
      * @param l location of the building.
      */
-    public BuildingMiner(Colony c, BlockPos l)
+    public BuildingMiner(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -230,7 +251,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     @NotNull
     @Override
-    public AbstractJob createJob(CitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobMiner(citizen);
     }
@@ -241,7 +262,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param compound the compound key.
      */
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -272,10 +293,10 @@ public class BuildingMiner extends AbstractBuildingWorker
 
         startingLevelNode = compound.getInteger(TAG_SN);
 
-        NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
+        final NBTTagList levelTagList = compound.getTagList(TAG_LEVELS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < levelTagList.tagCount(); i++)
         {
-            Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
+            final Level level = Level.createFromNBT(levelTagList.getCompoundTagAt(i));
             this.levels.add(level);
         }
     }
@@ -286,7 +307,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param compound the compound key.
      */
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
@@ -313,10 +334,10 @@ public class BuildingMiner extends AbstractBuildingWorker
             BlockPosUtil.writeToNBT(compound, TAG_LLOCATION, ladderLocation);
         }
 
-        @NotNull NBTTagList levelTagList = new NBTTagList();
-        for (@NotNull Level level : levels)
+        @NotNull final NBTTagList levelTagList = new NBTTagList();
+        for (@NotNull final Level level : levels)
         {
-            @NotNull NBTTagCompound levelCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound levelCompound = new NBTTagCompound();
             level.writeToNBT(levelCompound);
             levelTagList.appendTag(levelCompound);
         }
@@ -329,24 +350,24 @@ public class BuildingMiner extends AbstractBuildingWorker
      * @param buf the used ByteBuffer.
      */
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
         buf.writeInt(currentLevel);
         buf.writeInt(levels.size());
 
-        for (@NotNull Level level : levels)
+        for (@NotNull final Level level : levels)
         {
             buf.writeInt(level.getNumberOfNodes());
         }
     }
 
     /**
-     * Adds a level to the levels list
+     * Adds a level to the levels list.
      *
-     * @param currentLevel {@link Level}to add
+     * @param currentLevel {@link Level}to add.
      */
-    public void addLevel(Level currentLevel)
+    public void addLevel(final Level currentLevel)
     {
         levels.add(currentLevel);
     }
@@ -362,9 +383,9 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * Returns the current level
+     * Returns the current level.
      *
-     * @return Current level
+     * @return Current level.
      */
     @Nullable
     public Level getCurrentLevel()
@@ -381,38 +402,38 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param currentLevel the level to set.
      */
-    public void setCurrentLevel(int currentLevel)
+    public void setCurrentLevel(final int currentLevel)
     {
         this.currentLevel = currentLevel;
     }
 
     /**
-     * Returns the depth limit
-     * Limitted by building level
+     * Returns the depth limit.
+     * Limitted by building level.
      * <pre>
      * - Level 1: 50
      * - Level 2: 30
      * - Level 3: 5
      * </pre>
      *
-     * @return Depth limit
+     * @return Depth limit.
      */
     public int getDepthLimit()
     {
         if (this.getBuildingLevel() == 1)
         {
-            return 50;
+            return MAX_DEPTH_LEVEL_1;
         }
         else if (this.getBuildingLevel() == 2)
         {
-            return 30;
+            return MAX_DEPTH_LEVEL_2;
         }
         else if (this.getBuildingLevel() >= 3)
         {
-            return 5;
+            return MAX_DEPTH_LEVEL_3;
         }
 
-        return 70;
+        return MAX_DEPTH_LEVEL_0;
     }
 
     /**
@@ -430,7 +451,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param ladderLocation the new ladder location.
      */
-    public void setLadderLocation(BlockPos ladderLocation)
+    public void setLadderLocation(final BlockPos ladderLocation)
     {
         this.ladderLocation = ladderLocation;
     }
@@ -450,7 +471,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param foundLadder the boolean.
      */
-    public void setFoundLadder(boolean foundLadder)
+    public void setFoundLadder(final boolean foundLadder)
     {
         this.foundLadder = foundLadder;
     }
@@ -470,7 +491,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param vectorX the vector to set +1 or -1.
      */
-    public void setVectorX(int vectorX)
+    public void setVectorX(final int vectorX)
     {
         this.vectorX = vectorX;
     }
@@ -490,7 +511,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param vectorZ the vector to set +1 or -1.
      */
-    public void setVectorZ(int vectorZ)
+    public void setVectorZ(final int vectorZ)
     {
         this.vectorZ = vectorZ;
     }
@@ -510,7 +531,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param pos the location to set.
      */
-    public void setCobbleLocation(BlockPos pos)
+    public void setCobbleLocation(final BlockPos pos)
     {
         this.cobbleLocation = pos;
     }
@@ -520,7 +541,7 @@ public class BuildingMiner extends AbstractBuildingWorker
      *
      * @param pos the location.
      */
-    public void setShaftStart(BlockPos pos)
+    public void setShaftStart(final BlockPos pos)
     {
         this.shaftStart = pos;
     }
@@ -601,7 +622,7 @@ public class BuildingMiner extends AbstractBuildingWorker
          * @param c the colony.
          * @param l the position.
          */
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }
@@ -614,11 +635,11 @@ public class BuildingMiner extends AbstractBuildingWorker
         }
 
         @Override
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
             current = buf.readInt();
-            int size = buf.readInt();
+            final int size = buf.readInt();
             levels = new int[size];
 
             for (int i = 0; i < size; i++)

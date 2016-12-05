@@ -43,34 +43,25 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     }
 
     /**
-     * Action when build button is clicked
-     *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
+     * Action when build button is clicked.
      */
-    private void buildClicked(Button ignored)
+    private void buildClicked()
     {
         MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.BUILD));
     }
 
     /**
-     * Action when repair button is clicked
-     *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
+     * Action when repair button is clicked.
      */
-    private void repairClicked(Button ignored)
+    private void repairClicked()
     {
         MineColonies.getNetwork().sendToServer(new BuildRequestMessage(building, BuildRequestMessage.REPAIR));
     }
 
     /**
-     * Action when a button opening an inventory is clicked
-     *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
+     * Action when a button opening an inventory is clicked.
      */
-    private void inventoryClicked(Button ignored)
+    private void inventoryClicked()
     {
         MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
     }
@@ -90,16 +81,16 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         }
         else if (building.isBuildingMaxLevel())
         {
-            Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+            final Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
             button.setLabel(LanguageHandler.getString("com.minecolonies.gui.workerHuts.upgradeUnavailable"));
             button.disable();
         }
     }
 
     /**
-     * Returns the name of a building
+     * Returns the name of a building.
      *
-     * @return Name of a building
+     * @return Name of a building.
      */
     public abstract String getBuildingName();
 }

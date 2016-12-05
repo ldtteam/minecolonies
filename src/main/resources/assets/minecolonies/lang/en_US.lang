@@ -12,8 +12,7 @@ item.caliper.message.square=That's a %d by %d square.
 com.minecolonies.gui.workerHuts.buildersHut=Builder's Hut
 com.minecolonies.job.Lumberjack=Lumberjack
 item.scepterSteel.scanFailure=Scan failed to save
-tile.blockHutTownHall.messageColonistDead=The colonist %s has died!
-tile.blockHutTownHall.messageGuardDead=The guard %s has died!
+tile.blockHutTownHall.messageColonistDead=The colonist %s has died at %d %d %d!
 com.minecolonies.gui.townHall.population.totalCitizens=Number of Citizens: %d/%d
 entity.miner.messageNeedTools=Need tool %s!
 com.minecolonies.gui.citizen.skills.intelligence=Intelligence: %d
@@ -130,6 +129,7 @@ achievement.upgrade.townhall.first.desc=Build a townhall!
 achievement.upgrade.townhall.max=I am the King!
 achievement.upgrade.townhall.max.desc=What a King!
 com.minecolonies.gui.workerHuts.minerNodeList=Levels
+com.minecolonies.gui.workerHuts.resourceList=Required Resources
 com.minecolonies.job.Miner=Miner
 com.minecolonies.gui.warehouse.toBlacksmith=Deliver to Blacksmith:
 tile.minecolonies.blockHutWarehouse.name=Warehouse
@@ -202,3 +202,40 @@ com.minecolonies.gui.workerHuts.level0=Please construct the hut to hire a worker
 com.minecolonies.job.guard.name=GuardTower
 com.minecolonies.job.guard.needWeapon=a weapon!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
+
+
+tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
+
+com.minecolonies.gui.workerHuts.guardActions=Guard-actions:
+com.minecolonies.gui.workerHuts.assign=Assign the guard to the job:
+com.minecolonies.gui.workerHuts.patrol=Find patrol target:
+com.minecolonies.gui.workerHuts.retrieve=Try to retrieve on low health:
+com.minecolonies.gui.workerHuts.knight=Knight
+com.minecolonies.gui.workerHuts.ranger=Ranger
+com.minecolonies.gui.workerHuts.modeM=Manually
+com.minecolonies.gui.workerHuts.modeA=Automatically
+
+com.minecolonies.gui.workerHuts.retrieveOff=Off
+com.minecolonies.gui.workerHuts.retrieveOn=On
+
+com.minecolonies.gui.workerHuts.task.guard=Guard
+com.minecolonies.gui.workerHuts.task.patrol=Patrol
+com.minecolonies.gui.workerHuts.task.follow=Follow
+item.minecolonies.scepterGuard.name=Guard-scepter
+
+com.minecolonies.gui.workerHuts.targetPatrol=Set patrol positions.
+com.minecolonies.gui.workerHuts.targetGuard=Set guarding target.
+com.minecolonies.gui.workerHuts.setTarget="Disabled"
+
+com.minecolonies.gui.workerHuts.noSpace=Please make space in your inventory in order to use this functionality.
+
+com.minecolonies.job.guard.tool.taskPatrol=Right click on a block to add it as patrol target. Double click to close the tool.
+com.minecolonies.job.guard.tool.taskGuard=Right click on a block to set it as guard spot.
+
+com.minecolonies.job.guard.switch=Switched to guarding since the player is out of sight.
+
+com.minecolonies.job.guard.toolClickPatrol=Added position %s as new patrolling target for guard%s.
+com.minecolonies.job.guard.toolClickGuard=Set position %s as new guarding target for guard%s.
+
+com.minecolonies.job.guard.toolDoubleClick=Finished adding new patrol-targets.
+

@@ -1,10 +1,9 @@
 package com.structures.event;
 
 import com.minecolonies.util.BlockUtils;
-import com.structures.helpers.Structure;
 import com.structures.helpers.Settings;
+import com.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -18,12 +17,13 @@ public class RenderEventHandler
 
     /**
      * Event used to render the schematics. Only render the schematic if there is one in the settings.
+     *
      * @param event Object containing event details.
      */
     @SubscribeEvent
-    public void onRenderWorldLast(RenderWorldLastEvent event)
+    public void onRenderWorldLast(final RenderWorldLastEvent event)
     {
-        Structure structure = Settings.instance.getActiveStructure();
+        final Structure structure = Settings.instance.getActiveStructure();
         if (structure != null)
         {
             BlockPos size = structure.getSize(BlockUtils.getRotation(Settings.instance.getRotation()));
@@ -41,11 +41,11 @@ public class RenderEventHandler
             {
                 size = new BlockPos(size.getX(), size.getY(), -size.getZ());
             }
-            BlockPos offset = Settings.instance.getOffset(new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+            final BlockPos offset = Settings.instance.getOffset(new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
 
-            if(offset.equals(new BlockPos(0,0,0)))
+            if (offset.equals(new BlockPos(0, 0, 0)))
             {
-                position = position.add(-size.getX() / 2, 0, 0 -size.getZ() / 2);
+                position = position.subtract(new BlockPos(size.getX() / 2, 0 , size.getZ() / 2));
             }
             else
             {

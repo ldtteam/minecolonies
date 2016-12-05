@@ -6,9 +6,9 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Window for worker.
- * Placeholder for many different jobs
+ * Placeholder for many different jobs.
  *
- * @param <B> Object extending {@link AbstractBuildingWorker.View}
+ * @param <B> Object extending {@link AbstractBuildingWorker.View}.
  */
 public class WindowHutWorkerPlaceholder<B extends AbstractBuildingWorker.View> extends AbstractWindowWorkerBuilding<B>
 {
@@ -17,12 +17,12 @@ public class WindowHutWorkerPlaceholder<B extends AbstractBuildingWorker.View> e
 
     /**
      * Window for worker placeholder.
-     * Used by Baker, Blacksmith, Lumberjack ans Stonemason
+     * Used by Baker, Blacksmith, Lumberjack ans Stonemason.
      *
-     * @param building AbstractBuilding extending {@link AbstractBuildingWorker.View}
-     * @param name     Name of the the view (resource)
+     * @param building AbstractBuilding extending {@link AbstractBuildingWorker.View}.
+     * @param name     Name of the the view (resource).
      */
-    public WindowHutWorkerPlaceholder(B building, String name)
+    public WindowHutWorkerPlaceholder(final B building, final String name)
     {
         super(building, Constants.MOD_ID + WORKER_PLACEHOLDER_RESOURCE_SUFFIX);
         this.name = name;

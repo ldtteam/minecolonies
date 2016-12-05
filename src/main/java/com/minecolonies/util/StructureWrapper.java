@@ -20,26 +20,25 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Interface for using the structure codebase
- *
- * @author Colton
+ * Interface for using the structure codebase.
  */
 public final class StructureWrapper
 {
     /**
      * The position we use as our uninitialized value.
      */
-    private static final BlockPos                 NULL_POS            = new BlockPos(-1, -1, -1);
+    private static final BlockPos NULL_POS = new BlockPos(-1, -1, -1);
 
     /**
      * The Structure position we are at. Defaulted to NULL_POS.
      */
-    private final        BlockPos.MutableBlockPos progressPos         = new BlockPos.MutableBlockPos(-1, -1, -1);
+    private final BlockPos.MutableBlockPos progressPos = new BlockPos.MutableBlockPos(-1, -1, -1);
     /**
      * The minecraft world this struture is displayed in.
      */
@@ -59,28 +58,28 @@ public final class StructureWrapper
     private String         name;
 
     /**
-     * Create a new StructureProxy.
-     *
-     * @param worldObj       the world to show it in
-     * @param structure the structure it comes from
-     * @param name           the name this structure has
-     */
-    private StructureWrapper(World worldObj, StructureProxy structure, String name)
-    {
-        world = worldObj;
-        this.structure = structure;
-        this.name = name;
-    }
-
-    /**
      * Load a structure into this world.
      *
      * @param worldObj the world to load in
      * @param name     the structure name
      */
-    public StructureWrapper(World worldObj, String name)
+    public StructureWrapper(final World worldObj, final String name)
     {
         this(worldObj, new StructureProxy(worldObj, name), name);
+    }
+
+    /**
+     * Create a new StructureProxy.
+     *
+     * @param worldObj  the world to show it in
+     * @param structure the structure it comes from
+     * @param name      the name this structure has
+     */
+    private StructureWrapper(final World worldObj, final StructureProxy structure, final String name)
+    {
+        world = worldObj;
+        this.structure = structure;
+        this.name = name;
     }
 
     /**
@@ -90,7 +89,7 @@ public final class StructureWrapper
      * @return the resource location pointing towards the structure
      */
     @NotNull
-    private static ResourceLocation getResourceLocation(@NotNull String name)
+    private static ResourceLocation getResourceLocation(@NotNull final String name)
     {
         return new ResourceLocation("minecolonies:schematics/" + name + ".nbt");
     }
@@ -101,7 +100,7 @@ public final class StructureWrapper
      * @param res the location to pull the stream from
      * @return a stream from this location
      */
-    public static InputStream getStream(@NotNull ResourceLocation res)
+    public static InputStream getStream(@NotNull final ResourceLocation res)
     {
         try
         {
@@ -114,7 +113,7 @@ public final class StructureWrapper
                 return StructureWrapper.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
             }
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new IllegalStateException("Could not load stream!", e);
         }
@@ -129,18 +128,28 @@ public final class StructureWrapper
      * @param pos       coordinates
      * @param rotations number of times rotated
      */
-    public static void loadAndPlaceStructureWithRotation(World worldObj, @NotNull String name, @NotNull BlockPos pos, int rotations)
+    public static void loadAndPlaceStructureWithRotation(final World worldObj, @NotNull final String name, @NotNull final BlockPos pos, final int rotations)
     {
         try
         {
-            @NotNull StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
+            @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
             structureWrapper.rotate(rotations);
             structureWrapper.placeStructure(pos);
         }
-        catch (IllegalStateException e)
+        catch (final IllegalStateException e)
         {
             Log.getLogger().warn("Could not load structure!", e);
         }
+    }
+
+    /**
+     * Rotates the structure x times.
+     *
+     * @param times times to rotate.
+     */
+    public void rotate(final int times)
+    {
+        structure.rotate(times);
     }
 
     /**
@@ -148,13 +157,13 @@ public final class StructureWrapper
      *
      * @param pos coordinates
      */
-    private void placeStructure(@NotNull BlockPos pos)
+    private void placeStructure(@NotNull final BlockPos pos)
     {
         setLocalPosition(pos);
 
-        @NotNull List<BlockPos> delayedBlocks = new ArrayList<>();
+        @NotNull final List<BlockPos> delayedBlocks = new ArrayList<>();
 
-            //structure.getBlockInfo()[0].pos
+        //structure.getBlockInfo()[0].pos
 
         for (int j = 0; j < structure.getHeight(); j++)
         {
@@ -162,12 +171,12 @@ public final class StructureWrapper
             {
                 for (int i = 0; i < structure.getWidth(); i++)
                 {
-                    @NotNull BlockPos localPos = new BlockPos(i, j, k);
-                    IBlockState localState = this.structure.getBlockState(localPos);
-                    Block localBlock = localState.getBlock();
+                    @NotNull final BlockPos localPos = new BlockPos(i, j, k);
+                    final IBlockState localState = this.structure.getBlockState(localPos);
+                    final Block localBlock = localState.getBlock();
 
-                    BlockPos worldPos = pos.add(localPos);
-                    IBlockState worldState = world.getBlockState(worldPos);
+                    final BlockPos worldPos = pos.add(localPos);
+                    final IBlockState worldState = world.getBlockState(worldPos);
 
                     if (localBlock == ModBlocks.blockSubstitution)
                     {
@@ -192,26 +201,17 @@ public final class StructureWrapper
             }
         }
 
-        for (@NotNull BlockPos coords : delayedBlocks)
+        for (@NotNull final BlockPos coords : delayedBlocks)
         {
-            IBlockState localState = this.structure.getBlockState(coords);
-            Block localBlock = localState.getBlock();
-            BlockPos newWorldPos = pos.add(coords);
+            final IBlockState localState = this.structure.getBlockState(coords);
+            final Block localBlock = localState.getBlock();
+            final BlockPos newWorldPos = pos.add(coords);
 
             placeBlock(localState, localBlock, newWorldPos);
         }
     }
 
-    /**
-     * Rotates the structure x times.
-     * @param times times to rotate.
-     */
-    public void rotate(int times)
-    {
-        structure.rotate(times);
-    }
-
-    private void placeBlock(IBlockState localState, @NotNull Block localBlock, @NotNull BlockPos worldPos)
+    private void placeBlock(final IBlockState localState, @NotNull final Block localBlock, @NotNull final BlockPos worldPos)
     {
         world.setBlockState(worldPos, localState, 0x03);
         if (world.getBlockState(worldPos).getBlock() == localBlock)
@@ -282,8 +282,8 @@ public final class StructureWrapper
      */
     public boolean doesStructureBlockEqualWorldBlock()
     {
-        IBlockState structureBlockState = structure.getBlockState(this.getLocalPosition());
-        Block structureBlock = structureBlockState.getBlock();
+        final IBlockState structureBlockState = structure.getBlockState(this.getLocalPosition());
+        final Block structureBlock = structureBlockState.getBlock();
 
         //All worldBlocks are equal the substitution block
         if (structureBlock == ModBlocks.blockSubstitution)
@@ -291,9 +291,9 @@ public final class StructureWrapper
             return true;
         }
 
-        BlockPos worldPos = this.getBlockPosition();
+        final BlockPos worldPos = this.getBlockPosition();
 
-        IBlockState worldBlockState = world.getBlockState(worldPos);
+        final IBlockState worldBlockState = world.getBlockState(worldPos);
 
         //list of things to only check block for.
         //For the time being any flower pot is equal to each other.
@@ -333,7 +333,7 @@ public final class StructureWrapper
      *
      * @param localPosition new progressPos.
      */
-    public void setLocalPosition(@NotNull BlockPos localPosition)
+    public void setLocalPosition(@NotNull final BlockPos localPosition)
     {
         BlockPosUtil.set(this.progressPos, localPosition);
     }
@@ -385,20 +385,15 @@ public final class StructureWrapper
         return true;
     }
 
-    private boolean isAirBlock()
-    {
-        return getBlock() == Blocks.AIR;
-    }
-
     /**
-     * Calculate the current block in the structure
+     * Calculate the current block in the structure.
      *
-     * @return the current block or null if not initialized
+     * @return the current block or null if not initialized.
      */
     @Nullable
     public Block getBlock()
     {
-        @Nullable IBlockState state = getBlockState();
+        @Nullable final IBlockState state = getBlockState();
         if (state == null)
         {
             return null;
@@ -505,7 +500,7 @@ public final class StructureWrapper
 
     private boolean worldBlockAir()
     {
-        BlockPos pos = this.getBlockPosition();
+        final BlockPos pos = this.getBlockPosition();
         //had this problem in a superflat world, causes builder to sit doing nothing because placement failed
         return pos.getY() <= 0 || world.isAirBlock(pos);
     }
@@ -539,9 +534,9 @@ public final class StructureWrapper
      */
     public BlockPos getPosition()
     {
-        if(position == null)
+        if (position == null)
         {
-            return new BlockPos(0,0,0);
+            return new BlockPos(0, 0, 0);
         }
         return position;
     }
@@ -551,21 +546,21 @@ public final class StructureWrapper
      *
      * @param position Where the structure is in the world.
      */
-    public void setPosition(BlockPos position)
+    public void setPosition(final BlockPos position)
     {
         this.position = position;
     }
 
     /**
-     * Calculate the item needed to place the current block in the structure
+     * Calculate the item needed to place the current block in the structure.
      *
-     * @return an item or null if not initialized
+     * @return an item or null if not initialized.
      */
     @Nullable
     public Item getItem()
     {
-        @Nullable Block block = this.getBlock();
-        @Nullable IBlockState blockState = this.getBlockState();
+        @Nullable final Block block = this.getBlock();
+        @Nullable final IBlockState blockState = this.getBlockState();
         if (block == null || blockState == null)
         {
             return null;

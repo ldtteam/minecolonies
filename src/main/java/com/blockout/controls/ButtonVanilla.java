@@ -31,6 +31,7 @@ public class ButtonVanilla extends Button
      */
     public ButtonVanilla()
     {
+        super();
         width = DEFAULT_BUTTON_WIDTH;
         height = DEFAULT_BUTTON_HEIGHT;
     }
@@ -40,7 +41,7 @@ public class ButtonVanilla extends Button
      *
      * @param params PaneParams from xml file.
      */
-    public ButtonVanilla(PaneParams params)
+    public ButtonVanilla(final PaneParams params)
     {
         super(params);
         if (width == 0)
@@ -60,15 +61,15 @@ public class ButtonVanilla extends Button
      * @param my Mouse y (relative to parent)
      */
     @Override
-    public void drawSelf(int mx, int my)
+    public void drawSelf(final int mx, final int my)
     {
         mc.renderEngine.bindTexture(TEXTURE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-        boolean isMouseOver = isPointInPane(mx, my);
+        final boolean isMouseOver = isPointInPane(mx, my);
 
-        int u = 0;
-        int v = this.enabled ? (isMouseOver ? HOVER_TEXTURE_V : ENABLED_TEXTURE_V) : DISABLED_TEXTURE_V;
+        final int u = 0;
+        final int v = this.enabled ? (isMouseOver ? HOVER_TEXTURE_V : ENABLED_TEXTURE_V) : DISABLED_TEXTURE_V;
 
 
         GlStateManager.enableBlend();
@@ -88,7 +89,7 @@ public class ButtonVanilla extends Button
             drawTexturedModalRect(x + width / 2, y + height / 2, u + DEFAULT_BUTTON_WIDTH - width / 2, v + DEFAULT_BUTTON_HEIGHT - height / 2, width / 2, height / 2);
         }
 
-        int textColor = this.enabled ? (isMouseOver ? HOVER_COLOR : ENABLED_COLOR) : DISABLED_COLOR;
+        final int textColor = this.enabled ? (isMouseOver ? HOVER_COLOR : ENABLED_COLOR) : DISABLED_COLOR;
         drawCenteredString(this.mc.fontRendererObj, label, x + width / 2, y + (height - this.mc.fontRendererObj.FONT_HEIGHT) / 2, textColor);
 
         GlStateManager.disableBlend();

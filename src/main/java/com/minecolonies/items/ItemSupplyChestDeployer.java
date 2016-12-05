@@ -47,6 +47,8 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      */
     private static final int DISTANCE    = 4;
 
+    private static final String SUPPLY_SHIP_STRUCTURE_NAME = "SupplyShip";
+
     /**
      * Creates a new supplychest deployer. The item is not stackable.
      */
@@ -73,18 +75,28 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param hitZ     the hitBox z position (not used).
      * @return if the chest has been successfully placed.
      */
+    @NotNull
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(
+                                       final ItemStack stack,
+                                       final EntityPlayer playerIn,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
     {
         if (worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
         {
             return EnumActionResult.FAIL;
         }
 
-        @NotNull EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
+        @NotNull final EnumFacing enumfacing = canShipBePlaced(worldIn, pos);
         if (enumfacing != EnumFacing.DOWN)
         {
-            spawnShip(worldIn, pos, playerIn, enumfacing);
+            spawnShip(worldIn, pos, enumfacing);
             stack.stackSize--;
 
             playerIn.addStat(ModAchievements.achievementGetSupply);
@@ -101,7 +113,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param player the player.
      * @return boolean, returns true when player hasn't placed before, or when infinite placing is on.
      */
-    boolean isFirstPlacing(@NotNull EntityPlayer player)
+    private static boolean isFirstPlacing(@NotNull final EntityPlayer player)
     {
         if (Configurations.allowInfiniteSupplyChests || !player.hasAchievement(ModAchievements.achievementGetSupply))
         {
@@ -126,7 +138,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @return facings it can be placed at.
      */
     @NotNull
-    public EnumFacing canShipBePlaced(@NotNull World world, @NotNull BlockPos pos)
+    private static EnumFacing canShipBePlaced(@NotNull final World world, @NotNull final BlockPos pos)
     {
         if (check(world, pos.west(), true, false))
         {
@@ -150,18 +162,16 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
     /**
      * Spawns the ship and supply chest.
      *
-     * @param world        world obj.
-     * @param pos          coordinate clicked.
-     * @param entityPlayer the player.
+     * @param world world obj.
+     * @param pos   coordinate clicked.
      */
-    private void spawnShip(@NotNull World world, @NotNull BlockPos pos, EntityPlayer entityPlayer, @NotNull EnumFacing chestFacing)
+    private void spawnShip(@NotNull final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing chestFacing)
     {
         world.setBlockState(pos.up(), Blocks.CHEST.getDefaultState().withProperty(BlockChest.FACING, chestFacing));
 
         placeSupplyShip(world, pos, chestFacing);
 
         fillChest((TileEntityChest) world.getTileEntity(pos.up()));
-        //PlayerProperties.get(entityPlayer).placeSupplyChest();
     }
 
     /**
@@ -173,83 +183,37 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      * @param isCoordPositivelyAdded boolean whether the x or z side should be check on the positive side (true) or negative  side (false).
      * @return whether the space in the I shape is free or not.
      */
-    private boolean check(@NotNull World world, @NotNull BlockPos pos, boolean shouldCheckX, boolean isCoordPositivelyAdded)
+    private static boolean check(@NotNull final World world, @NotNull final BlockPos pos, final boolean shouldCheckX, final boolean isCoordPositivelyAdded)
     {
-        int k = isCoordPositivelyAdded ? 1 : -1;
+        final int k = isCoordPositivelyAdded ? 1 : -1;
 
-
-        int horizontalX = isCoordPositivelyAdded ? SPACE_LEFT : SPACE_RIGHT;
-        int horizontalZ = isCoordPositivelyAdded ? SPACE_RIGHT : SPACE_LEFT;
-
-        int spaceRightK = SPACE_RIGHT * k;
-        int spaceLeftK = SPACE_LEFT * k;
-
-        int widthK = WIDTH * k;
-        int widthKHalf = widthK / 2;
+        final int spaceRightK = SPACE_RIGHT * k;
+        final int spaceLeftK = SPACE_LEFT * k;
+        final int widthK = WIDTH * k;
 
         if (shouldCheckX)
         {
-            for (int i = DISTANCE; i < WIDTH; i++)
-            {
-                int j = k * i;
-                if (!BlockUtils.isWater(world.getBlockState(pos.add(j, 0, 0))) ||
-                      !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, spaceRightK))) ||
-                      !BlockUtils.isWater(world.getBlockState(pos.add(j, 0, -spaceLeftK))))
-                {
-                    return false;
-                }
-            }
-            for (int i = 0; i < LENGTH; i++)
-            {
-                if (!BlockUtils.isWater(world.getBlockState(pos.add(DISTANCE * k, 0, -horizontalX + i))) ||
-                      !BlockUtils.isWater(world.getBlockState(pos.add(widthKHalf, 0, -horizontalX + i))) ||
-                      !BlockUtils.isWater(world.getBlockState(pos.add(widthK, 0, -horizontalX + i))))
-                {
-                    return false;
-                }
-            }
+            return checkX(world, pos, k, spaceRightK, spaceLeftK, widthK, isCoordPositivelyAdded);
         }
-        else
-        {
-            for (int i = DISTANCE; i < WIDTH; i++)
-            {
-                int j = k * i;
-                if (!BlockUtils.isWater(world.getBlockState(pos.add(0, 0, j))) ||
-                      !BlockUtils.isWater(world.getBlockState(pos.add(-spaceRightK, 0, j))) ||
-                      !BlockUtils.isWater(world.getBlockState(pos.add(spaceLeftK, 0, j))))
-                {
-                    return false;
-                }
-            }
 
-            for (int i = 0; i < LENGTH; i++)
-            {
-                if (!BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, DISTANCE * k))) ||
-                      !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthKHalf))) ||
-                      !BlockUtils.isWater(world.getBlockState(pos.add(-horizontalZ + i, 0, widthK))))
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return checkZ(world, pos, k, spaceRightK, spaceLeftK, widthK, isCoordPositivelyAdded);
     }
 
-    private void placeSupplyShip(World world, @NotNull BlockPos pos, @NotNull EnumFacing direction)
+    private void placeSupplyShip(final World world, @NotNull final BlockPos pos, @NotNull final EnumFacing direction)
     {
         switch (direction)
         {
-            case SOUTH://North 2
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, "SupplyShip", pos.add(-11, -2, 5), 3);
+            case SOUTH:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-11, -2, 5), 3);
                 break;
-            case NORTH://South 3
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, "SupplyShip", pos.add(-20, -2, -21), 1);
+            case NORTH:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-20, -2, -21), 1);
                 break;
-            case EAST://West 4
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, "SupplyShip", pos.add(5, -2, -20), 2);
+            case EAST:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(5, -2, -20), 2);
                 break;
-            case WEST://East 5
-                StructureWrapper.loadAndPlaceStructureWithRotation(world, "SupplyShip", pos.add(-21, -2, -11), 0);
+            case WEST:
+                StructureWrapper.loadAndPlaceStructureWithRotation(world, SUPPLY_SHIP_STRUCTURE_NAME, pos.add(-21, -2, -11), 0);
                 break;
             default:
                 break;
@@ -261,7 +225,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
      *
      * @param chest the chest to fill.
      */
-    private void fillChest(@Nullable TileEntityChest chest)
+    private static void fillChest(@Nullable final TileEntityChest chest)
     {
         if (chest == null)
         {
@@ -270,5 +234,104 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         }
         chest.setInventorySlotContents(0, new ItemStack(ModBlocks.blockHutTownHall));
         chest.setInventorySlotContents(1, new ItemStack(ModItems.buildTool));
+    }
+
+    /**
+     * Checks the x axis for water.
+     *
+     * @param world                  the world.
+     * @param pos                    the starting pos.
+     * @param k                      the symbol.
+     * @param spaceRightK            the space to the left.
+     * @param spaceLeftK             the space to the right.
+     * @param widthK                 the width.
+     * @param isCoordPositivelyAdded if is positive or not.
+     * @return true if it can be placed.
+     */
+    private static boolean checkX(
+                                   final World world,
+                                   final BlockPos pos,
+                                   final int k,
+                                   final int spaceRightK,
+                                   final int spaceLeftK,
+                                   final int widthK,
+                                   final boolean isCoordPositivelyAdded)
+    {
+        for (int i = DISTANCE; i < WIDTH; i++)
+        {
+            final int j = k * i;
+            if (!checkIfWater(world, pos.add(j, 0, 0), pos.add(j, 0, spaceRightK), pos.add(j, 0, -spaceLeftK)))
+            {
+                return false;
+            }
+        }
+
+        final int horizontalX = isCoordPositivelyAdded ? SPACE_LEFT : SPACE_RIGHT;
+        final int widthKHalf = widthK / 2;
+
+        for (int i = 0; i < LENGTH; i++)
+        {
+            if (!checkIfWater(world, pos.add(DISTANCE * k, 0, -horizontalX + i), pos.add(widthKHalf, 0, -horizontalX + i), pos.add(widthK, 0, -horizontalX + i)))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Checks the z axis for water.
+     *
+     * @param world                  the world.
+     * @param pos                    the starting pos.
+     * @param k                      the symbol.
+     * @param spaceRightK            the space to the left.
+     * @param spaceLeftK             the space to the right.
+     * @param widthK                 the width.
+     * @param isCoordPositivelyAdded if is positive or not.
+     * @return true if it can be placed.
+     */
+    private static boolean checkZ(
+                                   final World world,
+                                   final BlockPos pos,
+                                   final int k,
+                                   final int spaceRightK,
+                                   final int spaceLeftK,
+                                   final int widthK,
+                                   final boolean isCoordPositivelyAdded)
+    {
+        for (int i = DISTANCE; i < WIDTH; i++)
+        {
+            final int j = k * i;
+            if (!checkIfWater(world, pos.add(0, 0, j), pos.add(-spaceRightK, 0, j), pos.add(spaceLeftK, 0, j)))
+            {
+                return false;
+            }
+        }
+
+        final int horizontalZ = isCoordPositivelyAdded ? SPACE_RIGHT : SPACE_LEFT;
+
+        for (int i = 0; i < LENGTH; i++)
+        {
+            if (!checkIfWater(world, pos.add(-horizontalZ + i, 0, DISTANCE * k), pos.add(-horizontalZ + i, 0, DISTANCE * k), pos.add(-horizontalZ + i, 0, widthK)))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check if the there is water at one of three positions.
+     *
+     * @param world the world.
+     * @param pos1  the first position.
+     * @param pos2  the second position.
+     * @param pos3  the third position.
+     * @return true if is water
+     */
+    private static boolean checkIfWater(final World world, final BlockPos pos1, final BlockPos pos2, final BlockPos pos3)
+    {
+        return BlockUtils.isWater(world.getBlockState(pos1)) && BlockUtils.isWater(world.getBlockState(pos2)) && BlockUtils.isWater(world.getBlockState(pos3));
     }
 }

@@ -9,6 +9,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 public abstract class AbstractItemMinecolonies extends Item
 {
+    /**
+     * The name of the item.
+     */
     private final String name;
 
     /**
@@ -16,8 +19,9 @@ public abstract class AbstractItemMinecolonies extends Item
      *
      * @param name The name of this item
      */
-    public AbstractItemMinecolonies(String name)
+    public AbstractItemMinecolonies(final String name)
     {
+        super();
         this.name = name;
 
         super.setUnlocalizedName(Constants.MOD_ID.toLowerCase() + "." + this.name);
@@ -26,9 +30,9 @@ public abstract class AbstractItemMinecolonies extends Item
     }
 
     /**
-     * Returns the name of the item
+     * Returns the name of the item.
      *
-     * @return Name of the item
+     * @return Name of the item.
      */
     public final String getName()
     {

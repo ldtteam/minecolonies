@@ -26,7 +26,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @param c the colony
      * @param l the position
      */
-    public AbstractBuildingWorker(@NotNull Colony c, BlockPos l)
+    public AbstractBuildingWorker(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -63,7 +63,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      *
      * @param citizen {@link CitizenData} of the worker
      */
-    public void setWorker(CitizenData citizen)
+    public void setWorker(final CitizenData citizen)
     {
         if (worker == citizen)
         {
@@ -103,7 +103,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
 
@@ -119,7 +119,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
 
@@ -158,13 +158,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @param citizen {@link CitizenData} you want to compare
      * @return true if same citizen, otherwise false
      */
-    public boolean isWorker(CitizenData citizen)
+    public boolean isWorker(final CitizenData citizen)
     {
         return citizen == worker;
     }
 
     @Override
-    public void removeCitizen(CitizenData citizen)
+    public void removeCitizen(final CitizenData citizen)
     {
         if (isWorker(citizen))
         {
@@ -176,7 +176,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
      * @see AbstractBuilding#onUpgradeComplete(int)
      */
     @Override
-    public void onWorldTick(@NotNull TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         super.onWorldTick(event);
 
@@ -199,7 +199,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     @Override
-    public void serializeToView(@NotNull ByteBuf buf)
+    public void serializeToView(@NotNull final ByteBuf buf)
     {
         super.serializeToView(buf);
 
@@ -219,7 +219,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
          * @param c the colony.
          * @param l the location.
          */
-        public View(ColonyView c, @NotNull BlockPos l)
+        public View(final ColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }
@@ -239,13 +239,13 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
          *
          * @param workerId the id to set.
          */
-        public void setWorkerId(int workerId)
+        public void setWorkerId(final int workerId)
         {
             this.workerId = workerId;
         }
 
         @Override
-        public void deserialize(@NotNull ByteBuf buf)
+        public void deserialize(@NotNull final ByteBuf buf)
         {
             super.deserialize(buf);
 

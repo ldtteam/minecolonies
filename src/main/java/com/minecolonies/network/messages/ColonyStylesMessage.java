@@ -17,25 +17,31 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     private Map<String, List<String>> hutStyleMap;
     private Map<String, List<String>> decorationStyleMap;
 
-    public ColonyStylesMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ColonyStylesMessage()
+    {
+        super();
+    }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         hutStyleMap = readStyleMapFromByteBuf(buf);
         decorationStyleMap = readStyleMapFromByteBuf(buf);
     }
 
     @NotNull
-    private static Map<String, List<String>> readStyleMapFromByteBuf(@NotNull ByteBuf buf)
+    private static Map<String, List<String>> readStyleMapFromByteBuf(@NotNull final ByteBuf buf)
     {
-        @NotNull Map<String, List<String>> map = new HashMap<>();
+        @NotNull final Map<String, List<String>> map = new HashMap<>();
 
-        int count = buf.readInt();
+        final int count = buf.readInt();
         for (int i = 0; i < count; i++)
         {
-            @NotNull List<String> styles = new ArrayList<>();
-            int numStyles = buf.readInt();
+            @NotNull final List<String> styles = new ArrayList<>();
+            final int numStyles = buf.readInt();
             for (int j = 0; j < numStyles; j++)
             {
                 styles.add(ByteBufUtils.readUTF8String(buf));
@@ -47,21 +53,21 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         writeStyleMapToByteBuf(buf, Structures.getHuts(), Structures::getStylesForHut);
         writeStyleMapToByteBuf(buf, Structures.getDecorations(), Structures::getStylesForDecoration);
     }
 
-    private static void writeStyleMapToByteBuf(@NotNull ByteBuf buf, @NotNull Set<String> objects, @NotNull Function<String, List<String>> getStyles)
+    private static void writeStyleMapToByteBuf(@NotNull final ByteBuf buf, @NotNull final Set<String> objects, @NotNull final Function<String, List<String>> getStyles)
     {
         buf.writeInt(objects.size());
-        for (@NotNull String object : objects)
+        for (@NotNull final String object : objects)
         {
-            List<String> styles = getStyles.apply(object);
+            final List<String> styles = getStyles.apply(object);
 
             buf.writeInt(styles.size());
-            for (@NotNull String style : styles)
+            for (@NotNull final String style : styles)
             {
                 ByteBufUtils.writeUTF8String(buf, style);
             }
@@ -81,7 +87,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
      */
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull ColonyStylesMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull final ColonyStylesMessage message, final MessageContext ctx)
     {
         Structures.setStyles(message.hutStyleMap, message.decorationStyleMap);
         return null;

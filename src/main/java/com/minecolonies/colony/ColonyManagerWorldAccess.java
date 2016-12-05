@@ -17,21 +17,21 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
 {
 
     @Override
-    public void notifyBlockUpdate(World worldIn, BlockPos pos, IBlockState oldState, IBlockState newState, int flags)
+    public void notifyBlockUpdate(final World worldIn, final BlockPos pos, final IBlockState oldState, final IBlockState newState, final int flags)
     {
         //Not needed
 
     }
 
     @Override
-    public void notifyLightSet(BlockPos pos)
+    public void notifyLightSet(final BlockPos pos)
     {
         //Not needed
 
     }
 
     @Override
-    public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2)
+    public void markBlockRangeForRenderUpdate(final int x1, final int y1, final int z1, final int x2, final int y2, final int z2)
     {
         //Not needed
 
@@ -39,15 +39,15 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
 
     @Override
     public void playSoundToAllNearExcept(
-                                          EntityPlayer player, SoundEvent soundIn, SoundCategory category, double x,
-                                          double y, double z, float volume, float pitch)
+                                          final EntityPlayer player, final SoundEvent soundIn, final SoundCategory category, final double x,
+                                          final double y, final double z, final float volume, final float pitch)
     {
         //Not needed
 
     }
 
     @Override
-    public void playRecord(SoundEvent soundIn, BlockPos pos)
+    public void playRecord(final SoundEvent soundIn, final BlockPos pos)
     {
         //Not needed
 
@@ -55,14 +55,14 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
 
     @Override
     public void spawnParticle(
-                               int particleID, boolean ignoreRange, double xCoord, double yCoord, double zCoord,
-                               double xSpeed, double ySpeed, double zSpeed, int... parameters)
+                               final int particleID, final boolean ignoreRange, final double xCoord, final double yCoord, final double zCoord,
+                               final double xSpeed, final double ySpeed, final double zSpeed, final int... parameters)
     {
         //Not needed
     }
 
     @Override
-    public void onEntityAdded(Entity entity)
+    public void onEntityAdded(final Entity entity)
     {
         if (entity instanceof EntityCitizen)
         {
@@ -71,11 +71,11 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     }
 
     @Override
-    public void onEntityRemoved(Entity entity)
+    public void onEntityRemoved(final Entity entity)
     {
         if (entity instanceof EntityCitizen)
         {
-            CitizenData citizen = ((EntityCitizen) entity).getCitizenData();
+            final CitizenData citizen = ((EntityCitizen) entity).getCitizenData();
             if (citizen != null)
             {
                 citizen.setCitizenEntity(null);
@@ -84,21 +84,21 @@ public class ColonyManagerWorldAccess implements IWorldEventListener
     }
 
     @Override
-    public void broadcastSound(int soundID, BlockPos pos, int data)
+    public void broadcastSound(final int soundID, final BlockPos pos, final int data)
     {
         //Not needed
 
     }
 
     @Override
-    public void playEvent(EntityPlayer player, int type, BlockPos blockPosIn, int data)
+    public void playEvent(final EntityPlayer player, final int type, final BlockPos blockPosIn, final int data)
     {
         //Not needed
 
     }
 
     @Override
-    public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress)
+    public void sendBlockBreakProgress(final int breakerId, final BlockPos pos, final int progress)
     {
         //Not needed
 

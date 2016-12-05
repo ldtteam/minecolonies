@@ -11,9 +11,9 @@
             <label id="AssignmentModeLabel" label="$(com.minecolonies.gui.workerHuts.farmerHut.AssignmentMode)" pos = "20 30"/>
             <button id="assignmentMode" size = "60 15" label = "$(com.minecolonies.gui.hiring.off)" pos = "50 40"/>
 
-            <label size="100% 11" pos="0 0" label="Fields:" color="black" textalign="BottomMiddle"/>
+            <label size="100% 11" pos="0 0" label="Fields:" color="black" textalign="BOTTOM_MIDDLE"/>
 
-            <list id="fields" size="85% 120" pos="5 60" align="TopMiddle">
+            <list id="fields" size="85% 120" pos="5 60" align="TOP_MIDDLE">
                 <view size="100% 30">
                     <box size="100% 30" linewidth="2">
 
@@ -29,10 +29,10 @@
         </view>
     </switch>
 
-    <button id="prevPage" align="TopLeft" size="20 20" pos="10 5" label="&lt;&lt;"/>
-    <button id="nextPage" align="TopRight" size="20 20" pos="10 5" label="&gt;&gt;"/>
+    <button id="prevPage" align="TOP_LEFT" size="20 20" pos="10 5" label="&lt;&lt;"/>
+    <button id="nextPage" align="TOP_RIGHT" size="20 20" pos="10 5" label="&gt;&gt;"/>
 
     <button id="inventory"
-            align="BottomMiddle" size="116 20" pos="0 13"
+            align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
             label="$(container.inventory)" />
 </window>

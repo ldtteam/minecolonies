@@ -27,7 +27,7 @@ public final class EntityUtils
      */
     private static final int    DEFAULT_MOVE_RANGE       = 3;
     /**
-     * How many blocks the citizen needs to stand safe
+     * How many blocks the citizen needs to stand safe.
      */
     private static final int    AIR_SPACE_ABOVE_TO_CHECK = 2;
     private static final int    TELEPORT_RANGE           = 512;
@@ -50,7 +50,7 @@ public final class EntityUtils
      * @param z      Z-coordinate
      * @return True if worker is at site, otherwise false
      */
-    public static boolean isWorkerAtSiteWithMove(@NotNull EntityCitizen worker, int x, int y, int z)
+    public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, final int x, final int y, final int z)
     {
         //Default range of 3 works better
         //Range of 2 get some workers stuck
@@ -68,11 +68,11 @@ public final class EntityUtils
      * @param range  Range to check in
      * @return True if worker is at site, otherwise false.
      */
-    public static boolean isWorkerAtSiteWithMove(@NotNull EntityCitizen worker, int x, int y, int z, int range)
+    public static boolean isWorkerAtSiteWithMove(@NotNull final EntityCitizen worker, final int x, final int y, final int z, final int range)
     {
         if (!isWorkerAtSite(worker, x, y, z, TELEPORT_RANGE))
         {
-            BlockPos spawnPoint =
+            final BlockPos spawnPoint =
               Utils.scanForBlockNearPoint(worker.getEntityWorld(),
                 new BlockPos(x, y, z),
                 SCAN_RADIUS, SCAN_RADIUS, SCAN_RADIUS, 2,
@@ -113,7 +113,7 @@ public final class EntityUtils
      * @param range  Range to check in
      * @return True if worker is at site, otherwise false
      */
-    public static boolean isWorkerAtSite(@NotNull EntityCitizen worker, int x, int y, int z, int range)
+    public static boolean isWorkerAtSite(@NotNull final EntityCitizen worker, final int x, final int y, final int z, final int range)
     {
         return worker.getPosition().distanceSq(new Vec3i(x, y, z)) < MathUtils.square(range);
     }
@@ -129,7 +129,7 @@ public final class EntityUtils
      * @param z      z-coordinate
      * @return True if the path is set to destination, otherwise false
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull EntityLiving living, int x, int y, int z)
+    public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, final int x, final int y, final int z)
     {
         return tryMoveLivingToXYZ(living, x, y, z, 1.0D);
     }
@@ -145,7 +145,7 @@ public final class EntityUtils
      * @param speed  Speed to move with
      * @return True if the path is set to destination, otherwise false
      */
-    public static boolean tryMoveLivingToXYZ(@NotNull EntityLiving living, int x, int y, int z, double speed)
+    public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, final int x, final int y, final int z, final double speed)
     {
         return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
     }
@@ -157,7 +157,7 @@ public final class EntityUtils
      * @param id    the entity's UUID
      * @return the Entity
      */
-    public static Entity getEntityFromUUID(@NotNull World world, @NotNull UUID id)
+    public static Entity getEntityFromUUID(@NotNull final World world, @NotNull final UUID id)
     {
         for (int i = 0; i < world.loadedEntityList.size(); ++i)
         {
@@ -177,15 +177,15 @@ public final class EntityUtils
      * @return list of Entity's
      */
     @NotNull
-    public static List<Entity> getEntitiesFromUUID(@NotNull World world, @NotNull Collection<UUID> ids)
+    public static List<Entity> getEntitiesFromUUID(@NotNull final World world, @NotNull final Collection<UUID> ids)
     {
-        @NotNull List<Entity> entities = new ArrayList<>();
+        @NotNull final List<Entity> entities = new ArrayList<>();
 
-        for (Object o : world.loadedEntityList)
+        for (final Object o : world.loadedEntityList)
         {
             if (o instanceof Entity)
             {
-                @NotNull Entity entity = (Entity) o;
+                @NotNull final Entity entity = (Entity) o;
                 if (ids.contains(entity.getUniqueID()))
                 {
                     entities.add(entity);
@@ -206,7 +206,7 @@ public final class EntityUtils
      * @param ids   List of Entity id's
      * @return list of Entity's
      */
-    public static List<Entity> getEntitiesFromID(@NotNull World world, @NotNull List<Integer> ids)
+    public static List<Entity> getEntitiesFromID(@NotNull final World world, @NotNull final List<Integer> ids)
     {
         return ids.stream()
                  .map(world::getEntityByID)
@@ -221,9 +221,9 @@ public final class EntityUtils
      * @param z       Z-coordinate
      * @return True if citizen heads to (x, z), otherwise false
      */
-    public static boolean isPathingTo(@NotNull EntityCitizen citizen, int x, int z)
+    public static boolean isPathingTo(@NotNull final EntityCitizen citizen, final int x, final int z)
     {
-        PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
+        final PathPoint pathpoint = citizen.getNavigator().getPath().getFinalPathPoint();
         return pathpoint != null && pathpoint.xCoord == x && pathpoint.zCoord == z;
     }
 
@@ -236,7 +236,7 @@ public final class EntityUtils
      * @param groundPosition the position to maybe stand on
      * @return true if a suitable Place to walk to
      */
-    public static boolean checkForFreeSpace(@NotNull World world, @NotNull BlockPos groundPosition)
+    public static boolean checkForFreeSpace(@NotNull final World world, @NotNull final BlockPos groundPosition)
     {
         for (int i = 1; i < AIR_SPACE_ABOVE_TO_CHECK; i++)
         {
@@ -258,7 +258,7 @@ public final class EntityUtils
      * @param blockPos the blocks position
      * @return true if solid or liquid
      */
-    public static boolean solidOrLiquid(@NotNull World world, @NotNull BlockPos blockPos)
+    public static boolean solidOrLiquid(@NotNull final World world, @NotNull final BlockPos blockPos)
     {
         final Material material = world.getBlockState(blockPos).getMaterial();
         return material.isSolid()

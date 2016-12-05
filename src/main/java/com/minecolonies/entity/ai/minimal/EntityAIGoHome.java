@@ -3,13 +3,12 @@ package com.minecolonies.entity.ai.minimal;
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.SoundUtils;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 
 /**
- * EntityCitizen go home AI
+ * EntityCitizen go home AI.
  * Created: May 25, 2014
- *
- * @author Colton
  */
 public class EntityAIGoHome extends EntityAIBase
 {
@@ -17,25 +16,49 @@ public class EntityAIGoHome extends EntityAIBase
      * Chance to play goHomeSound.
      */
     private static final int CHANCE = 100;
+
+    /**
+     * Damage source if has to kill citizen.
+     */
+    private static final DamageSource CLEANUP_DAMAGE = new DamageSource("CleanUpTask");
+
     /**
      * The citizen.
      */
-    private EntityCitizen citizen;
+    private final EntityCitizen citizen;
 
+    /**
+     * Constructor for the task, creates task.
+     * @param citizen the citizen to assign to this task.
+     */
     public EntityAIGoHome(EntityCitizen citizen)
     {
-        setMutexBits(1);
+        super();
         this.citizen = citizen;
     }
 
     @Override
-    public boolean shouldExecute()
+    public void setMutexBits(final int mutexBitsIn)
     {
-        return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP &&
-                 !citizen.isAtHome() &&
-                 citizen.getNavigator().noPath();
+        super.setMutexBits(1);
     }
 
+    /**
+     * Checks if the task should be executed.
+     * Only try to go home if he should sleep and he isn't home already.
+     * @return true if should execute.
+     */
+    @Override
+    public boolean shouldExecute()
+    {
+        return citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP
+                && !citizen.isAtHome();
+    }
+
+    /**
+     * Only execute if the citizen has no path atm (meaning while he isn't pathing at the moment)
+     * @return true if he should continue.
+     */
     @Override
     public boolean continueExecuting()
     {
@@ -45,25 +68,23 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public void startExecuting()
     {
-        BlockPos pos = citizen.getHomePosition();
+        final BlockPos pos = citizen.getHomePosition();
         if (pos == null)
         {
-            //todo: do something about this instead of spamming console
+            //If the citizen has no colony as well, remove the citizen.
+            if(citizen.getColony() == null)
+            {
+                citizen.onDeath(CLEANUP_DAMAGE);
+            }
+            else
+            {
+                //If he has no homePosition strangely then try to  move to the colony.
+                citizen.isWorkerAtSiteWithMove(citizen.getColony().getCenter(), 2);
+            }
             return;
         }
 
         playGoHomeSounds();
-
-        if (citizen.getWorkBuilding() != null)
-        {
-            /*
-            Temp fix for pathfinding in the night.
-            Citizens can't find a path home.
-             */
-            final BlockPos workBuilding = citizen.getWorkBuilding().getLocation();
-            citizen.isWorkerAtSiteWithMove(workBuilding, 2);
-            return;
-        }
 
         citizen.isWorkerAtSiteWithMove(pos, 2);
     }
@@ -75,12 +96,9 @@ public class EntityAIGoHome extends EntityAIBase
     {
         final int chance = citizen.getRandom().nextInt(CHANCE);
 
-        if (chance <= 1)
+        if (chance <= 1 && citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
         {
-            if (citizen.getWorkBuilding() != null && citizen.getColonyJob() != null)
-            {
-                SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
-            }
+            SoundUtils.playSoundAtCitizenWithChance(citizen.worldObj, citizen.getPosition(), citizen.getColonyJob().getBedTimeSound(), 1);
             //add further workers as soon as available.
         }
     }

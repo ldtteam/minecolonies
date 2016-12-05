@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
 
 /**
- * Wraps MineCrafts GuiScreen for BlockOut's Window
+ * Wraps MineCrafts GuiScreen for BlockOut's Window.
  */
 public class Screen extends GuiScreen
 {
@@ -22,8 +22,9 @@ public class Screen extends GuiScreen
      *
      * @param w blockout window.
      */
-    public Screen(Window w)
+    public Screen(final Window w)
     {
+        super();
         window = w;
     }
 
@@ -32,14 +33,14 @@ public class Screen extends GuiScreen
         return scale;
     }
 
-    private static void setScale(Minecraft mc)
+    private static void setScale(final Minecraft mc)
     {
         //Seems to work without the sides now
         scale = new ScaledResolution(mc).getScaleFactor();
     }
 
     @Override
-    public void drawScreen(int mx, int my, float f)
+    public void drawScreen(final int mx, final int my, final float f)
     {
         if (window.hasLightbox())
         {
@@ -55,13 +56,13 @@ public class Screen extends GuiScreen
     }
 
     @Override
-    protected void keyTyped(char ch, int key)
+    protected void keyTyped(final char ch, final int key)
     {
         window.onKeyTyped(ch, key);
     }
 
     @Override
-    protected void mouseClicked(int mx, int my, int code)
+    protected void mouseClicked(final int mx, final int my, final int code)
     {
         if (code == 0)
         {
@@ -71,7 +72,7 @@ public class Screen extends GuiScreen
     }
 
     @Override
-    protected void mouseReleased(int mx, int my, int code)
+    protected void mouseReleased(final int mx, final int my, final int code)
     {
         if (code == 0)
         {
@@ -81,7 +82,7 @@ public class Screen extends GuiScreen
     }
 
     @Override
-    protected void mouseClickMove(int mx, int my, int buttons, long timeElapsed)
+    protected void mouseClickMove(final int mx, final int my, final int buttons, final long timeElapsed)
     {
         // Can be overridden
     }

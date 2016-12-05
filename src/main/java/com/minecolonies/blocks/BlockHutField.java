@@ -106,13 +106,13 @@ public class BlockHutField extends BlockContainer
     }
 
     @Override
-    public EnumBlockRenderType getRenderType(IBlockState state)
+    public EnumBlockRenderType getRenderType(final IBlockState state)
     {
         return EnumBlockRenderType.INVISIBLE;
     }
 
     @Override
-    public int getMetaFromState(@NotNull IBlockState state)
+    public int getMetaFromState(@NotNull final IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
@@ -120,13 +120,13 @@ public class BlockHutField extends BlockContainer
     //todo: remove once we no longer need to support this
     @SuppressWarnings("deprecation")
     @Override
-    public boolean isFullCube(IBlockState state)
+    public boolean isFullCube(final IBlockState state)
     {
         return false;
     }
 
     @Override
-    public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
+    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
     {
         return false;
     }
@@ -134,7 +134,7 @@ public class BlockHutField extends BlockContainer
     //todo: remove once we no longer need to support this
     @SuppressWarnings("deprecation")
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
         return new AxisAlignedBB((float) START_COLLISION,
                                   (float) BOTTOM_COLLISION,
@@ -162,16 +162,16 @@ public class BlockHutField extends BlockContainer
 
     @Override
     public boolean onBlockActivated(
-                                     World worldIn,
-                                     BlockPos pos,
-                                     IBlockState state,
-                                     EntityPlayer playerIn,
-                                     EnumHand hand,
-                                     @Nullable ItemStack heldItem,
-                                     EnumFacing side,
-                                     float hitX,
-                                     float hitY,
-                                     float hitZ)
+                                     final World worldIn,
+                                     final BlockPos pos,
+                                     final IBlockState state,
+                                     final EntityPlayer playerIn,
+                                     final EnumHand hand,
+                                     @Nullable final ItemStack heldItem,
+                                     final EnumFacing side,
+                                     final float hitX,
+                                     final float hitY,
+                                     final float hitZ)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
@@ -190,14 +190,22 @@ public class BlockHutField extends BlockContainer
     // ======================= Rendering & IBlockState =======================
     // =======================================================================
     @Override
-    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, @Nullable EntityLivingBase placer)
+    public IBlockState onBlockPlaced(
+                                      final World worldIn,
+                                      final BlockPos pos,
+                                      final EnumFacing facing,
+                                      final float hitX,
+                                      final float hitY,
+                                      final float hitZ,
+                                      final int meta,
+                                      @Nullable final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 
     @Override
-    public void onBlockPlacedBy(@NotNull World worldIn, @NotNull BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
+    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
         //Only work on server side.
         if (worldIn.isRemote)
@@ -234,7 +242,7 @@ public class BlockHutField extends BlockContainer
 
     @NotNull
     @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta)
+    public TileEntity createNewTileEntity(final World worldIn, final int meta)
     {
         return new ScarecrowTileEntity();
     }

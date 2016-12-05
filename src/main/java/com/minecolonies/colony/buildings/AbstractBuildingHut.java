@@ -16,7 +16,7 @@ public abstract class AbstractBuildingHut extends AbstractBuilding
      * @param c The colony that this building belongs too.
      * @param l The location of this building.
      */
-    public AbstractBuildingHut(@NotNull Colony c, BlockPos l)
+    public AbstractBuildingHut(@NotNull final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -42,7 +42,7 @@ public abstract class AbstractBuildingHut extends AbstractBuilding
          * @param c ColonyView associated with this building.
          * @param l The location of this building.
          */
-        protected View(ColonyView c, @NotNull BlockPos l)
+        protected View(final ColonyView c, @NotNull final BlockPos l)
         {
             super(c, l);
         }

@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 public class WorkOrderBuildDecoration extends WorkOrderBuild
 {
     /**
-     * unused constructor for reflection
+     * unused constructor for reflection.
      */
     public WorkOrderBuildDecoration()
     {
@@ -24,8 +24,9 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
      * @param rotation   The number of times the decoration was rotated.
      * @param location   The location where the decoration should be built.
      */
-    public WorkOrderBuildDecoration(String decoration, String style, int rotation, BlockPos location)
+    public WorkOrderBuildDecoration(final String decoration, final String style, final int rotation, final BlockPos location)
     {
+        super();
         this.structureName = style + '/' + decoration;
         this.buildingRotation = rotation;
         this.buildingLocation = location;
@@ -33,7 +34,7 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
     }
 
     @Override
-    public boolean isValid(Colony colony)
+    public boolean isValid(final Colony colony)
     {
         return true;
     }

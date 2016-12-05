@@ -18,6 +18,7 @@ public class TextFieldVanilla extends TextField
      */
     public TextFieldVanilla()
     {
+        super();
         filter = new FilterVanilla();
     }
 
@@ -26,7 +27,7 @@ public class TextFieldVanilla extends TextField
      *
      * @param params xml parameters.
      */
-    public TextFieldVanilla(PaneParams params)
+    public TextFieldVanilla(final PaneParams params)
     {
         super(params);
         backgroundEnabled = params.getBooleanAttribute("background", backgroundEnabled);
@@ -40,7 +41,7 @@ public class TextFieldVanilla extends TextField
         return backgroundEnabled;
     }
 
-    public void setBackgroundEnabled(boolean e)
+    public void setBackgroundEnabled(final boolean e)
     {
         backgroundEnabled = e;
     }
@@ -50,7 +51,7 @@ public class TextFieldVanilla extends TextField
         return backgroundOuterColor;
     }
 
-    public void setBackgroundOuterColor(int c)
+    public void setBackgroundOuterColor(final int c)
     {
         backgroundOuterColor = c;
     }
@@ -60,7 +61,7 @@ public class TextFieldVanilla extends TextField
         return backgroundInnerColor;
     }
 
-    public void setBackgroundInnerColor(int c)
+    public void setBackgroundInnerColor(final int c)
     {
         backgroundInnerColor = c;
     }
@@ -72,7 +73,7 @@ public class TextFieldVanilla extends TextField
     }
 
     @Override
-    public void drawSelf(int mx, int my)
+    public void drawSelf(final int mx, final int my)
     {
         if (backgroundEnabled)
         {
@@ -93,7 +94,7 @@ public class TextFieldVanilla extends TextField
     }
 
     @Override
-    public void handleClick(int mx, int my)
+    public void handleClick(final int mx, final int my)
     {
         int mouseX = mx;
 
@@ -108,10 +109,10 @@ public class TextFieldVanilla extends TextField
     private static class FilterNumeric implements Filter
     {
         @Override
-        public String filter(String s)
+        public String filter(final String s)
         {
-            StringBuilder sb = new StringBuilder();
-            for (char c : s.toCharArray())
+            final StringBuilder sb = new StringBuilder();
+            for (final char c : s.toCharArray())
             {
                 if (isAllowedCharacter(c))
                 {
@@ -122,7 +123,7 @@ public class TextFieldVanilla extends TextField
         }
 
         @Override
-        public boolean isAllowedCharacter(char c)
+        public boolean isAllowedCharacter(final char c)
         {
             return Character.isDigit(c);
         }
@@ -131,13 +132,13 @@ public class TextFieldVanilla extends TextField
     private static class FilterVanilla implements Filter
     {
         @Override
-        public String filter(String s)
+        public String filter(final String s)
         {
             return ChatAllowedCharacters.filterAllowedCharacters(s);
         }
 
         @Override
-        public boolean isAllowedCharacter(char c)
+        public boolean isAllowedCharacter(final char c)
         {
             return ChatAllowedCharacters.isAllowedCharacter(c);
         }

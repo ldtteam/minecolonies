@@ -42,6 +42,13 @@ public final class BlockUtils
 
       );
 
+    /**
+     * Private constructor to hide the public one.
+     */
+    private BlockUtils()
+    {
+        //Hides implicit constructor.
+    }
 
     /**
      * Updates the rotation of the structure depending on the input.
@@ -64,15 +71,6 @@ public final class BlockUtils
         }
     }
 
-
-    /**
-     * Private constructor to hide the public one.
-     */
-    private BlockUtils()
-    {
-        //Hides implicit constructor.
-    }
-
     /**
      * Checks if this block type should be destroyed.
      * <p>
@@ -81,7 +79,7 @@ public final class BlockUtils
      * @param block the block type to check
      * @return true if you should back away
      */
-    public static boolean shouldNeverBeMessedWith(Block block)
+    public static boolean shouldNeverBeMessedWith(final Block block)
     {
         return block instanceof AbstractBlockHut
                  || Objects.equals(block, Blocks.BEDROCK);
@@ -115,7 +113,7 @@ public final class BlockUtils
         {
             return true;
         }
-        for (@NotNull BiPredicate<Block, IBlockState> predicate : freeToPlaceBlocks)
+        for (@NotNull final BiPredicate<Block, IBlockState> predicate : freeToPlaceBlocks)
         {
             if (predicate.test(block, blockState))
             {
@@ -131,7 +129,7 @@ public final class BlockUtils
      * @param iBlockState block state to be checked.
      * @return true if is water.
      */
-    public static boolean isWater(IBlockState iBlockState)
+    public static boolean isWater(final IBlockState iBlockState)
     {
         return Objects.equals(iBlockState, Blocks.WATER.getDefaultState())
                  || Objects.equals(iBlockState, Blocks.FLOWING_WATER.getDefaultState());
@@ -144,7 +142,7 @@ public final class BlockUtils
      * @param pos   the position the block is at.
      * @return true if is a seed.
      */
-    public static boolean isBlockSeed(@NotNull World world, @NotNull BlockPos pos)
+    public static boolean isBlockSeed(@NotNull final World world, @NotNull final BlockPos pos)
     {
         return BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())) != null
                  && BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())).getItem() instanceof ItemSeeds;
@@ -156,7 +154,7 @@ public final class BlockUtils
      * @param blockState the block and state we are creating an ItemStack for.
      * @return ItemStack fromt the BlockState.
      */
-    public static ItemStack getItemStackFromBlockState(@NotNull IBlockState blockState)
+    public static ItemStack getItemStackFromBlockState(@NotNull final IBlockState blockState)
     {
         final Item item = getItem(blockState);
 
@@ -174,7 +172,7 @@ public final class BlockUtils
         return new ItemStack(item, 1, getDamageValue(block, blockState));
     }
 
-    private static Item getItem(@NotNull IBlockState blockState)
+    private static Item getItem(@NotNull final IBlockState blockState)
     {
         if (blockState.getBlock() instanceof BlockBanner)
         {
@@ -202,7 +200,7 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockCrops)
         {
-            ItemStack stack = ((BlockCrops) blockState.getBlock()).getItem(null, null, blockState);
+            final ItemStack stack = ((BlockCrops) blockState.getBlock()).getItem(null, null, blockState);
             if (stack != null)
             {
                 return stack.getItem();
@@ -216,14 +214,14 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockDoor)
         {
-            Item item = blockState.getBlock() == Blocks.IRON_DOOR ? Items.IRON_DOOR :
-                                                                                      (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
-                                                                                         : (blockState.getBlock() == Blocks.BIRCH_DOOR ? Items.BIRCH_DOOR
-                                                                                              : (blockState.getBlock() == Blocks.JUNGLE_DOOR ? Items.JUNGLE_DOOR
-                                                                                                   : (blockState.getBlock() == Blocks.ACACIA_DOOR ? Items.ACACIA_DOOR
-                                                                                                        : (blockState.getBlock() == Blocks.DARK_OAK_DOOR
-                                                                                                             ? Items.DARK_OAK_DOOR
-                                                                                                             : Items.OAK_DOOR)))));
+            final Item item = blockState.getBlock() == Blocks.IRON_DOOR ? Items.IRON_DOOR
+                    : (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
+                            : (blockState.getBlock() == Blocks.BIRCH_DOOR ? Items.BIRCH_DOOR
+                                    : (blockState.getBlock() == Blocks.JUNGLE_DOOR ? Items.JUNGLE_DOOR
+                                            : (blockState.getBlock() == Blocks.ACACIA_DOOR ? Items.ACACIA_DOOR
+                                                    : (blockState.getBlock() == Blocks.DARK_OAK_DOOR
+                                                            ? Items.DARK_OAK_DOOR
+                                                            : Items.OAK_DOOR)))));
 
             return item == null ? Item.getItemFromBlock(blockState.getBlock()) : item;
         }
@@ -289,7 +287,7 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockStem)
         {
-            ItemStack stack = ((BlockStem) blockState.getBlock()).getItem(null, null, blockState);
+            final ItemStack stack = ((BlockStem) blockState.getBlock()).getItem(null, null, blockState);
             if (stack != null)
             {
                 return stack.getItem();
@@ -324,7 +322,7 @@ public final class BlockUtils
         }
     }
 
-    private static int getDamageValue(Block block, @NotNull IBlockState blockState)
+    private static int getDamageValue(final Block block, @NotNull final IBlockState blockState)
     {
         if (block instanceof BlockCocoa)
         {
@@ -360,5 +358,15 @@ public final class BlockUtils
         {
             return block.damageDropped(blockState);
         }
+    }
+
+    /**
+     * Checks if a certain block is a pathBlock (roadBlock).
+     * @param block the block to analyze.
+     * @return true if is so.
+     */
+    public static boolean isPathBlock(final Block block)
+    {
+        return block == Blocks.GRAVEL || block == Blocks.STONEBRICK;
     }
 }

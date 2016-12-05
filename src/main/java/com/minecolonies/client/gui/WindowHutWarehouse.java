@@ -9,7 +9,7 @@ import com.minecolonies.util.LanguageHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for the farmer hut
+ * Window for the farmer hut.
  */
 public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWarehouse.View> implements Button.Handler
 {
@@ -36,11 +36,11 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
     private Button buttonNextPage;
 
     /**
-     * Constructor for the window of the warehouse hut
+     * Constructor for the window of the warehouse hut.
      *
      * @param building {@link com.minecolonies.colony.buildings.BuildingWarehouse.View}
      */
-    public WindowHutWarehouse(@NotNull BuildingWarehouse.View building)
+    public WindowHutWarehouse(@NotNull final BuildingWarehouse.View building)
     {
         super(building, Constants.MOD_ID + HUT_WAREHOUSE_RESOURCE_SUFFIX);
         super.registerButton(BUTTON_BLACKSMITH_GOLD, b -> building.blacksmithGold = !building.blacksmithGold);
@@ -76,7 +76,7 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
     }
 
     /**
-     * Update the labels on the buttons
+     * Update the labels on the buttons.
      */
     private void updateButtonLabels()
     {
@@ -93,18 +93,18 @@ public class WindowHutWarehouse extends AbstractWindowWorkerBuilding<BuildingWar
     }
 
     /**
-     * Returns specific string depending on the boolean value
+     * Returns specific string depending on the boolean value.
      *
-     * @param bool Boolean value to check
-     * @return String depending on boolean value
+     * @param bool Boolean value to check.
+     * @return String depending on boolean value.
      */
-    private static String getYesOrNo(boolean bool)
+    private static String getYesOrNo(final boolean bool)
     {
         return bool ? LanguageHandler.format("gui.yes") : LanguageHandler.format("gui.no");
     }
 
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@NotNull final Button button)
     {
         switch (button.getID())
         {

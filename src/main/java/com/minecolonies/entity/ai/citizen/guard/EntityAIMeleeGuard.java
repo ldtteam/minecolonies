@@ -140,6 +140,7 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
             attackEntity(targetEntity, (float) DAMAGE_PER_ATTACK);
             setDelay(getReloadTime());
             attacksExecuted += 1;
+            currentSearchDistance = START_SEARCH_DISTANCE;
 
             if (attacksExecuted >= getMaxAttacksUntilRestock())
             {
@@ -148,15 +149,26 @@ public class EntityAIMeleeGuard extends AbstractEntityAIGuard
 
             return AIState.GUARD_HUNT_DOWN_TARGET;
         }
+
+        if (shouldReturnToTarget(targetEntity.getPosition(), FOLLOW_RANGE))
+        {
+            return AIState.GUARD_PATROL;
+        }
+
         worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getExperienceLevel()));
         worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), (int) MIN_ATTACK_DISTANCE);
 
         return AIState.GUARD_SEARCH_TARGET;
     }
 
-    private void attackEntity(@NotNull EntityLivingBase entityToAttack, float baseDamage)
+    private void attackEntity(@NotNull final EntityLivingBase entityToAttack, final float baseDamage)
     {
         double damgeToBeDealt = baseDamage;
+
+        if(worker.getHealth() <= 2)
+        {
+            damgeToBeDealt*=2;
+        }
 
         final ItemStack heldItem = worker.getHeldItem(EnumHand.MAIN_HAND);
         if (heldItem != null)

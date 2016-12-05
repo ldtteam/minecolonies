@@ -12,12 +12,13 @@ public abstract class AbstractTextElement extends Pane
 {
     protected static final ResourceLocation TEXTURE       = new ResourceLocation("textures/gui/widgets.png");
     protected              double           scale         = 1.0;
-    protected              Alignment        textAlignment = Alignment.MiddleLeft;
+    protected              Alignment        textAlignment = Alignment.MIDDLE_LEFT;
     protected              int              textColor     = 0xffffff;
     protected              boolean          shadow        = false;
 
     public AbstractTextElement()
     {
+        super();
         //Required
     }
 
@@ -26,7 +27,7 @@ public abstract class AbstractTextElement extends Pane
      *
      * @param params xml parameters.
      */
-    public AbstractTextElement(PaneParams params)
+    public AbstractTextElement(final PaneParams params)
     {
         super(params);
 
@@ -41,7 +42,7 @@ public abstract class AbstractTextElement extends Pane
         return textColor;
     }
 
-    public void setColor(int c)
+    public void setColor(final int c)
     {
         textColor = c;
     }
@@ -51,7 +52,7 @@ public abstract class AbstractTextElement extends Pane
         return shadow;
     }
 
-    public void setShadow(boolean s)
+    public void setShadow(final boolean s)
     {
         shadow = s;
     }
@@ -61,7 +62,7 @@ public abstract class AbstractTextElement extends Pane
         return textAlignment;
     }
 
-    public void setTextAlignment(Alignment align)
+    public void setTextAlignment(final Alignment align)
     {
         textAlignment = align;
     }
@@ -71,7 +72,7 @@ public abstract class AbstractTextElement extends Pane
         return scale;
     }
 
-    public void setScale(float s)
+    public void setScale(final float s)
     {
         scale = s;
     }

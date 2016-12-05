@@ -12,6 +12,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Message to set the level of the miner from the GUI.
+ */
 public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, IMessage>
 {
     private int      colonyId;
@@ -27,12 +30,12 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
     }
 
     /**
-     * Creates object for the miner set level message
+     * Creates object for the miner set level message.
      *
-     * @param building View of the building to read data from
-     * @param level    Level of the miner
+     * @param building View of the building to read data from.
+     * @param level    Level of the miner.
      */
-    public MinerSetLevelMessage(@NotNull BuildingMiner.View building, int level)
+    public MinerSetLevelMessage(@NotNull final BuildingMiner.View building, final int level)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -41,7 +44,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -49,7 +52,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -59,7 +62,7 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
     @Override
     public void messageOnServerThread(final MinerSetLevelMessage message, final EntityPlayerMP player)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
 
@@ -69,13 +72,10 @@ public class MinerSetLevelMessage extends AbstractMessage<MinerSetLevelMessage, 
                 return;
             }
 
-            @Nullable BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
-            if (building != null)
+            @Nullable final BuildingMiner building = colony.getBuilding(message.buildingId, BuildingMiner.class);
+            if (building != null && message.level >= 0 && message.level < building.getNumberOfLevels())
             {
-                if (message.level >= 0 && message.level < building.getNumberOfLevels())
-                {
-                    building.setCurrentLevel(message.level);
-                }
+                building.setCurrentLevel(message.level);
             }
         }
     }

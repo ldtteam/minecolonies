@@ -11,7 +11,7 @@ public class ModelEntityDeliverymanMale extends ModelBiped
 
     public ModelEntityDeliverymanMale()
     {
-        float scale = 0F;
+        final float scale = 0F;
         bipedHead = new ModelRenderer(this, 0, 0);
         bipedHead.addBox(-4F, -8F, -4F, 8, 8, 8, scale);
         bipedHead.setRotationPoint(0F, 2F, -4F);
@@ -46,7 +46,7 @@ public class ModelEntityDeliverymanMale extends ModelBiped
     }
 
     @Override
-    public void render(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor)
+    public void render(final Entity entity, final float limbSwing, final float limbSwingAmount, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scaleFactor)
     {
         setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scaleFactor, entity);
         bipedHead.render(scaleFactor);
@@ -59,7 +59,7 @@ public class ModelEntityDeliverymanMale extends ModelBiped
     }
 
     @Override
-    public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn)
+    public void setRotationAngles(final float limbSwing, final float limbSwingAmount, final float ageInTicks, final float netHeadYaw, final float headPitch, final float scaleFactor, final Entity entityIn)
     {
         bipedHead.rotateAngleY = netHeadYaw / 57.29578F;
         bipedHead.rotateAngleX = headPitch / 57.29578F + 0.45F;
@@ -99,8 +99,8 @@ public class ModelEntityDeliverymanMale extends ModelBiped
             f6 *= f6;
             f6 *= f6;
             f6 = 1.0F - f6;
-            float f7 = MathHelper.sin(f6 * 3.141593F);
-            float f8 = MathHelper.sin(swingProgress * 3.141593F) * -(bipedHead.rotateAngleX - 0.7F) * 0.75F;
+            final float f7 = MathHelper.sin(f6 * 3.141593F);
+            final float f8 = MathHelper.sin(swingProgress * 3.141593F) * -(bipedHead.rotateAngleX - 0.7F) * 0.75F;
             bipedRightArm.rotateAngleX -= f7 * 1.2D + f8;
             bipedRightArm.rotateAngleY += bipedBody.rotateAngleY * 2.0F;
             bipedRightArm.rotateAngleZ = MathHelper.sin(swingProgress * 3.141593F) * -0.4F;

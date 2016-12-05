@@ -202,6 +202,12 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
 
             return AIState.GUARD_HUNT_DOWN_TARGET;
         }
+
+        if (shouldReturnToTarget(targetEntity.getPosition(), FOLLOW_RANGE + MAX_ATTACK_DISTANCE))
+        {
+            return AIState.GUARD_PATROL;
+        }
+
         worker.setAIMoveSpeed((float) (BASE_FOLLOW_SPEED + BASE_FOLLOW_SPEED_MULTIPLIER * worker.getExperienceLevel()));
         worker.isWorkerAtSiteWithMove(targetEntity.getPosition(), MOVE_CLOSE);
 
@@ -209,20 +215,25 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     }
 
     @Override
-    public void attackEntityWithRangedAttack(@NotNull EntityLivingBase entityToAttack, float baseDamage)
+    public void attackEntityWithRangedAttack(@NotNull final EntityLivingBase entityToAttack, final float baseDamage)
     {
         final EntityTippedArrow arrowEntity = new GuardArrow(this.worker.worldObj, worker);
         final double xVector = entityToAttack.posX - worker.posX;
         final double yVector = entityToAttack.getEntityBoundingBox().minY + entityToAttack.height / AIM_HEIGHT - arrowEntity.posY;
         final double zVector = entityToAttack.posZ - worker.posZ;
         final double distance = (double) MathHelper.sqrt_double(xVector * xVector + zVector * zVector);
-
+        double damage = baseDamage;
         //Lower the variable higher the chance that the arrows hits the target.
         final double chance = HIT_CHANCE_DIVIDER / (worker.getExperienceLevel() + 1);
 
         arrowEntity.setThrowableHeading(xVector, yVector + distance * AIM_SLIGHTLY_HIGHER_MULTIPLIER, zVector, (float) ARROW_SPEED, (float) chance);
 
-        addEffectsToArrow(arrowEntity, baseDamage);
+        if(worker.getHealth() <= 2)
+        {
+            damage*=2;
+        }
+
+        addEffectsToArrow(arrowEntity, damage);
 
         worker.addExperience(XP_EACH_ARROW);
         worker.faceEntity(entityToAttack, (float) TURN_AROUND, (float) TURN_AROUND);
@@ -254,7 +265,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
      * @param arrowEntity the arrow to add these effects to.
      * @param baseDamage  the arrow base damage.
      */
-    private void addEffectsToArrow(EntityTippedArrow arrowEntity, double baseDamage)
+    private void addEffectsToArrow(final EntityTippedArrow arrowEntity, final double baseDamage)
     {
         final int powerEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
         final int punchEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);

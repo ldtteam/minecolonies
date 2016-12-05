@@ -8,7 +8,7 @@ import com.minecolonies.lib.Constants;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Window for a town hall name entry
+ * Window for a town hall name entry.
  */
 public class WindowTownHallNameEntry extends Window implements Button.Handler
 {
@@ -20,11 +20,11 @@ public class WindowTownHallNameEntry extends Window implements Button.Handler
     private ColonyView colony;
 
     /**
-     * Constructor for a town hall rename entry window
+     * Constructor for a town hall rename entry window.
      *
      * @param c {@link ColonyView}
      */
-    public WindowTownHallNameEntry(ColonyView c)
+    public WindowTownHallNameEntry(final ColonyView c)
     {
         super(Constants.MOD_ID + TOWNHALL_NAME_RESOURCE_SUFFIX);
         this.colony = c;
@@ -37,11 +37,11 @@ public class WindowTownHallNameEntry extends Window implements Button.Handler
     }
 
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@NotNull final Button button)
     {
         if (button.getID().equals(BUTTON_DONE))
         {
-            String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
+            final String name = findPaneOfTypeByID(INPUT_NAME, TextField.class).getText();
             if (!name.isEmpty())
             {
                 colony.setName(name);

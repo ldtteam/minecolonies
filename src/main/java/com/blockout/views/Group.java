@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
  * A Group is a View which enforces the position of children to be
  * a Y-sorted list in the order they are added.
  * <p>
- * All children are set to a Top version of their alignment, and have their Y coordinates overwritten
+ * All children are set to a Top version of their alignment, and have their Y coordinates overwritten.
  */
 public class Group extends View
 {
@@ -24,23 +24,23 @@ public class Group extends View
     }
 
     /**
-     * Constructs a View from PaneParams
+     * Constructs a View from PaneParams.
      *
-     * @param params Params for the Pane
+     * @param params Params for the Pane.
      */
-    public Group(@NotNull PaneParams params)
+    public Group(@NotNull final PaneParams params)
     {
         super(params);
         spacing = params.getIntegerAttribute("spacing", spacing);
     }
 
     @Override
-    public void adjustChild(@NotNull Pane child)
+    public void adjustChild(@NotNull final Pane child)
     {
         int childX = child.getX();
         int childY = spacing;
         int childWidth = child.getWidth();
-        int childHeight = child.getHeight();
+        final int childHeight = child.getHeight();
 
         //  Adjust for horizontal size and alignment
         if (childWidth < 0)
@@ -56,7 +56,7 @@ public class Group extends View
             childX = ((getInteriorWidth() - childWidth) / 2) + childX;
         }
 
-        for (@NotNull Pane c : children)
+        for (@NotNull final Pane c : children)
         {
             if (c == child)
             {
@@ -70,14 +70,14 @@ public class Group extends View
     }
 
     @Override
-    public void removeChild(@NotNull Pane child)
+    public void removeChild(@NotNull final Pane child)
     {
         super.removeChild(child);
 
-        int formerChildY = child.getY();
-        int formerChildHeight = child.getHeight();
+        final int formerChildY = child.getY();
+        final int formerChildHeight = child.getHeight();
 
-        for (@NotNull Pane c : children)
+        for (@NotNull final Pane c : children)
         {
             if (c.getY() > formerChildY)
             {

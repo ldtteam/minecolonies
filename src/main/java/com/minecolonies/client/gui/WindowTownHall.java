@@ -258,11 +258,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private ScrollingList userList;
 
     /**
-     * Constructor for the town hall window
+     * Constructor for the town hall window.
      *
-     * @param townHall {@link BuildingTownHall.View}
+     * @param townHall {@link BuildingTownHall.View}.
      */
-    public WindowTownHall(BuildingTownHall.View townHall)
+    public WindowTownHall(final BuildingTownHall.View townHall)
     {
         super(townHall, Constants.MOD_ID + TOWNHALL_RESOURCE_SUFFIX);
         this.townHall = townHall;
@@ -295,7 +295,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Clears and resets all users
+     * Clears and resets all users.
      */
     private void updateUsers()
     {
@@ -305,7 +305,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Clears and resets all citizens
+     * Clears and resets all citizens.
      */
     private void updateCitizens()
     {
@@ -328,7 +328,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      *
      * @param button the clicked button.
      */
-    private void updatePriority(@NotNull Button button)
+    private void updatePriority(@NotNull final Button button)
     {
         @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(HIDDEN_ID_POSITION);
         final int id = Integer.parseInt(idLabel.getLabelText());
@@ -362,7 +362,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      *
      * @param button the clicked button.
      */
-    private void deleteWorkOrder(@NotNull Button button)
+    private void deleteWorkOrder(@NotNull final Button button)
     {
         @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(HIDDEN_ID_POSITION);
         final int id = Integer.parseInt(idLabel.getLabelText());
@@ -380,7 +380,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
     /**
      * Executed when <code>WindowTownHall</code> is opened.
-     * Does tasks like setting buttons
+     * Does tasks like setting buttons.
      */
     @Override
     public void onOpened()
@@ -434,10 +434,10 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         workers += deliverymen + builders;
 
-        String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
-        String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townHall.population.unemployed", citizensSize - workers);
-        String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townHall.population.builders", builders);
-        String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townHall.population.deliverymen", deliverymen);
+        final String numberOfCitizens = LanguageHandler.format("com.minecolonies.gui.townHall.population.totalCitizens", citizensSize, townHall.getColony().getMaxCitizens());
+        final String numberOfUnemployed = LanguageHandler.format("com.minecolonies.gui.townHall.population.unemployed", citizensSize - workers);
+        final String numberOfBuilders = LanguageHandler.format("com.minecolonies.gui.townHall.population.builders", builders);
+        final String numberOfDeliverymen = LanguageHandler.format("com.minecolonies.gui.townHall.population.deliverymen", deliverymen);
 
         findPaneOfTypeByID(CURRENT_SPEC_LABEL, Label.class).setLabelText("<Industrial>");
         findPaneOfTypeByID(TOTAL_CITIZENS_LABEL, Label.class).setLabelText(numberOfCitizens);
@@ -461,9 +461,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
 
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                Permissions.Player player = users.get(index);
+                final Permissions.Player player = users.get(index);
                 String rank = player.getRank().name();
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(player.getName());
@@ -487,9 +487,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
 
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                CitizenDataView citizen = citizens.get(index);
+                final CitizenDataView citizen = citizens.get(index);
 
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(citizen.getName());
             }
@@ -515,7 +515,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
 
             @Override
-            public void updateElement(int index, @NotNull Pane rowPane)
+            public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                 final WorkOrderView workOrder = workOrders.get(index);
                 String claimingCitizen = "";
@@ -555,9 +555,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Returns the name of a building
+     * Returns the name of a building.
      *
-     * @return Name of a building
+     * @return Name of a building.
      */
     @Override
     public String getBuildingName()
@@ -568,11 +568,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Toggles the allocation of a certain job. Manual or automatic.
      *
-     * @param button the pressed button
+     * @param button the pressed button.
      */
-    private void toggleHiring(@NotNull Button button)
+    private void toggleHiring(@NotNull final Button button)
     {
-        boolean toggle;
+        final boolean toggle;
         if (button.getLabel().equals(LanguageHandler.format("com.minecolonies.gui.hiring.off")))
         {
             button.setLabel(LanguageHandler.format("com.minecolonies.gui.hiring.on"));
@@ -587,13 +587,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Sets the clicked tab
+     * Sets the clicked tab.
      *
-     * @param button Tab button clicked on
+     * @param button Tab button clicked on.
      */
-    private void onTabClicked(@NotNull Button button)
+    private void onTabClicked(@NotNull final Button button)
     {
-        String page = tabsToPages.get(button.getID());
+        final String page = tabsToPages.get(button.getID());
         findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).setView(page);
 
         lastTabButton.setEnabled(true);
@@ -604,7 +604,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     @Override
     public void onUpdate()
     {
-        String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
+        final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_PERMISSIONS))
         {
             updateUsers();
@@ -620,41 +620,37 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Action performed when rename button is clicked
+     * Action performed when rename button is clicked.
      *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void renameClicked(Button ignored)
+    private void renameClicked()
     {
-        @NotNull WindowTownHallNameEntry window = new WindowTownHallNameEntry(townHall.getColony());
+        @NotNull final WindowTownHallNameEntry window = new WindowTownHallNameEntry(townHall.getColony());
         window.open();
     }
 
     /**
-     * Action performed when add player button is clicked
+     * Action performed when add player button is clicked.
      *
-     * @param ignored Parameter is ignored, since some actions require a button.
-     *                This method does not
      */
-    private void addPlayerCLicked(Button ignored)
+    private void addPlayerCLicked()
     {
-        TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
+        final TextField input = findPaneOfTypeByID(INPUT_ADDPLAYER_NAME, TextField.class);
         MineColonies.getNetwork().sendToServer(new PermissionsMessage.AddPlayer(townHall.getColony(), input.getText()));
         input.setText("");
     }
 
     /**
-     * Action performed when remove player button is clicked
+     * Action performed when remove player button is clicked.
      *
-     * @param button Button that holds the user clicked on
+     * @param button Button that holds the user clicked on.
      */
-    private void removePlayerClicked(Button button)
+    private void removePlayerClicked(final Button button)
     {
-        int row = userList.getListElementIndexByPane(button);
+        final int row = userList.getListElementIndexByPane(button);
         if (row >= 0 && row < users.size())
         {
-            Permissions.Player user = users.get(row);
+            final Permissions.Player user = users.get(row);
             if (user.getRank() != Permissions.Rank.OWNER)
             {
                 MineColonies.getNetwork().sendToServer(new PermissionsMessage.RemovePlayer(townHall.getColony(), user.getID()));
@@ -663,16 +659,16 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     }
 
     /**
-     * Action performed when promote or demote button is clicked
+     * Action performed when promote or demote button is clicked.
      *
-     * @param button Button that holds the  user clicked on
+     * @param button Button that holds the  user clicked on.
      */
-    private void promoteDemoteClicked(@NotNull Button button)
+    private void promoteDemoteClicked(@NotNull final Button button)
     {
-        int row = userList.getListElementIndexByPane(button);
+        final int row = userList.getListElementIndexByPane(button);
         if (row >= 0 && row < users.size())
         {
-            Permissions.Player user = users.get(row);
+            final Permissions.Player user = users.get(row);
 
             if (button.getID().equals(BUTTON_PROMOTE))
             {

@@ -10,18 +10,25 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Class of the deliveryman job.
+ */
 public class JobDeliveryman extends AbstractJob
 {
     private static final String TAG_DESTINATION = "destination";
     private BlockPos destination;
 
-    public JobDeliveryman(CitizenData entity)
+    /**
+     * Instantiates the job for the deliveryman.
+     * @param entity
+     */
+    public JobDeliveryman(final CitizenData entity)
     {
         super(entity);
     }
 
     @Override
-    public void readFromNBT(@NotNull NBTTagCompound compound)
+    public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
         if (compound.hasKey(TAG_DESTINATION))
@@ -45,7 +52,7 @@ public class JobDeliveryman extends AbstractJob
     }
 
     @Override
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
         if (hasDestination())
@@ -67,9 +74,9 @@ public class JobDeliveryman extends AbstractJob
     }
 
     /**
-     * Returns whether or not the job has a destination
+     * Returns whether or not the job has a destination.
      *
-     * @return true if has destination, otherwise false
+     * @return true if has destination, otherwise false.
      */
     public boolean hasDestination()
     {
@@ -78,14 +85,14 @@ public class JobDeliveryman extends AbstractJob
 
     public boolean isNeeded()
     {
-        Colony colony = getCitizen().getColony();
+        final Colony colony = getCitizen().getColony();
         return colony != null && !colony.getDeliverymanRequired().isEmpty();
     }
 
     /**
-     * Returns the {@link BlockPos} of the destination
+     * Returns the {@link BlockPos} of the destination.
      *
-     * @return {@link BlockPos} of the destination
+     * @return {@link BlockPos} of the destination.
      */
     public BlockPos getDestination()
     {
@@ -93,11 +100,11 @@ public class JobDeliveryman extends AbstractJob
     }
 
     /**
-     * Sets the destination of the job
+     * Sets the destination of the job.
      *
-     * @param destination {@link BlockPos} of the destination
+     * @param destination {@link BlockPos} of the destination.
      */
-    public void setDestination(BlockPos destination)
+    public void setDestination(final BlockPos destination)
     {
         this.destination = destination;
     }

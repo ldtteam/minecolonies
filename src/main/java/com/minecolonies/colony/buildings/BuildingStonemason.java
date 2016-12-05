@@ -15,7 +15,7 @@ public class BuildingStonemason extends AbstractBuildingWorker
     private static final String STONEMASON          = "Stonemason";
     private static final String STONEMASON_HUT_NAME = "stonemasonHut";
 
-    public BuildingStonemason(Colony c, BlockPos l)
+    public BuildingStonemason(final Colony c, final BlockPos l)
     {
         super(c, l);
     }
@@ -42,14 +42,14 @@ public class BuildingStonemason extends AbstractBuildingWorker
 
     @NotNull
     @Override
-    public AbstractJob createJob(CitizenData citizen)
+    public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobPlaceholder(citizen); //TODO Implement Later
     }
 
     public static class View extends AbstractBuildingWorker.View
     {
-        public View(ColonyView c, BlockPos l)
+        public View(final ColonyView c, final BlockPos l)
         {
             super(c, l);
         }

@@ -23,31 +23,31 @@ public class SwitchView extends View
     }
 
     /**
-     * Constructs a View from PaneParams
+     * Constructs a View from PaneParams.
      *
-     * @param params Params for the Pane
+     * @param params Params for the Pane.
      */
-    public SwitchView(PaneParams params)
+    public SwitchView(final PaneParams params)
     {
         super(params);
     }
 
     @Override
-    public void parseChildren(@NotNull PaneParams params)
+    public void parseChildren(@NotNull final PaneParams params)
     {
         super.parseChildren(params);
 
-        String defaultView = params.getStringAttribute("default", null);
+        final String defaultView = params.getStringAttribute("default", null);
         if (defaultView != null)
         {
             setView(defaultView);
         }
     }
 
-    public void setView(String name)
+    public void setView(final String name)
     {
         //  Immediate children only
-        for (@NotNull Pane child : children)
+        for (@NotNull final Pane child : children)
         {
             if (child.getID().equals(name))
             {
@@ -59,7 +59,7 @@ public class SwitchView extends View
 
     @Nullable
     @Override
-    public Pane findPaneForClick(int mx, int my)
+    public Pane findPaneForClick(final int mx, final int my)
     {
         if (currentView != null && currentView.canHandleClick(mx, my))
         {
@@ -70,13 +70,13 @@ public class SwitchView extends View
     }
 
     @Override
-    protected boolean childIsVisible(Pane child)
+    protected boolean childIsVisible(final Pane child)
     {
         return child == currentView && super.childIsVisible(child);
     }
 
     @Override
-    public void addChild(@NotNull Pane child)
+    public void addChild(@NotNull final Pane child)
     {
         super.addChild(child);
         if (children.size() == 1)
@@ -91,7 +91,7 @@ public class SwitchView extends View
     }
 
     @Override
-    public void adjustChild(@NotNull Pane child)
+    public void adjustChild(@NotNull final Pane child)
     {
         if (child.getWidth() == 0 || child.getHeight() == 0)
         {
@@ -102,7 +102,7 @@ public class SwitchView extends View
     }
 
     @Override
-    public void removeChild(Pane child)
+    public void removeChild(final Pane child)
     {
         super.removeChild(child);
         if (child == currentView)
@@ -125,7 +125,7 @@ public class SwitchView extends View
         return currentView;
     }
 
-    private void setCurrentView(Pane pane)
+    private void setCurrentView(final Pane pane)
     {
         if (currentView != null)
         {

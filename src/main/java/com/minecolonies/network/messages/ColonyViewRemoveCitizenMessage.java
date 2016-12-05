@@ -10,36 +10,42 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Add or Update a ColonyView on the client
+ * Add or Update a ColonyView on the client.
  */
 public class ColonyViewRemoveCitizenMessage implements IMessage, IMessageHandler<ColonyViewRemoveCitizenMessage, IMessage>
 {
     private int colonyId;
     private int citizenId;
 
-    public ColonyViewRemoveCitizenMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ColonyViewRemoveCitizenMessage()
+    {
+        super();
+    }
 
     /**
-     * Creates an object for the remove message for citizen
+     * Creates an object for the remove message for citizen.
      *
-     * @param colony  Colony the citizen is in
-     * @param citizen Citizen ID
+     * @param colony  Colony the citizen is in.
+     * @param citizen Citizen ID.
      */
-    public ColonyViewRemoveCitizenMessage(@NotNull Colony colony, int citizen)
+    public ColonyViewRemoveCitizenMessage(@NotNull final Colony colony, final int citizen)
     {
         this.colonyId = colony.getID();
         this.citizenId = citizen;
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         citizenId = buf.readInt();
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         buf.writeInt(citizenId);
@@ -47,7 +53,7 @@ public class ColonyViewRemoveCitizenMessage implements IMessage, IMessageHandler
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull ColonyViewRemoveCitizenMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull final ColonyViewRemoveCitizenMessage message, final MessageContext ctx)
     {
         return ColonyManager.handleColonyViewRemoveCitizenMessage(message.colonyId, message.citizenId);
     }

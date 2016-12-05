@@ -14,6 +14,7 @@ public class Label extends AbstractTextElement
 
     public Label()
     {
+        super();
         // Required default constructor.
     }
 
@@ -22,7 +23,7 @@ public class Label extends AbstractTextElement
      *
      * @param params xml parameters.
      */
-    public Label(PaneParams params)
+    public Label(final PaneParams params)
     {
         super(params);
         labelText = params.getLocalizedStringAttribute("label", labelText);
@@ -41,7 +42,7 @@ public class Label extends AbstractTextElement
         return labelText;
     }
 
-    public void setLabelText(String s)
+    public void setLabelText(final String s)
     {
         labelText = s;
     }
@@ -57,16 +58,16 @@ public class Label extends AbstractTextElement
      * @param c default color.
      * @param h hover color.
      */
-    public void setColor(int c, int h)
+    public void setColor(final int c, final int h)
     {
         setColor(c);
         hoverColor = h;
     }
 
     @Override
-    public void drawSelf(int mx, int my)
+    public void drawSelf(final int mx, final int my)
     {
-        int color = isPointInPane(mx, my) ? hoverColor : textColor;
+        final int color = isPointInPane(mx, my) ? hoverColor : textColor;
 
         int offsetX = 0;
         int offsetY = 0;

@@ -42,13 +42,22 @@ public class ItemScanTool extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public EnumActionResult onItemUse(
+                                       final ItemStack stack,
+                                       final EntityPlayer playerIn,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
     {
         if (!stack.hasTagCompound())
         {
             stack.setTagCompound(new NBTTagCompound());
         }
-        NBTTagCompound compound = stack.getTagCompound();
+        final NBTTagCompound compound = stack.getTagCompound();
 
         if (!compound.hasKey("pos1"))
         {
@@ -61,8 +70,8 @@ public class ItemScanTool extends AbstractItemMinecolonies
         }
         else if (!compound.hasKey("pos2"))
         {
-            @NotNull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            @NotNull BlockPos pos2 = pos;
+            @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
+            @NotNull final BlockPos pos2 = pos;
             if (pos2.distanceSq(pos1) > 0)
             {
                 BlockPosUtil.writeToNBT(compound, "pos2", pos2);
@@ -80,8 +89,8 @@ public class ItemScanTool extends AbstractItemMinecolonies
         }
         else
         {
-            @NotNull BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
-            @NotNull BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
+            @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
+            @NotNull final BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
             if (!worldIn.isRemote)
             {
                 saveStructure(worldIn, pos1, pos2, playerIn);
@@ -95,32 +104,32 @@ public class ItemScanTool extends AbstractItemMinecolonies
     /**
      * Scan the structure and save it to the disk.
      *
-     * @param world Current world.
-     * @param from  First corner.
-     * @param to    Second corner.
+     * @param world  Current world.
+     * @param from   First corner.
+     * @param to     Second corner.
      * @param player causing this action.
      */
-    private static void saveStructure(@Nullable World world, @Nullable BlockPos from, @Nullable BlockPos to, @NotNull EntityPlayer player)
+    private static void saveStructure(@Nullable final World world, @Nullable final BlockPos from, @Nullable final BlockPos to, @NotNull final EntityPlayer player)
     {
         if (world == null || from == null || to == null)
         {
             throw new IllegalArgumentException("Invalid method call, arguments can't be null. Contact a developer.");
         }
 
-        BlockPos blockpos =
-                new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
-        BlockPos blockpos1 =
-                new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
-        BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
+        final BlockPos blockpos =
+          new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
+        final BlockPos blockpos1 =
+          new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
+        final BlockPos size = blockpos1.subtract(blockpos).add(1, 1, 1);
 
-        WorldServer worldserver = (WorldServer) world;
-        MinecraftServer minecraftserver = world.getMinecraftServer();
-        TemplateManager templatemanager = worldserver.getStructureTemplateManager();
+        final WorldServer worldserver = (WorldServer) world;
+        final MinecraftServer minecraftserver = world.getMinecraftServer();
+        final TemplateManager templatemanager = worldserver.getStructureTemplateManager();
 
-        String currentMillis = Long.toString(System.currentTimeMillis());
-        String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis + ".nbt");
+        final String currentMillis = Long.toString(System.currentTimeMillis());
+        final String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis + ".nbt");
 
-        Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
+        final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
 

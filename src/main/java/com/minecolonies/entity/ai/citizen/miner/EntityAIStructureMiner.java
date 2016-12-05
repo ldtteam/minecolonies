@@ -36,7 +36,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private static final String     RENDER_META_TORCH         = "Torch";
     private static final int        NODE_DISTANCE             = 7;
     /**
-     * Return to chest after 3 stacks
+     * Return to chest after 3 stacks.
      */
     private static final int        MAX_BLOCKS_MINED          = 3 * 64;
     /*
@@ -72,7 +72,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      *
      * @param job a fisherman job to use.
      */
-    public EntityAIStructureMiner(@NotNull JobMiner job)
+    public EntityAIStructureMiner(@NotNull final JobMiner job)
     {
         super(job);
         super.registerTargets(
@@ -115,9 +115,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     /**
-     * Walking to the ladder to check out the mine
+     * Walking to the ladder to check out the mine.
      *
-     * @return next AIState
+     * @return next AIState.
      */
     @NotNull
     private AIState goToLadder()
@@ -156,7 +156,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @Override
     protected void updateRenderMetaData()
     {
-        @NotNull String renderMetaData = getRenderMetaTorch();
+        @NotNull final String renderMetaData = getRenderMetaTorch();
         //TODO: Have pickaxe etc. displayed?
         worker.setRenderMetadata(renderMetaData);
     }
@@ -229,7 +229,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @NotNull
     private AIState lookForLadder()
     {
-        @Nullable BuildingMiner buildingMiner = getOwnBuilding();
+        @Nullable final BuildingMiner buildingMiner = getOwnBuilding();
 
         //Check for already found ladder
         if (buildingMiner.hasFoundLadder() && buildingMiner.getLadderLocation() != null)
@@ -245,9 +245,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             }
         }
 
-        int posX = buildingMiner.getLocation().getX();
-        int posY = buildingMiner.getLocation().getY() + 2;
-        int posZ = buildingMiner.getLocation().getZ();
+        final int posX = buildingMiner.getLocation().getX();
+        final int posY = buildingMiner.getLocation().getY() + 2;
+        final int posZ = buildingMiner.getLocation().getZ();
         for (int y = posY - LADDER_SEARCH_RANGE; y < posY; y++)
         {
             for (int x = posX - LADDER_SEARCH_RANGE; x < posX + LADDER_SEARCH_RANGE; x++)
@@ -262,16 +262,16 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return MINER_SEARCHING_LADDER;
     }
 
-    private void tryFindLadderAt(@NotNull BlockPos pos)
+    private void tryFindLadderAt(@NotNull final BlockPos pos)
     {
-        @Nullable BuildingMiner buildingMiner = getOwnBuilding();
+        @Nullable final BuildingMiner buildingMiner = getOwnBuilding();
         if (buildingMiner.hasFoundLadder())
         {
             return;
         }
         if (world.getBlockState(pos).getBlock().equals(Blocks.LADDER))
         {
-            int firstLadderY = getFirstLadder(pos);
+            final int firstLadderY = getFirstLadder(pos);
             buildingMiner.setLadderLocation(new BlockPos(pos.getX(), firstLadderY, pos.getZ()));
             validateLadderOrientation();
         }
@@ -279,8 +279,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private void validateLadderOrientation()
     {
-        @Nullable BuildingMiner buildingMiner = getOwnBuilding();
-        EnumFacing ladderOrientation = world.getBlockState(buildingMiner.getLadderLocation()).getValue(BlockLadder.FACING);
+        @Nullable final BuildingMiner buildingMiner = getOwnBuilding();
+        final EnumFacing ladderOrientation = world.getBlockState(buildingMiner.getLadderLocation()).getValue(BlockLadder.FACING);
 
         if (ladderOrientation == EnumFacing.WEST)
         {
@@ -307,9 +307,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             throw new IllegalStateException("Ladder metadata was " + ladderOrientation);
         }
 
-        int x = buildingMiner.getLadderLocation().getX();
-        int y = buildingMiner.getLadderLocation().getY();
-        int z = buildingMiner.getLadderLocation().getZ();
+        final int x = buildingMiner.getLadderLocation().getX();
+        final int y = buildingMiner.getLadderLocation().getY();
+        final int z = buildingMiner.getLadderLocation().getZ();
 
         buildingMiner.setCobbleLocation(new BlockPos(x - buildingMiner.getVectorX(), y, z - buildingMiner.getVectorZ()));
         buildingMiner.setShaftStart(new BlockPos(x, getLastLadder(buildingMiner.getLadderLocation()) - 1, z));
@@ -332,7 +332,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return MINER_MINING_SHAFT;
     }
 
-    private AIState advanceLadder(AIState state)
+    private AIState advanceLadder(final AIState state)
     {
         if (getOwnBuilding().getStartingLevelShaft() >= 4)
         {
@@ -344,17 +344,17 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return state;
         }
 
-        @NotNull BlockPos safeCobble =
+        @NotNull final BlockPos safeCobble =
           new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()) - 2, getOwnBuilding().getLadderLocation().getZ());
 
-        int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
-        int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
+        final int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
+        final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
         //Check for safe floor
         for (int x = -SAFE_CHECK_RANGE + xOffset; x <= SAFE_CHECK_RANGE + xOffset; x++)
         {
             for (int z = -SAFE_CHECK_RANGE + zOffset; z <= SAFE_CHECK_RANGE + zOffset; z++)
             {
-                @NotNull BlockPos curBlock = new BlockPos(safeCobble.getX() + x, safeCobble.getY(), safeCobble.getZ() + z);
+                @NotNull final BlockPos curBlock = new BlockPos(safeCobble.getX() + x, safeCobble.getY(), safeCobble.getZ() + z);
                 if (!secureBlock(curBlock, currentStandingPosition))
                 {
                     return state;
@@ -362,11 +362,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             }
         }
 
-        @NotNull BlockPos safeStand =
+        @NotNull final BlockPos safeStand =
           new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()), getOwnBuilding().getLadderLocation().getZ());
-        @NotNull BlockPos nextLadder =
+        @NotNull final BlockPos nextLadder =
           new BlockPos(getOwnBuilding().getLadderLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()) - 1, getOwnBuilding().getLadderLocation().getZ());
-        @NotNull BlockPos nextCobble =
+        @NotNull final BlockPos nextCobble =
           new BlockPos(getOwnBuilding().getCobbleLocation().getX(), getLastLadder(getOwnBuilding().getLadderLocation()) - 1, getOwnBuilding().getCobbleLocation().getZ());
 
         if (!mineBlock(nextCobble, safeStand) || !mineBlock(nextLadder, safeStand))
@@ -377,7 +377,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
 
         //Get ladder orientation
-        IBlockState metadata = getBlockState(safeStand);
+        final IBlockState metadata = getBlockState(safeStand);
 
         //set cobblestone
         setBlockFromInventory(nextCobble, Blocks.COBBLESTONE);
@@ -387,7 +387,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return MINER_CHECK_MINESHAFT;
     }
 
-    private IBlockState getBlockState(@NotNull BlockPos pos)
+    private IBlockState getBlockState(@NotNull final BlockPos pos)
     {
         return world.getBlockState(pos);
     }
@@ -400,8 +400,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private BlockPos getNextBlockInShaftToMine()
     {
 
-        BlockPos ladderPos = getOwnBuilding().getLadderLocation();
-        int lastLadder = getLastLadder(ladderPos);
+        final BlockPos ladderPos = getOwnBuilding().getLadderLocation();
+        final int lastLadder = getLastLadder(ladderPos);
         if (currentWorkingLocation == null)
         {
             currentWorkingLocation = new BlockPos(ladderPos.getX(), lastLadder + 1, ladderPos.getZ());
@@ -419,8 +419,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         @Nullable BlockPos nextBlockToMine = null;
         double bestDistance = Double.MAX_VALUE;
 
-        int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
-        int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
+        final int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
+        final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
 
         //remove water for safety
         for (int x = SHAFT_RADIUS + xOffset + 2; x >= -SHAFT_RADIUS + xOffset - 2; x--)
@@ -431,7 +431,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 {
                     continue;
                 }
-                @NotNull BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
+                @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
                 block = getBlock(curBlock);
                 if (block.equals(Blocks.WATER)
                       || block.equals(Blocks.LAVA)
@@ -454,8 +454,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 {
                     continue;
                 }
-                @NotNull BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
-                double distance = curBlock.distanceSq(ladderPos) + Math.pow(curBlock.distanceSq(currentWorkingLocation), 2);
+                @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
+                final double distance = curBlock.distanceSq(ladderPos) + Math.pow(curBlock.distanceSq(currentWorkingLocation), 2);
                 block = getBlock(curBlock);
                 if (distance < bestDistance
                       && !world.isAirBlock(curBlock))
@@ -484,8 +484,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                     {
                         continue;
                     }
-                    @NotNull BlockPos curBlock = new BlockPos(nextBlockToMine.getX() + x, lastLadder, nextBlockToMine.getZ() + z);
-                    double distance = curBlock.distanceSq(ladderPos);
+                    @NotNull final BlockPos curBlock = new BlockPos(nextBlockToMine.getX() + x, lastLadder, nextBlockToMine.getZ() + z);
+                    final double distance = curBlock.distanceSq(ladderPos);
                     if (distance < bestDistance && world.isAirBlock(curBlock))
                     {
                         currentStandingPosition = curBlock;
@@ -499,11 +499,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private boolean buildNextBlockInShaft()
     {
-        BlockPos ladderPos = getOwnBuilding().getLadderLocation();
-        int lastLadder = getLastLadder(ladderPos) + 1;
+        final BlockPos ladderPos = getOwnBuilding().getLadderLocation();
+        final int lastLadder = getLastLadder(ladderPos) + 1;
 
-        int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
-        int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
+        final int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
+        final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
         //TODO: Really ugly building code, change to structures
 
         //make area around it safe
@@ -517,9 +517,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                     {
                         continue;
                     }
-                    @NotNull BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder + y, ladderPos.getZ() + z);
-                    int normalizedX = x - xOffset;
-                    int normalizedZ = z - zOffset;
+                    @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder + y, ladderPos.getZ() + z);
+                    final int normalizedX = x - xOffset;
+                    final int normalizedZ = z - zOffset;
                     if ((Math.abs(normalizedX) > SHAFT_RADIUS
                            || Math.abs(normalizedZ) > SHAFT_RADIUS)
                           && !notReplacedInSecuringMine.contains(world.getBlockState(curBlock).getBlock()))
@@ -550,9 +550,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 {
                     continue;
                 }
-                @NotNull BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
-                int normalizedX = x - xOffset;
-                int normalizedZ = z - zOffset;
+                @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
+                final int normalizedX = x - xOffset;
+                final int normalizedZ = z - zOffset;
                 if ((Math.abs(normalizedX) >= 2 || Math.abs(normalizedZ) >= 2) && world.getBlockState(curBlock) != getOwnBuilding().getFloorBlock())
                 {
                     setDelay(DELAY_TIMEOUT);
@@ -574,9 +574,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 {
                     continue;
                 }
-                @NotNull BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder + 1, ladderPos.getZ() + z);
-                int normalizedX = x - xOffset;
-                int normalizedZ = z - zOffset;
+                @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder + 1, ladderPos.getZ() + z);
+                final int normalizedX = x - xOffset;
+                final int normalizedZ = z - zOffset;
                 if (((Math.abs(normalizedX) == 2
                         && Math.abs(normalizedZ) < SHAFT_RADIUS)
                        || (Math.abs(normalizedZ) == 2
@@ -602,9 +602,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 {
                     continue;
                 }
-                @NotNull BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder + 2, ladderPos.getZ() + z);
-                int normalizedX = x - xOffset;
-                int normalizedZ = z - zOffset;
+                @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder + 2, ladderPos.getZ() + z);
+                final int normalizedX = x - xOffset;
+                final int normalizedZ = z - zOffset;
                 if (Math.abs(normalizedX) == 2 && Math.abs(normalizedZ) == 2 && world.getBlockState(curBlock).getBlock() != Blocks.TORCH)
                 {
                     setDelay(DELAY_TIMEOUT);
@@ -618,7 +618,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             }
         }
 
-        @NotNull Level currentLevel = new Level(getOwnBuilding(), lastLadder);
+        @NotNull final Level currentLevel = new Level(getOwnBuilding(), lastLadder);
         getOwnBuilding().addLevel(currentLevel);
         getOwnBuilding().setCurrentLevel(getOwnBuilding().getNumberOfLevels());
         //Send out update to client
@@ -645,7 +645,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @NotNull
     private AIState doNodeMining()
     {
-        @Nullable Level currentLevel = getOwnBuilding().getCurrentLevel();
+        @Nullable final Level currentLevel = getOwnBuilding().getCurrentLevel();
         if (currentLevel == null)
         {
             Log.getLogger().warn("Current Level not set, resetting...");
@@ -656,7 +656,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return MINER_CHECK_MINESHAFT;
     }
 
-    private void mineAtLevel(@NotNull Level currentLevel)
+    private void mineAtLevel(@NotNull final Level currentLevel)
     {
         if (workingNode == null)
         {
@@ -666,11 +666,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //Looking for a node to stand on while mining workingNode
         int foundDirection = 0;
         @Nullable Node foundNode = null;
-        @NotNull List<Integer> directions = Arrays.asList(1, 2, 3, 4);
+        @NotNull final List<Integer> directions = Arrays.asList(1, 2, 3, 4);
 
-        for (Integer dir : directions)
+        for (final Integer dir : directions)
         {
-            Optional<Node> node = tryFindNodeInDirectionOfNode(currentLevel, workingNode, dir);
+            final Optional<Node> node = tryFindNodeInDirectionOfNode(currentLevel, workingNode, dir);
             if (node.isPresent() && getNodeStatusForDirection(node.get(), invertDirection(dir)) == Node.NodeStatus.COMPLETED)
             {
                 foundDirection = dir;
@@ -701,7 +701,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             zOffSet -= 1;
         }
-        @NotNull BlockPos standingPosition = new BlockPos(workingNode.getX() + xOffSet, currentLevel.getDepth(), workingNode.getZ() + zOffSet);
+        @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getX() + xOffSet, currentLevel.getDepth(), workingNode.getZ() + zOffSet);
         currentStandingPosition = standingPosition;
         if (workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS || workingNode.getStatus() == Node.NodeStatus.COMPLETED || !walkToBlock(standingPosition))
         {
@@ -709,13 +709,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
     }
 
-    private boolean isOre(Block block)
+    private static boolean isOre(final Block block)
     {
         //TODO make this more sophisticated
         return block instanceof BlockOre;
     }
 
-    private boolean secureBlock(@NotNull BlockPos curBlock, @NotNull BlockPos safeStand)
+    private boolean secureBlock(@NotNull final BlockPos curBlock, @NotNull final BlockPos safeStand)
     {
         if ((!getBlockState(curBlock).getMaterial().blocksMovement() && getBlock(curBlock) != Blocks.TORCH) || isOre(getBlock(curBlock)))
         {
@@ -738,7 +738,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return true;
     }
 
-    private void mineNodeFromStand(@NotNull Node mineNode, @NotNull BlockPos standingPosition, int direction)
+    private void mineNodeFromStand(@NotNull final Node mineNode, @NotNull final BlockPos standingPosition, final int direction)
     {
         //Preload structures
         if (job.getStructure() == null)
@@ -786,8 +786,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             {
                 for (int y = -1; y <= 5; y++)
                 {
-                    @NotNull BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
-                    Block block = getBlock(curBlock);
+                    @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
+                    final Block block = getBlock(curBlock);
                     if (block.equals(Blocks.WATER)
                           || block.equals(Blocks.LAVA)
                           || block.equals(Blocks.FLOWING_WATER)
@@ -806,7 +806,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             {
                 for (int y = 0; y <= 4; y++)
                 {
-                    @NotNull BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
+                    @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
                     if ((((Math.abs(x) >= 2) && (Math.abs(z) >= 2)) || (getBlock(curBlock) != Blocks.AIR) || (y < 1) || (y > 3)) && !secureBlock(curBlock, standingPosition))
                     {
                         return;
@@ -843,7 +843,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             zOffSet += 1;
         }
-        @NotNull BlockPos newStandingPosition = new BlockPos(mineNode.getX() + xOffSet, standingPosition.getY(), mineNode.getZ() + zOffSet);
+        @NotNull final BlockPos newStandingPosition = new BlockPos(mineNode.getX() + xOffSet, standingPosition.getY(), mineNode.getZ() + zOffSet);
         currentStandingPosition = newStandingPosition;
 
         if (mineNode.getStatus() != Node.NodeStatus.COMPLETED)
@@ -855,7 +855,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 {
                     for (int z = -1; z <= 1; z++)
                     {
-                        @NotNull BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
+                        @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
                         if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getShaftBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
                         {
                             continue;
@@ -869,10 +869,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             }
         }
 
-        @NotNull List<Integer> directions = Arrays.asList(1, 2, 3, 4);
-        for (Integer dir : directions)
+        @NotNull final List<Integer> directions = Arrays.asList(1, 2, 3, 4);
+        for (final Integer dir : directions)
         {
-            @NotNull BlockPos sideStandingPosition = new BlockPos(mineNode.getX() + getXDistance(dir) / 3, standingPosition.getY(), mineNode.getZ() + getZDistance(dir) / 3);
+            @NotNull final BlockPos sideStandingPosition = new BlockPos(mineNode.getX() + getXDistance(dir) / 3, standingPosition.getY(), mineNode.getZ() + getZDistance(dir) / 3);
             currentStandingPosition = sideStandingPosition;
             if (!mineSideOfNode(mineNode, dir, sideStandingPosition))
             {
@@ -895,7 +895,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         workingNode = null;
     }
 
-    private boolean buildNodeSupportStructure(@NotNull Node mineNode)
+    private boolean buildNodeSupportStructure(@NotNull final Node mineNode)
     {
         if (mineNode.getStyle() == Node.NodeType.CROSSROAD || mineNode.getStyle() == Node.NodeType.BEND || mineNode.getStyle() == Node.NodeType.TUNNEL)
         {
@@ -914,7 +914,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     {
         while (job.getStructure().findNextBlock())
         {
-            @Nullable Block block = job.getStructure().getBlock();
+            @Nullable final Block block = job.getStructure().getBlock();
 
             if (job.getStructure().doesStructureBlockEqualWorldBlock() || block == Blocks.STONE || block == Blocks.AIR)
             {
@@ -933,7 +933,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return true;
     }
 
-    private void loadStructure(@NotNull String name)
+    private void loadStructure(@NotNull final String name)
     {
         requestedBlock = false;
         buildStructure = false;
@@ -941,7 +941,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             job.setStructure(new StructureWrapper(world, name));
         }
-        catch (IllegalStateException e)
+        catch (final IllegalStateException e)
         {
             Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
             job.setStructure(null);
@@ -981,33 +981,33 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return false;
         }
 
-        @Nullable Block block = job.getStructure().getBlock();
-        @Nullable IBlockState metadata = job.getStructure().getBlockState();
+        @Nullable final Block block = job.getStructure().getBlock();
+        @Nullable final IBlockState metadata = job.getStructure().getBlockState();
 
-        BlockPos coordinates = job.getStructure().getBlockPosition();
-        int x = coordinates.getX();
-        int y = coordinates.getY();
-        int z = coordinates.getZ();
+        final BlockPos coordinates = job.getStructure().getBlockPosition();
+        final int x = coordinates.getX();
+        final int y = coordinates.getY();
+        final int z = coordinates.getZ();
 
-        Block worldBlock = world.getBlockState(coordinates).getBlock();
+        final Block worldBlock = world.getBlockState(coordinates).getBlock();
 
         //should never happen
         if (block == null)
         {
-            @NotNull BlockPos local = job.getStructure().getLocalPosition();
+            @NotNull final BlockPos local = job.getStructure().getLocalPosition();
             Log.getLogger().error(String.format("StructureProxy has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockNonSolid();
             return false;
         }
         //don't overwrite huts or bedrock, nor place huts
-        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK ||
-              block instanceof AbstractBlockHut)
+        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK
+                || block instanceof AbstractBlockHut)
         {
             findNextBlockNonSolid();
             return false;
         }
-        Item item = Item.getItemFromBlock(block);
-        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item != null ? new ItemStack(item, 1) : null);
+        final Item item = Item.getItemFromBlock(block);
+        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
 
         setBlockFromInventory(new BlockPos(x, y, z), block, metadata);
 
@@ -1034,37 +1034,37 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return false;
         }
 
-        @Nullable Block block = job.getStructure().getBlock();
-        @Nullable IBlockState metadata = job.getStructure().getBlockState();
+        @Nullable final Block block = job.getStructure().getBlock();
+        @Nullable final IBlockState metadata = job.getStructure().getBlockState();
 
-        BlockPos coordinates = job.getStructure().getBlockPosition();
-        int x = coordinates.getX();
-        int y = coordinates.getY();
-        int z = coordinates.getZ();
+        final BlockPos coordinates = job.getStructure().getBlockPosition();
+        final int x = coordinates.getX();
+        final int y = coordinates.getY();
+        final int z = coordinates.getZ();
 
-        Block worldBlock = world.getBlockState(coordinates).getBlock();
+        final Block worldBlock = world.getBlockState(coordinates).getBlock();
 
         //should never happen
         if (block == null)
         {
-            @NotNull BlockPos local = job.getStructure().getLocalPosition();
+            @NotNull final BlockPos local = job.getStructure().getLocalPosition();
             Log.getLogger().error(String.format("StructureProxy has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
             findNextBlockSolid();
             return false;
         }
 
         //don't overwrite huts or bedrock, nor place huts
-        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK ||
-              block instanceof AbstractBlockHut || job.getStructure().getBlock() == Blocks.STONE)
+        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK
+                || block instanceof AbstractBlockHut || job.getStructure().getBlock() == Blocks.STONE)
         {
             findNextBlockSolid();
             return false;
         }
 
-        if (!(block == Blocks.AIR))
+        if (block != Blocks.AIR)
         {
-            Item item = Item.getItemFromBlock(block);
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item != null ? new ItemStack(item, 1) : null);
+            final Item item = Item.getItemFromBlock(block);
+            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
             setBlockFromInventory(new BlockPos(x, y, z), block, metadata);
         }
 
@@ -1105,7 +1105,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return true;
     }
 
-    private boolean mineSideOfNode(@NotNull Node mineNode, int direction, @NotNull BlockPos standingPosition)
+    private boolean mineSideOfNode(@NotNull final Node mineNode, final int direction, @NotNull final BlockPos standingPosition)
     {
         if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.LADDER)
         {
@@ -1117,8 +1117,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             setNodeStatusForDirection(mineNode, direction, Node.NodeStatus.IN_PROGRESS);
         }
 
-        int xoffset = getXDistance(direction) / 2;
-        int zoffset = getZDistance(direction) / 2;
+        final int xoffset = getXDistance(direction) / 2;
+        final int zoffset = getZDistance(direction) / 2;
         int posx = 1;
         int negx = -1;
         int posz = 1;
@@ -1152,7 +1152,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             {
                 for (int z = negz; z <= posz; z++)
                 {
-                    @NotNull BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
+                    @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
                     if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getShaftBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
                     {
                         continue;
@@ -1175,7 +1175,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return true;
     }
 
-    private void setNodeStatusForDirection(@NotNull Node node, int direction, Node.NodeStatus status)
+    private static void setNodeStatusForDirection(@NotNull final Node node, final int direction, final Node.NodeStatus status)
     {
         if (direction == 1)
         {
@@ -1195,7 +1195,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
     }
 
-    private Node.NodeStatus getNodeStatusForDirection(@NotNull Node node, int direction)
+    private static Node.NodeStatus getNodeStatusForDirection(@NotNull final Node node, final int direction)
     {
         if (direction == 1)
         {
@@ -1217,7 +1217,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return Node.NodeStatus.LADDER;
     }
 
-    private int invertDirection(int direction)
+    private static int invertDirection(final int direction)
     {
         if (direction == 1)
         {
@@ -1238,12 +1238,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return 0;
     }
 
-    private boolean isNodeInDirectionOfOtherNode(@NotNull Node start, int direction, @NotNull Node check)
+    private boolean isNodeInDirectionOfOtherNode(@NotNull final Node start, final int direction, @NotNull final Node check)
     {
         return start.getX() + getXDistance(direction) == check.getX() && start.getZ() + getZDistance(direction) == check.getZ();
     }
 
-    private int getXDistance(int direction)
+    private static int getXDistance(final int direction)
     {
         if (direction == 1)
         {
@@ -1256,7 +1256,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return 0;
     }
 
-    private int getZDistance(int direction)
+    private static int getZDistance(final int direction)
     {
         if (direction == 3)
         {
@@ -1269,7 +1269,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return 0;
     }
 
-    private Optional<Node> tryFindNodeInDirectionOfNode(@NotNull Level curlevel, Node start, int direction)
+    private Optional<Node> tryFindNodeInDirectionOfNode(@NotNull final Level curlevel, final Node start, final int direction)
     {
         final Node finalCurrentNode = start;
         return curlevel.getNodes()
@@ -1279,15 +1279,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     @NotNull
-    private Node createNewNodeInDirectionFromNode(@NotNull Node start, int direction)
+    private Node createNewNodeInDirectionFromNode(@NotNull final Node start, final int direction)
     {
-        int x = start.getX() + getXDistance(direction);
-        int z = start.getZ() + getZDistance(direction);
-        @NotNull Node node = new Node(x, z);
+        final int x = start.getX() + getXDistance(direction);
+        final int z = start.getZ() + getZDistance(direction);
+        @NotNull final Node node = new Node(x, z);
         node.setStyle(getRandomNodeType());
         if (node.getStyle() == Node.NodeType.TUNNEL)
         {
-            int otherDirection = Math.max(direction, invertDirection(direction)) == 2 ? 4 : 2;
+            final int otherDirection = Math.max(direction, invertDirection(direction)) == 2 ? 4 : 2;
             setNodeStatusForDirection(node, otherDirection, Node.NodeStatus.WALL);
             setNodeStatusForDirection(node, invertDirection(otherDirection), Node.NodeStatus.WALL);
         }
@@ -1307,9 +1307,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     @NotNull
-    private Node.NodeType getRandomNodeType()
+    private static Node.NodeType getRandomNodeType()
     {
-        int roll = new Random().nextInt(100);
+        final int roll = new Random().nextInt(100);
         if (roll > 50)
         {
             return Node.NodeType.TUNNEL;
@@ -1321,10 +1321,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return Node.NodeType.CROSSROAD;
     }
 
-    private Node findNodeOnLevel(@NotNull Level currentLevel)
+    private Node findNodeOnLevel(@NotNull final Level currentLevel)
     {
         @Nullable Node currentNode = currentLevel.getLadderNode();
-        @NotNull LinkedList<Node> visited = new LinkedList<>();
+        @NotNull final LinkedList<Node> visited = new LinkedList<>();
         while (currentNode != null)
         {
             if (visited.contains(currentNode))
@@ -1338,18 +1338,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                 return currentNode;
             }
 
-            @NotNull List<Integer> directions = Arrays.asList(1, 2, 3, 4);
+            @NotNull final List<Integer> directions = Arrays.asList(1, 2, 3, 4);
             Collections.shuffle(directions);
-            for (Integer dir : directions)
+            for (final Integer dir : directions)
             {
-                Node.NodeStatus status = getNodeStatusForDirection(currentNode, dir);
+                final Node.NodeStatus status = getNodeStatusForDirection(currentNode, dir);
                 if (status == Node.NodeStatus.AVAILABLE || status == Node.NodeStatus.IN_PROGRESS)
                 {
                     return currentNode;
                 }
                 if (status == Node.NodeStatus.COMPLETED)
                 {
-                    Optional<Node> first = tryFindNodeInDirectionOfNode(currentLevel, currentNode, dir);
+                    final Optional<Node> first = tryFindNodeInDirectionOfNode(currentLevel, currentNode, dir);
                     if (first.isPresent())
                     {
                         if (visited.contains(first.get()))
@@ -1367,7 +1367,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                         break;
                     }
 
-                    @NotNull Node newnode = createNewNodeInDirectionFromNode(currentNode, dir);
+                    @NotNull final Node newnode = createNewNodeInDirectionFromNode(currentNode, dir);
                     currentLevel.addNode(newnode);
                     return newnode;
                 }
@@ -1377,15 +1377,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return null;
     }
 
-    private void setBlockFromInventory(@NotNull BlockPos location, @NotNull Block block)
+    private void setBlockFromInventory(@NotNull final BlockPos location, @NotNull final Block block)
     {
         worker.swingArm(worker.getActiveHand());
         setBlockFromInventory(location, block, block.getDefaultState());
     }
 
-    private void setBlockFromInventory(@NotNull BlockPos location, Block block, IBlockState metadata)
+    private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final IBlockState metadata)
     {
-        int slot = worker.findFirstSlotInInventoryWith(block);
+        final int slot = worker.findFirstSlotInInventoryWith(block);
         if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
@@ -1394,12 +1394,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
     }
 
-    private Block getBlock(@NotNull BlockPos loc)
+    private Block getBlock(@NotNull final BlockPos loc)
     {
         return world.getBlockState(loc).getBlock();
     }
 
-    private int getLastLadder(@NotNull BlockPos pos)
+    private int getLastLadder(@NotNull final BlockPos pos)
     {
         if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, null))
         {
@@ -1411,7 +1411,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
     }
 
-    private int getFirstLadder(@NotNull BlockPos pos)
+    private int getFirstLadder(@NotNull final BlockPos pos)
     {
         if (world.getBlockState(pos).getBlock().isLadder(world.getBlockState(pos), world, pos, null))
         {

@@ -13,6 +13,9 @@ import java.util.regex.Pattern;
 
 import static com.blockout.Log.getLogger;
 
+/**
+ * Special parameters for the panes.
+ */
 public class PaneParams
 {
     private static final Pattern PERCENTAGE_PATTERN = Pattern.compile("([-+]?\\d+)(%|px)?", Pattern.CASE_INSENSITIVE);
@@ -21,7 +24,11 @@ public class PaneParams
     private Node node;
     private View parentView;
 
-    public PaneParams(Node n)
+    /**
+     * Instantiates the pane parameters.
+     * @param n the node.
+     */
+    public PaneParams(final Node n)
     {
         node = n;
     }
@@ -36,7 +43,7 @@ public class PaneParams
         return parentView;
     }
 
-    public void setParentView(View parent)
+    public void setParentView(final View parent)
     {
         parentView = parent;
     }
@@ -87,7 +94,7 @@ public class PaneParams
     }
 
     @Nullable
-    private static String localize(String str)
+    private static String localize(final String str)
     {
         if (str == null)
         {
@@ -98,14 +105,14 @@ public class PaneParams
         int index = s.indexOf("$(");
         while (index != -1)
         {
-            int endIndex = s.indexOf(')', index);
+            final int endIndex = s.indexOf(')', index);
 
             if (endIndex == -1)
             {
                 break;
             }
 
-            String key = s.substring(index + 2, endIndex);
+            final String key = s.substring(index + 2, endIndex);
             String replacement = I18n.format(key);
 
             if (replacement.equals(key))
@@ -121,42 +128,75 @@ public class PaneParams
         return s;
     }
 
-    public String getStringAttribute(String name)
+    /**
+     * Get the string attribute.
+     * @param name the name to search.
+     * @return the attribute.
+     */
+    public String getStringAttribute(final String name)
     {
         return getStringAttribute(name, "");
     }
 
-    public String getStringAttribute(String name, String def)
+    /**
+     * Get the String attribute from the name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the String.
+     */
+    public String getStringAttribute(final String name, final String def)
     {
-        Node attr = getAttribute(name);
+        final Node attr = getAttribute(name);
         return (attr != null) ? attr.getNodeValue() : def;
     }
 
-    private Node getAttribute(String name)
+    private Node getAttribute(final String name)
     {
         return node.getAttributes().getNamedItem(name);
     }
 
+    /**
+     * Get the localized string attribute from the name.
+     * @param name the name.
+     * @return the string attribute.
+     */
     @Nullable
-    public String getLocalizedStringAttribute(String name)
+    public String getLocalizedStringAttribute(final String name)
     {
         return getLocalizedStringAttribute(name, "");
     }
 
+    /**
+     * Get the localized String attribute from the name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the string.
+     */
     @Nullable
-    public String getLocalizedStringAttribute(String name, String def)
+    public String getLocalizedStringAttribute(final String name, final String def)
     {
         return localize(getStringAttribute(name, def));
     }
 
-    public int getIntegerAttribute(String name)
+    /**
+     * Get the integer attribute from the name.
+     * @param name the name.
+     * @return the integer.
+     */
+    public int getIntegerAttribute(final String name)
     {
         return getIntegerAttribute(name, 0);
     }
 
-    public int getIntegerAttribute(String name, int def)
+    /**
+     * Get the integer attribute from name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the int.
+     */
+    public int getIntegerAttribute(final String name, final int def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             return Integer.parseInt(attr);
@@ -164,14 +204,25 @@ public class PaneParams
         return def;
     }
 
-    public float getFloatAttribute(String name)
+    /**
+     * Get the float attribute from name.
+     * @param name the name.
+     * @return the float.
+     */
+    public float getFloatAttribute(final String name)
     {
         return getFloatAttribute(name, 0);
     }
 
-    public float getFloatAttribute(String name, float def)
+    /**
+     * Get the float attribute from name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the float.
+     */
+    public float getFloatAttribute(final String name, final float def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             return Float.parseFloat(attr);
@@ -179,14 +230,25 @@ public class PaneParams
         return def;
     }
 
-    public double getDoubleAttribute(String name)
+    /**
+     * Get the double attribute from name.
+     * @param name the name.
+     * @return the double.
+     */
+    public double getDoubleAttribute(final String name)
     {
         return getDoubleAttribute(name, 0);
     }
 
-    public double getDoubleAttribute(String name, double def)
+    /**
+     * Get the double attribute from name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the double.
+     */
+    public double getDoubleAttribute(final String name, final double def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             return Double.parseDouble(attr);
@@ -195,14 +257,25 @@ public class PaneParams
         return def;
     }
 
-    public boolean getBooleanAttribute(String name)
+    /**
+     * Get the boolean attribute from name.
+     * @param name the name.
+     * @return the boolean.
+     */
+    public boolean getBooleanAttribute(final String name)
     {
         return getBooleanAttribute(name, false);
     }
 
-    public boolean getBooleanAttribute(String name, boolean def)
+    /**
+     * Get the boolean attribute from name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @return the boolean.
+     */
+    public boolean getBooleanAttribute(final String name, final boolean def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             return Boolean.parseBoolean(attr);
@@ -210,9 +283,16 @@ public class PaneParams
         return def;
     }
 
-    public <T extends Enum<T>> T getEnumAttribute(String name, Class<T> clazz, T def)
+    /**
+     * Get the boolean attribute from name and class and definition..
+     * @param name the name.
+     * @param clazz the class.
+     * @param def the definition.
+     * @return the boolean.
+     */
+    public <T extends Enum<T>> T getEnumAttribute(final String name, final Class<T> clazz, final T def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             return Enum.valueOf(clazz, attr);
@@ -220,12 +300,19 @@ public class PaneParams
         return def;
     }
 
-    public int getScalableIntegerAttribute(String name, int def, int scale)
+    /**
+     * Get the scalable integer attribute from name and definition.
+     * @param name the name.
+     * @param def the definition.
+     * @param scale the scale.
+     * @return the integer.
+     */
+    public int getScalableIntegerAttribute(final String name, final int def, final int scale)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
-            Matcher m = PERCENTAGE_PATTERN.matcher(attr);
+            final Matcher m = PERCENTAGE_PATTERN.matcher(attr);
             if (m.find())
             {
                 return parseScalableIntegerRegexMatch(m, def, scale);
@@ -235,7 +322,7 @@ public class PaneParams
         return def;
     }
 
-    private static int parseScalableIntegerRegexMatch(Matcher m, int def, int scale)
+    private static int parseScalableIntegerRegexMatch(final Matcher m, final int def, final int scale)
     {
         try
         {
@@ -259,16 +346,23 @@ public class PaneParams
         return def;
     }
 
+    /**
+     * Get the size pair attribute.
+     * @param name the name.
+     * @param def the definition.
+     * @param scale the scale.
+     * @return the SizePair.
+     */
     @Nullable
-    public SizePair getSizePairAttribute(String name, SizePair def, SizePair scale)
+    public SizePair getSizePairAttribute(final String name, final SizePair def, final SizePair scale)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr != null)
         {
             int w = def != null ? def.x : 0;
             int h = def != null ? def.y : 0;
 
-            Matcher m = PERCENTAGE_PATTERN.matcher(attr);
+            final Matcher m = PERCENTAGE_PATTERN.matcher(attr);
             if (m.find())
             {
                 w = parseScalableIntegerRegexMatch(m, w, scale != null ? scale.x : 0);
@@ -286,15 +380,21 @@ public class PaneParams
         return def;
     }
 
-    public int getColorAttribute(String name, int def)
+    /**
+     * Get the color attribute from name and definition.
+     * @param name the name.
+     * @param def the definition
+     * @return int color value.
+     */
+    public int getColorAttribute(final String name, final int def)
     {
-        String attr = getStringAttribute(name, null);
+        final String attr = getStringAttribute(name, null);
         if (attr == null)
         {
             return def;
         }
 
-        Matcher m = RGBA_PATTERN.matcher(attr);
+        final Matcher m = RGBA_PATTERN.matcher(attr);
 
         if (attr.startsWith("#"))
         {
@@ -312,41 +412,49 @@ public class PaneParams
         }
     }
 
-    private static int getRGBA(String attr, Matcher m)
+    private static int getRGBA(final String attr, final Matcher m)
     {
-        int r = MathHelper.clamp_int(Integer.parseInt(m.group(1)), 0, 255);
-        int g = MathHelper.clamp_int(Integer.parseInt(m.group(2)), 0, 255);
-        int b = MathHelper.clamp_int(Integer.parseInt(m.group(3)), 0, 255);
+        final int r = MathHelper.clamp_int(Integer.parseInt(m.group(1)), 0, 255);
+        final int g = MathHelper.clamp_int(Integer.parseInt(m.group(2)), 0, 255);
+        final int b = MathHelper.clamp_int(Integer.parseInt(m.group(3)), 0, 255);
 
         int color = ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF);
 
         if (attr.startsWith("rgba"))
         {
-            int alpha = (int) (Double.parseDouble(m.group(4)) * 255.0F);
+            final int alpha = (int) (Double.parseDouble(m.group(4)) * 255.0F);
             color |= MathHelper.clamp_int(alpha, 0, 255) << 24;
         }
 
         return color;
     }
 
-    private static int getColorByNumberOrName(int def, String attr)
+    private static int getColorByNumberOrName(final int def, final String attr)
     {
         try
         {
             return Integer.parseInt(attr);
         }
-        catch (NumberFormatException ex)
+        catch (final NumberFormatException ex)
         {
             return Color.getByName(attr, def);
         }
     }
 
+    /**
+     * Size pair of width and height.
+     */
     public static class SizePair
     {
         private int x;
         private int y;
 
-        public SizePair(int w, int h)
+        /**
+         * Instantiates a SizePair object.
+         * @param w width.
+         * @param h height.
+         */
+        public SizePair(final int w, final int h)
         {
             x = w;
             y = h;

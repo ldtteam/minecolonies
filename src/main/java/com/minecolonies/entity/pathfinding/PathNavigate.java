@@ -2,6 +2,7 @@ package com.minecolonies.entity.pathfinding;
 
 import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.util.BlockPosUtil;
+import com.minecolonies.util.BlockUtils;
 import com.minecolonies.util.Log;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -26,7 +27,7 @@ public class PathNavigate extends PathNavigateGround
     public static final double MAX_PATHING_LENGTH          = 36.0;
     public static final double PATHING_INTERMEDIARY_LENGTH = 16.0;
     //  Parent class private members
-    private EntityLiving entity;
+    private final EntityLiving entity;
     private double       walkSpeed;
     @Nullable
     private BlockPos     destination;
@@ -37,7 +38,12 @@ public class PathNavigate extends PathNavigateGround
     @Nullable
     private PathResult   pathResult;
 
-    public PathNavigate(@NotNull EntityLiving entity, World world)
+    /**
+     * Instantiates the navigation of an entity.
+     * @param entity the entity.
+     * @param world the world it is in.
+     */
+    public PathNavigate(@NotNull final EntityLiving entity, final World world)
     {
         super(entity, world);
         this.entity = entity;
@@ -66,7 +72,7 @@ public class PathNavigate extends PathNavigateGround
 
     @Nullable
     @Override
-    public Path getPathToPos(BlockPos pos)
+    public Path getPathToPos(final BlockPos pos)
     {
         //Because this directly returns Path we can't do it async.
         return null;
@@ -86,26 +92,34 @@ public class PathNavigate extends PathNavigateGround
     }
 
     @Override
-    public void setSpeed(double d)
+    public void setSpeed(final double d)
     {
         walkSpeed = d;
     }
 
     @Override
-    public boolean tryMoveToXYZ(double x, double y, double z, double speed)
+    public boolean tryMoveToXYZ(final double x, final double y, final double z, final double speed)
     {
         moveToXYZ(x, y, z, speed);
         return true;
     }
 
     @Override
-    public boolean tryMoveToEntityLiving(@NotNull Entity e, double speed)
+    public boolean tryMoveToEntityLiving(@NotNull final Entity e, final double speed)
     {
         return tryMoveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
 
+    /**
+     * Try to move to a certain position.
+     * @param x the x target.
+     * @param y the y target.
+     * @param z the z target.
+     * @param speed the speed to walk.
+     * @return the PathResult.
+     */
     @Nullable
-    public PathResult moveToXYZ(double x, double y, double z, double speed)
+    public PathResult moveToXYZ(final double x, final double y, final double z, final double speed)
     {
         int newX = MathHelper.floor_double(x);
         int newY = (int) y;
@@ -122,7 +136,6 @@ public class PathNavigate extends PathNavigateGround
             return pathResult;
         }
 
-
         final Vec3d moveVector = getEntityPosition().subtractReverse(new Vec3d(newX, newY, newZ));
         final double moveLength = moveVector.lengthVector();
         if (moveLength >= MAX_PATHING_LENGTH && !this.isUnableToReachDestination())
@@ -134,8 +147,8 @@ public class PathNavigate extends PathNavigateGround
             newZ = MathHelper.floor_double(newMove.zCoord);
         }
 
-        @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
-        @NotNull BlockPos dest = new BlockPos(newX, newY, newZ);
+        @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
+        @NotNull final BlockPos dest = new BlockPos(newX, newY, newZ);
 
         return setPathJob(
           new PathJobMoveToLocation(entity.worldObj, start, dest, (int) getPathSearchRange()),
@@ -143,7 +156,7 @@ public class PathNavigate extends PathNavigateGround
     }
 
     @Nullable
-    private PathResult setPathJob(@NotNull AbstractPathJob job, BlockPos dest, double speed)
+    private PathResult setPathJob(@NotNull final AbstractPathJob job, final BlockPos dest, final double speed)
     {
         clearPathEntity();
 
@@ -156,27 +169,28 @@ public class PathNavigate extends PathNavigateGround
     }
 
     @Override
-    public boolean setPath(@NotNull Path path, double speed)
+    public boolean setPath(@NotNull Path path, final double speed)
     {
-        int pathLength = path.getCurrentPathLength();
+        final int pathLength = path.getCurrentPathLength();
+        Path tempPath = null;
         if (pathLength > 0 && !(path.getPathPointFromIndex(0) instanceof PathPointExtended))
         {
             //  Fix vanilla PathPoints to be PathPointExtended
-            @NotNull PathPointExtended[] newPoints = new PathPointExtended[pathLength];
+            @NotNull final PathPointExtended[] newPoints = new PathPointExtended[pathLength];
 
             for (int i = 0; i < pathLength; ++i)
             {
-                PathPoint point = path.getPathPointFromIndex(i);
+                final PathPoint point = path.getPathPointFromIndex(i);
                 newPoints[i] = new PathPointExtended(new BlockPos(point.xCoord, point.yCoord, point.zCoord));
             }
 
-            path = new Path(newPoints);
+             tempPath = new Path(newPoints);
 
-            PathPointExtended finalPoint = newPoints[pathLength - 1];
+            final PathPointExtended finalPoint = newPoints[pathLength - 1];
             destination = new BlockPos(finalPoint.xCoord, finalPoint.yCoord, finalPoint.zCoord);
         }
 
-        return super.setPath(path, speed);
+        return super.setPath(tempPath == null ? path : tempPath, speed);
     }
 
     @Override
@@ -202,7 +216,7 @@ public class PathNavigate extends PathNavigateGround
                 pathResult.setPathLength(getPath().getCurrentPathLength());
                 pathResult.setStatus(PathResult.Status.IN_PROGRESS_FOLLOWING);
 
-                PathPoint p = getPath().getFinalPathPoint();
+                final PathPoint p = getPath().getFinalPathPoint();
                 if (p != null && destination == null)
                 {
                     destination = new BlockPos(p.xCoord, p.yCoord, p.zCoord);
@@ -225,11 +239,11 @@ public class PathNavigate extends PathNavigateGround
         //  Ladder Workaround
         if (!this.noPath())
         {
-            @NotNull PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
+            @NotNull final PathPointExtended pEx = (PathPointExtended) this.getPath().getPathPointFromIndex(this.getPath().getCurrentPathIndex());
 
             if (pEx.isOnLadder)
             {
-                Vec3d vec3 = this.getPath().getPosition(this.entity);
+                final Vec3d vec3 = this.getPath().getPosition(this.entity);
 
                 if (vec3.squareDistanceTo(entity.posX, vec3.yCoord, entity.posZ) < 0.1)
                 {
@@ -262,10 +276,10 @@ public class PathNavigate extends PathNavigateGround
             else if (entity.isInWater())
             {
                 //  Prevent shortcuts when swimming
-                int curIndex = this.getPath().getCurrentPathIndex();
-                if (curIndex > 0 &&
-                      (curIndex + 1) < this.getPath().getCurrentPathLength() &&
-                      this.getPath().getPathPointFromIndex(curIndex - 1).yCoord != pEx.yCoord)
+                final int curIndex = this.getPath().getCurrentPathIndex();
+                if (curIndex > 0
+                        && (curIndex + 1) < this.getPath().getCurrentPathLength()
+                        && this.getPath().getPathPointFromIndex(curIndex - 1).yCoord != pEx.yCoord)
                 {
                     //  Work around the initial 'spin back' when dropping into water
                     oldIndex = curIndex + 1;
@@ -275,8 +289,8 @@ public class PathNavigate extends PathNavigateGround
 
                 Vec3d Vec3d = this.getPath().getPosition(this.entity);
 
-                if (Vec3d.squareDistanceTo(new Vec3d(entity.posX, Vec3d.yCoord, entity.posZ)) < 0.1 &&
-                      Math.abs(entity.posY - Vec3d.yCoord) < 0.5)
+                if (Vec3d.squareDistanceTo(new Vec3d(entity.posX, Vec3d.yCoord, entity.posZ)) < 0.1
+                        && Math.abs(entity.posY - Vec3d.yCoord) < 0.5)
                 {
                     this.getPath().setCurrentPathIndex(this.getPath().getCurrentPathIndex() + 1);
                     if (this.noPath())
@@ -288,6 +302,17 @@ public class PathNavigate extends PathNavigateGround
                 }
 
                 this.entity.getMoveHelper().setMoveTo(Vec3d.xCoord, Vec3d.yCoord, Vec3d.zCoord, walkSpeed);
+            }
+            else
+            {
+                if(BlockUtils.isPathBlock(worldObj.getBlockState(entity.getPosition().down()).getBlock()))
+                {
+                    speed = 1.3;
+                }
+                else
+                {
+                    speed = 1.0;
+                }
             }
         }
 
@@ -301,19 +326,19 @@ public class PathNavigate extends PathNavigateGround
     @Override
     protected void pathFollow()
     {
-        int curNode = currentPath.getCurrentPathIndex();
-        int curNodeNext = curNode + 1;
+        final int curNode = currentPath.getCurrentPathIndex();
+        final int curNodeNext = curNode + 1;
         if (curNodeNext < currentPath.getCurrentPathLength())
         {
-            PathPointExtended pEx = (PathPointExtended) currentPath.getPathPointFromIndex(curNode);
-            PathPointExtended pExNext = (PathPointExtended) currentPath.getPathPointFromIndex(curNodeNext);
+            final PathPointExtended pEx = (PathPointExtended) currentPath.getPathPointFromIndex(curNode);
+            final PathPointExtended pExNext = (PathPointExtended) currentPath.getPathPointFromIndex(curNodeNext);
 
             //  If current node is bottom of a ladder, then stay on this node until
             //  the entity reaches the bottom, otherwise they will try to head out early
-            if (pEx.isOnLadder && pEx.ladderFacing == EnumFacing.DOWN &&
-                  !pExNext.isOnLadder)
+            if (pEx.isOnLadder && pEx.ladderFacing == EnumFacing.DOWN
+                    && !pExNext.isOnLadder)
             {
-                Vec3d vec3 = getEntityPosition();
+                final Vec3d vec3 = getEntityPosition();
                 if ((vec3.yCoord - (double) pEx.yCoord) < 0.001)
                 {
                     this.currentPath.setCurrentPathIndex(curNodeNext);
@@ -328,7 +353,7 @@ public class PathNavigate extends PathNavigateGround
     }
 
     /**
-     * If null path or reached the end
+     * If null path or reached the end.
      */
     @Override
     public boolean noPath()
@@ -355,38 +380,70 @@ public class PathNavigate extends PathNavigateGround
         super.clearPathEntity();
     }
 
+    /**
+     * Used to find a tree.
+     * @param range in the range.
+     * @param speed walking speed.
+     * @return the result of the search.
+     */
     @NotNull
-    public PathJobFindTree.TreePathResult moveToTree(int range, double speed)
+    public PathJobFindTree.TreePathResult moveToTree(final int range, final double speed)
     {
-        @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
+        @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
         return (PathJobFindTree.TreePathResult) setPathJob(
           new PathJobFindTree(entity.worldObj, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range), null, speed);
     }
 
+    /**
+     * Used to find a water.
+     * @param range in the range.
+     * @param speed walking speed.
+     * @return the result of the search.
+     */
     @Nullable
-    public PathJobFindWater.WaterPathResult moveToWater(int range, double speed, List<BlockPos> ponds)
+    public PathJobFindWater.WaterPathResult moveToWater(final int range, final double speed, final List<BlockPos> ponds)
     {
-        @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
+        @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
         return (PathJobFindWater.WaterPathResult) setPathJob(
           new PathJobFindWater(entity.worldObj, start, ((EntityCitizen) entity).getWorkBuilding().getLocation(), range, ponds), null, speed);
     }
 
+    /**
+     * Used to move a living entity with a speed.
+     * @param e the entity.
+     * @param speed the speed.
+     * @return the result.
+     */
     @Nullable
-    public PathResult moveToEntityLiving(@NotNull Entity e, double speed)
+    public PathResult moveToEntityLiving(@NotNull final Entity e, final double speed)
     {
         return moveToXYZ(e.posX, e.posY, e.posZ, speed);
     }
 
+     /**
+     * Used to path away from a entity.
+     * @param e the entity.
+     * @param distance the distance to move to.
+     * @param speed the speed to run at.
+     * @return the result of the pathing.
+     */
     @Nullable
-    public PathResult moveAwayFromEntityLiving(@NotNull Entity e, double distance, double speed)
+    public PathResult moveAwayFromEntityLiving(@NotNull final Entity e, final double distance, final double speed)
     {
         return moveAwayFromXYZ(e.getPosition(), distance, speed);
     }
 
+    /**
+     * Used to path away from a position.
+     * @param avoid the position to avoid.
+     * @param range the range he should move out of.
+     * @param speed the speed to run at.
+     * @return the result of the pathing.
+     */
     @Nullable
-    public PathResult moveAwayFromXYZ(BlockPos avoid, double range, double speed)
+    public PathResult moveAwayFromXYZ(final BlockPos avoid, final double range, final double speed)
     {
-        @NotNull BlockPos start = AbstractPathJob.prepareStart(entity);
+        @NotNull final BlockPos start = AbstractPathJob.prepareStart(entity);
 
         return setPathJob(
           new PathJobMoveAwayFromLocation(entity.worldObj, start, avoid, (int) range, (int) getPathSearchRange()),

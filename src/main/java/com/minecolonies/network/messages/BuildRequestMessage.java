@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Adds a entry to the builderRequired map
+ * Adds a entry to the builderRequired map.
  * Created: May 26, 2014
  *
  * @author Colton
@@ -41,7 +41,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     private int      mode;
 
     /**
-     * Empty constructor
+     * Empty constructor used when registering the message.
      */
     public BuildRequestMessage()
     {
@@ -49,12 +49,12 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     }
 
     /**
-     * Creates a build request message
+     * Creates a build request message.
      *
-     * @param building AbstractBuilding of the request
-     * @param mode     Mode of the request, 1 is repair, 0 is build
+     * @param building AbstractBuilding of the request.
+     * @param mode     Mode of the request, 1 is repair, 0 is build.
      */
-    public BuildRequestMessage(@NotNull AbstractBuilding.View building, int mode)
+    public BuildRequestMessage(@NotNull final AbstractBuilding.View building, final int mode)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -63,7 +63,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -71,7 +71,7 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -81,13 +81,13 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
     @Override
     public void messageOnServerThread(final BuildRequestMessage message, final EntityPlayerMP player)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony == null)
         {
             return;
         }
 
-        AbstractBuilding building = colony.getBuilding(message.buildingId);
+        final AbstractBuilding building = colony.getBuilding(message.buildingId);
         if (building == null)
         {
             return;

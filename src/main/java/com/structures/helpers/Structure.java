@@ -1,23 +1,10 @@
 package com.structures.helpers;
 
-import java.io.*;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
 import com.blockout.Log;
 import com.minecolonies.lib.Constants;
 import com.structures.fake.FakeEntity;
-import com.structures.lib.ModelHolder;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import org.apache.commons.io.IOUtils;
-import org.jetbrains.annotations.NotNull;
-import org.lwjgl.opengl.GL11;
-
 import com.structures.fake.FakeWorld;
-
+import com.structures.lib.ModelHolder;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -32,15 +19,12 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.Rotation;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
@@ -48,6 +32,14 @@ import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.pipeline.LightUtil;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
+import org.lwjgl.opengl.GL11;
+
+import javax.annotation.Nullable;
+import java.io.*;
+import java.util.List;
 
 /**
  * Structure class, used to store, create, get structures.
@@ -57,7 +49,13 @@ public class Structure
     /**
      * Rotation by 90 degree.
      */
-    private static final double  NINETY_DEGREE = 90D;
+    private static final double NINETY_DEGREE = 90D;
+
+    /**
+     * Used for scale.
+     */
+    private static final double SCALE = 1.001;
+
     /**
      * Template of the structure.
      */
@@ -65,35 +63,31 @@ public class Structure
     private Minecraft         mc;
     private PlacementSettings settings;
 
-    private static final int   COLOR_A    = 255;
-    private static final int   COLOR_R    = 255;
-    private static final int   COLOR_G    = 255;
-    private static final int   COLOR_B    = 255;
-
     /**
      * Constuctor of Structure, tries to create a new structure.
-     * @param world with world.
+     *
+     * @param world         with world.
      * @param structureName name of the structure (at stored location).
-     * @param settings it's settings.
+     * @param settings      it's settings.
      */
-    public Structure(@Nullable World world, String structureName, PlacementSettings settings)
+    public Structure(@Nullable final World world, final String structureName, final PlacementSettings settings)
     {
         InputStream inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
 
-        if(world == null || world.isRemote)
+        if (world == null || world.isRemote)
         {
             this.settings = settings;
             this.mc = Minecraft.getMinecraft();
         }
 
         //Might be at a different location!
-        if(inputstream == null)
+        if (inputstream == null)
         {
             try
             {
-                File decorationFolder;
+                final File decorationFolder;
 
-                if(FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+                if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
                 {
                     decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
                 }
@@ -103,7 +97,7 @@ public class Structure
                 }
                 inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
             }
-            catch (FileNotFoundException e)
+            catch (final FileNotFoundException e)
             {
                 Log.getLogger().warn("Couldn't find any structure with this name anywhere", e);
             }
@@ -118,7 +112,7 @@ public class Structure
         {
             this.template = readTemplateFromStream(inputstream);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             Log.getLogger().warn(String.format("Failed to load template %s", structureName), e);
         }
@@ -129,12 +123,12 @@ public class Structure
     }
 
     /**
-     * reads a template from an inputstream
+     * Reads a template from an inputstream.
      */
-    private static Template readTemplateFromStream(InputStream stream) throws IOException
+    private static Template readTemplateFromStream(final InputStream stream) throws IOException
     {
-        NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(stream);
-        Template template = new Template();
+        final NBTTagCompound nbttagcompound = CompressedStreamTools.readCompressed(stream);
+        final Template template = new Template();
         template.read(nbttagcompound);
         return template;
     }
@@ -144,6 +138,10 @@ public class Structure
         return template == null;
     }
 
+    /**
+     * Checks if the template is null.
+     * @return true if it's not.
+     */
     public boolean doesExist()
     {
         return template == null ? false : true;
@@ -156,54 +154,125 @@ public class Structure
         return blockList;
     }
 
-    public Template.BlockInfo[] getBlockInfoWithSettings(PlacementSettings settings)
-    {
-        Template.BlockInfo[] blockList = new Template.BlockInfo[template.blocks.size()];
-        blockList = template.blocks.toArray(blockList);
-
-        for (int i = 0; i < blockList.length; i++)
-        {
-            IBlockState finalState = blockList[i].blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());
-            BlockPos finalPos = Template.transformedBlockPos(settings, blockList[i].pos);
-            Template.BlockInfo finalInfo = new Template.BlockInfo(finalPos, finalState, blockList[i].tileentityData);
-            blockList[i] = finalInfo;
-        }
-        return blockList;
-    }
-
-    public Entity[] getEntityInfo(World world, BlockPos pos)
+    /**
+     * Get entity array at position in world.
+     * @param world the world.
+     * @param pos the position.
+     * @return the entity array.
+     */
+    public Entity[] getEntityInfo(final World world, final BlockPos pos)
     {
         Template.EntityInfo[] entityInfoList = new Template.EntityInfo[template.entities.size()];
         entityInfoList = template.blocks.toArray(entityInfoList);
 
-        Entity[] entityList = null;
+        final Entity[] entityList = null;
 
         for (int i = 0; i < entityInfoList.length; i++)
         {
-            Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
-            Vec3d entityVec = entityInfoList[i].pos.add(new Vec3d(pos));
+            final Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
+            final Vec3d entityVec = entityInfoList[i].pos.add(new Vec3d(pos));
             finalEntity.setPosition(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord);
         }
 
         return entityList;
     }
 
-    public Entity[] getEntityInfoWithSettings(World world, BlockPos pos, PlacementSettings settings)
+    /**
+     * Get size of structure.
+     * @param rotation with rotation.
+     * @return size as blockPos (x = length, z = width, y = height).
+     */
+    public BlockPos getSize(final Rotation rotation)
+    {
+        return this.template.transformedSize(rotation);
+    }
+
+    public void setPlacementSettings(final PlacementSettings settings)
+    {
+        this.settings = settings;
+    }
+
+    /**
+     * Renders the structure.
+     *
+     * @param startingPos  the start pos to render.
+     * @param clientWorld  the world of the client.
+     * @param player       the player object.
+     * @param partialTicks the partial ticks.
+     */
+    public void renderStructure(@NotNull final BlockPos startingPos, @NotNull final World clientWorld, @NotNull final EntityPlayer player, final float partialTicks)
+    {
+        final Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
+        final Entity[] entityList = this.getEntityInfoWithSettings(clientWorld, startingPos, this.settings);
+
+        for (final Template.BlockInfo aBlockList : blockList)
+        {
+            final Block block = aBlockList.blockState.getBlock();
+            final IBlockState iblockstate = aBlockList.blockState;
+            final BlockPos blockpos = aBlockList.pos.add(startingPos);
+            final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, blockpos);
+            final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
+            TileEntity tileentity = null;
+            if (block.hasTileEntity(iblockstate) && aBlockList.tileentityData != null)
+            {
+                tileentity = block.createTileEntity(clientWorld, iblockstate);
+                tileentity.readFromNBT(aBlockList.tileentityData);
+            }
+            final ModelHolder models = new ModelHolder(blockpos, iblockstate, iBlockExtendedState, tileentity, ibakedmodel);
+            getQuads(models, models.quads);
+            this.renderGhost(clientWorld, models, player, partialTicks);
+        }
+
+        for (final Entity anEntityList : entityList)
+        {
+            Minecraft.getMinecraft().getRenderManager().renderEntityStatic(anEntityList, 0.0F, true);
+        }
+    }
+
+    /**
+     * Get blockInfo of structure with a specific setting.
+     * @param settings the setting.
+     * @return the block info array.
+     */
+    public Template.BlockInfo[] getBlockInfoWithSettings(final PlacementSettings settings)
+    {
+        Template.BlockInfo[] blockList = new Template.BlockInfo[template.blocks.size()];
+        blockList = template.blocks.toArray(blockList);
+
+        for (int i = 0; i < blockList.length; i++)
+        {
+            final IBlockState finalState = blockList[i].blockState.withMirror(settings.getMirror()).withRotation(settings.getRotation());
+            final BlockPos finalPos = Template.transformedBlockPos(settings, blockList[i].pos);
+            final Template.BlockInfo finalInfo = new Template.BlockInfo(finalPos, finalState, blockList[i].tileentityData);
+            blockList[i] = finalInfo;
+        }
+        return blockList;
+    }
+
+    /**
+     * Get entity info with specific setting.
+     * @param world world the entity is in.
+     * @param pos the position it is at.
+     * @param settings the settings.
+     * @return the entity info aray.
+     */
+    public Entity[] getEntityInfoWithSettings(final World world, final BlockPos pos, final PlacementSettings settings)
     {
         Template.EntityInfo[] entityInfoList = new Template.EntityInfo[template.entities.size()];
         entityInfoList = template.entities.toArray(entityInfoList);
 
-        Entity[] entityList = new Entity[entityInfoList.length];
+        final Entity[] entityList = new Entity[entityInfoList.length];
 
         for (int i = 0; i < entityInfoList.length; i++)
         {
-            Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
-            Vec3d entityVec = Structure.transformedVec3d(settings, entityInfoList[i].pos).add(new Vec3d(pos));
+            final Entity finalEntity = EntityList.createEntityFromNBT(entityInfoList[i].entityData, world);
+            final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfoList[i].pos).add(new Vec3d(pos));
 
-            if(finalEntity != null)
+            if (finalEntity != null)
             {
                 finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREE);
-                double rotation = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double)finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
+                final double rotation =
+                  (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
                 finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, (float) rotation, finalEntity.rotationPitch);
             }
             entityList[i] = finalEntity;
@@ -212,22 +281,90 @@ public class Structure
         return entityList;
     }
 
-    public BlockPos getSize(Rotation rotation)
+    private static void getQuads(final ModelHolder holder, final List<BakedQuad> quads)
     {
-        return this.template.transformedSize(rotation);
+        if (holder.actualState.getRenderType() == EnumBlockRenderType.MODEL)
+        {
+            final BlockRenderLayer originalLayer = MinecraftForgeClient.getRenderLayer();
+
+            for (final BlockRenderLayer layer : BlockRenderLayer.values())
+            {
+                if (holder.actualState.getBlock().canRenderInLayer(holder.actualState, layer))
+                {
+                    ForgeHooksClient.setRenderLayer(layer);
+
+                    for (final EnumFacing facing : EnumFacing.values())
+                    {
+                        quads.addAll(holder.model.getQuads(holder.extendedState, facing, 0));
+                    }
+
+                    quads.addAll(holder.model.getQuads(holder.extendedState, null, 0));
+                }
+            }
+
+            ForgeHooksClient.setRenderLayer(originalLayer);
+        }
     }
 
-    public void setPlacementSettings(PlacementSettings settings)
+    private void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks)
     {
-        this.settings = settings;
+        final boolean existingModel = !this.mc.theWorld.isAirBlock(holder.pos);
+
+        final IBlockState actualState = holder.actualState;
+        final Block block = actualState.getBlock();
+
+        if (actualState.getRenderType() == EnumBlockRenderType.MODEL)
+        {
+            final BlockRenderLayer originalLayer = MinecraftForgeClient.getRenderLayer();
+
+            for (final BlockRenderLayer layer : BlockRenderLayer.values())
+            {
+                if (block.canRenderInLayer(actualState, layer))
+                {
+                    this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+                    ForgeHooksClient.setRenderLayer(layer);
+                    this.renderGhostBlock(world, holder, player, layer, existingModel, partialTicks);
+                    holder.rendered = true;
+                }
+            }
+
+            ForgeHooksClient.setRenderLayer(originalLayer);
+        }
+
+        if (holder.te != null && !holder.rendered)
+        {
+            final TileEntity te = holder.te;
+            te.setPos(holder.pos);
+            final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true);
+            te.setWorldObj(fakeWorld);
+            final int pass = 0;
+
+            if (te.shouldRenderInPass(pass))
+            {
+                final TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
+                terd.func_190056_a(fakeWorld,
+                  Minecraft.getMinecraft().renderEngine,
+                  Minecraft.getMinecraft().fontRendererObj,
+                  new FakeEntity(fakeWorld),
+                  null,
+                  0.0F);
+                GL11.glPushMatrix();
+                terd.renderEngine = Minecraft.getMinecraft().renderEngine;
+                terd.preDrawBatch();
+                GL11.glColor4f(1F, 1F, 1F, 1F);
+                terd.renderTileEntity(te, partialTicks, -1);
+                terd.drawBatch(pass);
+                GL11.glPopMatrix();
+            }
+        }
     }
 
-    private static Vec3d transformedVec3d(PlacementSettings settings, Vec3d vec)
+    private static Vec3d transformedVec3d(final PlacementSettings settings, final Vec3d vec)
     {
-        Mirror mirrorIn = settings.getMirror();
-        Rotation rotationIn = settings.getRotation();
+        final Mirror mirrorIn = settings.getMirror();
+        final Rotation rotationIn = settings.getRotation();
         double xCoord = vec.xCoord;
-        double yCoord = vec.yCoord;
+        final double yCoord = vec.yCoord;
         double zCoord = vec.zCoord;
         boolean flag = true;
 
@@ -256,108 +393,25 @@ public class Structure
         }
     }
 
-    /**
-     * Renders the structure.
-     * @param startingPos the start pos to render.
-     * @param clientWorld the world of the client.
-     * @param player the player object.
-     * @param partialTicks the partial ticks.
-     */
-    public void renderStructure(@NotNull BlockPos startingPos, @NotNull final World clientWorld, @NotNull final EntityPlayer player, final float partialTicks)
+    private void renderGhostBlock(
+                                   final World world,
+                                   final ModelHolder holder,
+                                   final EntityPlayer player,
+                                   final BlockRenderLayer layer,
+                                   final boolean existingModel,
+                                   final float partialTicks)
     {
-        Template.BlockInfo[] blockList = this.getBlockInfoWithSettings(this.settings);
-        Entity[] entityList = this.getEntityInfoWithSettings(clientWorld, startingPos, this.settings);
-
-        for (final Template.BlockInfo aBlockList : blockList)
-        {
-            Block block = aBlockList.blockState.getBlock();
-            IBlockState iblockstate = aBlockList.blockState;
-            BlockPos blockpos = aBlockList.pos.add(startingPos);
-            IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, blockpos);
-            IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);
-            TileEntity tileentity = null;
-            if (block.hasTileEntity(iblockstate) && aBlockList.tileentityData != null)
-            {
-                tileentity = block.createTileEntity(clientWorld, iblockstate);
-                tileentity.readFromNBT(aBlockList.tileentityData);
-            }
-            ModelHolder models = new ModelHolder(blockpos, iblockstate, iBlockExtendedState, tileentity, ibakedmodel);
-            this.getQuads(models, models.quads);
-            this.renderGhost(clientWorld, models, player, partialTicks);
-        }
-
-        for (final Entity anEntityList : entityList)
-        {
-            Minecraft.getMinecraft().getRenderManager().renderEntityStatic(anEntityList, 0.0F, true);
-        }
-    }
-
-    private void renderGhost(final World world, ModelHolder holder, final EntityPlayer player, final float partialTicks)
-    {
-        boolean existingModel = !this.mc.theWorld.isAirBlock(holder.pos);
-
-        IBlockState actualState = holder.actualState;
-        Block block = actualState.getBlock();
-
-        if (actualState.getRenderType() == EnumBlockRenderType.MODEL)
-        {
-            BlockRenderLayer originalLayer = MinecraftForgeClient.getRenderLayer();
-
-            for (BlockRenderLayer layer : BlockRenderLayer.values())
-            {
-                if (block.canRenderInLayer(actualState, layer))
-                {
-                    this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-                    ForgeHooksClient.setRenderLayer(layer);
-                    this.renderGhostBlock(world, holder, player, layer, existingModel, partialTicks);
-                    holder.rendered = true;
-                }
-            }
-
-            ForgeHooksClient.setRenderLayer(originalLayer);
-        }
-
-        if (holder.te != null && !holder.rendered)
-        {
-            TileEntity te = holder.te;
-            te.setPos(holder.pos);
-            FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true);
-            te.setWorldObj(fakeWorld);
-            int pass = 0;
-
-            if (te.shouldRenderInPass(pass))
-            {
-                TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
-                terd.func_190056_a(fakeWorld,
-                        Minecraft.getMinecraft().renderEngine,
-                        Minecraft.getMinecraft().fontRendererObj,
-                        new FakeEntity(fakeWorld),
-                        (RayTraceResult) null,
-                        0.0F);
-                GL11.glPushMatrix();
-                terd.renderEngine = Minecraft.getMinecraft().renderEngine;
-                terd.preDrawBatch();
-                GL11.glColor4f((float) (this.COLOR_R / COLOR_R), (float) (this.COLOR_G / COLOR_G), (float) (this.COLOR_B / COLOR_B), (this.COLOR_A / COLOR_A));
-                terd.renderTileEntity(te, partialTicks, -1);
-                terd.drawBatch(pass);
-                GL11.glPopMatrix();
-            }
-        }
-    }
-
-    private void renderGhostBlock(final World world, ModelHolder holder, final EntityPlayer player, BlockRenderLayer layer, boolean existingModel, final float partialTicks)
-    {
-        double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
-        double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
-        double dz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
-        BlockPos pos = holder.pos;
+        final double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
+        final double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
+        final double dz = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTicks;
+        final BlockPos pos = holder.pos;
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(pos.getX() - dx, pos.getY() - dy, pos.getZ() - dz);
 
         if (existingModel)
         {
-            GlStateManager.scale(1.001, 1.001, 1.001);
+            GlStateManager.scale(SCALE, SCALE, SCALE);
         }
 
         RenderHelper.disableStandardItemLighting();
@@ -367,9 +421,9 @@ public class Structure
             this.mc.getTextureManager().getTexture(TextureMap.LOCATION_BLOCKS_TEXTURE).setBlurMipmap(false, false);
         }
 
-        GlStateManager.color(1f, 1f, 1f, 1f);
+        GlStateManager.color(1F, 1F, 1F, 1F);
 
-        int alpha = ((int) (1.0F * 0xFF)) << 24;
+        final int alpha = ((int) (1.0D * 0xFF)) << 24;
 
         GlStateManager.enableBlend();
         GlStateManager.enableTexture2D();
@@ -400,31 +454,6 @@ public class Structure
         }
 
         this.renderQuads(world, holder.actualState, pos, holder.model.getQuads(holder.extendedState, null, 0), alpha);
-    }
-
-    private void getQuads(ModelHolder holder, List<BakedQuad> quads)
-    {
-        if (holder.actualState.getRenderType() == EnumBlockRenderType.MODEL)
-        {
-            BlockRenderLayer originalLayer = MinecraftForgeClient.getRenderLayer();
-
-            for (BlockRenderLayer layer : BlockRenderLayer.values())
-            {
-                if (holder.actualState.getBlock().canRenderInLayer(holder.actualState, layer))
-                {
-                    ForgeHooksClient.setRenderLayer(layer);
-
-                    for (final EnumFacing facing : EnumFacing.values())
-                    {
-                        quads.addAll(holder.model.getQuads(holder.extendedState, facing, 0));
-                    }
-
-                    quads.addAll(holder.model.getQuads(holder.extendedState, null, 0));
-                }
-            }
-
-            ForgeHooksClient.setRenderLayer(originalLayer);
-        }
     }
 
     private void renderQuads(final World world, final IBlockState actualState, final BlockPos pos, final List<BakedQuad> quads, final int alpha)

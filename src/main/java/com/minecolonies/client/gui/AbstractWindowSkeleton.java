@@ -34,9 +34,20 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
      * @param id     Button ID.
      * @param action Consumer with the action to be performed.
      */
-    public final void registerButton(String id, Consumer<Button> action)
+    public final void registerButton(final String id, final Consumer<Button> action)
     {
         buttons.put(id, action);
+    }
+
+    /**
+     * Register a button on the window.
+     *
+     * @param id     Button ID.
+     * @param action Consumer with the action to be performed.
+     */
+    public final void registerButton(String id, Runnable action)
+    {
+        registerButton(id, (button) -> action.run());
     }
 
     /**
@@ -48,7 +59,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
      * @param button the button that was clicked.
      */
     @Override
-    public void onButtonClicked(@NotNull Button button)
+    public void onButtonClicked(@NotNull final Button button)
     {
         if (buttons.containsKey(button.getID()))
         {
@@ -65,7 +76,7 @@ public abstract class AbstractWindowSkeleton extends Window implements Button.Ha
      *
      * @param ignored Parameter is ignored. Since some actions require a button, we must accept a button parameter.
      */
-    public final void doNothing(Button ignored)
+    public final void doNothing(final Button ignored)
     {
         //do nothing with that event
     }

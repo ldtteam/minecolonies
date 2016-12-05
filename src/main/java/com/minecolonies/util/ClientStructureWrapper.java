@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 /**
@@ -28,68 +29,67 @@ public final class ClientStructureWrapper
 
     /**
      * Handles the save message of scans.
+     *
      * @param nbttagcompound compound to store.
-     * @param storeLocation where to store it at.
+     * @param storeLocation  where to store it at.
      */
-    public static void handleSaveScanMessage(NBTTagCompound nbttagcompound, String storeLocation)
+    public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final String storeLocation)
     {
-        File file = new File(Minecraft.getMinecraft().mcDataDir, storeLocation);
+        final File file = new File(Minecraft.getMinecraft().mcDataDir, storeLocation);
         createScanDirectory(Minecraft.getMinecraft().theWorld);
 
         try (OutputStream outputstream = new FileOutputStream(file))
         {
             CompressedStreamTools.writeCompressed(nbttagcompound, outputstream);
         }
-        catch (Exception e)
+        catch (final IOException e)
         {
             LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("item.scepterSteel.scanFailure"));
+            Log.getLogger().warn("Exception while trying to scan.", e);
             return;
         }
 
         LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer,
-                LanguageHandler.format("item.scepterSteel.scanSuccess", storeLocation));
-
+          LanguageHandler.format("item.scepterSteel.scanSuccess", storeLocation));
     }
 
     /**
      * Creates the scan directories for the scanTool.
+     *
      * @param world the worldIn.
      */
-    private static void createScanDirectory(@NotNull World world)
+    private static void createScanDirectory(@NotNull final World world)
     {
-        File minecolonies;
+        final File minecolonies;
         if (world.isRemote)
         {
             minecolonies = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
         }
         else
         {
-            MinecraftServer server = world.getMinecraftServer();
-            if(server != null)
-            {
-                minecolonies = server.getFile("minecolonies/");
-            }
-            else
+            final MinecraftServer server = world.getMinecraftServer();
+            if (server == null)
             {
                 return;
             }
+            minecolonies = server.getFile("minecolonies/");
         }
         checkDirectory(minecolonies);
 
-        @NotNull File scans = new File(minecolonies, "scans/");
+        @NotNull final File scans = new File(minecolonies, "scans/");
         checkDirectory(scans);
     }
 
     /**
      * Checks if directory exists, else creates it.
+     *
      * @param directory the directory to check.
      */
-    private static void checkDirectory(@NotNull File directory)
+    private static void checkDirectory(@NotNull final File directory)
     {
         if (!directory.exists() && !directory.mkdirs())
         {
             Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
         }
     }
-
 }

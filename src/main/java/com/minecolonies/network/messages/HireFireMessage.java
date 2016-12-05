@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
 {
     /**
-     * The Colony ID;
+     * The Colony ID.
      */
     private int colonyId;
 
@@ -34,7 +34,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
     private boolean hire;
 
     /**
-     * The citizen to hire/fire
+     * The citizen to hire/fire.
      */
     private int citizenID;
 
@@ -53,7 +53,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
      * @param hire      hire or fire the citizens
      * @param citizenID the id of the citizen to fill the job.
      */
-    public HireFireMessage(@NotNull AbstractBuilding.View building, boolean hire, int citizenID)
+    public HireFireMessage(@NotNull final AbstractBuilding.View building, final boolean hire, final int citizenID)
     {
         super();
         this.colonyId = building.getColony().getID();
@@ -68,7 +68,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
      * @param buf the used byteBuffer.
      */
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
@@ -82,7 +82,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
      * @param buf the used byteBuffer.
      */
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -93,7 +93,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
     @Override
     public void messageOnServerThread(final HireFireMessage message, final EntityPlayerMP player)
     {
-        Colony colony = ColonyManager.getColony(message.colonyId);
+        final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
         {
             //Verify player has permission to change this huts settings
@@ -104,7 +104,7 @@ public class HireFireMessage extends AbstractMessage<HireFireMessage, IMessage>
 
             if (message.hire)
             {
-                CitizenData citizen = colony.getCitizen(message.citizenID);
+                final CitizenData citizen = colony.getCitizen(message.citizenID);
                 ((AbstractBuildingWorker) colony.getBuilding(message.buildingId)).setWorker(citizen);
             }
             else

@@ -5,12 +5,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Logging utility class
+ * Logging utility class.
  */
 public final class Log
 {
     /**
-     * Mod logger
+     * Mod logger.
      */
     private static Logger logger = null;
 
@@ -19,7 +19,9 @@ public final class Log
      */
     private Log()
     {
-        //Hides implicit constructor.
+        /*
+         * Intentionally left empty.
+         */
     }
 
     /**
@@ -29,6 +31,7 @@ public final class Log
      */
     public static Logger getLogger()
     {
+        //Only create logger if current logger is empty.
         if (logger == null)
         {
             Log.logger = LogManager.getLogger(Constants.MOD_ID);

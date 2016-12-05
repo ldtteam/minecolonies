@@ -20,23 +20,30 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Colony Permissions System
- * Created: October 08, 2014
- *
- * @author Colton
+ * Colony Permissions System.
  */
 public class Permissions implements IPermissions
 {
+    /**
+     * All tags to store and retrieve data from nbt.
+     */
     private static final String TAG_OWNERS      = "owners";
     private static final String TAG_ID          = "id";
     private static final String TAG_RANK        = "rank";
-    private static final String TAG_PERMISSIONS = "permissions";
+    private static final String TAG_PERMISSIONS = "permissionMap";
     private static final String TAG_FLAGS       = "flags";
     private static final String TAG_OWNER       = "owner";
     private static final String TAG_OWNER_ID    = "ownerid";
 
+    /**
+     * All promotion rank possibilities.
+     */
     @NotNull
     private static Map<Rank, RankPair> promotionRanks = new EnumMap<>(Rank.class);
+
+    /**
+     * Fill the promotion ranks.
+     */
     static
     {
         setPromotionRanks(Rank.OFFICER, Rank.OFFICER, Rank.FRIEND);
@@ -45,13 +52,28 @@ public class Permissions implements IPermissions
         setPromotionRanks(Rank.HOSTILE, Rank.NEUTRAL, Rank.HOSTILE);
     }
 
+    /**
+     * The colony the permissions belong to.
+     */
     @NotNull
     private final Colony colony;
+
+    /**
+     * Players registered to the colony.
+     */
     @NotNull
-    private Map<UUID, Player>  players     = new HashMap<>();
+    private final Map<UUID, Player>  players       = new HashMap<>();
+
+    /**
+     * Permissions of these players.
+     */
     @NotNull
-    private Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
-    private boolean            dirty       = false;
+    private final Map<Rank, Integer> permissionMap = new EnumMap<>(Rank.class);
+
+    /**
+     * Used to check if the permissions have to by synchronized.
+     */
+    private boolean dirty = false;
 
     /**
      * The name of the owner.
@@ -63,14 +85,14 @@ public class Permissions implements IPermissions
     private UUID   ownerUUID = null;
 
     /**
-     * Saves the permissions with allowed actions
+     * Saves the permissionMap with allowed actions.
      *
-     * @param colony the colony this permissions object belongs to.
+     * @param colony the colony this permissionMap object belongs to.
      */
     public Permissions(@NotNull final Colony colony)
     {
         //Owner
-        permissions.put(Rank.OWNER, 0);
+        permissionMap.put(Rank.OWNER, 0);
         this.setPermission(Rank.OWNER, Action.ACCESS_HUTS);
         this.setPermission(Rank.OWNER, Action.PLACE_HUTS);
         this.setPermission(Rank.OWNER, Action.BREAK_HUTS);
@@ -80,7 +102,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OWNER, Action.EDIT_PERMISSIONS);
         this.setPermission(Rank.OWNER, Action.MANAGE_HUTS);
         //Officer
-        permissions.put(Rank.OFFICER, 0);
+        permissionMap.put(Rank.OFFICER, 0);
         this.setPermission(Rank.OFFICER, Action.ACCESS_HUTS);
         this.setPermission(Rank.OFFICER, Action.PLACE_HUTS);
         this.setPermission(Rank.OFFICER, Action.BREAK_HUTS);
@@ -89,12 +111,12 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.SEND_MESSAGES);
         this.setPermission(Rank.OFFICER, Action.MANAGE_HUTS);
         //Friend
-        permissions.put(Rank.FRIEND, 0);
+        permissionMap.put(Rank.FRIEND, 0);
         this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
         //Neutral
-        permissions.put(Rank.NEUTRAL, 0);
+        permissionMap.put(Rank.NEUTRAL, 0);
         //Hostile
-        permissions.put(Rank.HOSTILE, 0);
+        permissionMap.put(Rank.HOSTILE, 0);
         this.setPermission(Rank.HOSTILE, Action.GUARDS_ATTACK);
 
         //Add new additional Permissions inside this method.
@@ -104,25 +126,25 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Sets the rank for a specific action
+     * Sets the rank for a specific action.
      *
-     * @param rank   Desired rank
-     * @param action Action that should have desired rank
+     * @param rank   Desired rank.
+     * @param action Action that should have desired rank.
      */
-    public final void setPermission(Rank rank, @NotNull Action action)
+    public final void setPermission(final Rank rank, @NotNull final Action action)
     {
-        int flags = permissions.get(rank);
+        final int flags = permissionMap.get(rank);
 
         //check that flag isn't set
         if (!Utils.testFlag(flags, action.flag))
         {
-            permissions.put(rank, Utils.setFlag(flags, action.flag));
+            permissionMap.put(rank, Utils.setFlag(flags, action.flag));
             markDirty();
         }
     }
 
     /**
-     * Marks instance dirty
+     * Marks instance dirty.
      */
     private void markDirty()
     {
@@ -130,25 +152,25 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Stores the list of promotion/demotion ranks
+     * Stores the list of promotion/demotion ranks.
      *
-     * @param r Rank to set pro- and demotion of
-     * @param p Promotion rank
-     * @param d Demotion rank
+     * @param r Rank to set pro- and demotion of.
+     * @param p Promotion rank.
+     * @param d Demotion rank.
      */
-    private static void setPromotionRanks(Rank r, Rank p, Rank d)
+    private static void setPromotionRanks(final Rank r, final Rank p, final Rank d)
     {
         promotionRanks.put(r, new RankPair(p, d));
     }
 
     /**
-     * Returns the promotion rank of a specific rank
-     * E.G.: Neutral will return Friend
+     * Returns the promotion rank of a specific rank.
+     * E.G.: Neutral will return Friend.
      *
-     * @param rank Rank to check promotion of
-     * @return {@link Rank} after promotion
+     * @param rank Rank to check promotion of.
+     * @return {@link Rank} after promotion.
      */
-    public static Rank getPromotionRank(Rank rank)
+    public static Rank getPromotionRank(final Rank rank)
     {
         if (promotionRanks.containsKey(rank))
         {
@@ -159,13 +181,13 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Returns the demotion rank of a specific rank
-     * E.G.: Neutral will return Hostile
+     * Returns the demotion rank of a specific rank.
+     * E.G.: Neutral will return Hostile.
      *
-     * @param rank Rank to check demotion of
-     * @return {@link Rank} after demotion
+     * @param rank Rank to check demotion of.
+     * @return {@link Rank} after demotion.
      */
-    public static Rank getDemotionRank(Rank rank)
+    public static Rank getDemotionRank(final Rank rank)
     {
         if (promotionRanks.containsKey(rank))
         {
@@ -176,21 +198,21 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Reads the permissions from a NBT
+     * Reads the permissionMap from a NBT.
      *
-     * @param compound NBT to read from
+     * @param compound NBT to read from.
      */
-    public void loadPermissions(@NotNull NBTTagCompound compound)
+    public void loadPermissions(@NotNull final NBTTagCompound compound)
     {
         //  Owners
-        NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final NBTTagList ownerTagList = compound.getTagList(TAG_OWNERS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < ownerTagList.tagCount(); ++i)
         {
-            NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
-            @NotNull UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
-            Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
+            final NBTTagCompound ownerCompound = ownerTagList.getCompoundTagAt(i);
+            @NotNull final UUID id = UUID.fromString(ownerCompound.getString(TAG_ID));
+            final Rank rank = Rank.valueOf(ownerCompound.getString(TAG_RANK));
 
-            GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(id);
+            final GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(id);
 
             if (player != null)
             {
@@ -199,22 +221,22 @@ public class Permissions implements IPermissions
         }
 
         //Permissions
-        NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
+        final  NBTTagList permissionsTagList = compound.getTagList(TAG_PERMISSIONS, net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < permissionsTagList.tagCount(); ++i)
         {
-            NBTTagCompound permissionsCompound = permissionsTagList.getCompoundTagAt(i);
-            Rank rank = Rank.valueOf(permissionsCompound.getString(TAG_RANK));
+            final NBTTagCompound permissionsCompound = permissionsTagList.getCompoundTagAt(i);
+            final Rank rank = Rank.valueOf(permissionsCompound.getString(TAG_RANK));
 
-            NBTTagList flagsTagList = permissionsCompound.getTagList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
+            final NBTTagList flagsTagList = permissionsCompound.getTagList(TAG_FLAGS, net.minecraftforge.common.util.Constants.NBT.TAG_STRING);
 
             int flags = 0;
 
             for (int j = 0; j < flagsTagList.tagCount(); ++j)
             {
-                String flag = flagsTagList.getStringTagAt(j);
+                final String flag = flagsTagList.getStringTagAt(j);
                 flags = Utils.setFlag(flags, Action.valueOf(flag).flag);
             }
-            permissions.put(rank, flags);
+            permissionMap.put(rank, flags);
         }
 
         updateNewPermissions();
@@ -229,7 +251,7 @@ public class Permissions implements IPermissions
             {
                 ownerUUID = UUID.fromString(compound.getString(TAG_OWNER_ID));
             }
-            catch (IllegalArgumentException e)
+            catch (final IllegalArgumentException e)
             {
                 /*
                  * Intentionally left empty. Happens when the UUID hasn't been saved yet.
@@ -237,10 +259,18 @@ public class Permissions implements IPermissions
             }
         }
 
+        restoreOwnerIfNull();
+    }
+
+    /**
+     * Restores the owner from other variables if he is null on loading.
+     */
+    private void restoreOwnerIfNull()
+    {
         final Map.Entry<UUID, Player> owner = getOwnerEntry();
         if(owner == null && ownerUUID != null)
         {
-            GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(ownerUUID);
+            final GameProfile player = FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getProfileByUUID(ownerUUID);
 
             if(player != null)
             {
@@ -250,7 +280,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * This method should be used to update new permissions added to the game which old colonies probably don't have yet.
+     * This method should be used to update new permissionMap added to the game which old colonies probably don't have yet.
      */
     private void updateNewPermissions()
     {
@@ -259,17 +289,17 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Save the permissions to a NBT
+     * Save the permissionMap to a NBT.
      *
-     * @param compound NBT to write to
+     * @param compound NBT to write to.
      */
-    public void savePermissions(@NotNull NBTTagCompound compound)
+    public void savePermissions(@NotNull final NBTTagCompound compound)
     {
         //  Owners
-        @NotNull NBTTagList ownerTagList = new NBTTagList();
-        for (@NotNull Player player : players.values())
+        @NotNull final NBTTagList ownerTagList = new NBTTagList();
+        for (@NotNull final Player player : players.values())
         {
-            @NotNull NBTTagCompound ownersCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound ownersCompound = new NBTTagCompound();
             ownersCompound.setString(TAG_ID, player.id.toString());
             ownersCompound.setString(TAG_RANK, player.rank.name());
             ownerTagList.appendTag(ownersCompound);
@@ -277,14 +307,14 @@ public class Permissions implements IPermissions
         compound.setTag(TAG_OWNERS, ownerTagList);
 
         // Permissions
-        @NotNull NBTTagList permissionsTagList = new NBTTagList();
-        for (@NotNull Map.Entry<Rank, Integer> entry : permissions.entrySet())
+        @NotNull final NBTTagList permissionsTagList = new NBTTagList();
+        for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
         {
-            @NotNull NBTTagCompound permissionsCompound = new NBTTagCompound();
+            @NotNull final NBTTagCompound permissionsCompound = new NBTTagCompound();
             permissionsCompound.setString(TAG_RANK, entry.getKey().name());
 
-            @NotNull NBTTagList flagsTagList = new NBTTagList();
-            for (@NotNull Action action : Action.values())
+            @NotNull final NBTTagList flagsTagList = new NBTTagList();
+            for (@NotNull final Action action : Action.values())
             {
                 if (Utils.testFlag(entry.getValue(), action.flag))
                 {
@@ -307,6 +337,10 @@ public class Permissions implements IPermissions
         }
     }
 
+    /**
+     * Returns an unmodifiable map of the players list.
+     * @return
+     */
     @NotNull
     public Map<UUID, Player> getPlayers()
     {
@@ -314,9 +348,9 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Returns a set of UUID's that have permission to send (and receive) messages
+     * Returns a set of UUID's that have permission to send (and receive) messages.
      *
-     * @return Set of UUID's allowed to send and receive messages
+     * @return Set of UUID's allowed to send and receive messages.
      */
     public Set<UUID> getMessagePlayers()
     {
@@ -325,26 +359,36 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Checks if a rank can perform an action
+     * Checks if a rank can perform an action.
      *
-     * @param rank   Rank you want to check
-     * @param action Action you want to perform
-     * @return true if rank has permission for action, otherwise false
+     * @param rank   Rank you want to check.
+     * @param action Action you want to perform.
+     * @return true if rank has permission for action, otherwise false.
      */
-    public boolean hasPermission(Rank rank, @NotNull Action action)
+    public boolean hasPermission(final Rank rank, @NotNull final Action action)
     {
         return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
-                 || Utils.testFlag(permissions.get(rank), action.flag);
+                 || Utils.testFlag(permissionMap.get(rank), action.flag);
     }
 
-    public Set<Player> getPlayersByRank(Rank rank)
+    /**
+     * Gets all player by a certain rank.
+     * @param rank the rank.
+     * @return set of players.
+     */
+    public Set<Player> getPlayersByRank(final Rank rank)
     {
         return this.players.values().stream()
                  .filter(player -> player.rank.equals(rank))
                  .collect(Collectors.toSet());
     }
 
-    public Set<Player> getPlayersByRank(@NotNull Set<Rank> ranks)
+    /**
+     * Gets all player by a set of ranks.
+     * @param ranks the set of ranks.
+     * @return set of players.
+     */
+    public Set<Player> getPlayersByRank(@NotNull final Set<Rank> ranks)
     {
         return this.players.values().stream()
                  .filter(player -> ranks.contains(player.rank))
@@ -352,93 +396,94 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Returns the map of permissions and ranks
+     * Returns the map of permissionMap and ranks.
      *
-     * @return map of permissions
+     * @return map of permissionMap.
      */
     @NotNull
-    public Map<Rank, Integer> getPermissions()
+    public Map<Rank, Integer> getPermissionMap()
     {
-        return permissions;
+        return permissionMap;
     }
 
     /**
-     * Checks if the player has the permission of an action
+     * Checks if the player has the permission of an action.
      *
-     * @param player {@link EntityPlayer} player
-     * @param action {@link Permissions.Action} action
-     * @return true if player has permissions, otherwise false
+     * @param player {@link EntityPlayer} player.
+     * @param action {@link Permissions.Action} action.
+     * @return true if player has permissionMap, otherwise false.
      */
     @Override
-    public boolean hasPermission(@NotNull EntityPlayer player, @NotNull Action action)
+    public boolean hasPermission(@NotNull final EntityPlayer player, @NotNull final Action action)
     {
         return hasPermission(getRank(player), action);
     }
 
     /**
-     * Returns the rank of a player
+     * Returns the rank of a player.
      *
-     * @param player player to check rank
-     * @return Rank of te player
+     * @param player player to check rank.
+     * @return Rank of te player.
      */
     @NotNull
-    public Rank getRank(@NotNull EntityPlayer player)
+    public Rank getRank(@NotNull final EntityPlayer player)
     {
         return getRank(player.getGameProfile().getId());
     }
 
     /**
-     * Remove permission for a specific rank
+     * Remove permission for a specific rank.
      *
-     * @param rank   Rank to remove permission
-     * @param action Action to remove from rank
+     * @param rank   Rank to remove permission.
+     * @param action Action to remove from rank.
      */
-    public void removePermission(Rank rank, @NotNull Action action)
+    public void removePermission(final Rank rank, @NotNull final Action action)
     {
-        int flags = permissions.get(rank);
+        final int flags = permissionMap.get(rank);
         if (Utils.testFlag(flags, action.flag))
         {
-            permissions.put(rank, Utils.unsetFlag(flags, action.flag));
+            permissionMap.put(rank, Utils.unsetFlag(flags, action.flag));
             markDirty();
         }
     }
 
     /**
-     * Returns the rank belonging to the UUID
+     * Returns the rank belonging to the UUID.
      *
-     * @param id UUID that you want to check rank of
-     * @return Rank of the UUID
+     * @param id UUID that you want to check rank of.
+     * @return Rank of the UUID.
      */
     @NotNull
     @Override
-    public Rank getRank(UUID id)
+    public Rank getRank(final UUID id)
     {
-        Player player = players.get(id);
+        final Player player = players.get(id);
         return player != null ? player.rank : Rank.NEUTRAL;
     }
 
     /**
-     * Toggle permission for a specific rank
+     * Toggle permission for a specific rank.
      *
-     * @param rank   Rank to toggle permission
-     * @param action Action to toggle permission
+     * @param rank   Rank to toggle permission.
+     * @param action Action to toggle permission.
      */
-    public void togglePermission(Rank rank, @NotNull Action action)
+    public void togglePermission(final Rank rank, @NotNull final Action action)
     {
-        permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
+        permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.flag));
         markDirty();
     }
 
     /**
-     * Sets the player's rank to a given rank
+     * Sets the player's rank to a given rank.
      *
-     * @param id   UUID of the player of the new rank
-     * @param rank Desired rank
-     * @return True if successful, otherwise false
+     * @param id   UUID of the player of the new rank.
+     * @param rank Desired rank.
+     * @param world the world the player is in.
+     * @return True if successful, otherwise false.
      */
-    public boolean setPlayerRank(UUID id, Rank rank, World world)
+    public boolean setPlayerRank(final UUID id, final Rank rank, final World world)
     {
-        Player player = players.get(id);
+        final Player player = players.get(id);
 
         if (player != null)
         {
@@ -449,7 +494,7 @@ public class Permissions implements IPermissions
         else
         {
 
-            GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(id);
+            final GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getProfileByUUID(id);
 
             return gameprofile != null && addPlayer(gameprofile, rank);
         }
@@ -458,15 +503,15 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Adds a player to the rankings
+     * Adds a player to the rankings.
      *
-     * @param gameprofile GameProfile of the player
-     * @param rank        Desired rank
+     * @param gameprofile GameProfile of the player.
+     * @param rank        Desired rank.
      * @return True if succesful, otherwise false.
      */
-    private boolean addPlayer(@NotNull GameProfile gameprofile, Rank rank)
+    private boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
     {
-        @NotNull Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
+        @NotNull final Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
         players.put(p.id, p);
 
         markDirty();
@@ -475,32 +520,33 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Add a player to the rankings
+     * Add a player to the rankings.
      *
-     * @param player String playername of the player to add
-     * @param rank   Rank desired starting rank
-     * @return True if successful, otherwise false
+     * @param player String playername of the player to add.
+     * @param rank   Rank desired starting rank.
+     * @param world the world the player is in.
+     * @return True if successful, otherwise false.
      */
-    public boolean addPlayer(@NotNull String player, Rank rank, World world)
+    public boolean addPlayer(@NotNull final String player, final Rank rank, final World world)
     {
         if (player.isEmpty())
         {
             return false;
         }
-        GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(player);
+        final GameProfile gameprofile = world.getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(player);
         //Check if the player already exists so that their rank isn't overridden
         return gameprofile != null && !players.containsKey(gameprofile.getId()) && addPlayer(gameprofile, rank);
     }
 
     /**
-     * Remove a player from the permissions.
+     * Remove a player from the permissionMap.
      *
-     * @param id UUID of the player
+     * @param id UUID of the player.
      * @return True if succesfull, otherwise false.
      */
-    public boolean removePlayer(UUID id)
+    public boolean removePlayer(final UUID id)
     {
-        Player player = players.get(id);
+        final Player player = players.get(id);
         AchievementUtils.syncAchievements(colony);
         if (player != null && player.getRank() != Rank.OWNER && players.remove(id) != null)
         {
@@ -514,7 +560,7 @@ public class Permissions implements IPermissions
     /**
      * Returns the owner of this permission instance.
      *
-     * @return UUID of the owner
+     * @return UUID of the owner.
      */
     @Nullable
     public UUID getOwner()
@@ -535,7 +581,7 @@ public class Permissions implements IPermissions
      * <p>
      * Can be quite expensive in colonies with many players.
      *
-     * @return the corresponding entry or null
+     * @return the corresponding entry or null.
      */
     @Nullable
     private Map.Entry<UUID, Player> getOwnerEntry()
@@ -551,7 +597,7 @@ public class Permissions implements IPermissions
     }
 
     @Override
-    public boolean isColonyMember(@NotNull EntityPlayer player)
+    public boolean isColonyMember(@NotNull final EntityPlayer player)
     {
         return players.containsKey(player.getGameProfile().getId());
     }
@@ -559,7 +605,7 @@ public class Permissions implements IPermissions
     /**
      * Returns the name of the owner of this permission instance.
      *
-     * @return Name of the owner
+     * @return Name of the owner.
      */
     @Nullable
     public String getOwnerName()
@@ -576,31 +622,31 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Checks if a user is a subscriber
+     * Checks if a user is a subscriber.
      *
      * @param player {@link EntityPlayer} to check for subscription.
      * @return True is subscriber, otherwise false.
      */
-    public boolean isSubscriber(@NotNull EntityPlayer player)
+    public boolean isSubscriber(@NotNull final EntityPlayer player)
     {
         return isSubscriber(player.getGameProfile().getId());
     }
 
     /**
-     * See {@link #isSubscriber(EntityPlayer)}
+     * See {@link #isSubscriber(EntityPlayer)}.
      *
-     * @param player {@link UUID} of the player
+     * @param player {@link UUID} of the player.
      * @return True if subscriber, otherwise false.
      */
-    private boolean isSubscriber(UUID player)
+    private boolean isSubscriber(final UUID player)
     {
         return getRank(player).isSubscriber;
     }
 
     /**
-     * Returns if the instance is dirty
+     * Returns if the instance is dirty.
      *
-     * @return True if dirty, otherise false.
+     * @return True if dirty, otherwise false.
      */
     public boolean isDirty()
     {
@@ -608,7 +654,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Marks instance not dirty
+     * Marks instance not dirty.
      */
     public void clearDirty()
     {
@@ -616,18 +662,18 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Serializes network data
+     * Serializes network data.
      *
-     * @param buf        {@link ByteBuf} to write to
-     * @param viewerRank Rank of the viewer
+     * @param buf        {@link ByteBuf} to write to.
+     * @param viewerRank Rank of the viewer.
      */
-    public void serializeViewNetworkData(@NotNull ByteBuf buf, @NotNull Permissions.Rank viewerRank)
+    public void serializeViewNetworkData(@NotNull final ByteBuf buf, @NotNull final Permissions.Rank viewerRank)
     {
         ByteBufUtils.writeUTF8String(buf, viewerRank.name());
 
         //  Owners
         buf.writeInt(players.size());
-        for (@NotNull Map.Entry<UUID, Player> player : players.entrySet())
+        for (@NotNull final Map.Entry<UUID, Player> player : players.entrySet())
         {
             PacketUtils.writeUUID(buf, player.getKey());
             ByteBufUtils.writeUTF8String(buf, player.getValue().name);
@@ -635,8 +681,8 @@ public class Permissions implements IPermissions
         }
 
         // Permissions
-        buf.writeInt(permissions.size());
-        for (@NotNull Map.Entry<Rank, Integer> entry : permissions.entrySet())
+        buf.writeInt(permissionMap.size());
+        for (@NotNull final Map.Entry<Rank, Integer> entry : permissionMap.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey().name());
             buf.writeInt(entry.getValue());
@@ -644,7 +690,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Ranks within a colony
+     * Ranks within a colony.
      */
     public enum Rank
     {
@@ -654,6 +700,9 @@ public class Permissions implements IPermissions
         NEUTRAL(false),
         HOSTILE(false);
 
+        /**
+         * Is the Rank a subscriber to certain events.
+         */
         public final boolean isSubscriber;
 
         /**
@@ -665,7 +714,7 @@ public class Permissions implements IPermissions
          *
          * @param isSubscriber boolean whether auto-subscribed to this colony.
          */
-        Rank(boolean isSubscriber)
+        Rank(final boolean isSubscriber)
         {
             this.isSubscriber = isSubscriber;
         }
@@ -673,7 +722,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Actions that can be performed in a colony
+     * Actions that can be performed in a colony.
      */
     public enum Action
     {
@@ -696,7 +745,7 @@ public class Permissions implements IPermissions
          *
          * @param bit how many bits should be shifted and set
          */
-        Action(int bit)
+        Action(final int bit)
         {
             this.flag = 0x1 << bit;
         }
@@ -708,7 +757,7 @@ public class Permissions implements IPermissions
     }
 
     /**
-     * Player within a colony
+     * Player within a colony.
      */
     public static class Player
     {
@@ -716,7 +765,13 @@ public class Permissions implements IPermissions
         private String name;
         private Rank   rank;
 
-        public Player(UUID id, String name, Rank rank)
+        /**
+         * Instantiates our own player object.
+         * @param id id of the player.
+         * @param name name of the player
+         * @param rank rank of the player.
+         */
+        public Player(final UUID id, final String name, final Rank rank)
         {
             this.id = id;
             this.name = name;
@@ -750,29 +805,39 @@ public class Permissions implements IPermissions
 
     private static class RankPair
     {
+        /**
+         * The rank if promoted.
+         */
         private Rank promote;
+
+        /**
+         * The rank if demoted.
+         */
         private Rank demote;
 
         /**
-         * Links promotion and demotion
+         * Links promotion and demotion.
          *
-         * @param p Promoting rank
-         * @param d Demoting rank
+         * @param p Promoting rank.
+         * @param d Demoting rank.
          */
-        RankPair(Rank p, Rank d)
+        RankPair(final Rank p, final Rank d)
         {
             promote = p;
             demote = d;
         }
     }
 
+    /**
+     * A client side representation of the permissions.
+     */
     public static class View implements IPermissions
     {
         private Rank               userRank    = Rank.NEUTRAL;
         @NotNull
-        private Map<UUID, Player>  players     = new HashMap<>();
+        private final Map<UUID, Player>  players     = new HashMap<>();
         @NotNull
-        private Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
+        private final Map<Rank, Integer> permissions = new EnumMap<>(Rank.class);
 
         public Rank getUserRank()
         {
@@ -785,8 +850,13 @@ public class Permissions implements IPermissions
             return Collections.unmodifiableMap(players);
         }
 
+        /**
+         * Gets all player by a certain rank.
+         * @param rank the rank.
+         * @return set of players.
+         */
         @NotNull
-        public Set<Player> getPlayersByRank(Rank rank)
+        public Set<Player> getPlayersByRank(final Rank rank)
         {
             return Collections.unmodifiableSet(
               this.players.values()
@@ -795,8 +865,13 @@ public class Permissions implements IPermissions
                 .collect(Collectors.toSet()));
         }
 
+        /**
+         * Gets all player by a certain set of rank.
+         * @param ranks the set of rank.
+         * @return set of players.
+         */
         @NotNull
-        public Set<Player> getPlayersByRank(@NotNull Set<Rank> ranks)
+        public Set<Player> getPlayersByRank(@NotNull final Set<Rank> ranks)
         {
             return Collections.unmodifiableSet(
               this.players.values()
@@ -811,20 +886,38 @@ public class Permissions implements IPermissions
             return permissions;
         }
 
-        public boolean hasPermission(UUID id, @NotNull Action action)
+        /**
+         * Checks if the player has the permission to do an action.
+         * @param id the id of the player.
+         * @param action the action he is trying to execute.
+         * @return true if so.
+         */
+        public boolean hasPermission(final UUID id, @NotNull final Action action)
         {
             return hasPermission(getRank(id), action);
         }
 
-        public boolean hasPermission(Rank rank, @NotNull Action action)
+        /**
+         * Checks if the rank has the permission to do an action.
+         * @param rank the rank of the player.
+         * @param action the action he is trying to execute.
+         * @return true if so.
+         */
+        public boolean hasPermission(final Rank rank, @NotNull final Action action)
         {
             return (rank == Rank.OWNER && action != Action.GUARDS_ATTACK)
                      || Utils.testFlag(permissions.get(rank), action.flag);
         }
 
-        public boolean setPermission(Rank rank, @NotNull Action action)
+        /**
+         * Sets if the rank has the permission to do an action.
+         * @param rank the rank to set.
+         * @param action the action he is trying to execute.
+         * @return true if so.
+         */
+        public boolean setPermission(final Rank rank, @NotNull final Action action)
         {
-            int flags = permissions.get(rank);
+            final int flags = permissions.get(rank);
 
             //check that flag isn't set
             if (!Utils.testFlag(flags, action.flag))
@@ -835,9 +928,15 @@ public class Permissions implements IPermissions
             return false;
         }
 
-        public boolean removePermission(Rank rank, @NotNull Action action)
+        /**
+         * Remove if the rank has the permission to do an action.
+         * @param rank the rank to set.
+         * @param action the action he is trying to execute.
+         * @return true if so.
+         */
+        public boolean removePermission(final Rank rank, @NotNull final Action action)
         {
-            int flags = permissions.get(rank);
+            final int flags = permissions.get(rank);
             if (Utils.testFlag(flags, action.flag))
             {
                 permissions.put(rank, Utils.unsetFlag(flags, action.flag));
@@ -846,60 +945,74 @@ public class Permissions implements IPermissions
             return false;
         }
 
-        public void togglePermission(Rank rank, @NotNull Action action)
+        /**
+         * Toggle a permission flag.
+         * @param rank the rank.
+         * @param action the action.
+         */
+        public void togglePermission(final Rank rank, @NotNull final Action action)
         {
             permissions.put(rank, Utils.toggleFlag(permissions.get(rank), action.flag));
         }
 
-        public void deserialize(@NotNull ByteBuf buf)
+        /**
+         * Deserialize content of class to a buffer.
+         * @param buf the buffer.
+         */
+        public void deserialize(@NotNull final ByteBuf buf)
         {
             userRank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
 
             //  Owners
             players.clear();
-            int numOwners = buf.readInt();
+            final int numOwners = buf.readInt();
             for (int i = 0; i < numOwners; ++i)
             {
-                UUID id = PacketUtils.readUUID(buf);
-                String name = ByteBufUtils.readUTF8String(buf);
-                Rank rank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
+                final UUID id = PacketUtils.readUUID(buf);
+                final String name = ByteBufUtils.readUTF8String(buf);
+                final Rank rank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
 
                 players.put(id, new Player(id, name, rank));
             }
 
             //Permissions
             permissions.clear();
-            int numPermissions = buf.readInt();
+            final int numPermissions = buf.readInt();
             for (int i = 0; i < numPermissions; ++i)
             {
-                Rank rank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
-                int flags = buf.readInt();
+                final Rank rank = Rank.valueOf(ByteBufUtils.readUTF8String(buf));
+                final int flags = buf.readInt();
                 permissions.put(rank, flags);
             }
         }
 
+        /**
+         * Get the rank of a certain player.
+         * @param player the player.
+         * @return the rank.
+         */
         @NotNull
-        public Rank getRank(@NotNull EntityPlayer player)
+        public Rank getRank(@NotNull final EntityPlayer player)
         {
             return getRank(player.getUniqueID());
         }
 
         @NotNull
         @Override
-        public Rank getRank(UUID id)
+        public Rank getRank(final UUID id)
         {
-            Player player = players.get(id);
-            return player != null ? player.rank : Rank.NEUTRAL;
+            final Player player = players.get(id);
+            return player == null ?  Rank.NEUTRAL : player.rank;
         }
 
         @Override
-        public boolean hasPermission(@NotNull EntityPlayer player, @NotNull Action action)
+        public boolean hasPermission(@NotNull final EntityPlayer player, @NotNull final Action action)
         {
             return hasPermission(getRank(player), action);
         }
 
         @Override
-        public boolean isColonyMember(@NotNull EntityPlayer player)
+        public boolean isColonyMember(@NotNull final EntityPlayer player)
         {
             return players.containsKey(player.getUniqueID());
         }

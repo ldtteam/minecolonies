@@ -41,7 +41,7 @@ public class Node
      * @param x X-coordinate in the node
      * @param z Z-coordinate in the node
      */
-    public Node(int x, int z)
+    public Node(final int x, final int z)
     {
         this.x = x;
         this.z = z;
@@ -61,21 +61,21 @@ public class Node
      * @return Node created from compound
      */
     @NotNull
-    public static Node createFromNBT(@NotNull NBTTagCompound compound)
+    public static Node createFromNBT(@NotNull final NBTTagCompound compound)
     {
-        int x = compound.getInteger(TAG_X);
-        int z = compound.getInteger(TAG_Z);
+        final int x = compound.getInteger(TAG_X);
+        final int z = compound.getInteger(TAG_Z);
 
-        NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
+        final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
 
-        NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
+        final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
-        NodeStatus directionPosX = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_X));
-        NodeStatus directionNegX = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_X));
-        NodeStatus directionPosZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_Z));
-        NodeStatus directionNegZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_Z));
+        final NodeStatus directionPosX = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_X));
+        final NodeStatus directionNegX = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_X));
+        final NodeStatus directionPosZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_Z));
+        final NodeStatus directionNegZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_Z));
 
-        @NotNull Node node = new Node(x, z);
+        @NotNull final Node node = new Node(x, z);
         node.setStyle(style);
         node.setStatus(status);
         node.setDirectionPosX(directionPosX);
@@ -101,7 +101,7 @@ public class Node
      *
      * @param directionPosX {@link NodeStatus} of Positive X node
      */
-    public void setDirectionPosX(NodeStatus directionPosX)
+    public void setDirectionPosX(final NodeStatus directionPosX)
     {
         this.directionPosX = directionPosX;
     }
@@ -121,7 +121,7 @@ public class Node
      *
      * @param directionNegX {@link NodeStatus} of Negative X node
      */
-    public void setDirectionNegX(NodeStatus directionNegX)
+    public void setDirectionNegX(final NodeStatus directionNegX)
     {
         this.directionNegX = directionNegX;
     }
@@ -141,7 +141,7 @@ public class Node
      *
      * @param directionPosZ {@link NodeStatus} of positive Z node
      */
-    public void setDirectionPosZ(NodeStatus directionPosZ)
+    public void setDirectionPosZ(final NodeStatus directionPosZ)
     {
         this.directionPosZ = directionPosZ;
     }
@@ -161,7 +161,7 @@ public class Node
      *
      * @param directionNegZ {@link NodeStatus} of negative Z node
      */
-    public void setDirectionNegZ(NodeStatus directionNegZ)
+    public void setDirectionNegZ(final NodeStatus directionNegZ)
     {
         this.directionNegZ = directionNegZ;
     }
@@ -171,7 +171,7 @@ public class Node
      *
      * @param compound Compound to write to
      */
-    public void writeToNBT(@NotNull NBTTagCompound compound)
+    public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         compound.setInteger(TAG_X, x);
         compound.setInteger(TAG_Z, z);
@@ -221,7 +221,7 @@ public class Node
      *
      * @param status {@link NodeStatus}
      */
-    public void setStatus(NodeStatus status)
+    public void setStatus(final NodeStatus status)
     {
         this.status = status;
     }
@@ -258,7 +258,7 @@ public class Node
      *
      * @param style {@link NodeType}
      */
-    public void setStyle(NodeType style)
+    public void setStyle(final NodeType style)
     {
         this.style = style;
     }

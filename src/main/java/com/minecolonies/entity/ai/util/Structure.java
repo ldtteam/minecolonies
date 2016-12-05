@@ -35,7 +35,7 @@ public class Structure
          * @param message the message to pass along
          * @param cause   the cause of this exception
          */
-        public StructureException(String message, Throwable cause)
+        public StructureException(final String message, final Throwable cause)
         {
             super(message, cause);
         }
@@ -45,7 +45,7 @@ public class Structure
          *
          * @param message the message to pass along.
          */
-        public StructureException(String message)
+        public StructureException(final String message)
         {
             super(message);
         }
@@ -102,7 +102,7 @@ public class Structure
      * @param rotation          the rotation it should have
      * @throws StructureException when there is an error loading the schematic file
      */
-    public Structure(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation) throws StructureException
+    public Structure(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation) throws StructureException
     {
         this(targetWorld, buildingLocation, schematicFileName, rotation, Stage.CLEAR, null);
     }
@@ -118,7 +118,7 @@ public class Structure
      * @param blockProgress     the block it should start with
      * @throws StructureException when there is an error loading the schematic file
      */
-    public Structure(World targetWorld, BlockPos buildingLocation, String schematicFileName, int rotation, Stage stageProgress, BlockPos blockProgress) throws StructureException
+    public Structure(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation, final Stage stageProgress, final BlockPos blockProgress) throws StructureException
     {
         this.schematic = loadSchematic(targetWorld, buildingLocation, schematicFileName, rotation, stageProgress, blockProgress);
         this.stage = stageProgress;
@@ -138,12 +138,12 @@ public class Structure
      */
     @Nullable
     private static StructureWrapper loadSchematic(
-                                                   @Nullable World targetWorld,
-                                                   @Nullable BlockPos buildingLocation,
-                                                   @Nullable String schematicFileName,
-                                                   int rotation,
-                                                   Stage stageProgress,
-                                                   @Nullable BlockPos blockProgress)
+                                                   @Nullable final World targetWorld,
+                                                   @Nullable final BlockPos buildingLocation,
+                                                   @Nullable final String schematicFileName,
+                                                   final int rotation,
+                                                   final Stage stageProgress,
+                                                   @Nullable final BlockPos blockProgress)
       throws StructureException
     {
         if (targetWorld == null || buildingLocation == null || schematicFileName == null)
@@ -157,7 +157,7 @@ public class Structure
         {
             tempSchematic = new StructureWrapper(targetWorld, schematicFileName);
         }
-        catch (IllegalStateException e)
+        catch (final IllegalStateException e)
         {
             throw new StructureException("failed to load schematic file!", e);
         }
@@ -226,7 +226,7 @@ public class Structure
      * @return a Result enum specifying the result
      */
     @NotNull
-    private Result advanceBlocks(@NotNull Supplier<Boolean> moveOneBlock, @NotNull Function<SchematicBlock, Boolean> checkIfApplies)
+    private Result advanceBlocks(@NotNull final Supplier<Boolean> moveOneBlock, @NotNull final Function<SchematicBlock, Boolean> checkIfApplies)
     {
         for (int i = 0; i < Configurations.maxBlocksCheckedByBuilder; i++)
         {
@@ -266,7 +266,7 @@ public class Structure
      * @param blocksToTest the blocks to test
      * @return true if they are the same
      */
-    private boolean checkBlocksEqual(@NotNull SchematicBlock blocksToTest)
+    private static boolean checkBlocksEqual(@NotNull final SchematicBlock blocksToTest)
     {
         return blocksToTest.block == blocksToTest.worldBlock
                  && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);

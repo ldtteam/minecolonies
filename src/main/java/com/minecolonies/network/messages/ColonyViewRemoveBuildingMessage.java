@@ -12,36 +12,42 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Add or Update a ColonyView on the client
+ * Add or Update a ColonyView on the client.
  */
 public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandler<ColonyViewRemoveBuildingMessage, IMessage>
 {
     private int      colonyId;
     private BlockPos buildingId;
 
-    public ColonyViewRemoveBuildingMessage() {}
+    /**
+     * Empty constructor used when registering the message.
+     */
+    public ColonyViewRemoveBuildingMessage()
+    {
+        super();
+    }
 
     /**
-     * Creates an object for the building remove message
+     * Creates an object for the building remove message.
      *
-     * @param colony   Colony the building is in
-     * @param building AbstractBuilding that is removed
+     * @param colony   Colony the building is in.
+     * @param building AbstractBuilding that is removed.
      */
-    public ColonyViewRemoveBuildingMessage(@NotNull Colony colony, BlockPos building)
+    public ColonyViewRemoveBuildingMessage(@NotNull final Colony colony, final BlockPos building)
     {
         this.colonyId = colony.getID();
         this.buildingId = building;
     }
 
     @Override
-    public void fromBytes(@NotNull ByteBuf buf)
+    public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
     }
 
     @Override
-    public void toBytes(@NotNull ByteBuf buf)
+    public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
@@ -49,7 +55,7 @@ public class ColonyViewRemoveBuildingMessage implements IMessage, IMessageHandle
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull ColonyViewRemoveBuildingMessage message, MessageContext ctx)
+    public IMessage onMessage(@NotNull final ColonyViewRemoveBuildingMessage message, final MessageContext ctx)
     {
         return ColonyManager.handleColonyViewRemoveBuildingMessage(message.colonyId, message.buildingId);
     }

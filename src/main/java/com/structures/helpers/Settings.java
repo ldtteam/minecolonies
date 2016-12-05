@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Class used to store
+ * Class used to store.
  */
 public final class Settings
 {
@@ -17,6 +17,10 @@ public final class Settings
      */
     public static final Settings                 instance  = new Settings();
     private final       BlockPos.MutableBlockPos offset    = new BlockPos.MutableBlockPos();
+    /**
+     * The position of the structure.
+     */
+    public              BlockPos                 pos       = null;
     private             boolean                  inHutMode = true;
     @Nullable
     private             Structure                structure = null;
@@ -24,8 +28,6 @@ public final class Settings
     private             String                   hutDec    = "";
     private             String                   style     = "";
     private             int                      level     = 0;
-    public             BlockPos                  pos = null;
-
     private boolean isPendingReset = false;
 
     private Settings()
@@ -37,7 +39,7 @@ public final class Settings
      *
      * @param pos location to render.
      */
-    public void moveTo(BlockPos pos)
+    public void moveTo(final BlockPos pos)
     {
         if (this.structure == null)
         {
@@ -52,7 +54,7 @@ public final class Settings
     @Nullable
     public Structure getActiveStructure()
     {
-        if(structure != null && structure.isTemplateNull())
+        if (structure != null && structure.isTemplateNull())
         {
 
             this.structure = null;
@@ -65,15 +67,15 @@ public final class Settings
      *
      * @param structure structure to render.
      */
-    public void setActiveSchematic(Structure structure)
+    public void setActiveSchematic(final Structure structure)
     {
-        if (structure != null)
+        if (structure == null)
         {
-            this.structure = structure;
+            reset();
         }
         else
         {
-            reset();
+            this.structure = structure;
         }
     }
 
@@ -84,7 +86,7 @@ public final class Settings
     {
         structure = null;
         isPendingReset = false;
-        offset.setPos(0,0,0);
+        offset.setPos(0, 0, 0);
         rotation = 0;
     }
 
@@ -99,7 +101,7 @@ public final class Settings
     /**
      * @param mode true if in hut mode, false if in decoration mode.
      */
-    public void setInHutMode(boolean mode)
+    public void setInHutMode(final boolean mode)
     {
         inHutMode = mode;
     }
@@ -112,7 +114,7 @@ public final class Settings
      * @param level    AbstractBuilding level.
      * @param rotation The number of times the building is rotated.
      */
-    public void setSchematicInfo(String hutDec, String style, int level, int rotation)
+    public void setSchematicInfo(final String hutDec, final String style, final int level, final int rotation)
     {
         this.hutDec = hutDec;
         this.style = style;
@@ -153,6 +155,16 @@ public final class Settings
     }
 
     /**
+     * Sets the rotation.
+     *
+     * @param rotation the rotation to set.
+     */
+    public void setRotation(final int rotation)
+    {
+        this.rotation = rotation;
+    }
+
+    /**
      * Call reset next tick.
      */
     public void markDirty()
@@ -170,15 +182,16 @@ public final class Settings
 
     /**
      * Calculates the offset regarding the blockHut.
+     *
      * @param settings depending on the rotation.
      * @return the offset a blockPos.
      */
     @NotNull
-    public BlockPos getOffset(PlacementSettings settings)
+    public BlockPos getOffset(final PlacementSettings settings)
     {
-        if(structure != null)
+        if (structure != null)
         {
-            for (Template.BlockInfo info : structure.getBlockInfoWithSettings(settings))
+            for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(settings))
             {
                 if (info.blockState.getBlock() instanceof AbstractBlockHut)
                 {
@@ -187,15 +200,6 @@ public final class Settings
                 }
             }
         }
-        return new BlockPos(0,0,0);
-    }
-
-    /**
-     * Sets the rotation.
-     * @param rotation the rotation to set.
-     */
-    public void setRotation(final int rotation)
-    {
-        this.rotation = rotation;
+        return new BlockPos(0, 0, 0);
     }
 }

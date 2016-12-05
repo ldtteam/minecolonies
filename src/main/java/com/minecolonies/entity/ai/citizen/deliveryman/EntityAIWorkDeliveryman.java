@@ -5,7 +5,7 @@ import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Performs deliveryman work
+ * Performs deliveryman work.
  * Created: July 18, 2014
  *
  * @author MrIbby
@@ -17,7 +17,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @param deliveryman the job he has.
      */
-    public EntityAIWorkDeliveryman(@NotNull JobDeliveryman deliveryman)
+    public EntityAIWorkDeliveryman(@NotNull final JobDeliveryman deliveryman)
     {
         super(deliveryman);
     }

@@ -6,15 +6,15 @@
 
     <xs:simpleType name="align">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="TopLeft"/>
-            <xs:enumeration value="TopMiddle"/>
-            <xs:enumeration value="TopRight"/>
-            <xs:enumeration value="MiddleLeft"/>
-            <xs:enumeration value="Middle"/>
-            <xs:enumeration value="MiddleRight"/>
-            <xs:enumeration value="BottomLeft"/>
-            <xs:enumeration value="BottomMiddle"/>
-            <xs:enumeration value="BottomRight"/>
+            <xs:enumeration value="TOP_LEFT"/>
+            <xs:enumeration value="TOP_MIDDLE"/>
+            <xs:enumeration value="TOP_RIGHT"/>
+            <xs:enumeration value="MIDDLE_LEFT"/>
+            <xs:enumeration value="MIDDLE"/>
+            <xs:enumeration value="MIDDLE_RIGHT"/>
+            <xs:enumeration value="BOTTOM_LEFT"/>
+            <xs:enumeration value="BOTTOM_MIDDLE"/>
+            <xs:enumeration value="BOTTOM_RIGHT"/>
         </xs:restriction>
     </xs:simpleType>
 

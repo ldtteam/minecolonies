@@ -31,12 +31,12 @@ public class ScrollingList extends ScrollingView
      *
      * @param params Params for the ScrollingList
      */
-    public ScrollingList(PaneParams params)
+    public ScrollingList(final PaneParams params)
     {
         super(params);
     }
 
-    public void setDataProvider(DataProvider p)
+    public void setDataProvider(final DataProvider p)
     {
         dataProvider = p;
         refreshElementPanes();
@@ -58,9 +58,9 @@ public class ScrollingList extends ScrollingView
     }
 
     @Override
-    public void parseChildren(@NotNull PaneParams params)
+    public void parseChildren(@NotNull final PaneParams params)
     {
-        List<PaneParams> childNodes = params.getChildren();
+        final List<PaneParams> childNodes = params.getChildren();
         if (childNodes == null)
         {
             return;
@@ -77,7 +77,7 @@ public class ScrollingList extends ScrollingView
      * @param pane the pane to find the index of.
      * @return the index.
      */
-    public int getListElementIndexByPane(Pane pane)
+    public int getListElementIndexByPane(final Pane pane)
     {
         return ((ScrollingListContainer) container).getListElementIndexByPane(pane);
     }

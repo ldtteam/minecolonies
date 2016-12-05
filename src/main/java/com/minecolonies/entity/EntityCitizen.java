@@ -12,6 +12,7 @@ import com.minecolonies.configuration.Configurations;
 import com.minecolonies.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.entity.ai.minimal.*;
 import com.minecolonies.entity.pathfinding.PathNavigate;
+import com.minecolonies.entity.pathfinding.WalkToProxy;
 import com.minecolonies.inventory.InventoryCitizen;
 import com.minecolonies.lib.Constants;
 import com.minecolonies.network.messages.BlockParticleEffectMessage;
@@ -70,12 +71,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final int MOVE_AWAY_RANGE = 6;
 
     /**
-     * Number of ticks to heal the citizens
+     * Number of ticks to heal the citizens.
      */
     private static final int HEAL_CITIZENS_AFTER = 100;
 
     /**
-     * Tag's to save data to NBT
+     * Tag's to save data to NBT.
      */
     private static final String TAG_COLONY_ID      = "colony";
     private static final String TAG_CITIZEN        = "citizen";
@@ -141,19 +142,39 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Building level at which the workers work even if it is raining.
      */
-    private static final int    BONUS_BUILDING_LEVEL   = 5;
+    private static final int    BONUS_BUILDING_LEVEL = 5;
+    /**
+     * The speed the citizen has to rotate.
+     */
+    private static final double ROTATION_MOVEMENT    = 30;
+    /**
+     * 20 ticks or also: once a second.
+     */
+    private static final int TICKS_20                = 20;
+    /**
+     * This times the citizen id is the personal offset of the citizen.
+     */
+    private static final int OFFSET_TICK_MULTIPLIER  = 7;
+    /**
+     * Range required for the citizen to be home.
+     */
+    private static final double RANGE_TO_BE_HOME     = 16;
     private static Field navigatorField;
     protected Status                   status  = Status.IDLE;
     private   RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
     private String           renderMetadata;
     private ResourceLocation texture;
-    private InventoryCitizen inventory;
+    private final InventoryCitizen inventory;
     private int              colonyId;
     private int citizenId = 0;
     private int level;
     private int textureId;
     /**
-     * Skill modifier defines how fast a citizen levels in a certain skill
+     * Walk to proxy.
+     */
+    private WalkToProxy proxy;
+    /**
+     * Skill modifier defines how fast a citizen levels in a certain skill.
      */
     private double skillModifier = 0;
     private boolean     female;
@@ -162,15 +183,15 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Nullable
     private CitizenData citizenData;
     @NotNull
-    private Map<String, Integer> statusMessages = new HashMap<>();
-    private PathNavigate newNavigator;
+    private final Map<String, Integer> statusMessages = new HashMap<>();
+    private final PathNavigate newNavigator;
 
     /**
      * Citizen constructor.
      *
      * @param world the world the citizen lives in.
      */
-    public EntityCitizen(World world)
+    public EntityCitizen(final World world)
     {
         super(world);
         setSize((float) CITIZEN_WIDTH, (float) CITIZEN_HEIGHT);
@@ -189,15 +210,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
         initTasks();
     }
 
-    /**
-     *
-     */
     private synchronized void updateNavigatorField()
     {
         if (navigatorField == null)
         {
-            Field[] fields = EntityLiving.class.getDeclaredFields();
-            for (@NotNull Field field : fields)
+            final Field[] fields = EntityLiving.class.getDeclaredFields();
+            for (@NotNull final Field field : fields)
             {
                 if (field.getType().equals(net.minecraft.pathfinding.PathNavigate.class))
                 {
@@ -217,7 +235,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             navigatorField.set(this, this.newNavigator);
         }
-        catch (IllegalAccessException e)
+        catch (final IllegalAccessException e)
         {
             Log.getLogger().error("Navigator error", e);
         }
@@ -248,7 +266,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     public AbstractJob getColonyJob()
     {
-        return citizenData != null ? citizenData.getJob() : null;
+        return citizenData == null ? null : citizenData.getJob();
     }
 
     /**
@@ -256,14 +274,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param job the set job.
      */
-    public void onJobChanged(@Nullable AbstractJob job)
+    public void onJobChanged(@Nullable final AbstractJob job)
     {
         //  Model
-        if (job != null)
-        {
-            modelId = job.getModel();
-        }
-        else
+        if (job == null)
         {
             switch (getLevel())
             {
@@ -281,14 +295,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
                     break;
             }
         }
+        else
+        {
+            modelId = job.getModel();
+        }
 
         dataManager.set(DATA_MODEL, modelId.name());
         setRenderMetadata("");
 
 
         //  AI Tasks
-        @NotNull Object[] currentTasks = this.tasks.taskEntries.toArray();
-        for (@NotNull Object task : currentTasks)
+        @NotNull final Object[] currentTasks = this.tasks.taskEntries.toArray();
+        for (@NotNull final Object task : currentTasks)
         {
             if (((EntityAITasks.EntityAITaskEntry) task).action instanceof AbstractEntityAIInteract)
             {
@@ -311,7 +329,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return level;
     }
 
-    public void setRenderMetadata(String metadata)
+    public void setRenderMetadata(final String metadata)
     {
         renderMetadata = metadata;
         dataManager.set(DATA_RENDER_METADATA, renderMetadata);
@@ -340,7 +358,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Nullable
     public AbstractBuildingWorker getWorkBuilding()
     {
-        return (citizenData != null) ? citizenData.getWorkBuilding() : null;
+        return (citizenData == null) ? null : citizenData.getWorkBuilding();
     }
 
     public Status getStatus()
@@ -348,7 +366,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return status;
     }
 
-    public void setStatus(Status status)
+    public void setStatus(final Status status)
     {
         this.status = status;
     }
@@ -361,25 +379,33 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param range Range to check in
      * @return True if worker is at site, otherwise false.
      */
-    public boolean isWorkerAtSiteWithMove(@NotNull BlockPos site, int range)
+    public boolean isWorkerAtSiteWithMove(@NotNull final BlockPos site, final int range)
     {
-        return EntityUtils.isWorkerAtSiteWithMove(this, site.getX(), site.getY(), site.getZ(), range)
-                 //Fix for getting stuck sometimes
-                 || EntityUtils.isWorkerAtSite(this, site.getX(), site.getY(), site.getZ(), range + 1);
+        if (proxy == null)
+        {
+            proxy = new WalkToProxy(this);
+        }
+        return proxy.walkToBlock(site, range, true);
     }
 
+    /**
+     * Get the job of the citizen.
+     * @param type of the type.
+     * @param <J> wildcard.
+     * @return the job.
+     */
     @Nullable
-    public <J extends AbstractJob> J getColonyJob(@NotNull Class<J> type)
+    public <J extends AbstractJob> J getColonyJob(@NotNull final Class<J> type)
     {
-        return citizenData != null ? citizenData.getJob(type) : null;
+        return citizenData == null ? null : citizenData.getJob(type);
     }
 
     /**
      * Change the citizens Rotation to look at said block.
      *
-     * @param block the block he should look at
+     * @param block the block he should look at.
      */
-    public void faceBlock(@Nullable BlockPos block)
+    public void faceBlock(@Nullable final BlockPos block)
     {
         if (block == null)
         {
@@ -393,7 +419,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double squareDifference = Math.sqrt(xDifference * xDifference + zDifference * zDifference);
         final double intendedRotationYaw = (Math.atan2(zDifference, xDifference) * 180.0D / Math.PI) - 90.0;
         final double intendedRotationPitch = -(Math.atan2(yDifference, squareDifference) * 180.0D / Math.PI);
-        this.setRotation((float) updateRotation(this.rotationYaw, intendedRotationYaw, 30), (float) updateRotation(this.rotationPitch, intendedRotationPitch, 30));
+        this.setRotation((float) updateRotation(this.rotationYaw, intendedRotationYaw, ROTATION_MOVEMENT), (float) updateRotation(this.rotationPitch, intendedRotationPitch, ROTATION_MOVEMENT));
 
         final double goToX = xDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
@@ -405,12 +431,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Returns the new rotation degree calculated from the current and intended rotation up to a max.
      *
-     * @param currentRotation  the current rotation the citizen has
-     * @param intendedRotation the wanted rotation he should have after applying this
-     * @param maxIncrement     the 'movement speed'
-     * @return a rotation value he should move
+     * @param currentRotation  the current rotation the citizen has.
+     * @param intendedRotation the wanted rotation he should have after applying this.
+     * @param maxIncrement     the 'movement speed.
+     * @return a rotation value he should move.
      */
-    private static double updateRotation(double currentRotation, double intendedRotation, double maxIncrement)
+    private static double updateRotation(final double currentRotation, final double intendedRotation, final double maxIncrement)
     {
         double wrappedAngle = MathHelper.wrapDegrees(intendedRotation - currentRotation);
 
@@ -428,25 +454,25 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Collect exp orbs around the entity
+     * Collect exp orbs around the entity.
      */
     public void gatherXp()
     {
-        for (@NotNull EntityXPOrb orb : getXPOrbsOnGrid())
+        for (@NotNull final EntityXPOrb orb : getXPOrbsOnGrid())
         {
-            addExperience(orb.getXpValue() / 2);
+            addExperience(orb.getXpValue() / 2.0D);
             orb.setDead();
         }
     }
 
     /**
-     * Defines the area in which the citizen automatically gathers experience
+     * Defines the area in which the citizen automatically gathers experience.
      *
-     * @return a list of xp orbs around the entity
+     * @return a list of xp orbs around the entity.
      */
     private List<EntityXPOrb> getXPOrbsOnGrid()
     {
-        @NotNull AxisAlignedBB bb = new AxisAlignedBB(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
+        @NotNull final AxisAlignedBB bb = new AxisAlignedBB(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
 
         return worldObj.getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
@@ -456,9 +482,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Increases the citizen level if he has sufficient experience.
      * This will reset the experience.
      *
-     * @param xp the amount of points added
+     * @param xp the amount of points added.
      */
-    public void addExperience(double xp)
+    public void addExperience(final double xp)
     {
         final double citizenHutLevel = getHomeBuilding() == null ? 0 : getHomeBuilding().getBuildingLevel();
         final double citizenHutMaxLevel = getHomeBuilding() == null ? 1 : getHomeBuilding().getMaxBuildingLevel();
@@ -471,7 +497,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double maxValue = Integer.MAX_VALUE - citizenData.getExperience();
         double localXp = xp * skillModifier / EXP_DIVIDER;
         final double workBuildingLevel = getWorkBuilding() == null ? 0 : getWorkBuilding().getBuildingLevel();
-        final double bonusXp = workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2);
+        final double bonusXp = workBuildingLevel * (1 + citizenHutLevel) / Math.log(this.getExperienceLevel() + 2.0D);
         localXp = localXp * bonusXp;
         if (localXp > maxValue)
         {
@@ -488,16 +514,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Entities treat being on ladders as not on ground; this breaks navigation logic
+     * Entities treat being on ladders as not on ground; this breaks navigation logic.
      */
     @Override
-    protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos)
+    protected void updateFallState(final double y, final boolean onGroundIn, final IBlockState state, final BlockPos pos)
     {
         if (!onGround)
         {
-            int px = MathHelper.floor_double(posX);
-            int py = (int) posY;
-            int pz = MathHelper.floor_double(posZ);
+            final int px = MathHelper.floor_double(posX);
+            final int py = (int) posY;
+            final int pz = MathHelper.floor_double(posZ);
 
             this.onGround =
               worldObj.getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(worldObj.getBlockState(new BlockPos(px, py, pz)), worldObj, new BlockPos(px, py, pz),
@@ -508,7 +534,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     @Override
-    public boolean attackEntityFrom(@NotNull DamageSource damageSource, float damage)
+    public boolean attackEntityFrom(@NotNull final DamageSource damageSource, final float damage)
     {
         final Entity sourceEntity = damageSource.getEntity();
         if (sourceEntity instanceof EntityCitizen && ((EntityCitizen) sourceEntity).colonyId == this.colonyId)
@@ -531,10 +557,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Called when the mob's health reaches 0.
      *
-     * @param par1DamageSource the attacking entity
+     * @param par1DamageSource the attacking entity.
      */
     @Override
-    public void onDeath(DamageSource par1DamageSource)
+    public void onDeath(final DamageSource par1DamageSource)
     {
         dropExperience();
         this.setDead();
@@ -546,14 +572,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageGuardDead",
-                  citizenData.getName());
+                  citizenData.getName(), (int)posX, (int)posY, (int)posZ);
             }
             else
             {
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageColonistDead",
-                  citizenData.getName());
+                  citizenData.getName(), (int) posX, (int)posY, (int)posZ);
             }
             colony.removeCitizen(getCitizenData());
         }
@@ -573,7 +599,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
             while (experience > 0)
             {
-                int j = EntityXPOrb.getXPSplit(experience);
+                final int j = EntityXPOrb.getXPSplit(experience);
                 experience -= j;
                 this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
             }
@@ -582,9 +608,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //Spawn particle explosion of xp orbs on death
         for (int i = 0; i < 20; ++i)
         {
-            double d2 = this.rand.nextGaussian() * 0.02D;
-            double d0 = this.rand.nextGaussian() * 0.02D;
-            double d1 = this.rand.nextGaussian() * 0.02D;
+            final double d2 = this.rand.nextGaussian() * 0.02D;
+            final double d0 = this.rand.nextGaussian() * 0.02D;
+            final double d1 = this.rand.nextGaussian() * 0.02D;
             this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
               this.posX + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
               this.posY + (this.rand.nextDouble() * this.height),
@@ -617,7 +643,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param damage damage dealt.
      */
-    private void updateArmorDamage(double damage)
+    private void updateArmorDamage(final double damage)
     {
         for (final ItemStack stack : this.getArmorInventoryList())
         {
@@ -635,25 +661,29 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
     }
 
+    /**
+     * For the time being we don't want any childrens of our colonists.
+     * @param var1 the ageable entity.
+     * @return the child.
+     */
     @Override
-    public EntityAgeable createChild(EntityAgeable var1)
+    public EntityAgeable createChild(final EntityAgeable var1)
     {
-        //TODO ???
         return null;
     }
 
     /**
      * Called when a player tries to interact with a citizen.
      *
-     * @param player which interacts with the citizen
+     * @param player which interacts with the citizen.
      * @return If citizen should interact or not.
      */
     @Override
-    public boolean processInteract(@NotNull EntityPlayer player, EnumHand hand, @Nullable ItemStack stack)
+    public boolean processInteract(@NotNull final EntityPlayer player, final EnumHand hand, @Nullable final ItemStack stack)
     {
         if (worldObj.isRemote)
         {
-            CitizenDataView citizenDataView = getCitizenDataView();
+            final CitizenDataView citizenDataView = getCitizenDataView();
             if (citizenDataView != null)
             {
                 MineColonies.proxy.showCitizenWindow(citizenDataView);
@@ -676,7 +706,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     @Override
-    public void writeEntityToNBT(NBTTagCompound compound)
+    public void writeEntityToNBT(final NBTTagCompound compound)
     {
         super.writeEntityToNBT(compound);
         compound.setInteger(TAG_STATUS, status.ordinal());
@@ -691,7 +721,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     @Override
-    public void readEntityFromNBT(NBTTagCompound compound)
+    public void readEntityFromNBT(final NBTTagCompound compound)
     {
         super.readEntityFromNBT(compound);
 
@@ -709,7 +739,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
+     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons.
      * use this to react to sunlight and start to burn.
      */
     @Override
@@ -777,9 +807,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void pickupItems()
     {
-        @NotNull List<EntityItem> retList = new ArrayList<>();
+        @NotNull final List<EntityItem> retList = new ArrayList<>();
         //I know streams look better but they are flawed in type erasure
-        for (Object o : worldObj.getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(2.0F, 0.0F, 2.0F)))
+        for (final Object o : worldObj.getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(2.0F, 0.0F, 2.0F)))
         {
             if (o instanceof EntityItem)
             {
@@ -797,12 +827,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private void cleanupChatMessages()
     {
         //Only check if there are messages and once a second
-        if (statusMessages.size() > 0 && ticksExisted % 20 == 0)
+        if (statusMessages.size() > 0 && ticksExisted % TICKS_20 == 0)
         {
-            @NotNull Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
+            @NotNull final Iterator<Map.Entry<String, Integer>> it = statusMessages.entrySet().iterator();
             while (it.hasNext())
             {
-                if (ticksExisted - it.next().getValue() > 20 * Configurations.chatFrequency)
+                if (ticksExisted - it.next().getValue() > TICKS_20 * Configurations.chatFrequency)
                 {
                     it.remove();
                 }
@@ -823,7 +853,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Sets the textures of all citizens and distinguishes between male and female
+     * Sets the textures of all citizens and distinguishes between male and female.
      */
     private void setTexture()
     {
@@ -832,19 +862,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        RenderBipedCitizen.Model model = getModelID();
+        final RenderBipedCitizen.Model model = getModelID();
 
-        String textureBase = "textures/entity/";
-        textureBase += model.textureBase;
+        String textureBase = "textures/entity/" + model.textureBase;
         textureBase += female ? "Female" : "Male";
 
-        int moddedTextureId = (textureId % model.numTextures) + 1;
+        final int moddedTextureId = (textureId % model.numTextures) + 1;
         texture = new ResourceLocation(Constants.MOD_ID, textureBase + moddedTextureId + renderMetadata + ".png");
     }
 
     public int getOffsetTicks()
     {
-        return this.ticksExisted + 7 * this.getEntityId();
+        return this.ticksExisted + OFFSET_TICK_MULTIPLIER * this.getEntityId();
     }
 
     public RenderBipedCitizen.Model getModelID()
@@ -853,7 +882,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Server-specific update for the EntityCitizen
+     * Server-specific update for the EntityCitizen.
      */
     public void updateColonyServer()
     {
@@ -874,7 +903,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void handleNullColony()
     {
-        Colony c = ColonyManager.getColony(colonyId);
+        final Colony c = ColonyManager.getColony(colonyId);
 
         if (c == null)
         {
@@ -883,7 +912,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        CitizenData data = c.getCitizen(citizenId);
+        final CitizenData data = c.getCitizen(citizenId);
         if (data == null)
         {
             //  Citizen does not exist in the Colony
@@ -895,7 +924,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return;
         }
 
-        @Nullable EntityCitizen existingCitizen = data.getCitizenEntity();
+        @Nullable final EntityCitizen existingCitizen = data.getCitizenEntity();
         if (existingCitizen != null && existingCitizen != this)
         {
             // This Citizen already has a different Entity registered to it
@@ -906,20 +935,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
         setColony(c, data);
     }
 
-    private void handleExistingCitizen(@NotNull CitizenData data, @NotNull EntityCitizen existingCitizen)
+    private void handleExistingCitizen(@NotNull final CitizenData data, @NotNull final EntityCitizen existingCitizen)
     {
         Log.getLogger().warn(String.format("EntityCitizen '%s' attempting to register with Colony #%d as Citizen #%d, but already have a citizen ('%s')",
           getUniqueID(),
           colonyId,
           citizenId,
           existingCitizen.getUniqueID()));
-        if (!existingCitizen.getUniqueID().equals(this.getUniqueID()))
+        if (existingCitizen.getUniqueID().equals(this.getUniqueID()))
         {
-            setDead();
+            data.setCitizenEntity(this);
         }
         else
         {
-            data.setCitizenEntity(this);
+            setDead();
         }
     }
 
@@ -929,7 +958,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param c    the colony.
      * @param data the data of the new citizen.
      */
-    public void setColony(@Nullable Colony c, @Nullable CitizenData data)
+    public void setColony(@Nullable final Colony c, @Nullable final CitizenData data)
     {
         if (c == null)
         {
@@ -969,7 +998,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void updateLevel()
     {
-        level = citizenData != null ? citizenData.getLevel() : 0;
+        level = citizenData == null ? 0 : citizenData.getLevel();
         dataManager.set(DATA_LEVEL, level);
     }
 
@@ -982,7 +1011,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (colonyId != 0 && citizenId != 0)
         {
-            ColonyView colonyView = ColonyManager.getColonyView(colonyId);
+            final ColonyView colonyView = ColonyManager.getColonyView(colonyId);
             if (colonyView != null)
             {
                 return colonyView.getCitizen(citizenId);
@@ -1028,12 +1057,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Drop the equipment for this entity.
      */
     @Override
-    protected void dropEquipment(boolean par1, int par2)
+    protected void dropEquipment(final boolean par1, final int par2)
     {
         //Drop actual inventory
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            ItemStack itemstack = inventory.getStackInSlot(i);
+            final ItemStack itemstack = inventory.getStackInSlot(i);
             if (itemstack != null && itemstack.stackSize > 0)
             {
                 entityDropItem(itemstack);
@@ -1042,7 +1071,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Returns false if the newer Entity AI code should be run
+     * Returns false if the newer Entity AI code should be run.
      */
     @Override
     public boolean isAIDisabled()
@@ -1056,7 +1085,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param itemstack to drop.
      * @return the dropped item.
      */
-    private EntityItem entityDropItem(@NotNull ItemStack itemstack)
+    private EntityItem entityDropItem(@NotNull final ItemStack itemstack)
     {
         return entityDropItem(itemstack, 0.0F);
     }
@@ -1091,12 +1120,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     public boolean isAtHome()
     {
-        @Nullable BlockPos homePosition = getHomePosition();
-        return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= 16;
+        @Nullable final BlockPos homePosition = getHomePosition();
+        return homePosition != null && homePosition.distanceSq((int) Math.floor(posX), (int) posY, (int) Math.floor(posZ)) <= RANGE_TO_BE_HOME;
     }
 
     /**
-     * Returns the home position of each citizen (His house or town hall)
+     * Returns the home position of each citizen (His house or town hall).
      *
      * @return location
      */
@@ -1104,7 +1133,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     @Override
     public BlockPos getHomePosition()
     {
-        @Nullable BuildingHome homeBuilding = getHomeBuilding();
+        @Nullable final BuildingHome homeBuilding = getHomeBuilding();
         if (homeBuilding != null)
         {
             return homeBuilding.getLocation();
@@ -1119,7 +1148,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     private BuildingHome getHomeBuilding()
     {
-        return (citizenData != null) ? citizenData.getHomeBuilding() : null;
+        return (citizenData == null) ? null : citizenData.getHomeBuilding();
     }
 
     @Nullable
@@ -1169,7 +1198,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Checks if the citizen should work even when it rains.
      *
-     * @return true if his building level is bigger than 5
+     * @return true if his building level is bigger than 5.
      */
     private boolean shouldWorkWhileRaining()
     {
@@ -1183,7 +1212,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     @Override
     @Nullable
-    public Entity changeDimension(int dimensionIn)
+    public Entity changeDimension(final int dimensionIn)
     {
         return null;
     }
@@ -1201,7 +1230,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param targetItem the item.
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(Item targetItem)
+    public int findFirstSlotInInventoryWith(final Item targetItem)
     {
         return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), targetItem);
     }
@@ -1212,7 +1241,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param block the block.
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(Block block)
+    public int findFirstSlotInInventoryWith(final Block block)
     {
         return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), block);
     }
@@ -1223,7 +1252,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param block the block.
      * @return the quantity.
      */
-    public int getItemCountInInventory(Block block)
+    public int getItemCountInInventory(final Block block)
     {
         return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), block);
     }
@@ -1234,7 +1263,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param targetItem the block.
      * @return the quantity.
      */
-    public int getItemCountInInventory(Item targetItem)
+    public int getItemCountInInventory(final Item targetItem)
     {
         return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), targetItem);
     }
@@ -1245,7 +1274,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param block the block.
      * @return true if so.
      */
-    public boolean hasItemInInventory(Block block)
+    public boolean hasItemInInventory(final Block block)
     {
         return InventoryUtils.hasitemInInventory(getInventoryCitizen(), block);
     }
@@ -1256,7 +1285,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param item the item.
      * @return true if so.
      */
-    public boolean hasItemInInventory(Item item)
+    public boolean hasItemInInventory(final Item item)
     {
         return InventoryUtils.hasitemInInventory(getInventoryCitizen(), item);
     }
@@ -1266,7 +1295,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param entityItem the item he wants to pickup.
      */
-    private void tryPickupEntityItem(@NotNull EntityItem entityItem)
+    private void tryPickupEntityItem(@NotNull final EntityItem entityItem)
     {
         if (!this.worldObj.isRemote)
         {
@@ -1275,9 +1304,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 return;
             }
 
-            ItemStack itemStack = entityItem.getEntityItem();
+            final ItemStack itemStack = entityItem.getEntityItem();
 
-            int i = itemStack.stackSize;
+            final int i = itemStack.stackSize;
             if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventoryCitizen(), itemStack))
             {
                 this.worldObj.playSound((EntityPlayer) null,
@@ -1309,7 +1338,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param slot from the inventory slot.
      */
-    public void setHeldItem(int slot)
+    public void setHeldItem(final int slot)
     {
         inventory.setHeldItem(slot);
         setItemStackToSlot(EntityEquipmentSlot.MAINHAND, inventory.getStackInSlot(slot));
@@ -1320,7 +1349,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * <p>
      * Will not break the block.
      *
-     * @param blockPos Block position
+     * @param blockPos Block position.
      */
     public void hitBlockWithToolInHand(@Nullable final BlockPos blockPos)
     {
@@ -1337,8 +1366,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * If breakBlock is true then it will break the block (different sound and particles),
      * and damage the tool in the citizens hand.
      *
-     * @param blockPos   Block position
-     * @param breakBlock if we want to break this block
+     * @param blockPos   Block position.
+     * @param breakBlock if we want to break this block.
      */
     private void hitBlockWithToolInHand(@Nullable final BlockPos blockPos, final boolean breakBlock)
     {
@@ -1351,8 +1380,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         this.swingArm(this.getActiveHand());
 
-        IBlockState blockState = worldObj.getBlockState(blockPos);
-        Block block = blockState.getBlock();
+        final IBlockState blockState = worldObj.getBlockState(blockPos);
+        final Block block = blockState.getBlock();
         if (breakBlock)
         {
             if (!worldObj.isRemote)
@@ -1393,7 +1422,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Damage the current held item.
      *
-     * @param damage amount of damage
+     * @param damage amount of damage.
      */
     public void damageItemInHand(final int damage)
     {
@@ -1419,7 +1448,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * This will break the block (different sound and particles),
      * and damage the tool in the citizens hand.
      *
-     * @param blockPos Block position
+     * @param blockPos Block position.
      */
     public void breakBlockWithToolInHand(@Nullable final BlockPos blockPos)
     {
@@ -1436,7 +1465,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param key  the key to retrieve the string.
      * @param args additional arguments.
      */
-    public void sendLocalizedChat(String key, Object... args)
+    public void sendLocalizedChat(final String key, final Object... args)
     {
         sendChat(LanguageHandler.format(key, args));
     }
@@ -1446,7 +1475,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param msg the message string.
      */
-    private void sendChat(@Nullable String msg)
+    private void sendChat(@Nullable final String msg)
     {
         if (msg == null || msg.length() == 0 || statusMessages.containsKey(msg))
         {
@@ -1462,9 +1491,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Intelligence getter
+     * Intelligence getter.
      *
-     * @return citizen intelligence value
+     * @return citizen intelligence value.
      */
     public int getIntelligence()
     {
@@ -1472,9 +1501,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Charisma getter
+     * Charisma getter.
      *
-     * @return citizen Charisma value
+     * @return citizen Charisma value.
      */
     public int getCharisma()
     {
@@ -1482,9 +1511,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Strength getter
+     * Strength getter.
      *
-     * @return citizen Strength value
+     * @return citizen Strength value.
      */
     public int getStrength()
     {
@@ -1492,9 +1521,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Endurance getter
+     * Endurance getter.
      *
-     * @return citizen Endurance value
+     * @return citizen Endurance value.
      */
     public int getEndurance()
     {
@@ -1502,9 +1531,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Dexterity getter
+     * Dexterity getter.
      *
-     * @return citizen Dexterity value
+     * @return citizen Dexterity value.
      */
     public int getDexterity()
     {
@@ -1512,19 +1541,19 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Set the skill modifier which defines how fast a citizen levels in a certain skill
+     * Set the skill modifier which defines how fast a citizen levels in a certain skill.
      *
-     * @param modifier input modifier
+     * @param modifier input modifier.
      */
-    public void setSkillModifier(int modifier)
+    public void setSkillModifier(final int modifier)
     {
         skillModifier = modifier;
     }
 
     /**
-     * ExperienceLevel getter
+     * ExperienceLevel getter.
      *
-     * @return citizen ExperienceLevel value
+     * @return citizen ExperienceLevel value.
      */
     public int getExperienceLevel()
     {
@@ -1553,7 +1582,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
-     * Used for chat messages, sounds, and other need based interactions
+     * Used for chat messages, sounds, and other need based interactions.
      * Created: June 20, 2014
      *
      * @author Colton

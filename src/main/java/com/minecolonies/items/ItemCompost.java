@@ -27,14 +27,22 @@ public class ItemCompost extends AbstractItemMinecolonies
     }
 
     //whenever player right click a block with this "compost item", call this method
-    public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ)
+    public boolean onItemUse(
+                              final ItemStack stack,
+                              final EntityPlayer playerIn,
+                              final World worldIn,
+                              final BlockPos pos,
+                              final EnumFacing side,
+                              final float hitX,
+                              final float hitY,
+                              final float hitZ)
     {
 
-        IBlockState iblockstate = worldIn.getBlockState(pos);
+        final IBlockState iblockstate = worldIn.getBlockState(pos);
 
         if (iblockstate.getBlock() instanceof IGrowable)
         {
-            IGrowable igrowable = (IGrowable) iblockstate.getBlock();
+            final IGrowable igrowable = (IGrowable) iblockstate.getBlock();
 
             if (igrowable.canGrow(worldIn, pos, iblockstate, worldIn.isRemote))
             {
