@@ -1,21 +1,21 @@
-<window inherit="minecolonies:gui/windowBase.xml"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="file:../../../../java/com/blockout/blockOut.xsd">
+<window xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        inherit="minecolonies:gui/windowBase.xml"
+        xsi:noNamespaceSchemaLocation="file:../../../../java/com/minecolonies/blockout/blockOut.xsd">
     <label id="title"
            size="100% 11" pos="0 9"
            textalign="TOP_MIDDLE"
            color="0"
-           label="$(com.minecolonies.gui.citizen.skills)" />
+           label="$(com.minecolonies.coremod.gui.citizen.skills)"/>
     <group width="100" height="55" x="30" y="30">
         <label id="strength"
                width="100%" height="11"
-               color="0" />
+               color="0"/>
         <label id="stamina"
                width="100%" height="11"
-               color="black" />
+               color="black"/>
         <label id="wisdom"
                width="100%" height="11"
-               color="#ff0000" />
+               color="#ff0000"/>
         <!-- label id="intelligence"
                width="100%" height="11"
                color="rgb(255,0,0)" />
@@ -26,11 +26,11 @@
     </group>
     <view size="80% 60" y="85" align="TOP_MIDDLE">
         <input id="text1"
-              size="100% 20" y="0" text="This is just a test"
-              tab="text2" />
+               size="100% 20" y="0" text="This is just a test"
+               tab="text2"/>
         <input id="text2"
-              size="100% 20" y="20" text="This is just a test"
-              tab="text1" />
+               size="100% 20" y="20" text="This is just a test"
+               tab="text1"/>
     </view>
     <!-- box padding="3" size="100 85" y="128" align="TOP_MIDDLE">
         <list id="scrollgroup"
@@ -46,14 +46,14 @@
     </box -->
     <box size="80% 85" pos="0 128" align="TOP_MIDDLE">
         <text size="100% 100%" color="black" textscale="1.0">
-This is just a test of text!
-The text has multiple lines...
-So let's see if it really works...
-It should also wrap on it's own.
+            This is just a test of text!
+            The text has multiple lines...
+            So let's see if it really works...
+            It should also wrap on it's own.
         </text>
     </box>
 
     <button id="inventory"
             align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
-            label="$(container.inventory)" />
+            label="$(container.inventory)"/>
 </window>

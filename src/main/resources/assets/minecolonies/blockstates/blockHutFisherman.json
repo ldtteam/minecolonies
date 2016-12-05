@@ -1,9 +1,23 @@
 {
-    "variants": {
-        "facing=up": { "model": "minecolonies:blockHutFisherman" },
-        "facing=east": { "model": "minecolonies:blockHutFisherman", "y": 0},
-        "facing=south": { "model": "minecolonies:blockHutFisherman", "y": 90 },
-        "facing=west": { "model": "minecolonies:blockHutFisherman", "y": 180 },
-        "facing=north": { "model": "minecolonies:blockHutFisherman", "y": 270 }
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockHutFisherman"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockHutFisherman",
+      "y": 0
+    },
+    "facing=south": {
+      "model": "minecolonies:blockHutFisherman",
+      "y": 90
+    },
+    "facing=west": {
+      "model": "minecolonies:blockHutFisherman",
+      "y": 180
+    },
+    "facing=north": {
+      "model": "minecolonies:blockHutFisherman",
+      "y": 270
     }
+  }
 }

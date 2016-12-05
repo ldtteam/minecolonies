@@ -4,13 +4,13 @@
             <layout source="minecolonies:gui/layoutWorkerBuildingDefault.xml"/>
         </view>
 
-        <view id="levelActions" size="100% 100%" >
+        <view id="levelActions" size="100% 100%">
             <label size="100% 11" pos="0 0"
-                   label="$(com.minecolonies.gui.workerHuts.minerNodeList)" color="black" textalign="BOTTOM_MIDDLE"/>
-            <list id="levels" size="78% 85%" pos="30 20" >
+                   label="$(com.minecolonies.coremod.gui.workerHuts.minerNodeList)" color="black" textalign="BOTTOM_MIDDLE"/>
+            <list id="levels" size="78% 85%" pos="30 20">
                 <box size="100% 30" linewidth="2">
                     <label id="lvl" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
-                    <button id="changeToLevel" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.gui.workerHuts.minerMineNode)"/>
+                    <button id="changeToLevel" size="100 12" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.minerMineNode)"/>
                     <label id="nONodes" size="50 12" pos="35 16" textalign="MIDDLE_LEFT" color="black"/>
                 </box>
             </list>
@@ -24,5 +24,5 @@
 
     <button id="inventory"
             align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
-            label="$(container.inventory)" />
+            label="$(container.inventory)"/>
 </window>
