@@ -32,17 +32,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      * Id of the actions page in the GUI.
      */
     private static final String PAGE_ACTIONS = "levelActions";
-
-    /**
-     * Id of the previous page button in the GUI.
-     */
-    private static final String BUTTON_PREVPAGE = "prevPage";
-
-    /**
-     * Id of the next page button in the GUI.
-     */
-    private static final String BUTTON_NEXTPAGE = "nextPage";
-
     /**
      * Id of the switch job button in the GUI.
      */
@@ -96,8 +85,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     private final Button buttonTaskFollow;
     private final Button buttonTaskGuard;
     private final Button buttonSetTarget;
-    private Button buttonPrevPage;
-    private Button buttonNextPage;
     /**
      * Assign the job manually, knight or ranger.
      */
@@ -367,10 +354,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     public void onOpened()
     {
         super.onOpened();
-        findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
-
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
 
         patrolList = findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class);
         if (task.equals(BuildingGuardTower.Task.PATROL))
@@ -408,27 +391,6 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
                     rowPane.findPaneOfTypeByID("position", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
                 }
             });
-        }
-    }
-
-    @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        switch (button.getID())
-        {
-            case BUTTON_PREVPAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                buttonPrevPage.setEnabled(false);
-                buttonNextPage.setEnabled(true);
-                break;
-            case BUTTON_NEXTPAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                buttonPrevPage.setEnabled(true);
-                buttonNextPage.setEnabled(false);
-                break;
-            default:
-                super.onButtonClicked(button);
-                break;
         }
     }
 

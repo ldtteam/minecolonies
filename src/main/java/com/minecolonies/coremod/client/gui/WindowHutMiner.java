@@ -21,8 +21,6 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
 {
     private static final String LIST_LEVELS               = "levels";
     private static final String PAGE_LEVELS               = "levelActions";
-    private static final String BUTTON_PREVPAGE           = "prevPage";
-    private static final String BUTTON_NEXTPAGE           = "nextPage";
     private static final String BUTTON_CURRENTLEVEL       = "changeToLevel";
     private static final String VIEW_PAGES                = "pages";
     private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/windowHutMiner.xml";
@@ -59,11 +57,6 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     public void onOpened()
     {
         super.onOpened();
-        findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
-
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
-
         levelList = findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class);
         levelList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -91,35 +84,6 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
                   .setLabelText(LanguageHandler.getString("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + levels[index]);
             }
         });
-    }
-
-    @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        switch (button.getID())
-        {
-            case BUTTON_PREVPAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                buttonPrevPage.setEnabled(false);
-                buttonNextPage.setEnabled(true);
-                break;
-            case BUTTON_NEXTPAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                buttonPrevPage.setEnabled(true);
-                buttonNextPage.setEnabled(false);
-                break;
-            case BUTTON_CURRENTLEVEL:
-                final int row = levelList.getListElementIndexByPane(button);
-                if (row != miner.current && row >= 0 && row < levels.length)
-                {
-                    miner.current = row;
-                    MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
-                }
-                break;
-            default:
-                super.onButtonClicked(button);
-                break;
-        }
     }
 
     @Override
