@@ -6,5 +6,5 @@
     <button id="build" align="TOP_MIDDLE" size="116 20" pos="0 64"
             label="$(com.minecolonies.gui.workerHuts.upgrade)"/>
     <button id="repair" align="TOP_MIDDLE" size="116 20" pos="0 88"
-            label="$(com.minecolonies.gui.workerHuts.repair)"/>
+            label="$(com.minecolonies.coremod.gui.workerHuts.repair)"/>
 </layout>

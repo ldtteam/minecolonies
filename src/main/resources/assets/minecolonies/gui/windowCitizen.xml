@@ -9,7 +9,7 @@
     </group>
     <label id="title" size="100% 11" pos="0 60"
            textalign="TOP_MIDDLE" color="black"
-           label="$(com.minecolonies.gui.citizen.skills)"/>
+           label="$(com.minecolonies.coremod.gui.citizen.skills)"/>
     <box padding="3" size="100 61" pos="40 70">
         <group size="100% 100%">
             <label id="strength" size="100% 11" color="black"/>

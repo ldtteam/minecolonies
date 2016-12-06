@@ -5,42 +5,42 @@
         <buttonimage id="info" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
                      imageoffset="0 0" imagesize="120 30"
-                     label="$(com.minecolonies.gui.workerHuts.information)"
+                     label="$(com.minecolonies.coremod.gui.workerHuts.information)"
                      textalign="MIDDLE_RIGHT" textoffset="-15 1"
                      textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
 
         <buttonimage id="actions" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
                      imageoffset="0 30" imagesize="120 30"
-                     label="$(com.minecolonies.gui.townHall.actions)"
+                     label="$(com.minecolonies.coremod.gui.townHall.actions)"
                      textalign="MIDDLE_RIGHT" textoffset="-15 1"
                      textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
 
         <buttonimage id="permissions" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
                      imageoffset="0 60" imagesize="120 30"
-                     label="$(com.minecolonies.gui.townHall.permissions)"
+                     label="$(com.minecolonies.coremod.gui.townHall.permissions)"
                      textalign="MIDDLE_RIGHT" textoffset="-15 1"
                      textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
 
         <buttonimage id="citizens" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
                      imageoffset="0 90" imagesize="120 30"
-                     label="$(com.minecolonies.gui.townHall.citizens)"
+                     label="$(com.minecolonies.coremod.gui.townHall.citizens)"
                      textalign="MIDDLE_RIGHT" textoffset="-15 1"
                      textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
 
         <buttonimage id="settings" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
                      imageoffset="0 120" imagesize="120 30"
-                     label="$(com.minecolonies.gui.workerHuts.settings)"
+                     label="$(com.minecolonies.coremod.gui.workerHuts.settings)"
                      textalign="MIDDLE_RIGHT" textoffset="-15 1"
                      textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
 
         <buttonimage id="workOrder" size="100% 30"
                      source="minecolonies:textures/gui/guiBanners.png"
                      imageoffset="0 150" imagesize="120 30"
-                     label="$(com.minecolonies.gui.workerHuts.workOrder)"
+                     label="$(com.minecolonies.coremod.gui.workerHuts.workOrder)"
                      textalign="MIDDLE_RIGHT" textoffset="-15 1"
                      textcolor="DimGray" texthovercolor="DimGray" textdisabledcolor="DarkGray"/>
     </group>
@@ -52,7 +52,7 @@
 
             <group size="100% 22" pos="0 4">
                 <label size="100% 11"
-                       label="$(com.minecolonies.gui.townHall.currTownHallName)" textalign="MIDDLE" color="green"/>
+                       label="$(com.minecolonies.coremod.gui.townHall.currTownHallName)" textalign="MIDDLE" color="green"/>
                 <label size="100% 11"
                        id="name" textalign="MIDDLE" color="black"/>
             </group>
@@ -64,14 +64,14 @@
                 <button id="repair" align="TOP_MIDDLE" size="116 20"
                         label="$(com.minecolonies.gui.townHall.repair)"/>
                 <button id="recall" align="TOP_MIDDLE" size="116 20"
-                        label="$(com.minecolonies.gui.townHall.recall)"/>
+                        label="$(com.minecolonies.coremod.gui.townHall.recall)"/>
                 <button id="changeSpec" align="TOP_MIDDLE" size="116 20"
-                        label="$(com.minecolonies.gui.townHall.togglespec)"/>
+                        label="$(com.minecolonies.coremod.gui.townHall.togglespec)"/>
             </group>
 
             <group size="100% 22" pos="0 129">
                 <label size="100% 11"
-                       label="$(com.minecolonies.gui.townHall.currentSpecialization)" color="black"
+                       label="$(com.minecolonies.coremod.gui.townHall.currentSpecialization)" color="black"
                        textalign="MIDDLE"/>
                 <label id="currentSpec" size="100% 11"
                        color="black" textalign="MIDDLE"/>
@@ -105,7 +105,7 @@
                 </box>
             </list>
 
-            <label size="100 11" pos="15 170" textalign="TOP_LEFT" color="black" label="$(com.minecolonies.gui.townHall.addPlayer)"/>
+            <label size="100 11" pos="15 170" textalign="TOP_LEFT" color="black" label="$(com.minecolonies.coremod.gui.townHall.addPlayer)"/>
             <input id="addPlayerName"
                    size="120 20" pos="15 185" maxlength="32"/>
             <button id="addPlayer"
@@ -123,8 +123,8 @@
             </list>
         </view>
         <view id="pageSettings">
-            <label id="assignCitizens" label="$(com.minecolonies.gui.townHall.jobHiring)" pos="40 12" size="80 11" textalign="MIDDLE_LEFT" color="black"/>
-            <button id="toggleJob" size="50 20" pos="60 25" label="$(com.minecolonies.gui.hiring.off)"/>
+            <label id="assignCitizens" label="$(com.minecolonies.coremod.gui.townHall.jobHiring)" pos="40 12" size="80 11" textalign="MIDDLE_LEFT" color="black"/>
+            <button id="toggleJob" size="50 20" pos="60 25" label="$(com.minecolonies.coremod.gui.hiring.off)"/>
         </view>
 
         <view id="pageWorkOrder">

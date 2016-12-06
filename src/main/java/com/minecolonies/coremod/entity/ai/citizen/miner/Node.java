@@ -262,16 +262,15 @@ public class Node
     @Override
     public String toString()
     {
-        return "Node{" + "x=" + x +
-                ", z=" + z +
-                ", style=" + style +
-                ", status=" + status +
-                ", directionPosX=" + directionPosX +
-                ", directionNegX=" + directionNegX +
-                ", directionPosZ=" + directionPosZ +
-                ", directionNegZ=" + directionNegZ +
-                '}';
-
+        return "Node{" + "x=" + x
+                + ", z=" + z
+                + ", style=" + style
+                + ", status=" + status
+                + ", directionPosX=" + directionPosX
+                + ", directionNegX=" + directionNegX
+                + ", directionPosZ=" + directionPosZ
+                + ", directionNegZ=" + directionNegZ
+                + '}';
     }
 
     /**
