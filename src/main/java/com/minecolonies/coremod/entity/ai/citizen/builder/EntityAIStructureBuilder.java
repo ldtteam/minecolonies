@@ -39,11 +39,6 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuilder>
 {
     /**
-     * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
-     */
-    private static final double XP_EACH_BUILDING              = 2.5;
-
-    /**
      * How often should intelligence factor into the builders skill modifier.
      */
     private static final int    INTELLIGENCE_MULTIPLIER       = 2;
@@ -58,15 +53,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      */
     private static final int    ACTIONS_UNTIL_DUMP            = 1024;
 
-    /**
-     * String which shows if something is a waypoint.
-     */
-    private static final CharSequence WAYPOINT_STRING = "waypoint";
 
-    /**
-     * Speed the builder should run away when he castles himself in.
-     */
-    private static final double   RUN_AWAY_SPEED = 4.1D;
+
     /**
      * Position where the Builders constructs from.
      */
@@ -82,13 +70,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         super(job);
         super.registerTargets(
+          /**
+           * If IDLE - switch to start working.
+           */
+          new AITarget(IDLE, START_WORKING),
           new AITarget(this::checkIfCanceled, IDLE),
           new AITarget(this::checkIfExecute, this::getState),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials),
-          new AITarget(BUILDER_STRUCTURE_STEP, this::structureStep),
-          new AITarget(BUILDER_DECORATION_STEP, this::decorationStep),
-          new AITarget(BUILDER_COMPLETE_BUILD, this::completeBuild)
+          new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials)
         );
         worker.setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
@@ -282,174 +271,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return AIState.BUILDER_STRUCTURE_STEP;
     }
 
-    /**
-     * Defines blocks that can be built for free.
-     *
-     * @param block    The block to check if it is free.
-     * @param metadata The metadata of the block.
-     * @return true or false.
-     */
-    private static boolean isBlockFree(@Nullable final Block block, final int metadata)
-    {
-        return block == null
-                 || BlockUtils.isWater(block.getDefaultState())
-                 || block.equals(Blocks.LEAVES)
-                 || block.equals(Blocks.LEAVES2)
-                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
-                 || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08))
-                 || block.equals(Blocks.GRASS)
-                 || block.equals(Blocks.DIRT);
-    }
-
     private boolean incrementBlock()
     {
         //method returns false if there is no next block (structures finished)
         return job.getStructure().incrementBlock();
     }
 
-    private AIState structureStep()
-    {
-        if (job.getStructure() == null)
-        {
-            //fix for bad structures
-            job.complete();
-        }
-        if (!walkToConstructionSite())
-        {
-            return this.getState();
-        }
 
-        if (job.getStructure().getBlock() == null
-              || job.getStructure().doesStructureBlockEqualWorldBlock()
-              || (!job.getStructure().getBlockState().getMaterial().isSolid()
-                    && job.getStructure().getBlock() != Blocks.AIR))
-        {
-            //findNextBlock count was reached and we can ignore this block
-            return findNextBlockSolid();
-        }
-
-        worker.faceBlock(job.getStructure().getBlockPosition());
-
-
-        final BlockPos coordinates = job.getStructure().getBlockPosition();
-        @Nullable final Block block = job.getStructure().getBlock();
-        @Nullable final IBlockState blockState = job.getStructure().getBlockState();
-
-        //should never happen
-        if (block == null)
-        {
-            @NotNull final BlockPos local = job.getStructure().getLocalPosition();
-            Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", coordinates, local));
-            findNextBlockSolid();
-            return this.getState();
-        }
-
-        final Block worldBlock = world.getBlockState(coordinates).getBlock();
-        //don't overwrite huts or bedrock, nor place huts
-        if (worldBlock instanceof AbstractBlockHut
-              || worldBlock == Blocks.BEDROCK
-              || block instanceof AbstractBlockHut)
-        {
-            return findNextBlockSolid();
-        }
-
-        //We need to deal with materials
-        if (!Configurations.builderInfiniteResources
-              && !handleMaterials(block, blockState))
-        {
-            return this.getState();
-        }
-
-        placeBlockAt(block, blockState, coordinates);
-
-        return findNextBlockSolid();
-    }
-
-    private AIState decorationStep()
-    {
-        if (job.getStructure() == null)
-        {
-            //fix for bad structures
-            job.complete();
-        }
-        if (!walkToConstructionSite())
-        {
-            return this.getState();
-        }
-        //|| job.getStructure().getBlock() == Blocks.AIR
-        if (job.getStructure().doesStructureBlockEqualWorldBlock()
-              || job.getStructure().getBlockState().getMaterial().isSolid())
-        {
-            //findNextBlock count was reached and we can ignore this block
-            return findNextBlockNonSolid();
-        }
-
-        worker.faceBlock(job.getStructure().getBlockPosition());
-
-        @Nullable final Block block = job.getStructure().getBlock();
-        @Nullable final IBlockState blockState = job.getStructure().getBlockState();
-
-        final BlockPos coords = job.getStructure().getBlockPosition();
-
-        final Block worldBlock = world.getBlockState(coords).getBlock();
-
-        //should never happen
-        if (block == null)
-        {
-            @NotNull final BlockPos local = job.getStructure().getLocalPosition();
-            Log.getLogger().error(String.format("StructureProxy has null block at %s- local(%s)", coords, local));
-            findNextBlockNonSolid();
-            return this.getState();
-        }
-        //don't overwrite huts or bedrock, nor place huts
-        if (worldBlock instanceof AbstractBlockHut
-              || worldBlock == Blocks.BEDROCK
-              || block instanceof AbstractBlockHut)
-        {
-            findNextBlockNonSolid();
-            return this.getState();
-        }
-
-        //We need to deal with materials
-        if (!Configurations.builderInfiniteResources && !handleMaterials(block, blockState))
-        {
-            return this.getState();
-        }
-
-        placeBlockAt(block, blockState, coords);
-
-        return findNextBlockNonSolid();
-    }
-
-    private void placeBlockAt(@NotNull final Block block, @NotNull final IBlockState blockState, @NotNull final BlockPos coords)
-    {
-        if (block == Blocks.AIR)
-        {
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
-
-            if (!world.setBlockToAir(coords))
-            {
-                Log.getLogger().error(String.format("Block break failure at %s", coords));
-                //TODO handle - for now, just skipping
-            }
-        }
-        else
-        {
-            final Item item = Item.getItemFromBlock(block);
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
-
-            if (placeBlock(coords, block, blockState))
-            {
-                setTileEntity(coords);
-            }
-            else
-            {
-                Log.getLogger().error(String.format("Block place failure %s at %s", block.getUnlocalizedName(), coords));
-                //TODO handle - for now, just skipping
-            }
-            worker.swingArm(worker.getActiveHand());
-        }
-    }
 
     //TODO handle resources
     private void spawnEntity(@Nullable final Entity entity)
@@ -491,141 +319,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
     }
 
-    private boolean handleMaterials(@NotNull final Block block, @NotNull final IBlockState blockState)
-    {
-        //Breaking blocks doesn't require taking materials from the citizens inventory
-        if (block == Blocks.AIR)
-        {
-            return true;
-        }
 
-        if (isBlockFree(block, block.getMetaFromState(blockState)))
-        {
-            return true;
-        }
-
-        return !checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState));
-    }
-
-    private boolean placeBlock(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState blockState)
-    {
-        //Move out of the way when placing blocks
-        if (MathHelper.floor_double(worker.posX) == pos.getX()
-              && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
-              && MathHelper.floor_double(worker.posZ) == pos.getZ()
-              && worker.getNavigator().noPath())
-        {
-            worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
-        }
-
-        //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
-        if (blockState.getBlock() instanceof BlockStairs
-              && world.getBlockState(pos).getBlock() instanceof BlockStairs
-              && world.getBlockState(pos).getValue(BlockStairs.FACING) == blockState.getValue(BlockStairs.FACING)
-              && blockState.getBlock() == world.getBlockState(pos).getBlock())
-        {
-            return true;
-        }
-
-        //We need to deal with materials
-        if (!Configurations.builderInfiniteResources && world.getBlockState(pos).getBlock() != Blocks.AIR)
-        {
-            final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
-            for (final ItemStack item : items)
-            {
-                InventoryUtils.setStack(worker.getInventoryCitizen(), item);
-            }
-        }
-
-        if (block instanceof BlockDoor)
-        {
-            if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
-            {
-                ItemDoor.placeDoor(world, pos, blockState.getValue(BlockDoor.FACING), block, false);
-            }
-        }
-        else if (block instanceof BlockBed)
-        {
-            world.setBlockState(pos, blockState, 0x03);
-            final EnumFacing facing = blockState.getValue(BlockBed.FACING);
-
-            //Set other part of the bed, to the opposite PartType
-            if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
-            {
-                //pos.offset(facing) will get the other part of the bed
-                world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
-                world.setBlockState(pos.offset(facing), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
-            }
-            else
-            {
-                return true;
-            }
-        }
-        else if (block instanceof BlockDoublePlant)
-        {
-            world.setBlockState(pos, blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.LOWER), 0x03);
-            world.setBlockState(pos.up(), blockState.withProperty(BlockDoublePlant.HALF, BlockDoublePlant.EnumBlockHalf.UPPER), 0x03);
-        }
-        else if (block instanceof BlockEndPortal || block instanceof BlockMobSpawner || block instanceof BlockDragonEgg || block instanceof BlockPortal)
-        {
-            return true;
-        }
-        else
-        {
-            if (!world.setBlockState(pos, blockState, 0x03))
-            {
-                return false;
-            }
-            if (world.getBlockState(pos).getBlock() == block && world.getBlockState(pos) != blockState)
-            {
-                world.setBlockState(pos, blockState, 0x03);
-            }
-        }
-
-        //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
-        if (isBlockFree(block, block.getMetaFromState(blockState)))
-        {
-            return true;
-        }
-
-        @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
-        if (stack == null)
-        {
-            Log.getLogger().error("Block causes NPE: " + blockState.getBlock());
-            return false;
-        }
-
-        final int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
-        if (slot != -1)
-        {
-            getInventory().decrStackSize(slot, 1);
-            reduceNeededResources(block);
-        }
-        return true;
-    }
-
-    /**
-     * Reduces the needed resources by 1.
-     *
-     * @param block the block which has been used now.
-     */
-    private void reduceNeededResources(final Block block)
-    {
-        final AbstractBuilding workerBuilding = this.getOwnBuilding();
-        if (workerBuilding instanceof BuildingBuilder)
-        {
-            ((BuildingBuilder) workerBuilding).reduceNeededResource(block, 1);
-        }
-    }
-
-    private void setTileEntity(@NotNull BlockPos pos)
-    {
-        @Nullable final TileEntity tileEntity = job.getStructure().getTileEntity();
-        if (tileEntity != null && world.getTileEntity(pos) != null)
-        {
-            world.setTileEntity(pos, tileEntity);
-        }
-    }
 
     private AIState findNextBlockSolid()
     {
@@ -649,69 +343,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return AIState.BUILDER_COMPLETE_BUILD;
         }
         return this.getState();
-    }
-
-    @NotNull
-    private AIState completeBuild()
-    {
-        if (job.getStructure() == null)
-        {
-            //fix for bad structures
-            job.complete();
-        }
-        job.getStructure().getEntities().forEach(this::spawnEntity);
-
-        final String structureName = job.getStructure().getName();
-
-        LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
-          "entity.builder.messageBuildComplete",
-          structureName);
-
-        final WorkOrderBuild wo = job.getWorkOrder();
-        if (wo == null)
-        {
-            Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
-              worker.getColony().getID(),
-              worker.getCitizenData().getId(),
-              job.getWorkOrderId()));
-        }
-        else
-        {
-            if (!(wo instanceof WorkOrderBuildDecoration))
-            {
-                final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
-                if (building == null)
-                {
-                    Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                      worker.getColony().getID(),
-                      worker.getCitizenData().getId(),
-                      wo.getBuildingLocation()));
-                }
-                else
-                {
-                    building.setBuildingLevel(wo.getUpgradeLevel());
-                }
-            }
-            else
-            {
-                if (structureName.contains(WAYPOINT_STRING))
-                {
-                    worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
-                }
-            }
-            job.complete();
-        }
-
-        final AbstractBuilding workerBuilding = getOwnBuilding();
-        if (workerBuilding instanceof BuildingBuilder)
-        {
-            ((BuildingBuilder) workerBuilding).resetNeededResources();
-        }
-        resetTask();
-        worker.addExperience(XP_EACH_BUILDING);
-        workFrom = null;
-
-        return AIState.IDLE;
     }
 
     /**
