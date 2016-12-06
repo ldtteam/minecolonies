@@ -191,9 +191,9 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
-     * Getter of the schematic name.
+     * Getter of the structure name.
      *
-     * @return the schematic name.
+     * @return the structure name.
      */
     @NotNull
     @Override

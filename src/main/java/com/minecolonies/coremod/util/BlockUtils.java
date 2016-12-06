@@ -7,6 +7,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -83,6 +84,27 @@ public final class BlockUtils
     {
         return block instanceof AbstractBlockHut
                  || Objects.equals(block, Blocks.BEDROCK);
+    }
+
+    /**
+     * Gets a rotation from a block facing.
+     *
+     * @param facing the block facing.
+     * @return the int rotation.
+     */
+    public static int getRotationFromFacing(final EnumFacing facing)
+    {
+        switch (facing)
+        {
+            case SOUTH:
+                return 2;
+            case EAST:
+                return 1;
+            case WEST:
+                return 3;
+            default:
+                return 0;
+        }
     }
 
     /**

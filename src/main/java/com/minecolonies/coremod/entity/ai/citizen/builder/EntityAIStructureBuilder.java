@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
-import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -44,26 +42,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
      */
     private static final double XP_EACH_BUILDING              = 2.5;
+
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
     private static final int    INTELLIGENCE_MULTIPLIER       = 2;
+
     /**
      * How often should strength factor into the builders skill modifier.
      */
     private static final int    STRENGTH_MULTIPLIER           = 1;
-    /**
-     * The maximum range to keep from the current building place.
-     */
-    private static final int    MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
-    /**
-     * The standard range the builder should reach until his target.
-     */
-    private static final int    STANDARD_WORKING_RANGE        = 5;
-    /**
-     * The minimum range the builder has to reach in order to construct or clear.
-     */
-    private static final int    MIN_WORKING_RANGE             = 7;
+
     /**
      * After how many actions should the builder dump his inventory.
      */
@@ -95,9 +84,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         super.registerTargets(
           new AITarget(this::checkIfCanceled, IDLE),
           new AITarget(this::checkIfExecute, this::getState),
-          new AITarget(IDLE, START_WORKING),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
-          new AITarget(BUILDER_CLEAR_STEP, this::clearStep),
           new AITarget(BUILDER_REQUEST_MATERIALS, this::requestMaterials),
           new AITarget(BUILDER_STRUCTURE_STEP, this::structureStep),
           new AITarget(BUILDER_DECORATION_STEP, this::decorationStep),
@@ -204,176 +191,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
     }
 
-    private void loadStructure()
-    {
-        final WorkOrderBuild workOrder = job.getWorkOrder();
-        if (workOrder == null)
-        {
-            return;
-        }
-
-        final BlockPos pos = workOrder.getBuildingLocation();
-
-        if (!(workOrder instanceof WorkOrderBuildDecoration) && worker.getColony().getBuilding(pos) == null)
-        {
-            Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
-            worker.getColony().getWorkManager().removeWorkOrder(workOrder);
-            return;
-        }
-
-        try
-        {
-            job.setStructure(new StructureWrapper(world, workOrder.getStructureName()));
-        }
-        catch (final RuntimeException e)
-        {
-            Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", workOrder.getStructureName()), e);
-            job.setStructure(null);
-            return;
-        }
-
-        final Colony colony = worker.getColony();
-        if (workOrder instanceof WorkOrderBuildDecoration)
-        {
-            job.getStructure().rotate(workOrder.getRotation());
-        }
-        else if (colony != null)
-        {
-            if (workOrder.getRotation() == 0)
-            {
-                final IBlockState blockState = world.getBlockState(pos);
-                if (blockState.getBlock() instanceof AbstractBlockHut)
-                {
-                    job.getStructure().rotate(getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING)));
-                }
-            }
-            else
-            {
-                job.getStructure().rotate(workOrder.getRotation());
-            }
-        }
-        job.getStructure().setPosition(pos);
-        workOrder.setCleared(false);
-        workOrder.setRequested(false);
-    }
-
-    /**
-     * Gets a rotation from a block facing.
-     *
-     * @param facing the block facing.
-     * @return the int rotation.
-     */
-    private static int getRotationFromFacing(final EnumFacing facing)
-    {
-        switch (facing)
-        {
-            case SOUTH:
-                return 2;
-            case EAST:
-                return 1;
-            case WEST:
-                return 3;
-            default:
-                return 0;
-        }
-    }
-
     private AIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())
         {
             return getState();
         }
-        return BUILDER_CLEAR_STEP;
-    }
-
-    /**
-     * Will lead the worker to a good position to construct.
-     *
-     * @return true if the position has been reached.
-     */
-    private boolean goToConstructionSite()
-    {
-        if (workFrom == null)
-        {
-            workFrom = getPositionToWorkFrom();
-        }
-
-        return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
-    }
-
-    /**
-     * Calculates the working position. Takes a min distance from width and length.
-     * Then finds the floor level at that distance and then check if it does contain two air levels.
-     *
-     * @return BlockPos position to work from.
-     */
-    private BlockPos getPositionToWorkFrom()
-    {
-        return getPositionToWorkFrom(0);
-    }
-
-    /**
-     * Calculates the working position. Takes a min distance from width and length.
-     * Then finds the floor level at that distance and then check if it does contain two air levels.
-     *
-     * @param offset the extra distance to apply away from the building
-     * @return BlockPos position to work from.
-     */
-    private BlockPos getPositionToWorkFrom(final int offset)
-    {
-        if (offset > MAX_ADDITIONAL_RANGE_TO_BUILD)
-        {
-            return job.getStructure().getBlockPosition();
-        }
-        //get length or width either is larger.
-        final int length = job.getStructure().getLength();
-        final int width = job.getStructure().getWidth();
-        final int distance = width > length ? width : length;
-        @NotNull final EnumFacing[] directions = {EnumFacing.EAST, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.SOUTH};
-
-        //then get a solid place with two air spaces above it in any direction.
-        for (final EnumFacing direction : directions)
-        {
-            @NotNull final BlockPos positionInDirection = getPositionInDirection(direction, distance);
-            if (EntityUtils.checkForFreeSpace(world, positionInDirection))
-            {
-                return positionInDirection;
-            }
-        }
-
-        //if necessary we can could implement calling getPositionToWorkFrom recursively and add some "offset" to the sides.
-        return getPositionToWorkFrom(offset + 1);
-    }
-
-    /**
-     * Gets a floorPosition in a particular direction.
-     *
-     * @param facing   the direction.
-     * @param distance the distance.
-     * @return a BlockPos position.
-     */
-    @NotNull
-    private BlockPos getPositionInDirection(final EnumFacing facing, final int distance)
-    {
-        return getFloor(job.getStructure().getPosition().offset(facing, distance));
-    }
-
-    /**
-     * Calculates the floor level.
-     *
-     * @param position input position.
-     * @return returns BlockPos position with air above.
-     */
-    @NotNull
-    private BlockPos getFloor(@NotNull final BlockPos position)
-    {
-        final BlockPos floor = getFloor(position, 0);
-        if (floor == null)
-        {
-            return position;
-        }
-        return floor;
+        return AIState.START_BUILDING;
     }
 
     /**
@@ -401,70 +225,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return position;
         }
         return getFloor(position.up(), depth + 1);
-    }
-
-    private AIState clearStep()
-    {
-        final WorkOrderBuild wo = job.getWorkOrder();
-
-        if (job.getStructure() == null)
-        {
-            //fix for bad structures
-            job.complete();
-        }
-
-        if (wo.isCleared())
-        {
-            return AIState.BUILDER_REQUEST_MATERIALS;
-        }
-
-        final BlockPos coordinates = job.getStructure().getBlockPosition();
-        final IBlockState worldBlockState = world.getBlockState(coordinates);
-        final Block worldBlock = worldBlockState.getBlock();
-
-        if (worldBlock != Blocks.AIR
-              && !(worldBlock instanceof AbstractBlockHut)
-              && worldBlock != Blocks.BEDROCK
-              && job.getStructure().getBlock() != ModBlocks.blockSubstitution)
-        {
-            //Fill workFrom with the position from where the builder should build.
-            if (!goToConstructionSite())
-            {
-                return this.getState();
-            }
-
-            worker.faceBlock(coordinates);
-            //We need to deal with materials
-            if (Configurations.builderInfiniteResources || worldBlockState.getMaterial().isLiquid())
-            {
-                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
-
-                if (!world.setBlockToAir(coordinates))
-                {
-                    //TODO: create own logger in class
-                    Log.getLogger().error(String.format("Block break failure at %d, %d, %d", coordinates.getX(), coordinates.getY(), coordinates.getZ()));
-                    //TODO handle - for now, just skipping
-                }
-                worker.swingArm(worker.getActiveHand());
-            }
-            else
-            {
-                if (!mineBlock(coordinates))
-                {
-                    return this.getState();
-                }
-            }
-        }
-
-        //method returns false if there is no next block (structure finished)
-        if (!job.getStructure().findNextBlockToClear())
-        {
-            job.getStructure().reset();
-            incrementBlock();
-            wo.setCleared(true);
-            return AIState.BUILDER_REQUEST_MATERIALS;
-        }
-        return this.getState();
     }
 
     private AIState requestMaterials()
@@ -554,7 +314,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             //fix for bad structures
             job.complete();
         }
-        if (!goToConstructionSite())
+        if (!walkToConstructionSite())
         {
             return this.getState();
         }
@@ -612,7 +372,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             //fix for bad structures
             job.complete();
         }
-        if (!goToConstructionSite())
+        if (!walkToConstructionSite())
         {
             return this.getState();
         }

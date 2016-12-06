@@ -1,12 +1,18 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.colony.jobs.JobMiner;
+import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
-import com.minecolonies.coremod.util.BlockUtils;
-import com.minecolonies.coremod.util.EntityUtils;
+import com.minecolonies.coremod.util.*;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -14,6 +20,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
+
+import static com.minecolonies.coremod.entity.ai.util.AIState.IDLE;
+import static com.minecolonies.coremod.entity.ai.util.AIState.START_WORKING;
 
 /**
  * This base ai class is used by ai's who need to build entire structures.
@@ -38,10 +47,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private static final int MAX_ADDITIONAL_RANGE_TO_BUILD = 25;
     /**
-     * The amount of blocks away from his working position until the builder will build.
-     */
-    private static final int BUILDING_WALK_RANGE           = 10;
-    /**
      * The amount of ticks to wait when not needing any tools to break blocks.
      */
     private static final int UNLIMITED_RESOURCES_TIMEOUT   = 5;
@@ -53,6 +58,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * Position where the Builders constructs from.
      */
     private BlockPos  workFrom;
+    /**
+     * The standard range the builder should reach until his target.
+     */
+    private static final int    STANDARD_WORKING_RANGE        = 5;
+    /**
+     * The minimum range the builder has to reach in order to construct or clear.
+     */
+    private static final int    MIN_WORKING_RANGE             = 7;
 
     /**
      * Creates this ai base class and set's up important things.
@@ -66,6 +79,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         super(job);
         this.registerTargets(
           /**
+           * If IDLE - switch to start working.
+           */
+          new AITarget(IDLE, START_WORKING),
+          /**
            * Check if we have to build something.
            */
           new AITarget(this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
@@ -75,9 +92,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
           new AITarget(AIState.START_BUILDING, this::startBuilding),
           /**
            * Clear out the building area.
-           * todo: implement
            */
-          new AITarget(AIState.CLEAR_STEP, generateSchematicIterator(this::clearStep, AIState.BUILDER_STRUCTURE_STEP)),
+          new AITarget(AIState.CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDER_STRUCTURE_STEP)),
           /**
            * Build the structure and foundation of the building.
            * todo: implement
@@ -102,7 +118,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Generate a function that will iterate over a schematic.
+     * Generate a function that will iterate over a structure.
      * <p>
      * It will pass the current block (with all infos) to the evaluation function.
      *
@@ -110,8 +126,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param nextState          the next state to change to once done iterating.
      * @return the new state this AI will be in after one pass.
      */
-    private Supplier<AIState> generateSchematicIterator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
+    private Supplier<AIState> generateStructureGenerator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
     {
+        if(currentStructure == null)
+        {
+            return () -> getState();
+        }
+
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
         @NotNull final Supplier<Structure.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
@@ -119,7 +140,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         return () ->
         {
+            if(checkForLostWorkOrder())
+            {
+                return nextState;
+            }
+
             final Structure.StructureBlock currentBlock = getCurrentBlock.get();
+
             /*
             check if we have not found a block (when block == null
             if we have a block, apply the eval function
@@ -143,19 +170,127 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
+     * Load the structure, special builder use with workOrders.
+     * Extracts data from workOrder and hands it to generic loading.
+     */
+    public void loadStructure()
+    {
+        WorkOrderBuild workOrder = null;
+        if(job instanceof JobBuilder)
+        {
+            workOrder = ((JobBuilder) job).getWorkOrder();
+        }
+
+        if (workOrder == null)
+        {
+            return;
+        }
+
+        final BlockPos pos = workOrder.getBuildingLocation();
+        if (!(workOrder instanceof WorkOrderBuildDecoration) && worker.getColony().getBuilding(pos) == null)
+        {
+            Log.getLogger().warn("AbstractBuilding does not exist - removing build request");
+            worker.getColony().getWorkManager().removeWorkOrder(workOrder);
+            return;
+        }
+
+        int rotation = 0;
+        if (workOrder.getRotation() == 0 && !(workOrder instanceof WorkOrderBuildDecoration))
+        {
+            final IBlockState blockState = world.getBlockState(pos);
+            if (blockState.getBlock() instanceof AbstractBlockHut)
+            {
+                rotation = BlockUtils.getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING));
+            }
+        }
+        else
+        {
+            rotation = workOrder.getRotation();
+        }
+
+        loadStructure(workOrder.getStructureName(), rotation, pos);
+
+        workOrder.setCleared(false);
+        workOrder.setRequested(false);
+    }
+
+    /**
+     * Loads the structure given the name, rotation and position.
+     * @param name the name to retrieve  it.
+     * @param rotateTimes number of times to rotate it.
+     * @param position the position to set it.
+     */
+    public void loadStructure(@NotNull final String name, int rotateTimes, BlockPos position)
+    {
+        if(job instanceof AbstractJobStructure)
+        {
+            try
+            {
+                StructureWrapper wrapper = new StructureWrapper(world, name);
+                ((AbstractJobStructure) job).setStructure(wrapper);
+                currentStructure = new Structure(world, wrapper, job instanceof JobMiner ? Structure.Stage.BUILD : Structure.Stage.CLEAR);
+            }
+            catch (final IllegalStateException e)
+            {
+                Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
+                ((AbstractJobStructure) job).setStructure(null);
+            }
+
+            ((AbstractJobStructure) job).getStructure().rotate(rotateTimes);
+            ((AbstractJobStructure) job).getStructure().setPosition(position);
+        }
+    }
+
+    /**
+     * Checks if the workOrder or structure is lost or the AI is in an invalid state.
+     * @return true if invalid execution, try next state.
+     */
+    private boolean checkForLostWorkOrder()
+    {
+        if(job instanceof JobBuilder)
+        {
+            final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
+
+            if(wo == null || (getState().equals(AIState.CLEAR_STEP) && wo.isCleared()))
+            {
+                return true;
+            }
+
+            if (((JobBuilder) job).getStructure() == null)
+            {
+                //fix for bad structures
+                ((JobBuilder) job).complete();
+                return true;
+            }
+        }
+        else
+        {
+            if (getState().equals(AIState.CLEAR_STEP))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Walk to the current construction site.
      * <p>
      * Calculates and caches the position where to walk to.
      *
      * @return true while walking to the site.
      */
-    private boolean walkToConstructionSite()
+    public boolean walkToConstructionSite()
     {
         if (workFrom == null)
         {
             workFrom = getWorkingPosition();
         }
-        return walkToBlock(workFrom, BUILDING_WALK_RANGE);
+
+        //The miner shouldn't search for a save position. Just let him build from where he currently is.
+        return job instanceof JobMiner
+                || worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE)
+                || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
     }
 
     /**
@@ -215,7 +350,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
-
         //Don't break bedrock etc.
         if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
         {
@@ -227,8 +361,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
 
             worker.faceBlock(currentBlock.blockPosition);
+
             //We need to deal with materials
-            if (Configurations.builderInfiniteResources)
+            if (Configurations.builderInfiniteResources  || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
                 worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
                 world.setBlockToAir(currentBlock.blockPosition);
@@ -243,7 +378,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 }
             }
         }
-
+        //todo request materials
         return true;
     }
 

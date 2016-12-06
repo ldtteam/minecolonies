@@ -370,7 +370,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Children must return the name of their schematic.
+     * Children must return the name of their structure.
      *
      * @return StructureProxy name.
      */

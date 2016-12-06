@@ -7,8 +7,6 @@ import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.builder.EntityAIStructureBuilder;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -17,19 +15,17 @@ import org.jetbrains.annotations.Nullable;
 /**
  * The job of the builder.
  */
-public class JobBuilder extends AbstractJob
+public class JobBuilder extends AbstractJobStructure
 {
+    /**
+     * Tag to store the workOrder id.
+     */
     private static final String TAG_WORK_ORDER = "workorder";
-    private static final String TAG_SCHEMATIC  = "schematic";
-    private static final String TAG_NAME       = "name";
-    private static final String TAG_POSITION   = "position";
-    private static final String TAG_PROGRESS   = "progress";
-    protected StructureWrapper schematic;
-    //TODO save some of this in building
+
+    /**
+     * The id of the current workOrder.
+     */
     private   int              workOrderId;
-    private   String           schematicName;
-    private   BlockPos         schematicPos;
-    private   BlockPos         schematicProgress;
 
     /**
      * Instantiates builder job.
@@ -48,14 +44,6 @@ public class JobBuilder extends AbstractJob
         if (compound.hasKey(TAG_WORK_ORDER))
         {
             workOrderId = compound.getInteger(TAG_WORK_ORDER);
-
-            if (compound.hasKey(TAG_SCHEMATIC))
-            {
-                final NBTTagCompound schematicTag = compound.getCompoundTag(TAG_SCHEMATIC);
-                schematicName = schematicTag.getString(TAG_NAME);
-                schematicPos = BlockPosUtil.readFromNBT(schematicTag, TAG_POSITION);
-                schematicProgress = BlockPosUtil.readFromNBT(schematicTag, TAG_PROGRESS);
-            }
         }
     }
 
@@ -80,28 +68,7 @@ public class JobBuilder extends AbstractJob
         if (workOrderId != 0)
         {
             compound.setInteger(TAG_WORK_ORDER, workOrderId);
-
-            if (hasStructure())
-            {
-                @NotNull final NBTTagCompound schematicTag = new NBTTagCompound();
-                schematicTag.setString(TAG_NAME, schematic.getName());
-                BlockPosUtil.writeToNBT(schematicTag, TAG_POSITION, schematic.getPosition());
-                BlockPosUtil.writeToNBT(schematicTag, TAG_PROGRESS, schematic.getLocalPosition());
-                compound.setTag(TAG_SCHEMATIC, schematicTag);
-            }
         }
-    }
-
-    /**
-     * Does this job have a loaded StructureProxy?
-     * <p>
-     * if a schematic is not null there exists a location for it
-     *
-     * @return true if there is a loaded schematic for this Job
-     */
-    public boolean hasStructure()
-    {
-        return schematic != null;
     }
 
     @NotNull
@@ -129,26 +96,6 @@ public class JobBuilder extends AbstractJob
     public boolean hasWorkOrder()
     {
         return workOrderId != 0;
-    }
-
-    /**
-     * Get the StructureProxy loaded by the Job.
-     *
-     * @return StructureProxy loaded by the Job
-     */
-    public StructureWrapper getStructure()
-    {
-        return schematic;
-    }
-
-    /**
-     * Set the schematic of builder's job.
-     *
-     * @param schematic {@link StructureWrapper} object
-     */
-    public void setStructure(final StructureWrapper schematic)
-    {
-        this.schematic = schematic;
     }
 
     /**

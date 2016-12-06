@@ -8,7 +8,6 @@ import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.Log;
-import com.minecolonies.coremod.util.StructureWrapper;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLadder;
@@ -76,7 +75,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     {
         super(job);
         super.registerTargets(
-          new AITarget(IDLE, START_WORKING),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding),
           new AITarget(PREPARING, this::prepareForMining),
           new AITarget(MINER_SEARCHING_LADDER, this::lookForLadder),
@@ -842,46 +840,52 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return true;
     }
 
+    /**
+     * Initiates structure loading.
+     * @param mineNode the node to load it for.
+     * @param direction the direction it faces.
+     */
+    private void initStructure(final Node mineNode, final int direction)
+    {
+        int rotateTimes = 2;
+        if (direction == 3)
+        {
+            rotateTimes = 3;
+        }
+        else if (direction == 2)
+        {
+            rotateTimes = 0;
+        }
+        else if (direction == 4)
+        {
+            rotateTimes = 1;
+        }
+
+        BlockPos structurePos = new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ());
+
+        if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
+        {
+            loadStructure("miner/minerX4", rotateTimes, structurePos);
+        }
+        if (mineNode.getStyle() == Node.NodeType.BEND)
+        {
+            loadStructure("miner/minerX2Right", rotateTimes, structurePos);
+        }
+        if (mineNode.getStyle() == Node.NodeType.TUNNEL)
+        {
+            loadStructure("miner/minerX2Top", rotateTimes, structurePos);
+        }
+        requestedBlock = false;
+        buildStructure = false;
+    }
+
     private void mineNodeFromStand(@NotNull final Node mineNode, @NotNull final BlockPos standingPosition, final int direction)
     {
         //Preload structures
         if (job.getStructure() == null)
         {
-            if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
-            {
-                loadStructure("miner/minerX4");
-            }
-            if (mineNode.getStyle() == Node.NodeType.BEND)
-            {
-                loadStructure("miner/minerX2Right");
-            }
-            if (mineNode.getStyle() == Node.NodeType.TUNNEL)
-            {
-                loadStructure("miner/minerX2Top");
-            }
-
-            if (job.getStructure() != null)
-            {
-                job.getStructure().setPosition(new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
-
-                int rotateTimes = 2;
-                if (direction == 3)
-                {
-                    rotateTimes = 3;
-                }
-                else if (direction == 2)
-                {
-                    rotateTimes = 0;
-                }
-                else if (direction == 4)
-                {
-                    rotateTimes = 1;
-                }
-
-                job.getStructure().rotate(rotateTimes);
-            }
+            initStructure(mineNode, direction);
         }
-
 
         //Check for liquids
         for (int x = -NODE_DISTANCE / 2 - 1; x <= NODE_DISTANCE / 2 + 1; x++)
@@ -985,7 +989,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
 
         //Build middle
-        //TODO: make it look nicer!
         if (!buildNodeSupportStructure(mineNode))
         {
             return;
@@ -1035,21 +1038,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         requestedBlock = true;
         buildStructure = false;
         return true;
-    }
-
-    private void loadStructure(@NotNull final String name)
-    {
-        requestedBlock = false;
-        buildStructure = false;
-        try
-        {
-            job.setStructure(new StructureWrapper(world, name));
-        }
-        catch (final IllegalStateException e)
-        {
-            Log.getLogger().warn(String.format("StructureProxy: (%s) does not exist - removing build request", name), e);
-            job.setStructure(null);
-        }
     }
 
     private boolean executeStructurePlacement()

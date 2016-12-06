@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 /**
  * Represents a build task for the Structure AI.
  * <p>
- * It internally uses a schematic it transparently loads.
+ * It internally uses a structure it transparently loads.
  */
 public class Structure
 {
@@ -93,7 +93,7 @@ public class Structure
          * @param blockPosition the BlockPos this block has.
          * @param metadata      the metadata this block has.
          * @param item          the item needed to place this block
-         * @param worldBlock    the block to be replaced with the schematic block
+         * @param worldBlock    the block to be replaced with the structure block
          * @param worldMetadata the metadata of the world block
          */
         public StructureBlock(final Block block, final BlockPos blockPosition, final IBlockState metadata, final Item item, final Block worldBlock, final IBlockState worldMetadata)
@@ -107,12 +107,12 @@ public class Structure
         }
     }
 
-    private final Stage            stage;
+    private Stage                  stage;
     /**
-     * The internal schematic loaded.
+     * The internal structure loaded.
      */
     @Nullable
-    private final StructureWrapper schematic;
+    private final StructureWrapper structure;
     /**
      * the targetWorld to build the structure in.
      */
@@ -123,9 +123,9 @@ public class Structure
      *
      * @param targetWorld       the world to build it in
      * @param buildingLocation  the location where we should build this Structure
-     * @param schematicFileName the schematic file to load it from
+     * @param schematicFileName the structure file to load it from
      * @param rotation          the rotation it should have
-     * @throws StructureException when there is an error loading the schematic file
+     * @throws StructureException when there is an error loading the structure file
      */
     public Structure(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation) throws StructureException
     {
@@ -137,38 +137,51 @@ public class Structure
      *
      * @param targetWorld       the world to build it in
      * @param buildingLocation  the location where we should build this Structure
-     * @param schematicFileName the schematic file to load it from
+     * @param structureFileName the structure file to load it from
      * @param rotation          the rotation it should have
      * @param stageProgress     the stage is should start with
      * @param blockProgress     the block it should start with
-     * @throws StructureException when there is an error loading the schematic file
+     * @throws StructureException when there is an error loading the structure file
      */
     public Structure(
                       final World targetWorld,
                       final BlockPos buildingLocation,
-                      final String schematicFileName,
+                      final String structureFileName,
                       final int rotation,
                       final Stage stageProgress,
                       final BlockPos blockProgress) throws StructureException
     {
-        this.schematic = loadSchematic(targetWorld, buildingLocation, schematicFileName, rotation, stageProgress, blockProgress);
+        this.structure = loadStructure(targetWorld, buildingLocation, structureFileName, rotation, stageProgress, blockProgress);
         this.stage = stageProgress;
         this.targetWorld = targetWorld;
     }
 
     /**
-     * Load the schematic for this building.
+     * Create a new building task.
+     * @param targetWorld the world.
+     * @param structure the structure.
+     * @param stageProgress the stage to start off with.
+     */
+    public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
+    {
+        this.structure = structure;
+        this.stage = stageProgress;
+        this.targetWorld = targetWorld;
+    }
+
+    /**
+     * Load the structure for this building.
      *
      * @param targetWorld       the world we want to place it
-     * @param buildingLocation  the location where we should place the schematic
-     * @param schematicFileName the filename of the schematic we should load
-     * @param rotation          The rotation this schematic should be in
+     * @param buildingLocation  the location where we should place the structure
+     * @param schematicFileName the filename of the structure we should load
+     * @param rotation          The rotation this structure should be in
      * @param stageProgress     the stage we are in
      * @param blockProgress     the progress we have made so far
-     * @throws StructureException when there is an error loading the schematic file
+     * @throws StructureException when there is an error loading the structure file
      */
     @Nullable
-    private static StructureWrapper loadSchematic(
+    private static StructureWrapper loadStructure(
                                                    @Nullable final World targetWorld,
                                                    @Nullable final BlockPos buildingLocation,
                                                    @Nullable final String schematicFileName,
@@ -183,14 +196,14 @@ public class Structure
               targetWorld, buildingLocation, schematicFileName));
         }
         @Nullable StructureWrapper tempSchematic = null;
-        //failsafe for faulty schematic files
+        //failsafe for faulty structure files
         try
         {
             tempSchematic = new StructureWrapper(targetWorld, schematicFileName);
         }
         catch (final IllegalStateException e)
         {
-            throw new StructureException("failed to load schematic file!", e);
+            throw new StructureException("failed to load structure file!", e);
         }
 
         //put the building into place
@@ -225,6 +238,11 @@ public class Structure
         return stage;
     }
 
+    public void setStage(Stage stage)
+    {
+        this.stage = stage;
+    }
+
     /**
      * Calculates the position of the block we are working on.
      *
@@ -232,7 +250,7 @@ public class Structure
      */
     public BlockPos getCurrentBlockPosition()
     {
-        return this.schematic.getBlockPosition();
+        return this.structure.getBlockPosition();
     }
 
     /**
@@ -248,12 +266,12 @@ public class Structure
         switch (this.stage)
         {
             case CLEAR:
-                return advanceBlocks(this.schematic::decrementBlock,
+                return advanceBlocks(this.structure::decrementBlock,
                   structureBlock -> structureBlock.blockPosition.getX() <= 0
                                       || this.targetWorld.isAirBlock(structureBlock.blockPosition));
             case BUILD:
             case DECORATE:
-                return advanceBlocks(this.schematic::incrementBlock, structureBlock -> false);
+                return advanceBlocks(this.structure::incrementBlock, structureBlock -> false);
             default:
                 return Result.NEW_BLOCK;
         }
@@ -263,7 +281,7 @@ public class Structure
      * Advance many blocks until either moveOneBlock or checkIfApplies return false
      * or if we reached the maximum of iterations in maxBlocksCheckedByBuilder.
      *
-     * @param moveOneBlock   this will be called to advance the schematic one block.
+     * @param moveOneBlock   this will be called to advance the structure one block.
      * @param checkIfApplies this will be evaluated to check if we should skip a block.
      * @return a Result enum specifying the result
      */
@@ -293,12 +311,12 @@ public class Structure
     public StructureBlock getCurrentBlock()
     {
         return new StructureBlock(
-                                   this.schematic.getBlock(),
-                                   this.schematic.getBlockPosition(),
-                                   this.schematic.getBlockState(),
-                                   this.schematic.getItem(),
-                                   BlockPosUtil.getBlock(targetWorld, this.schematic.getBlockPosition()),
-                                   BlockPosUtil.getBlockState(targetWorld, this.schematic.getBlockPosition())
+                                   this.structure.getBlock(),
+                                   this.structure.getBlockPosition(),
+                                   this.structure.getBlockState(),
+                                   this.structure.getItem(),
+                                   BlockPosUtil.getBlock(targetWorld, this.structure.getBlockPosition()),
+                                   BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition())
         );
     }
 
@@ -309,7 +327,7 @@ public class Structure
      */
     public int getWidth()
     {
-        return this.schematic.getWidth();
+        return this.structure.getWidth();
     }
 
     /**
@@ -319,7 +337,7 @@ public class Structure
      */
     public int getLength()
     {
-        return this.schematic.getLength();
+        return this.structure.getLength();
     }
 
     /**
