@@ -14,10 +14,10 @@
             <label size="50% 11" pos="40 30" label="$(com.minecolonies.coremod.gui.workerHuts.assign)" color="black" textalign="BOTTOM_MIDDLE"/>
             <button id="assign" size="50% 12" pos="40 45" label="$(com.minecolonies.coremod.gui.workerHuts.modeA)"/>
             <label size="50% 11" pos="40 60" label="$(com.minecolonies.coremod.gui.workerHuts.patrol)" color="black" textalign="BOTTOM_MIDDLE"/>
-            <button id="patrol" size="50% 12" pos="40 75" label="$(com.minecolonies.gui.workerHuts.modeA)"/>
+            <button id="patrol" size="50% 12" pos="40 75" label="$(com.minecolonies.coremod.gui.workerHuts.modeA)"/>
 
-            <label size="50% 11" pos="40 90" label="$(com.minecolonies.gui.workerHuts.retrieve)" color="black" textalign="BOTTOM_MIDDLE"/>
-            <button id="retrieve" size="50% 12" pos="40 105" label="$(com.minecolonies.gui.workerHuts.retrieveOff)"/>
+            <label size="50% 11" pos="40 90" label="$(com.minecolonies.coremod.gui.workerHuts.retrieve)" color="black" textalign="BOTTOM_MIDDLE"/>
+            <button id="retrieve" size="50% 12" pos="40 105" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
 
             <button id="patrolling" size="30% 14" pos="10 125" label="$(com.minecolonies.coremod.gui.workerHuts.task.patrol)"/>
             <button id="following" size="30% 14" pos="62 125" label="$(com.minecolonies.coremod.gui.workerHuts.task.follow)"/>

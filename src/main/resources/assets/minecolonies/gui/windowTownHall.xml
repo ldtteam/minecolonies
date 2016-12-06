@@ -59,10 +59,10 @@
 
             <group spacing="4" size="100% 92" pos="0 29">
                 <button id="build" align="TOP_MIDDLE" size="116 20"
-                        label="$(com.minecolonies.gui.townHall.build)"
+                        label="$(com.minecolonies.coremod.gui.townHall.build)"
                 />
                 <button id="repair" align="TOP_MIDDLE" size="116 20"
-                        label="$(com.minecolonies.gui.townHall.repair)"/>
+                        label="$(com.minecolonies.coremod.gui.townHall.repair)"/>
                 <button id="recall" align="TOP_MIDDLE" size="116 20"
                         label="$(com.minecolonies.coremod.gui.townHall.recall)"/>
                 <button id="changeSpec" align="TOP_MIDDLE" size="116 20"
@@ -78,7 +78,7 @@
             </group>
 
             <button id="rename" size="116 20" pos="0 153"
-                    label="$(com.minecolonies.gui.townHall.rename)"
+                    label="$(com.minecolonies.coremod.gui.townHall.rename)"
                     align="TOP_MIDDLE"/>
         </view>
         <view id="pageInfo">
