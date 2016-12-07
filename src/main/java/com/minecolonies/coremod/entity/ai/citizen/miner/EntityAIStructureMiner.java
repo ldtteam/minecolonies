@@ -643,14 +643,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
 
         initStructure(null, rotation, new BlockPos(ladderPos.getX() + xOffset, lastLadder, ladderPos.getZ() + zOffset));
-
-        @NotNull final Level currentLevel = new Level(getOwnBuilding(), lastLadder);
-        getOwnBuilding().addLevel(currentLevel);
-        getOwnBuilding().setCurrentLevel(getOwnBuilding().getNumberOfLevels());
-        getOwnBuilding().resetStartingLevelShaft();
-
-        //Send out update to client
-        getOwnBuilding().markDirty();
         return true;
     }
 

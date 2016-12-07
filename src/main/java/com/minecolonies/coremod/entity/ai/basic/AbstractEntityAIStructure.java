@@ -4,6 +4,7 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
@@ -11,6 +12,7 @@ import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
@@ -199,6 +201,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     ((BuildingBuilder) workerBuilding).resetNeededResources();
                 }
                 resetTask();
+            }
+            else if(job instanceof JobMiner)
+            {
+                BuildingMiner minerBuilding = (BuildingMiner) getOwnBuilding();
+                @NotNull final Level currentLevel = new Level(minerBuilding, ((JobMiner) job).getStructure().getPosition().getY());
+                minerBuilding.addLevel(currentLevel);
+                minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
+                minerBuilding.resetStartingLevelShaft();
+
+                //Send out update to client
+                getOwnBuilding().markDirty();
             }
             worker.addExperience(XP_EACH_BUILDING);
             workFrom = null;
