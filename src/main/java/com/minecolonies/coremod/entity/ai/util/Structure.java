@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -105,6 +108,38 @@ public class Structure
             this.item = item;
             this.worldBlock = worldBlock;
             this.worldMetadata = worldMetadata;
+        }
+
+        /**
+         * Checks if the structureBlock equals the worldBlock.
+         * @return true if so.
+         */
+        public boolean doesStructureBlockEqualWorldBlock()
+        {
+            final IBlockState structureBlockState = metadata;
+            final Block structureBlock = structureBlockState.getBlock();
+
+            //All worldBlocks are equal the substitution block
+            if (structureBlock == ModBlocks.blockSubstitution)
+            {
+                return true;
+            }
+
+            final IBlockState worldBlockState = worldMetadata;
+
+            //list of things to only check block for.
+            //For the time being any flower pot is equal to each other.
+            if (structureBlock instanceof BlockDoor || structureBlock == Blocks.FLOWER_POT)
+            {
+                return structureBlock == worldBlockState.getBlock();
+            }
+            else if (structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
+            {
+                return true;
+            }
+
+            //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
+            return structureBlockState == worldBlockState;
         }
     }
 
@@ -272,7 +307,7 @@ public class Structure
                                       || this.targetWorld.isAirBlock(structureBlock.blockPosition));
             case BUILD:
             case DECORATE:
-                return advanceBlocks(this.structure::incrementBlock, structureBlock -> false);
+                return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock() || structureBlock.block == Blocks.AIR);
             default:
                 return Result.NEW_BLOCK;
         }

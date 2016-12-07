@@ -764,16 +764,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             getOwnBuilding().setCurrentLevel(getOwnBuilding().getNumberOfLevels() - 1);
             return doNodeMining();
         }
-        mineAtLevel(currentLevel);
-        return MINER_CHECK_MINESHAFT;
+        return mineAtLevel(currentLevel);
     }
 
-    private void mineAtLevel(@NotNull final Level currentLevel)
+    private AIState mineAtLevel(@NotNull final Level currentLevel)
     {
         if (workingNode == null)
         {
             workingNode = findNodeOnLevel(currentLevel);
-            return;
+            return MINER_CHECK_MINESHAFT;
         }
         //Looking for a node to stand on while mining workingNode
         int foundDirection = 0;
@@ -793,7 +792,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         if (foundNode == null || foundDirection <= 0)
         {
             workingNode = null;
-            return;
+            return MINER_CHECK_MINESHAFT;
         }
         int xOffSet = getXDistance(foundDirection) / 2;
         int zOffSet = getZDistance(foundDirection) / 2;
@@ -817,8 +816,9 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         currentStandingPosition = standingPosition;
         if (workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS || workingNode.getStatus() == Node.NodeStatus.COMPLETED || !walkToBlock(standingPosition))
         {
-            mineNodeFromStand(workingNode, standingPosition, foundDirection);
+            return mineNodeFromStand(workingNode, standingPosition, foundDirection);
         }
+        return MINER_CHECK_MINESHAFT;
     }
 
     private boolean secureBlock(@NotNull final BlockPos curBlock, @NotNull final BlockPos safeStand)
@@ -883,7 +883,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         buildStructure = false;
     }
 
-    private void mineNodeFromStand(@NotNull final Node mineNode, @NotNull final BlockPos standingPosition, final int direction)
+    private AIState mineNodeFromStand(@NotNull final Node mineNode, @NotNull final BlockPos standingPosition, final int direction)
     {
         //Preload structures
         if (job.getStructure() == null)
@@ -921,7 +921,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                     @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
                     if ((((Math.abs(x) >= 2) && (Math.abs(z) >= 2)) || (getBlock(curBlock) != Blocks.AIR) || (y < 1) || (y > 3)) && !secureBlock(curBlock, standingPosition))
                     {
-                        return;
+                        return MINER_CHECK_MINESHAFT;
                     }
                 }
             }
@@ -929,7 +929,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
         if (!mineSideOfNode(mineNode, direction, standingPosition))
         {
-            return;
+            return MINER_CHECK_MINESHAFT;
         }
 
         if (mineNode.getStatus() == Node.NodeStatus.AVAILABLE)
@@ -974,7 +974,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
                         }
                         if (!mineBlock(curBlock, newStandingPosition))
                         {
-                            return;
+                            return MINER_CHECK_MINESHAFT;
                         }
                     }
                 }
@@ -988,14 +988,14 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             currentStandingPosition = sideStandingPosition;
             if (!mineSideOfNode(mineNode, dir, sideStandingPosition))
             {
-                return;
+                return MINER_CHECK_MINESHAFT;
             }
         }
 
         //Build middle
         if (!buildNodeSupportStructure(mineNode))
         {
-            return;
+            return BUILDING_STEP;
         }
 
         if (mineNode.getStatus() == Node.NodeStatus.IN_PROGRESS)
@@ -1004,6 +1004,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
 
         workingNode = null;
+        return MINER_CHECK_MINESHAFT;
     }
 
     private boolean buildNodeSupportStructure(@NotNull final Node mineNode)
@@ -1046,156 +1047,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private boolean executeStructurePlacement()
     {
-        if (!requestedBlock && !requestBlock())
+        if (!buildStructure)
         {
-            return false;
-        }
-
-        if (!buildStructure && !buildStructure())
-        {
-            return false;
-        }
-
-        return buildDecoration();
-    }
-
-    private boolean buildDecoration()
-    {
-        if (job.getStructure().getBlock() == null
-              || job.getStructure().doesStructureBlockEqualWorldBlock()
-              || (job.getStructure().getBlock() != null && job.getStructure()
-                                                             .getBlockState()
-                                                             .getMaterial()
-                                                             .isSolid())
-              || job.getStructure().getBlock() == Blocks.AIR)
-        {
-            return !findNextBlockNonSolid();
-        }
-
-        if (!worker.isWorkerAtSiteWithMove(job.getStructure().getPosition(), 3))
-        {
-            return false;
-        }
-
-        @Nullable final Block block = job.getStructure().getBlock();
-        @Nullable final IBlockState metadata = job.getStructure().getBlockState();
-
-        final BlockPos coordinates = job.getStructure().getBlockPosition();
-        final int x = coordinates.getX();
-        final int y = coordinates.getY();
-        final int z = coordinates.getZ();
-
-        final Block worldBlock = world.getBlockState(coordinates).getBlock();
-
-        //should never happen
-        if (block == null)
-        {
-            @NotNull final BlockPos local = job.getStructure().getLocalPosition();
-            Log.getLogger().error(String.format("StructureProxy has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
-            findNextBlockNonSolid();
-            return false;
-        }
-        //don't overwrite huts or bedrock, nor place huts
-        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK
-              || block instanceof AbstractBlockHut)
-        {
-            findNextBlockNonSolid();
-            return false;
-        }
-        final Item item = Item.getItemFromBlock(block);
-        worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
-
-        setBlockFromInventory(new BlockPos(x, y, z), block, metadata);
-
-        if (findNextBlockNonSolid())
-        {
-            worker.swingArm(worker.getActiveHand());
-            return false;
-        }
-
-        job.setStructure(null);
-        return true;
-    }
-
-    private boolean buildStructure()
-    {
-        if (job.getStructure().getBlock() == null || job.getStructure().doesStructureBlockEqualWorldBlock() || (!job.getStructure().getBlockState().getMaterial().isSolid()
-                                                                                                                  && job.getStructure().getBlock() != Blocks.AIR))
-        {
-            return !findNextBlockSolid();
-        }
-
-        if (!worker.isWorkerAtSiteWithMove(job.getStructure().getPosition(), 3))
-        {
-            return false;
-        }
-
-        @Nullable final Block block = job.getStructure().getBlock();
-        @Nullable final IBlockState metadata = job.getStructure().getBlockState();
-
-        final BlockPos coordinates = job.getStructure().getBlockPosition();
-        final int x = coordinates.getX();
-        final int y = coordinates.getY();
-        final int z = coordinates.getZ();
-
-        final Block worldBlock = world.getBlockState(coordinates).getBlock();
-
-        //should never happen
-        if (block == null)
-        {
-            @NotNull final BlockPos local = job.getStructure().getLocalPosition();
-            Log.getLogger().error(String.format("StructureProxy has null block at %d, %d, %d - local(%d, %d, %d)", x, y, z, local.getX(), local.getY(), local.getZ()));
-            findNextBlockSolid();
-            return false;
-        }
-
-        //don't overwrite huts or bedrock, nor place huts
-        if (worldBlock instanceof AbstractBlockHut || worldBlock == Blocks.BEDROCK
-              || block instanceof AbstractBlockHut || job.getStructure().getBlock() == Blocks.STONE)
-        {
-            findNextBlockSolid();
-            return false;
-        }
-
-        if (block != Blocks.AIR)
-        {
-            final Item item = Item.getItemFromBlock(block);
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
-            setBlockFromInventory(new BlockPos(x, y, z), block, metadata);
-        }
-
-
-        if (findNextBlockSolid())
-        {
-            worker.swingArm(worker.getActiveHand());
-            return false;
-        }
-        job.getStructure().reset();
-        buildStructure = true;
-        return true;
-    }
-
-    private boolean findNextBlockNonSolid()
-    {
-        //method returns false if there is no next block (structures finished)
-        if (!job.getStructure().findNextBlockNonSolid())
-        {
-            job.getStructure().incrementBlock();
-            job.getStructure().reset();
-            job.setStructure(null);
-            return false;
-        }
-        return true;
-    }
-
-    private boolean findNextBlockSolid()
-    {
-        //method returns false if there is no next block (structures finished)
-        if (!job.getStructure().findNextBlockSolid())
-        {
-            job.getStructure().incrementBlock();
-            job.getStructure().reset();
-            buildStructure = true;
             return false;
         }
         return true;

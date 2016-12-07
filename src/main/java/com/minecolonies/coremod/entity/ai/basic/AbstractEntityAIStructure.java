@@ -16,6 +16,9 @@ import com.minecolonies.coremod.entity.ai.util.Structure;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityHanging;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -82,7 +85,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int    MIN_WORKING_RANGE             = 7;
+    private static final int    MIN_WORKING_RANGE             = 12;
 
     /**
      * String which shows if something is a waypoint.
@@ -114,22 +117,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
           new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDING_STEP)),
           /**
            * Build the structure and foundation of the building.
-           * todo: implement
            */
           new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.DECORATION_STEP)),
           /**
            * Decorate the AbstractBuilding with torches etc.
-           * todo: implement
            */
           new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.COMPLETE_BUILD)),
           /**
            * Spawn entities on the structure.
-           * todo: implement
            */
           new AITarget(SPAWN_STEP, () -> AIState.IDLE),
           /**
            * Finalize the building and give back control to the ai.
-           * todo: implement
            */
           new AITarget(COMPLETE_BUILD, this::completeBuild),
           /**
@@ -143,16 +142,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if(job instanceof AbstractJobStructure)
         {
-            if (((AbstractJobStructure) job).getStructure() == null)
+            if (((AbstractJobStructure) job).getStructure() == null && job instanceof JobBuilder)
             {
                 //fix for bad structures
-                if(job instanceof JobBuilder)
-                {
-                    ((JobBuilder) job).complete();
-                }
+                ((JobBuilder) job).complete();
             }
-            //todo extra step
-            //job.getStructure().getEntities().forEach(this::spawnEntity);
 
             final String structureName = ((AbstractJobStructure) job).getStructure().getName();
 
@@ -161,6 +155,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     structureName);
             if(job instanceof JobBuilder)
             {
+                ((JobBuilder) job).getStructure().getEntities().forEach(this::spawnEntity);
+
                 final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
                 if (wo == null)
                 {
@@ -196,7 +192,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     ((JobBuilder) job).complete();
                 }
 
-
                 final AbstractBuilding workerBuilding = getOwnBuilding();
                 if (workerBuilding instanceof BuildingBuilder)
                 {
@@ -223,10 +218,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 return false;
             }
 
-            //todo does structureBlockEqualWorldBlock call!!
-
             if (structureBlock.block == null
-                    || structureBlock.block.equals(structureBlock.worldBlock)
+                    || structureBlock.doesStructureBlockEqualWorldBlock()
                     || structureBlock.metadata.getMaterial().isSolid())
             {
                 //findNextBlock count was reached and we can ignore this block
@@ -235,28 +228,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             worker.faceBlock(structureBlock.blockPosition);
 
-            final BlockPos coordinates = structureBlock.blockPosition;
             @Nullable final Block block = structureBlock.block;
-            @Nullable final IBlockState blockState = structureBlock.metadata;
 
             //should never happen
             if (block == null)
             {
-                //todo not clean yet.
                 @NotNull final BlockPos local = structureBlock.blockPosition;
-                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", coordinates, local));
+                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
                 return true;
             }
 
-            final Block worldBlock = world.getBlockState(coordinates).getBlock();
-            //don't overwrite huts or bedrock, nor place huts
-            if (worldBlock instanceof AbstractBlockHut
-                    || worldBlock == Blocks.BEDROCK
-                    || block instanceof AbstractBlockHut)
-            {
-                return true;
-            }
-
+            @Nullable final IBlockState blockState = structureBlock.metadata;
             //We need to deal with materials
             if (!Configurations.builderInfiniteResources
                     && !handleMaterials(block, blockState))
@@ -264,7 +246,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 return false;
             }
 
-            placeBlockAt(block, blockState, coordinates);
+            placeBlockAt(block, blockState, structureBlock.blockPosition);
         }
         return true;
     }
@@ -280,10 +262,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 return false;
             }
 
-            //todo does structureBlockEqualWorldBlock call!!
-
             if (structureBlock.block == null
-                    || structureBlock.block.equals(structureBlock.worldBlock)
+                    || structureBlock.doesStructureBlockEqualWorldBlock()
                     || (!structureBlock.metadata.getMaterial().isSolid()
                     && structureBlock.block != Blocks.AIR))
             {
@@ -292,29 +272,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
 
             worker.faceBlock(structureBlock.blockPosition);
-
-            final BlockPos coordinates = structureBlock.blockPosition;
             @Nullable final Block block = structureBlock.block;
-            @Nullable final IBlockState blockState = structureBlock.metadata;
 
             //should never happen
             if (block == null)
             {
-                //todo not clean yet.
                 @NotNull final BlockPos local = structureBlock.blockPosition;
-                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", coordinates, local));
+                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
                 return true;
             }
 
-            final Block worldBlock = world.getBlockState(coordinates).getBlock();
-            //don't overwrite huts or bedrock, nor place huts
-            if (worldBlock instanceof AbstractBlockHut
-                    || worldBlock == Blocks.BEDROCK
-                    || block instanceof AbstractBlockHut)
-            {
-                return true;
-            }
-
+            @Nullable final IBlockState blockState = structureBlock.metadata;
             //We need to deal with materials
             if (!Configurations.builderInfiniteResources
                     && !handleMaterials(block, blockState))
@@ -322,7 +290,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 return false;
             }
 
-            placeBlockAt(block, blockState, coordinates);
+            placeBlockAt(block, blockState, structureBlock.blockPosition);
         }
         return true;
     }
@@ -338,11 +306,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private Supplier<AIState> generateStructureGenerator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
     {
-        /*if(currentStructure == null)
-        {
-            return () -> IDLE;
-        }*/
-
         //do not replace with method reference, this one stays the same on changing reference for currentStructure
         //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
         @NotNull final Supplier<Structure.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
@@ -362,15 +325,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final Structure.Result result = advanceBlock.get();
                 if (result == Structure.Result.AT_END)
                 {
-                    if(currentStructure.getStage().equals(Structure.Stage.CLEAR))
-                    {
-                        currentStructure.setStage(Structure.Stage.BUILD);
-                    }
-                    else if(currentStructure.getStage().equals(Structure.Stage.BUILD))
-                    {
-                        currentStructure.setStage(Structure.Stage.DECORATE);
-                    }
-
+                    switchStage();
                     return nextState;
                 }
                 if (result == Structure.Result.CONFIG_LIMIT)
@@ -380,6 +335,25 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
             return getState();
         };
+    }
+
+    /**
+     * Switches the structures stage after the current one has been completed.
+     */
+    private void switchStage()
+    {
+        if(currentStructure.getStage().equals(Structure.Stage.CLEAR))
+        {
+            currentStructure.setStage(Structure.Stage.BUILD);
+        }
+        else if(currentStructure.getStage().equals(Structure.Stage.BUILD))
+        {
+            currentStructure.setStage(Structure.Stage.DECORATE);
+        }
+        else if(currentStructure.getStage().equals(Structure.Stage.DECORATE))
+        {
+            currentStructure.setStage(Structure.Stage.COMPLETE);
+        }
     }
 
     /**
@@ -425,6 +399,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         workOrder.setCleared(false);
         workOrder.setRequested(false);
+
+        requestMaterials();
     }
 
     /**
@@ -454,6 +430,43 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
+    private void requestMaterials()
+    {
+        //We need to deal with materials
+        if (!Configurations.builderInfiniteResources && job instanceof JobBuilder)
+        {
+            while (((JobBuilder) job).getStructure().findNextBlock())
+            {
+                @Nullable final Block block = ((JobBuilder) job).getStructure().getBlock();
+                @NotNull final IBlockState blockState = ((JobBuilder) job).getStructure().getBlockState();
+
+                if (((JobBuilder) job).getStructure().doesStructureBlockEqualWorldBlock() ||
+                        (blockState instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                        || (blockState instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER)))
+                {
+                    continue;
+                }
+
+                final Block worldBlock = BlockPosUtil.getBlock(world, ((JobBuilder) job).getStructure().getBlockPosition());
+
+                if (block != null
+                        && block != Blocks.AIR
+                        && worldBlock != Blocks.BEDROCK
+                        && !(worldBlock instanceof AbstractBlockHut)
+                        && !isBlockFree(block, 0))
+                {
+                    final AbstractBuilding building = getOwnBuilding();
+                    if (building instanceof BuildingBuilder)
+                    {
+                        ((BuildingBuilder) building).addNeededResource(block, 1);
+                    }
+                }
+            }
+            ((JobBuilder) job).getWorkOrder().setRequested(true);
+        }
+    }
+
+
     /**
      * Works on clearing the area of unneeded blocks.
      *
@@ -461,10 +474,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
-        //todo if clearStep in workOrder is done -> forget about that.
+        if((job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder().isCleared()) || job instanceof JobMiner)
+        {
+            return true;
+        }
 
         //Don't break bedrock etc.
-        if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
+        if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock) && !currentStructure.getCurrentBlock().doesStructureBlockEqualWorldBlock())
         {
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
@@ -491,7 +507,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 }
             }
         }
-        //todo request materials
+
         return true;
     }
 
@@ -634,7 +650,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
-    public boolean handleMaterials(@NotNull final Block block, @NotNull final IBlockState blockState)
+    private boolean handleMaterials(@NotNull final Block block, @NotNull final IBlockState blockState)
     {
         //Breaking blocks doesn't require taking materials from the citizens inventory
         if (block == Blocks.AIR)
@@ -665,11 +681,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 || block.equals(Blocks.LEAVES2)
                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
                 || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08))
-                || block.equals(Blocks.GRASS)
-                || block.equals(Blocks.DIRT);
+                || block.equals(Blocks.GRASS);
     }
 
-    public void placeBlockAt(@NotNull final Block block, @NotNull final IBlockState blockState, @NotNull final BlockPos coords)
+    private void placeBlockAt(@NotNull final Block block, @NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
         if (block == Blocks.AIR)
         {
@@ -678,7 +693,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (!world.setBlockToAir(coords))
             {
                 Log.getLogger().error(String.format("Block break failure at %s", coords));
-                //TODO handle - for now, just skipping
             }
         }
         else
@@ -693,13 +707,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             else
             {
                 Log.getLogger().error(String.format("Block place failure %s at %s", block.getUnlocalizedName(), coords));
-                //TODO handle - for now, just skipping
             }
             worker.swingArm(worker.getActiveHand());
         }
     }
 
-    public boolean placeBlock(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState blockState)
+    private boolean placeBlock(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState blockState)
     {
         //Move out of the way when placing blocks
         if (MathHelper.floor_double(worker.posX) == pos.getX()
@@ -810,13 +823,55 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
-    public void setTileEntity(@NotNull BlockPos pos)
+    private void spawnEntity(@Nullable final Entity entity)
     {
-        /*@Nullable final TileEntity tileEntity = job.getStructure().getTileEntity();
-        if (tileEntity != null && world.getTileEntity(pos) != null)
+        if (entity != null && job instanceof JobBuilder)
         {
-            world.setTileEntity(pos, tileEntity);
+            final BlockPos pos = ((JobBuilder) job).getStructure().getOffsetPosition();
+
+            if (entity instanceof EntityHanging)
+            {
+                @NotNull final EntityHanging entityHanging = (EntityHanging) entity;
+
+                entityHanging.posX += pos.getX();
+                entityHanging.posY += pos.getY();
+                entityHanging.posZ += pos.getZ();
+                //also sets position based on tile
+                entityHanging.setPosition(
+                        entityHanging.getHangingPosition().getX(),
+                        entityHanging.getHangingPosition().getY(),
+                        entityHanging.getHangingPosition().getZ());
+
+                entityHanging.setWorld(world);
+                entityHanging.dimension = world.provider.getDimension();
+
+                world.spawnEntityInWorld(entityHanging);
+            }
+            else if (entity instanceof EntityMinecart)
+            {
+                @Nullable final EntityMinecart minecart = (EntityMinecart) entity;
+                minecart.posX += pos.getX();
+                minecart.posY += pos.getY();
+                minecart.posZ += pos.getZ();
+
+                minecart.setWorld(world);
+                minecart.dimension = world.provider.getDimension();
+
+                world.spawnEntityInWorld(minecart);
+            }
+        }
+    }
+
+    //todo test without.
+    private void setTileEntity(@NotNull BlockPos pos)
+    {
+        /*if(job instanceof JobBuilder)
+        {
+            @Nullable final TileEntity tileEntity = ((JobBuilder) job).getStructure().getTileEntity();
+            if (tileEntity != null && world.getTileEntity(pos) != null)
+            {
+                world.setTileEntity(pos, tileEntity);
+            }
         }*/
-        //todo handle tileEntities -> in spawn step
     }
 }
