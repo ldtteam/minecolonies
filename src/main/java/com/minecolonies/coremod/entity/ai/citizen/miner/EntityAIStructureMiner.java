@@ -326,7 +326,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @NotNull
     private AIState checkMineShaft()
     {
-        //TODO: check if mineshaft needs repairing!
         //Check if we reached the mineshaft depth limit
         if (getLastLadder(getOwnBuilding().getLadderLocation()) < getOwnBuilding().getDepthLimit())
         {
@@ -800,7 +799,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //Preload structures
         if (job.getStructure() == null)
         {
-            initStructure(mineNode, direction, new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
+            initStructure(mineNode, direction, new BlockPos(mineNode.getX() + direction == 2 ? -1 : 1, getOwnBuilding().getCurrentLevel().getDepth(), mineNode.getZ() + direction == 4 ? -1 : 1));
         }
 
         //Check for liquids
@@ -823,7 +822,20 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             }
         }
 
-        return CLEAR_STEP;
+        if (mineNode.getStatus() == Node.NodeStatus.IN_PROGRESS)
+        {
+            mineNode.setStatus(Node.NodeStatus.COMPLETED);
+        }
+        //todo doesn't seem to complete the node completely and shouldn't return to build to continue as well.
+
+        workingNode = null;
+
+        if(job.getStructure() != null)
+        {
+            return CLEAR_STEP;
+        }
+
+        return this.getState();
     }
 
     private static boolean isNodeInDirectionOfOtherNode(@NotNull final Node start, final int direction, @NotNull final Node check)

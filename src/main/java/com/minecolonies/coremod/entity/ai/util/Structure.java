@@ -6,6 +6,7 @@ import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockOre;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -120,7 +121,8 @@ public class Structure
             final Block structureBlock = structureBlockState.getBlock();
 
             //All worldBlocks are equal the substitution block
-            if (structureBlock == ModBlocks.blockSubstitution)
+            if (structureBlock == ModBlocks.blockSubstitution
+                    || (structureBlock == ModBlocks.blockSolidSubstitution && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre)))
             {
                 return true;
             }

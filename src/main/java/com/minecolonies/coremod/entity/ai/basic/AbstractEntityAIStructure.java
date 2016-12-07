@@ -133,11 +133,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
           /**
            * Finalize the building and give back control to the ai.
            */
-          new AITarget(COMPLETE_BUILD, this::completeBuild),
-          /**
-           * Check if we have to build something.
-           */
-          new AITarget(this::isThereAStructureToBuild, () -> AIState.START_BUILDING)
+          new AITarget(COMPLETE_BUILD, this::completeBuild)
         );
     }
 
@@ -205,17 +201,22 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             else if(job instanceof JobMiner)
             {
                 BuildingMiner minerBuilding = (BuildingMiner) getOwnBuilding();
-                @NotNull final Level currentLevel = new Level(minerBuilding, ((JobMiner) job).getStructure().getPosition().getY());
-                minerBuilding.addLevel(currentLevel);
-                minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
-                minerBuilding.resetStartingLevelShaft();
+                if(!minerBuilding.clearedShaft)
+                {
+                    @NotNull final Level currentLevel = new Level(minerBuilding, ((JobMiner) job).getStructure().getPosition().getY());
+                    minerBuilding.addLevel(currentLevel);
+                    minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
+                    minerBuilding.resetStartingLevelShaft();
 
-                //Send out update to client
-                getOwnBuilding().markDirty();
+                    //Send out update to client
+                    getOwnBuilding().markDirty();
+                }
+                ((JobMiner) job).setStructure(null);
             }
             worker.addExperience(XP_EACH_BUILDING);
             workFrom = null;
         }
+
         currentStructure = null;
 
         return AIState.IDLE;
@@ -348,7 +349,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                   || evaluationFunction.apply(currentBlock))
             {
                 final Structure.Result result = advanceBlock.get();
-                if (result == Structure.Result.AT_END)
+                if (result == Structure.Result.AT_END || currentBlock.block == null)
                 {
                     switchStage();
                     return nextState;
@@ -506,17 +507,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
-        if((job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder().isCleared()) || job instanceof JobMiner)
+        if(job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder().isCleared())
         {
             return true;
         }
+        //todo miner not clearing what he should! not even clearing air!
 
         //Don't break bedrock etc.
         if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock) && !currentStructure.getCurrentBlock().doesStructureBlockEqualWorldBlock())
         {
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
-            if (!walkToConstructionSite())
+             if (!walkToConstructionSite())
             {
                 return false;
             }
@@ -894,16 +896,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
-    //todo test without.
     private void setTileEntity(@NotNull BlockPos pos)
     {
-        /*if(job instanceof JobBuilder)
+        if(job instanceof JobBuilder)
         {
             @Nullable final TileEntity tileEntity = ((JobBuilder) job).getStructure().getTileEntity();
             if (tileEntity != null && world.getTileEntity(pos) != null)
             {
                 world.setTileEntity(pos, tileEntity);
             }
-        }*/
+        }
     }
 }

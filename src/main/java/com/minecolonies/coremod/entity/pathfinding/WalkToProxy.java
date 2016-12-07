@@ -120,7 +120,6 @@ public class WalkToProxy
         {
             if (proxyList.isEmpty())
             {
-                Log.getLogger().info("Switch from pathPoint " + currentProxy.toString() + " to " + target);
                 currentProxy = target;
             }
             else
