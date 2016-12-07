@@ -159,7 +159,6 @@ public final class ColonyManager
                 building.destroy();
                 for (final World world : colonyWorlds)
                 {
-                    Log.getLogger().info("Try out World " + world.getProviderName());
                     if (world.getBlockState(location).getBlock() instanceof AbstractBlockHut)
                     {
                         Log.getLogger().info("Found Block, deleting " + world.getBlockState(location).getBlock());
