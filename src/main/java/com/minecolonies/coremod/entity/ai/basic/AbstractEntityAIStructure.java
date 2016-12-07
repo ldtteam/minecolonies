@@ -349,7 +349,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                   || evaluationFunction.apply(currentBlock))
             {
                 final Structure.Result result = advanceBlock.get();
-                if (result == Structure.Result.AT_END || currentBlock.block == null)
+                if (result == Structure.Result.AT_END || (currentBlock.block == null && currentBlock.worldBlock == Blocks.AIR))
                 {
                     switchStage();
                     return nextState;
@@ -734,11 +734,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             final Item item = Item.getItemFromBlock(block);
             worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
 
-            if (placeBlock(coords, block, blockState))
-            {
-                setTileEntity(coords);
-            }
-            else
+            if (!placeBlock(coords, block, blockState))
             {
                 Log.getLogger().error(String.format("Block place failure %s at %s", block.getUnlocalizedName(), coords));
             }
@@ -892,18 +888,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 minecart.dimension = world.provider.getDimension();
 
                 world.spawnEntityInWorld(minecart);
-            }
-        }
-    }
-
-    private void setTileEntity(@NotNull BlockPos pos)
-    {
-        if(job instanceof JobBuilder)
-        {
-            @Nullable final TileEntity tileEntity = ((JobBuilder) job).getStructure().getTileEntity();
-            if (tileEntity != null && world.getTileEntity(pos) != null)
-            {
-                world.setTileEntity(pos, tileEntity);
             }
         }
     }

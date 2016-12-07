@@ -306,7 +306,8 @@ public class Structure
             case CLEAR:
                 return advanceBlocks(this.structure::decrementBlock,
                   structureBlock -> structureBlock.blockPosition.getX() <= 0
-                                      || this.targetWorld.isAirBlock(structureBlock.blockPosition));
+                          || !structureBlock.doesStructureBlockEqualWorldBlock()
+                          || structureBlock.worldBlock == Blocks.AIR);
             case BUILD:
             case DECORATE:
                 return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock() || structureBlock.block == Blocks.AIR);

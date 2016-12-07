@@ -622,26 +622,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         final int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
         final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
 
-        int rotation = getOwnBuilding().getRotation();
-
-        if(rotation == 0)
-        {
-            rotation = 4;
-        }
-        else if(rotation == 1)
-        {
-            rotation = 0;
-        }
-        else if(rotation == 2)
-        {
-            rotation = 3;
-        }
-        else
-        {
-            rotation = 2;
-        }
-
-        initStructure(null, rotation, new BlockPos(ladderPos.getX() + xOffset, lastLadder, ladderPos.getZ() + zOffset));
+        initStructure(null, 0, new BlockPos(ladderPos.getX() + xOffset, lastLadder, ladderPos.getZ() + zOffset));
         return true;
     }
 
@@ -788,6 +769,22 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         else
         {
+            if(getOwnBuilding().getVectorX() == 1)
+            {
+                rotateTimes = 1;
+            }
+            else if(getOwnBuilding().getVectorZ() == 1)
+            {
+                rotateTimes = 2;
+            }
+            else if(getOwnBuilding().getVectorX() == -1)
+            {
+                rotateTimes = 3;
+            }
+            else if(getOwnBuilding().getVectorZ() == -1)
+            {
+                rotateTimes = 4;
+            }
             loadStructure("miner/minerMainShaft", rotateTimes, structurePos);
         }
         requestedBlock = false;
@@ -799,7 +796,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //Preload structures
         if (job.getStructure() == null)
         {
-            initStructure(mineNode, direction, new BlockPos(mineNode.getX() + direction == 2 ? -1 : 1, getOwnBuilding().getCurrentLevel().getDepth(), mineNode.getZ() + direction == 4 ? -1 : 1));
+            int directionX = direction == 2 ? 1 : direction == 1 ? -1 : 0;
+            int directionZ = direction == 4 ? 1 : direction == 3 ? -1 : 0;
+
+            initStructure(mineNode, direction, new BlockPos(mineNode.getX() + directionX, getOwnBuilding().getCurrentLevel().getDepth(), mineNode.getZ() + directionZ));
         }
 
         //Check for liquids
@@ -826,7 +826,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             mineNode.setStatus(Node.NodeStatus.COMPLETED);
         }
-        //todo doesn't seem to complete the node completely and shouldn't return to build to continue as well.
 
         workingNode = null;
 
