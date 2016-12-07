@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -264,15 +265,27 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (structureBlock.block == null
                     || structureBlock.doesStructureBlockEqualWorldBlock()
-                    || (!structureBlock.metadata.getMaterial().isSolid()
-                    && structureBlock.block != Blocks.AIR))
+                    || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
             }
 
+            @Nullable Block block = structureBlock.block;
+            @Nullable IBlockState blockState = structureBlock.metadata;
+            if(structureBlock.block == ModBlocks.blockSolidSubstitution)
+            {
+                if(!(job instanceof JobMiner && structureBlock.worldBlock instanceof BlockOre)
+                        && structureBlock.worldMetadata.getMaterial().isSolid())
+                {
+                    return true;
+                }
+
+                block = getSolidSubstitution(structureBlock.blockPosition);
+                blockState = block.getDefaultState();
+            }
+
             worker.faceBlock(structureBlock.blockPosition);
-            @Nullable final Block block = structureBlock.block;
 
             //should never happen
             if (block == null)
@@ -282,7 +295,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 return true;
             }
 
-            @Nullable final IBlockState blockState = structureBlock.metadata;
             //We need to deal with materials
             if (!Configurations.builderInfiniteResources
                     && !handleMaterials(block, blockState))
@@ -402,6 +414,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         requestMaterials();
     }
+
+    /**
+     * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
+     * @param location the location the block should be at.
+     * @return the Block.
+     */
+    public abstract Block getSolidSubstitution(BlockPos location);
 
     /**
      * Loads the structure given the name, rotation and position.

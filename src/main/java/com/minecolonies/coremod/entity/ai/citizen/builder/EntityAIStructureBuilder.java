@@ -25,6 +25,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeProvider;
+import net.minecraft.world.biome.BiomeProviderSingle;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,6 +84,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         worker.setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
                                   + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
+    }
+
+    @Override
+    public Block getSolidSubstitution(BlockPos location)
+    {
+        IBlockState filler = world.getBiome(location).fillerBlock;
+        if(filler.getBlock() instanceof BlockFalling)
+        {
+            return Blocks.DIRT;
+        }
+        return filler.getBlock();
     }
 
     private boolean checkIfCanceled()

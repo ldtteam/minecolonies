@@ -94,6 +94,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         worker.setCanPickUpLoot(true);
     }
 
+    @Override
+    public Block getSolidSubstitution(BlockPos ignored)
+    {
+        return Blocks.COBBLESTONE;
+    }
+
     private static boolean isOre(final Block block)
     {
         //TODO make this more sophisticated
@@ -616,126 +622,36 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
         final int xOffset = SHAFT_RADIUS * getOwnBuilding().getVectorX();
         final int zOffset = SHAFT_RADIUS * getOwnBuilding().getVectorZ();
-        //TODO: Really ugly building code, change to structures
 
-        //make area around it safe
-        for (int x = -SAFE_CHECK_RANGE + xOffset; x <= SAFE_CHECK_RANGE + xOffset; x++)
+        int rotation = getOwnBuilding().getRotation();
+
+        if(rotation == 0)
         {
-            for (int z = -SAFE_CHECK_RANGE + zOffset; z <= SAFE_CHECK_RANGE + zOffset; z++)
-            {
-                for (int y = SAFE_CHECK_UPPER_BOUND; y >= SAFE_CHECK_LOWER_BOUND; y--)
-                {
-                    if ((x == 0 && 0 == z) || lastLadder + y <= 1)
-                    {
-                        continue;
-                    }
-                    @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder + y, ladderPos.getZ() + z);
-                    final int normalizedX = x - xOffset;
-                    final int normalizedZ = z - zOffset;
-                    if ((Math.abs(normalizedX) > SHAFT_RADIUS
-                           || Math.abs(normalizedZ) > SHAFT_RADIUS)
-                          && !notReplacedInSecuringMine.contains(world.getBlockState(curBlock).getBlock()))
-                    {
-                        if (!mineBlock(curBlock, getOwnBuilding().getLocation()))
-                        {
-                            //make securing go fast as to not confuse the player
-                            setDelay(1);
-                            return true;
-                        }
-                        if (checkOrRequestItems(new ItemStack(Blocks.COBBLESTONE)))
-                        {
-                            return true;
-                        }
-                        setBlockFromInventory(curBlock, Blocks.COBBLESTONE);
-                        return true;
-                    }
-                }
-            }
+            rotation = 4;
+        }
+        else if(rotation == 1)
+        {
+            rotation = 0;
+        }
+        else if(rotation == 2)
+        {
+            rotation = 3;
+        }
+        else
+        {
+            rotation = 2;
         }
 
-        //Build the planks
-        for (int x = -SHAFT_RADIUS + xOffset; x <= SHAFT_RADIUS + xOffset; x++)
-        {
-            for (int z = -SHAFT_RADIUS + zOffset; z <= SHAFT_RADIUS + zOffset; z++)
-            {
-                if (x == 0 && 0 == z)
-                {
-                    continue;
-                }
-                @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder, ladderPos.getZ() + z);
-                final int normalizedX = x - xOffset;
-                final int normalizedZ = z - zOffset;
-                if ((Math.abs(normalizedX) >= 2 || Math.abs(normalizedZ) >= 2) && world.getBlockState(curBlock) != getOwnBuilding().getFloorBlock())
-                {
-                    setDelay(DELAY_TIMEOUT);
-                    if (checkOrRequestItems(new ItemStack(getOwnBuilding().getFloorBlock().getBlock())))
-                    {
-                        return true;
-                    }
-                    setBlockFromInventory(curBlock, getOwnBuilding().getFloorBlock().getBlock(), getOwnBuilding().getFloorBlock());
-                    return true;
-                }
-            }
-        }
-        //Build fence
-        for (int x = -SHAFT_RADIUS + xOffset; x <= SHAFT_RADIUS + xOffset; x++)
-        {
-            for (int z = -SHAFT_RADIUS + zOffset; z <= SHAFT_RADIUS + zOffset; z++)
-            {
-                if (x == 0 && 0 == z)
-                {
-                    continue;
-                }
-                @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder + 1, ladderPos.getZ() + z);
-                final int normalizedX = x - xOffset;
-                final int normalizedZ = z - zOffset;
-                if (((Math.abs(normalizedX) == 2
-                        && Math.abs(normalizedZ) < SHAFT_RADIUS)
-                       || (Math.abs(normalizedZ) == 2
-                             && Math.abs(normalizedX) < SHAFT_RADIUS))
-                      && world.getBlockState(curBlock).getBlock() != getOwnBuilding().getFenceBlock())
-                {
-                    setDelay(DELAY_TIMEOUT);
-                    if (checkOrRequestItems(new ItemStack(getOwnBuilding().getFenceBlock())))
-                    {
-                        return true;
-                    }
-                    setBlockFromInventory(curBlock, getOwnBuilding().getFenceBlock());
-                    return true;
-                }
-            }
-        }
-        //Build torches
-        for (int x = -SHAFT_RADIUS + xOffset; x <= SHAFT_RADIUS + xOffset; x++)
-        {
-            for (int z = -SHAFT_RADIUS + zOffset; z <= SHAFT_RADIUS + zOffset; z++)
-            {
-                if (x == 0 && 0 == z)
-                {
-                    continue;
-                }
-                @NotNull final BlockPos curBlock = new BlockPos(ladderPos.getX() + x, lastLadder + 2, ladderPos.getZ() + z);
-                final int normalizedX = x - xOffset;
-                final int normalizedZ = z - zOffset;
-                if (Math.abs(normalizedX) == 2 && Math.abs(normalizedZ) == 2 && world.getBlockState(curBlock).getBlock() != Blocks.TORCH)
-                {
-                    setDelay(DELAY_TIMEOUT);
-                    if (checkOrRequestItems(new ItemStack(Blocks.TORCH)))
-                    {
-                        return true;
-                    }
-                    setBlockFromInventory(curBlock, Blocks.TORCH);
-                    return true;
-                }
-            }
-        }
+        initStructure(null, rotation, new BlockPos(ladderPos.getX() + xOffset, lastLadder, ladderPos.getZ() + zOffset));
 
         @NotNull final Level currentLevel = new Level(getOwnBuilding(), lastLadder);
         getOwnBuilding().addLevel(currentLevel);
         getOwnBuilding().setCurrentLevel(getOwnBuilding().getNumberOfLevels());
+        getOwnBuilding().resetStartingLevelShaft();
+
         //Send out update to client
         getOwnBuilding().markDirty();
-        return false;
+        return true;
     }
 
     @NotNull
@@ -747,9 +663,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         if (buildNextBlockInShaft())
         {
-            return MINER_BUILDING_SHAFT;
+            return BUILDING_STEP;
         }
-        getOwnBuilding().resetStartingLevelShaft();
 
         return START_WORKING;
     }
@@ -849,7 +764,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      * @param mineNode the node to load it for.
      * @param direction the direction it faces.
      */
-    private void initStructure(final Node mineNode, final int direction)
+    private void initStructure(final Node mineNode, final int direction, BlockPos structurePos)
     {
         int rotateTimes = 2;
         if (direction == 3)
@@ -865,19 +780,24 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             rotateTimes = 1;
         }
 
-        BlockPos structurePos = new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ());
-
-        if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
+        if(mineNode != null)
         {
-            loadStructure("miner/minerX4", rotateTimes, structurePos);
+            if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
+            {
+                loadStructure("miner/minerX4", rotateTimes, structurePos);
+            }
+            if (mineNode.getStyle() == Node.NodeType.BEND)
+            {
+                loadStructure("miner/minerX2Right", rotateTimes, structurePos);
+            }
+            if (mineNode.getStyle() == Node.NodeType.TUNNEL)
+            {
+                loadStructure("miner/minerX2Top", rotateTimes, structurePos);
+            }
         }
-        if (mineNode.getStyle() == Node.NodeType.BEND)
+        else
         {
-            loadStructure("miner/minerX2Right", rotateTimes, structurePos);
-        }
-        if (mineNode.getStyle() == Node.NodeType.TUNNEL)
-        {
-            loadStructure("miner/minerX2Top", rotateTimes, structurePos);
+            loadStructure("miner/minerMainShaft", rotateTimes, structurePos);
         }
         requestedBlock = false;
         buildStructure = false;
@@ -888,7 +808,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //Preload structures
         if (job.getStructure() == null)
         {
-            initStructure(mineNode, direction);
+            initStructure(mineNode, direction, new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth() + 1, mineNode.getZ()));
         }
 
         //Check for liquids
@@ -911,225 +831,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             }
         }
 
-        //Check for safe Node
-        for (int x = -NODE_DISTANCE / 2; x <= NODE_DISTANCE / 2; x++)
-        {
-            for (int z = -NODE_DISTANCE / 2; z <= NODE_DISTANCE / 2; z++)
-            {
-                for (int y = 0; y <= 4; y++)
-                {
-                    @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
-                    if ((((Math.abs(x) >= 2) && (Math.abs(z) >= 2)) || (getBlock(curBlock) != Blocks.AIR) || (y < 1) || (y > 3)) && !secureBlock(curBlock, standingPosition))
-                    {
-                        return MINER_CHECK_MINESHAFT;
-                    }
-                }
-            }
-        }
-
-        if (!mineSideOfNode(mineNode, direction, standingPosition))
-        {
-            return MINER_CHECK_MINESHAFT;
-        }
-
-        if (mineNode.getStatus() == Node.NodeStatus.AVAILABLE)
-        {
-            mineNode.setStatus(Node.NodeStatus.IN_PROGRESS);
-        }
-
-        int xOffSet = getXDistance(direction) / 2;
-        int zOffSet = getZDistance(direction) / 2;
-        if (xOffSet > 0)
-        {
-            xOffSet -= 1;
-        }
-        else
-        {
-            xOffSet += 1;
-        }
-        if (zOffSet > 0)
-        {
-            zOffSet -= 1;
-        }
-        else
-        {
-            zOffSet += 1;
-        }
-        @NotNull final BlockPos newStandingPosition = new BlockPos(mineNode.getX() + xOffSet, standingPosition.getY(), mineNode.getZ() + zOffSet);
-        currentStandingPosition = newStandingPosition;
-
-        if (mineNode.getStatus() != Node.NodeStatus.COMPLETED)
-        {
-            //Mine middle
-            for (int y = 1; y <= 3; y++)
-            {
-                for (int x = -1; x <= 1; x++)
-                {
-                    for (int z = -1; z <= 1; z++)
-                    {
-                        @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
-                        if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getShaftBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
-                        {
-                            continue;
-                        }
-                        if (!mineBlock(curBlock, newStandingPosition))
-                        {
-                            return MINER_CHECK_MINESHAFT;
-                        }
-                    }
-                }
-            }
-        }
-
-        @NotNull final List<Integer> directions = Arrays.asList(1, 2, 3, 4);
-        for (final Integer dir : directions)
-        {
-            @NotNull final BlockPos sideStandingPosition = new BlockPos(mineNode.getX() + getXDistance(dir) / 3, standingPosition.getY(), mineNode.getZ() + getZDistance(dir) / 3);
-            currentStandingPosition = sideStandingPosition;
-            if (!mineSideOfNode(mineNode, dir, sideStandingPosition))
-            {
-                return MINER_CHECK_MINESHAFT;
-            }
-        }
-
-        //Build middle
-        if (!buildNodeSupportStructure(mineNode))
-        {
-            return BUILDING_STEP;
-        }
-
-        if (mineNode.getStatus() == Node.NodeStatus.IN_PROGRESS)
-        {
-            mineNode.setStatus(Node.NodeStatus.COMPLETED);
-        }
-
-        workingNode = null;
-        return MINER_CHECK_MINESHAFT;
+        return CLEAR_STEP;
     }
 
-    private boolean buildNodeSupportStructure(@NotNull final Node mineNode)
-    {
-        if (mineNode.getStyle() == Node.NodeType.CROSSROAD || mineNode.getStyle() == Node.NodeType.BEND || mineNode.getStyle() == Node.NodeType.TUNNEL)
-        {
-            return executeStructurePlacement();
-        }
-        if (mineNode.getStyle() == Node.NodeType.LADDER_BACK)
-        {
-            //already done
-            return true;
-        }
-        Log.getLogger().info("None of the above: " + mineNode);
-        return false;
-    }
-
-    private boolean requestBlock()
-    {
-        while (job.getStructure().findNextBlock())
-        {
-            @Nullable final Block block = job.getStructure().getBlock();
-
-            if (job.getStructure().doesStructureBlockEqualWorldBlock() || block == Blocks.STONE || block == Blocks.AIR)
-            {
-                continue;
-            }
-
-            if (checkOrRequestItems(new ItemStack(block)))
-            {
-                job.getStructure().reset();
-                return false;
-            }
-        }
-        job.getStructure().reset();
-        requestedBlock = true;
-        buildStructure = false;
-        return true;
-    }
-
-    private boolean executeStructurePlacement()
-    {
-        if (!buildStructure)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean mineSideOfNode(@NotNull final Node mineNode, final int direction, @NotNull final BlockPos standingPosition)
-    {
-        if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.LADDER)
-        {
-            return true;
-        }
-
-        if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.AVAILABLE)
-        {
-            setNodeStatusForDirection(mineNode, direction, Node.NodeStatus.IN_PROGRESS);
-        }
-
-        final int xoffset = getXDistance(direction) / 2;
-        final int zoffset = getZDistance(direction) / 2;
-        int posx = 1;
-        int negx = -1;
-        int posz = 1;
-        int negz = -1;
-        if (xoffset > 0)
-        {
-            posx = xoffset;
-            negx = 2;
-        }
-        if (xoffset < 0)
-        {
-            negx = xoffset;
-            posx = -2;
-        }
-        if (zoffset > 0)
-        {
-            posz = zoffset;
-            negz = 2;
-        }
-        if (zoffset < 0)
-        {
-            negz = zoffset;
-            posz = -2;
-        }
-
-        //Mine side
-        //TODO: make it look nicer!
-        for (int y = 1; y <= 3; y++)
-        {
-            for (int x = negx; x <= posx; x++)
-            {
-                for (int z = negz; z <= posz; z++)
-                {
-                    @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
-                    if (getBlock(curBlock) == Blocks.TORCH || getBlock(curBlock) == getOwnBuilding().getShaftBlock() || getBlock(curBlock) == getOwnBuilding().getFenceBlock())
-                    {
-                        continue;
-                    }
-                    if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.WALL)
-                    {
-                        secureBlock(curBlock, standingPosition);
-                    }
-                    else if (!mineBlock(curBlock, standingPosition))
-                    {
-                        return false;
-                    }
-                }
-            }
-        }
-        if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.IN_PROGRESS)
-        {
-            setNodeStatusForDirection(mineNode, direction, Node.NodeStatus.COMPLETED);
-        }
-        return true;
-    }
-
-    private boolean isNodeInDirectionOfOtherNode(@NotNull final Node start, final int direction, @NotNull final Node check)
+    private static boolean isNodeInDirectionOfOtherNode(@NotNull final Node start, final int direction, @NotNull final Node check)
     {
         return start.getX() + getXDistance(direction) == check.getX() && start.getZ() + getZDistance(direction) == check.getZ();
     }
 
-    private Optional<Node> tryFindNodeInDirectionOfNode(@NotNull final Level curlevel, final Node start, final int direction)
+    private static Optional<Node> tryFindNodeInDirectionOfNode(@NotNull final Level curlevel, final Node start, final int direction)
     {
         final Node finalCurrentNode = start;
         return curlevel.getNodes()
@@ -1139,7 +849,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     }
 
     @NotNull
-    private Node createNewNodeInDirectionFromNode(@NotNull final Node start, final int direction)
+    private static Node createNewNodeInDirectionFromNode(@NotNull final Node start, final int direction)
     {
         final int x = start.getX() + getXDistance(direction);
         final int z = start.getZ() + getZDistance(direction);
