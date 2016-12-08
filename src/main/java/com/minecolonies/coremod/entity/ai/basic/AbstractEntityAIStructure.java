@@ -27,7 +27,6 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -294,9 +293,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 {
                     return true;
                 }
-
                 block = getSolidSubstitution(structureBlock.blockPosition);
                 blockState = block.getDefaultState();
+
             }
 
             worker.faceBlock(structureBlock.blockPosition);
@@ -349,9 +348,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                   || evaluationFunction.apply(currentBlock))
             {
                 final Structure.Result result = advanceBlock.get();
-                if (result == Structure.Result.AT_END || (currentBlock.block == null && currentBlock.worldBlock == Blocks.AIR))
+                if (result == Structure.Result.AT_END)
                 {
-                    switchStage();
+                    switchStage(nextState);
                     return nextState;
                 }
                 if (result == Structure.Result.CONFIG_LIMIT)
@@ -366,17 +365,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * Switches the structures stage after the current one has been completed.
      */
-    private void switchStage()
+    private void switchStage(AIState state)
     {
-        if(currentStructure.getStage().equals(Structure.Stage.CLEAR))
+        if(state.equals(AIState.BUILDING_STEP))
         {
             currentStructure.setStage(Structure.Stage.BUILD);
         }
-        else if(currentStructure.getStage().equals(Structure.Stage.BUILD))
+        else if(state.equals(AIState.DECORATION_STEP))
         {
             currentStructure.setStage(Structure.Stage.DECORATE);
         }
-        else if(currentStructure.getStage().equals(Structure.Stage.DECORATE))
+        else if(state.equals(AIState.COMPLETE_BUILD))
         {
             currentStructure.setStage(Structure.Stage.COMPLETE);
         }
@@ -450,7 +449,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 StructureWrapper wrapper = new StructureWrapper(world, name);
                 ((AbstractJobStructure) job).setStructure(wrapper);
-                currentStructure = new Structure(world, wrapper, job instanceof JobMiner ? Structure.Stage.BUILD : Structure.Stage.CLEAR);
+                currentStructure = new Structure(world, wrapper, Structure.Stage.CLEAR);
             }
             catch (final IllegalStateException e)
             {
@@ -507,18 +506,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
-        if(job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder().isCleared())
+        if(job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder().isCleared() || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
         {
             return true;
         }
-        //todo miner not clearing what he should! not even clearing air!
 
         //Don't break bedrock etc.
-        if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock) && !currentStructure.getCurrentBlock().doesStructureBlockEqualWorldBlock())
+        if (!BlockUtils.shouldNeverBeMessedWith(currentBlock.worldBlock))
         {
             //Fill workFrom with the position from where the builder should build.
             //also ensure we are at that position.
-             if (!walkToConstructionSite())
+            if (!walkToConstructionSite())
             {
                 return false;
             }
@@ -530,6 +528,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
                 world.setBlockToAir(currentBlock.blockPosition);
+                world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
                 setDelay(UNLIMITED_RESOURCES_TIMEOUT);
             }
@@ -810,10 +809,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (!world.setBlockState(pos, blockState, 0x03))
             {
                 return false;
-            }
-            if (world.getBlockState(pos).getBlock() == block && world.getBlockState(pos) != blockState)
-            {
-                world.setBlockState(pos, blockState, 0x03);
             }
         }
 

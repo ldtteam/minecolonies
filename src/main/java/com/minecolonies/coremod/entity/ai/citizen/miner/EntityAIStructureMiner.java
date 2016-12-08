@@ -214,7 +214,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @NotNull
     private AIState startWorkingAtOwnBuilding()
     {
-        if (walkToBuilding())
+        if (worker.posY >= getOwnBuilding().getLocation().getY() && walkToBuilding())
         {
             return START_WORKING;
         }
@@ -796,10 +796,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //Preload structures
         if (job.getStructure() == null)
         {
-            int directionX = direction == 2 ? 1 : direction == 1 ? -1 : 0;
-            int directionZ = direction == 4 ? 1 : direction == 3 ? -1 : 0;
-
-            initStructure(mineNode, direction, new BlockPos(mineNode.getX() + directionX, getOwnBuilding().getCurrentLevel().getDepth(), mineNode.getZ() + directionZ));
+            initStructure(mineNode, direction, new BlockPos(mineNode.getX(), getOwnBuilding().getCurrentLevel().getDepth(), mineNode.getZ()));
         }
 
         //Check for liquids

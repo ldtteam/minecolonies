@@ -122,7 +122,8 @@ public class Structure
 
             //All worldBlocks are equal the substitution block
             if (structureBlock == ModBlocks.blockSubstitution
-                    || (structureBlock == ModBlocks.blockSolidSubstitution && worldMetadata.getMaterial().isSolid() && !(worldBlock instanceof BlockOre)))
+                    || (structureBlock == ModBlocks.blockSolidSubstitution && worldMetadata.getMaterial().isSolid()
+                    && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR))
             {
                 return true;
             }
@@ -135,13 +136,12 @@ public class Structure
             {
                 return structureBlock == worldBlockState.getBlock();
             }
-            else if (structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
+            else if (structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
             {
                 return true;
             }
 
-            //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
-            return structureBlockState == worldBlockState;
+            return structureBlockState.equals(worldBlockState);
         }
     }
 
@@ -305,17 +305,15 @@ public class Structure
         {
             case CLEAR:
                 return advanceBlocks(this.structure::decrementBlock,
-                  structureBlock -> structureBlock.blockPosition.getX() <= 0
-                          || !structureBlock.doesStructureBlockEqualWorldBlock()
+                  structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
                           || structureBlock.worldBlock == Blocks.AIR);
             case BUILD:
                 return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
-                        || structureBlock.block == Blocks.AIR
-                        || !structureBlock.metadata.getMaterial().isSolid());
+                        && structureBlock.block == Blocks.AIR
+                        && !structureBlock.metadata.getMaterial().isSolid());
             case DECORATE:
-                return advanceBlocks(this.structure::incrementBlock, structureBlock ->
+                return advanceBlocks(this.structure::decrementBlock, structureBlock ->
                         structureBlock.doesStructureBlockEqualWorldBlock()
-                        || structureBlock.block == Blocks.AIR
                         || structureBlock.metadata.getMaterial().isSolid());
             default:
                 return Result.NEW_BLOCK;
