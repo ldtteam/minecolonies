@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
-import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Tuple;
@@ -11,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+
+import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.TUNNEL;
 
 /**
  * Miner Level Data Structure.
@@ -95,22 +96,22 @@ public class Level
         ladderNode.setStatus(Node.NodeStatus.COMPLETED);
         nodes.put(ladderKey, ladderNode);
 
-        ArrayList<BlockPos> nodeCenterList = new ArrayList<>();
+        List<BlockPos> nodeCenterList = new ArrayList<>();
         //Calculate the center positions of the new nodes.
         nodeCenterList.add(ladderNode.getNorthNodeCenter());
         nodeCenterList.add(ladderNode.getSouthNodeCenter());
         nodeCenterList.add(ladderNode.getEastNodeCenter());
         nodeCenterList.add(ladderNode.getWesthNodeCenter());
 
-        for(BlockPos pos: nodeCenterList)
+        for(final BlockPos pos: nodeCenterList)
         {
             if(cobbleCenter.equals(pos))
             {
                 continue;
             }
-            Node tempNode = new Node(pos.getX(), pos.getZ(), ladderKey);
-            tempNode.setStyle(Node.NodeType.TUNNEL);
-            nodes.put(ladderKey, tempNode);
+            final Node tempNode = new Node(pos.getX(), pos.getZ(), ladderKey);
+            tempNode.setStyle(TUNNEL);
+            nodes.put(new Tuple<>(pos.getX(), pos.getZ()), tempNode);
             openNodes.add(tempNode);
         }
     }
@@ -131,10 +132,54 @@ public class Level
      */
     public void closeNextNode(int rotation)
     {
-        Node tempNode = openNodes.poll();
-        //todo check it for rotation and style.
-        //todo check Node type, check node type with rotation and create new nodes depending on it.
+        final Node tempNode = openNodes.poll();
+        final List<BlockPos> nodeCenterList = new ArrayList<>();
+
+        //todo let them face the correct direction!
+        switch(tempNode.getStyle())
+        {
+            case TUNNEL:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation));
+                break;
+            case BEND:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation+3));
+                break;
+            case CROSSROAD:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation + 1));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation + 3));
+                break;
+        }
+
+        //todo random style!
+        for(final BlockPos pos: nodeCenterList)
+        {
+            Tuple<Integer, Integer> tuple = new Tuple<>(pos.getX(), pos.getZ());
+            if(nodes.containsKey(tuple))
+            {
+                continue;
+            }
+            final Node tempNodeToAdd = new Node(pos.getX(), pos.getZ(), new Tuple<>(tempNode.getX(), tempNode.getZ()));
+            tempNodeToAdd.setStyle(TUNNEL);
+            nodes.put(tuple, tempNodeToAdd);
+            openNodes.add(tempNodeToAdd);
+        }
         nodes.get(new Tuple<>(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
+    }
+
+    private static BlockPos getNextNodePositionFromNodeWithRotation(Node node, int rotation)
+    {
+        switch(rotation)
+        {
+            case 1:
+                return node.getSouthNodeCenter();
+            case 2:
+                return node.getWesthNodeCenter();
+            case 3:
+                return node.getNorthNodeCenter();
+            default:
+                return node.getEastNodeCenter();
+        }
     }
 
     /**

@@ -530,17 +530,30 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private AIState searchANodeToMine(@NotNull final Level currentLevel)
     {
-        //todo get a randomNode for the currentLevel
         if (workingNode == null || workingNode.getStatus() == Node.NodeStatus.COMPLETED)
         {
             workingNode = currentLevel.getRandomNode();
             return MINER_CHECK_MINESHAFT;
         }
 
-        /**
-         * TODO calculate the rotation we placed it.
-         */
+        //normal facing +x
         int rotation = 0;
+
+        int vectorX = workingNode.getX() < workingNode.getParent().getFirst() ? -1 : (workingNode.getX() > workingNode.getParent().getFirst() ? 1 : 0);
+        int vectorZ = workingNode.getZ() < workingNode.getParent().getSecond() ? -1 : (workingNode.getZ() > workingNode.getParent().getSecond() ? 1 : 0);
+
+        if(vectorX == -1)
+        {
+            rotation = 3;
+        }
+        else if(vectorZ == -1)
+        {
+            rotation = 2;
+        }
+        else if(vectorZ == 1)
+        {
+            rotation = 1;
+        }
 
         @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getParent().getFirst(), currentLevel.getDepth(), workingNode.getParent().getSecond());
         currentStandingPosition = standingPosition;
