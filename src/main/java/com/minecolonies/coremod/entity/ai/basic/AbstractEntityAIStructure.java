@@ -89,6 +89,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private static final int    MIN_WORKING_RANGE             = 12;
 
+    private int rotation = 0;
+
     /**
      * String which shows if something is a waypoint.
      */
@@ -202,6 +204,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             else if(job instanceof JobMiner)
             {
                 BuildingMiner minerBuilding = (BuildingMiner) getOwnBuilding();
+                //If shaft isn't cleared we're in shaft clearing mode.
                 if(!minerBuilding.clearedShaft)
                 {
                     @NotNull final Level currentLevel = new Level(minerBuilding, ((JobMiner) job).getStructure().getPosition().getY());
@@ -211,6 +214,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
                     //Send out update to client
                     getOwnBuilding().markDirty();
+                }
+                else
+                {
+                    minerBuilding.getCurrentLevel().closeNextNode(rotation);
                 }
                 ((JobMiner) job).setStructure(null);
             }
@@ -447,9 +454,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if(job instanceof AbstractJobStructure)
         {
+            rotation = rotateTimes;
             try
             {
-                StructureWrapper wrapper = new StructureWrapper(world, name);
+                 StructureWrapper wrapper = new StructureWrapper(world, name);
                 ((AbstractJobStructure) job).setStructure(wrapper);
                 currentStructure = new Structure(world, wrapper, Structure.Stage.CLEAR);
             }
@@ -508,7 +516,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
-        if(job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder().isCleared() || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
+        if((job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder().isCleared()) || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
         {
             return true;
         }

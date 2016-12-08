@@ -1,7 +1,10 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Miner Node Data Structure.
@@ -20,10 +23,13 @@ public class Node
     private static final String TAG_Z                 = "idZ";
     private static final String TAG_STYLE             = "Style";
     private static final String TAG_STATUS            = "Status";
-    private static final String TAG_STATUS_POSITIVE_X = "positiveX";
-    private static final String TAG_STATUS_NEGATIVE_X = "negativeX";
-    private static final String TAG_STATUS_POSITIVE_Z = "positiveZ";
-    private static final String TAG_STATUS_NEGATIVE_Z = "negativeZ";
+    private static final String TAG_PARENTX           = "ParentX";
+    private static final String TAG_PARENTY           = "ParentY";
+
+    /**
+     * The distance to the center of the next node.
+     */
+    private static final int DISTANCE_TO_NEXT_NODE = 7;
 
     /**
      * X position of the Node.
@@ -38,32 +44,21 @@ public class Node
     /**
      * Style of the node.
      */
-    private NodeType   style;
+    @NotNull
+    private NodeType style;
 
     /**
      * Status of the node.
      */
+    @NotNull
     private NodeStatus status;
 
     /**
-     * Status in positive x direction.
+     * Central position of parent node.
      */
-    private NodeStatus directionPosX;
+    @Nullable
+    private final Tuple<Integer, Integer> parent;
 
-    /**
-     * Status in negative x direction.
-     */
-    private NodeStatus directionNegX;
-
-    /**
-     * Status in positive z direction.
-     */
-    private NodeStatus directionPosZ;
-
-    /**
-     * Status in negative z direction.
-     */
-    private NodeStatus directionNegZ;
 
     /**
      * Initializes the node.
@@ -71,17 +66,15 @@ public class Node
      *
      * @param x X-coordinate in the node
      * @param z Z-coordinate in the node
+     * @param parent the parent of the node.
      */
-    public Node(final int x, final int z)
+    public Node(final int x, final int z, @Nullable Tuple<Integer, Integer> parent)
     {
         this.x = x;
         this.z = z;
-        style = NodeType.CROSSROAD;
-        status = NodeStatus.AVAILABLE;
-        directionPosX = NodeStatus.AVAILABLE;
-        directionNegX = NodeStatus.AVAILABLE;
-        directionPosZ = NodeStatus.AVAILABLE;
-        directionNegZ = NodeStatus.AVAILABLE;
+        this.style = NodeType.CROSSROAD;
+        this.status = NodeStatus.AVAILABLE;
+        this.parent = parent;
     }
 
     /**
@@ -101,102 +94,16 @@ public class Node
 
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
-        //Set the node status in all directions.
-        final NodeStatus directionPosX = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_X));
-        final NodeStatus directionNegX = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_X));
-        final NodeStatus directionPosZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_POSITIVE_Z));
-        final NodeStatus directionNegZ = NodeStatus.valueOf(compound.getString(TAG_STATUS_NEGATIVE_Z));
+        Tuple<Integer, Integer> tempParent = compound.hasKey(TAG_PARENTX) ? new Tuple<>(compound.getInteger(TAG_PARENTX), compound.getInteger(TAG_PARENTY)) : null;
 
-        @NotNull final Node node = new Node(x, z);
+        //Set the node status in all directions.
+        @NotNull final Node node = new Node(x, z, tempParent);
         node.setStyle(style);
         node.setStatus(status);
-        node.setDirectionPosX(directionPosX);
-        node.setDirectionNegX(directionNegX);
-        node.setDirectionPosZ(directionPosZ);
-        node.setDirectionNegZ(directionNegZ);
 
         return node;
     }
 
-    /**
-     * Returns the status of the positive X node.
-     *
-     * @return {@link NodeStatus}
-     */
-    public NodeStatus getDirectionPosX()
-    {
-        return directionPosX;
-    }
-
-    /**
-     * Sets the node status of the positive x node.
-     *
-     * @param directionPosX {@link NodeStatus} of Positive X node
-     */
-    public void setDirectionPosX(final NodeStatus directionPosX)
-    {
-        this.directionPosX = directionPosX;
-    }
-
-    /**
-     * Returns the status of the negative X node.
-     *
-     * @return {@link NodeStatus}
-     */
-    public NodeStatus getDirectionNegX()
-    {
-        return directionNegX;
-    }
-
-    /**
-     * Sets the node status of the negative x node.
-     *
-     * @param directionNegX {@link NodeStatus} of Negative X node
-     */
-    public void setDirectionNegX(final NodeStatus directionNegX)
-    {
-        this.directionNegX = directionNegX;
-    }
-
-    /**
-     * Returns the status of the positive Z node.
-     *
-     * @return {@link NodeStatus}
-     */
-    public NodeStatus getDirectionPosZ()
-    {
-        return directionPosZ;
-    }
-
-    /**
-     * Sets the node status of the positive z node.
-     *
-     * @param directionPosZ {@link NodeStatus} of positive Z node
-     */
-    public void setDirectionPosZ(final NodeStatus directionPosZ)
-    {
-        this.directionPosZ = directionPosZ;
-    }
-
-    /**
-     * Returns the status of the negative Z node.
-     *
-     * @return {@link NodeStatus}
-     */
-    public NodeStatus getDirectionNegZ()
-    {
-        return directionNegZ;
-    }
-
-    /**
-     * Sets the node status of the negative z node.
-     *
-     * @param directionNegZ {@link NodeStatus} of negative Z node
-     */
-    public void setDirectionNegZ(final NodeStatus directionNegZ)
-    {
-        this.directionNegZ = directionNegZ;
-    }
 
     /**
      * Writes the node to a NBT-compound.
@@ -209,13 +116,13 @@ public class Node
         compound.setInteger(TAG_Z, z);
 
         compound.setString(TAG_STYLE, style.name());
-
         compound.setString(TAG_STATUS, status.name());
 
-        compound.setString(TAG_STATUS_POSITIVE_X, directionPosX.name());
-        compound.setString(TAG_STATUS_NEGATIVE_X, directionNegX.name());
-        compound.setString(TAG_STATUS_POSITIVE_Z, directionPosZ.name());
-        compound.setString(TAG_STATUS_NEGATIVE_Z, directionNegZ.name());
+        if(parent != null)
+        {
+            compound.setInteger(TAG_PARENTX, parent.getFirst());
+            compound.setInteger(TAG_PARENTY, parent.getSecond());
+        }
     }
 
     /**
@@ -243,6 +150,7 @@ public class Node
      *
      * @return {@link NodeStatus}
      */
+    @NotNull
     public NodeStatus getStatus()
     {
         return status;
@@ -253,9 +161,20 @@ public class Node
      *
      * @param status {@link NodeStatus}
      */
-    public void setStatus(final NodeStatus status)
+    public void setStatus(@NotNull final NodeStatus status)
     {
         this.status = status;
+    }
+
+    /**
+     * Getter for the parent value.
+     *
+     * @return tuple of parent position.
+     */
+    @Nullable
+    public Tuple<Integer, Integer> getParent()
+    {
+        return this.parent;
     }
 
     @NotNull
@@ -266,10 +185,6 @@ public class Node
                 + ", z=" + z
                 + ", style=" + style
                 + ", status=" + status
-                + ", directionPosX=" + directionPosX
-                + ", directionNegX=" + directionNegX
-                + ", directionPosZ=" + directionPosZ
-                + ", directionNegZ=" + directionNegZ
                 + '}';
     }
 
@@ -278,6 +193,7 @@ public class Node
      *
      * @return {@link NodeType}
      */
+    @NotNull
     public NodeType getStyle()
     {
         return style;
@@ -288,9 +204,49 @@ public class Node
      *
      * @param style {@link NodeType}
      */
-    public void setStyle(final NodeType style)
+    public void setStyle(@NotNull final NodeType style)
     {
         this.style = style;
+    }
+
+    /**
+     * Calculates the next Node north.
+     *
+     * @return position of the new Node.
+     */
+    public BlockPos getNorthNodeCenter()
+    {
+        return new BlockPos(getX(), 0, getZ() - DISTANCE_TO_NEXT_NODE);
+    }
+
+    /**
+     * Calculates the next Node south.
+     *
+     * @return position of the new Node.
+     */
+    public BlockPos getSouthNodeCenter()
+    {
+        return new BlockPos(getX(), 0, getZ() + DISTANCE_TO_NEXT_NODE);
+    }
+
+    /**
+     * Calculates the next Node east.
+     *
+     * @return position of the new Node.
+     */
+    public BlockPos getEastNodeCenter()
+    {
+        return new BlockPos(getX() + DISTANCE_TO_NEXT_NODE, 0, getZ());
+    }
+
+    /**
+     * Calculates the next Node west.
+     *
+     * @return position of the new Node.
+     */
+    public BlockPos getWesthNodeCenter()
+    {
+        return new BlockPos(getX() - DISTANCE_TO_NEXT_NODE, 0, getZ());
     }
 
     /**
@@ -302,11 +258,12 @@ public class Node
      */
     enum NodeStatus
     {
+        //Not built yet.
         AVAILABLE,
+        //In building progress
         IN_PROGRESS,
-        COMPLETED,
-        WALL,
-        LADDER
+        //Already finished
+        COMPLETED
     }
 
     /**

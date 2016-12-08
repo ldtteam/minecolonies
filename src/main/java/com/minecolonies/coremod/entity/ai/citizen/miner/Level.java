@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Miner Level Data Structure.
@@ -33,10 +33,22 @@ public class Level
     private int depth;
 
     /**
-     * The list of nodes which are part of the level.
+     * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
      */
     @NotNull
-    private List<Node> nodes      = new ArrayList<>();
+    private final HashMap<Tuple<Integer, Integer>,Node> nodes = new HashMap<>();
+
+    /**
+     * Comparator to compare two nodes, for the priority queue.
+     */
+    @NotNull
+    private static final Comparator<Node> NODE_COMPARATOR = (Node n1, Node n2) -> new Random().nextInt(100) > 50 ? 1 : -1;
+
+    /**
+     * The queue of open Nodes. Get a new node to work on here.
+     */
+    @NotNull
+    private final Queue<Node> openNodes = new PriorityQueue<>(11, NODE_COMPARATOR);
 
     /**
      * The node of the ladder.
@@ -63,8 +75,6 @@ public class Level
     public Level(@NotNull final BuildingMiner buildingMiner, final int depth)
     {
         this.depth = depth;
-        //TODO: Store in HashMap for faster access
-        nodes = new ArrayList<>();
 
         final int cobbleX = buildingMiner.getCobbleLocation().getX();
         final int cobbleZ = buildingMiner.getCobbleLocation().getZ();
@@ -72,38 +82,59 @@ public class Level
         //check for orientation
         @NotNull final BlockPos cobbleCenter = new BlockPos(cobbleX - (buildingMiner.getVectorX() * 3), depth, cobbleZ - (buildingMiner.getVectorZ() * 3));
         @NotNull final BlockPos ladderCenter = new BlockPos(cobbleX + (buildingMiner.getVectorX() * 4), depth, cobbleZ + (buildingMiner.getVectorZ() * 4));
-        //TODO: let them know they are ladder and cobble (they are handled different)
-        @NotNull final Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ());
+        Tuple<Integer, Integer> ladderKey = new Tuple<>(ladderCenter.getX(), ladderCenter.getZ());
+
+        //They are shaft and ladderBack, their parents are the shaft.
+        @NotNull final Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ(), ladderKey);
         cobbleNode.setStyle(Node.NodeType.LADDER_BACK);
-        ladderNode = new Node(ladderCenter.getX(), ladderCenter.getZ());
+        cobbleNode.setStatus(Node.NodeStatus.COMPLETED);
+        nodes.put(new Tuple<>(cobbleCenter.getX(), cobbleCenter.getZ()), cobbleNode);
+
+        ladderNode = new Node(ladderCenter.getX(), ladderCenter.getZ(), null);
         ladderNode.setStyle(Node.NodeType.SHAFT);
         ladderNode.setStatus(Node.NodeStatus.COMPLETED);
-        ladderNode.setDirectionNegX(Node.NodeStatus.COMPLETED);
-        ladderNode.setDirectionPosX(Node.NodeStatus.COMPLETED);
-        ladderNode.setDirectionNegZ(Node.NodeStatus.COMPLETED);
-        ladderNode.setDirectionPosZ(Node.NodeStatus.COMPLETED);
-        if (buildingMiner.getVectorX() > 0)
+        nodes.put(ladderKey, ladderNode);
+
+        ArrayList<BlockPos> nodeCenterList = new ArrayList<>();
+        //Calculate the center positions of the new nodes.
+        nodeCenterList.add(ladderNode.getNorthNodeCenter());
+        nodeCenterList.add(ladderNode.getSouthNodeCenter());
+        nodeCenterList.add(ladderNode.getEastNodeCenter());
+        nodeCenterList.add(ladderNode.getWesthNodeCenter());
+
+        for(BlockPos pos: nodeCenterList)
         {
-            ladderNode.setDirectionNegX(Node.NodeStatus.LADDER);
-            cobbleNode.setDirectionPosX(Node.NodeStatus.LADDER);
+            if(cobbleCenter.equals(pos))
+            {
+                continue;
+            }
+            Node tempNode = new Node(pos.getX(), pos.getZ(), ladderKey);
+            tempNode.setStyle(Node.NodeType.TUNNEL);
+            nodes.put(ladderKey, tempNode);
+            openNodes.add(tempNode);
         }
-        else if (buildingMiner.getVectorX() < 0)
-        {
-            ladderNode.setDirectionPosX(Node.NodeStatus.LADDER);
-            cobbleNode.setDirectionNegX(Node.NodeStatus.LADDER);
-        }
-        else if (buildingMiner.getVectorZ() > 0)
-        {
-            ladderNode.setDirectionNegZ(Node.NodeStatus.LADDER);
-            cobbleNode.setDirectionPosZ(Node.NodeStatus.LADDER);
-        }
-        else if (buildingMiner.getVectorZ() < 0)
-        {
-            ladderNode.setDirectionPosZ(Node.NodeStatus.LADDER);
-            cobbleNode.setDirectionNegZ(Node.NodeStatus.LADDER);
-        }
-        nodes.add(cobbleNode);
-        nodes.add(ladderNode);
+    }
+
+    /**
+     * Getter for a random Node in the level.
+     * @return any random node.
+     */
+    public Node getRandomNode()
+    {
+        return openNodes.peek();
+    }
+
+    /**
+     * Closes the first Node in the list (Has been returned previously probably).
+     * Then creates the new nodes connected to it.
+     * @param rotation
+     */
+    public void closeNextNode(int rotation)
+    {
+        Node tempNode = openNodes.poll();
+        //todo check it for rotation and style.
+        //todo check Node type, check node type with rotation and create new nodes depending on it.
+        nodes.get(new Tuple<>(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
     }
 
     /**
@@ -123,16 +154,12 @@ public class Level
         for (int i = 0; i < nodeTagList.tagCount(); i++)
         {
             @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
-            level.nodes.add(node);
+            level.nodes.put(new Tuple<>(node.getX(), node.getZ()), node);
         }
         final int ladderX = compound.getInteger(TAG_LADDERX);
         final int ladderZ = compound.getInteger(TAG_LADDERZ);
 
-        level.ladderNode = level.nodes
-                             .stream()
-                             .filter(node -> node.getX() == ladderX && node.getZ() == ladderZ)
-                             .findFirst()
-                             .orElseThrow(() -> new IllegalStateException("No ladder node found."));
+        level.ladderNode = level.nodes.get(new Tuple<>(ladderX, ladderZ));
 
         return level;
     }
@@ -154,7 +181,7 @@ public class Level
         compound.setInteger(TAG_DEPTH, depth);
 
         @NotNull final NBTTagList nodeTagList = new NBTTagList();
-        for (@NotNull final Node node : nodes)
+        for (@NotNull final Node node : nodes.values())
         {
             @NotNull final NBTTagCompound nodeCompound = new NBTTagCompound();
             node.writeToNBT(nodeCompound);
@@ -167,9 +194,9 @@ public class Level
     }
 
     @NotNull
-    public List<Node> getNodes()
+    public Map<Tuple<Integer, Integer>, Node> getNodes()
     {
-        return Collections.unmodifiableList(nodes);
+        return Collections.unmodifiableMap(nodes);
     }
 
     public int getNumberOfNodes()
@@ -195,6 +222,6 @@ public class Level
      */
     public void addNode(final Node newNode)
     {
-        nodes.add(newNode);
+        nodes.put(new Tuple<>(newNode.getX(), newNode.getZ()), newNode);
     }
 }
