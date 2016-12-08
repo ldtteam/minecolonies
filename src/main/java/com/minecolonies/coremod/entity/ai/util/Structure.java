@@ -309,8 +309,14 @@ public class Structure
                           || !structureBlock.doesStructureBlockEqualWorldBlock()
                           || structureBlock.worldBlock == Blocks.AIR);
             case BUILD:
+                return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
+                        || structureBlock.block == Blocks.AIR
+                        || !structureBlock.metadata.getMaterial().isSolid());
             case DECORATE:
-                return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock() || structureBlock.block == Blocks.AIR);
+                return advanceBlocks(this.structure::incrementBlock, structureBlock ->
+                        structureBlock.doesStructureBlockEqualWorldBlock()
+                        || structureBlock.block == Blocks.AIR
+                        || structureBlock.metadata.getMaterial().isSolid());
             default:
                 return Result.NEW_BLOCK;
         }
