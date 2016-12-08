@@ -146,6 +146,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 ((JobBuilder) job).complete();
             }
 
+            //todo move to builder later
             final String structureName = ((AbstractJobStructure) job).getStructure().getName();
 
             LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
@@ -153,6 +154,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     structureName);
             if(job instanceof JobBuilder)
             {
+
                 ((JobBuilder) job).getStructure().getEntities().forEach(this::spawnEntity);
 
                 final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
@@ -604,8 +606,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         //The miner shouldn't search for a save position. Just let him build from where he currently is.
-        return job instanceof JobMiner
-                || worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
+        return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
     }
 
     /**
@@ -619,6 +620,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private BlockPos getWorkingPosition()
     {
+        if(job instanceof JobMiner)
+        {
+            return this.currentStructure.getCurrentBlockPosition();
+        }
         return getWorkingPosition(0);
     }
 

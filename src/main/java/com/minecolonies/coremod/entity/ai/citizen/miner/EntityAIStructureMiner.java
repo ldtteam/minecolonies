@@ -635,7 +635,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         if (buildNextBlockInShaft())
         {
-            return BUILDING_STEP;
+            return CLEAR_STEP;
         }
 
         return START_WORKING;
@@ -793,6 +793,10 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private AIState mineNodeFromStand(@NotNull final Node mineNode, @NotNull final BlockPos standingPosition, final int direction)
     {
+        if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.AVAILABLE)
+        {
+            setNodeStatusForDirection(mineNode, direction, Node.NodeStatus.IN_PROGRESS);
+        }
         //Preload structures
         if (job.getStructure() == null)
         {
@@ -819,7 +823,12 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             }
         }
 
-        if (mineNode.getStatus() == Node.NodeStatus.IN_PROGRESS)
+        if (getNodeStatusForDirection(mineNode, direction) == Node.NodeStatus.IN_PROGRESS)
+        {
+            setNodeStatusForDirection(mineNode, direction, Node.NodeStatus.COMPLETED);
+        }
+
+        if (mineNode.getStatus() == Node.NodeStatus.IN_PROGRESS || mineNode.getStatus() == Node.NodeStatus.AVAILABLE)
         {
             mineNode.setStatus(Node.NodeStatus.COMPLETED);
         }
@@ -831,7 +840,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return CLEAR_STEP;
         }
 
-        return this.getState();
+        return AIState.MINER_MINING_NODE;
     }
 
     private static boolean isNodeInDirectionOfOtherNode(@NotNull final Node start, final int direction, @NotNull final Node check)
@@ -876,7 +885,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         return node;
     }
 
-    private Node findNodeOnLevel(@NotNull final Level currentLevel)
+    private static Node findNodeOnLevel(@NotNull final Level currentLevel)
     {
         @Nullable Node currentNode = currentLevel.getLadderNode();
         @NotNull final LinkedList<Node> visited = new LinkedList<>();

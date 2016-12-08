@@ -87,6 +87,25 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     }
 
     @Override
+    public void onButtonClicked(@NotNull final Button button)
+    {
+        switch (button.getID())
+        {
+            case BUTTON_CURRENTLEVEL:
+                final int row = levelList.getListElementIndexByPane(button);
+                if (row != miner.current && row >= 0 && row < levels.length)
+                {
+                    miner.current = row;
+                    MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
+                }
+                break;
+            default:
+                super.onButtonClicked(button);
+                break;
+        }
+    }
+
+    @Override
     public void onUpdate()
     {
         final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
