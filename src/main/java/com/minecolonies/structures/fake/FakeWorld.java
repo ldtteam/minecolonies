@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NotNull;
 public class FakeWorld extends World
 {
 
-    private IBlockState blockState;
+    private final IBlockState blockState;
 
     /**
      * Creates a fake world.

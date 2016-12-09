@@ -260,27 +260,13 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * @param player Player to check permission of.
      * @return True when player has access, or building doesn't exist, otherwise false.
      */
-    public boolean hasAccessPermission(final EntityPlayer player)//TODO This is called every tick the GUI is open. Is that bad?
+    public boolean hasAccessPermission(final EntityPlayer player)
     {
+        //TODO This is called every tick the GUI is open. Is that bad?
         return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
 
     //-----------------------------Material Handling--------------------------------
-
-    /**
-     * Makes sure ItemStacks inside of the inventory aren't affected by changes to the returned stack.
-     */
-    @Override
-    public ItemStack getStackInSlot(final int index)
-    {
-        final ItemStack stack = super.getStackInSlot(index);
-        if (stack == null)
-        {
-            return null;
-        }
-        return stack.copy();
-    }
-
     @Override
     public ItemStack decrStackSize(final int index, final int quantity)
     {

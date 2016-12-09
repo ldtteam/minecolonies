@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Building class of the guard tower.
@@ -521,14 +522,40 @@ public class BuildingGuardTower extends AbstractBuildingWorker
      */
     public static class View extends AbstractBuildingWorker.View
     {
-        public boolean  assignManually      = false;
-        public boolean  retrieveOnLowHealth = false;
-        public boolean  patrolManually      = false;
-        public Task     task                = Task.GUARD;
-        public GuardJob job                 = null;
-        public BlockPos guardPos            = getLocation();
+        /**
+         * Assign the job manually, knight or ranger.
+         */
+        public boolean assignManually = false;
 
-        public ArrayList<BlockPos> patrolTargets = new ArrayList<>();
+        /**
+         * Retrieve the guard on low health.
+         */
+        public boolean retrieveOnLowHealth = false;
+
+        /**
+         * Patrol manually or automatically.
+         */
+        public boolean patrolManually = false;
+
+        /**
+         * The task of the guard, following the Task enum.
+         */
+        public Task task = Task.GUARD;
+
+        /**
+         * Position the guard should guard at.
+         */
+        public BlockPos guardPos = this.getID();
+
+        /**
+         * The job of the guard, following the GuarJob enum.
+         */
+        public GuardJob job = null;
+
+        /**
+         * The list of manual patrol targets.
+         */
+        public List<BlockPos> patrolTargets = new ArrayList<>();
 
         /**
          * The client view constructor for the baker building.

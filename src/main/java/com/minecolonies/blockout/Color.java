@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public final class Color
 {
-    private static Map<String, Integer> nameToColorMap = new HashMap<>();
+    private static final Map<String, Integer> nameToColorMap = new HashMap<>();
     static
     {
         //  Would love to load these from a file

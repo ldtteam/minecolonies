@@ -22,13 +22,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowHutBuilder.xml";
     private static final String LIST_RESOURCES              = "resources";
     private static final String PAGE_RESOURCES              = "resourceActions";
-    private static final String BUTTON_PREVPAGE             = "prevPage";
-    private static final String BUTTON_NEXTPAGE             = "nextPage";
-
     private static final String VIEW_PAGES = "pages";
     private final BuildingBuilder.View builder;
-    private Button buttonPrevPage;
-    private Button buttonNextPage;
     private       Map<String, Integer> resources;
 
     /**
@@ -70,10 +65,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     public void onOpened()
     {
         super.onOpened();
-        findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
-
-        buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
-        buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
         pullResourcesFromHut();
 
         final Object[] entries = resources.entrySet().toArray();
@@ -101,27 +92,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                 }
             }
         });
-    }
-
-    @Override
-    public void onButtonClicked(@NotNull final Button button)
-    {
-        switch (button.getID())
-        {
-            case BUTTON_PREVPAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).previousView();
-                buttonPrevPage.setEnabled(false);
-                buttonNextPage.setEnabled(true);
-                break;
-            case BUTTON_NEXTPAGE:
-                findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).nextView();
-                buttonPrevPage.setEnabled(true);
-                buttonNextPage.setEnabled(false);
-                break;
-            default:
-                super.onButtonClicked(button);
-                break;
-        }
     }
 
     @Override

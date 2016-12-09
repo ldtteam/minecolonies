@@ -2,6 +2,9 @@ package com.minecolonies.coremod.items;
 
 import net.minecraft.item.Item;
 
+/**
+ * Class handling the registering of the mod items.
+ */
 public final class ModItems
 {
     public static final Item supplyChest  = new ItemSupplyChestDeployer();
@@ -19,9 +22,12 @@ public final class ModItems
     // public static final Item compost    = new ItemCompost();
 
     /**
-     * private constructor to hide the implicit public one.
+     * Private constructor to hide the implicit public one.
      */
     private ModItems()
     {
+        /*
+         * Intentionally left empty.
+         */
     }
 }

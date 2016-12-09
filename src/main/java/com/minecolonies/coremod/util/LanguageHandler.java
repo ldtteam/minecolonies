@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @author Colton
  */
-public class LanguageHandler
+public final class LanguageHandler
 {
     /**
      * Private constructor to hide implicit one.
@@ -36,6 +36,11 @@ public class LanguageHandler
         sendPlayerMessage(player, format(key, args));
     }
 
+    /**
+     * Send a message to the player.
+     * @param player the player to send to.
+     * @param message the message to send.
+     */
     public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String message)
     {
         player.addChatComponentMessage(new TextComponentString(message));

@@ -12,11 +12,13 @@ import net.minecraft.inventory.Container;
 /**
  * Handles gui operations on the server.
  * Created: June 21, 2014
- *
+ * @deprecated remove this when we don't need it anymore or something better is available.
  * @author Colton
+ * //TODO undepricate when finished
+ *  //ContainerChest in future
  */
-@Deprecated //TODO undepricate when finished
-public class ContainerHut extends Container //ContainerChest in future
+@Deprecated
+public class ContainerHut extends Container
 {
     private final TileEntityColonyBuilding hut;
     private final EntityPlayerMP           player;
@@ -24,6 +26,11 @@ public class ContainerHut extends Container //ContainerChest in future
 
     private final int lastNumberOfCitizens = 0;
 
+    /**
+     * Instantiates the container hut.
+     * @param hut the hut.
+     * @param player the player.
+     */
     public ContainerHut(final TileEntityColonyBuilding hut, final EntityPlayer player)
     {
         super();

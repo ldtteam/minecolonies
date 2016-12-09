@@ -377,7 +377,7 @@ public class Tree
      */
     public BlockPos pollNextLog()
     {
-        return woodBlocks.poll();
+        return woodBlocks.pollLast();
     }
 
     /**
@@ -387,7 +387,7 @@ public class Tree
      */
     public BlockPos peekNextLog()
     {
-        return woodBlocks.peek();
+        return woodBlocks.peekLast();
     }
 
     /**

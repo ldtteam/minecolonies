@@ -8,25 +8,25 @@ import org.jetbrains.annotations.NotNull;
 public class ModelEntityFishermanMale extends ModelBiped
 {
     //fields
-    private ModelRenderer string;
-    private ModelRenderer hookTie1;
-    private ModelRenderer hookTie2;
-    private ModelRenderer hookTie3;
-    private ModelRenderer fish1;
-    private ModelRenderer fish2;
-    private ModelRenderer fish3;
-    private ModelRenderer reel;
-    private ModelRenderer line;
-    private ModelRenderer pole;
-    private ModelRenderer shape1;
-    private ModelRenderer shape2;
-    private ModelRenderer shape3;
-    private ModelRenderer shape4;
-    private ModelRenderer shape5;
-    private ModelRenderer shape6;
-    private ModelRenderer shape7;
-    private ModelRenderer rightBoot;
-    private ModelRenderer leftBoot;
+    private final ModelRenderer string;
+    private final ModelRenderer hookTie1;
+    private final ModelRenderer hookTie2;
+    private final ModelRenderer hookTie3;
+    private final ModelRenderer fish1;
+    private final ModelRenderer fish2;
+    private final ModelRenderer fish3;
+    private final ModelRenderer reel;
+    private final ModelRenderer line;
+    private final ModelRenderer pole;
+    private final ModelRenderer shape1;
+    private final ModelRenderer shape2;
+    private final ModelRenderer shape3;
+    private final ModelRenderer shape4;
+    private final ModelRenderer shape5;
+    private final ModelRenderer shape6;
+    private final ModelRenderer shape7;
+    private final ModelRenderer rightBoot;
+    private final ModelRenderer leftBoot;
 
     public ModelEntityFishermanMale()
     {

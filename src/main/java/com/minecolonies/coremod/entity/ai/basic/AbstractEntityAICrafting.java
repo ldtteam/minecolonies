@@ -4,7 +4,8 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by marvin on 19.05.16.
+ * Basic class for all crafting AIs.
+ * @param <J> the job of the AI.
  */
 public abstract class AbstractEntityAICrafting<J extends AbstractJob> extends AbstractEntityAISkill<J>
 {

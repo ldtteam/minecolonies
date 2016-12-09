@@ -154,7 +154,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private EntityFishHook entityFishHook;
 
     @NotNull
-    private Random random = new Random();
+    private final Random random = new Random();
 
     /**
      * Constructor for the Fisherman.

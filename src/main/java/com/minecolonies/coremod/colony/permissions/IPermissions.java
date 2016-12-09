@@ -5,6 +5,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+/**
+ * Permission interface.
+ */
 public interface IPermissions
 {
     /**

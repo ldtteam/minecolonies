@@ -38,7 +38,7 @@ public final class Structures
     private static       Map<String, List<String>> hutStyleMap           = new HashMap<>();
     //Hut, Levels
     @NotNull
-    private static       Map<String, Integer>      hutLevelsMap          = new HashMap<>();
+    private static final Map<String, Integer>      hutLevelsMap          = new HashMap<>();
     //Decoration, Style
     private static       Map<String, List<String>> decorationStyleMap    = new HashMap<>();
 

@@ -8,30 +8,30 @@ import org.jetbrains.annotations.NotNull;
 public class ModelEntityFishermanFemale extends ModelBiped
 {
     //fields
-    private ModelRenderer string;
-    private ModelRenderer string2;
-    private ModelRenderer hookTie1;
-    private ModelRenderer hookTie2;
-    private ModelRenderer hookTie3;
-    private ModelRenderer fish1;
-    private ModelRenderer fish2;
-    private ModelRenderer fish3;
-    private ModelRenderer reel;
-    private ModelRenderer line;
-    private ModelRenderer pole;
-    private ModelRenderer chest;
-    private ModelRenderer rightBoot;
-    private ModelRenderer leftBoot;
-    private ModelRenderer hairBack1;
-    private ModelRenderer hairBack2;
-    private ModelRenderer hairBack3;
-    private ModelRenderer hairBack4;
-    private ModelRenderer hairBack5;
-    private ModelRenderer hairBack6;
-    private ModelRenderer hairBack7;
-    private ModelRenderer hairBack8;
-    private ModelRenderer hairBack9;
-    private ModelRenderer hairBack10;
+    private final ModelRenderer string;
+    private final ModelRenderer string2;
+    private final ModelRenderer hookTie1;
+    private final ModelRenderer hookTie2;
+    private final ModelRenderer hookTie3;
+    private final ModelRenderer fish1;
+    private final ModelRenderer fish2;
+    private final ModelRenderer fish3;
+    private final ModelRenderer reel;
+    private final ModelRenderer line;
+    private final ModelRenderer pole;
+    private final ModelRenderer chest;
+    private final ModelRenderer rightBoot;
+    private final ModelRenderer leftBoot;
+    private final ModelRenderer hairBack1;
+    private final ModelRenderer hairBack2;
+    private final ModelRenderer hairBack3;
+    private final ModelRenderer hairBack4;
+    private final ModelRenderer hairBack5;
+    private final ModelRenderer hairBack6;
+    private final ModelRenderer hairBack7;
+    private final ModelRenderer hairBack8;
+    private final ModelRenderer hairBack9;
+    private final ModelRenderer hairBack10;
 
     public ModelEntityFishermanFemale()
     {
