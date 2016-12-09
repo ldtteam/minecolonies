@@ -434,6 +434,15 @@ public class InventoryCitizen implements IInventory
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
         }
+
+        //This is for the old inventories which still have nulls.
+        for(int i = 0; i < this.stacks.length ; i++)
+        {
+            if (stacks[i] == null)
+            {
+                stacks[i] = ItemStack.EMPTY;
+            }
+        }
     }
 
     /**
