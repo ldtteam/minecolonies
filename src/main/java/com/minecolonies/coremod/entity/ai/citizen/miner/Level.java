@@ -23,10 +23,11 @@ public class Level
     /**
      * Tags used to store and retrieve level data from NBT.
      */
-    private static final String TAG_DEPTH   = "Depth";
-    private static final String TAG_NODES   = "Nodes";
-    private static final String TAG_LADDERX = "LadderX";
-    private static final String TAG_LADDERZ = "LadderZ";
+    private static final String TAG_DEPTH      = "Depth";
+    private static final String TAG_NODES      = "Nodes";
+    private static final String TAG_LADDERX    = "LadderX";
+    private static final String TAG_LADDERZ    = "LadderZ";
+    private static final String TAG_OPEN_NODES = "OpenNodes";
 
     /**
      * Possible rotations.
@@ -35,6 +36,7 @@ public class Level
     private static final int ROTATE_TWICE       = 2;
     private static final int ROTATE_THREE_TIMES = 3;
     private static final int MAX_ROTATIONS      = 4;
+
 
     /**
      * The depth of the level stored as the y coordinate.
@@ -233,6 +235,14 @@ public class Level
 
         level.ladderNode = level.nodes.get(new Point2D.Double(ladderX, ladderZ));
 
+
+        final NBTTagList openNodeTagList = compound.getTagList(TAG_OPEN_NODES, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < openNodeTagList.tagCount(); i++)
+        {
+            @NotNull final Node node = Node.createFromNBT(openNodeTagList.getCompoundTagAt(i));
+            level.openNodes.add(node);
+        }
+
         return level;
     }
 
@@ -263,6 +273,16 @@ public class Level
 
         compound.setInteger(TAG_LADDERX, ladderNode.getX());
         compound.setInteger(TAG_LADDERZ, ladderNode.getZ());
+
+        @NotNull final NBTTagList openNodeTagList = new NBTTagList();
+        for (@NotNull final Node node : openNodes)
+        {
+            @NotNull final NBTTagCompound nodeCompound = new NBTTagCompound();
+            node.writeToNBT(nodeCompound);
+            openNodeTagList.appendTag(nodeCompound);
+        }
+        compound.setTag(TAG_OPEN_NODES, openNodeTagList);
+
     }
 
     @NotNull
