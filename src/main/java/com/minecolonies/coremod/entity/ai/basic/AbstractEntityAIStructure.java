@@ -631,7 +631,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if(job instanceof JobMiner)
         {
-            getNodeMiningPosition();
+            getNodeMiningPosition(currentStructure.getCurrentBlockPosition());
         }
         return getWorkingPosition(0);
     }
@@ -903,10 +903,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     /**
      * Create a save mining position for the miner.
+     * @param blockToMine block which should be mined or placed.
      * @return the save position.
      */
-    private BlockPos getNodeMiningPosition()
+    private BlockPos getNodeMiningPosition(BlockPos blockToMine)
     {
+        if(((BuildingMiner) getOwnBuilding()).getCurrentLevel() == null)
+        {
+            return blockToMine;
+        }
         Point2D pos = ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode().getParent();
         return new BlockPos(pos.getX(), ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getDepth(), pos.getY());
     }

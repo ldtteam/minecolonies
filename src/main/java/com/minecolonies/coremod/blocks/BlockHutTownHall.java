@@ -28,22 +28,4 @@ public class BlockHutTownHall extends AbstractBlockHut
     {
         return "blockHutTownHall";
     }
-
-    /**
-     * Event-Handler for placement of this block.
-     * <p>
-     * Award the townhall placed achievement
-     *
-     * @param worldIn the word we are in
-     * @param pos     the position where the block was placed
-     * @param state   the state the placed block is in
-     * @param placer  the player placing the block
-     * @param stack   the itemstack from where the block was placed
-     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
-     */
-    @Override
-    public void onBlockPlacedBy(@NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
-    {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-    }
 }
