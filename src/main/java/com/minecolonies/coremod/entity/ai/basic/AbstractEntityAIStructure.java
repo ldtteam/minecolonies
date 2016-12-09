@@ -149,15 +149,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 ((JobBuilder) job).complete();
             }
 
-            //todo move to builder later
-            final String structureName = ((AbstractJobStructure) job).getStructure().getName();
-
-            LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
-                    "entity.builder.messageBuildComplete",
-                    structureName);
             if(job instanceof JobBuilder)
             {
+                final String structureName = ((AbstractJobStructure) job).getStructure().getName();
 
+                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildComplete",
+                        structureName);
                 ((JobBuilder) job).getStructure().getEntities().forEach(this::spawnEntity);
 
                 final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
