@@ -380,7 +380,7 @@ public final class Utils
             return -1;
         }
         //todo: use 'better' version of this thing
-        return stack.getItem().getHarvestLevel(stack, tool);
+        return stack.getItem().getHarvestLevel(stack, tool, null, null);
     }
 
     /**

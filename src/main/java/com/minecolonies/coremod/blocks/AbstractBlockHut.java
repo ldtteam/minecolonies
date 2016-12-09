@@ -208,7 +208,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     }
 
     @Override
-    public IBlockState onBlockPlaced(
+    public IBlockState getStateForPlacement(
             final World worldIn,
             final BlockPos pos,
             final EnumFacing facing,
@@ -216,12 +216,12 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
             final float hitY,
             final float hitZ,
             final int meta,
-            @Nullable final EntityLivingBase placer)
+            final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
-
+    
     /**
      * Event-Handler for placement of this block.
      * <p>

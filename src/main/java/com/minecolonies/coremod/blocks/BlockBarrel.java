@@ -66,7 +66,6 @@ public class BlockBarrel extends Block
         setRegistryName(BLOCK_NAME);
         setUnlocalizedName(String.format("%s.%s", Constants.MOD_ID.toLowerCase(), BLOCK_NAME));
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
-        GameRegistry.registerBlock(this, BLOCK_NAME);
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
     }
@@ -109,7 +108,7 @@ public class BlockBarrel extends Block
         {
             Log.getLogger().info("item Consumed");
 
-            itemstack.stackSize--;
+            itemstack.setCount(itemstack.getCount() - 1);
 
             fullness += 1;
             if (fullness >= MAX_FULLNESS)

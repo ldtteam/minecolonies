@@ -43,7 +43,6 @@ public class ItemScanTool extends AbstractItemMinecolonies
     @NotNull
     @Override
     public EnumActionResult onItemUse(
-                                       final ItemStack stack,
                                        final EntityPlayer playerIn,
                                        final World worldIn,
                                        final BlockPos pos,
@@ -53,6 +52,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
+        ItemStack stack = playerIn.getActiveItemStack();
         if (!stack.hasTagCompound())
         {
             stack.setTagCompound(new NBTTagCompound());

@@ -70,11 +70,11 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     {
         if (targetEntityClass == EntityPlayer.class)
         {
-            return theEntity.worldObj.getClosestPlayerToEntity(theEntity, (double) distanceFromEntity);
+            return theEntity.world.getClosestPlayerToEntity(theEntity, (double) distanceFromEntity);
         }
         else
         {
-            final Optional<Entity> entityOptional = theEntity.worldObj.getEntitiesInAABBexcluding(
+            final Optional<Entity> entityOptional = theEntity.world.getEntitiesInAABBexcluding(
               theEntity,
               theEntity.getEntityBoundingBox().expand(
                 (double) distanceFromEntity,

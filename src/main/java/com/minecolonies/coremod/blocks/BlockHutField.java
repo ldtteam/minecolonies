@@ -162,16 +162,15 @@ public class BlockHutField extends BlockContainer
 
     @Override
     public boolean onBlockActivated(
-                                     final World worldIn,
-                                     final BlockPos pos,
-                                     final IBlockState state,
-                                     final EntityPlayer playerIn,
-                                     final EnumHand hand,
-                                     @Nullable final ItemStack heldItem,
-                                     final EnumFacing side,
-                                     final float hitX,
-                                     final float hitY,
-                                     final float hitZ)
+            final World worldIn,
+            final BlockPos pos,
+            final IBlockState state,
+            final EntityPlayer playerIn,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
@@ -189,16 +188,17 @@ public class BlockHutField extends BlockContainer
     // =======================================================================
     // ======================= Rendering & IBlockState =======================
     // =======================================================================
+
     @Override
-    public IBlockState onBlockPlaced(
-                                      final World worldIn,
-                                      final BlockPos pos,
-                                      final EnumFacing facing,
-                                      final float hitX,
-                                      final float hitY,
-                                      final float hitZ,
-                                      final int meta,
-                                      @Nullable final EntityLivingBase placer)
+    public IBlockState getStateForPlacement(
+            final World worldIn,
+            final BlockPos pos,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ,
+            final int meta,
+            final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);

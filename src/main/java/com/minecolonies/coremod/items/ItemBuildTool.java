@@ -32,7 +32,6 @@ public class ItemBuildTool extends AbstractItemMinecolonies
     @NotNull
     @Override
     public EnumActionResult onItemUse(
-                                       final ItemStack stack,
                                        final EntityPlayer playerIn,
                                        final World worldIn,
                                        final BlockPos pos,
@@ -53,13 +52,15 @@ public class ItemBuildTool extends AbstractItemMinecolonies
 
     @NotNull
     @Override
-    public ActionResult<ItemStack> onItemRightClick(@NotNull final ItemStack itemStackIn, final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer playerIn, final EnumHand hand)
     {
+        ItemStack stack = playerIn.getActiveItemStack();
+
         if (worldIn.isRemote)
         {
             MineColonies.proxy.openBuildToolWindow(null);
         }
 
-        return new ActionResult<>(EnumActionResult.SUCCESS, itemStackIn);
+        return new ActionResult<>(EnumActionResult.SUCCESS, stack);
     }
 }

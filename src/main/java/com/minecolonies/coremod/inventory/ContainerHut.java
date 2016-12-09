@@ -50,7 +50,7 @@ public class ContainerHut extends Container
     {
         assert !hut.getWorld().isRemote;
 
-        if (hut.isUseableByPlayer(player))
+        if (hut.isUsableByPlayer(player))
         {
             return true;
         }

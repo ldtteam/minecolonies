@@ -41,7 +41,6 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
     @NotNull
     @Override
     public EnumActionResult onItemUse(
-                                       final ItemStack scepter,
                                        final EntityPlayer playerIn,
                                        final World worldIn,
                                        final BlockPos pos,
@@ -51,7 +50,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
-        //todo watch how interaction with server is, might facilitate this.
+        ItemStack scepter = playerIn.getActiveItemStack();
         // if server world, do nothing
         if (worldIn.isRemote)
         {

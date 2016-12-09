@@ -153,7 +153,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
     private static void doCitizenInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-        @Nullable final EntityCitizen citizen = (EntityCitizen) player.worldObj.getEntityByID(message.entityID);
+        @Nullable final EntityCitizen citizen = (EntityCitizen) player.world.getEntityByID(message.entityID);
         if (checkPermissions(citizen.getColony(), player))
         {
             if (!StringUtils.isNullOrEmpty(message.name))
@@ -169,7 +169,7 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
-            @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
+            @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.world, message.tePos);
             if (!StringUtils.isNullOrEmpty(message.name))
             {
                 chest.setCustomName(message.name);

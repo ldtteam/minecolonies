@@ -36,7 +36,7 @@ public final class ClientStructureWrapper
     public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final String storeLocation)
     {
         final File file = new File(Minecraft.getMinecraft().mcDataDir, storeLocation);
-        createScanDirectory(Minecraft.getMinecraft().theWorld);
+        createScanDirectory(Minecraft.getMinecraft().world);
 
         try (OutputStream outputstream = new FileOutputStream(file))
         {
@@ -44,12 +44,12 @@ public final class ClientStructureWrapper
         }
         catch (final IOException e)
         {
-            LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("item.scepterSteel.scanFailure"));
+            LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().player, LanguageHandler.format("item.scepterSteel.scanFailure"));
             Log.getLogger().warn("Exception while trying to scan.", e);
             return;
         }
 
-        LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer,
+        LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().player,
           LanguageHandler.format("item.scepterSteel.scanSuccess", storeLocation));
     }
 

@@ -43,7 +43,7 @@ public final class LanguageHandler
      */
     public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String message)
     {
-        player.addChatComponentMessage(new TextComponentString(message));
+        player.sendMessage(new TextComponentString(message));
     }
 
     /**

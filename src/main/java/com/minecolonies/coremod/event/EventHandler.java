@@ -50,8 +50,8 @@ public class EventHandler
             final Minecraft mc = Minecraft.getMinecraft();
             if (mc.gameSettings.showDebugInfo)
             {
-                final WorldClient world = mc.theWorld;
-                final EntityPlayerSP player = mc.thePlayer;
+                final WorldClient world = mc.world;
+                final EntityPlayerSP player = mc.player;
                 IColony colony = ColonyManager.getIColony(world, player.getPosition());
                 final double minDistance = ColonyManager.getMinimumDistanceBetweenTownHalls();
 

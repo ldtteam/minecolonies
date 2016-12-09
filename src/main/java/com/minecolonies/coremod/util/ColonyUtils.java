@@ -22,7 +22,7 @@ public class ColonyUtils
     {
         final EntityCitizen entity = citizen.getCitizenEntity();
 
-        return entity != null && entity.worldObj.getEntityByID(entity.getEntityId()) != entity;
+        return entity != null && entity.world.getEntityByID(entity.getEntityId()) != entity;
     }
 
     /**

@@ -68,13 +68,13 @@ public class EntityAIOpenFenceGate extends EntityAIGateInteract
      */
     private void toggleDoor(final boolean open)
     {
-        final IBlockState iblockstate = this.theEntity.worldObj.getBlockState(this.gatePosition);
+        final IBlockState iblockstate = this.theEntity.world.getBlockState(this.gatePosition);
         //If the block is a gate block and the fence gate state does not respond to the input open toggle it.
         if (iblockstate.getBlock() == this.gateBlock && (iblockstate.getValue(BlockFenceGate.OPEN)) != open)
         {
-            this.theEntity.worldObj.setBlockState(this.gatePosition, iblockstate.withProperty(BlockFenceGate.OPEN, open), 2);
+            this.theEntity.world.setBlockState(this.gatePosition, iblockstate.withProperty(BlockFenceGate.OPEN, open), 2);
             final SoundEvent openCloseSound = open ? SoundEvents.BLOCK_FENCE_GATE_OPEN : SoundEvents.BLOCK_FENCE_GATE_CLOSE;
-            SoundUtils.playSoundAtCitizen(this.theEntity.worldObj, this.gatePosition, openCloseSound);
+            SoundUtils.playSoundAtCitizen(this.theEntity.world, this.gatePosition, openCloseSound);
         }
     }
 

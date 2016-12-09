@@ -111,7 +111,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     @Override
     public void messageOnServerThread(final BuildToolPlaceMessage message, final EntityPlayerMP player)
     {
-        final World world = player.worldObj;
+        final World world = player.world;
         if (message.isHut)
         {
             handleHut(world, player, message.hutDec, message.style, message.rotation, message.pos);
