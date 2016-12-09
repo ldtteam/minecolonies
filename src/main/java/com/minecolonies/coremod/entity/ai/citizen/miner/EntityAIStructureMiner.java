@@ -51,6 +51,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private static final int ROTATE_THREE_TIMES = 3;
     private static final int ROTATE_FOUR_TIMES  = 4;
 
+    /**
+     * Check for liquids in the following range.
+     */
+    private static final int LIQUID_CHECK_RANGE = 5;
+
     //The current block to mine
     @Nullable
     private BlockPos minerWorkingLocation;
@@ -553,15 +558,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
         if(vectorX == -1)
         {
-            rotation = 3;
+            rotation = ROTATE_THREE_TIMES;
         }
         else if(vectorZ == -1)
         {
-            rotation = 2;
+            rotation = ROTATE_TWICE;
         }
         else if(vectorZ == 1)
         {
-            rotation = 1;
+            rotation = ROTATE_ONCE;
         }
 
         @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getParent().getFirst(), currentLevel.getDepth(), workingNode.getParent().getSecond());
@@ -663,7 +668,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             for (int z = -NODE_DISTANCE / 2 - 1; z <= NODE_DISTANCE / 2 + 1; z++)
             {
-                for (int y = -1; y <= 5; y++)
+                for (int y = -1; y <= LIQUID_CHECK_RANGE; y++)
                 {
                     @NotNull final BlockPos curBlock = new BlockPos(mineNode.getX() + x, standingPosition.getY() + y, mineNode.getZ() + z);
                     final Block block = getBlock(curBlock);

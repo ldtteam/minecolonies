@@ -415,21 +415,21 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return;
         }
 
-        int rotation = 0;
+        int tempRotation = 0;
         if (workOrder.getRotation() == 0 && !(workOrder instanceof WorkOrderBuildDecoration))
         {
             final IBlockState blockState = world.getBlockState(pos);
             if (blockState.getBlock() instanceof AbstractBlockHut)
             {
-                rotation = BlockUtils.getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING));
+                tempRotation = BlockUtils.getRotationFromFacing(blockState.getValue(AbstractBlockHut.FACING));
             }
         }
         else
         {
-            rotation = workOrder.getRotation();
+            tempRotation = workOrder.getRotation();
         }
 
-        loadStructure(workOrder.getStructureName(), rotation, pos);
+        loadStructure(workOrder.getStructureName(), tempRotation, pos);
 
         workOrder.setCleared(false);
         workOrder.setRequested(false);
