@@ -30,18 +30,27 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 {
 
     private static final String     RENDER_META_TORCH         = "Torch";
-    private static final int        NODE_DISTANCE             = 7;
+    private static final int        NODE_DISTANCE       = 7;
     /**
      * Return to chest after 3 stacks.
      */
-    private static final int        MAX_BLOCKS_MINED          = 3 * 64;
-    private static final int        LADDER_SEARCH_RANGE       = 10;
-    private static final int        SHAFT_RADIUS              = 3;
-    private static final int        SAFE_CHECK_RANGE          = 5;
+    private static final int        MAX_BLOCKS_MINED    = 3 * 64;
+    private static final int        LADDER_SEARCH_RANGE = 10;
+    private static final int        SHAFT_RADIUS        = 3;
+    private static final int        SAFE_CHECK_RANGE    = 5;
     /**
      * Amount of items to be kept.
      */
-    private static final int STACK_MAX_SIZE = 64;
+    private static final int STACK_MAX_SIZE     = 64;
+
+    /**
+     * Possible rotations.
+     */
+    private static final int ROTATE_ONCE        = 1;
+    private static final int ROTATE_TWICE       = 2;
+    private static final int ROTATE_THREE_TIMES = 3;
+    private static final int ROTATE_FOUR_TIMES  = 4;
+
     //The current block to mine
     @Nullable
     private BlockPos minerWorkingLocation;
@@ -624,19 +633,19 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     {
         if(getOwnBuilding().getVectorX() == 1)
         {
-            return 1;
+            return ROTATE_ONCE;
         }
         else if(getOwnBuilding().getVectorZ() == 1)
         {
-            return 2;
+            return ROTATE_TWICE;
         }
         else if(getOwnBuilding().getVectorX() == -1)
         {
-            return 3;
+            return ROTATE_THREE_TIMES;
         }
         else if(getOwnBuilding().getVectorZ() == -1)
         {
-            return 4;
+            return ROTATE_FOUR_TIMES;
         }
         return 0;
     }

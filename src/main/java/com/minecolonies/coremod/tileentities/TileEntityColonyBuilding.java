@@ -266,21 +266,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     //-----------------------------Material Handling--------------------------------
-
-    /**
-     * Makes sure ItemStacks inside of the inventory aren't affected by changes to the returned stack.
-     */
-    @Override
-    public ItemStack getStackInSlot(final int index)
-    {
-        final ItemStack stack = super.getStackInSlot(index);
-        if (stack == null)
-        {
-            return null;
-        }
-        return stack.copy();
-    }
-
     @Override
     public ItemStack decrStackSize(final int index, final int quantity)
     {

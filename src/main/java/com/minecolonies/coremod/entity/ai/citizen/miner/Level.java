@@ -29,9 +29,27 @@ public class Level
     private static final String TAG_LADDERZ = "LadderZ";
 
     /**
+     * Possible rotations.
+     */
+    private static final int ROTATE_ONCE        = 1;
+    private static final int ROTATE_TWICE       = 2;
+    private static final int ROTATE_THREE_TIMES = 3;
+    private static final int MAX_ROTATIONS      = 4;
+
+    /**
      * The depth of the level stored as the y coordinate.
      */
     private int depth;
+
+    /**
+     * Random object needed for some tasks.
+     */
+    private static final Random rand = new Random();
+
+    /**
+     * Number to choose random types. It's random.nextInt(RANDOM_TYPES),
+     */
+    private static final int RANDOM_TYPES = 4;
 
     /**
      * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
@@ -43,7 +61,7 @@ public class Level
      * Comparator to compare two nodes, for the priority queue.
      */
     @NotNull
-    private static final Comparator<Node> NODE_COMPARATOR = (Node n1, Node n2) -> new Random().nextInt(100) > 50 ? 1 : -1;
+    private static final Comparator<Node> NODE_COMPARATOR = (Node n1, Node n2) -> rand.nextInt(100) > 50 ? 1 : -1;
 
     /**
      * The queue of open Nodes. Get a new node to work on here.
@@ -135,23 +153,23 @@ public class Level
         final Node tempNode = openNodes.poll();
         final List<BlockPos> nodeCenterList = new ArrayList<>();
 
-        //todo let them face the correct direction!
         switch(tempNode.getStyle())
         {
             case TUNNEL:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
                 break;
             case BEND:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation+3));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
                 break;
             case CROSSROAD:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation));
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation + 1));
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation + 3));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
                 break;
+            default:
+                return;
         }
 
-        //todo random style!
         for(final BlockPos pos: nodeCenterList)
         {
             Tuple<Integer, Integer> tuple = new Tuple<>(pos.getX(), pos.getZ());
@@ -160,22 +178,31 @@ public class Level
                 continue;
             }
             final Node tempNodeToAdd = new Node(pos.getX(), pos.getZ(), new Tuple<>(tempNode.getX(), tempNode.getZ()));
-            tempNodeToAdd.setStyle(TUNNEL);
+            int randNumber = rand.nextInt(RANDOM_TYPES);
+            tempNodeToAdd.setStyle(randNumber <= 1 ? Node.NodeType.TUNNEL : (randNumber == 2 ? Node.NodeType.BEND : Node.NodeType.CROSSROAD));
             nodes.put(tuple, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
         nodes.get(new Tuple<>(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
     }
 
-    private static BlockPos getNextNodePositionFromNodeWithRotation(Node node, int rotation)
+    /**
+     * GEts the next node position from the currentNode the rotation of it and the additional rotation.
+     * @param node the node.
+     * @param rotation the rotation.
+     * @param additionalRotation the additional rotation.
+     * @return center of the new node.
+     */
+    private static BlockPos getNextNodePositionFromNodeWithRotation(Node node, int rotation, int additionalRotation)
     {
-        switch(rotation)
+        int realRotation = Math.floorMod(rotation + additionalRotation, MAX_ROTATIONS);
+        switch(realRotation)
         {
-            case 1:
+            case ROTATE_ONCE:
                 return node.getSouthNodeCenter();
-            case 2:
+            case ROTATE_TWICE:
                 return node.getWesthNodeCenter();
-            case 3:
+            case ROTATE_THREE_TIMES:
                 return node.getNorthNodeCenter();
             default:
                 return node.getEastNodeCenter();
