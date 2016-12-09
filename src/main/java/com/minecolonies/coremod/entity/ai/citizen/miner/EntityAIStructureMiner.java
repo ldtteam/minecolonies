@@ -553,25 +553,25 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //normal facing +x
         int rotation = 0;
 
-        int vectorX = workingNode.getX() < workingNode.getParent().getFirst() ? -1 : (workingNode.getX() > workingNode.getParent().getFirst() ? 1 : 0);
-        int vectorZ = workingNode.getZ() < workingNode.getParent().getSecond() ? -1 : (workingNode.getZ() > workingNode.getParent().getSecond() ? 1 : 0);
+        int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : (workingNode.getX() > workingNode.getParent().getX() ? 1 : 0);
+        int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : (workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0);
 
         if(vectorX == -1)
         {
-            rotation = ROTATE_THREE_TIMES;
+            rotation = ROTATE_TWICE;
         }
         else if(vectorZ == -1)
         {
-            rotation = ROTATE_TWICE;
+            rotation = ROTATE_THREE_TIMES;
         }
         else if(vectorZ == 1)
         {
             rotation = ROTATE_ONCE;
         }
 
-        @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getParent().getFirst(), currentLevel.getDepth(), workingNode.getParent().getSecond());
+        @NotNull final BlockPos standingPosition = new BlockPos(workingNode.getParent().getX(), currentLevel.getDepth(), workingNode.getParent().getY());
         currentStandingPosition = standingPosition;
-        if ((workingNode.getStatus() == Node.NodeStatus.COMPLETED || workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS) && !walkToBlock(standingPosition))
+        if ((workingNode.getStatus() == Node.NodeStatus.AVAILABLE || workingNode.getStatus() == Node.NodeStatus.IN_PROGRESS) && !walkToBlock(standingPosition))
         {
             return executeStructurePlacement(workingNode, standingPosition, rotation);
         }
@@ -657,6 +657,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private AIState executeStructurePlacement(@NotNull final Node mineNode, @NotNull final BlockPos standingPosition, final int rotation)
     {
+        mineNode.setStatus(Node.NodeStatus.IN_PROGRESS);
         //Preload structures
         if (job.getStructure() == null)
         {

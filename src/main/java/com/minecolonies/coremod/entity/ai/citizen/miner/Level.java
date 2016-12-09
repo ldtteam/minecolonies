@@ -3,12 +3,12 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.geom.Point2D;
 import java.util.*;
 
 import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.TUNNEL;
@@ -55,7 +55,7 @@ public class Level
      * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
      */
     @NotNull
-    private final HashMap<Tuple<Integer, Integer>,Node> nodes = new HashMap<>();
+    private final HashMap<Point2D, Node> nodes = new HashMap<>();
 
     /**
      * Comparator to compare two nodes, for the priority queue.
@@ -101,13 +101,13 @@ public class Level
         //check for orientation
         @NotNull final BlockPos cobbleCenter = new BlockPos(cobbleX - (buildingMiner.getVectorX() * 3), depth, cobbleZ - (buildingMiner.getVectorZ() * 3));
         @NotNull final BlockPos ladderCenter = new BlockPos(cobbleX + (buildingMiner.getVectorX() * 4), depth, cobbleZ + (buildingMiner.getVectorZ() * 4));
-        Tuple<Integer, Integer> ladderKey = new Tuple<>(ladderCenter.getX(), ladderCenter.getZ());
+        Point2D ladderKey = new Point2D.Double(ladderCenter.getX(), ladderCenter.getZ());
 
         //They are shaft and ladderBack, their parents are the shaft.
         @NotNull final Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ(), ladderKey);
         cobbleNode.setStyle(Node.NodeType.LADDER_BACK);
         cobbleNode.setStatus(Node.NodeStatus.COMPLETED);
-        nodes.put(new Tuple<>(cobbleCenter.getX(), cobbleCenter.getZ()), cobbleNode);
+        nodes.put(new Point2D.Double(cobbleCenter.getX(), cobbleCenter.getZ()), cobbleNode);
 
         ladderNode = new Node(ladderCenter.getX(), ladderCenter.getZ(), null);
         ladderNode.setStyle(Node.NodeType.SHAFT);
@@ -123,13 +123,13 @@ public class Level
 
         for(final BlockPos pos: nodeCenterList)
         {
-            if(cobbleCenter.equals(pos))
+            if(cobbleCenter.equals(pos) || ladderCenter.equals(pos))
             {
                 continue;
             }
             final Node tempNode = new Node(pos.getX(), pos.getZ(), ladderKey);
             tempNode.setStyle(TUNNEL);
-            nodes.put(new Tuple<>(pos.getX(), pos.getZ()), tempNode);
+            nodes.put(new Point2D.Double(pos.getX(), pos.getZ()), tempNode);
             openNodes.add(tempNode);
         }
     }
@@ -172,18 +172,18 @@ public class Level
 
         for(final BlockPos pos: nodeCenterList)
         {
-            Tuple<Integer, Integer> tuple = new Tuple<>(pos.getX(), pos.getZ());
+            Point2D tuple = new Point2D.Double(pos.getX(), pos.getZ());
             if(nodes.containsKey(tuple))
             {
                 continue;
             }
-            final Node tempNodeToAdd = new Node(pos.getX(), pos.getZ(), new Tuple<>(tempNode.getX(), tempNode.getZ()));
+            final Node tempNodeToAdd = new Node(pos.getX(), pos.getZ(), new Point2D.Double(tempNode.getX(), tempNode.getZ()));
             int randNumber = rand.nextInt(RANDOM_TYPES);
             tempNodeToAdd.setStyle(randNumber <= 1 ? Node.NodeType.TUNNEL : (randNumber == 2 ? Node.NodeType.BEND : Node.NodeType.CROSSROAD));
             nodes.put(tuple, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
-        nodes.get(new Tuple<>(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
+        nodes.get(new Point2D.Double(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
     }
 
     /**
@@ -226,12 +226,12 @@ public class Level
         for (int i = 0; i < nodeTagList.tagCount(); i++)
         {
             @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
-            level.nodes.put(new Tuple<>(node.getX(), node.getZ()), node);
+            level.nodes.put(new Point2D.Double(node.getX(), node.getZ()), node);
         }
         final int ladderX = compound.getInteger(TAG_LADDERX);
         final int ladderZ = compound.getInteger(TAG_LADDERZ);
 
-        level.ladderNode = level.nodes.get(new Tuple<>(ladderX, ladderZ));
+        level.ladderNode = level.nodes.get(new Point2D.Double(ladderX, ladderZ));
 
         return level;
     }
@@ -266,7 +266,7 @@ public class Level
     }
 
     @NotNull
-    public Map<Tuple<Integer, Integer>, Node> getNodes()
+    public Map<Point2D, Node> getNodes()
     {
         return Collections.unmodifiableMap(nodes);
     }
@@ -294,6 +294,6 @@ public class Level
      */
     public void addNode(final Node newNode)
     {
-        nodes.put(new Tuple<>(newNode.getX(), newNode.getZ()), newNode);
+        nodes.put(new Point2D.Double(newNode.getX(), newNode.getZ()), newNode);
     }
 }

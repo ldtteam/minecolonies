@@ -6,6 +6,8 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.geom.Point2D;
+
 /**
  * Miner Node Data Structure.
  * <p>
@@ -19,12 +21,12 @@ public class Node
     /**
      * Tags used to save and retrieve data from NBT.
      */
-    private static final String TAG_X                 = "idX";
-    private static final String TAG_Z                 = "idZ";
-    private static final String TAG_STYLE             = "Style";
-    private static final String TAG_STATUS            = "Status";
-    private static final String TAG_PARENTX           = "ParentX";
-    private static final String TAG_PARENTY           = "ParentY";
+    private static final String TAG_X       = "idX";
+    private static final String TAG_Z       = "idZ";
+    private static final String TAG_STYLE   = "Style";
+    private static final String TAG_STATUS  = "Status";
+    private static final String TAG_PARENTX = "ParentX";
+    private static final String TAG_PARENTZ = "ParentZ";
 
     /**
      * The distance to the center of the next node.
@@ -57,7 +59,7 @@ public class Node
      * Central position of parent node.
      */
     @Nullable
-    private final Tuple<Integer, Integer> parent;
+    private final Point2D parent;
 
 
     /**
@@ -68,7 +70,7 @@ public class Node
      * @param z Z-coordinate in the node
      * @param parent the parent of the node.
      */
-    public Node(final int x, final int z, @Nullable Tuple<Integer, Integer> parent)
+    public Node(final int x, final int z, @Nullable Point2D parent)
     {
         this.x = x;
         this.z = z;
@@ -94,7 +96,7 @@ public class Node
 
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
-        Tuple<Integer, Integer> tempParent = compound.hasKey(TAG_PARENTX) ? new Tuple<>(compound.getInteger(TAG_PARENTX), compound.getInteger(TAG_PARENTY)) : null;
+        Point2D tempParent = compound.hasKey(TAG_PARENTX) ? new Point2D.Double(compound.getDouble(TAG_PARENTX), compound.getDouble(TAG_PARENTZ)) : null;
 
         //Set the node status in all directions.
         @NotNull final Node node = new Node(x, z, tempParent);
@@ -120,8 +122,8 @@ public class Node
 
         if(parent != null)
         {
-            compound.setInteger(TAG_PARENTX, parent.getFirst());
-            compound.setInteger(TAG_PARENTY, parent.getSecond());
+            compound.setDouble(TAG_PARENTX, parent.getX());
+            compound.setDouble(TAG_PARENTZ, parent.getY());
         }
     }
 
@@ -172,7 +174,7 @@ public class Node
      * @return tuple of parent position.
      */
     @Nullable
-    public Tuple<Integer, Integer> getParent()
+    public Point2D getParent()
     {
         return this.parent;
     }
