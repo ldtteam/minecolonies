@@ -544,7 +544,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
             else
             {
-                if (!mineBlock(currentBlock.blockPosition, workFrom))
+                if (!mineBlock(currentBlock.blockPosition, workFrom == null ?  getWorkingPosition() : workFrom))
                 {
                     return false;
                 }

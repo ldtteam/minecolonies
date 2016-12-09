@@ -55,7 +55,7 @@ public final class ConfigurationHandler
             chatFrequency = config.get(CATEGORY_GAMEPLAY, "chatFrequency", chatFrequency, "Chat Frequency (seconds)").getInt();
 
             enableInDevelopmentFeatures = config.get(CATEGORY_GAMEPLAY, "development", enableInDevelopmentFeatures,
-              "Don't hide in-development features which do not work and may break your game").getBoolean();
+              "Display in-development features which do not work and may break your game").getBoolean();
 
             pathfindingDebugDraw = config.get(CATEGORY_PATHFINDING, "debugDraw", pathfindingDebugDraw, "Render pathfinding results for debugging purposes (SSP only)").getBoolean();
             pathfindingDebugVerbosity = config.get(CATEGORY_PATHFINDING, "debugVerbosity", pathfindingDebugVerbosity,

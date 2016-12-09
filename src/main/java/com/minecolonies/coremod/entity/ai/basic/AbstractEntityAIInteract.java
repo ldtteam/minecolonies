@@ -156,8 +156,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             ));
         }
 
-        //todo shit is happening!
-        if (walkToBlock(safeStand) || MathUtils.twoDimDistance(worker.getPosition(), safeStand) < MIN_WORKING_RANGE)
+        if (walkToBlock(safeStand) && MathUtils.twoDimDistance(worker.getPosition(), safeStand) > MIN_WORKING_RANGE)
         {
             return true;
         }
