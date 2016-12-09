@@ -313,7 +313,7 @@ public class Structure
 
     private void renderGhost(final World world, final ModelHolder holder, final EntityPlayer player, final float partialTicks)
     {
-        final boolean existingModel = !this.mc.theWorld.isAirBlock(holder.pos);
+        final boolean existingModel = !this.mc.world.isAirBlock(holder.pos);
 
         final IBlockState actualState = holder.actualState;
         final Block block = actualState.getBlock();
@@ -341,13 +341,13 @@ public class Structure
             final TileEntity te = holder.te;
             te.setPos(holder.pos);
             final FakeWorld fakeWorld = new FakeWorld(holder.actualState, world.getSaveHandler(), world.getWorldInfo(), world.provider, world.theProfiler, true);
-            te.setWorldObj(fakeWorld);
+            te.setWorld(fakeWorld);
             final int pass = 0;
 
             if (te.shouldRenderInPass(pass))
             {
                 final TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
-                terd.func_190056_a(fakeWorld,
+                terd.prepare(fakeWorld,
                   Minecraft.getMinecraft().renderEngine,
                   Minecraft.getMinecraft().fontRendererObj,
                   new FakeEntity(fakeWorld),

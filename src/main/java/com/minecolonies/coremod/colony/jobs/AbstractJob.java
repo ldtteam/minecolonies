@@ -158,7 +158,7 @@ public abstract class AbstractJob
         for (int i = 0; i < itemsNeededTag.tagCount(); i++)
         {
             final NBTTagCompound itemCompound = itemsNeededTag.getCompoundTagAt(i);
-            itemsNeeded.add(ItemStack.loadItemStackFromNBT(itemCompound));
+            itemsNeeded.add(new ItemStack(itemCompound));
         }
     }
 
@@ -269,7 +269,7 @@ public abstract class AbstractJob
         {
             if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
             {
-                neededItem.stackSize += stack.stackSize;
+                neededItem.setCount(neededItem.getCount() + stack.getCount());
                 return;
             }
         }
@@ -292,11 +292,11 @@ public abstract class AbstractJob
         {
             if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
             {
-                final int itemsToRemove = Math.min(neededItem.stackSize, stackCopy.stackSize);
-                neededItem.stackSize -= itemsToRemove;
-                stackCopy.stackSize -= itemsToRemove;
+                final int itemsToRemove = Math.min(neededItem.getCount(), stackCopy.getCount());
+                neededItem.setCount(stackCopy.getCount() - itemsToRemove);
+                stackCopy.setCount(stackCopy.getCount() - itemsToRemove);
 
-                if (neededItem.stackSize == 0)
+                if (neededItem.getCount() == 0)
                 {
                     itemsNeeded.remove(neededItem);
                 }
@@ -305,7 +305,7 @@ public abstract class AbstractJob
             }
         }
 
-        return stackCopy.stackSize == 0 ? null : stackCopy;
+        return stackCopy.getCount() == 0 ? null : stackCopy;
     }
 
     /**

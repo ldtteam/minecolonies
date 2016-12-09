@@ -4,6 +4,7 @@ import com.minecolonies.coremod.util.MathUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.init.SoundEvents;
@@ -185,7 +186,7 @@ public final class EntityFishHook extends Entity
 
     private void setPosition(final double x, final double y, final double z, final double yaw, final double pitch)
     {
-        final double squareRootXYZ = MathHelper.sqrt_double(x * x + y * y + z * z);
+        final double squareRootXYZ = MathHelper.sqrt(x * x + y * y + z * z);
         double newX = x / squareRootXYZ;
         double newY = y / squareRootXYZ;
         double newZ = z / squareRootXYZ;
@@ -377,7 +378,7 @@ public final class EntityFishHook extends Entity
                                                                              this.getEntityBoundingBox().maxZ);
 
             //If the hook is swimming
-            if (this.worldObj.isAABBInMaterial(axisAlignedBB1, Material.WATER))
+            if (this.world.isMaterialInBB(axisAlignedBB1, Material.WATER))
             {
                 waterDensity += 1.0 / numSteps;
             }
@@ -406,7 +407,7 @@ public final class EntityFishHook extends Entity
      */
     private void updateMotionAndRotation()
     {
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
+        this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
         final double motion = Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
         this.rotationYaw = (float) (Math.atan2(this.motionY, this.motionZ) * HALF_CIRCLE / Math.PI);
         this.rotationPitch = (float) (Math.atan2(this.motionY, motion) * HALF_CIRCLE / Math.PI);
@@ -445,12 +446,12 @@ public final class EntityFishHook extends Entity
      */
     private void checkIfFishBites(final double waterDensity)
     {
-        if (!this.worldObj.isRemote && waterDensity > 0.0)
+        if (!this.world.isRemote && waterDensity > 0.0)
         {
             int fishingProgressStep = 1;
 
             if (this.rand.nextDouble() < NO_CLEAR_SKY_CHANCE
-                  && !this.worldObj.canBlockSeeSky(new BlockPos(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY) + 1, MathHelper.floor_double(this.posZ))))
+                  && !this.world.canBlockSeeSky(new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.posY) + 1, MathHelper.floor(this.posZ))))
             {
                 --fishingProgressStep;
             }
@@ -461,7 +462,7 @@ public final class EntityFishHook extends Entity
                 return;
             }
 
-            @NotNull final WorldServer worldServer = (WorldServer) this.worldObj;
+            @NotNull final WorldServer worldServer = (WorldServer) this.world;
 
             if (this.countdownFishNear > 0)
             {
@@ -477,7 +478,7 @@ public final class EntityFishHook extends Entity
             }
             else
             {
-                this.countdownFishNear = MathHelper.getRandomIntegerInRange(this.rand, 100, 900);
+                this.countdownFishNear = MathHelper.getInt(this.rand, 100, 900);
                 this.countdownFishNear -= fishingSpeedEnchantment * 20 * 5;
             }
         }
@@ -524,8 +525,8 @@ public final class EntityFishHook extends Entity
 
         if (this.countdownFishNear <= 0)
         {
-            this.relativeRotation = MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F);
-            this.countdownFishBites = MathHelper.getRandomIntegerInRange(this.rand, 20, 80);
+            this.relativeRotation = MathHelper.nextFloat(this.rand, 0.0F, 360.0F);
+            this.countdownFishBites = MathHelper.getInt(this.rand, 20, 80);
         }
     }
 
@@ -551,8 +552,8 @@ public final class EntityFishHook extends Entity
      */
     private void renderLittleSplash(@NotNull final WorldServer worldServer)
     {
-        final double sinYPosition = (double) MathHelper.randomFloatClamp(this.rand, 0.0F, 360.0F) * 0.017453292D;
-        final double cosYPosition = MathHelper.randomFloatClamp(this.rand, 25.0F, 60.0F);
+        final double sinYPosition = (double) MathHelper.nextFloat(this.rand, 0.0F, 360.0F) * 0.017453292D;
+        final double cosYPosition = MathHelper.nextFloat(this.rand, 25.0F, 60.0F);
         final double bubbleX = this.posX + (Math.sin(sinYPosition) * cosYPosition * 0.1);
         final double increasedYPosition = Math.floor(this.getEntityBoundingBox().minY) + 1.0;
         final double bubbleZ = this.posZ + (Math.cos(sinYPosition) * cosYPosition * 0.1);
@@ -598,7 +599,7 @@ public final class EntityFishHook extends Entity
           0.0,
           (double) this.width,
           0.20000000298023224);
-        this.countdownNoFish = MathHelper.getRandomIntegerInRange(this.rand, 10, 30);
+        this.countdownNoFish = MathHelper.getInt(this.rand, 10, 30);
         isFishCaugth = true;
     }
 
@@ -638,7 +639,7 @@ public final class EntityFishHook extends Entity
      */
     public int getDamage(@NotNull final EntityCitizen citizen)
     {
-        if (this.worldObj.isRemote)
+        if (this.world.isRemote)
         {
             this.setDead();
             return 0;
@@ -674,7 +675,7 @@ public final class EntityFishHook extends Entity
         final double citizenPosX = citizen.posX;
         final double citizenPosY = citizen.posY;
         final double citizenPosZ = citizen.posZ;
-        @NotNull final EntityItem entityitem = new EntityItem(this.worldObj, this.posX, this.posY, this.posZ, this.getFishingLoot(citizen));
+        @NotNull final EntityItem entityitem = new EntityItem(this.world, this.posX, this.posY, this.posZ, this.getFishingLoot(citizen));
         final double distanceX = citizenPosX - this.posX;
         final double distanceY = citizenPosY - this.posY;
         final double distanceZ = citizenPosZ - this.posZ;
@@ -682,8 +683,8 @@ public final class EntityFishHook extends Entity
         entityitem.motionX = distanceX * 0.1;
         entityitem.motionY = distanceY * 0.1 + Math.sqrt(Math.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ)) * 0.08;
         entityitem.motionZ = distanceZ * 0.1;
-        this.worldObj.spawnEntityInWorld(entityitem);
-        citizen.worldObj.spawnEntityInWorld(new EntityXPOrb(citizen.worldObj,
+        this.world.spawnEntity(entityitem);
+        citizen.world.spawnEntity(new EntityXPOrb(citizen.world,
                                                              citizenPosX,
                                                              citizenPosY + 0.D,
                                                              citizenPosZ + 0.5,
@@ -702,18 +703,18 @@ public final class EntityFishHook extends Entity
     private ItemStack getFishingLoot(final EntityCitizen citizen)
     {
         //Reduce random to get more fish drops
-        double random = this.worldObj.rand.nextDouble() / INCREASE_RARENESS_MODIFIER;
+        double random = this.world.rand.nextDouble() / INCREASE_RARENESS_MODIFIER;
         double speedBonus = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
         double lootBonus = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
         //clamp_float gives the values an upper limit
-        speedBonus = MathHelper.clamp_float((float) speedBonus, 0.0F, 1.0F);
-        lootBonus = MathHelper.clamp_float((float) lootBonus, 0.0F, 1.0F);
+        speedBonus = MathHelper.clamp((float) speedBonus, 0.0F, 1.0F);
+        lootBonus = MathHelper.clamp((float) lootBonus, 0.0F, 1.0F);
         final int buildingLevel = citizen.getWorkBuilding().getBuildingLevel();
 
         if (random < speedBonus || buildingLevel == 1)
         {
-            final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
-            for (final ItemStack itemstack : this.worldObj.getLootTableManager()
+            final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.world);
+            for (final ItemStack itemstack : this.world.getLootTableManager()
                                                .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_FISH)
                                                .generateLootForPools(this.rand, lootContextBuilder.build()))
             {
@@ -726,8 +727,8 @@ public final class EntityFishHook extends Entity
 
             if (random < lootBonus || buildingLevel == 2)
             {
-                final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
-                for (final ItemStack itemstack : this.worldObj.getLootTableManager()
+                final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.world);
+                for (final ItemStack itemstack : this.world.getLootTableManager()
                                                    .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_JUNK)
                                                    .generateLootForPools(this.rand, lootContextBuilder.build()))
                 {
@@ -736,8 +737,8 @@ public final class EntityFishHook extends Entity
             }
             else
             {
-                final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.worldObj);
-                for (final ItemStack itemstack : this.worldObj.getLootTableManager()
+                final LootContext.Builder lootContextBuilder = new LootContext.Builder((WorldServer) this.world);
+                for (final ItemStack itemstack : this.world.getLootTableManager()
                                                    .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING_TREASURE)
                                                    .generateLootForPools(this.rand, lootContextBuilder.build()))
                 {

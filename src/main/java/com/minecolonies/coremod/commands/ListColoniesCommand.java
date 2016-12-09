@@ -98,13 +98,13 @@ public class ListColoniesCommand extends AbstractSingleCommand
         }
 
         final ITextComponent headerLine = new TextComponentString(PAGE_TOP_LEFT + page + PAGE_TOP_MIDDLE + pageCount + PAGE_TOP_RIGHT);
-        sender.addChatMessage(headerLine);
+        sender.sendMessage(headerLine);
 
         for (final Colony colony : coloniesPage)
         {
-            sender.addChatMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
+            sender.sendMessage(new TextComponentString(ID_TEXT + colony.getID() + NAME_TEXT + colony.getName()));
             final BlockPos center = colony.getCenter();
-            sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ())));
+            sender.sendMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ())));
         }
 
         final ITextComponent prevButton = new TextComponentString(PREV_PAGE).setStyle(new Style().setBold(true).setColor(TextFormatting.GOLD).setClickEvent(
@@ -116,7 +116,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
 
         final ITextComponent beginLine = new TextComponentString(PAGE_LINE);
         final ITextComponent endLine = new TextComponentString(PAGE_LINE);
-        sender.addChatMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
+        sender.sendMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
     }
 
     @NotNull

@@ -574,7 +574,7 @@ public class Colony implements IColony
 
         // Add owners
         subscribers.addAll(
-          this.getWorld().getMinecraftServer().getPlayerList().getPlayerList()
+          this.getWorld().getMinecraftServer().getPlayerList().getPlayers()
             .stream()
             .filter(permissions::isSubscriber)
             .collect(Collectors.toList()));
@@ -962,7 +962,7 @@ public class Colony implements IColony
             entity.setColony(this, citizenData);
 
             entity.setPosition(spawnPoint.getX() + 0.5D, spawnPoint.getY() + 0.1D, spawnPoint.getZ() + 0.5D);
-            world.spawnEntityInWorld(entity);
+            world.spawnEntity(entity);
 
             checkAchievements();
 

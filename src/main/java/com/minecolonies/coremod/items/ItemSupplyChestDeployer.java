@@ -88,7 +88,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
-        if (worldIn == null || playerIn == null || worldIn.isRemote || stack.stackSize == 0 || !isFirstPlacing(playerIn))
+        if (worldIn == null || playerIn == null || worldIn.isRemote || stack.getCount() == 0 || !isFirstPlacing(playerIn))
         {
             return EnumActionResult.FAIL;
         }

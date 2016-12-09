@@ -68,7 +68,7 @@ public class ItemCompost extends AbstractItemMinecolonies
                         igrowable.grow(worldIn, worldIn.rand, pos, iblockstate);
                     }
 
-                    --stack.stackSize;
+                    stack.setCount(stack.getCount() - 1);
                 }
             }
         }

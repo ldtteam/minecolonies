@@ -757,9 +757,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     private boolean placeBlock(@NotNull final BlockPos pos, final Block block, @NotNull final IBlockState blockState)
     {
         //Move out of the way when placing blocks
-        if (MathHelper.floor_double(worker.posX) == pos.getX()
-                && MathHelper.abs_int(pos.getY() - (int) worker.posY) <= 1
-                && MathHelper.floor_double(worker.posZ) == pos.getZ()
+        if (MathHelper.floor(worker.posX) == pos.getX()
+                && MathHelper.abs(pos.getY() - (int) worker.posY) <= 1
+                && MathHelper.floor(worker.posZ) == pos.getZ()
                 && worker.getNavigator().noPath())
         {
             worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
@@ -883,7 +883,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 entityHanging.setWorld(world);
                 entityHanging.dimension = world.provider.getDimension();
 
-                world.spawnEntityInWorld(entityHanging);
+                world.spawnEntity(entityHanging);
             }
             else if (entity instanceof EntityMinecart)
             {
@@ -895,7 +895,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 minecart.setWorld(world);
                 minecart.dimension = world.provider.getDimension();
 
-                world.spawnEntityInWorld(minecart);
+                world.spawnEntity(minecart);
             }
         }
     }

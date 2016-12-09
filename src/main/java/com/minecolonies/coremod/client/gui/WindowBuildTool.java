@@ -294,7 +294,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.coremod.gui.buildtool.hut"));
 
-        final InventoryPlayer inventory = this.mc.thePlayer.inventory;
+        final InventoryPlayer inventory = this.mc.player.inventory;
 
         //Add possible hutDec (has item) to list, if it has a structure, and player has the block
         hutDec.addAll(Structures.getHuts().stream()
@@ -517,7 +517,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
         else
         {
-            LanguageHandler.sendPlayerLocalizedMessage(this.mc.thePlayer, WindowBuildTool.NO_HUT_IN_INVENTORY);
+            LanguageHandler.sendPlayerLocalizedMessage(this.mc.player, WindowBuildTool.NO_HUT_IN_INVENTORY);
         }
 
         Settings.instance.reset();
@@ -538,7 +538,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveLeftClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing().rotateYCCW()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateYCCW()));
     }
 
     /**
@@ -546,7 +546,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveRightClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing().rotateY()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().rotateY()));
     }
 
     /**
@@ -554,7 +554,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveForwardClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing()));
     }
 
     /**
@@ -562,7 +562,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void moveBackClicked()
     {
-        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.thePlayer.getHorizontalFacing().getOpposite()));
+        Settings.instance.moveTo(new BlockPos(0, 0, 0).offset(this.mc.player.getHorizontalFacing().getOpposite()));
     }
 
     /**

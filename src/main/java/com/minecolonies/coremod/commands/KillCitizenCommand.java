@@ -66,7 +66,7 @@ public class KillCitizenCommand extends AbstractSingleCommand
         //No citizen or citizen defined.
         if (colonyId == -1 || citizenId == -1)
         {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
             return;
         }
 
@@ -74,14 +74,14 @@ public class KillCitizenCommand extends AbstractSingleCommand
         final Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
             return;
         }
 
         final CitizenData citizenData = colony.getCitizen(citizenId);
         if (citizenData == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DATA_NULL, citizenId, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DATA_NULL, citizenId, colonyId)));
             return;
         }
 
@@ -89,14 +89,14 @@ public class KillCitizenCommand extends AbstractSingleCommand
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
         if (entityCitizen == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(ENTITY_CITIZEN_NULL, citizenId, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(ENTITY_CITIZEN_NULL, citizenId, colonyId)));
             return;
         }
 
-        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, entityCitizen.getEntityId(), entityCitizen.getName())));
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, entityCitizen.getEntityId(), entityCitizen.getName())));
         final BlockPos position = entityCitizen.getPosition();
-        sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-        sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
+        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
 
         server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
     }

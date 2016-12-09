@@ -54,16 +54,17 @@ public class RenderBipedCitizen extends RenderBiped<EntityCitizen>
     @Override
     public void doRender(@NotNull final EntityCitizen citizen, final double d, final double d1, final double d2, final float f, final float f1)
     {
-        modelBipedMain = citizen.isFemale()
+
+        mainModel = citizen.isFemale()
                            ? idToFemaleModelMap.get(citizen.getModelID())
                            : idToMaleModelMap.get(citizen.getModelID());
 
-        if (modelBipedMain == null)
+        if (mainModel == null)
         {
-            modelBipedMain = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
+            mainModel = citizen.isFemale() ? defaultModelFemale : defaultModelMale;
         }
 
-        mainModel = modelBipedMain;
+        mainModel = mainModel;
 
         super.doRender(citizen, d, d1, d2, f, f1);
     }

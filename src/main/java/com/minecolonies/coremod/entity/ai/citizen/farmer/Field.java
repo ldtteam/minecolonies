@@ -264,7 +264,7 @@ public class Field extends Container
             {
                 @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
                 inventory.setInventorySlotContents(0, stack);
-                if (playerIn.inventory.getStackInSlot(playerIndex).stackSize == 0)
+                if (playerIn.inventory.getStackInSlot(playerIndex).getCount() == 0)
                 {
                     playerIn.inventory.removeStackFromSlot(playerIndex);
                 }

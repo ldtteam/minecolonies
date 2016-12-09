@@ -176,10 +176,10 @@ public abstract class AbstractPathJob implements Callable<Path>
      */
     public static BlockPos prepareStart(@NotNull final EntityLiving entity)
     {
-        @NotNull final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor_double(entity.posX),
+        @NotNull final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(MathHelper.floor(entity.posX),
                                                                                     (int) entity.posY,
-                                                                                    MathHelper.floor_double(entity.posZ));
-        IBlockState bs = entity.worldObj.getBlockState(pos);
+                                                                                    MathHelper.floor(entity.posZ));
+        IBlockState bs = entity.world.getBlockState(pos);
         final Block b = bs.getBlock();
 
         if (entity.isInWater())
@@ -187,7 +187,7 @@ public abstract class AbstractPathJob implements Callable<Path>
             while (bs.getMaterial().isLiquid())
             {
                 pos.setPos(pos.getX(), pos.getY() + 1, pos.getZ());
-                bs = entity.worldObj.getBlockState(pos);
+                bs = entity.world.getBlockState(pos);
             }
         }
         else if (b instanceof BlockFence || b instanceof BlockWall || b instanceof BlockHutField)

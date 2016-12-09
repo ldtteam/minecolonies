@@ -123,7 +123,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         {
             if (colonyId == 0)
             {
-                colony = ColonyManager.getColony(worldObj, this.getPos());
+                colony = ColonyManager.getColony(world, this.getPos());
             }
             else
             {
@@ -133,7 +133,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             if (colony == null)
             {
                 //we tried to update the colony it is still missing... so we...
-                if (worldObj == null || worldObj.isRemote)
+                if (world == null || world.isRemote)
                 {
                     /*
                      * It's most probably previewed building, please don't spam it here.
@@ -144,7 +144,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
                     //log on the server
                     Log.getLogger()
                       .warn(String.format("TileEntityColonyBuilding at %s:[%d,%d,%d] had colony.",
-                        worldObj.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
+                        world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ()));
                 }
             }
         }
@@ -152,7 +152,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         if (building == null && colony != null)
         {
             building = colony.getBuilding(getPosition());
-            if (building != null && (worldObj == null || !worldObj.isRemote))
+            if (building != null && (world == null || !world.isRemote))
             {
                 building.setTileEntity(this);
             }
@@ -162,9 +162,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         super.update();
 
-        if (!worldObj.isRemote && colonyId == 0)
+        if (!world.isRemote && colonyId == 0)
         {
-            final Colony tempColony = ColonyManager.getColony(worldObj, this.getPosition());
+            final Colony tempColony = ColonyManager.getColony(world, this.getPosition());
             if (tempColony != null)
             {
                 colonyId = tempColony.getID();
@@ -249,9 +249,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
     }
 
     @Override
-    public boolean isUseableByPlayer(@NotNull final EntityPlayer player)
+    public boolean isUsableByPlayer(final EntityPlayer player)
     {
-        return super.isUseableByPlayer(player) && this.hasAccessPermission(player);
+        return super.isUsableByPlayer(player) && this.hasAccessPermission(player);
     }
 
     /**
@@ -307,7 +307,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (MaterialSystem.isEnabled)
         {
-            building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
+            building.getMaterialStore().addMaterial(stack.getItem(), stack.getCount());
         }
     }
 
@@ -320,7 +320,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
 
         if (MaterialSystem.isEnabled)
         {
-            building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
+            building.getMaterialStore().removeMaterial(stack.getItem(), stack.getCount());
         }
     }
 }

@@ -262,7 +262,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
      */
     private void setTarget()
     {
-        final EntityPlayerSP player = this.mc.thePlayer;
+        final EntityPlayerSP player = this.mc.player;
         final int emptySlot = player.inventory.getFirstEmptyStack();
         pullInfoFromHut();
 

@@ -6,6 +6,7 @@ import com.minecolonies.coremod.entity.ai.util.AITarget;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IRangedAttackMob;
+import net.minecraft.entity.MoverType;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
@@ -217,11 +218,11 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     public void attackEntityWithRangedAttack(@NotNull final EntityLivingBase entityToAttack, final float baseDamage)
     {
-        final EntityTippedArrow arrowEntity = new GuardArrow(this.worker.worldObj, worker);
+        final EntityTippedArrow arrowEntity = new GuardArrow(this.worker.world, worker);
         final double xVector = entityToAttack.posX - worker.posX;
         final double yVector = entityToAttack.getEntityBoundingBox().minY + entityToAttack.height / AIM_HEIGHT - arrowEntity.posY;
         final double zVector = entityToAttack.posZ - worker.posZ;
-        final double distance = (double) MathHelper.sqrt_double(xVector * xVector + zVector * zVector);
+        final double distance = (double) MathHelper.sqrt(xVector * xVector + zVector * zVector);
         double damage = baseDamage;
         //Lower the variable higher the chance that the arrows hits the target.
         final double chance = HIT_CHANCE_DIVIDER / (worker.getExperienceLevel() + 1);
@@ -245,11 +246,11 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         final double goToX = xDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
         final double goToZ = zDiff > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
-        worker.moveEntity(goToX, 0, goToZ);
+        worker.move(MoverType.SELF, goToX, 0, goToZ);
 
         worker.swingArm(EnumHand.MAIN_HAND);
         worker.playSound(SoundEvents.ENTITY_SKELETON_SHOOT, (float) BASIC_VOLUME, (float) getRandomPitch());
-        worker.worldObj.spawnEntityInWorld(arrowEntity);
+        worker.world.spawnEntity(arrowEntity);
 
         worker.damageItemInHand(1);
     }
@@ -270,10 +271,10 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         final int powerEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.POWER, worker);
         final int punchEntchantment = EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.PUNCH, worker);
 
-        final DifficultyInstance difficulty = this.worker.worldObj.getDifficultyForLocation(new BlockPos(worker));
+        final DifficultyInstance difficulty = this.worker.world.getDifficultyForLocation(new BlockPos(worker));
         arrowEntity.setDamage((baseDamage * BASE_DAMAGE_MULTIPLIER)
                                 + worker.getRandom().nextGaussian() * RANDOM_DAMAGE_MULTPLIER
-                                + this.worker.worldObj.getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
+                                + this.worker.world.getDifficulty().getDifficultyId() * DIFFICULTY_DAMAGE_INCREASE);
 
         if (powerEntchantment > 0)
         {
@@ -285,7 +286,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
             arrowEntity.setKnockbackStrength(punchEntchantment);
         }
 
-        boolean onFire = worker.isBurning() && difficulty.func_190083_c() && worker.getRandom().nextBoolean();
+        boolean onFire = worker.isBurning() && worker.getRandom().nextBoolean();
         onFire = onFire || EnchantmentHelper.getMaxEnchantmentLevel(Enchantments.FLAME, worker) > 0;
 
         if (onFire)

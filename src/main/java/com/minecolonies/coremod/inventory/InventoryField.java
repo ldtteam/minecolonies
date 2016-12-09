@@ -102,7 +102,7 @@ public class InventoryField implements IInventory
 
             if (j != NO_SLOT && j < this.stackResult.length)
             {
-                this.stackResult[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
+                stackResult[j] = new ItemStack(nbttagcompound);
             }
         }
 
@@ -116,6 +116,12 @@ public class InventoryField implements IInventory
     public int getSizeInventory()
     {
         return 1;
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        return stackResult.length == 0;
     }
 
     /**
@@ -139,7 +145,7 @@ public class InventoryField implements IInventory
             return null;
         }
 
-        if (this.stackResult[index].stackSize <= count)
+        if (this.stackResult[index].getCount() <= count)
         {
             final ItemStack itemStack1 = this.stackResult[index];
             this.stackResult[index] = null;
@@ -150,7 +156,7 @@ public class InventoryField implements IInventory
         {
             @NotNull final ItemStack itemstack = this.stackResult[index].splitStack(count);
 
-            if (this.stackResult[index].stackSize == 0)
+            if (this.stackResult[index].getCount() == 0)
             {
                 this.stackResult[index] = null;
             }
@@ -185,9 +191,9 @@ public class InventoryField implements IInventory
     {
         this.stackResult[index] = stack;
 
-        if (stack != null && stack.stackSize > this.getInventoryStackLimit())
+        if (stack != null && stack.getCount() > this.getInventoryStackLimit())
         {
-            stack.stackSize = this.getInventoryStackLimit();
+            stack.setCount(this.getInventoryStackLimit());
         }
 
         this.markDirty();
@@ -206,7 +212,7 @@ public class InventoryField implements IInventory
     }
 
     @Override
-    public boolean isUseableByPlayer(final EntityPlayer entityPlayer)
+    public boolean isUsableByPlayer(final EntityPlayer entityPlayer)
     {
         return true;
     }

@@ -216,7 +216,7 @@ public class CitizenData
         female = rand.nextBoolean();
         name = generateName(rand);
 
-        textureId = entity.worldObj.rand.nextInt(Integer.MAX_VALUE);
+        textureId = entity.world.rand.nextInt(Integer.MAX_VALUE);
         health = entity.getHealth();
         maxHealth = entity.getMaxHealth();
         experience = 0;

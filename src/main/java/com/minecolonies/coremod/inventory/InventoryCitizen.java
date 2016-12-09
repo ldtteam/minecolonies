@@ -185,8 +185,8 @@ public class InventoryCitizen implements IInventory
         }
         else
         {
-            --this.stacks[i].stackSize;
-            if (this.stacks[i].stackSize <= 0)
+            this.stacks[i].setCount(this.stacks[i].getCount() - 1);
+            if (this.stacks[i].getCount() <= 0)
             {
                 this.stacks[i] = null;
             }
@@ -216,7 +216,7 @@ public class InventoryCitizen implements IInventory
      */
     public boolean addItemStackToInventory(@Nullable final ItemStack itemStackIn)
     {
-        if (itemStackIn != null && itemStackIn.stackSize != 0 && itemStackIn.getItem() != null)
+        if (itemStackIn != null && itemStackIn.getCount() != 0 && itemStackIn.getItem() != null)
         {
             try
             {
@@ -228,8 +228,9 @@ public class InventoryCitizen implements IInventory
                     {
                         return false;
                     }
-                    this.stacks[j] = ItemStack.copyItemStack(itemStackIn);
-                    itemStackIn.stackSize = 0;
+                    this.stacks[j] = itemStackIn.copy();
+
+                    itemStackIn.setCount(0);
                     return true;
                 }
                 else
@@ -238,16 +239,16 @@ public class InventoryCitizen implements IInventory
 
                     while (true)
                     {
-                        i = itemStackIn.stackSize;
-                        itemStackIn.stackSize = this.storePartialItemStack(itemStackIn);
+                        i = itemStackIn.getCount();
+                        itemStackIn.setCount(this.storePartialItemStack(itemStackIn));
 
-                        if (itemStackIn.stackSize <= 0 || itemStackIn.stackSize >= i)
+                        if (itemStackIn.getCount() <= 0 || itemStackIn.getCount() >= i)
                         {
                             break;
                         }
                     }
 
-                    return itemStackIn.stackSize < i;
+                    return itemStackIn.getCount() < i;
                 }
             }
             catch (final RuntimeException exp)
@@ -297,7 +298,7 @@ public class InventoryCitizen implements IInventory
      */
     private int storePartialItemStack(@NotNull final ItemStack itemStackIn)
     {
-        int i = itemStackIn.stackSize;
+        int i = itemStackIn.getCount();
         int j = this.storeItemStack(itemStackIn);
 
         if (j < 0)
@@ -315,19 +316,19 @@ public class InventoryCitizen implements IInventory
             {
                 // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
                 this.stacks[j] = itemStackIn.copy();
-                this.stacks[j].stackSize = 0;
+                this.stacks[j].setCount(0);
             }
 
             int k = i;
 
-            if (i > this.stacks[j].getMaxStackSize() - this.stacks[j].stackSize)
+            if (i > this.stacks[j].getMaxStackSize() - this.stacks[j].getCount())
             {
-                k = this.stacks[j].getMaxStackSize() - this.stacks[j].stackSize;
+                k = this.stacks[j].getMaxStackSize() - this.stacks[j].getCount();
             }
 
-            if (k > this.getInventoryStackLimit() - this.stacks[j].stackSize)
+            if (k > this.getInventoryStackLimit() - this.stacks[j].getCount())
             {
-                k = this.getInventoryStackLimit() - this.stacks[j].stackSize;
+                k = this.getInventoryStackLimit() - this.stacks[j].getCount();
             }
 
             if (k == 0)
@@ -337,7 +338,7 @@ public class InventoryCitizen implements IInventory
             else
             {
                 i = i - k;
-                this.stacks[j].stackSize += k;
+                this.stacks[j].setCount(this.stacks[j].getCount() + k);
                 return i;
             }
         }
@@ -351,7 +352,7 @@ public class InventoryCitizen implements IInventory
         for (int i = 0; i < this.stacks.length; ++i)
         {
             if (this.stacks[i] != null && this.stacks[i].getItem() == itemStackIn.getItem() && this.stacks[i].isStackable()
-                  && this.stacks[i].stackSize < this.stacks[i].getMaxStackSize() && this.stacks[i].stackSize < this.getInventoryStackLimit()
+                  && this.stacks[i].getCount() < this.stacks[i].getMaxStackSize() && this.stacks[i].getCount() < this.getInventoryStackLimit()
                   && (!this.stacks[i].getHasSubtypes() || this.stacks[i].getMetadata() == itemStackIn.getMetadata())
                   && ItemStack.areItemStackTagsEqual(this.stacks[i], itemStackIn))
             {
@@ -432,7 +433,7 @@ public class InventoryCitizen implements IInventory
 
         if (MaterialSystem.isEnabled)
         {
-            materialStore.addMaterial(stack.getItem(), stack.stackSize);
+            materialStore.addMaterial(stack.getItem(), stack.getCount());
         }
     }
 
@@ -445,7 +446,7 @@ public class InventoryCitizen implements IInventory
 
         if (MaterialSystem.isEnabled)
         {
-            materialStore.removeMaterial(stack.getItem(), stack.stackSize);
+            materialStore.removeMaterial(stack.getItem(), stack.getCount());
         }
     }
 
@@ -466,7 +467,7 @@ public class InventoryCitizen implements IInventory
 
             if (j != NO_SLOT && j < this.stacks.length)
             {
-                this.stacks[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
+                this.stacks[j] = new ItemStack(nbttagcompound);
             }
         }
 
@@ -485,6 +486,12 @@ public class InventoryCitizen implements IInventory
     public int getSizeInventory()
     {
         return INVENTORY_SIZE;
+    }
+
+    @Override
+    public boolean isEmpty()
+    {
+        return this.stacks.length == 0;
     }
 
     /**
@@ -512,7 +519,7 @@ public class InventoryCitizen implements IInventory
     {
         if (this.stacks[index] != null)
         {
-            if (this.stacks[index].stackSize <= count)
+            if (this.stacks[index].getCount() <= count)
             {
                 final ItemStack itemstack1 = this.stacks[index];
                 this.stacks[index] = null;
@@ -531,7 +538,7 @@ public class InventoryCitizen implements IInventory
             {
                 @NotNull final ItemStack itemstack = this.stacks[index].splitStack(count);
 
-                if (this.stacks[index].stackSize == 0)
+                if (this.stacks[index].getCount() == 0)
                 {
                     this.stacks[index] = null;
                 }
@@ -586,9 +593,9 @@ public class InventoryCitizen implements IInventory
 
         this.stacks[index] = stack;
 
-        if (stack != null && stack.stackSize > this.getInventoryStackLimit())
+        if (stack != null && stack.getCount() > this.getInventoryStackLimit())
         {
-            stack.stackSize = this.getInventoryStackLimit();
+            stack.setCount(this.getInventoryStackLimit());
         }
 
         this.markDirty();
@@ -631,7 +638,7 @@ public class InventoryCitizen implements IInventory
      * @return if the player is allowed to access.
      */
     @Override
-    public boolean isUseableByPlayer(@NotNull final EntityPlayer player)
+    public boolean isUsableByPlayer(@NotNull final EntityPlayer player)
     {
         return this.citizen.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }

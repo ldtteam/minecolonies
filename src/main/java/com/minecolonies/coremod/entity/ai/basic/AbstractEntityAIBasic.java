@@ -879,23 +879,23 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         else
         {
-            final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.stackSize, false);
+            final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.getCount(), false);
             final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
-            if (tempStack == null || tempStack.stackSize == 0)
+            if (tempStack == null || tempStack.getCount() == 0)
             {
                 return false;
             }
-            amountToKeep = stack.stackSize - tempStorage.getAmount();
+            amountToKeep = stack.getCount() - tempStorage.getAmount();
             returnStack = InventoryUtils.setStack(buildingWorker.getTileEntity(), tempStack);
         }
         if (returnStack == null)
         {
-            worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - amountToKeep);
+            worker.getInventoryCitizen().decrStackSize(i, stack.getCount() - amountToKeep);
             return amountToKeep == 0;
         }
-        worker.getInventoryCitizen().decrStackSize(i, stack.stackSize - returnStack.stackSize - amountToKeep);
+        worker.getInventoryCitizen().decrStackSize(i, stack.getCount() - returnStack.getCount() - amountToKeep);
         //Check that we are not inserting into a full inventory.
-        return stack.stackSize != returnStack.stackSize;
+        return stack.getCount() != returnStack.getCount();
     }
 
     /**
@@ -978,9 +978,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 continue;
             }
             final int countOfItem = worker.getItemCountInInventory(stack.getItem());
-            if (countOfItem < stack.stackSize)
+            if (countOfItem < stack.getCount())
             {
-                final int itemsLeft = stack.stackSize - countOfItem;
+                final int itemsLeft = stack.getCount() - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
                 itemsCurrentlyNeeded.add(requiredStack);
                 allClear = false;

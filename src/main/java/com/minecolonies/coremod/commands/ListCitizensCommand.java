@@ -63,7 +63,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, colonyId)));
             return;
         }
 
@@ -96,16 +96,16 @@ public class ListCitizensCommand extends AbstractSingleCommand
         }
 
         final ITextComponent headerLine = new TextComponentString(String.format(PAGE_TOP, page, pageCount));
-        sender.addChatMessage(headerLine);
+        sender.sendMessage(headerLine);
 
         for (final CitizenData citizen : citizensPage)
         {
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizen.getId(), citizen.getName())));
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizen.getId(), citizen.getName())));
 
             if (citizen.getCitizenEntity() != null)
             {
                 final BlockPos position = citizen.getCitizenEntity().getPosition();
-                sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+                sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             }
         }
         drawPageSwitcher(sender, page, citizenCount, halfPage);
@@ -155,7 +155,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
 
         final ITextComponent beginLine = new TextComponentString(PAGE_LINE);
         final ITextComponent endLine = new TextComponentString(PAGE_LINE);
-        sender.addChatMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
+        sender.sendMessage(beginLine.appendSibling(prevButton).appendSibling(new TextComponentString(PAGE_LINE_DIVIDER)).appendSibling(nextButton).appendSibling(endLine));
     }
 
     @NotNull

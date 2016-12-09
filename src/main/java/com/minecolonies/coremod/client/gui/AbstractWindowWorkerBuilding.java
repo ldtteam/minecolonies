@@ -72,7 +72,7 @@ public abstract class AbstractWindowWorkerBuilding<B extends AbstractBuildingWor
         {
             if (building.getBuildingLevel() == 0 && !BUILDER_HUT_NAME.equals(getBuildingName()))
             {
-                LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.level0"));
+                LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().player, LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.level0"));
                 return;
             }
 

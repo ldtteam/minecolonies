@@ -51,15 +51,14 @@ public class ItemCaliper extends AbstractItemMinecolonies
 
     @Override
     public EnumActionResult onItemUse(
-                                       final ItemStack stack,
-                                       final EntityPlayer playerIn,
-                                       final World worldIn,
-                                       final BlockPos pos,
-                                       final EnumHand hand,
-                                       final EnumFacing facing,
-                                       final float hitX,
-                                       final float hitY,
-                                       final float hitZ)
+            final EntityPlayer player,
+            final World worldIn,
+            final BlockPos pos,
+            final EnumHand hand,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ)
     {
         // if client world, do nothing
         if (worldIn.isRemote)
@@ -68,10 +67,10 @@ public class ItemCaliper extends AbstractItemMinecolonies
         }
 
         // if attribute instance is not known, register it.
-        IAttributeInstance attribute = playerIn.getEntityAttribute(ATTRIBUTE_CALIPER_USE);
+        IAttributeInstance attribute = player.getEntityAttribute(ATTRIBUTE_CALIPER_USE);
         if (attribute == null)
         {
-            attribute = playerIn.getAttributeMap().registerAttribute(ATTRIBUTE_CALIPER_USE);
+            attribute = player.getAttributeMap().registerAttribute(ATTRIBUTE_CALIPER_USE);
         }
         // if the value of the attribute is still 0, set the start values. (first point)
         if (attribute.getAttributeValue() < HALF)
@@ -84,12 +83,14 @@ public class ItemCaliper extends AbstractItemMinecolonies
         //Start == end, same location
         if (startPosition.getX() == pos.getX() && startPosition.getY() == pos.getY() && startPosition.getZ() == pos.getZ())
         {
-            LanguageHandler.sendPlayerLocalizedMessage(playerIn, ITEM_CALIPER_MESSAGE_SAME);
+            LanguageHandler.sendPlayerLocalizedMessage(player, ITEM_CALIPER_MESSAGE_SAME);
             return EnumActionResult.FAIL;
         }
 
-        return handlePlayerMessage(playerIn, pos);
+        return handlePlayerMessage(player, pos);
     }
+
+
 
     private EnumActionResult handlePlayerMessage(@NotNull final EntityPlayer playerIn, @NotNull final BlockPos pos)
     {

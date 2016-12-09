@@ -54,7 +54,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
         setMutexBits(MUTEX_MASK);
         this.job = job;
         this.worker = this.job.getCitizen().getCitizenEntity();
-        this.world = this.worker.worldObj;
+        this.world = this.worker.world;
         this.chatSpamFilter = new ChatSpamFilter(worker);
         this.state = AIState.INIT;
     }

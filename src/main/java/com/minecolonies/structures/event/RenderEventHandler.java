@@ -51,7 +51,7 @@ public class RenderEventHandler
             {
                 position = position.subtract(offset);
             }
-            structure.renderStructure(position, Minecraft.getMinecraft().theWorld, Minecraft.getMinecraft().thePlayer, event.getPartialTicks());
+            structure.renderStructure(position, Minecraft.getMinecraft().world, Minecraft.getMinecraft().player, event.getPartialTicks());
         }
     }
 }

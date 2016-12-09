@@ -427,7 +427,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
-        moveEntity(goToX, 0, goToZ);
+        moveEntityWithHeading((float)goToX, (float)goToZ);
     }
 
     /**
@@ -476,7 +476,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         @NotNull final AxisAlignedBB bb = new AxisAlignedBB(posX - 2, posY - 2, posZ - 2, posX + 2, posY + 2, posZ + 2);
 
-        return worldObj.getEntitiesWithinAABB(EntityXPOrb.class, bb);
+        return world.getEntitiesWithinAABB(EntityXPOrb.class, bb);
     }
 
     /**
@@ -547,12 +547,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (!onGround)
         {
-            final int px = MathHelper.floor_double(posX);
+            final int px = MathHelper.floor(posX);
             final int py = (int) posY;
-            final int pz = MathHelper.floor_double(posZ);
+            final int pz = MathHelper.floor(posZ);
 
             this.onGround =
-              worldObj.getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(worldObj.getBlockState(new BlockPos(px, py, pz)), worldObj, new BlockPos(px, py, pz),
+              world.getBlockState(new BlockPos(px, py, pz)).getBlock().isLadder(world.getBlockState(new BlockPos(px, py, pz)), world, new BlockPos(px, py, pz),
                 this);
         }
 
@@ -619,7 +619,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         int experience;
 
-        if (!this.worldObj.isRemote && this.recentlyHit > 0 && this.canDropLoot() && this.worldObj.getGameRules().getBoolean("doMobLoot"))
+        if (!this.world.isRemote && this.recentlyHit > 0 && this.canDropLoot() && this.world.getGameRules().getBoolean("doMobLoot"))
         {
             experience = (int) (this.getExperiencePoints());
 
@@ -627,7 +627,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             {
                 final int j = EntityXPOrb.getXPSplit(experience);
                 experience -= j;
-                this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, j));
+                this.world.spawnEntity(new EntityXPOrb(this.world, this.posX, this.posY, this.posZ, j));
             }
         }
 
@@ -637,7 +637,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             final double d2 = this.rand.nextGaussian() * 0.02D;
             final double d0 = this.rand.nextGaussian() * 0.02D;
             final double d1 = this.rand.nextGaussian() * 0.02D;
-            this.worldObj.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
+            this.world.spawnParticle(EnumParticleTypes.EXPLOSION_LARGE,
               this.posX + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
               this.posY + (this.rand.nextDouble() * this.height),
               this.posZ + (this.rand.nextDouble() * this.width * 2.0F) - (double) this.width,
@@ -679,7 +679,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             }
             stack.damageItem((int) (damage / 2), this);
 
-            if (stack.stackSize < 1)
+            if (stack.getCount() < 1)
             {
                 setItemStackToSlot(getSlotForItemStack(stack), null);
             }
@@ -699,16 +699,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return null;
     }
 
-    /**
-     * Called when a player tries to interact with a citizen.
-     *
-     * @param player which interacts with the citizen.
-     * @return If citizen should interact or not.
-     */
     @Override
-    public boolean processInteract(@NotNull final EntityPlayer player, final EnumHand hand, @Nullable final ItemStack stack)
+    public boolean processInteract(final EntityPlayer player, final EnumHand hand)
     {
-        if (worldObj.isRemote)
+        if (world.isRemote)
         {
             final CitizenDataView citizenDataView = getCitizenDataView();
             if (citizenDataView != null)
@@ -776,7 +770,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             citizenData.markDirty();
         }
-        if (worldObj.isRemote)
+        if (world.isRemote)
         {
             updateColonyClient();
         }
@@ -785,13 +779,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
-            if (worldObj.isDaytime() && !worldObj.isRaining())
+            if (world.isDaytime() && !world.isRaining())
             {
-                SoundUtils.playRandomSound(worldObj, this);
+                SoundUtils.playRandomSound(world, this);
             }
-            else if (worldObj.isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && this.getColonyJob() != null)
+            else if (world.isRaining() && 1 >= rand.nextInt(RANT_ABOUT_WEATHER_CHANCE) && this.getColonyJob() != null)
             {
-                SoundUtils.playSoundAtCitizenWithChance(worldObj, this.getPosition(), this.getColonyJob().getBadWeatherSound(), 1);
+                SoundUtils.playSoundAtCitizenWithChance(world, this.getPosition(), this.getColonyJob().getBadWeatherSound(), 1);
             }
         }
 
@@ -836,7 +830,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         @NotNull final List<EntityItem> retList = new ArrayList<>();
         //I know streams look better but they are flawed in type erasure
-        for (final Object o : worldObj.getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(2.0F, 0.0F, 2.0F)))
+        for (final Object o : world.getEntitiesWithinAABB(EntityItem.class, getEntityBoundingBox().expand(2.0F, 0.0F, 2.0F)))
         {
             if (o instanceof EntityItem)
             {
@@ -884,7 +878,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void setTexture()
     {
-        if (!worldObj.isRemote)
+        if (!world.isRemote)
         {
             return;
         }
@@ -1081,7 +1075,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             final ItemStack itemstack = inventory.getStackInSlot(i);
-            if (itemstack != null && itemstack.stackSize > 0)
+            if (itemstack != null && itemstack.getCount() > 0)
             {
                 entityDropItem(itemstack);
             }
@@ -1194,11 +1188,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
             return DesiredActivity.WORK;
         }
 
-        if (!worldObj.isDaytime())
+        if (!world.isDaytime())
         {
             return DesiredActivity.SLEEP;
         }
-        else if (worldObj.isRaining() && !shouldWorkWhileRaining())
+        else if (world.isRaining() && !shouldWorkWhileRaining())
         {
             return DesiredActivity.IDLE;
         }
@@ -1310,7 +1304,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void tryPickupEntityItem(@NotNull final EntityItem entityItem)
     {
-        if (!this.worldObj.isRemote)
+        if (!this.world.isRemote)
         {
             if (entityItem.cannotPickup())
             {
@@ -1319,10 +1313,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
             final ItemStack itemStack = entityItem.getEntityItem();
 
-            final int i = itemStack.stackSize;
+            final int i = itemStack.getCount();
             if (i <= 0 || InventoryUtils.addItemStackToInventory(this.getInventoryCitizen(), itemStack))
             {
-                this.worldObj.playSound((EntityPlayer) null,
+                this.world.playSound((EntityPlayer) null,
                   this.getPosition(),
                   SoundEvents.ENTITY_ITEM_PICKUP,
                   SoundCategory.AMBIENT,
@@ -1330,7 +1324,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                   (float) ((this.rand.nextGaussian() * 0.7D + 1.0D) * 2.0D));
                 this.onItemPickup(this, i);
 
-                if (itemStack.stackSize <= 0)
+                if (itemStack.getCount() <= 0)
                 {
                     entityItem.setDead();
                 }
@@ -1393,42 +1387,42 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         this.swingArm(this.getActiveHand());
 
-        final IBlockState blockState = worldObj.getBlockState(blockPos);
+        final IBlockState blockState = world.getBlockState(blockPos);
         final Block block = blockState.getBlock();
         if (breakBlock)
         {
-            if (!worldObj.isRemote)
+            if (!world.isRemote)
             {
                 MineColonies.getNetwork().sendToAllAround(
-                  new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
-                  new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
+                  new BlockParticleEffectMessage(blockPos, world.getBlockState(blockPos), BlockParticleEffectMessage.BREAK_BLOCK),
+                  new NetworkRegistry.TargetPoint(world.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_SOUND_RANGE));
             }
-            worldObj.playSound(null,
+            world.playSound(null,
               blockPos,
-              block.getSoundType(blockState, worldObj, blockPos, this).getBreakSound(),
+              block.getSoundType(blockState, world, blockPos, this).getBreakSound(),
               SoundCategory.BLOCKS,
-              block.getSoundType(blockState, worldObj, blockPos, this).getVolume(),
-              block.getSoundType(blockState, worldObj, blockPos, this).getPitch());
-            worldObj.setBlockToAir(blockPos);
+              block.getSoundType(blockState, world, blockPos, this).getVolume(),
+              block.getSoundType(blockState, world, blockPos, this).getPitch());
+            world.setBlockToAir(blockPos);
 
             damageItemInHand(1);
         }
         else
         {
             //todo: might remove this
-            if (!worldObj.isRemote)
+            if (!world.isRemote)
             {
                 MineColonies.getNetwork().sendToAllAround(
                   //todo: correct side
-                  new BlockParticleEffectMessage(blockPos, worldObj.getBlockState(blockPos), 1),
-                  new NetworkRegistry.TargetPoint(worldObj.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
+                  new BlockParticleEffectMessage(blockPos, world.getBlockState(blockPos), 1),
+                  new NetworkRegistry.TargetPoint(world.provider.getDimension(), blockPos.getX(), blockPos.getY(), blockPos.getZ(), BLOCK_BREAK_PARTICLE_RANGE));
             }
-            worldObj.playSound((EntityPlayer) null,
+            world.playSound((EntityPlayer) null,
               blockPos,
-              block.getSoundType(blockState, worldObj, blockPos, this).getBreakSound(),
+              block.getSoundType(blockState, world, blockPos, this).getBreakSound(),
               SoundCategory.BLOCKS,
-              block.getSoundType(blockState, worldObj, blockPos, this).getVolume(),
-              block.getSoundType(blockState, worldObj, blockPos, this).getPitch());
+              block.getSoundType(blockState, world, blockPos, this).getVolume(),
+              block.getSoundType(blockState, world, blockPos, this).getPitch());
         }
     }
 
@@ -1448,7 +1442,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         heldItem.damageItem(damage, this);
 
         //check if tool breaks
-        if (heldItem.stackSize < 1)
+        if (heldItem.getCount() < 1)
         {
             getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), null);
             this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);

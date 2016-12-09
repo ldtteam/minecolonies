@@ -4,6 +4,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.lib.Constants;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 /**
  * Class used to handle the creativeTab of minecolonies.
@@ -12,12 +13,13 @@ public final class ModCreativeTabs
 {
     public static final CreativeTabs MINECOLONIES = new CreativeTabs(Constants.MOD_ID)
     {
+
         @Override
-        public Item getTabIconItem()
+        public ItemStack getTabIconItem()
         {
             this.setBackgroundImageName("minecolonies_background.jpg");
             this.setNoScrollbar();
-            return Item.getItemFromBlock(ModBlocks.blockHutTownHall);
+            return new ItemStack(ModBlocks.blockHutTownHall);
         }
 
         @Override

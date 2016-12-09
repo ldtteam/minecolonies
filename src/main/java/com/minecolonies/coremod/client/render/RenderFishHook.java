@@ -73,7 +73,7 @@ public class RenderFishHook extends Render<EntityFishHook>
         //Check if he is a fisherman -> Through his texture
         if (citizen == null)
         {
-            for (@NotNull final Object citizenX : entity.worldObj.getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
+            for (@NotNull final Object citizenX : entity.world.getEntitiesWithinAABB(EntityCitizen.class, entity.getEntityBoundingBox().expand(10, 10, 10)))
             {
                 if (((EntityCitizen) citizenX).getModelID().textureBase.contains("Fisherman"))
                 {

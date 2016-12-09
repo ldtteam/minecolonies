@@ -86,7 +86,7 @@ public class Scrollbar extends Pane
 
         if (container.getScrollY() == 0 || container.getScrollY() == container.getMaxScrollY())
         {
-            barClickY = MathHelper.clamp_int(my - getScrollBarYPos(), 0, getBarHeight() - 1);
+            barClickY = MathHelper.clamp(my - getScrollBarYPos(), 0, getBarHeight() - 1);
         }
     }
 
