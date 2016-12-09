@@ -1444,7 +1444,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         //check if tool breaks
         if (heldItem.getCount() < 1)
         {
-            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), null);
+            getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), ItemStack.EMPTY);
             this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
     }

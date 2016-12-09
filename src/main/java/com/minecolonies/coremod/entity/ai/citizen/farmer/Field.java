@@ -255,7 +255,7 @@ public class Field extends Container
         if (slotIndex == 0)
         {
             playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
-            inventory.setInventorySlotContents(0, null);
+            inventory.setInventorySlotContents(0, ItemStack.EMPTY);
         }
         else if (inventory.getStackInSlot(0) == null)
         {

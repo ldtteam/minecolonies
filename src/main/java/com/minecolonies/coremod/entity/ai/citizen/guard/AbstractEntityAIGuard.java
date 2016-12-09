@@ -213,7 +213,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                     if (emptySlot != -1)
                     {
                         worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
-                        chest.setInventorySlotContents(i, null);
+                        chest.setInventorySlotContents(i, ItemStack.EMPTY);
                     }
                 }
                 dumpAfterActions = DUMP_BASE * workBuilding.getBuildingLevel();
@@ -254,13 +254,13 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
-            if (stack == null || stack.getCount() == 0)
+            if (stack == null || stack.getCount() == 0 )
             {
-                worker.getInventoryCitizen().setInventorySlotContents(i, null);
+                worker.getInventoryCitizen().setInventorySlotContents(i, ItemStack.EMPTY);
                 continue;
             }
 
-            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
+            if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == ItemStack.EMPTY)
             {
                 worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
             }

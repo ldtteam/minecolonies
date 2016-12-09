@@ -188,7 +188,7 @@ public class InventoryCitizen implements IInventory
             this.stacks[i].setCount(this.stacks[i].getCount() - 1);
             if (this.stacks[i].getCount() <= 0)
             {
-                this.stacks[i] = null;
+                this.stacks[i] = ItemStack.EMPTY;
             }
 
             return true;
@@ -283,7 +283,7 @@ public class InventoryCitizen implements IInventory
     {
         for (int i = 0; i < this.stacks.length; ++i)
         {
-            if (this.stacks[i] == null)
+            if (this.stacks[i] == null || this.stacks[i] == ItemStack.EMPTY)
             {
                 return i;
             }
@@ -312,7 +312,7 @@ public class InventoryCitizen implements IInventory
         }
         else
         {
-            if (this.stacks[j] == null)
+            if (this.stacks[j] == null || this.stacks[j] == ItemStack.EMPTY)
             {
                 // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
                 this.stacks[j] = itemStackIn.copy();
@@ -351,7 +351,7 @@ public class InventoryCitizen implements IInventory
     {
         for (int i = 0; i < this.stacks.length; ++i)
         {
-            if (this.stacks[i] != null && this.stacks[i].getItem() == itemStackIn.getItem() && this.stacks[i].isStackable()
+            if (this.stacks[i] != null && this.stacks[i] != ItemStack.EMPTY && this.stacks[i].getItem() == itemStackIn.getItem() && this.stacks[i].isStackable()
                   && this.stacks[i].getCount() < this.stacks[i].getMaxStackSize() && this.stacks[i].getCount() < this.getInventoryStackLimit()
                   && (!this.stacks[i].getHasSubtypes() || this.stacks[i].getMetadata() == itemStackIn.getMetadata())
                   && ItemStack.areItemStackTagsEqual(this.stacks[i], itemStackIn))
@@ -393,26 +393,10 @@ public class InventoryCitizen implements IInventory
      */
     public boolean isSlotEmpty(final int index)
     {
-        return getStackInSlot(index) == null;
+        return getStackInSlot(index) == null || getStackInSlot(index) == ItemStack.EMPTY;
     }
 
     /**
-     * Create a material store.
-     *
-     * @param system the system to use.
-     */
-    public void createMaterialStore(@NotNull final MaterialSystem system)
-    {
-        if (materialStore == null)
-        {
-            materialStore = new MaterialStore(MaterialStore.Type.INVENTORY, system);
-        }
-    }
-
-    public MaterialStore getMaterialStore()
-    {
-        return materialStore;
-    }    /**
      * Get the name of this object. For citizens this returns their name.
      *
      * @return the name of the inventory.
@@ -422,32 +406,6 @@ public class InventoryCitizen implements IInventory
     public String getName()
     {
         return this.hasCustomName() ? this.customName : "citizen.inventory";
-    }
-
-    private void addStackToMaterialStore(@Nullable final ItemStack stack)
-    {
-        if (stack == null)
-        {
-            return;
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.addMaterial(stack.getItem(), stack.getCount());
-        }
-    }
-
-    private void removeStackFromMaterialStore(@Nullable final ItemStack stack)
-    {
-        if (stack == null)
-        {
-            return;
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.removeMaterial(stack.getItem(), stack.getCount());
-        }
     }
 
     /**
@@ -467,7 +425,8 @@ public class InventoryCitizen implements IInventory
 
             if (j != NO_SLOT && j < this.stacks.length)
             {
-                this.stacks[j] = new ItemStack(nbttagcompound);
+                ItemStack tempStack = new ItemStack(nbttagcompound);
+                this.stacks[j] =  tempStack;
             }
         }
 
@@ -517,12 +476,12 @@ public class InventoryCitizen implements IInventory
     @Override
     public ItemStack decrStackSize(final int index, final int count)
     {
-        if (this.stacks[index] != null)
+        if (this.stacks[index] != null && this.stacks[index] != ItemStack.EMPTY)
         {
             if (this.stacks[index].getCount() <= count)
             {
                 final ItemStack itemstack1 = this.stacks[index];
-                this.stacks[index] = null;
+                this.stacks[index] = ItemStack.EMPTY;
                 this.markDirty();
                 if (index == heldItem)
                 {
@@ -540,7 +499,7 @@ public class InventoryCitizen implements IInventory
 
                 if (this.stacks[index].getCount() == 0)
                 {
-                    this.stacks[index] = null;
+                    this.stacks[index] = ItemStack.EMPTY;
                 }
 
                 this.markDirty();
@@ -549,7 +508,7 @@ public class InventoryCitizen implements IInventory
         }
         else
         {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
 
@@ -565,11 +524,11 @@ public class InventoryCitizen implements IInventory
     {
         if (this.stacks[index] == null)
         {
-            return null;
+            return ItemStack.EMPTY;
         }
 
         final ItemStack itemstack = this.stacks[index];
-        this.stacks[index] = null;
+        this.stacks[index] = ItemStack.EMPTY;
         return itemstack;
     }
 
@@ -582,7 +541,7 @@ public class InventoryCitizen implements IInventory
     @Override
     public void setInventorySlotContents(final int index, @Nullable final ItemStack stack)
     {
-        if (index == heldItem && stack == null)
+        if (index == heldItem && (stack == null || stack == ItemStack.EMPTY))
         {
             if (citizen != null)
             {
@@ -599,7 +558,9 @@ public class InventoryCitizen implements IInventory
         }
 
         this.markDirty();
-    }    /**
+    }
+
+    /**
      * Checks if the inventory is named.
      *
      * @return true if the inventory has a custom name.
@@ -692,7 +653,9 @@ public class InventoryCitizen implements IInventory
     public int getField(final int id)
     {
         return 0;
-    }    /**
+    }
+
+    /**
      * Get the formatted TextComponent that will be used for the sender's username in chat.
      */
     @NotNull
@@ -735,7 +698,7 @@ public class InventoryCitizen implements IInventory
     {
         for (int i = 0; i < this.stacks.length; ++i)
         {
-            this.stacks[i] = null;
+            this.stacks[i] = ItemStack.EMPTY;
         }
     }
 
@@ -772,26 +735,4 @@ public class InventoryCitizen implements IInventory
 
         compound.setTag(TAG_INVENTORY, nbttaglist);
     }
-
-
-
-
-
-
-
-
-    //-----------------------------Material Handling--------------------------------
-
-
-    //todo missing now
-    /*
-    @Override
-    public ItemStack getStackInSlotOnClosing(int index)
-    {
-            ItemStack removed = super.getStackInSlotOnClosing(index);
-
-                    removeStackFromMaterialStore(removed);
-
-                    return removed;
-    }*/
 }
