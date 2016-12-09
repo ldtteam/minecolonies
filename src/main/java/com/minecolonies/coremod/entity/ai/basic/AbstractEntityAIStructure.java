@@ -33,6 +33,7 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -544,7 +545,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
             else
             {
-                if (!mineBlock(currentBlock.blockPosition, workFrom == null ?  getWorkingPosition() : workFrom))
+                if (!mineBlock(currentBlock.blockPosition, workFrom == null ? getWorkingPosition() : workFrom))
                 {
                     return false;
                 }
@@ -630,7 +631,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if(job instanceof JobMiner)
         {
-            return this.currentStructure.getCurrentBlockPosition();
+            getNodeMiningPosition();
         }
         return getWorkingPosition(0);
     }
@@ -898,5 +899,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 world.spawnEntity(minecart);
             }
         }
+    }
+
+    /**
+     * Create a save mining position for the miner.
+     * @return the save position.
+     */
+    private BlockPos getNodeMiningPosition()
+    {
+        Point2D pos = ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode().getParent();
+        return new BlockPos(pos.getX(), ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getDepth(), pos.getY());
     }
 }
