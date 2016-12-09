@@ -1010,8 +1010,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         citizenData.setCitizenEntity(this);
 
         onJobChanged(getColonyJob());
-
-        inventory.createMaterialStore(c.getMaterialSystem());
     }
 
     /**
