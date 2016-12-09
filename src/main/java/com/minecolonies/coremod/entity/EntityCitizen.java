@@ -681,7 +681,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
             if (stack.getCount() < 1)
             {
-                setItemStackToSlot(getSlotForItemStack(stack), null);
+                setItemStackToSlot(getSlotForItemStack(stack), ItemStack.EMPTY);
             }
             setItemStackToSlot(getSlotForItemStack(stack), stack);
         }
@@ -1337,7 +1337,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void removeHeldItem()
     {
-        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+        setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
     }
 
     /**
@@ -1445,7 +1445,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (heldItem.getCount() < 1)
         {
             getInventoryCitizen().setInventorySlotContents(getInventoryCitizen().getHeldItemSlot(), null);
-            this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+            this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
         }
     }
 
