@@ -73,7 +73,7 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     private static final String BUTTON_SET_TARGET = "setTarget";
 
     private static final String VIEW_PAGES                      = "pages";
-    private static final String HUT_GUARD_TOWER_RESOURCE_SUFFIX = ":gui/windowHutGuardTower.xml";
+    private static final String HUT_GUARD_TOWER_RESOURCE_SUFFIX = ":gui/windowhutguardtower.xml";
     private static final String AUTO   = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.modeA");
     private static final String MANUAL = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.modeM");
     private static final String ON  = LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOn");

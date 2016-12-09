@@ -245,10 +245,10 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
      */
     protected void updateArmor()
     {
-        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, null);
-        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, null);
-        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, null);
-        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, null);
+        worker.setItemStackToSlot(EntityEquipmentSlot.CHEST, ItemStack.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.FEET, ItemStack.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, ItemStack.EMPTY);
+        worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, ItemStack.EMPTY);
 
         for (int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
         {

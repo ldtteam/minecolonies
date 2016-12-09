@@ -537,7 +537,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             //We need to deal with materials
             if (Configurations.builderInfiniteResources  || currentBlock.worldMetadata.getMaterial().isLiquid())
             {
-                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+                worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
                 world.setBlockToAir(currentBlock.blockPosition);
                 world.setBlockState(currentBlock.blockPosition, Blocks.AIR.getDefaultState());
                 worker.swingArm(worker.getActiveHand());
@@ -735,7 +735,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if (block == Blocks.AIR)
         {
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, null);
+            worker.resetActiveHand();
+            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
 
             if (!world.setBlockToAir(coords))
             {
@@ -745,7 +746,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         else
         {
             final Item item = Item.getItemFromBlock(block);
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
+            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? ItemStack.EMPTY : new ItemStack(item, 1));
 
             if (!placeBlock(coords, block, blockState))
             {

@@ -27,7 +27,7 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * The label to find the gui of the citizen.
      */
-    private static final String CITIZEN_RESOURCE_SUFFIX = ":gui/windowCitizen.xml";
+    private static final String CITIZEN_RESOURCE_SUFFIX = ":gui/windowcitizen.xml";
     /**
      * The label to find strength in the gui.
      */

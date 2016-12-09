@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WindowHutDeliveryman extends AbstractWindowWorkerBuilding<BuildingDeliveryman.View> implements Button.Handler
 {
-    private static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/windowHutWarehouse.xml";
+    private static final String HUT_WAREHOUSE_RESOURCE_SUFFIX = ":gui/windowhutwarehouse.xml";
 
     /**
      * Constructor for the window of the warehouse hut.

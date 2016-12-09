@@ -58,7 +58,7 @@ public class WindowHireWorker extends Window implements Button.Handler
     /**
      * Link to the xml file of the window.
      */
-    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowHireWorker.xml";
+    private static final String BUILDING_NAME_RESOURCE_SUFFIX = ":gui/windowhireworker.xml";
 
     /**
      * Position of the id label of each citizen in the list.

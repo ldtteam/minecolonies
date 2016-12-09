@@ -16,7 +16,7 @@ public class WindowHutFisherman extends AbstractWindowWorkerBuilding<BuildingFis
      */
     public WindowHutFisherman(final BuildingFisherman.View building)
     {
-        super(building, Constants.MOD_ID + ":gui/windowHutFisherman.xml");
+        super(building, Constants.MOD_ID + ":gui/windowhutfisherman.xml");
     }
 
     /**

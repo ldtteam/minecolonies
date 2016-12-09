@@ -42,7 +42,7 @@ public class WindowHutFarmer extends AbstractWindowWorkerBuilding<BuildingFarmer
     /**
      * Resource suffix of the GUI.
      */
-    private static final String HUT_FARMER_RESOURCE_SUFFIX = ":gui/windowHutFarmer.xml";
+    private static final String HUT_FARMER_RESOURCE_SUFFIX = ":gui/windowhutfarmer.xml";
 
     /**
      * Id of the the fields page inside the GUI.

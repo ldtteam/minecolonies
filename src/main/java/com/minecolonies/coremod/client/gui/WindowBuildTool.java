@@ -105,7 +105,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Resource suffix.
      */
-    private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowBuildTool.xml";
+    private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowbuilldtool.xml";
 
     /**
      * Hut prefix.
