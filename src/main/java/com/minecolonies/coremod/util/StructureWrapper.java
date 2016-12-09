@@ -561,7 +561,7 @@ public final class StructureWrapper
     {
         @Nullable final Block block = this.getBlock();
         @Nullable final IBlockState blockState = this.getBlockState();
-        if (block == null || blockState == null || block == Blocks.AIR)
+        if (block == null || blockState == null || block == Blocks.AIR || blockState.getMaterial().isLiquid())
         {
             return null;
         }

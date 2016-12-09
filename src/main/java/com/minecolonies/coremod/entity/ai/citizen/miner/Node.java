@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.miner;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,12 +34,12 @@ public class Node
     /**
      * X position of the Node.
      */
-    private final int x;
+    private final double x;
 
     /**
      * Z position of the node.
      */
-    private final int z;
+    private final double z;
 
     /**
      * Style of the node.
@@ -70,7 +68,7 @@ public class Node
      * @param z Z-coordinate in the node
      * @param parent the parent of the node.
      */
-    public Node(final int x, final int z, @Nullable Point2D parent)
+    public Node(final double x, final double z, @Nullable Point2D parent)
     {
         this.x = x;
         this.z = z;
@@ -89,8 +87,8 @@ public class Node
     @NotNull
     public static Node createFromNBT(@NotNull final NBTTagCompound compound)
     {
-        final int x = compound.getInteger(TAG_X);
-        final int z = compound.getInteger(TAG_Z);
+        final double x = compound.getDouble(TAG_X);
+        final double z = compound.getDouble(TAG_Z);
 
         final NodeType style = NodeType.valueOf(compound.getString(TAG_STYLE));
 
@@ -114,8 +112,8 @@ public class Node
      */
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
-        compound.setInteger(TAG_X, x);
-        compound.setInteger(TAG_Z, z);
+        compound.setDouble(TAG_X, x);
+        compound.setDouble(TAG_Z, z);
 
         compound.setString(TAG_STYLE, style.name());
         compound.setString(TAG_STATUS, status.name());
@@ -132,7 +130,7 @@ public class Node
      *
      * @return x-coordinate
      */
-    public int getX()
+    public double getX()
     {
         return x;
     }
@@ -142,7 +140,7 @@ public class Node
      *
      * @return z-coordinate
      */
-    public int getZ()
+    public double getZ()
     {
         return z;
     }
@@ -216,9 +214,9 @@ public class Node
      *
      * @return position of the new Node.
      */
-    public BlockPos getNorthNodeCenter()
+    public Point2D.Double getNorthNodeCenter()
     {
-        return new BlockPos(getX(), 0, getZ() - DISTANCE_TO_NEXT_NODE);
+        return new Point2D.Double(getX(), getZ() - DISTANCE_TO_NEXT_NODE);
     }
 
     /**
@@ -226,9 +224,9 @@ public class Node
      *
      * @return position of the new Node.
      */
-    public BlockPos getSouthNodeCenter()
+    public Point2D.Double getSouthNodeCenter()
     {
-        return new BlockPos(getX(), 0, getZ() + DISTANCE_TO_NEXT_NODE);
+        return new Point2D.Double(getX(), getZ() + DISTANCE_TO_NEXT_NODE);
     }
 
     /**
@@ -236,9 +234,9 @@ public class Node
      *
      * @return position of the new Node.
      */
-    public BlockPos getEastNodeCenter()
+    public Point2D.Double getEastNodeCenter()
     {
-        return new BlockPos(getX() + DISTANCE_TO_NEXT_NODE, 0, getZ());
+        return new Point2D.Double(getX() + DISTANCE_TO_NEXT_NODE, getZ());
     }
 
     /**
@@ -246,9 +244,9 @@ public class Node
      *
      * @return position of the new Node.
      */
-    public BlockPos getWesthNodeCenter()
+    public Point2D.Double getWesthNodeCenter()
     {
-        return new BlockPos(getX() - DISTANCE_TO_NEXT_NODE, 0, getZ());
+        return new Point2D.Double(getX() - DISTANCE_TO_NEXT_NODE, getZ());
     }
 
     /**

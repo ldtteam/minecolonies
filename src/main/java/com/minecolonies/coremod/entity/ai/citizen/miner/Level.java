@@ -3,7 +3,6 @@ package com.minecolonies.coremod.entity.ai.citizen.miner;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,37 +100,36 @@ public class Level
         final int cobbleZ = buildingMiner.getCobbleLocation().getZ();
 
         //check for orientation
-        @NotNull final BlockPos cobbleCenter = new BlockPos(cobbleX - (buildingMiner.getVectorX() * 3), depth, cobbleZ - (buildingMiner.getVectorZ() * 3));
-        @NotNull final BlockPos ladderCenter = new BlockPos(cobbleX + (buildingMiner.getVectorX() * 4), depth, cobbleZ + (buildingMiner.getVectorZ() * 4));
-        Point2D ladderKey = new Point2D.Double(ladderCenter.getX(), ladderCenter.getZ());
+        @NotNull final Point2D cobbleCenter = new Point2D.Double(cobbleX - (buildingMiner.getVectorX() * 3), cobbleZ - (buildingMiner.getVectorZ() * 3));
+        @NotNull final Point2D ladderCenter = new Point2D.Double(cobbleX + (buildingMiner.getVectorX() * 4), cobbleZ + (buildingMiner.getVectorZ() * 4));
 
         //They are shaft and ladderBack, their parents are the shaft.
-        @NotNull final Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getZ(), ladderKey);
+        @NotNull final Node cobbleNode = new Node(cobbleCenter.getX(), cobbleCenter.getY(), ladderCenter);
         cobbleNode.setStyle(Node.NodeType.LADDER_BACK);
         cobbleNode.setStatus(Node.NodeStatus.COMPLETED);
-        nodes.put(new Point2D.Double(cobbleCenter.getX(), cobbleCenter.getZ()), cobbleNode);
+        nodes.put(cobbleCenter, cobbleNode);
 
-        ladderNode = new Node(ladderCenter.getX(), ladderCenter.getZ(), null);
+        ladderNode = new Node(ladderCenter.getX(), ladderCenter.getY(), null);
         ladderNode.setStyle(Node.NodeType.SHAFT);
         ladderNode.setStatus(Node.NodeStatus.COMPLETED);
-        nodes.put(ladderKey, ladderNode);
+        nodes.put(ladderCenter, ladderNode);
 
-        List<BlockPos> nodeCenterList = new ArrayList<>();
+        List<Point2D.Double> nodeCenterList = new ArrayList<>();
         //Calculate the center positions of the new nodes.
         nodeCenterList.add(ladderNode.getNorthNodeCenter());
         nodeCenterList.add(ladderNode.getSouthNodeCenter());
         nodeCenterList.add(ladderNode.getEastNodeCenter());
         nodeCenterList.add(ladderNode.getWesthNodeCenter());
 
-        for(final BlockPos pos: nodeCenterList)
+        for(final Point2D.Double pos: nodeCenterList)
         {
             if(cobbleCenter.equals(pos) || ladderCenter.equals(pos))
             {
                 continue;
             }
-            final Node tempNode = new Node(pos.getX(), pos.getZ(), ladderKey);
+            final Node tempNode = new Node(pos.getX(), pos.getY(), ladderCenter);
             tempNode.setStyle(TUNNEL);
-            nodes.put(new Point2D.Double(pos.getX(), pos.getZ()), tempNode);
+            nodes.put(pos, tempNode);
             openNodes.add(tempNode);
         }
     }
@@ -153,7 +151,7 @@ public class Level
     public void closeNextNode(int rotation)
     {
         final Node tempNode = openNodes.poll();
-        final List<BlockPos> nodeCenterList = new ArrayList<>();
+        final List<Point2D.Double> nodeCenterList = new ArrayList<>();
 
         switch(tempNode.getStyle())
         {
@@ -172,17 +170,16 @@ public class Level
                 return;
         }
 
-        for(final BlockPos pos: nodeCenterList)
+        for(final Point2D.Double pos: nodeCenterList)
         {
-            Point2D tuple = new Point2D.Double(pos.getX(), pos.getZ());
-            if(nodes.containsKey(tuple))
+            if(nodes.containsKey(pos))
             {
                 continue;
             }
-            final Node tempNodeToAdd = new Node(pos.getX(), pos.getZ(), new Point2D.Double(tempNode.getX(), tempNode.getZ()));
+            final Node tempNodeToAdd = new Node(pos.getX(), pos.getY(), new Point2D.Double(tempNode.getX(), tempNode.getZ()));
             int randNumber = rand.nextInt(RANDOM_TYPES);
             tempNodeToAdd.setStyle(randNumber <= 1 ? Node.NodeType.TUNNEL : (randNumber == 2 ? Node.NodeType.BEND : Node.NodeType.CROSSROAD));
-            nodes.put(tuple, tempNodeToAdd);
+            nodes.put(pos, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
         nodes.get(new Point2D.Double(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
@@ -195,7 +192,7 @@ public class Level
      * @param additionalRotation the additional rotation.
      * @return center of the new node.
      */
-    private static BlockPos getNextNodePositionFromNodeWithRotation(Node node, int rotation, int additionalRotation)
+    private static Point2D.Double getNextNodePositionFromNodeWithRotation(Node node, int rotation, int additionalRotation)
     {
         int realRotation = Math.floorMod(rotation + additionalRotation, MAX_ROTATIONS);
         switch(realRotation)
@@ -230,8 +227,8 @@ public class Level
             @NotNull final Node node = Node.createFromNBT(nodeTagList.getCompoundTagAt(i));
             level.nodes.put(new Point2D.Double(node.getX(), node.getZ()), node);
         }
-        final int ladderX = compound.getInteger(TAG_LADDERX);
-        final int ladderZ = compound.getInteger(TAG_LADDERZ);
+        final double ladderX = compound.getDouble(TAG_LADDERX);
+        final double ladderZ = compound.getDouble(TAG_LADDERZ);
 
         level.ladderNode = level.nodes.get(new Point2D.Double(ladderX, ladderZ));
 
@@ -271,8 +268,8 @@ public class Level
         }
         compound.setTag(TAG_NODES, nodeTagList);
 
-        compound.setInteger(TAG_LADDERX, ladderNode.getX());
-        compound.setInteger(TAG_LADDERZ, ladderNode.getZ());
+        compound.setDouble(TAG_LADDERX, ladderNode.getX());
+        compound.setDouble(TAG_LADDERZ, ladderNode.getZ());
 
         @NotNull final NBTTagList openNodeTagList = new NBTTagList();
         for (@NotNull final Node node : openNodes)
