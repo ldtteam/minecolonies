@@ -24,8 +24,6 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     private static final String BUTTON_CURRENTLEVEL       = "changeToLevel";
     private static final String VIEW_PAGES                = "pages";
     private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/windowhutminer.xml";
-    private       Button             buttonPrevPage;
-    private       Button             buttonNextPage;
     private       int[]              levels;
     private       ScrollingList      levelList;
     private final BuildingMiner.View miner;
@@ -89,19 +87,18 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        switch (button.getID())
+        if(button.getID().equals(BUTTON_CURRENTLEVEL))
         {
-            case BUTTON_CURRENTLEVEL:
-                final int row = levelList.getListElementIndexByPane(button);
-                if (row != miner.current && row >= 0 && row < levels.length)
-                {
-                    miner.current = row;
-                    MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
-                }
-                break;
-            default:
-                super.onButtonClicked(button);
-                break;
+            final int row = levelList.getListElementIndexByPane(button);
+            if (row != miner.current && row >= 0 && row < levels.length)
+            {
+                miner.current = row;
+                MineColonies.getNetwork().sendToServer(new MinerSetLevelMessage(miner, row));
+            }
+        }
+        else
+        {
+            super.onButtonClicked(button);
         }
     }
 

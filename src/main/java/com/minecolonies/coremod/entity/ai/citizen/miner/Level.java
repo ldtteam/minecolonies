@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.geom.Point2D;
 import java.util.*;
 
+import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.BEND;
+import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.CROSSROAD;
 import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.TUNNEL;
 
 /**
@@ -114,7 +116,7 @@ public class Level
         ladderNode.setStatus(Node.NodeStatus.COMPLETED);
         nodes.put(ladderCenter, ladderNode);
 
-        List<Point2D.Double> nodeCenterList = new ArrayList<>();
+        final List<Point2D.Double> nodeCenterList = new ArrayList<>();
         //Calculate the center positions of the new nodes.
         nodeCenterList.add(ladderNode.getNorthNodeCenter());
         nodeCenterList.add(ladderNode.getSouthNodeCenter());
@@ -177,8 +179,8 @@ public class Level
                 continue;
             }
             final Node tempNodeToAdd = new Node(pos.getX(), pos.getY(), new Point2D.Double(tempNode.getX(), tempNode.getZ()));
-            int randNumber = rand.nextInt(RANDOM_TYPES);
-            tempNodeToAdd.setStyle(randNumber <= 1 ? Node.NodeType.TUNNEL : (randNumber == 2 ? Node.NodeType.BEND : Node.NodeType.CROSSROAD));
+            final int randNumber = rand.nextInt(RANDOM_TYPES);
+            tempNodeToAdd.setStyle(randNumber <= 1 ? TUNNEL : (randNumber == 2 ? BEND : CROSSROAD));
             nodes.put(pos, tempNodeToAdd);
             openNodes.add(tempNodeToAdd);
         }
@@ -194,7 +196,7 @@ public class Level
      */
     private static Point2D.Double getNextNodePositionFromNodeWithRotation(Node node, int rotation, int additionalRotation)
     {
-        int realRotation = Math.floorMod(rotation + additionalRotation, MAX_ROTATIONS);
+        final int realRotation = Math.floorMod(rotation + additionalRotation, MAX_ROTATIONS);
         switch(realRotation)
         {
             case ROTATE_ONCE:

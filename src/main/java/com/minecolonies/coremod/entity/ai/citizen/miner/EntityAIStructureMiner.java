@@ -553,8 +553,8 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         //normal facing +x
         int rotation = 0;
 
-        int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : (workingNode.getX() > workingNode.getParent().getX() ? 1 : 0);
-        int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : (workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0);
+        final int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : (workingNode.getX() > workingNode.getParent().getX() ? 1 : 0);
+        final int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : (workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0);
 
         if(vectorX == -1)
         {
@@ -608,7 +608,11 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      */
     private void initStructure(final Node mineNode, final int rotateTimes, BlockPos structurePos)
     {
-        if(mineNode != null)
+        if(mineNode == null)
+        {
+            loadStructure("miner/minerMainShaft", getRotationFromVector(), structurePos);
+        }
+        else
         {
             //todo we can add other nodeTypes without a problem.
             if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
@@ -623,10 +627,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             {
                 loadStructure("miner/minerX2Top", rotateTimes, structurePos);
             }
-        }
-        else
-        {
-            loadStructure("miner/minerMainShaft", getRotationFromVector(), structurePos);
         }
     }
 
@@ -691,7 +691,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return CLEAR_STEP;
         }
 
-        return AIState.MINER_MINING_NODE;
+        return MINER_MINING_NODE;
     }
 
     private void setBlockFromInventory(@NotNull final BlockPos location, @NotNull final Block block)

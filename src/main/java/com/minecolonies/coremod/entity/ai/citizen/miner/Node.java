@@ -94,7 +94,7 @@ public class Node
 
         final NodeStatus status = NodeStatus.valueOf(compound.getString(TAG_STATUS));
 
-        Point2D tempParent = compound.hasKey(TAG_PARENTX) ? new Point2D.Double(compound.getDouble(TAG_PARENTX), compound.getDouble(TAG_PARENTZ)) : null;
+        final Point2D tempParent = compound.hasKey(TAG_PARENTX) ? new Point2D.Double(compound.getDouble(TAG_PARENTX), compound.getDouble(TAG_PARENTZ)) : null;
 
         //Set the node status in all directions.
         @NotNull final Node node = new Node(x, z, tempParent);
