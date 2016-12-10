@@ -13,8 +13,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Class handling the buildTool item.
+ */
 public class ItemBuildTool extends AbstractItemMinecolonies
 {
+    /**
+     * Instantiates the buildTool on load.
+     */
     public ItemBuildTool()
     {
         super("scepterGold");

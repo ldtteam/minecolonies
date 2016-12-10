@@ -65,25 +65,25 @@ public abstract class AbstractBuilding
      * Map to resolve names to class.
      */
     @NotNull
-    private static Map<String, Class<?>> nameToClassMap = new HashMap<>();
+    private static final Map<String, Class<?>> nameToClassMap = new HashMap<>();
 
     /**
      * Map to resolve classes to name.
      */
     @NotNull
-    private static Map<Class<?>, String> classToNameMap = new HashMap<>();
+    private static final Map<Class<?>, String> classToNameMap = new HashMap<>();
 
     /**
      * Map to resolve block to building class.
      */
     @NotNull
-    private static Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> blockClassToBuildingClassMap = new HashMap<>();
 
     /**
      * Map to resolve classNameHash to class.
      */
     @NotNull
-    private static Map<Integer, Class<?>> classNameHashToClassMap = new HashMap<>();
+    private static final Map<Integer, Class<?>> classNameHashToClassMap = new HashMap<>();
     /*
      * Add all the mappings.
      */
@@ -370,7 +370,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Children must return the name of their schematic.
+     * Children must return the name of their structure.
      *
      * @return StructureProxy name.
      */

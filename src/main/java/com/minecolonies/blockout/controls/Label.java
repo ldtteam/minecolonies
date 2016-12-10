@@ -8,10 +8,19 @@ import net.minecraft.client.renderer.GlStateManager;
  */
 public class Label extends AbstractTextElement
 {
+    /**
+     * The text of the label.
+     */
     protected String labelText;
 
+    /**
+     * The color the label has when hovering it with the mouse.
+     */
     protected int hoverColor = 0xffffff;
 
+    /**
+     * Standard constructor which instantiates a new label.
+     */
     public Label()
     {
         super();
@@ -98,11 +107,19 @@ public class Label extends AbstractTextElement
         GlStateManager.popMatrix();
     }
 
+    /**
+     * Getter of the width of the string.
+     * @return the width.
+     */
     public int getStringWidth()
     {
         return (int) (mc.fontRendererObj.getStringWidth(labelText) * scale);
     }
 
+    /**
+     * Getter of the text height.
+     * @return the text height.
+     */
     public int getTextHeight()
     {
         return (int) (mc.fontRendererObj.FONT_HEIGHT * scale);

@@ -19,16 +19,16 @@ public class Pane extends Gui
 {
     protected static Pane lastClickedPane;
     protected static Pane focus;
-    protected static boolean             debugging         = false;
+    protected static     boolean             debugging         = false;
     @NotNull
-    private static   Deque<ScissorsInfo> scissorsInfoStack = new ConcurrentLinkedDeque<>();
-    protected        Minecraft           mc                = Minecraft.getMinecraft();
+    private static final Deque<ScissorsInfo> scissorsInfoStack = new ConcurrentLinkedDeque<>();
+    protected            Minecraft           mc                = Minecraft.getMinecraft();
     //  Attributes
-    protected        String              id                = "";
-    protected        int                 x                 = 0;
-    protected        int                 y                 = 0;
-    protected        int                 width             = 0;
-    protected        int                 height            = 0;
+    protected            String              id                = "";
+    protected            int                 x                 = 0;
+    protected            int                 y                 = 0;
+    protected            int                 width             = 0;
+    protected            int                 height            = 0;
     protected        Alignment           alignment         = Alignment.TOP_LEFT;
     protected        boolean             visible           = true;
     protected        boolean             enabled           = true;
@@ -575,10 +575,10 @@ public class Pane extends Gui
 
     private static class ScissorsInfo
     {
-        private int x;
-        private int y;
-        private int width;
-        private int height;
+        private final int x;
+        private final int y;
+        private final int width;
+        private final int height;
 
         ScissorsInfo(final int x, final int y, final int w, final int h)
         {

@@ -13,12 +13,29 @@ import java.util.stream.Collectors;
  */
 public class Text extends AbstractTextElement
 {
+    /**
+     * String content of the text area.
+     */
     protected String       textContent;
+
+    /**
+     * List of string elements.
+     */
     protected List<String> formattedText;
 
+    /**
+     * The height of the text.
+     */
     protected int textHeight;
+
+    /**
+     * The linespace of the text.
+     */
     protected int linespace = 0;
 
+    /**
+     * Standard constructor which instantiates the textField.
+     */
     public Text()
     {
         super();
@@ -45,6 +62,10 @@ public class Text extends AbstractTextElement
         formattedText = null;
     }
 
+    /**
+     * Getter of the textContent.
+     * @return the string content.
+     */
     public String getTextContent()
     {
         return textContent;
@@ -56,21 +77,37 @@ public class Text extends AbstractTextElement
         formattedText = null;
     }
 
+    /**
+     * Getter of the lineSpace.
+     * @return the lineSpace.
+     */
     public int getLineSpace()
     {
         return linespace;
     }
 
+    /**
+     * Setter of the lineSpace.
+     * @param l the new lineSpace.
+     */
     public void setLineSpace(final int l)
     {
         linespace = l;
     }
 
+    /**
+     * Getter of the lineHeight.
+     * @return the line height.
+     */
     public int getLineHeight()
     {
         return (int) (mc.fontRendererObj.FONT_HEIGHT * scale);
     }
 
+    /**
+     * Getter of the textheight.
+     * @return the text height.
+     */
     public int getTextHeight()
     {
         // Force computation of textHeight, if necessary
@@ -89,6 +126,10 @@ public class Text extends AbstractTextElement
         return (int) (mc.fontRendererObj.getStringWidth(s) * scale);
     }
 
+    /**
+     * Getter for the formattedText, instantiates it if not already.
+     * @return the list of strings.
+     */
     public List<String> getFormattedText()
     {
         if (formattedText == null)

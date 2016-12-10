@@ -1,10 +1,15 @@
 package com.minecolonies.coremod.entity.ai.util;
 
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoor;
+import net.minecraft.block.BlockOre;
+import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -18,7 +23,7 @@ import java.util.function.Supplier;
 /**
  * Represents a build task for the Structure AI.
  * <p>
- * It internally uses a schematic it transparently loads.
+ * It internally uses a structure it transparently loads.
  */
 public class Structure
 {
@@ -51,14 +56,39 @@ public class Structure
         }
     }
 
-    public static final class SchematicBlock
+    /**
+     * Class used to describe a certain structure block of the structure.
+     */
+    public static final class StructureBlock
     {
-
+        /**
+         * The block.
+         */
         public final Block       block;
+
+        /**
+         * The position of the block.
+         */
         public final BlockPos    blockPosition;
+
+        /**
+         * The metadata of the block.
+         */
         public final IBlockState metadata;
+
+        /**
+         * The item of the block.
+         */
         public final Item        item;
+
+        /**
+         * The world block at the same position.
+         */
         public final Block       worldBlock;
+
+        /**
+         * The metadata of the world block at the same position.
+         */
         public final IBlockState worldMetadata;
 
         /**
@@ -68,10 +98,10 @@ public class Structure
          * @param blockPosition the BlockPos this block has.
          * @param metadata      the metadata this block has.
          * @param item          the item needed to place this block
-         * @param worldBlock    the block to be replaced with the schematic block
+         * @param worldBlock    the block to be replaced with the structure block
          * @param worldMetadata the metadata of the world block
          */
-        public SchematicBlock(final Block block, final BlockPos blockPosition, final IBlockState metadata, final Item item, final Block worldBlock, final IBlockState worldMetadata)
+        public StructureBlock(final Block block, final BlockPos blockPosition, final IBlockState metadata, final Item item, final Block worldBlock, final IBlockState worldMetadata)
         {
             this.block = block;
             this.blockPosition = blockPosition;
@@ -80,14 +110,47 @@ public class Structure
             this.worldBlock = worldBlock;
             this.worldMetadata = worldMetadata;
         }
+
+        /**
+         * Checks if the structureBlock equals the worldBlock.
+         * @return true if so.
+         */
+        public boolean doesStructureBlockEqualWorldBlock()
+        {
+            final IBlockState structureBlockState = metadata;
+            final Block structureBlock = structureBlockState.getBlock();
+
+            //All worldBlocks are equal the substitution block
+            if (structureBlock == ModBlocks.blockSubstitution
+                    || (structureBlock == ModBlocks.blockSolidSubstitution && worldMetadata.getMaterial().isSolid()
+                    && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR))
+            {
+                return true;
+            }
+
+            final IBlockState worldBlockState = worldMetadata;
+
+            //list of things to only check block for.
+            //For the time being any flower pot is equal to each other.
+            if (structureBlock instanceof BlockDoor || structureBlock == Blocks.FLOWER_POT)
+            {
+                return structureBlock == worldBlockState.getBlock();
+            }
+            else if (structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
+            {
+                return true;
+            }
+
+            return structureBlockState.equals(worldBlockState);
+        }
     }
 
-    private final Stage            stage;
+    private Stage                  stage;
     /**
-     * The internal schematic loaded.
+     * The internal structure loaded.
      */
     @Nullable
-    private final StructureWrapper schematic;
+    private final StructureWrapper structure;
     /**
      * the targetWorld to build the structure in.
      */
@@ -98,9 +161,9 @@ public class Structure
      *
      * @param targetWorld       the world to build it in
      * @param buildingLocation  the location where we should build this Structure
-     * @param schematicFileName the schematic file to load it from
+     * @param schematicFileName the structure file to load it from
      * @param rotation          the rotation it should have
-     * @throws StructureException when there is an error loading the schematic file
+     * @throws StructureException when there is an error loading the structure file
      */
     public Structure(final World targetWorld, final BlockPos buildingLocation, final String schematicFileName, final int rotation) throws StructureException
     {
@@ -112,38 +175,51 @@ public class Structure
      *
      * @param targetWorld       the world to build it in
      * @param buildingLocation  the location where we should build this Structure
-     * @param schematicFileName the schematic file to load it from
+     * @param structureFileName the structure file to load it from
      * @param rotation          the rotation it should have
      * @param stageProgress     the stage is should start with
      * @param blockProgress     the block it should start with
-     * @throws StructureException when there is an error loading the schematic file
+     * @throws StructureException when there is an error loading the structure file
      */
     public Structure(
                       final World targetWorld,
                       final BlockPos buildingLocation,
-                      final String schematicFileName,
+                      final String structureFileName,
                       final int rotation,
                       final Stage stageProgress,
                       final BlockPos blockProgress) throws StructureException
     {
-        this.schematic = loadSchematic(targetWorld, buildingLocation, schematicFileName, rotation, stageProgress, blockProgress);
+        this.structure = loadStructure(targetWorld, buildingLocation, structureFileName, rotation, stageProgress, blockProgress);
         this.stage = stageProgress;
         this.targetWorld = targetWorld;
     }
 
     /**
-     * Load the schematic for this building.
+     * Create a new building task.
+     * @param targetWorld the world.
+     * @param structure the structure.
+     * @param stageProgress the stage to start off with.
+     */
+    public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
+    {
+        this.structure = structure;
+        this.stage = stageProgress;
+        this.targetWorld = targetWorld;
+    }
+
+    /**
+     * Load the structure for this building.
      *
      * @param targetWorld       the world we want to place it
-     * @param buildingLocation  the location where we should place the schematic
-     * @param schematicFileName the filename of the schematic we should load
-     * @param rotation          The rotation this schematic should be in
+     * @param buildingLocation  the location where we should place the structure
+     * @param schematicFileName the filename of the structure we should load
+     * @param rotation          The rotation this structure should be in
      * @param stageProgress     the stage we are in
      * @param blockProgress     the progress we have made so far
-     * @throws StructureException when there is an error loading the schematic file
+     * @throws StructureException when there is an error loading the structure file
      */
     @Nullable
-    private static StructureWrapper loadSchematic(
+    private static StructureWrapper loadStructure(
                                                    @Nullable final World targetWorld,
                                                    @Nullable final BlockPos buildingLocation,
                                                    @Nullable final String schematicFileName,
@@ -158,14 +234,14 @@ public class Structure
               targetWorld, buildingLocation, schematicFileName));
         }
         @Nullable StructureWrapper tempSchematic = null;
-        //failsafe for faulty schematic files
+        //failsafe for faulty structure files
         try
         {
             tempSchematic = new StructureWrapper(targetWorld, schematicFileName);
         }
         catch (final IllegalStateException e)
         {
-            throw new StructureException("failed to load schematic file!", e);
+            throw new StructureException("failed to load structure file!", e);
         }
 
         //put the building into place
@@ -179,12 +255,12 @@ public class Structure
     }
 
     /**
-     * Check if the worldBlock equals the schematicBlock
+     * Check if the worldBlock equals the schematicBlock.
      *
-     * @param blocksToTest the blocks to test
-     * @return true if they are the same
+     * @param blocksToTest the blocks to test.
+     * @return true if they are the same.
      */
-    private static boolean checkBlocksEqual(@NotNull final SchematicBlock blocksToTest)
+    public static boolean checkBlocksEqual(@NotNull final StructureBlock blocksToTest)
     {
         return blocksToTest.block == blocksToTest.worldBlock
                  && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);
@@ -200,6 +276,11 @@ public class Structure
         return stage;
     }
 
+    public void setStage(Stage stage)
+    {
+        this.stage = stage;
+    }
+
     /**
      * Calculates the position of the block we are working on.
      *
@@ -207,7 +288,7 @@ public class Structure
      */
     public BlockPos getCurrentBlockPosition()
     {
-        return this.schematic.getBlockPosition();
+        return this.structure.getBlockPosition();
     }
 
     /**
@@ -223,13 +304,17 @@ public class Structure
         switch (this.stage)
         {
             case CLEAR:
-                return advanceBlocks(this.schematic::decrementBlock,
-                  schematicBlock -> schematicBlock.blockPosition.getX() <= 0
-                                      || this.targetWorld.isAirBlock(schematicBlock.blockPosition));
+                return advanceBlocks(this.structure::decrementBlock,
+                  structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
+                          || structureBlock.worldBlock == Blocks.AIR);
             case BUILD:
-                return advanceBlocks(this.schematic::incrementBlock, schematicBlock -> false);
+                return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
+                        && structureBlock.block == Blocks.AIR
+                        && !structureBlock.metadata.getMaterial().isSolid());
             case DECORATE:
-                return advanceBlocks(this.schematic::incrementBlock, schematicBlock -> false);
+                return advanceBlocks(this.structure::decrementBlock, structureBlock ->
+                        structureBlock.doesStructureBlockEqualWorldBlock()
+                        || structureBlock.metadata.getMaterial().isSolid());
             default:
                 return Result.NEW_BLOCK;
         }
@@ -239,12 +324,12 @@ public class Structure
      * Advance many blocks until either moveOneBlock or checkIfApplies return false
      * or if we reached the maximum of iterations in maxBlocksCheckedByBuilder.
      *
-     * @param moveOneBlock   this will be called to advance the schematic one block.
+     * @param moveOneBlock   this will be called to advance the structure one block.
      * @param checkIfApplies this will be evaluated to check if we should skip a block.
      * @return a Result enum specifying the result
      */
     @NotNull
-    private Result advanceBlocks(@NotNull final Supplier<Boolean> moveOneBlock, @NotNull final Function<SchematicBlock, Boolean> checkIfApplies)
+    private Result advanceBlocks(@NotNull final Supplier<Boolean> moveOneBlock, @NotNull final Function<StructureBlock, Boolean> checkIfApplies)
     {
         for (int i = 0; i < Configurations.maxBlocksCheckedByBuilder; i++)
         {
@@ -263,18 +348,18 @@ public class Structure
     /**
      * Gather all information needed to evaluate one block.
      *
-     * @return a SchematicBlock having all information for the current block.
+     * @return a StructureBlock having all information for the current block.
      */
     @NotNull
-    public SchematicBlock getCurrentBlock()
+    public StructureBlock getCurrentBlock()
     {
-        return new SchematicBlock(
-                                   this.schematic.getBlock(),
-                                   this.schematic.getBlockPosition(),
-                                   this.schematic.getBlockState(),
-                                   this.schematic.getItem(),
-                                   BlockPosUtil.getBlock(targetWorld, this.schematic.getBlockPosition()),
-                                   BlockPosUtil.getBlockState(targetWorld, this.schematic.getBlockPosition())
+        return new StructureBlock(
+                                   this.structure.getBlock(),
+                                   this.structure.getBlockPosition(),
+                                   this.structure.getBlockState(),
+                                   this.structure.getItem(),
+                                   BlockPosUtil.getBlock(targetWorld, this.structure.getBlockPosition()),
+                                   BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition())
         );
     }
 
@@ -285,7 +370,7 @@ public class Structure
      */
     public int getWidth()
     {
-        return this.schematic.getWidth();
+        return this.structure.getWidth();
     }
 
     /**
@@ -295,7 +380,7 @@ public class Structure
      */
     public int getLength()
     {
-        return this.schematic.getLength();
+        return this.structure.getLength();
     }
 
     /**

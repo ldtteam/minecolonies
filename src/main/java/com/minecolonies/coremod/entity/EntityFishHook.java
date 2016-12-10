@@ -132,7 +132,7 @@ public final class EntityFishHook extends Entity
      * entity creation time.
      * Used to check it the hook got stuck.
      */
-    private long creationTime;
+    private final long creationTime;
 
     /**
      * When a fish is on the hook, this will be true.

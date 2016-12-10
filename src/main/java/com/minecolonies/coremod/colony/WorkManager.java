@@ -28,12 +28,12 @@ public class WorkManager
      */
     protected final Colony colony;
     @NotNull
-    private Map<Integer, AbstractWorkOrder> workOrders     = new LinkedHashMap<>();
-    private int                             topWorkOrderId = 0;
+    private final Map<Integer, AbstractWorkOrder> workOrders     = new LinkedHashMap<>();
+    private       int                             topWorkOrderId = 0;
     /**
      * Checks if there has been changes.
      */
-    private boolean                         dirty          = false;
+    private       boolean                         dirty          = false;
 
     /**
      * Constructor, saves reference to the colony.

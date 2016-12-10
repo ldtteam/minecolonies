@@ -5,9 +5,11 @@ import com.minecolonies.coremod.lib.Constants;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
-public class ModCreativeTabs
+/**
+ * Class used to handle the creativeTab of minecolonies.
+ */
+public final class ModCreativeTabs
 {
-
     public static final CreativeTabs MINECOLONIES = new CreativeTabs(Constants.MOD_ID)
     {
         @Override
@@ -25,8 +27,13 @@ public class ModCreativeTabs
         }
     };
 
+    /**
+     * Private constructor to hide the implicit one.
+     */
     private ModCreativeTabs()
     {
-
+        /*
+         * Intentionally left empty.
+         */
     }
 }

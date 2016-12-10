@@ -59,7 +59,7 @@ public class EntityAIGoHome extends EntityAIBase
     @Override
     public boolean continueExecuting()
     {
-        return !citizen.getNavigator().noPath();
+        return !citizen.getNavigator().noPath() && citizen.getDesiredActivity() == EntityCitizen.DesiredActivity.SLEEP;
     }
 
     @Override

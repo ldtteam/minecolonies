@@ -24,19 +24,19 @@ public class MaterialSystem
      * This Map contains keeps track of how many extra materials we have in the colony. (Materials that aren't needed).
      */
     @NotNull
-    private Map<Material, Integer> materials = new HashMap<>();
+    private final Map<Material, Integer> materials = new HashMap<>();
 
     /**
      * Set of MaterialStores inside this MaterialSystem(Colony).
      */
     @NotNull
-    private Set<MaterialStore> stores = new HashSet<>();
+    private final Set<MaterialStore> stores = new HashSet<>();
 
     /**
      * So that we only have one Material reference per material inside of the system.
      */
     @NotNull
-    private Map<Integer, Material> materialCache = new HashMap<>();
+    private final Map<Integer, Material> materialCache = new HashMap<>();
 
     /**
      * @return An unmodifiable version of the materials map.

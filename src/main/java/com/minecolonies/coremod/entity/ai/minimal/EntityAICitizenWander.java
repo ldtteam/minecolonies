@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EntityAICitizenWander extends EntityAIBase
 {
-    private EntityCitizen citizen;
-    private double        xPosition;
-    private double        yPosition;
-    private double        zPosition;
-    private double        speed;
+    private final EntityCitizen citizen;
+    private       double        xPosition;
+    private       double        yPosition;
+    private       double        zPosition;
+    private final double        speed;
 
     /**
      * Instantiates this task.

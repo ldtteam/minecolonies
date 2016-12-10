@@ -107,6 +107,15 @@ public class StructureProxy
     }
 
     /**
+     * Getter for the structure.
+     * @return the structure object.
+     */
+    public Structure getStructure()
+    {
+        return structure;
+    }
+
+    /**
      * Getter of the IBlockState at a certain position.
      *
      * @param pos the position.

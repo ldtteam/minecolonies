@@ -52,7 +52,7 @@ public class CitizenData
     private       String                 name;
     private       boolean                female;
     private       int                    textureId;
-    private       Colony                 colony;
+    private final Colony                 colony;
     @Nullable
     private       BuildingHome           homeBuilding;
     @Nullable

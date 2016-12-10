@@ -37,7 +37,7 @@ public class MineColonies
      */
     @SidedProxy(clientSide = Constants.CLIENT_PROXY_LOCATION, serverSide = Constants.SERVER_PROXY_LOCATION)
     public static IProxy       proxy;
-    private static Logger logger = LogManager.getLogger(Constants.MOD_ID);
+    private static final Logger logger = LogManager.getLogger(Constants.MOD_ID);
     private static SimpleNetworkWrapper network;
 
     /**

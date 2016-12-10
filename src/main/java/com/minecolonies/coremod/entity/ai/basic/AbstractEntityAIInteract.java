@@ -39,6 +39,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
      * The Multiplier to add to hand mining speed.
      */
     private static final int    HAND_MINING_MODIFIER = 10;
+    /**
+     * The minimum range the builder has to reach in order to construct or clear.
+     */
+    private static final int    MIN_WORKING_RANGE             = 12;
 
     /**
      * Creates the abstract part of the AI.
@@ -152,7 +156,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             ));
         }
 
-        if (walkToBlock(safeStand))
+        if (walkToBlock(safeStand) && MathUtils.twoDimDistance(worker.getPosition(), safeStand) > MIN_WORKING_RANGE)
         {
             return true;
         }

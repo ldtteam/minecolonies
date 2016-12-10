@@ -75,7 +75,7 @@ com.minecolonies.coremod.gui.hiring.off=Automatic
 com.minecolonies.coremod.gui.workerHuts.settings=Settings
 achievement.size.town=Town
 tile.minecolonies.blockHutTownHall.name=Town Hall
-tile.minecolonies.blockSubstitution.name=SchematicPlaceholder.
+
 
 
 tile.minecolonies.blockHutField.name=Field
@@ -119,7 +119,6 @@ achievement.upgrade.lumberjack.max.desc=Deforestation
 tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
 com.minecolonies.coremod.gui.workerHuts.warehouse=Warehouse
 entity.miner.messageRequiresBetterHut=Please upgrade my hut to dig deeper!
-tile.minecolonies.blockSubstitution.name=SchematicPlaceholder.
 com.minecolonies.coremod.gui.townHall.recall=Recall Citizens
 item.scepterSteel.point=Point one saved
 achievement.upgrade.builder.max=The Builder!
@@ -239,3 +238,7 @@ com.minecolonies.coremod.job.guard.toolClickGuard=Set position %s as new guardin
 
 com.minecolonies.coremod.job.guard.toolDoubleClick=Finished adding new patrol-targets.
 
+com.minecolonies.coremod.workerHuts.recallFail=Recall failed - Please make more space around the location.
+
+tile.minecolonies.blockSubstitution.name=Placeholderblock
+tile.minecolonies.blockSolidSubstitution.name=Solid-Placeholderblock

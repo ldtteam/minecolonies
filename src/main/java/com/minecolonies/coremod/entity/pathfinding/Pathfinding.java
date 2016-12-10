@@ -27,7 +27,7 @@ public final class Pathfinding
 {
     private static final BlockingQueue<Runnable> jobQueue = new LinkedBlockingDeque<>();
     private static final ResourceLocation        TEXTURE  = new ResourceLocation("textures/gui/widgets.png");
-    private static ThreadPoolExecutor executor;
+    private static final ThreadPoolExecutor executor;
     static
     {
         executor = new ThreadPoolExecutor(1, Configurations.pathfindingMaxThreadCount, 10, TimeUnit.SECONDS, jobQueue);
@@ -201,8 +201,8 @@ public final class Pathfinding
     @SideOnly(Side.CLIENT)
     private static void renderDebugText(@NotNull final Node n, final float f1)
     {
-        final String s1 = String.format("F: %.3f [%d]", n.cost, n.counterAdded);
-        final String s2 = String.format("G: %.3f [%d]", n.score, n.counterVisited);
+        final String s1 = String.format("F: %.3f [%d]", n.getCost(), n.getCounterAdded());
+        final String s2 = String.format("G: %.3f [%d]", n.getScore(), n.getCounterVisited());
         final FontRenderer fontrenderer = Minecraft.getMinecraft().fontRendererObj;
         GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         GL11.glPushMatrix();

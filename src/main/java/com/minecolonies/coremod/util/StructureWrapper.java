@@ -42,20 +42,20 @@ public final class StructureWrapper
     /**
      * The minecraft world this struture is displayed in.
      */
-    private World          world;
+    private final World          world;
     /**
      * The structure this structure comes from.
      */
-    private StructureProxy structure;
+    private final StructureProxy structure;
     /**
      * The anchor position this structure will be
      * placed on in the minecraft world.
      */
-    private BlockPos       position;
+    private       BlockPos       position;
     /**
      * The name this structure has.
      */
-    private String         name;
+    private final String         name;
 
     /**
      * Load a structure into this world.
@@ -561,7 +561,7 @@ public final class StructureWrapper
     {
         @Nullable final Block block = this.getBlock();
         @Nullable final IBlockState blockState = this.getBlockState();
-        if (block == null || blockState == null)
+        if (block == null || blockState == null || block == Blocks.AIR || blockState.getMaterial().isLiquid())
         {
             return null;
         }

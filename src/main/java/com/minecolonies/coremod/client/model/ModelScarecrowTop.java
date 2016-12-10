@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull;
 public class ModelScarecrowTop extends ModelBase
 {
     //fields
-    private ModelRenderer Head;
-    private ModelRenderer LeftArmPeg;
-    private ModelRenderer RightArmPeg;
-    private ModelRenderer Torso;
-    private ModelRenderer LeftArm;
-    private ModelRenderer RightArm;
+    private final ModelRenderer Head;
+    private final ModelRenderer LeftArmPeg;
+    private final ModelRenderer RightArmPeg;
+    private final ModelRenderer Torso;
+    private final ModelRenderer LeftArm;
+    private final ModelRenderer RightArm;
 
     public ModelScarecrowTop()
     {

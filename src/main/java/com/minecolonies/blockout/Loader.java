@@ -31,7 +31,7 @@ public final class Loader
 {
     private static final Logger logger = LogManager.getLogger("BlockOut");
 
-    private static Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<>();
+    private static final Map<String, Constructor<? extends Pane>> paneConstructorMap = new HashMap<>();
     static
     {
         register("view", View.class);

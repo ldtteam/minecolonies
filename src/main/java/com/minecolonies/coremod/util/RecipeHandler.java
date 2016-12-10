@@ -43,6 +43,8 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ItemStack(ModItems.scanTool, 1), "  I", " S ", "S  ", 'I', Items.IRON_INGOT, 'S', Items.STICK);
         GameRegistry.addRecipe(new ItemStack(ModItems.buildTool, 1), "  C", " S ", "S  ", 'C', Blocks.COBBLESTONE, 'S', Items.STICK);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockSubstitution, 16), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', ModItems.scanTool);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockSolidSubstitution, 16), "XXX", "X#X", "XXX", 'X', Blocks.LOG, '#', ModItems.scanTool);
+
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutFarmer, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.WOODEN_HOE);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutFarmer, 2), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.STONE_HOE);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutField, 1), " Y ", "X#X", " X ", 'X', Items.STICK, '#', Items.LEATHER, 'Y', Blocks.HAY_BLOCK);

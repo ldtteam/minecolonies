@@ -151,7 +151,7 @@ public class WindowCitizen extends Window implements Button.Handler
     /**
      * The citizenData.View object.
      */
-    private CitizenDataView citizen;
+    private final CitizenDataView citizen;
 
     /**
      * Constructor to initiate the citizen windows.

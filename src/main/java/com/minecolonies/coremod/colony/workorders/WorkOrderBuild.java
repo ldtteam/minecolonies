@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents one building order to complete.
- * Has his onw schematic for the building.
+ * Has his onw structure for the building.
  */
 public class WorkOrderBuild extends AbstractWorkOrder
 {
@@ -264,9 +264,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
     }
 
     /**
-     * Get the name the schematic for this work order.
+     * Get the name the structure for this work order.
      *
-     * @return the internal string for this schematic.
+     * @return the internal string for this structure.
      */
     public String getStructureName()
     {
@@ -274,7 +274,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     }
 
     /**
-     * Gets how many times this schematic should be rotated.
+     * Gets how many times this structure should be rotated.
      *
      * @return building rotation.
      */

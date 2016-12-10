@@ -230,22 +230,22 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * The view of the current building.
      */
-    private BuildingTownHall.View townHall;
+    private final BuildingTownHall.View townHall;
     /**
      * List of added users.
      */
     @NotNull
-    private List<Permissions.Player> users       = new ArrayList<>();
+    private final List<Permissions.Player> users       = new ArrayList<>();
     /**
      * List of citizens.
      */
     @NotNull
-    private List<CitizenDataView>    citizens    = new ArrayList<>();
+    private final List<CitizenDataView>    citizens    = new ArrayList<>();
     /**
      * Map of the pages.
      */
     @NotNull
-    private Map<String, String>      tabsToPages = new HashMap<>();
+    private final Map<String, String>      tabsToPages = new HashMap<>();
 
     /**
      * The button f the last tab -> will be filled later on.

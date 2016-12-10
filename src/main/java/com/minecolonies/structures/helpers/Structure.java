@@ -329,14 +329,14 @@ public class Structure
                     this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                     ForgeHooksClient.setRenderLayer(layer);
                     this.renderGhostBlock(world, holder, player, layer, existingModel, partialTicks);
-                    holder.rendered = true;
+                    holder.setRendered(true);;
                 }
             }
 
             ForgeHooksClient.setRenderLayer(originalLayer);
         }
 
-        if (holder.te != null && !holder.rendered)
+        if (holder.te != null && !holder.isRendered())
         {
             final TileEntity te = holder.te;
             te.setPos(holder.pos);

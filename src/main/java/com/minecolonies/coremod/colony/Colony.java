@@ -101,13 +101,13 @@ public class Colony implements IColony
     @Nullable
     private BuildingTownHall townHall;
     @NotNull
-    private Map<BlockPos, AbstractBuilding> buildings    = new HashMap<>();
+    private final Map<BlockPos, AbstractBuilding> buildings    = new HashMap<>();
     //  Citizenry
     @NotNull
-    private Map<Integer, CitizenData>       citizens     = new HashMap<>();
-    private int                             topCitizenId = 0;
-    private int                             maxCitizens  = Configurations.maxCitizens;
-    private int                             killedMobs   = 0;
+    private final Map<Integer, CitizenData>       citizens     = new HashMap<>();
+    private       int                             topCitizenId = 0;
+    private       int                             maxCitizens  = Configurations.maxCitizens;
+    private       int                             killedMobs   = 0;
 
     /**
      * Constructor for a newly created Colony.

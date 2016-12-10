@@ -6,29 +6,71 @@ import com.minecolonies.blockout.views.ScrollingContainer;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Mouse;
 
+/**
+ * Class handling scrollbars in our GUIs.
+ */
 public class Scrollbar extends Pane
 {
-    //  Params
-    protected int scrollbarBackground     = 0xFF000000;
-    protected int scrollbarColor          = 0xFFC0C0C0;
+    /**
+     * Max height of the scrollbar.
+     */
+    private static final int MAXIMUM_HEIGHT      = 20;
+
+    /**
+     * Background of the scrollbar.
+     */
+    protected int scrollbarBackground = 0xFF000000;
+
+    /**
+     * Color of the scrollbar.
+     */
+    protected int scrollbarColor = 0xFFC0C0C0;
+
+    /**
+     * Color of the scrollbar when hovered.
+     */
     protected int scrollbarColorHighlight = 0xFF808080;
 
+    /**
+     * Container containing the scrollbar.
+     */
     protected ScrollingContainer container;
+
+    /**
+     * The height the bar is clicked.
+     */
     protected int     barClickY  = 0;
+
+    /**
+     * True if the bar is clicked at the moment.
+     */
     protected boolean barClicked = false;
 
+    /**
+     * Instantiates the scrollbar with certain parameters.
+     * @param container the container of the scrollbar.
+     * @param params the parameters.
+     */
     public Scrollbar(final ScrollingContainer container, final PaneParams params)
     {
         this(container);
         //  TODO: Parse Scrollbar-specific Params
     }
 
+    /**
+     * Instantiates a simple scrollbar.
+     * @param container the container of the scrollbar.
+     */
     public Scrollbar(final ScrollingContainer container)
     {
         super();
         this.container = container;
     }
 
+    /**
+     * Called when the scrollbar has been clicked.
+     * @param my the y it is clicked on.
+     */
     public void dragScroll(final int my)
     {
         final int barClickYNow = getScrollBarYPos() + barClickY;
@@ -117,7 +159,7 @@ public class Scrollbar extends Pane
 
     private int getBarHeight()
     {
-        return Math.max(Math.min(20, getHeight() / 2), (getHeight() * getHeight()) / container.getContentHeight());
+        return Math.max(Math.min(MAXIMUM_HEIGHT, getHeight() / 2), (getHeight() * getHeight()) / container.getContentHeight());
     }
 
     private int getScrollBarYPos()

@@ -9,27 +9,77 @@ import org.jetbrains.annotations.Nullable;
  */
 public class Node implements Comparable<Node>
 {
+    /**
+     * Values used in the generation of the hash of the node.
+     */
+    private static final int HASH_A = 12;
+    private static final int HASH_B = 20;
+    private static final int HASH_C = 24;
+
+    /**
+     * The position of the node.
+     */
     @NotNull
     public final  BlockPos pos;
+
+    /**
+     * The hash of the node.
+     */
     private final int      hash;
+
+    /**
+     * The parent of the node (Node preceding this node).
+     */
     @Nullable
     public        Node     parent;
-    public        int      counterAdded;
-    public        int      counterVisited;
-    public        int      steps;
 
-    // A* g value
-    public double cost;
+    /**
+     * Added counter.
+     */
+    private         int      counterAdded;
 
-    //  A* h value
-    public double heuristic;
+    /**
+     * Visited counter.
+     */
+    private        int      counterVisited;
 
-    //  A* f value (g + h)
-    public double score;
+    /**
+     * Number of steps.
+     */
+    private        int      steps;
 
-    public boolean closed     = false;
-    public boolean isLadder   = false;
-    public boolean isSwimming = false;
+    /**
+     * The cost of the node.
+     * A* g value.
+     */
+    private double cost;
+
+    /**
+     * The heuristic of the node.
+     * A* h value.
+     */
+    private double heuristic;
+
+    /**
+     * The score of the node.
+     * A* f value (g + h).
+     */
+    private double score;
+
+    /**
+     * Checks if the node has been closed already.
+     */
+    private boolean closed     = false;
+
+    /**
+     * Checks if the node is on a ladder.
+     */
+    private boolean ladder   = false;
+
+    /**
+     * Checks if the node is in water.
+     */
+    private boolean swimming = false;
 
     /**
      * Create initial Node.
@@ -59,11 +109,11 @@ public class Node implements Comparable<Node>
         this.cost = cost;
         this.heuristic = heuristic;
         this.score = score;
-        this.hash = pos.getX() ^ ((pos.getZ() << 12) | (pos.getZ() >> 20)) ^ (pos.getY() << 24);
+        this.hash = pos.getX() ^ ((pos.getZ() << HASH_A) | (pos.getZ() >> HASH_B)) ^ (pos.getY() << HASH_C);
     }
 
     @Override
-    public int compareTo(final Node o)
+    public int compareTo(@NotNull final Node o)
     {
         //  Comparing doubles and returning value as int; can't simply cast the result
         if (score < o.score)
@@ -108,5 +158,164 @@ public class Node implements Comparable<Node>
         }
 
         return false;
+    }
+
+    /**
+     * Checks if node is closed.
+     * @return true if so.
+     */
+    public boolean isClosed()
+    {
+        return closed;
+    }
+
+    /**
+     * Checks if node is on a ladder.
+     * @return true if so.
+     */
+    public boolean isLadder()
+    {
+        return ladder;
+    }
+
+    /**
+     * Checks if node is in water.
+     * @return true if so.
+     */
+    public boolean isSwimming()
+    {
+        return swimming;
+    }
+
+    /**
+     * Sets the node as closed.
+     */
+    public void setClosed()
+    {
+        closed = true;
+    }
+
+    /**
+     * Getter for the visited counter.
+     * @return the amount.
+     */
+    public int getCounterVisited()
+    {
+        return counterVisited;
+    }
+
+    /**
+     * Setter for the visited counter.
+     * @param counterVisited amount to set.
+     */
+    public void setCounterVisited(final int counterVisited)
+    {
+        this.counterVisited = counterVisited;
+    }
+
+    /**
+     * Getter of the score of the node.
+     * @return the score.
+     */
+    public double getScore()
+    {
+        return score;
+    }
+
+    /**
+     * Getter of the cost of the node.
+     * @return the cost.
+     */
+    public double getCost()
+    {
+        return cost;
+    }
+
+    /**
+     * Getter of the steps.
+     * @return the steps.
+     */
+    public int getSteps()
+    {
+        return steps;
+    }
+
+    /**
+     * Sets the node as a ladder node.
+     */
+    public void setLadder()
+    {
+        ladder = true;
+    }
+
+    /**
+     * Sets the node as a swimming node.
+     */
+    public void setSwimming()
+    {
+        swimming = true;
+    }
+
+    /**
+     * Getter of the heuristic.
+     * @return the heuristic.
+     */
+    public double getHeuristic()
+    {
+        return heuristic;
+    }
+
+    /**
+     * Sets the added counter.
+     * @param counterAdded amount to set.
+     */
+    public void setCounterAdded(final int counterAdded)
+    {
+        this.counterAdded = counterAdded;
+    }
+
+    /**
+     * Sets the amount of steps.
+     * @param steps the amount.
+     */
+    public void setSteps(final int steps)
+    {
+        this.steps = steps;
+    }
+
+    /**
+     * Sets the node cost.
+     * @param cost the cost.
+     */
+    public void setCost(final double cost)
+    {
+        this.cost = cost;
+    }
+
+    /**
+     * Sets the node heuristic.
+     * @param heuristic the heuristic.
+     */
+    public void setHeuristic(final double heuristic)
+    {
+        this.heuristic = heuristic;
+    }
+
+    /**
+     * Sets the node score.
+     * @param score the score.
+     */
+    public void setScore(final double score)
+    {
+        this.score = score;
+    }
+
+    /**
+     * Getter of the added counter.
+     * @return the amount.
+     */
+    public int getCounterAdded()
+    {
+        return counterAdded;
     }
 }

@@ -15,15 +15,45 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model holder of the structures.
+ */
 public class ModelHolder
 {
+    /**
+     * Position the model is at.
+     */
     public final BlockPos        pos;
+
+    /**
+     * Actual state of the model.
+     */
     public final IBlockState     actualState;
+
+    /**
+     * Extended state of that model.
+     */
     public final IBlockState     extendedState;
+
+    /**
+     * Tile entity of the model.
+     */
     public final TileEntity      te;
+
+    /**
+     * The model of the model.
+     */
     public final IBakedModel     model;
+
+    /**
+     * Quads to render for the model.
+     */
     public final List<BakedQuad> quads;
-    public boolean rendered = false;
+
+    /**
+     * If it is rendered.
+     */
+    private boolean rendered = false;
 
     /**
      * Creates a model holder.
@@ -43,5 +73,23 @@ public class ModelHolder
         this.model = model;
         this.quads = new ArrayList<>();
         this.rendered = false;
+    }
+
+    /**
+     * Checks if it is rendered.
+     * @return true if so.
+     */
+    public boolean isRendered()
+    {
+        return rendered;
+    }
+
+    /**
+     * Sets if it rendered.
+     * @param rendered state to set.
+     */
+    public void setRendered(final boolean rendered)
+    {
+        this.rendered = rendered;
     }
 }
