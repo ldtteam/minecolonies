@@ -619,6 +619,10 @@ public class CitizenData
      */
     public void setLevel(final int lvl)
     {
+        if(lvl == 0)
+        {
+            this.experience = 0;
+        }
         this.level = lvl;
     }
 
