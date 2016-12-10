@@ -72,7 +72,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     @Override
     public Block getSolidSubstitution(BlockPos location)
     {
-        IBlockState filler = world.getBiome(location).fillerBlock;
+        final IBlockState filler = world.getBiome(location).fillerBlock;
         if(filler.getBlock() instanceof BlockFalling)
         {
             return Blocks.DIRT;
@@ -182,7 +182,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             return getState();
         }
-        return AIState.START_BUILDING;
+        return START_BUILDING;
     }
 
     /**

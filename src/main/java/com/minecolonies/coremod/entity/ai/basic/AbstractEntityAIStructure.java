@@ -168,7 +168,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 }
                 else
                 {
-                    if (!(wo instanceof WorkOrderBuildDecoration))
+                    if (wo instanceof WorkOrderBuildDecoration)
+                    {
+                        if (structureName.contains(WAYPOINT_STRING))
+                        {
+                            worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
+                        }
+                    }
+                    else
                     {
                         final AbstractBuilding building = job.getColony().getBuilding(wo.getBuildingLocation());
                         if (building == null)
@@ -183,13 +190,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                             building.setBuildingLevel(wo.getUpgradeLevel());
                         }
                     }
-                    else
-                    {
-                        if (structureName.contains(WAYPOINT_STRING))
-                        {
-                            worker.getColony().addWayPoint(wo.getBuildingLocation(), world.getBlockState(wo.getBuildingLocation()));
-                        }
-                    }
                     ((JobBuilder) job).complete();
                 }
 
@@ -202,22 +202,22 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
             else if(job instanceof JobMiner)
             {
-                BuildingMiner minerBuilding = (BuildingMiner) getOwnBuilding();
+                final BuildingMiner minerBuilding = (BuildingMiner) getOwnBuilding();
                 //If shaft isn't cleared we're in shaft clearing mode.
-                if(!minerBuilding.clearedShaft)
+                if(minerBuilding.clearedShaft)
+                {
+                    minerBuilding.getCurrentLevel().closeNextNode(rotation);
+                }
+                else
                 {
                     @NotNull final Level currentLevel = new Level(minerBuilding, ((JobMiner) job).getStructure().getPosition().getY());
                     minerBuilding.addLevel(currentLevel);
                     minerBuilding.setCurrentLevel(minerBuilding.getNumberOfLevels());
                     minerBuilding.resetStartingLevelShaft();
+                }
+                //Send out update to client
+                getOwnBuilding().markDirty();
 
-                    //Send out update to client
-                    getOwnBuilding().markDirty();
-                }
-                else
-                {
-                    minerBuilding.getCurrentLevel().closeNextNode(rotation);
-                }
                 ((JobMiner) job).setStructure(null);
             }
             worker.addExperience(XP_EACH_BUILDING);
@@ -456,7 +456,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             rotation = rotateTimes;
             try
             {
-                 StructureWrapper wrapper = new StructureWrapper(world, name);
+                 final StructureWrapper wrapper = new StructureWrapper(world, name);
                 ((AbstractJobStructure) job).setStructure(wrapper);
                 currentStructure = new Structure(world, wrapper, Structure.Stage.CLEAR);
             }
@@ -481,8 +481,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 @Nullable final Block block = ((JobBuilder) job).getStructure().getBlock();
                 @NotNull final IBlockState blockState = ((JobBuilder) job).getStructure().getBlockState();
 
-                if (((JobBuilder) job).getStructure().doesStructureBlockEqualWorldBlock() ||
-                        (blockState instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                if (((JobBuilder) job).getStructure().doesStructureBlockEqualWorldBlock()
+                        || (blockState instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
                         || (blockState instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER)))
                 {
                     continue;
@@ -910,7 +910,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         {
             return blockToMine;
         }
-        Point2D pos = ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode().getParent();
+        final Point2D pos = ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode().getParent();
         return new BlockPos(pos.getX(), ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getDepth(), pos.getY());
     }
 }
