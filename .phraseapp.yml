@@ -1,0 +1,10 @@
+phraseapp:
+  access_token: "668107fc926bf5133a3ca84b00a9d9dd2f23cda21056ba2658d4351ca8f3901f"
+  project_id: "09531da72cf7a704ae061efbc25cb2c6"
+  file_format: "properties"
+  push:
+    sources:
+    - file: "src/main/resources/assets/minecolonies/lang/*.lang"
+  pull:
+    targets:
+    - file: "src/main/resources/assets/minecolonies/lang/en_UK.lang"
