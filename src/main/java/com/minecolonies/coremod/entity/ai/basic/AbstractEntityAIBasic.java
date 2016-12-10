@@ -412,7 +412,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  && InventoryFunctions
                       .matchFirstInInventory(
                         buildingMiner.getTileEntity(),
-                        stack -> stack != null && is.isItemEqual(stack),
+                        stack -> stack != null && stack != ItemStack.EMPTY && is.isItemEqual(stack),
                         this::takeItemStackFromChest
                       );
     }

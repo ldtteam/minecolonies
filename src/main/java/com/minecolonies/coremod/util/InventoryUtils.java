@@ -243,7 +243,7 @@ public class InventoryUtils
      */
     public static boolean takeStackInSlot(final IInventory sendingInv, final IInventory receivingInv, final int slotID)
     {
-        return takeStackInSlot(sendingInv, receivingInv, slotID, 1, true);
+        return takeStackInSlot(sendingInv, receivingInv, slotID, sendingInv.getStackInSlot(slotID).getCount(), true);
     }
 
     /**
@@ -312,7 +312,7 @@ public class InventoryUtils
         {
             @Nullable ItemStack returnStack = stack.copy();
             int slot;
-            while ((slot = containsPartialStack(inventory, stack)) != -1 && returnStack != null)
+            while ((slot = containsPartialStack(inventory, stack)) != -1 && returnStack != null && returnStack != ItemStack.EMPTY)
             {
                 final ItemStack current = inventory.getStackInSlot(slot);
                 final int spaceLeft = current.getMaxStackSize() - current.getCount();

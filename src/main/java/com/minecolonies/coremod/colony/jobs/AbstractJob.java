@@ -292,11 +292,12 @@ public abstract class AbstractJob
         {
             if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
             {
-                final int itemsToRemove = Math.min(neededItem.getCount(), stackCopy.getCount());
-                neededItem.setCount(stackCopy.getCount() - itemsToRemove);
-                stackCopy.setCount(stackCopy.getCount() - itemsToRemove);
+                //todo make this sofisticated as soon as material handling has been implemented.
+                //final int itemsToRemove = Math.min(neededItem.getCount(), stackCopy.getCount());
+                //neededItem.setCount(stackCopy.getCount() - itemsToRemove);
+                //stackCopy.setCount(stackCopy.getCount() - itemsToRemove);
 
-                if (neededItem.getCount() == 0)
+                if (neededItem.getCount() <= stackCopy.getCount())
                 {
                     itemsNeeded.remove(neededItem);
                 }

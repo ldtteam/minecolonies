@@ -32,6 +32,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
@@ -737,7 +738,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             compound.setInteger(TAG_CITIZEN, citizenData.getId());
         }
 
-        inventory.writeToNBT(compound);
+        compound.setTag("Inventory", this.inventory.writeToNBT(new NBTTagList()));
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
     }
 
@@ -754,7 +755,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             updateColonyServer();
         }
-        inventory.readFromNBT(compound);
+        NBTTagList nbttaglist = compound.getTagList("Inventory", 10);
+        this.inventory.readFromNBT(nbttaglist);
 
         inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
     }

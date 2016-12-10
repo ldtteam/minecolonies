@@ -50,7 +50,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
-        ItemStack scepter = playerIn.getActiveItemStack();
+        ItemStack scepter = playerIn.getHeldItem(hand);
         // if server world, do nothing
         if (worldIn.isRemote)
         {

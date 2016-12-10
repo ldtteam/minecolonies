@@ -208,7 +208,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
                 if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                 {
-                    final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
+                    final int emptySlot = worker.getInventoryCitizen().getFirstEmptyStack();
 
                     if (emptySlot != -1)
                     {
