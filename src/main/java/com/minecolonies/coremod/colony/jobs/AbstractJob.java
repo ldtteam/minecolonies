@@ -305,7 +305,7 @@ public abstract class AbstractJob
             }
         }
 
-        return stackCopy.getCount() == 0 ? null : stackCopy;
+        return stackCopy.getCount() == 0 ? ItemStack.EMPTY : stackCopy;
     }
 
     /**
