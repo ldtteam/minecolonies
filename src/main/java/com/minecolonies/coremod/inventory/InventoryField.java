@@ -68,6 +68,7 @@ public class InventoryField implements IInventory
     {
         super();
         this.customName = title;
+        stackResult[0] = ItemStack.EMPTY;
     }
 
     /**
@@ -106,6 +107,11 @@ public class InventoryField implements IInventory
             }
         }
 
+        if(stackResult[0] == null)
+        {
+            stackResult[0] = ItemStack.EMPTY;
+        }
+
         if (compound.hasKey(TAG_CUSTOM_NAME, Constants.NBT.TAG_STRING))
         {
             this.customName = compound.getString(TAG_CUSTOM_NAME);
@@ -121,7 +127,7 @@ public class InventoryField implements IInventory
     @Override
     public boolean isEmpty()
     {
-        return stackResult.length == 0;
+        return stackResult[0] == null || stackResult[0] == ItemStack.EMPTY;
     }
 
     /**
@@ -187,7 +193,7 @@ public class InventoryField implements IInventory
      * @param stack the itemStack to set.
      */
     @Override
-    public void setInventorySlotContents(final int index, @Nullable final ItemStack stack)
+    public void setInventorySlotContents(final int index, @NotNull final ItemStack stack)
     {
         this.stackResult[index] = stack;
 
