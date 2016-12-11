@@ -1106,7 +1106,7 @@ public class Colony implements IColony
     public void addNewField(final ScarecrowTileEntity tileEntity, final InventoryPlayer inventoryPlayer, final BlockPos pos, final World world)
     {
         @NotNull final Field field = new Field(tileEntity, inventoryPlayer, world, pos);
-        field.setCustomName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
+        //field.setCustomName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
         addField(field);
         field.calculateSize(world, pos);
         markFieldsDirty();

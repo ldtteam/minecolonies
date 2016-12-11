@@ -58,7 +58,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     public ScarecrowTileEntity()
     {
         super();
-        this.inventoryField = new InventoryField(name);
+        this.inventoryField = new InventoryField();
     }
 
     /**
@@ -124,7 +124,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         super.readFromNBT(compound);
 
         type = ScareCrowType.values()[compound.getInteger(TAG_TYPE)];
-        getInventoryField().readFromNBT(compound);
+        getInventoryField().deserializeNBT(compound);
         name = compound.getString(TAG_NAME);
     }
 
@@ -134,7 +134,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         super.writeToNBT(compound);
 
         compound.setInteger(TAG_TYPE, this.getType().ordinal());
-        getInventoryField().writeToNBT(compound);
+        compound.setTag("inventory", getInventoryField().serializeNBT());
         compound.setString(TAG_NAME, name);
         return compound;
     }

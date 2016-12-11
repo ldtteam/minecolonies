@@ -18,6 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -214,7 +215,7 @@ public class Field extends Container
         this.location = location;
         this.inventory = scarecrowTileEntity.getInventoryField();
 
-        addSlotToContainer(new Slot(inventory, 0, X_OFFSET, Y_OFFSET));
+        addSlotToContainer(new SlotItemHandler(inventory, 0, X_OFFSET, Y_OFFSET));
 
         //Ddd player inventory slots
         // Note: The slot numbers are within the player inventory and may be the same as the field inventory.
@@ -255,15 +256,15 @@ public class Field extends Container
         if (slotIndex == 0)
         {
             playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
-            inventory.setInventorySlotContents(0, ItemStack.EMPTY);
+            inventory.setStackInSlot(0, ItemStack.EMPTY);
         }
-        else if (inventory.getStackInSlot(0) == null)
+        else if (inventory.getStackInSlot(0) == ItemStack.EMPTY)
         {
             final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
             if (playerIn.inventory.getStackInSlot(playerIndex) != null)
             {
                 @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
-                inventory.setInventorySlotContents(0, stack);
+                inventory.setStackInSlot(0, stack);
                 if (playerIn.inventory.getStackInSlot(playerIndex).getCount() == 0)
                 {
                     playerIn.inventory.removeStackFromSlot(playerIndex);
@@ -321,8 +322,8 @@ public class Field extends Container
         widthPlusZ = compound.getInteger(TAG_WIDTH_PLUS);
         lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
         widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
-        inventory = new InventoryField("");
-        inventory.readFromNBT(compound);
+        inventory = new InventoryField();
+        inventory.deserializeNBT(compound);
         setOwner(compound.getString(TAG_OWNER));
         initialized = compound.getBoolean(TAG_INITIALIZED);
     }
@@ -410,7 +411,7 @@ public class Field extends Container
         compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
         compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
         compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
-        inventory.writeToNBT(compound);
+        compound.setTag("inventory", inventory.serializeNBT());
         compound.setString(TAG_OWNER, owner);
         compound.setBoolean(TAG_INITIALIZED, initialized);
     }
@@ -503,7 +504,7 @@ public class Field extends Container
     @Nullable
     public Item getSeed()
     {
-        if (inventory.getStackInSlot(0) != null && inventory.getStackInSlot(0).getItem() instanceof IPlantable)
+        if (inventory.getStackInSlot(0) != ItemStack.EMPTY && inventory.getStackInSlot(0).getItem() instanceof IPlantable)
         {
             return inventory.getStackInSlot(0).getItem();
         }
@@ -601,24 +602,14 @@ public class Field extends Container
     {
         if (owner.isEmpty())
         {
-            this.inventory.setCustomName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user",
-              LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
+            /*this.inventory.setCustomName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user",
+              LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));*/
         }
         else
         {
-            this.inventory.setCustomName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", owner));
+            //this.inventory.setCustomName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", owner));
         }
         this.owner = owner;
-    }
-
-    /**
-     * Setter for a custom description of the inventory.
-     *
-     * @param customName the name to set.
-     */
-    public void setCustomName(final String customName)
-    {
-        this.inventory.setCustomName(customName);
     }
 
     /**

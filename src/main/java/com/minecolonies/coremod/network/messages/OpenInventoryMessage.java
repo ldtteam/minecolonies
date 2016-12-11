@@ -1,14 +1,17 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.StringUtils;
@@ -166,7 +169,6 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
     private static void doHutInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
             @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.world, message.tePos);
@@ -185,9 +187,9 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             @NotNull final InventoryField inventoryField = ColonyManager.getColony(message.colonyId).getField(message.tePos).getInventoryField();
             if (!StringUtils.isNullOrEmpty(message.name))
             {
-                inventoryField.setCustomName(message.name);
+               // inventoryField.setCustomName(message.name);
             }
-            player.displayGUIChest(inventoryField);
+            player.openGui(MineColonies.instance, 1, player.getEntityWorld(),  player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
         }
     }
 
