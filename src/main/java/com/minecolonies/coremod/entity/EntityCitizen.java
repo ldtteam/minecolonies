@@ -814,7 +814,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
     /**
      * Sets the last job of the citizen.
-     * @param job the job he last had.
+     * @param jobName the job he last had.
      */
     public void setLastJob(@NotNull String jobName)
     {
