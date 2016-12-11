@@ -83,6 +83,8 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final String TAG_CITIZEN        = "citizen";
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
     private static final String TAG_STATUS         = "status";
+    private static final String TAG_LAST_JOB           = "lastJob";
+
 
     /**
      * The delta yaw value for looking at things.
@@ -160,6 +162,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Range required for the citizen to be home.
      */
     private static final double RANGE_TO_BE_HOME       = 16;
+    /**
+     * The last job of the citizen.
+     */
+    private String lastJob                             = null;
     private static Field navigatorField;
     private final InventoryCitizen inventory;
     @NotNull
@@ -740,6 +746,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         compound.setTag("Inventory", this.inventory.writeToNBT(new NBTTagList()));
         compound.setInteger(TAG_HELD_ITEM_SLOT, inventory.getHeldItemSlot());
+        compound.setString(TAG_LAST_JOB, lastJob);
     }
 
     @Override
@@ -759,6 +766,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         this.inventory.readFromNBT(nbttaglist);
 
         inventory.setHeldItem(compound.getInteger(TAG_HELD_ITEM_SLOT));
+        lastJob = compound.getString(TAG_LAST_JOB);
     }
 
     /**
@@ -798,6 +806,25 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         checkHeal();
         super.onLivingUpdate();
+    }
+
+    /**
+     * Sets the last job of the citizen.
+     * @param jobName the job he last had.
+     */
+    public void setLastJob(@NotNull String jobName)
+    {
+        this.lastJob = jobName;
+    }
+
+    /**
+     * Getter for the last job.
+     * @return the last job he had.
+     */
+    @NotNull
+    public String getLastJob()
+    {
+        return this.lastJob;
     }
 
     private void updateColonyClient()

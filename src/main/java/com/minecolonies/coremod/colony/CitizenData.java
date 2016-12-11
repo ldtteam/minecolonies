@@ -623,6 +623,15 @@ public class CitizenData
     }
 
     /**
+     * Resets the experience and the experience level of the citizen.
+     */
+    public void resetExperienceAndLevel()
+    {
+        this.level = 0;
+        this.experience = 0;
+    }
+
+    /**
      * Returns the experience of the citizen.
      *
      * @return experience of the citizen.
