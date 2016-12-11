@@ -209,7 +209,6 @@ public class EventHandler
         colony = ColonyManager.getClosestIColony(world, pos);
         if (colony == null)
         {
-            createColony(world, player, pos);
             return true;
         }
 
@@ -258,14 +257,6 @@ public class EventHandler
         return true;
     }
 
-    private static void createColony(@NotNull final World world, final EntityPlayer player, final BlockPos pos)
-    {
-        if (!world.isRemote)
-        {
-            ColonyManager.createColony(world, pos, player);
-        }
-    }
-
     private static boolean canPlayerPlaceTownHallHere(@NotNull final World world, @NotNull final EntityPlayer player, final BlockPos pos, @NotNull final IColony closestColony)
     {
         // Is the player trying to place a town hall in a colony
@@ -299,7 +290,6 @@ public class EventHandler
             return false;
         }
 
-        createColony(world, player, pos);
         return true;
     }
 
