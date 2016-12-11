@@ -148,7 +148,7 @@ public class Level
     /**
      * Closes the first Node in the list (Has been returned previously probably).
      * Then creates the new nodes connected to it.
-     * @param rotation
+     * @param rotation the rotation of the node.
      */
     public void closeNextNode(int rotation)
     {
