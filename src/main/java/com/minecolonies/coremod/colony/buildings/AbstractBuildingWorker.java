@@ -73,7 +73,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         // If we have a worker, it no longer works here
         if (worker != null)
         {
-            EntityCitizen tempCitizen = worker.getCitizenEntity();
+            final EntityCitizen tempCitizen = worker.getCitizenEntity();
             worker.setWorkBuilding(null);
             tempCitizen.setLastJob(getJobName());
         }
@@ -83,7 +83,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         // If we set a worker, inform it of such
         if (worker != null)
         {
-            EntityCitizen tempCitizen = citizen.getCitizenEntity();
+            final EntityCitizen tempCitizen = citizen.getCitizenEntity();
             if(!tempCitizen.getLastJob().equals(getJobName()))
             {
                 citizen.resetExperienceAndLevel();
