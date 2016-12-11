@@ -42,7 +42,7 @@ public class BlockHutTownHall extends AbstractBlockHut
             return;
         }
 
-        Colony colony = ColonyManager.getClosestColony(worldIn, pos);
+        final Colony colony = ColonyManager.getClosestColony(worldIn, pos);
         if (colony == null && placer instanceof EntityPlayer)
         {
             ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer);
