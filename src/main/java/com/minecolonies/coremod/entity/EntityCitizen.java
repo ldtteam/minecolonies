@@ -164,7 +164,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * The last job of the citizen.
      */
-    private String lastJob                             = null;
+    private String lastJob                             = "";
     private static Field navigatorField;
     private final InventoryCitizen inventory;
     @NotNull
