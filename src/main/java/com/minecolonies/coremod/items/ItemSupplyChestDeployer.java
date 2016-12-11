@@ -72,7 +72,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
                                        final float hitY,
                                        final float hitZ)
     {
-        ItemStack stack = playerIn.getActiveItemStack();
+        ItemStack stack = playerIn.getHeldItem(hand);
         if (worldIn.isRemote || stack.getCount() == 0 || !isFirstPlacing(playerIn))
         {
             return EnumActionResult.FAIL;
