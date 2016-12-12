@@ -680,6 +680,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     @NotNull
     private AIState startBuilding()
     {
+        if(currentStructure == null)
+        {
+            return AIState.IDLE;
+        }
         switch (currentStructure.getStage())
         {
             case CLEAR:
@@ -906,7 +910,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private BlockPos getNodeMiningPosition(BlockPos blockToMine)
     {
-        if(((BuildingMiner) getOwnBuilding()).getCurrentLevel() == null)
+        if(((BuildingMiner) getOwnBuilding()).getCurrentLevel() == null || ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode() != null)
         {
             return blockToMine;
         }

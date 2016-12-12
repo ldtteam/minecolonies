@@ -164,7 +164,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * The last job of the citizen.
      */
-    private String lastJob                             = null;
+    private String lastJob                             = "";
     private static Field navigatorField;
     private final InventoryCitizen inventory;
     @NotNull
@@ -1231,6 +1231,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
         else
         {
+            if(this.getNavigator() != null && (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0))
+            {
+                this.getNavigator().clearPathEntity();
+            }
             return DesiredActivity.WORK;
         }
     }
