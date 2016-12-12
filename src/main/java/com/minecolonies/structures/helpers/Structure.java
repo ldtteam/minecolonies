@@ -228,7 +228,10 @@ public class Structure
 
         for (final Entity anEntityList : entityList)
         {
-            Minecraft.getMinecraft().getRenderManager().renderEntityStatic(anEntityList, 0.0F, true);
+            if(anEntityList != null)
+            {
+                Minecraft.getMinecraft().getRenderManager().renderEntityStatic(anEntityList, 0.0F, true);
+            }
         }
     }
 
