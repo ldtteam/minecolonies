@@ -67,7 +67,7 @@ public class TownHallPlacementTest extends AbstractTest
         Assert.assertTrue(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic();
-        ColonyManager.createColony(world, PLACE_POS, player);
+        //ColonyManager.createColony(world, PLACE_POS, player);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class TownHallPlacementTest extends AbstractTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        ColonyManager.createColony(world, PLACE_POS, player);
+        colonyManager.createColony(world, PLACE_POS, player);
     }
 
     @Test
@@ -213,6 +213,6 @@ public class TownHallPlacementTest extends AbstractTest
         Assert.assertTrue(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic();
-        ColonyManager.createColony(world, PLACE_POS, player);
+        //ColonyManager.createColony(world, PLACE_POS, player);
     }
 }

@@ -1225,6 +1225,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
         else
         {
+            if(status == Status.IDLE)
+            {
+                this.getNavigator().clearPathEntity();
+            }
             return DesiredActivity.WORK;
         }
     }
