@@ -929,13 +929,14 @@ public class Colony implements IColony
      */
     public void spawnCitizen(final CitizenData data)
     {
-        if (!world.isBlockLoaded(center))
+        final BlockPos townHallLocation = townHall.getLocation();
+        if (!world.isBlockLoaded(townHallLocation))
         {
             //  Chunk with TownHall Block is not loaded
             return;
         }
 
-        @Nullable final BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, center, 1, 1, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
+        @Nullable final BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, townHallLocation, 1, 1, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
 
         if (spawnPoint != null)
         {
