@@ -7,7 +7,6 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.EntityUtils;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -122,10 +121,6 @@ public class WalkToProxy
             {
                 currentProxy = target;
             }
-            else
-            {
-                Log.getLogger().info("Switch from pathPoint " + currentProxy.toString() + " to " + proxyList.get(0));
-            }
 
             if (proxyList.isEmpty())
             {
@@ -172,8 +167,6 @@ public class WalkToProxy
             proxyList.remove(0);
         }
 
-        Log.getLogger().info("Path contains :" + (proxyList.size() + 1) + " pathpoints");
-        Log.getLogger().info("First target :" + proxyPoint);
         return proxyPoint;
     }
 
