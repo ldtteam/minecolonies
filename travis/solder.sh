@@ -14,7 +14,7 @@ any() {
 }
 
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ( any "beginswith $TRAVIS_BRANCH" develop master release testing ); then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ( any "beginswith $TRAVIS_BRANCH" develop master release version ); then
     mkdir $SOLDER_DIR
     mv ./build/libs/*univ*.jar $SOLDER_DIR
     cd $SOLDER_DIR
