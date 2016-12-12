@@ -329,7 +329,7 @@ public class Structure
                     this.mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                     ForgeHooksClient.setRenderLayer(layer);
                     this.renderGhostBlock(world, holder, player, layer, existingModel, partialTicks);
-                    holder.setRendered(true);;
+                    holder.setRendered(true);
                 }
             }
 
