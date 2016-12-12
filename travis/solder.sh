@@ -14,7 +14,7 @@ any() {
 }
 
 
-if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ( any "beginswith $TRAVIS_BRANCH" develop master release testing ); then
+if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ( any "beginswith $TRAVIS_BRANCH" develop master release version ); then
     mkdir $SOLDER_DIR
     mv ./build/libs/*univ*.jar $SOLDER_DIR
     cd $SOLDER_DIR
@@ -55,7 +55,7 @@ if [ "$TRAVIS_PULL_REQUEST" == "false" ] && ( any "beginswith $TRAVIS_BRANCH" de
     
     echo Token: $INSERT_TOKEN
     
-    MODPACK_VERSION=$(curl -sL -w "%{url_effective}\\n" -b cookies.txt -c cookies.txt --data "_token=$INSERT_TOKEN&version=$JAR_VERSION&minecraft=1.10.2&clone=$MODPACK_OLD_VERSION&java-version=1.8" -H 'X-Requested-With: XMLHttpRequest' $SOLDER_URL/modpack/add-build/1  -o /dev/null | cut -d'/' -f6)
+    MODPACK_VERSION=$(curl -sL -w "%{url_effective}\\n" -b cookies.txt -c cookies.txt --data "_token=$INSERT_TOKEN&version=$JAR_VERSION&minecraft=1.11&clone=$MODPACK_OLD_VERSION&java-version=1.8" -H 'X-Requested-With: XMLHttpRequest' $SOLDER_URL/modpack/add-build/1  -o /dev/null | cut -d'/' -f6)
         
     echo Created Modpack Version: $MODPACK_VERSION
     
