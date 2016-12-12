@@ -3,6 +3,7 @@ package com.minecolonies.coremod.tileentities;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.inventory.InventoryField;
+import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.EntityUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.entity.Entity;
@@ -26,6 +27,11 @@ public class ScarecrowTileEntity extends TileEntityChest
      * NBTTag to store the type.
      */
     private static final String TAG_TYPE = "type";
+
+    /**
+     * Tag to store the inventory to nbt.
+     */
+    private static final String TAG_INVENTORY = "inventory";
 
     /**
      * NBTag to store the name.
@@ -124,7 +130,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         super.readFromNBT(compound);
 
         type = ScareCrowType.values()[compound.getInteger(TAG_TYPE)];
-        getInventoryField().deserializeNBT(compound);
+        getInventoryField().deserializeNBT((NBTTagCompound) compound.getTag(Constants.MOD_ID + TAG_INVENTORY));
         name = compound.getString(TAG_NAME);
     }
 
@@ -134,7 +140,7 @@ public class ScarecrowTileEntity extends TileEntityChest
         super.writeToNBT(compound);
 
         compound.setInteger(TAG_TYPE, this.getType().ordinal());
-        compound.setTag("inventory", getInventoryField().serializeNBT());
+        compound.setTag(Constants.MOD_ID + TAG_INVENTORY, getInventoryField().serializeNBT());
         compound.setString(TAG_NAME, name);
         return compound;
     }

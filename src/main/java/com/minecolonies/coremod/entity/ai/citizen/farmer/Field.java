@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.inventory.InventoryField;
+import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
@@ -88,6 +89,11 @@ public class Field extends Container
     private static final String TAG_OWNER = "owner";
 
     /**
+     * Tag to store the inventory to nbt.
+     */
+    private static final String TAG_INVENTORY = "inventory";
+
+    /**
      * Tag to store if initialized or not.
      */
     private static final String TAG_INITIALIZED = "initialized";
@@ -125,7 +131,7 @@ public class Field extends Container
     /**
      * The max width/length of a field.
      */
-    private static final int MAX_RANGE = 5;
+    private static final int MAX_RANGE     = 5;
 
     /**
      * The colony of the field.
@@ -323,7 +329,7 @@ public class Field extends Container
         lengthMinusX = compound.getInteger(TAG_LENGTH_MINUS);
         widthMinusZ = compound.getInteger(TAG_WIDTH_MINUS);
         inventory = new InventoryField();
-        inventory.deserializeNBT(compound);
+        inventory.deserializeNBT((NBTTagCompound) compound.getTag(Constants.MOD_ID + TAG_INVENTORY));
         setOwner(compound.getString(TAG_OWNER));
         initialized = compound.getBoolean(TAG_INITIALIZED);
     }
@@ -411,7 +417,7 @@ public class Field extends Container
         compound.setInteger(TAG_WIDTH_PLUS, widthPlusZ);
         compound.setInteger(TAG_LENGTH_MINUS, lengthMinusX);
         compound.setInteger(TAG_WIDTH_MINUS, widthMinusZ);
-        compound.setTag("inventory", inventory.serializeNBT());
+        compound.setTag(Constants.MOD_ID + TAG_INVENTORY, inventory.serializeNBT());
         compound.setString(TAG_OWNER, owner);
         compound.setBoolean(TAG_INITIALIZED, initialized);
     }
