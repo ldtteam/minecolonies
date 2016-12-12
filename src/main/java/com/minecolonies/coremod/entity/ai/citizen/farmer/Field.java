@@ -264,10 +264,10 @@ public class Field extends Container
             playerIn.inventory.addItemStackToInventory(inventory.getStackInSlot(0));
             inventory.setStackInSlot(0, ItemStack.EMPTY);
         }
-        else if (inventory.getStackInSlot(0) == ItemStack.EMPTY)
+        else if (inventory.getStackInSlot(0) == ItemStack.EMPTY || inventory.getStackInSlot(0).getCount() == 0)
         {
             final int playerIndex = slotIndex < MAX_INVENTORY_INDEX ? (slotIndex + INVENTORY_BAR_SIZE) : (slotIndex - MAX_INVENTORY_INDEX);
-            if (playerIn.inventory.getStackInSlot(playerIndex) != null)
+            if (playerIn.inventory.getStackInSlot(playerIndex) != ItemStack.EMPTY)
             {
                 @NotNull final ItemStack stack = playerIn.inventory.getStackInSlot(playerIndex).splitStack(1);
                 inventory.setStackInSlot(0, stack);
@@ -278,7 +278,7 @@ public class Field extends Container
             }
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -606,15 +606,6 @@ public class Field extends Container
      */
     public void setOwner(@NotNull final String owner)
     {
-        if (owner.isEmpty())
-        {
-            /*this.inventory.setCustomName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user",
-              LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));*/
-        }
-        else
-        {
-            //this.inventory.setCustomName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user", owner));
-        }
         this.owner = owner;
     }
 
