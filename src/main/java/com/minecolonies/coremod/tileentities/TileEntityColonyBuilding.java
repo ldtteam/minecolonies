@@ -119,7 +119,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     private void updateColonyReferences()
     {
-        if (colony == null && world != null)
+        if (colony == null && worldObj != null)
         {
             if (colonyId == 0)
             {
@@ -133,7 +133,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             if (colony == null)
             {
                 //we tried to update the colony it is still missing... so we...
-                if (worldObj == null || worldObj.isRemote)
+                if (worldObj.isRemote)
                 {
                     /*
                      * It's most probably previewed building, please don't spam it here.
