@@ -119,7 +119,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     private void updateColonyReferences()
     {
-        if (colony == null)
+        if (colony == null && world != null)
         {
             if (colonyId == 0)
             {
@@ -133,7 +133,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
             if (colony == null)
             {
                 //we tried to update the colony it is still missing... so we...
-                if (world == null || world.isRemote)
+                if (world.isRemote)
                 {
                     /*
                      * It's most probably previewed building, please don't spam it here.
@@ -157,7 +157,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 building.setTileEntity(this);
             }
         }
-    }    @Override
+    }
+
+    @Override
     public void update()
     {
         super.update();

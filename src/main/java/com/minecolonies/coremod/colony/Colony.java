@@ -1195,7 +1195,7 @@ public class Colony implements IColony
               building.getSchematicName()));
         }
 
-        if (building == townHall)
+        if (building instanceof BuildingTownHall)
         {
             townHall = null;
         }
