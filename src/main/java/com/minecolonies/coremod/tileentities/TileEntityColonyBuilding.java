@@ -119,7 +119,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      */
     private void updateColonyReferences()
     {
-        if (colony == null)
+        if (colony == null && world != null)
         {
             if (colonyId == 0)
             {
@@ -157,7 +157,9 @@ public class TileEntityColonyBuilding extends TileEntityChest
                 building.setTileEntity(this);
             }
         }
-    }    @Override
+    }
+
+    @Override
     public void update()
     {
         super.update();
