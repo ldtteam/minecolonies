@@ -143,7 +143,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if(job instanceof AbstractJobStructure)
         {
-            if (((AbstractJobStructure) job).getStructure() == null && job instanceof JobBuilder)
+            if (((AbstractJobStructure) job).getStructure() == null && job instanceof JobBuilder && ((JobBuilder) job).hasWorkOrder())
             {
                 //fix for bad structures
                 ((JobBuilder) job).complete();
@@ -911,7 +911,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private BlockPos getNodeMiningPosition(BlockPos blockToMine)
     {
-        if(((BuildingMiner) getOwnBuilding()).getCurrentLevel() == null || ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode() != null)
+        if(((BuildingMiner) getOwnBuilding()).getCurrentLevel() == null || ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode() == null)
         {
             return blockToMine;
         }
