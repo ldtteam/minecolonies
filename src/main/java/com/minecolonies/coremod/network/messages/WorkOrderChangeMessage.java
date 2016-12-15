@@ -1,9 +1,12 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -93,20 +96,41 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
         {
-            //Verify player has permission to change this huts settings
-            if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+            final boolean hasPermission = colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS);
+            if (!hasPermission)
             {
                 return;
             }
 
             if (message.removeWorkOrder)
             {
-                colony.getWorkManager().removeWorkOrder(message.workOrderId);
+                removeWorkOrder(colony, message);
             }
             else
             {
                 colony.getWorkManager().getWorkOrder(message.workOrderId).setPriority(message.priority);
             }
+        }
+    }
+
+    private void removeWorkOrder(final Colony colony, final WorkOrderChangeMessage message)
+    {
+        WorkOrderBuild orderBuild = colony.getWorkManager().getWorkOrder(message.workOrderId, WorkOrderBuild.class);
+        if (orderBuild == null)
+        {
+            colony.getWorkManager().removeWorkOrder(message.workOrderId);
+            return;
+        }
+        CitizenData citizen = colony.getCitizen(orderBuild.getClaimedBy());
+        if (citizen == null)
+        {
+            colony.getWorkManager().removeWorkOrder(message.workOrderId);
+            return;
+        }
+        final JobBuilder job = citizen.getJob(JobBuilder.class);
+        if (job != null)
+        {
+            job.cancelCurrentJob();
         }
     }
 }

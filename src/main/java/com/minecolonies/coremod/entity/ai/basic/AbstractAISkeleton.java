@@ -115,7 +115,7 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      * Resets the task.
      */
     @Override
-    public final void resetTask()
+    public void resetTask()
     {
         worker.setStatus(IDLE);
     }

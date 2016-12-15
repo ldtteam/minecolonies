@@ -37,6 +37,7 @@ entity.fisherman.messageWaterTooFar=Fisherman's hut is too far from water!
 achievement.upgrade.miner.first=A miner
 achievement.supply.desc=Get supplies
 entity.builder.messageBuildStart=Started building %s
+entity.builder.messageBuildCancel=Canceled building %s
 com.minecolonies.coremod.gui.warehouse.toStonemason=Deliver to Stonemason:
 com.minecolonies.coremod.workOrderAdded=Build Request Created!
 com.minecolonies.coremod.gui.townHall.population.builders=Builders: %d
