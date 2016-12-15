@@ -315,4 +315,14 @@ public class Level
     {
         nodes.put(new Point2D.Double(newNode.getX(), newNode.getZ()), newNode);
     }
+
+    /**
+     * Returns a node by its key from the map.
+     * @param key the Point2D key.
+     * @return the Node.
+     */
+    public Node getNode(final Point2D key)
+    {
+        return nodes.get(key);
+    }
 }
