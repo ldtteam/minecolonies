@@ -234,7 +234,7 @@ public class WalkToProxy
                 {
                     List<BlockPos> nodesToTarget = new ArrayList<>();
                     com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
-                    while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent())
+                    while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
                     {
                         nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
                         currentNode = level.getNode(currentNode.getParent());

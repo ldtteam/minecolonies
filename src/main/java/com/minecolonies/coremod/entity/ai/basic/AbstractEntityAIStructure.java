@@ -221,9 +221,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 ((JobMiner) job).setStructure(null);
             }
             worker.addExperience(XP_EACH_BUILDING);
-            workFrom = null;
         }
 
+        workFrom = null;
         currentStructure = null;
 
         return AIState.IDLE;
@@ -629,7 +629,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if(job instanceof JobMiner)
         {
-            getNodeMiningPosition(currentStructure.getCurrentBlockPosition());
+            return getNodeMiningPosition(currentStructure.getCurrentBlockPosition());
         }
         return getWorkingPosition(0);
     }
