@@ -525,7 +525,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tool tool required for block
      * @return true if we have a tool
      */
-    private boolean checkForTool(@NotNull String tool)
+   private boolean checkForTool(@NotNull String tool)
     {
         final boolean needsTool = !InventoryFunctions
                                      .matchFirstInInventory(
@@ -534,7 +534,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                                        InventoryFunctions::doNothing
                                      );
 
-        final boolean isUsable = hasToolLevel(tool);
+        final boolean isUsable = Utils.hasToolLevel(tool, worker);
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
 
         if (!needsTool && isUsable)
@@ -550,7 +550,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
-        requestWithoutSpam(tool + " of a maximum level of " + hutLevel);
+        String message = LanguageHandler.format("entity.worker.toolRequest",tool,hutLevel);
+        chatSpamFilter.talkWithoutSpam(message);
         return true;
     }
 
@@ -644,7 +645,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param minlevel the minimum pickaxe level needed.
      * @return true if we have a pickaxe
      */
-    private boolean checkForPickaxe(final int minlevel)
+     private boolean checkForPickaxe(final int minlevel)
     {
         //Check for a pickaxe
         needsPickaxe = !InventoryFunctions
@@ -658,7 +659,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         delay += DELAY_RECHECK;
 
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
-        final boolean isUsable = hasToolLevel(Utils.PICKAXE);
+        final boolean isUsable = Utils.hasToolLevel(Utils.PICKAXE, worker);
 
         if (!isUsable)
         {
@@ -675,7 +676,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return true;
             }
-            requestWithoutSpam("Pickaxe of at least level " + minlevel + " and at maximum " + hutLevel);
+            String message = LanguageHandler.format("entity.worker.pickaxeRequest",minlevel,hutLevel);
+            chatSpamFilter.talkWithoutSpam(message);
         }
 
         return needsPickaxe;
@@ -1119,92 +1121,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if (level >= required && level < bestLevel)
             {
-                boolean isUsable = true;
-
-                if (item != null)
-                {
-                    isUsable = verifyToolLevel(item, level);
-                }
-                if (isUsable)
+                if (tool == null || Utils.verifyToolLevel(item, level, worker))
                 {
                     bestSlot = i;
                     bestLevel = level;
                 }
             }
         }
+
         return bestSlot;
     }
-    
-     /**
-     * Verifies if there is one tool with an acceptable level
-     * in a worker's inventory
-     *
-     * @param tool the type of tool needed
-     * @return true if tool is acceptable
-     */
-    private boolean hasToolLevel(final String tool)
-    {
-        @NotNull InventoryCitizen inventory = worker.getInventoryCitizen();
-
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            final ItemStack item = inventory.getStackInSlot(i);
-            final int level = Utils.getMiningLevel(item, tool);
-
-            if (item != null)
-            {
-                final boolean isTool = Utils.isTool(item, tool);
-                final boolean isUsable = verifyToolLevel(item, level);
-                if (isTool && isUsable)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    
-     /**
-     * Verifies if an item has an appropriated grade
-     *
-     * @param item  the type of tool needed
-     * @param level the type of tool needed
-     * @return true if tool is acceptable
-     */
-    private boolean verifyToolLevel(final ItemStack item, int level)
-    {
-        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
-        final boolean itemEnchanted = item.hasEffect();
-
-        switch (hutLevel)
-        {
-            case 0:
-            case 1:
-            case 2:
-            {
-                if (hutLevel >= level && !itemEnchanted)
-                {
-                    return true;
-                }
-            }
-            break;
-            case 3:
-            case 4:
-            {
-                if (hutLevel > level)
-                {
-                    return true;
-                }
-            }
-            break;
-            default:
-            {
-                return true;
-            }
-        }
-        return false;
-    }    
 
     /**
      * Will delay one time and pass through the second time.
