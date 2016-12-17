@@ -26,8 +26,6 @@ public final class Utils
     public static final String SHOVEL  = "shovel";
     public static final String AXE     = "axe";
     public static final String HOE     = "hoe";
-    public static final int FREE_TOOL_CHOICE_LEVEL = 4;
-    public static final int EFFECT_TOOL_CHOICE_LEVEL=2;
 
     /**
      * The compound id for fortune enchantment.
@@ -436,56 +434,5 @@ public final class Utils
             }
         }
         return fortune;
-    }
-    
-    /**
-     * Verifies if there is one tool with an acceptable level
-     * in a worker's inventory.
-     *
-     * @param tool   the type of tool needed
-     * @param inventory the worker's inventory
-     * @param hutLevel the worker's hut level
-     * @return true if tool is acceptable
-     */
-    public static boolean hasToolLevel(final String tool, @NotNull final InventoryCitizen inventory, final int hutLevel)
-    {
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            final ItemStack item = inventory.getStackInSlot(i);
-            final int level = Utils.getMiningLevel(item, tool);
-
-            if (Utils.isTool(item, tool) && verifyToolLevel(item, level, hutLevel))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Verifies if an item has an appropriated grade.
-     *
-     * @param item   the type of tool needed
-     * @param level  the type of tool needed
-     * @param hutLevel the worker's hut level
-     * @return true if tool is acceptable
-     */
-    public static boolean verifyToolLevel(final ItemStack item, int level, final int hutLevel)
-    {
-        if (item == null || hutLevel > FREE_TOOL_CHOICE_LEVEL)
-        {
-            return true;
-        }
-        else if (item.hasEffect() && hutLevel <= EFFECT_TOOL_CHOICE_LEVEL )
-        {
-            return false;
-        }
-        else if (hutLevel >= level)
-        {
-            return true;
-        }
-
-        return false;
-    }
-    
+    }    
 }
