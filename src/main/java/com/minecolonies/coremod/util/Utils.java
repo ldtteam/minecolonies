@@ -476,7 +476,7 @@ public final class Utils
     {
         if (item == null)
         {
-            return false;
+            return true;
         }
 
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
