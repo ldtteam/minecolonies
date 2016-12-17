@@ -1,8 +1,8 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.compatibility.Compatibility;
-import com.minecolonies.entity.coremod.EntityCitizen;
-import com.minecolonies.inventory.coremod.InventoryCitizen;
+import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.init.Blocks;
