@@ -1,13 +1,17 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.compatibility.Compatibility;
+import com.minecolonies.entity.EntityCitizen;
+import com.minecolonies.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
