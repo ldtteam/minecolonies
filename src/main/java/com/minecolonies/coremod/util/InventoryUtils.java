@@ -654,7 +654,7 @@ public class InventoryUtils
     }
 
     /**
-     * Verifies if an item has an appropriated grade
+     * Verifies if an item has an appropriated grade.
      *
      * @param item   the type of tool needed
      * @param level  the type of tool needed
