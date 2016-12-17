@@ -440,7 +440,7 @@ public final class Utils
     
     /**
      * Verifies if there is one tool with an acceptable level
-     * in a worker's inventory
+     * in a worker's inventory.
      *
      * @param tool   the type of tool needed
      * @param inventory the worker's inventory
@@ -463,7 +463,7 @@ public final class Utils
     }
 
     /**
-     * Verifies if an item has an appropriated grade
+     * Verifies if an item has an appropriated grade.
      *
      * @param item   the type of tool needed
      * @param level  the type of tool needed
