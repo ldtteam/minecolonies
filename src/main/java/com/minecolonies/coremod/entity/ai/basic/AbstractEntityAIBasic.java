@@ -550,8 +550,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
-        String message = LanguageHandler.format("entity.worker.toolRequest",tool,hutLevel);
-        chatSpamFilter.talkWithoutSpam(message);
+        chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.toolRequest",tool,hutLevel));
         return true;
     }
 
@@ -676,8 +675,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return true;
             }
-            String message = LanguageHandler.format("entity.worker.pickaxeRequest",minlevel,hutLevel);
-            chatSpamFilter.talkWithoutSpam(message);
+            chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.pickaxeRequest",minlevel,hutLevel));
         }
 
         return needsPickaxe;
