@@ -242,3 +242,6 @@ com.minecolonies.coremod.workerHuts.recallFail=Recall failed - Please make more 
 
 tile.minecolonies.blockSubstitution.name=Placeholderblock
 tile.minecolonies.blockSolidSubstitution.name=Solid-Placeholderblock
+
+entity.worker.toolRequest=I need a %d of a maximum level of %d.
+entity.worker.pickaxeRequest=I need a pickaxe of at least level %d and at maximum %d.
