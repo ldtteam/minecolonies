@@ -519,7 +519,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return needsShovel;
     }
 
-    private boolean checkForTool(@NotNull final String tool)
+     /**
+     * Ensures that we have a tool available.
+     *
+     * @param tool tool required for block
+     * @return true if we have a tool
+     */
+    private boolean checkForTool(@NotNull String tool)
     {
         final boolean needsTool = !InventoryFunctions
                                      .matchFirstInInventory(
@@ -527,7 +533,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                                        stack -> Utils.isTool(stack, tool),
                                        InventoryFunctions::doNothing
                                      );
-        if (!needsTool)
+
+        final boolean isUsable = hasToolLevel(tool);
+        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+
+        if (!needsTool && isUsable)
         {
             return false;
         }
@@ -540,7 +550,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
-        requestWithoutSpam(tool);
+        requestWithoutSpam(tool + " of a maximum level of " + hutLevel);
         return true;
     }
 
@@ -627,7 +637,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return IDLE;
     }
 
-    /**
+   /**
      * Ensures that we have a pickaxe available.
      * Will set {@code needsPickaxe} accordingly.
      *
@@ -647,6 +657,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         delay += DELAY_RECHECK;
 
+        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+        final boolean isUsable = hasToolLevel(Utils.PICKAXE);
+
+        if (!isUsable)
+        {
+            needsPickaxe = true;
+        }
         if (needsPickaxe)
         {
             needsPickaxeLevel = minlevel;
@@ -658,11 +675,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return true;
             }
-            requestWithoutSpam("Pickaxe at least level " + minlevel);
+            requestWithoutSpam("Pickaxe of at least level " + minlevel + " and at maximum " + hutLevel);
         }
+
         return needsPickaxe;
     }
-
+    
     /**
      * Looks for a pickaxe to mine a block of {@code minLevel}.
      * The pickaxe will be taken from the chest.
@@ -1092,19 +1110,101 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         final int required = target.getHarvestLevel(target.getDefaultState());
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
-        @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
+        @NotNull InventoryCitizen inventory = worker.getInventoryCitizen();
+
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = Utils.getMiningLevel(item, tool);
+
             if (level >= required && level < bestLevel)
             {
-                bestSlot = i;
-                bestLevel = level;
+                boolean isUsable = true;
+
+                if (item != null)
+                {
+                    isUsable = verifyToolLevel(item, level);
+                }
+                if (isUsable)
+                {
+                    bestSlot = i;
+                    bestLevel = level;
+                }
             }
         }
         return bestSlot;
     }
+    
+     /**
+     * Verifies if there is one tool with an acceptable level
+     * in a worker's inventory
+     *
+     * @param tool the type of tool needed
+     * @return true if tool is acceptable
+     */
+    private boolean hasToolLevel(final String tool)
+    {
+        @NotNull InventoryCitizen inventory = worker.getInventoryCitizen();
+
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            final ItemStack item = inventory.getStackInSlot(i);
+            final int level = Utils.getMiningLevel(item, tool);
+
+            if (item != null)
+            {
+                final boolean isTool = Utils.isTool(item, tool);
+                final boolean isUsable = verifyToolLevel(item, level);
+                if (isTool && isUsable)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    
+     /**
+     * Verifies if an item has an appropriated grade
+     *
+     * @param item  the type of tool needed
+     * @param level the type of tool needed
+     * @return true if tool is acceptable
+     */
+    private boolean verifyToolLevel(final ItemStack item, int level)
+    {
+        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+        final boolean itemEnchanted = item.hasEffect();
+
+        switch (hutLevel)
+        {
+            case 0:
+            case 1:
+            case 2:
+            {
+                if (hutLevel >= level && !itemEnchanted)
+                {
+                    return true;
+                }
+            }
+            break;
+            case 3:
+            case 4:
+            {
+                if (hutLevel > level)
+                {
+                    return true;
+                }
+            }
+            break;
+            default:
+            {
+                return true;
+            }
+        }
+        return false;
+    }    
 
     /**
      * Will delay one time and pass through the second time.
