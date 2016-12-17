@@ -525,7 +525,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param tool tool required for block
      * @return true if we have a tool
      */
-   private boolean checkForTool(@NotNull String tool)
+    private boolean checkForTool(@NotNull String tool)
     {
         final boolean needsTool = !InventoryFunctions
                                      .matchFirstInInventory(
@@ -534,8 +534,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                                        InventoryFunctions::doNothing
                                      );
 
-        final boolean isUsable = Utils.hasToolLevel(tool, worker);
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+        final InventoryCitizen inventory = worker.getInventoryCitizen();
+        final boolean isUsable = Utils.hasToolLevel(tool, inventory, hutLevel);
+
 
         if (!needsTool && isUsable)
         {
@@ -644,7 +646,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param minlevel the minimum pickaxe level needed.
      * @return true if we have a pickaxe
      */
-     private boolean checkForPickaxe(final int minlevel)
+    private boolean checkForPickaxe(final int minlevel)
     {
         //Check for a pickaxe
         needsPickaxe = !InventoryFunctions
@@ -657,8 +659,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         delay += DELAY_RECHECK;
 
+        final InventoryCitizen inventory = worker.getInventoryCitizen();
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
-        final boolean isUsable = Utils.hasToolLevel(Utils.PICKAXE, worker);
+        final boolean isUsable = Utils.hasToolLevel(Utils.PICKAXE, inventory, hutLevel);
 
         if (!isUsable)
         {
@@ -1104,13 +1107,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param target the Block type to mine
      * @return the slot with the best tool
      */
-    private int getMostEfficientTool(@NotNull final Block target)
+   private int getMostEfficientTool(@NotNull final Block target)
     {
         final String tool = target.getHarvestTool(target.getDefaultState());
         final int required = target.getHarvestLevel(target.getDefaultState());
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
-        @NotNull InventoryCitizen inventory = worker.getInventoryCitizen();
+        @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
+        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
 
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
@@ -1119,7 +1123,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if (level >= required && level < bestLevel)
             {
-                if (tool == null || Utils.verifyToolLevel(item, level, worker))
+                if (tool == null || Utils.verifyToolLevel(item, level, hutLevel))
                 {
                     bestSlot = i;
                     bestLevel = level;
