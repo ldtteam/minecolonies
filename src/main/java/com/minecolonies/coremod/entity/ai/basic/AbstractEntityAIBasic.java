@@ -536,7 +536,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
         final InventoryCitizen inventory = worker.getInventoryCitizen();
-        final boolean isUsable = Utils.hasToolLevel(tool, inventory, hutLevel);
+        final boolean isUsable = InventoryUtils.hasToolLevel(tool, inventory, hutLevel);
 
 
         if (!needsTool && isUsable)
@@ -661,7 +661,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         final InventoryCitizen inventory = worker.getInventoryCitizen();
         final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
-        final boolean isUsable = Utils.hasToolLevel(Utils.PICKAXE, inventory, hutLevel);
+        final boolean isUsable = InventoryUtils.hasToolLevel(Utils.PICKAXE, inventory, hutLevel);
 
         if (!isUsable)
         {
@@ -1123,7 +1123,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if (level >= required && level < bestLevel)
             {
-                if (tool == null || Utils.verifyToolLevel(item, level, hutLevel))
+                if (tool == null || InventoryUtils.verifyToolLevel(item, level, hutLevel))
                 {
                     bestSlot = i;
                     bestLevel = level;
