@@ -678,4 +678,23 @@ public class InventoryUtils
 
         return false;
     }
+    
+    /**
+     * Assigns a string containing the grade of the toolGrade.
+     *
+     * @param toolGrade the number of the grade of a tool
+     * @return a string corresponding to the tool
+     */
+    public static String swapToolGrade(final int toolGrade)
+    {
+        switch(toolGrade)
+        {
+            case 0: return "Wood or Gold";
+            case 1: return "Stone";
+            case 2: return "Iron";
+            case 3: return "Diamond";
+            default: return "";
+        }
+    }
+    
 }
