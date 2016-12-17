@@ -26,6 +26,8 @@ public final class Utils
     public static final String SHOVEL  = "shovel";
     public static final String AXE     = "axe";
     public static final String HOE     = "hoe";
+    public static final int FREE_TOOL_CHOICE_LEVEL = 4;
+    public static final int EFFECT_TOOL_CHOICE_LEVEL=2;
 
     /**
      * The compound id for fortune enchantment.
@@ -470,11 +472,11 @@ public final class Utils
      */
     public static boolean verifyToolLevel(final ItemStack item, int level, final int hutLevel)
     {
-        if (item == null || hutLevel > 4)
+        if (item == null || hutLevel > FREE_TOOL_CHOICE_LEVEL)
         {
             return true;
         }
-        else if (item.hasEffect() && hutLevel <= 2 )
+        else if (item.hasEffect() && hutLevel <= EFFECT_TOOL_CHOICE_LEVEL )
         {
             return false;
         }
