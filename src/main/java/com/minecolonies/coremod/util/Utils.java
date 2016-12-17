@@ -434,4 +434,63 @@ public final class Utils
         }
         return fortune;
     }
+    
+     /**
+     * Verifies if there is one tool with an acceptable level
+     * in a worker's inventory
+     *
+     * @param tool   the type of tool needed
+     * @param worker the worker that needs a tool
+     * @return true if tool is acceptable
+     */
+    public static boolean hasToolLevel(final String tool, EntityCitizen worker)
+    {
+        @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
+
+        for (int i = 0; i < inventory.getSizeInventory(); i++)
+        {
+            final ItemStack item = inventory.getStackInSlot(i);
+            final int level = Utils.getMiningLevel(item, tool);
+
+            if (Utils.isTool(item, tool) && verifyToolLevel(item, level, worker))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Verifies if an item has an appropriated grade
+     *
+     * @param item   the type of tool needed
+     * @param level  the type of tool needed
+     * @param worker the current worker that needs the item
+     * @return true if tool is acceptable
+     */
+    public static boolean verifyToolLevel(final ItemStack item, int level, EntityCitizen worker)
+    {
+        if (item == null)
+        {
+            return false;
+        }
+
+        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+
+        if (hutLevel <= 2 && hutLevel >= level && !item.hasEffect())
+        {
+            return true;
+        }
+        else if (hutLevel > 2 && hutLevel <= 4 && hutLevel > level)
+        {
+            return true;
+        }
+        else if (hutLevel > 4)
+        {
+            return true;
+        }
+
+        return false;
+    }
+    
 }
