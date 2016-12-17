@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.compatibility.Compatibility;
-import com.minecolonies.entity.EntityCitizen;
 import com.minecolonies.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -439,24 +438,23 @@ public final class Utils
         return fortune;
     }
     
-     /**
+    /**
      * Verifies if there is one tool with an acceptable level
      * in a worker's inventory
      *
      * @param tool   the type of tool needed
-     * @param worker the worker that needs a tool
+     * @param inventory the worker's inventory
+     * @param hutLevel the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(final String tool, EntityCitizen worker)
+    public static boolean hasToolLevel(final String tool, @NotNull final InventoryCitizen inventory, final int hutLevel)
     {
-        @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
-
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = Utils.getMiningLevel(item, tool);
 
-            if (Utils.isTool(item, tool) && verifyToolLevel(item, level, worker))
+            if (Utils.isTool(item, tool) && verifyToolLevel(item, level, hutLevel))
             {
                 return true;
             }
@@ -469,27 +467,20 @@ public final class Utils
      *
      * @param item   the type of tool needed
      * @param level  the type of tool needed
-     * @param worker the current worker that needs the item
+     * @param hutLevel the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean verifyToolLevel(final ItemStack item, int level, EntityCitizen worker)
+    public static boolean verifyToolLevel(final ItemStack item, int level, final int hutLevel)
     {
-        if (item == null)
+        if (item == null || hutLevel > 4)
         {
             return true;
         }
-
-        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
-
-        if (hutLevel <= 2 && hutLevel >= level && !item.hasEffect())
+        else if (item.hasEffect() && hutLevel <= 2 )
         {
-            return true;
+            return false;
         }
-        else if (hutLevel > 2 && hutLevel <= 4 && hutLevel > level)
-        {
-            return true;
-        }
-        else if (hutLevel > 4)
+        else if (hutLevel >= level)
         {
             return true;
         }
