@@ -433,5 +433,5 @@ public final class Utils
             }
         }
         return fortune;
-    }    
+    }
 }

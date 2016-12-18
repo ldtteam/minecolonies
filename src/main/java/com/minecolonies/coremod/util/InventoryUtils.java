@@ -16,10 +16,10 @@ import java.util.List;
  */
 public class InventoryUtils
 {
-    
-    public static final int FREE_TOOL_CHOICE_LEVEL = 4;
+
+    public static final int FREE_TOOL_CHOICE_LEVEL   = 4;
     public static final int EFFECT_TOOL_CHOICE_LEVEL = 2;
-    
+
     /**
      * Private constructor to hide the implicit one.
      */
@@ -627,15 +627,14 @@ public class InventoryUtils
 
         return -1;
     }
-    
-    
+
     /**
      * Verifies if there is one tool with an acceptable level
      * in a worker's inventory.
      *
-     * @param tool   the type of tool needed
+     * @param tool      the type of tool needed
      * @param inventory the worker's inventory
-     * @param hutLevel the worker's hut level
+     * @param hutLevel  the worker's hut level
      * @return true if tool is acceptable
      */
     public static boolean hasToolLevel(final String tool, @NotNull final InventoryCitizen inventory, final int hutLevel)
@@ -656,8 +655,8 @@ public class InventoryUtils
     /**
      * Verifies if an item has an appropriated grade.
      *
-     * @param item   the type of tool needed
-     * @param level  the type of tool needed
+     * @param item     the type of tool needed
+     * @param level    the type of tool needed
      * @param hutLevel the worker's hut level
      * @return true if tool is acceptable
      */
@@ -667,7 +666,7 @@ public class InventoryUtils
         {
             return true;
         }
-        else if (item.hasEffect() && hutLevel <= EFFECT_TOOL_CHOICE_LEVEL )
+        else if (item.hasEffect() && hutLevel <= EFFECT_TOOL_CHOICE_LEVEL)
         {
             return false;
         }
@@ -678,7 +677,7 @@ public class InventoryUtils
 
         return false;
     }
-    
+
     /**
      * Assigns a string containing the grade of the toolGrade.
      *
@@ -687,14 +686,18 @@ public class InventoryUtils
      */
     public static String swapToolGrade(final int toolGrade)
     {
-        switch(toolGrade)
+        switch (toolGrade)
         {
-            case 0: return "Wood or Gold";
-            case 1: return "Stone";
-            case 2: return "Iron";
-            case 3: return "Diamond";
-            default: return "";
+            case 0:
+                return "Wood or Gold";
+            case 1:
+                return "Stone";
+            case 2:
+                return "Iron";
+            case 3:
+                return "Diamond";
+            default:
+                return "";
         }
     }
-    
 }

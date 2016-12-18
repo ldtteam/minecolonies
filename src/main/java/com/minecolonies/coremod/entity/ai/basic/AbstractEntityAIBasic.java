@@ -31,15 +31,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Time in ticks to wait until the next check for items.
      */
-    private static final int DELAY_RECHECK = 10;
+    private static final int             DELAY_RECHECK           = 10;
     /**
      * The default range for any walking to blocks.
      */
-    private static final int DEFAULT_RANGE_FOR_DELAY = 4;
+    private static final int             DEFAULT_RANGE_FOR_DELAY = 4;
     /**
      * The number of actions done before item dump.
      */
-    private static final int ACTIONS_UNTIL_DUMP = 32;
+    private static final int             ACTIONS_UNTIL_DUMP      = 32;
     /**
      * Hit a block every x ticks when mining.
      */
@@ -519,7 +519,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return needsShovel;
     }
 
-     /**
+    /**
      * Ensures that we have a tool available.
      *
      * @param tool tool required for block
@@ -639,7 +639,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return IDLE;
     }
 
-   /**
+    /**
      * Ensures that we have a pickaxe available.
      * Will set {@code needsPickaxe} accordingly.
      *
@@ -683,7 +683,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         return needsPickaxe;
     }
-    
+
     /**
      * Looks for a pickaxe to mine a block of {@code minLevel}.
      * The pickaxe will be taken from the chest.
@@ -1107,7 +1107,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @param target the Block type to mine
      * @return the slot with the best tool
      */
-   private int getMostEfficientTool(@NotNull final Block target)
+    private int getMostEfficientTool(@NotNull final Block target)
     {
         final String tool = target.getHarvestTool(target.getDefaultState());
         final int required = target.getHarvestLevel(target.getDefaultState());
