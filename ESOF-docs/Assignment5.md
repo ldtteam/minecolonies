@@ -11,6 +11,7 @@ Dado que o MineColonies é uma modificação de um jogo, existe muito por onde e
 Como forma de avaliar a facilidade de manutenção deste projeto, foi nos introduzido a ferramenta Better Code Hub que faz esta avaliação, tendo em conta dez parâmetros a seguir descritos, juntamente com a sua classificação (Rejeitado/Aceite).
 
 ![alt tag](resources/bch.PNG)
+
 Figura 1 - *Análise resumida pelo Better Code Hub ao projeto Minecolonies*
 
 - Write Short Units of Code (Rejeitado) - Pequenas unidades de código são mais fáceis de compreender; 
@@ -25,6 +26,7 @@ Figura 1 - *Análise resumida pelo Better Code Hub ao projeto Minecolonies*
 - Write Clean Code (Aceite).
 
 ![alt tag](resources/analise_bch.PNG)
+
 Figura 2 - *Estatísticas de ficheiros analisados pelo Better Code Hub ao projeto Minecolonies*
 
 Tendo em conta os resultados acima referidos, podemos concluir que a facilidade de manutenção do projeto seria de 50%, contando que, cada parâmetro tem o mesmo peso na avaliação. Estes resultados demonstram que, para o sucesso e facilidade de implementação de futuras features ou outro tipo de manutenção, devia-se apostar mais na qualidade do software de forma a melhorar estes resultados e tentar passar em todos os testes.
