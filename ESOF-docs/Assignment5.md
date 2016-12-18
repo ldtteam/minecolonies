@@ -84,11 +84,17 @@ Os ficheiros alterados podem ser observados na secção de [ficheiros alterados]
 
 ## Pull Request ##
 
-(texto)
+https://github.com/Minecolonies/minecolonies/pull/352
+Após a implementação da feature, tal como no assignment anterior, foi criado um branch no projeto original, com a implementação da feature, do qual foi feito o pull request. Tal como já foi referido no ponto das dificuldades, o pull request foi diversas vezes rejeitado, até que por fim passou no último parâmetro de pull aprove, onde kostronor e raycoms aceitaram o nosso pull request, fazendo merge com o branch develop!
 
-##Conclusão ##
+## Conclusão ##
 
-(texto)
+A cadeira de ESOF foi sem dúvida uma mais valia para o nosso percurso escolar. O facto de ter de interagir com novas pessoas e projetos reais, mostrou-nos uma nova perspetiva do mundo da engenharia de software. A aprendizagem tornou-se mais dinâmica e contextualizada permitindo uma melhor absorção do conhecimento. O facto de integrar projetos open-source também serviu de porta de entrada para este mundo da programação que existe e que ainda não tínhamos grande conhecimento.
+A escolha do projeto Minecolonies também foi sem dúvida enriquecedora, graças à simpatia de todos os elementos que nos ajudaram em tudo o que puderam. A equipa também ficou especialmente grata pela ajuda que lhes prestamos e ainda nos convidou a integrar a equipa.
+
+![alt tag](resources/chat.png)
+
+Concluímos então que os processos de engenharia de software são essenciais nas equipas de qualquer projeto (quer open-source quer empresarial). A engenharia de software permite diversas análises aos projetos facilitando a integração de novas pessoas, mas também o desenvolvimento gradual e modular dos projetos.
 
 ## Contribuições ##
 
