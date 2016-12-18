@@ -9,6 +9,11 @@
 ## Software Maintainability ##
 
 (texto)
+![alt tag](resources/bch.PNG)
+Figura 1 - *Análise resumida pelo Better Code Hub ao projeto Minecolonies*
+
+![alt tag](resources/analise_bch.PNG)
+Figura 2 - *Estatísticas de ficheiros analisados pelo Better Code Hub ao projeto Minecolonies*
 
 ## Evolution Process ##
 
@@ -18,6 +23,7 @@ Para a realização do último trabalho prático foi requisitada a implementaç�
 
 > “That would be something doable, definitely It would be nice if this could be implemented for all workers in a general ai function” - [Marvin](https://github.com/Kostronor)
 
+<a name="descricao"/>
 ### Descrição ###
 
 A feature a implementar tem como objetivo a implementação de um sistema de níveis, comum a todos os workers (*NPC’s*), que restringe as ferramentas usadas de acordo com o nível do *blockhut* (bloco que associa um trabalhador com a respetiva casa). A declaração de restrições foi nos especificada pelos *developers* como:
@@ -36,27 +42,28 @@ Os níveis das ferramentas são relativamente ao tipo de material, em que:
 * nível 2: ferro;
 * nível 3: diamante.
 
+<a name="implementacao"/>
 ### Implementação ###
 
 Para começar a implementação, auxiliamos-nos nas dicas dos *developers* que nos indicaram a classe [abstractEntityAiBasic9](https://github.com/Minecolonies/minecolonies/blob/develop/src/main/java/com/minecolonies/coremod/entity/ai/basic/AbstractEntityAIBasic.java) mais especificamente o método *holdEfficientTool()* que tem como objetivo a escolha do slot com a melhor ferramenta (adequado ao bloco) do inventório. No entanto, após uma análise mais profunda do código, chegamos à conclusão que a implementação não estaria apenas restrita a este método. 
 
 Assim, foi necessário dividir a implementação em vários passos. Fazendo uma abordagem *bottom-up*, o primeiro método, e mais importante, a ser implementado foi:
 
-				`verifyToolLevel(final ItemStack item, int level, final int hutLevel)`
+				verifyToolLevel(final ItemStack item, int level, final int hutLevel)
 			
 Este método retorna verdadeiro ou falso consoante o **item** recebido respeita o sistema de níveis de acordo com o **level** do bloco com que irá interagir e o **hutLevel** desse *worker*.
 
 Este método é invocado por duas vezes em duas ocasiões distintas:
 
-			`hasToolLevel(final String tool, @NotNull final InventoryCitizen inventory, final int hutLevel)` 
+			hasToolLevel(final String tool, @NotNull final InventoryCitizen inventory, final int hutLevel) 
 
-					`getMostEfficientTool(@NotNull final Block target)`
+					getMostEfficientTool(@NotNull final Block target)
 				
 O primeiro método, também criado pelo grupo, recebe o tipo de **tool** do bloco a interagir, o **inventory** do worker, e o seu **hutLevel**. O seu objetivo é retornar verdadeiro ou falso caso exista alguma **tool** no inventário do *worker* que se adeque ao bloco e respeite o sistema de níveis. Este método é por sua vez invocado nos seguintes métodos
 
-						`checkForTool(@NotNull String tool)`
+						checkForTool(@NotNull String tool)
 							
-						`checkForPickaxe(final int minlevel)`
+						checkForPickaxe(final int minlevel)
 						
 Ambos os métodos têm o mesmo objetivo: verificar se existe alguma ferramenta no inventário do *worker* que o possibilite de executar a sua tarefa. O primeiro método, engloba todas as ferramentas menos a picareta. O segundo método é um caso particular do primeiro, devido às restrições de nível mínimo desta ferramenta (regras do **Minecraft**). Estes métodos são invocados aquando o pedido por parte do jogador ao *NPC* que execute uma tarefa. Se retornar falso, o *worker* (*NPC*) não executará a sua tarefa enquanto não tiver a ferramenta adequada, pedindo-a ao jogador em intervalos de tempo regulares. Se retornar verdadeiro, executa a tarefa. O nosso método é invocado aquando a verificação da existência de ferramentas para executar a tarefa, limitando a escolha dependendo do sistema de níveis.
 
@@ -70,43 +77,54 @@ Além destes métodos foram necessárias algumas alterações como:
 
 Os ficheiros alterados podem ser observados na secção de [ficheiros alterados](https://github.com/Minecolonies/minecolonies/pull/352/files) do nosso *pull request*. 
 
+<a name="resultado"/>
 ### Resultado ###
 
-Para testar o resultado da nossa implementação decidimos pedir a um worker do tipo builder para construir uma casa, ao que ele pede uma pá do tipo máximo ‘Madeira’ ou ‘Ouro’, como pode ser verificado pela figura x. 
+Para testar o resultado da nossa implementação decidimos pedir a um *worker* do tipo *builder* para construir uma casa, ao que ele pede uma pá do tipo máximo "Madeira" ou "Ouro", como pode ser verificado pela figura 3. 
 
-(imagem x)
+![alt tag](resources/res1.png)
+Figura 3 - *Imagem ilustrativa com o chat após um pedido do NPC ao jogador*
 
-O worker pede uma ferramenta deste tipo devido ao nível do seu blockhut que, como pode ser verificado na imagem y, é 0. De acordo com o sistema de níveis referido na descrição da feature, para um blockhut de nível zero o worker pode apenas usufruir de ferramentas de nível zero, ou seja, madeira e ouro.
+O *worker* pede uma ferramenta deste tipo devido ao nível do seu *blockhut* que, como pode ser verificado na figura 4, é 0. De acordo com o sistema de níveis referido na [descrição](#descricao) da feature, para um *blockhut* de nível zero o *worker* pode apenas usufruir de ferramentas de nível zero, ou seja, madeira e ouro.
 
-(imagem y)
+![alt tag](resources/res2.png)
+Figura 4 - *Imagem ilustrativa de um menu de um blockhut com o seu nível associado*
 
-Assim, ao dar-lhe uma pá do tipo diamante (figura y), o nosso NPC verifica que a pá não pode ser usada e volta ao estado da figura x, repetindo a frase de tempo a tempo, até receber uma ferramenta adequada. Nesse estado, o NPC começa a executar a sua tarefa.
+Assim, ao dar-lhe uma pá do tipo diamante (figura 5), o nosso *NPC* verifica que a pá não pode ser usada e volta ao estado da figura 3, repetindo a frase de tempo a tempo, até receber uma ferramenta adequada. Nesse estado, o *NPC* começa a executar a sua tarefa.
 
-(imagem z)
+![alt tag](resources/res3.png)
+Figura 5 - *Imagem ilustrativa do inventório do worker com uma pá de diamante*
 
+<a name="dificuldades"/>
 ### Dificuldades ###
 
 A maior dificuldade, já encontrada no relatório anterior, está relacionada com o facto de não conhecermos o código em mãos. Foi necessária muita análise para perceber que métodos seriam mudados, a sua ordem de invocação, e que métodos influenciavam o comportamento antes e pós implementação. 
 
-Outra dificuldade encontrada, já relacionada com o pull request, deveu-se à minuciosidade da equipa do MineColonies com o code style. O nosso pull request foi diversas vezes rejeitado devido a pormenores de code style e também, às vezes, de lógica quando certos blocos de código poderiam tornar-se mais eficientes.
+Outra dificuldade encontrada, já relacionada com o [*pull request*](https://github.com/Minecolonies/minecolonies/pull/352), deveu-se à minuciosidade da equipa do **MineColonies** com o *code style*. O nosso *pull request* foi diversas vezes rejeitado devido a pormenores de *code style* e também, às vezes, de lógica quando certos blocos de código poderiam tornar-se mais eficientes.
 
+<a name="analise"/>
 ### Análise do impacto desta feature no projeto ###
 
-O impacto desta feature no MineColonies é enorme! Até agora, um NPC podia usar qualquer ferramenta do seu inventário (adequada ao bloco a interagir). Como o nível das ferramentas influencia a rapidez da quebra de um bloco e a durabilidade da ferramenta, um NPC de nível baixo com uma boa ferramenta terminava a sua tarefa muito mais depressa e ganhava muito mais experiência que outro NPC que usasse as ferramentas de acordo com o seu nível. Esta mudança permite uma evolução gradual do jogo e igualdade de circunstâncias para todos os jogadores.
+O impacto desta feature no **MineColonies** é enorme! Até agora, um *NPC* podia usar qualquer ferramenta do seu inventário (adequada ao bloco a interagir). Como o nível das ferramentas influencia a rapidez da quebra de um bloco e a durabilidade da ferramenta, um *NPC* de nível baixo com uma boa ferramenta terminava a sua tarefa muito mais depressa e ganhava muito mais experiência que outro *NPC* que usasse as ferramentas de acordo com o seu nível. Esta mudança permite uma evolução gradual do jogo e igualdade de circunstâncias para todos os jogadores.
 
 ## Pull Request ##
 
-https://github.com/Minecolonies/minecolonies/pull/352
-Após a implementação da feature, tal como no assignment anterior, foi criado um branch no projeto original, com a implementação da feature, do qual foi feito o pull request. Tal como já foi referido no ponto das dificuldades, o pull request foi diversas vezes rejeitado, até que por fim passou no último parâmetro de pull aprove, onde kostronor e raycoms aceitaram o nosso pull request, fazendo merge com o branch develop!
+[Aqui!](https://github.com/Minecolonies/minecolonies/pull/352)
+
+Após a implementação da *feature*, tal como no *assignment* anterior, foi criado um branch no projeto original, com a implementação da feature, do qual foi feito o *pull request*. Tal como já foi referido no ponto das [dificuldades](#dificuldades), o *pull request* foi diversas vezes rejeitado, até que por fim passou no último parâmetro de [*pull aprove*](https://pullapprove.com/Minecolonies/minecolonies/pull-request/352/?utm_source=github-pr&utm_medium=comment-badge&utm_campaign=Minecolonies/minecolonies), onde [kostronor](https://github.com/Kostronor) e [raycoms](https://github.com/Raycoms) **aceitaram** o nosso *pull request*, fazendo merge com o branch develop!
 
 ## Conclusão ##
 
-A cadeira de ESOF foi sem dúvida uma mais valia para o nosso percurso escolar. O facto de ter de interagir com novas pessoas e projetos reais, mostrou-nos uma nova perspetiva do mundo da engenharia de software. A aprendizagem tornou-se mais dinâmica e contextualizada permitindo uma melhor absorção do conhecimento. O facto de integrar projetos open-source também serviu de porta de entrada para este mundo da programação que existe e que ainda não tínhamos grande conhecimento.
-A escolha do projeto Minecolonies também foi sem dúvida enriquecedora, graças à simpatia de todos os elementos que nos ajudaram em tudo o que puderam. A equipa também ficou especialmente grata pela ajuda que lhes prestamos e ainda nos convidou a integrar a equipa.
+A cadeira de **ESOF** foi sem dúvida uma mais valia para o nosso percurso escolar. O facto de ter de interagir com novas pessoas e projetos reais, mostrou-nos uma nova perspetiva do mundo da engenharia de software. A aprendizagem tornou-se mais dinâmica e contextualizada permitindo uma melhor absorção do conhecimento. O facto de integrar projetos open-source também serviu de porta de entrada para este mundo da programação que existe e que ainda não tínhamos grande conhecimento.
 
-![alt tag](resources/chat.png)
+A escolha do projeto **Minecolonies** também foi sem dúvida enriquecedora, graças à simpatia de todos os elementos que nos ajudaram em tudo o que puderam. A equipa também ficou especialmente grata pela ajuda que lhes prestamos e ainda nos convidou a integrar a equipa!
 
-Concluímos então que os processos de engenharia de software são essenciais nas equipas de qualquer projeto (quer open-source quer empresarial). A engenharia de software permite diversas análises aos projetos facilitando a integração de novas pessoas, mas também o desenvolvimento gradual e modular dos projetos.
+![alt tag](resources/chat.PNG)
+Figura 6 - *Slack com uma conversa entre intervenientes no projeto*
+
+Concluímos então que os processos de engenharia de software são essenciais nas equipas de qualquer projeto (quer *open-source* quer empresarial). A engenharia de software permite diversas análises aos projetos facilitando a integração de novas pessoas, mas também o desenvolvimento gradual e modular dos projetos.
+
+Além dos agradecimentos ao trabalho espetacular da equipa do **MineColonies** não podemos deixar de agradecer a todos os docentes que permitiram a realização desta cadeira!
 
 ## Contribuições ##
 
