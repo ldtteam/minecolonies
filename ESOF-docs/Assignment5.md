@@ -86,11 +86,13 @@ Assim, ao dar-lhe uma pá do tipo diamante (figura y), o nosso NPC verifica que 
 
 ### Dificuldades ###
 
-(texto)
+A maior dificuldade, já encontrada no relatório anterior, está relacionada com o facto de não conhecermos o código em mãos. Foi necessária muita análise para perceber que métodos seriam mudados, a sua ordem de invocação, e que métodos influenciavam o comportamento antes e pós implementação. 
+
+Outra dificuldade encontrada, já relacionada com o pull request, deveu-se à minuciosidade da equipa do MineColonies com o code style. O nosso pull request foi diversas vezes rejeitado devido a pormenores de code style e também, às vezes, de lógica quando certos blocos de código poderiam tornar-se mais eficientes.
 
 ### Análise do impacto desta feature no projeto ###
 
-(texto)
+O impacto desta feature no MineColonies é enorme! Até agora, um NPC podia usar qualquer ferramenta do seu inventário (adequada ao bloco a interagir). Como o nível das ferramentas influencia a rapidez da quebra de um bloco e a durabilidade da ferramenta, um NPC de nível baixo com uma boa ferramenta terminava a sua tarefa muito mais depressa e ganhava muito mais experiência que outro NPC que usasse as ferramentas de acordo com o seu nível. Esta mudança permite uma evolução gradual do jogo e igualdade de circunstâncias para todos os jogadores.
 
 ## Pull Request ##
 
