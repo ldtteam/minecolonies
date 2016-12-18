@@ -72,7 +72,17 @@ Os ficheiros alterados podem ser observados na secção de [ficheiros alterados]
 
 ### Resultado ###
 
-(imagem + descrição)
+Para testar o resultado da nossa implementação decidimos pedir a um worker do tipo builder para construir uma casa, ao que ele pede uma pá do tipo máximo ‘Madeira’ ou ‘Ouro’, como pode ser verificado pela figura x. 
+
+(imagem x)
+
+O worker pede uma ferramenta deste tipo devido ao nível do seu blockhut que, como pode ser verificado na imagem y, é 0. De acordo com o sistema de níveis referido na descrição da feature, para um blockhut de nível zero o worker pode apenas usufruir de ferramentas de nível zero, ou seja, madeira e ouro.
+
+(imagem y)
+
+Assim, ao dar-lhe uma pá do tipo diamante (figura y), o nosso NPC verifica que a pá não pode ser usada e volta ao estado da figura x, repetindo a frase de tempo a tempo, até receber uma ferramenta adequada. Nesse estado, o NPC começa a executar a sua tarefa.
+
+(imagem z)
 
 ### Dificuldades ###
 
