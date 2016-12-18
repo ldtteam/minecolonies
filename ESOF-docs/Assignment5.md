@@ -4,16 +4,33 @@
 
 ## Introdução ##
 
-(texto)
+Dado que o MineColonies é uma modificação de um jogo, existe muito por onde este possa evoluir, tendo em conta, a grande extensão do jogo base. Desta forma, são propostas várias features novas ou até mesmo a resolução de algumas que contém bugs ao longo do tempo. Contudo, a facilidade de manutenção e/ou evolução do software depende também da qualidade do código e como este foi implementado.
 
 ## Software Maintainability ##
 
-(texto)
+Como forma de avaliar a facilidade de manutenção deste projeto, foi nos introduzido a ferramenta Better Code Hub que faz esta avaliação, tendo em conta dez parâmetros a seguir descritos, juntamente com a sua classificação (Rejeitado/Aceite).
+
 ![alt tag](resources/bch.PNG)
 Figura 1 - *Análise resumida pelo Better Code Hub ao projeto Minecolonies*
 
+- Write Short Units of Code (Rejeitado) - Pequenas unidades de código são mais fáceis de compreender; 
+- Write Simple Units of Code (Rejeitado) - Unidades de código mais simples são mais fáceis de testar; 
+- Write Code Once (Aceite) - Código duplicado significa erros duplicados e ter que fazer alterações em duplicado;
+- Keep Unit Interfaces Small (Rejeitado) - Unidades com interfaces mais pequenas são mais fáceis de reutilizar;
+- Separate Concerns in Modules (Rejeitado) - Módulos com uma única responsabilidade são mais fáceis de fazer manutenção;
+- Couple Architecture Components Loosely (Aceite) - Componentes independentes podem ser testados em isoladamente;
+- Keep Architecture Components Balanced (Aceite) - Com uma arquitectura bem equilibrada é mais intuitivo encontrar o que se pretende;
+- Keep Code Base Small (Aceite) - Com um código base pequeno é mais fácil para fazer manutenção;
+- Automate Tests (Rejeitado) - Os testes automáticos são repetíveis e ajudam a prevenir erros; 
+- Write Clean Code (Aceite).
+
 ![alt tag](resources/analise_bch.PNG)
 Figura 2 - *Estatísticas de ficheiros analisados pelo Better Code Hub ao projeto Minecolonies*
+
+Tendo em conta os resultados acima referidos, podemos concluir que a facilidade de manutenção do projeto seria de 50%, contando que, cada parâmetro tem o mesmo peso na avaliação. Estes resultados demonstram que, para o sucesso e facilidade de implementação de futuras features ou outro tipo de manutenção, devia-se apostar mais na qualidade do software de forma a melhorar estes resultados e tentar passar em todos os testes.
+
+
+
 
 ## Evolution Process ##
 
