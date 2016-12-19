@@ -31,6 +31,11 @@ Figura 2 - *Estatísticas de ficheiros analisados pelo Better Code Hub ao projet
 
 Tendo em conta os resultados acima referidos, podemos concluir que a facilidade de manutenção do projeto seria de 50%, contando que, cada parâmetro tem o mesmo peso na avaliação. Estes resultados demonstram que, para o sucesso e facilidade de implementação de futuras features ou outro tipo de manutenção, devia-se apostar mais na qualidade do software de forma a melhorar estes resultados e tentar passar em todos os testes.
 
+Analisando os resultados podemos verificar que a equipa apresenta os piores resultados no “Automate Tests”. Isto acontece devido às grandes dimensões do projeto que impossibilitam a realização de testes unitários. Como já foi referido no assignment anterior, a equipa prefere testar o código com os seus *Patreons* do que com testes unitários. Para os poucos testes unitários que existem, o projeto falha na escrita de testes pequenos e simples. Isto acontece devido aos inúmeros objetos que são necessários criar (mundo, NPC’s, blockhuts…) para testar apenas uma ação.
+	A rejeição do ponto de “Write Simple Units of Code” deve-se ao facto do projeto ser de grande dimensão e com métodos complexos que por vezes não é possível simplificar o tipo de metodologia usada para determinadas sequência de código.
+Embora a equipa tenha bastante cuidado relativamente ao uso de métodos distintos, o projeto falhou no parâmetro “Keep Unit Interfaces Small”. Mesmo durante a implementação verificamos que os maintainers mencionaram a necessidade de colocar métodos distintos e com apenas um fim, mas o facto do projeto ser tão extenso  e derivado de um jogo já feito (e com a impossibilidade do acesso ao seu código fonte), por vezes é impossível evitar manter os métodos simples. Apesar de tal acontecer, o projeto passa no parâmetro “Write Clean Code”, como seria de esperar. Como já foi referido em alguns relatórios anteriores, a equipa de minecolonies impõe um code style bastante restrito (chegando ao ponto de nos pedir para adicionar pontos finais nos comentários durante o processo de pull request).  
+Em termos de duplicação de código e legibilidade do mesmo a equipa mantém o seu grau de excelência muito graças às suas regras rigorosas de code style, como já foi referido.
+
 
 
 
