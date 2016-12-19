@@ -25,7 +25,7 @@ Figura 1 - *Análise resumida pelo Better Code Hub ao projeto Minecolonies*
 - Automate Tests (Rejeitado) - Os testes automáticos são repetíveis e ajudam a prevenir erros; 
 - Write Clean Code (Aceite).
 
-![alt tag](resources/analise_bch.PNG)
+![alt tag](resources/analise.PNG)
 
 Figura 2 - *Estatísticas de ficheiros analisados pelo Better Code Hub ao projeto Minecolonies*
 
