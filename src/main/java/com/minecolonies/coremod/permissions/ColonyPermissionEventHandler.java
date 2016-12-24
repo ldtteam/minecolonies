@@ -3,14 +3,20 @@ package com.minecolonies.coremod.permissions;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
@@ -47,7 +53,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final BlockEvent.PlaceEvent event)
     {
-        if (checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getPlacedBlock()))
+        if (Configurations.enableColonyProtection && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getPlacedBlock()))
         {
             cancelEvent(event);
         }
@@ -105,7 +111,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final BlockEvent.BreakEvent event)
     {
-        if (checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos())))
+        if (Configurations.enableColonyProtection && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getWorld().getBlockState(event.getPos())))
         {
             cancelEvent(event);
         }
@@ -119,6 +125,10 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Detonate event)
     {
+        if(!Configurations.enableColonyProtection || !Configurations.turnOffExplosionsInColonies)
+        {
+            return;
+        }
 
         final World eventWorld = event.getWorld();
         final Predicate<BlockPos> getBlocksInColony = pos -> colony.isCoordInColony(eventWorld, pos);
@@ -144,7 +154,9 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Start event)
     {
-        if (colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
+        if (Configurations.enableColonyProtection
+                && Configurations.turnOffExplosionsInColonies
+                && colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
         {
             cancelEvent(event);
         }
@@ -169,34 +181,36 @@ public class ColonyPermissionEventHandler
             final Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
             // Huts
             if (block instanceof AbstractBlockHut
-                  && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_HUTS))
+                    && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_HUTS))
+            {
+                cancelEvent(event);
+            }
+
+            if(Configurations.enableColonyProtection && event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer)
+            {
+                final Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
+
+                if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
+                {
+                    cancelEvent(event);
+                }
+            }
+
+            if(event.getItemStack().getItem() instanceof ItemMonsterPlacer && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.PLACE_HUTS))
             {
                 cancelEvent(event);
             }
         }
-    }
 
-    /**
-     * Check Permissions for Container Open Events.
-     *
-     * @param event the event to check on.
-     */
-    @SubscribeEvent
-    public void on(final PlayerContainerEvent.Open event)
-    {
-        if (this.colony.isCoordInColony(event.getEntity().getEntityWorld(), event.getEntity().getPosition()))
-        {
-            final Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
-
-            if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
-            {
-                cancelEvent(event);
-            }
-        }
     }
 
     /**
      * ItemTossEvent handler.
+     * <p>
+     * Check, if a player tossed a block.
+     * Deny if:
+     * - If the tossing happens in the colony
+     * - player is hostile to colony
      *
      * @param event ItemTossEvent
      */
@@ -204,7 +218,7 @@ public class ColonyPermissionEventHandler
     public void on(final ItemTossEvent event)
     {
         final EntityPlayer playerIn = event.getPlayer();
-        if (colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
+        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 
@@ -222,10 +236,65 @@ public class ColonyPermissionEventHandler
     }
 
     /**
-     * Template.
+     * EntityItemPickupEvent handler.
+     * <p>
+     * Check, if a player tries to pickup a block.
+     * Deny if:
+     * - If the pickUp happens in the colony
+     * - player is neutral or hostile to colony
+     *
+     * @param event EntityItemPickupEvent
      */
-    public void on()
+    @SubscribeEvent
+    public void on(final EntityItemPickupEvent event)
     {
-        //
+        final EntityPlayer playerIn = event.getEntityPlayer();
+        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
+        {
+            final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
+
+            if (rank.ordinal() > Permissions.Rank.FRIEND.ordinal())
+            {
+                /*
+                    this will delete the item entirely:
+                    Canceling the event will stop the items from entering the world,
+                    but will not prevent them being removed from the inventory
+                    - and thus removed from the system.
+                 */
+                cancelEvent(event);
+            }
+        }
+    }
+
+    /**
+     * AttackEntityEvent handler.
+     * <p>
+     * Check, if a player tries to attack an entity..
+     * Deny if:
+     * - If the attacking happens in the colony
+     * - Player is less than officer to the colony.
+     * - Entity is a citizen.
+     *
+     * @param event EntityItemPickupEvent
+     */
+    @SubscribeEvent
+    public void on(final AttackEntityEvent event)
+    {
+        final EntityPlayer playerIn = event.getEntityPlayer();
+        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()) && event.getTarget() instanceof EntityCitizen )
+        {
+            final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
+
+            if (rank.ordinal() > Permissions.Rank.FRIEND.ordinal())
+            {
+                /*
+                    this will delete the item entirely:
+                    Canceling the event will stop the items from entering the world,
+                    but will not prevent them being removed from the inventory
+                    - and thus removed from the system.
+                 */
+                cancelEvent(event);
+            }
+        }
     }
 }

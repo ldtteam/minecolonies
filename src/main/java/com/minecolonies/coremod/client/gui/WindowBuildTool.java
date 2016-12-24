@@ -315,6 +315,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             buttonHutDec.setLabel(LanguageHandler.getString(
               Settings.instance.isInHutMode() ? "com.minecolonies.coremod.gui.buildtool.nohut" : "com.minecolonies.coremod.gui.buildtool.nodecoration"));
             buttonHutDec.setEnabled(false);
+            final Button buttonStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
+            buttonStyle.setVisible(false);
             Settings.instance.setActiveSchematic(null);
         }
         else

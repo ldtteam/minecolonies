@@ -567,10 +567,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Calculates the floor level
+     * Calculates the floor level.
      *
-     * @param position input position
-     * @return returns BlockPos position with air above
+     * @param position input position.
+     * @return returns BlockPos position with air above.
      */
     @NotNull
     private BlockPos getFloor(@NotNull BlockPos position)
@@ -584,11 +584,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Calculates the floor level
+     * Calculates the floor level.
      *
-     * @param position input position
-     * @param depth    the iteration depth
-     * @return returns BlockPos position with air above
+     * @param position input position.
+     * @param depth    the iteration depth.
+     * @return returns BlockPos position with air above.
      */
     @Nullable
     private BlockPos getFloor(@NotNull BlockPos position, int depth)
@@ -932,11 +932,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private BlockPos getNodeMiningPosition(BlockPos blockToMine)
     {
-        if(((BuildingMiner) getOwnBuilding()).getCurrentLevel() == null || ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode() == null)
+        if(getOwnBuilding() instanceof BuildingMiner)
         {
-            return blockToMine;
+            BuildingMiner buildingMiner = (BuildingMiner) getOwnBuilding();
+            if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
+            {
+                return blockToMine;
+            }
+            final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+            return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
         }
-        final Point2D pos = ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode().getParent();
-        return new BlockPos(pos.getX(), ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getDepth(), pos.getY());
+        return blockToMine;
     }
 }
