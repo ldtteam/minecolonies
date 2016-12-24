@@ -259,13 +259,17 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 tempField.setTaken(false);
                 tempField.setOwner("");
                 @NotNull final ScarecrowTileEntity scarecrowTileEntity = (ScarecrowTileEntity) getColony().getWorld().getTileEntity(field.getID());
-                getColony().getWorld()
-                  .notifyBlockUpdate(scarecrowTileEntity.getPos(),
-                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
-                    BLOCK_UPDATE_FLAG);
-                scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user",
-                  LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
+
+                if(getColony() != null && getColony().getWorld() != null)
+                {
+                    getColony().getWorld()
+                            .notifyBlockUpdate(scarecrowTileEntity.getPos(),
+                                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                                    getColony().getWorld().getBlockState(scarecrowTileEntity.getPos()),
+                                    BLOCK_UPDATE_FLAG);
+                    scarecrowTileEntity.setName(LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user",
+                            LanguageHandler.format("com.minecolonies.coremod.gui.scarecrow.user.noone")));
+                }
             }
         }
     }

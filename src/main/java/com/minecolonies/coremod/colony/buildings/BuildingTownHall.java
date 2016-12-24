@@ -21,7 +21,7 @@ public class BuildingTownHall extends AbstractBuildingHut
     /**
      * Max building level of the hut.
      */
-    private static final int MAX_BUILDING_LEVEL = 4;
+    private static final int MAX_BUILDING_LEVEL = 5;
 
     /**
      * Instantiates the building.

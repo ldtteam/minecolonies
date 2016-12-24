@@ -11,6 +11,9 @@ public class Configurations
     public static       int     citizenRespawnInterval       = 30;
     public static       boolean builderInfiniteResources     = false;
 
+    public static boolean enableColonyProtection = true;
+    public static boolean turnOffExplosionsInColonies = true;
+
     //TODO change to false when material handling is implemented
     public static boolean deliverymanInfiniteResources = true;
 

@@ -3,6 +3,7 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -199,7 +200,10 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         {
             @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
 
-            if (building != null)
+            if (building != null
+                    && building.getColony() != null
+                    && building.getColony().getPermissions() != null
+                    && building.getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS))
             {
                 building.openGui();
             }
