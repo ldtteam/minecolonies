@@ -196,7 +196,9 @@ public class ColonyPermissionEventHandler
                 }
             }
 
-            if(event.getItemStack().getItem() instanceof ItemMonsterPlacer && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.PLACE_HUTS))
+            if(event.getItemStack() != null
+                    && event.getItemStack().getItem() instanceof ItemMonsterPlacer
+                    && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.PLACE_HUTS))
             {
                 cancelEvent(event);
             }
