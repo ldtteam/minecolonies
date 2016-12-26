@@ -63,12 +63,12 @@ public class AddOfficerCommand extends AbstractSingleCommand
         //No citizen or citizen defined.
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId, colonyId)));
             return;
         }
 
         colony.getPermissions().addPlayer(playerName, Permissions.Rank.OFFICER, colony.getWorld());
-        sender.addChatMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
+        sender.sendMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
     }
 
     @NotNull
