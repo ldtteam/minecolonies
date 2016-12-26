@@ -40,6 +40,11 @@ public class StructureProxy
     public StructureProxy(final World worldObj, final String name)
     {
         this.structure = new Structure(worldObj, name, new PlacementSettings());
+
+        if(structure.isTemplateNull())
+        {
+            return;
+        }
         final BlockPos size = structure.getSize(Rotation.NONE);
 
         this.width = size.getX();
