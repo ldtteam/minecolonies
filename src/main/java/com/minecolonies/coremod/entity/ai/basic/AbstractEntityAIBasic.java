@@ -31,15 +31,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Time in ticks to wait until the next check for items.
      */
-    private static final int DELAY_RECHECK = 10;
+    private static final int             DELAY_RECHECK           = 10;
     /**
      * The default range for any walking to blocks.
      */
-    private static final int DEFAULT_RANGE_FOR_DELAY = 4;
+    private static final int             DEFAULT_RANGE_FOR_DELAY = 4;
     /**
      * The number of actions done before item dump.
      */
-    private static final int ACTIONS_UNTIL_DUMP = 32;
+    private static final int             ACTIONS_UNTIL_DUMP      = 32;
     /**
      * Hit a block every x ticks when mining.
      */
@@ -519,7 +519,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return needsShovel;
     }
 
-    private boolean checkForTool(@NotNull final String tool)
+    /**
+     * Ensures that we have a tool available.
+     *
+     * @param tool tool required for block
+     * @return true if we have a tool
+     */
+    private boolean checkForTool(@NotNull String tool)
     {
         final boolean needsTool = !InventoryFunctions
                                      .matchFirstInInventory(
@@ -527,7 +533,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                                        stack -> Utils.isTool(stack, tool),
                                        InventoryFunctions::doNothing
                                      );
-        if (!needsTool)
+
+        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+        final InventoryCitizen inventory = worker.getInventoryCitizen();
+        final boolean isUsable = InventoryUtils.hasToolLevel(tool, inventory, hutLevel);
+
+
+        if (!needsTool && isUsable)
         {
             return false;
         }
@@ -540,7 +552,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
-        requestWithoutSpam(tool);
+        chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.toolRequest", tool, InventoryUtils.swapToolGrade(hutLevel)));
         return true;
     }
 
@@ -647,6 +659,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
         delay += DELAY_RECHECK;
 
+        final InventoryCitizen inventory = worker.getInventoryCitizen();
+        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+        final boolean isUsable = InventoryUtils.hasToolLevel(Utils.PICKAXE, inventory, hutLevel);
+
+        if (!isUsable)
+        {
+            needsPickaxe = true;
+        }
         if (needsPickaxe)
         {
             needsPickaxeLevel = minlevel;
@@ -658,8 +678,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return true;
             }
-            requestWithoutSpam("Pickaxe at least level " + minlevel);
+            chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.pickaxeRequest", InventoryUtils.swapToolGrade(minlevel), InventoryUtils.swapToolGrade(hutLevel)));
         }
+
         return needsPickaxe;
     }
 
@@ -1093,16 +1114,23 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
+        final int hutLevel = worker.getWorkBuilding().getBuildingLevel();
+
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = Utils.getMiningLevel(item, tool);
+
             if (level >= required && level < bestLevel)
             {
-                bestSlot = i;
-                bestLevel = level;
+                if (tool == null || InventoryUtils.verifyToolLevel(item, level, hutLevel))
+                {
+                    bestSlot = i;
+                    bestLevel = level;
+                }
             }
         }
+
         return bestSlot;
     }
 
