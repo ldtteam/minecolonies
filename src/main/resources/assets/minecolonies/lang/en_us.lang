@@ -75,23 +75,8 @@ com.minecolonies.coremod.gui.hiring.off=Automatic
 com.minecolonies.coremod.gui.workerHuts.settings=Settings
 achievement.size.town=Town
 tile.minecolonies.blockHutTownHall.name=Town Hall
-
-
-
 tile.minecolonies.blockHutField.name=Field
 com.minecolonies.coremod.gui.workerHuts.Farmer=Farmer
-
-
-tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
-tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
-
-com.minecolonies.coremod.job.Builder=Builder
-com.minecolonies.coremod.job.Deliveryman=Deliveryman
-com.minecolonies.coremod.job.Farmer=Farmer
-com.minecolonies.coremod.job.Lumberjack=Lumberjack
-com.minecolonies.coremod.job.Miner=Miner
-com.minecolonies.coremod.job.Fisherman=Fisherman
-
 com.minecolonies.coremod.gui.workerHuts.fire=Fire Worker
 achievement.upgrade.builder.max.desc=What a powerful man
 tile.blockHutTownHall.messageMaxSize=Colony has reached max size
@@ -165,8 +150,6 @@ item.caliper.message.same=That's the same block.
 entity.worker.inventoryFullChestFull=Please make space in my building chest. I am not able to dump my inventory.
 com.minecolonies.coremod.gui.townHall.currentSpecialization=Current Specialization:
 tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
-
-com.minecolonies.coremod.gui.workerHuts.workOrderAdded=Construction added to build queue.
 com.minecolonies.coremod.gui.workerHuts.workOrder=Work Orders
 achievement.upgrade.fisher.first=A fisherman.
 achievement.upgrade.fisher.first.desc=I like fish.
@@ -189,22 +172,16 @@ com.minecolonies.coremod.gui.workerHuts.farmerHut.unused=unused
 com.minecolonies.coremod.gui.scarecrow.user=Field used by: %s
 com.minecolonies.coremod.gui.scarecrow.user.noone=no-one
 com.minecolonies.coremod.gui.buildtool.nohutininventory=The hut was not found in your inventory.
-
 com.minecolonies.coremod.gui.debugScreen.noCloseColony=No close colony!
 com.minecolonies.coremod.gui.debugScreen.nextColony=Next colony is %d blocks away (%d required to place a colony)
 com.minecolonies.coremod.gui.debugScreen.blocksFromCenter=%d blocks from the center.
-
 com.minecolonies.coremod.gui.workerHuts.GuardTower=Guard Tower
 com.minecolonies.coremod.job.guard.name=GuardTower
 com.minecolonies.coremod.job.Guard=Guard
 com.minecolonies.coremod.gui.workerHuts.level0=Please construct the hut to hire a worker.
-com.minecolonies.coremod.job.guard.name=GuardTower
 com.minecolonies.coremod.job.guard.needWeapon=a weapon!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
-
-
 tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
-
 com.minecolonies.coremod.gui.workerHuts.guardActions=Guard-actions:
 com.minecolonies.coremod.gui.workerHuts.assign=Assign the guard to the job:
 com.minecolonies.coremod.gui.workerHuts.patrol=Find patrol target:
@@ -213,35 +190,24 @@ com.minecolonies.coremod.gui.workerHuts.knight=Knight
 com.minecolonies.coremod.gui.workerHuts.ranger=Ranger
 com.minecolonies.coremod.gui.workerHuts.modeM=Manually
 com.minecolonies.coremod.gui.workerHuts.modeA=Automatically
-
 com.minecolonies.coremod.gui.workerHuts.retrieveOff=Off
 com.minecolonies.coremod.gui.workerHuts.retrieveOn=On
-
 com.minecolonies.coremod.gui.workerHuts.task.guard=Guard
 com.minecolonies.coremod.gui.workerHuts.task.patrol=Patrol
 com.minecolonies.coremod.gui.workerHuts.task.follow=Follow
 item.minecolonies.scepterGuard.name=Guard-scepter
-
 com.minecolonies.coremod.gui.workerHuts.targetPatrol=Set patrol positions.
 com.minecolonies.coremod.gui.workerHuts.targetGuard=Set guarding target.
 com.minecolonies.coremod.gui.workerHuts.setTarget="Disabled"
-
 com.minecolonies.coremod.gui.workerHuts.noSpace=Please make space in your inventory in order to use this functionality.
-
 com.minecolonies.coremod.job.guard.tool.taskPatrol=Right click on a block to add it as patrol target. Double click to close the tool.
 com.minecolonies.coremod.job.guard.tool.taskGuard=Right click on a block to set it as guard spot.
-
 com.minecolonies.coremod.job.guard.switch=Switched to guarding since the player is out of sight.
-
 com.minecolonies.coremod.job.guard.toolClickPatrol=Added position %s as new patrolling target for guard%s.
 com.minecolonies.coremod.job.guard.toolClickGuard=Set position %s as new guarding target for guard%s.
-
 com.minecolonies.coremod.job.guard.toolDoubleClick=Finished adding new patrol-targets.
-
 com.minecolonies.coremod.workerHuts.recallFail=Recall failed - Please make more space around the location.
-
 tile.minecolonies.blockSubstitution.name=Placeholderblock
 tile.minecolonies.blockSolidSubstitution.name=Solid-Placeholderblock
-
 entity.worker.toolRequest=I need a %s of a maximum grade of %s.
 entity.worker.pickaxeRequest=I need a pickaxe of at least %s grade and at maximum %s grade.
