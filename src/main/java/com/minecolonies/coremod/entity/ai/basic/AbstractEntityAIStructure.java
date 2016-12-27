@@ -143,7 +143,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if(job instanceof AbstractJobStructure)
         {
-            if (((AbstractJobStructure) job).getStructure() == null && job instanceof JobBuilder)
+            if (((AbstractJobStructure) job).getStructure() == null && job instanceof JobBuilder && ((JobBuilder) job).hasWorkOrder())
             {
                 //fix for bad structures
                 ((JobBuilder) job).complete();
@@ -221,9 +221,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 ((JobMiner) job).setStructure(null);
             }
             worker.addExperience(XP_EACH_BUILDING);
-            workFrom = null;
         }
 
+        workFrom = null;
         currentStructure = null;
 
         return AIState.IDLE;
@@ -573,19 +573,41 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return returns BlockPos position with air above.
      */
     @NotNull
-    private BlockPos getFloor(@NotNull final BlockPos position)
+    private BlockPos getFloor(@NotNull BlockPos position)
     {
+        final BlockPos floor = getFloor(position, 0);
+        if (floor == null)
+        {
+            return position;
+        }
+        return floor;
+    }
+
+    /**
+     * Calculates the floor level.
+     *
+     * @param position input position.
+     * @param depth    the iteration depth.
+     * @return returns BlockPos position with air above.
+     */
+    @Nullable
+    private BlockPos getFloor(@NotNull BlockPos position, int depth)
+    {
+        if (depth > 50)
+        {
+            return null;
+        }
         //If the position is floating in Air go downwards
         if (!EntityUtils.solidOrLiquid(world, position))
         {
-            return getFloor(position.down());
+            return getFloor(position.down(), depth + 1);
         }
         //If there is no air above the block go upwards
         if (!EntityUtils.solidOrLiquid(world, position.up()))
         {
             return position;
         }
-        return getFloor(position.up());
+        return getFloor(position.up(), depth + 1);
     }
 
     /**
@@ -629,7 +651,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if(job instanceof JobMiner)
         {
-            getNodeMiningPosition(currentStructure.getCurrentBlockPosition());
+            return getNodeMiningPosition(currentStructure.getCurrentBlockPosition());
         }
         return getWorkingPosition(0);
     }
@@ -910,11 +932,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private BlockPos getNodeMiningPosition(BlockPos blockToMine)
     {
-        if(((BuildingMiner) getOwnBuilding()).getCurrentLevel() == null || ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode() != null)
+        if(getOwnBuilding() instanceof BuildingMiner)
         {
-            return blockToMine;
+            BuildingMiner buildingMiner = (BuildingMiner) getOwnBuilding();
+            if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
+            {
+                return blockToMine;
+            }
+            final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+            return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
         }
-        final Point2D pos = ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getRandomNode().getParent();
-        return new BlockPos(pos.getX(), ((BuildingMiner) getOwnBuilding()).getCurrentLevel().getDepth(), pos.getY());
+        return blockToMine;
     }
 }

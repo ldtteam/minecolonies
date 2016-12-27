@@ -1,13 +1,16 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.coremod.blocks.BlockHutTownHall;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
+import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.event.EventHandler;
 import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
@@ -142,18 +145,21 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             return;
         }
 
+        final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
-        if (tempColony != null && !tempColony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
+        if (tempColony != null
+                && (!tempColony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS)
+                && !(block instanceof BlockHutTownHall
+                && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.workingRangeTownHall * 2 + Configurations.townHallPadding)))
         {
             return;
         }
-
-        final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
 
         if (block != null && player.inventory.hasItemStack(new ItemStack(block)))
         {
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
+
                 world.destroyBlock(buildPos, true);
                 world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
                 block.onBlockPlacedBy(world, buildPos, world.getBlockState(buildPos), player, null);

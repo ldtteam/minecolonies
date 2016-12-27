@@ -75,7 +75,10 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             final EntityCitizen tempCitizen = worker.getCitizenEntity();
             worker.setWorkBuilding(null);
-            tempCitizen.setLastJob(getJobName());
+            if(tempCitizen != null)
+            {
+                tempCitizen.setLastJob(getJobName());
+            }
         }
 
         worker = citizen;

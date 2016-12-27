@@ -79,7 +79,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
 
         if (tempColony == null)
         {
-            if (colonyId == -1)
+            if (colonyId == -1 && args.length != 0)
             {
                 sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
             }
@@ -93,7 +93,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
         if (colony == null)
         {
-            if (colonyId == -1)
+            if (colonyId == -1 && args.length != 0)
             {
                 sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
             }

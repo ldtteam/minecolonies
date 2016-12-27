@@ -4,13 +4,15 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
+import com.minecolonies.coremod.entity.ai.citizen.miner.*;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.EntityUtils;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Proxy handling walkToX tasks.
@@ -201,6 +203,16 @@ public class WalkToProxy
             //Check if miner is underground in shaft and his target is overground.
             if (workerY <= levelDepth && targetY > levelDepth)
             {
+                if(level.getRandomNode().getParent() != null)
+                {
+                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
+                    while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
+                    {
+                        proxyList.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
+                        currentNode = level.getNode(currentNode.getParent());
+                    }
+                }
+
                 proxyList.add(new BlockPos(ladderPos.getX(), level.getDepth(), ladderPos.getZ()));
                 return getProxy(target, worker.getPosition(), distanceToPath);
 
@@ -217,6 +229,23 @@ public class WalkToProxy
 
                 //Then add the ladder position as the latest node.
                 proxyList.add(new BlockPos(ladderPos.getX(), level.getDepth(), ladderPos.getZ()));
+
+                if(level.getRandomNode().getParent() != null)
+                {
+                    final List<BlockPos> nodesToTarget = new ArrayList<>();
+                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
+                    while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
+                    {
+                        nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
+                        currentNode = level.getNode(currentNode.getParent());
+                    }
+
+                    for (int i = nodesToTarget.size() - 1; i >= 0; i--)
+                    {
+                        proxyList.add(nodesToTarget.get(i));
+                    }
+                }
+
                 return newProxy;
             }
             //If he is on the same Y level as his target and both underground, don't use a proxy. Just don't.

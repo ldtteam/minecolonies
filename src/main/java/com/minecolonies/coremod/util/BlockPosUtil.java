@@ -185,8 +185,8 @@ public final class BlockPosUtil
      */
     public static long getDistance2D(@NotNull final BlockPos block1, @NotNull final BlockPos block2)
     {
-        final long xDiff = (long) block1.getX() - block2.getX();
-        final long zDiff = (long) block1.getZ() - block2.getZ();
+        final long xDiff = Math.abs((long) block1.getX() - block2.getX());
+        final long zDiff = Math.abs((long) block1.getZ() - block2.getZ());
 
         return Math.abs(xDiff + zDiff);
     }

@@ -461,13 +461,15 @@ public abstract class AbstractBuilding
      */
     public void onDestroyed()
     {
-
         final TileEntityColonyBuilding tileEntityNew = this.getTileEntity();
         final World world = colony.getWorld();
         final Block block = world.getBlockState(this.location).getBlock();
 
-        InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
-        world.updateComparatorOutputLevel(this.location, block);
+        if(tileEntityNew != null)
+        {
+            InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
+            world.updateComparatorOutputLevel(this.location, block);
+        }
 
         if (MaterialSystem.isEnabled)
         {
