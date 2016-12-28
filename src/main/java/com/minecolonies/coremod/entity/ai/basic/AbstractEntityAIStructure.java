@@ -396,7 +396,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     public void loadStructure()
     {
         WorkOrderBuild workOrder = null;
-        if(job instanceof JobBuilder)
+        if (job instanceof JobBuilder)
         {
             workOrder = ((JobBuilder) job).getWorkOrder();
         }
@@ -433,7 +433,22 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         workOrder.setCleared(false);
         workOrder.setRequested(false);
 
-        requestMaterials();
+        //We need to deal with materials
+        requestMaterialsIfRequired();
+    }
+
+    /**
+     * Requests Materials if required.
+     * - If the entity is a builder.
+     * - If the builder doesn't have infinite resources.
+     */
+    private void requestMaterialsIfRequired()
+    {
+        if (!Configurations.builderInfiniteResources && job instanceof JobBuilder && getOwnBuilding() instanceof BuildingBuilder)
+        {
+            ((BuildingBuilder) getOwnBuilding()).resetNeededResources();
+            requestMaterials();
+        }
     }
 
     /**
@@ -471,40 +486,40 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
+    /**
+     * Iterates through all the required resources and stores them in the building.
+     */
     private void requestMaterials()
     {
-        //We need to deal with materials
-        if (!Configurations.builderInfiniteResources && job instanceof JobBuilder)
+        JobBuilder builderJob = (JobBuilder) job;
+        while (builderJob.getStructure().findNextBlock())
         {
-            while (((JobBuilder) job).getStructure().findNextBlock())
+            @Nullable final Block block = builderJob.getStructure().getBlock();
+            @NotNull final IBlockState blockState = builderJob.getStructure().getBlockState();
+
+            if (builderJob.getStructure().doesStructureBlockEqualWorldBlock()
+                    || (blockState instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                    || (blockState instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER)))
             {
-                @Nullable final Block block = ((JobBuilder) job).getStructure().getBlock();
-                @NotNull final IBlockState blockState = ((JobBuilder) job).getStructure().getBlockState();
+                continue;
+            }
 
-                if (((JobBuilder) job).getStructure().doesStructureBlockEqualWorldBlock()
-                        || (blockState instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
-                        || (blockState instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER)))
+            final Block worldBlock = BlockPosUtil.getBlock(world, builderJob.getStructure().getBlockPosition());
+
+            if (block != null
+                    && block != Blocks.AIR
+                    && worldBlock != Blocks.BEDROCK
+                    && !(worldBlock instanceof AbstractBlockHut)
+                    && !isBlockFree(block, 0))
+            {
+                final AbstractBuilding building = getOwnBuilding();
+                if (building instanceof BuildingBuilder)
                 {
-                    continue;
-                }
-
-                final Block worldBlock = BlockPosUtil.getBlock(world, ((JobBuilder) job).getStructure().getBlockPosition());
-
-                if (block != null
-                        && block != Blocks.AIR
-                        && worldBlock != Blocks.BEDROCK
-                        && !(worldBlock instanceof AbstractBlockHut)
-                        && !isBlockFree(block, 0))
-                {
-                    final AbstractBuilding building = getOwnBuilding();
-                    if (building instanceof BuildingBuilder)
-                    {
-                        ((BuildingBuilder) building).addNeededResource(block, 1);
-                    }
+                    ((BuildingBuilder) building).addNeededResource(block, 1);
                 }
             }
-            ((JobBuilder) job).getWorkOrder().setRequested(true);
         }
+        builderJob.getWorkOrder().setRequested(true);
     }
 
 
