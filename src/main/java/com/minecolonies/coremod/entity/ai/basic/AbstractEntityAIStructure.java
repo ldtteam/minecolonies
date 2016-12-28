@@ -491,7 +491,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private void requestMaterials()
     {
-        JobBuilder builderJob = (JobBuilder) job;
+        final JobBuilder builderJob = (JobBuilder) job;
         while (builderJob.getStructure().findNextBlock())
         {
             @Nullable final Block block = builderJob.getStructure().getBlock();
