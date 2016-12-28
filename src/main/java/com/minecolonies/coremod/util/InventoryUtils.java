@@ -666,7 +666,7 @@ public class InventoryUtils
         {
             return true;
         }
-        else if (item.hasEffect() && hutLevel <= EFFECT_TOOL_CHOICE_LEVEL)
+        else if (item.isItemEnchanted() && hutLevel <= EFFECT_TOOL_CHOICE_LEVEL)
         {
             return false;
         }
