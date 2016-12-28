@@ -203,7 +203,7 @@ public class WalkToProxy
             //Check if miner is underground in shaft and his target is overground.
             if (workerY <= levelDepth && targetY > levelDepth)
             {
-                if(level.getRandomNode().getParent() != null)
+                if(level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {
                     com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
                     while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
