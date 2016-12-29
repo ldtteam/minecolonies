@@ -583,5 +583,19 @@ public class BuildingFarmer extends AbstractBuildingWorker
                 amountOfFields--;
             }
         }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.ENDURANCE;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.CHARISMA;
+        }
     }
 }

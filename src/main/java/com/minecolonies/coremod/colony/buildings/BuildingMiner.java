@@ -647,5 +647,19 @@ public class BuildingMiner extends AbstractBuildingWorker
                 levels[i] = buf.readInt();
             }
         }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.STRENGTH;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.CHARISMA;
+        }
     }
 }

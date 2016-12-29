@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Item used to scan structures.
+ * Item used to scan structures. Will store the structure on the client even if used in smp.
  */
 public class ItemScanTool extends AbstractItemMinecolonies
 {

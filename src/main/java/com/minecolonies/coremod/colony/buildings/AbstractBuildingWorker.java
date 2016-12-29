@@ -21,6 +21,19 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     private CitizenData worker;
 
     /**
+     * Available skills of the citizens.
+     */
+    public enum Skill
+    {
+        STRENGTH,
+        ENDURANCE,
+        CHARISMA,
+        INTELLIGENCE,
+        DEXTERITY,
+        PLACEHOLDER
+    }
+
+    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -260,6 +273,18 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
             super.deserialize(buf);
 
             workerId = buf.readInt();
+        }
+
+        @NotNull
+        public Skill getPrimarySkill()
+        {
+            return Skill.PLACEHOLDER;
+        }
+
+        @NotNull
+        public Skill getSecondarySkill()
+        {
+            return Skill.PLACEHOLDER;
         }
     }
 }

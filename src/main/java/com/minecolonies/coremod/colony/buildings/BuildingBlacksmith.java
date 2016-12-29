@@ -88,5 +88,19 @@ public class BuildingBlacksmith extends AbstractBuildingWorker
         {
             return new WindowHutWorkerPlaceholder<AbstractBuildingWorker.View>(this, BLACKSMITH_HUT_NAME);
         }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.DEXTERITY;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.STRENGTH;
+        }
     }
 }

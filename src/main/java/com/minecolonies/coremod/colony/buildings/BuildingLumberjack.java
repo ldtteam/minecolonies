@@ -132,5 +132,19 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             return new WindowHutWorkerPlaceholder<>(this, LUMBERJACK_HUT_NAME);
         }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.STRENGTH;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.CHARISMA;
+        }
     }
 }

@@ -129,5 +129,19 @@ public class BuildingFisherman extends AbstractBuildingWorker
         {
             return new WindowHutFisherman(this);
         }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.INTELLIGENCE;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.DEXTERITY;
+        }
     }
 }
