@@ -84,9 +84,24 @@ public class BuildingStonemason extends AbstractBuildingWorker
         }
 
         @NotNull
+        @Override
         public Window getWindow()
         {
             return new WindowHutWorkerPlaceholder<>(this, STONEMASON_HUT_NAME);
+        }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.DEXTERITY;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.STRENGTH;
         }
     }
 }
