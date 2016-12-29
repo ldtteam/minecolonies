@@ -112,5 +112,19 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
         {
             super.deserialize(buf);
         }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.INTELLIGENCE;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.ENDURANCE;
+        }
     }
 }

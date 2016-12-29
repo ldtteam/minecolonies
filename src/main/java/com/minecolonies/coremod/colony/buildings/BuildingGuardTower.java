@@ -601,6 +601,30 @@ public class BuildingGuardTower extends AbstractBuildingWorker
 
             guardPos = BlockPosUtil.readFromByteBuf(buf);
         }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            if(GuardJob.KNIGHT.equals(job))
+            {
+                return Skill.STRENGTH;
+            }
+
+            return Skill.INTELLIGENCE;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            if(GuardJob.KNIGHT.equals(job))
+            {
+                return Skill.ENDURANCE;
+            }
+
+            return Skill.STRENGTH;
+        }
     }
 }
 

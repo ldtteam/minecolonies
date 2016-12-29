@@ -106,5 +106,19 @@ public class BuildingBaker extends AbstractBuildingWorker
         {
             return new WindowHutWorkerPlaceholder<>(this, BAKER_HUT_NAME);
         }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.DEXTERITY;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.CHARISMA;
+        }
     }
 }
