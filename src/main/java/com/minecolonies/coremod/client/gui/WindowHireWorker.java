@@ -66,6 +66,16 @@ public class WindowHireWorker extends Window implements Button.Handler
     private static final int CITIZEN_ID_LABEL_POSITION = 3;
 
     /**
+     * Colors the following String in green.
+     */
+    private static final String GREEN_STRING = "§n§2";
+
+    /**
+     * Colors the following string in orange.
+     */
+    private static final String ORANGE_STRING = "§n§6";
+
+    /**
      * Contains all the citizens.
      */
     private List<CitizenDataView> citizens = new ArrayList<>();
@@ -142,19 +152,39 @@ public class WindowHireWorker extends Window implements Button.Handler
             {
                 final CitizenDataView citizen = citizens.get(index);
 
-                //todo store the best skills in the building and then highlight them here.
-                //Creates the list of attributes for each citizen
-                @NotNull final String attributes = LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()) + " "
-                                                     + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()) + " "
-                                                     + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()) + " "
-                                                     + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()) + " "
-                                                     + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getIntelligence());
+                if (building instanceof AbstractBuildingWorker.View)
+                {
+                    final AbstractBuildingWorker.Skill primary = ((AbstractBuildingWorker.View) building).getPrimarySkill();
+                    final AbstractBuildingWorker.Skill secondary = ((AbstractBuildingWorker.View) building).getSecondarySkill();
 
-                rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
-                rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes);
+                    @NotNull final String strength = (primary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? GREEN_STRING
+                            : (secondary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? ORANGE_STRING : ""))
+                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()) + " § ";
 
-                //Invisible id textContent.
-                rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabelText(Integer.toString(citizen.getID()));
+                    @NotNull final String charisma = (primary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? GREEN_STRING
+                            : (secondary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? ORANGE_STRING : ""))
+                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()) + " § ";
+
+                    @NotNull final String dexterity = (primary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? GREEN_STRING
+                            : (secondary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? ORANGE_STRING : ""))
+                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()) + " § ";
+
+                    @NotNull final String endurance = (primary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? GREEN_STRING
+                            : (secondary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? ORANGE_STRING : ""))
+                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()) + " § ";
+
+                    @NotNull final String intelligence = (primary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? GREEN_STRING
+                            : (secondary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? ORANGE_STRING : ""))
+                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getStrength()) + " § ";
+
+                    //Creates the list of attributes for each citizen
+                    @NotNull final String attributes = strength + charisma + dexterity + endurance + intelligence;
+
+                    rowPane.findPaneOfTypeByID(CITIZEN_LABEL, Label.class).setLabelText(citizen.getName());
+                    rowPane.findPaneOfTypeByID(ATTRIBUTES_LABEL, Label.class).setLabelText(attributes);
+                    //Invisible id textContent.
+                    rowPane.findPaneOfTypeByID(ID_LABEL, Label.class).setLabelText(Integer.toString(citizen.getID()));
+                }
             }
         });
     }

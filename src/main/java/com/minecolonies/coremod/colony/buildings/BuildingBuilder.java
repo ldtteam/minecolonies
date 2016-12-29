@@ -289,5 +289,19 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             return new HashMap<>(neededResources);
         }
+
+        @NotNull
+        @Override
+        public Skill getPrimarySkill()
+        {
+            return Skill.INTELLIGENCE;
+        }
+
+        @NotNull
+        @Override
+        public Skill getSecondarySkill()
+        {
+            return Skill.STRENGTH;
+        }
     }
 }

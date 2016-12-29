@@ -257,12 +257,6 @@ public class ColonyPermissionEventHandler
 
             if (rank.ordinal() > Permissions.Rank.FRIEND.ordinal())
             {
-                /*
-                    this will delete the item entirely:
-                    Canceling the event will stop the items from entering the world,
-                    but will not prevent them being removed from the inventory
-                    - and thus removed from the system.
-                 */
                 cancelEvent(event);
             }
         }
@@ -289,12 +283,6 @@ public class ColonyPermissionEventHandler
 
             if (rank.ordinal() > Permissions.Rank.FRIEND.ordinal())
             {
-                /*
-                    this will delete the item entirely:
-                    Canceling the event will stop the items from entering the world,
-                    but will not prevent them being removed from the inventory
-                    - and thus removed from the system.
-                 */
                 cancelEvent(event);
             }
         }
