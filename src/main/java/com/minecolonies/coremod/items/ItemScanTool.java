@@ -91,6 +91,8 @@ public class ItemScanTool extends AbstractItemMinecolonies
         {
             @NotNull final BlockPos pos1 = BlockPosUtil.readFromNBT(compound, "pos1");
             @NotNull final BlockPos pos2 = BlockPosUtil.readFromNBT(compound, "pos2");
+
+            //todo if on client (ssp) -> no need to send message, we can execute it in worldIn.isRemote without a message.
             if (!worldIn.isRemote)
             {
                 saveStructure(worldIn, pos1, pos2, playerIn);
@@ -111,6 +113,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
      */
     private static void saveStructure(@Nullable final World world, @Nullable final BlockPos from, @Nullable final BlockPos to, @NotNull final EntityPlayer player)
     {
+        //todo if on clientSide check if isRemote and if it is -> don't seed message, execute right away.
         if (world == null || from == null || to == null)
         {
             throw new IllegalArgumentException("Invalid method call, arguments can't be null. Contact a developer.");
@@ -132,7 +135,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
         final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
-
+        
         MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), fileName), (EntityPlayerMP) player);
     }
 }
