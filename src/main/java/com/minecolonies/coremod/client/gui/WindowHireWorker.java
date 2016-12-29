@@ -142,6 +142,7 @@ public class WindowHireWorker extends Window implements Button.Handler
             {
                 final CitizenDataView citizen = citizens.get(index);
 
+                //todo store the best skills in the building and then highlight them here.
                 //Creates the list of attributes for each citizen
                 @NotNull final String attributes = LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()) + " "
                                                      + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()) + " "
