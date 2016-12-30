@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.commands.GetColonyAndCitizen;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -62,21 +63,8 @@ public class CitizenInfoCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        final int colonyId;
-        final int citizenId;
-        //todo add this in a feature update when we added argument parsing and permission handling.
-        final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
-        if (args.length == 1)
-        {
-            colonyId = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID).getID();
-            citizenId = getIthArgument(args, 0, -1);
-        }
-        else
-        {
-            colonyId = getIthArgument(args, 0, -1);
-            citizenId = getIthArgument(args, 1, -1);
-        }
-        //No citizen or citizen defined.
+        final int colonyId = GetColonyAndCitizen.getColonyId(sender, args);
+        final int citizenId = GetColonyAndCitizen.getCitizenId(sender, args);
         if (colonyId == -1 && citizenId == -1)
         {
             sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE,
