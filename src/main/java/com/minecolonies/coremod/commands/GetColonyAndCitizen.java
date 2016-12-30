@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.command.ICommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -19,7 +20,14 @@ public abstract class GetColonyAndCitizen
         final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
         if (args.length == 2)
         {
-            ColonyId = Integer.parseInt(args[0]);
+            try
+            {
+                ColonyId = Integer.parseInt(args[0]);
+            }
+            catch (NumberFormatException e)
+            {
+                ColonyId = -1;
+            }
         }
         else if (args.length == 1)
         {
@@ -29,6 +37,8 @@ public abstract class GetColonyAndCitizen
         {
             ColonyId = -1;
         }
+
+
         return ColonyId;
     }
 
