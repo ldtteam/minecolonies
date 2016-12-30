@@ -14,6 +14,11 @@ public class BlockHutBaker extends AbstractBlockHut
         super();
     }
 
+    public String getJobName()
+    {
+        return "Baker";
+    }
+
     @NotNull
     @Override
     public String getName()

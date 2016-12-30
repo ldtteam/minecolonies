@@ -16,6 +16,11 @@ public class BlockHutGuardTower extends AbstractBlockHut
         super();
     }
 
+    public String getJobName()
+    {
+        return "Guard";
+    }
+
     @NotNull
     @Override
     public String getName()
