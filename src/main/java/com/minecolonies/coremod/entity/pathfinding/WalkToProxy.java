@@ -92,8 +92,8 @@ public class WalkToProxy
      */
     public boolean walkToBlock(@NotNull BlockPos target, int range, boolean onMove)
     {
-        final double distanceToPath = worker.getColonyJob() instanceof JobBuilder ?
-                BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target) : BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
+        final double distanceToPath = worker.getColonyJob() instanceof JobBuilder
+                ? BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target) : BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
