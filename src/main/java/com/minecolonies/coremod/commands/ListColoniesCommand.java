@@ -23,8 +23,8 @@ import java.util.List;
 public class ListColoniesCommand extends AbstractSingleCommand
 {
 
-    private static final String ID_TEXT                = "§2ID: §f";
-    private static final String NAME_TEXT              = "§2 Name: §f";
+    private static final String ID_TEXT                = "§2ID: §f%s";
+    private static final String NAME_TEXT              = "§2 Name: §f%s";
     private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
     private static final String COORDINATES_XYZ        = "§4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list ";
