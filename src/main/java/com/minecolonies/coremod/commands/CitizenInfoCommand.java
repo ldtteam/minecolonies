@@ -42,7 +42,6 @@ public class CitizenInfoCommand extends AbstractSingleCommand
 
 
 
-
     /**
      * Initialize this SubCommand with it's parents.
      *
