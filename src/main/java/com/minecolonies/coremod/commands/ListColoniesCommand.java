@@ -28,15 +28,15 @@ public class ListColoniesCommand extends AbstractSingleCommand
     private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
     private static final String COORDINATES_XYZ        = "§4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list ";
-    private static final String PAGE_TOP_LEFT       = "§2   ------------------ page ";
-    private static final String PAGE_TOP_RIGHT      = " ------------------";
-    private static final String PAGE_TOP_MIDDLE     = " of ";
-    private static final String PREV_PAGE           = " <- prev";
-    private static final String NEXT_PAGE           = "next -> ";
-    private static final String PAGE_LINE           = "§2 ----------------";
-    private static final String PAGE_LINE_DIVIDER   = "§2 | ";
-    private static final String COMMAND_COLONY_INFO = "/mc colony info %s";
-    private static final int    COLONIES_ON_PAGE    = 9;
+    private static final String PAGE_TOP_LEFT          = "§2   ------------------ page ";
+    private static final String PAGE_TOP_RIGHT         = " ------------------";
+    private static final String PAGE_TOP_MIDDLE        = " of ";
+    private static final String PREV_PAGE              = " <- prev";
+    private static final String NEXT_PAGE              = "next -> ";
+    private static final String PAGE_LINE              = "§2 ----------------";
+    private static final String PAGE_LINE_DIVIDER      = "§2 | ";
+    private static final String COMMAND_COLONY_INFO    = "/mc colony info %d";
+    private static final int    COLONIES_ON_PAGE       = 9;
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -104,8 +104,8 @@ public class ListColoniesCommand extends AbstractSingleCommand
         for (final Colony colony : coloniesPage)
         {
             sender.addChatMessage(new TextComponentString(String.format(
-              ID_TEXT + colony.getID() + NAME_TEXT + colony.getName())).setStyle((new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                                                                                            String.format(COMMAND_COLONY_INFO, colony.getID()))))));
+              ID_TEXT + colony.getID() + NAME_TEXT + colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                                                                                                           String.format(COMMAND_COLONY_INFO, colony.getID())))));
             final BlockPos center = colony.getCenter();
             sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ())));
         }

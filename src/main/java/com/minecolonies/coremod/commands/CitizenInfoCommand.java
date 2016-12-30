@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -14,8 +15,11 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
-
+/**
+ * Show info of one citizen.
+ */
 public class CitizenInfoCommand extends AbstractSingleCommand
 {
     public static final  String       DESC                            = "citizenInfo";
@@ -49,6 +53,20 @@ public class CitizenInfoCommand extends AbstractSingleCommand
         super(parents);
     }
 
+    private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
+    {
+        final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();
+        if (tempServer != null)
+        {
+            final GameProfile profile = tempServer.getPlayerProfileCache().getGameProfileForUsername(args[0]);
+            if (profile != null)
+            {
+                return profile.getId();
+            }
+        }
+        return null;
+    }
+
     @NotNull
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
@@ -59,12 +77,24 @@ public class CitizenInfoCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        final int colonyId = getIthArgument(args, 0, -1);
-        final int citizenId = getIthArgument(args, 1, -1);
+        final int colonyId;
+        final int citizenId;
         //todo add this in a feature update when we added argument parsing and permission handling.
 
+        UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
+
+        if (args.length == 1)
+        {
+            colonyId = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID).getID();
+            citizenId = getIthArgument(args, 0, -1);
+        }
+        else
+        {
+            colonyId = getIthArgument(args, 0, -1);
+            citizenId = getIthArgument(args, 1, -1);
+        }
         //No citizen or citizen defined.
-        if (colonyId == -1 || citizenId == -1)
+        if (colonyId == -1 && citizenId == -1)
         {
             sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE,
               citizenId,
@@ -99,9 +129,6 @@ public class CitizenInfoCommand extends AbstractSingleCommand
             return;
         }
 
-
-
-
         sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
           entityCitizen.getEntityId(),
           entityCitizen.getName())));
@@ -115,17 +142,17 @@ public class CitizenInfoCommand extends AbstractSingleCommand
           homePosition.getX(),
           homePosition.getY(),
           homePosition.getZ())));
-        if (entityCitizen.getWorkBuilding() != null)
+        if (entityCitizen.getWorkBuilding() == null)
+        {
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION_NULL)));
+        }
+        else
         {
             final BlockPos workingPosition = entityCitizen.getWorkBuilding().getLocation();
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION,
               workingPosition.getX(),
               workingPosition.getY(),
               workingPosition.getZ())));
-        }
-        else
-        {
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION_NULL)));
         }
         sender.addChatMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
           entityCitizen.getHealth(),
@@ -140,17 +167,17 @@ public class CitizenInfoCommand extends AbstractSingleCommand
           entityCitizen.getEndurance(),
           entityCitizen.getIntelligence(),
           entityCitizen.getStrength())));
-        if (entityCitizen.getColonyJob() != null)
+        if (entityCitizen.getColonyJob() == null)
+        {
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_JOB_NULL)));
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_NO_ACTIVITY)));
+        }
+        else
         {
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_JOB, entityCitizen.getWorkBuilding().getJobName())));
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESIRED_ACTIVITY,
               entityCitizen.getDesiredActivity(),
               entityCitizen.getColonyJob().getNameTagDescription())));
-        }
-        else
-        {
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_JOB_NULL)));
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_NO_ACTIVITY)));
         }
 
     }

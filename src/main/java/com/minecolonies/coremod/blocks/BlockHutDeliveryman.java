@@ -15,10 +15,6 @@ public class BlockHutDeliveryman extends AbstractBlockHut
         super();
     }
 
-    public String getJobName()
-    {
-        return "Deliveryman";
-    }
     @NotNull
     @Override
     public String getName()

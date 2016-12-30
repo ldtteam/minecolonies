@@ -14,11 +14,6 @@ public class BlockHutLumberjack extends AbstractBlockHut
         super();
     }
 
-    public String getJobName()
-    {
-        return "Lumberjack";
-    }
-
     @NotNull
     @Override
     public String getName()

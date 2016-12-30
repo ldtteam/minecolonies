@@ -14,11 +14,6 @@ public class BlockHutBlacksmith extends AbstractBlockHut
         super();
     }
 
-    public String getJobName()
-    {
-        return "Blacksmith";
-    }
-
     @NotNull
     @Override
     public String getName()
