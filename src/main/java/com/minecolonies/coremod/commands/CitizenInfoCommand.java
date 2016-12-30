@@ -65,9 +65,7 @@ public class CitizenInfoCommand extends AbstractSingleCommand
         final int colonyId;
         final int citizenId;
         //todo add this in a feature update when we added argument parsing and permission handling.
-
         final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
-
         if (args.length == 1)
         {
             colonyId = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID).getID();
