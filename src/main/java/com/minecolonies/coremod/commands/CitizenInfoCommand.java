@@ -4,7 +4,6 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -53,20 +52,6 @@ public class CitizenInfoCommand extends AbstractSingleCommand
         super(parents);
     }
 
-    private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
-    {
-        final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();
-        if (tempServer != null)
-        {
-            final GameProfile profile = tempServer.getPlayerProfileCache().getGameProfileForUsername(args[0]);
-            if (profile != null)
-            {
-                return profile.getId();
-            }
-        }
-        return null;
-    }
-
     @NotNull
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
@@ -81,7 +66,7 @@ public class CitizenInfoCommand extends AbstractSingleCommand
         final int citizenId;
         //todo add this in a feature update when we added argument parsing and permission handling.
 
-        UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
+        final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
 
         if (args.length == 1)
         {
