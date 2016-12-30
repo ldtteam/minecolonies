@@ -23,8 +23,7 @@ import java.util.List;
 public class ListColoniesCommand extends AbstractSingleCommand
 {
 
-    private static final String ID_TEXT                = "§2ID: §f%s";
-    private static final String NAME_TEXT              = "§2 Name: §f%s";
+    private static final String ID_AND_NAME_TEXT       = "§2ID: §f%s §2 Name: §f%s";
     private static final String COORDINATES_TEXT       = "§2Coordinates: §f";
     private static final String COORDINATES_XYZ        = "§4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String LIST_COMMAND_SUGGESTED = "/mc colonies list ";
@@ -104,7 +103,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
         for (final Colony colony : coloniesPage)
         {
             sender.addChatMessage(new TextComponentString(String.format(
-              ID_TEXT, colony.getID(), NAME_TEXT, colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+              ID_AND_NAME_TEXT, colony.getID(), colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                                                                            String.format(COMMAND_COLONY_INFO, colony.getID())))));
             final BlockPos center = colony.getCenter();
             sender.addChatMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ())));
