@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.pathfinding;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.miner.*;
@@ -71,8 +72,9 @@ public class WalkToProxy
     {
         if (onMove)
         {
+            final int targetY = worker.getColonyJob() instanceof JobBuilder ? worker.getPosition().getY() : target.getY();
             return EntityUtils.isWorkerAtSiteWithMove(worker, target.getX(), target.getY(), target.getZ(), range)
-                     || EntityUtils.isWorkerAtSite(worker, target.getX(), target.getY(), target.getZ(), range + 1);
+                     || EntityUtils.isWorkerAtSite(worker, target.getX(), targetY, target.getZ(), range + 1);
         }
         else
         {
@@ -90,7 +92,8 @@ public class WalkToProxy
      */
     public boolean walkToBlock(@NotNull BlockPos target, int range, boolean onMove)
     {
-        final double distanceToPath = BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
+        final double distanceToPath = worker.getColonyJob() instanceof JobBuilder
+                ? BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target) : BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
