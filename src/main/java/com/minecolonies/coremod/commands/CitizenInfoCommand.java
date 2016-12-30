@@ -84,7 +84,6 @@ public class CitizenInfoCommand extends AbstractSingleCommand
               colonyId)));
             return;
         }
-
         //Wasn't able to get the citizen from the colony.
         final Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
@@ -92,7 +91,6 @@ public class CitizenInfoCommand extends AbstractSingleCommand
             sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
             return;
         }
-
         final CitizenData citizenData = colony.getCitizen(citizenId);
         if (citizenData == null)
         {
@@ -101,7 +99,6 @@ public class CitizenInfoCommand extends AbstractSingleCommand
               colonyId)));
             return;
         }
-
         //Wasn't able to get the entity from the citizenData.
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
         if (entityCitizen == null)
@@ -111,7 +108,6 @@ public class CitizenInfoCommand extends AbstractSingleCommand
               colonyId)));
             return;
         }
-
         sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
           entityCitizen.getEntityId(),
           entityCitizen.getName())));
@@ -162,7 +158,6 @@ public class CitizenInfoCommand extends AbstractSingleCommand
               entityCitizen.getDesiredActivity(),
               entityCitizen.getColonyJob().getNameTagDescription())));
         }
-
     }
 
     @NotNull
