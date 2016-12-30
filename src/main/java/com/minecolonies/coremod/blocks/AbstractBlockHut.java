@@ -77,7 +77,6 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * @return Name of the block.
      */
     public abstract String getName();
-
     @NotNull
     @Override
     public TileEntity createNewTileEntity(final World world, final int meta)

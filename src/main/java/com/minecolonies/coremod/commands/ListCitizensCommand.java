@@ -103,8 +103,8 @@ public class ListCitizensCommand extends AbstractSingleCommand
         {
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
               citizen.getId(),
-              citizen.getName())).setStyle((new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
-                                                                                      String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId()))))));
+              citizen.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+                                                                                     String.format(COMMAND_CITIZEN_INFO, citizen.getColony().getID(), citizen.getId())))));
 
             if (citizen.getCitizenEntity() != null)
             {
