@@ -104,7 +104,7 @@ public class ListColoniesCommand extends AbstractSingleCommand
         for (final Colony colony : coloniesPage)
         {
             sender.addChatMessage(new TextComponentString(String.format(
-              ID_TEXT + colony.getID() + NAME_TEXT + colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+              ID_TEXT, colony.getID(), NAME_TEXT, colony.getName())).setStyle(new Style().setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
                                                                                                                            String.format(COMMAND_COLONY_INFO, colony.getID())))));
             final BlockPos center = colony.getCenter();
             sender.sendMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, center.getX(), center.getY(), center.getZ())));
