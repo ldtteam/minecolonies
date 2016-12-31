@@ -43,9 +43,12 @@ public abstract class GetColonyAndCitizen
         {
             colonyId = -3;
         }
-        if (ColonyManager.getColony(colonyId) == null)
+        if (colonyId >= 0)
         {
-            colonyId = -4;
+            if (ColonyManager.getColony(colonyId) == null)
+            {
+                colonyId = -4;
+            }
         }
 
 
@@ -54,35 +57,50 @@ public abstract class GetColonyAndCitizen
 
     public static int getCitizenId(@NotNull final int colonyId, @NotNull final String... args)
     {
-        String citizenName = null;
+        String citizenName;
+        citizenId = -4;
         if (args.length == 2)
         {
-            citizenId = Integer.parseInt(args[1]);
+            try
+            {
+                citizenId = Integer.parseInt(args[1]);
+            }
+            catch (NumberFormatException e)
+            {
+                citizenId = -1;
+            }
         }
         else if (args.length == 1)
         {
-            citizenId = Integer.parseInt(args[0]);
+            try
+            {
+                citizenId = Integer.parseInt(args[0]);
+            }
+            catch (NumberFormatException e)
+            {
+                citizenId = -1;
+            }
         }
         else if (args.length == 3 && colonyId >= 0)
         {
-            final List<CitizenData> citizens = new ArrayList<>(ColonyManager.getColony(colonyId).getCitizens().values());
             citizenName = args[0] + " " + args[1] + " " + args[2];
-            for (int i = 0; i == citizens.size(); i++)
+            for (int i = 1
+                   ; i <= ColonyManager.getColony(colonyId).getCitizens().size(); i++)
             {
-                if (ColonyManager.getColony(colonyId).getCitizen(i).getName() == citizenName)
+                if (ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
                 }
             }
 
         }
-        else if (args.length == 4)
+        else if (args.length == 4 && colonyId >= 0)
         {
             final List<CitizenData> citizens = new ArrayList<>(ColonyManager.getColony(colonyId).getCitizens().values());
             citizenName = args[1] + " " + args[2] + " " + args[3];
-            for (int i = 0; i == citizens.size(); i++)
+            for (int i = 1; i <= citizens.size(); i++)
             {
-                if (ColonyManager.getColony(colonyId).getCitizen(i).getName() == citizenName)
+                if (ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
                 }
@@ -90,15 +108,18 @@ public abstract class GetColonyAndCitizen
         }
         else if (args.length >= 5)
         {
-            citizenId = -1;
+            citizenId = -2;
         }
         else
         {
-            citizenId = -2;
-        }
-        if (citizenId >= 0 && colonyId >= 0 && ColonyManager.getColony(colonyId).getCitizen(citizenId) == null)
-        {
             citizenId = -3;
+        }
+        if (citizenId >= 0 && colonyId >= 0)
+        {
+            if (ColonyManager.getColony(colonyId).getCitizen(citizenId) == null)
+            {
+                citizenId = -4;
+            }
         }
         return citizenId;
     }
@@ -133,13 +154,17 @@ public abstract class GetColonyAndCitizen
         }
         else if (citizenId == -1 && ErrorMessage == null)
         {
-            ErrorMessage = "Too many arguments!";
+            ErrorMessage = "Please only use numbers for the citizen ID!";
         }
         else if (citizenId == -2 && ErrorMessage == null)
         {
-            ErrorMessage = "Unknown Error!";
+            ErrorMessage = "Too many arguments!";
         }
         else if (citizenId == -3 && ErrorMessage == null)
+        {
+            ErrorMessage = "Unknown Error!";
+        }
+        else if (citizenId == -4 && ErrorMessage == null)
         {
             ErrorMessage = "Citizen not found!";
         }
