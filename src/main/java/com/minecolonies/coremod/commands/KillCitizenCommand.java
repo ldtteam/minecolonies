@@ -58,11 +58,6 @@ public class KillCitizenCommand extends AbstractSingleCommand
         final int colonyId = getIthArgument(args, 0, -1);
         final int citizenId = getIthArgument(args, 1, -1);
         //todo add this in a feature update when we added argument parsing and permission handling.
-        /*if(colonyId == -1)
-        {
-            colonyId = getColonyId(sender);
-        }*/
-
         //No citizen or citizen defined.
         if (colonyId == -1 || citizenId == -1)
         {
