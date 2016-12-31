@@ -55,7 +55,7 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
             final Colony colony = ColonyManager.getColony(colonyId);
             final CitizenData citizenData = colony.getCitizen(citizenId);
             final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, entityCitizen.getEntityId(), entityCitizen.getName())));
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
             final BlockPos position = entityCitizen.getPosition();
             sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
 

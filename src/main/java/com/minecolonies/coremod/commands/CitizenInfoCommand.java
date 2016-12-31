@@ -64,8 +64,8 @@ public class CitizenInfoCommand extends AbstractSingleCommand
             final CitizenData citizenData = colony.getCitizen(citizenId);
             final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
-              entityCitizen.getEntityId(),
-              entityCitizen.getName())));
+              citizenData.getId(),
+              citizenData.getName())));
             final BlockPos citizenPosition = entityCitizen.getPosition();
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_POSITION,
               citizenPosition.getX(),

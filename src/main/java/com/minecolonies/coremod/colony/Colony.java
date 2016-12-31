@@ -948,7 +948,6 @@ public class Colony implements IColony
             CitizenData citizenData = data;
             if (citizenData == null)
             {
-                //topCitizenId++;
                 for (int i = 1; i <= 100; i++)
                 {
                     if (getCitizen(i) == null)

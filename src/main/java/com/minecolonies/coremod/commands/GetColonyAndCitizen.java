@@ -16,6 +16,7 @@ public abstract class GetColonyAndCitizen
     private static final String TOO_MANY_ARGUMENTS = "Too many arguments!";
     private static final String UNKNOWN_ERROR      = "Unknown Error!";
     private static final String NOT_FOUND          = "%s not found";
+    private static final String NO_COLONY          = "You haven't got a colony!";
 
 
     public static int colonyId;
@@ -37,7 +38,14 @@ public abstract class GetColonyAndCitizen
         }
         else if (args.length == 1 || args.length == 3)
         {
-            colonyId = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID).getID();
+            try
+            {
+                colonyId = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID).getID();
+            }
+            catch (NullPointerException e)
+            {
+                colonyId = -5;
+            }
         }
         else if (args.length >= 5)
         {
@@ -156,6 +164,10 @@ public abstract class GetColonyAndCitizen
         else if (colonyId == -4)
         {
             ErrorMessage = String.format(NOT_FOUND, "Colony");
+        }
+        else if (colonyId == -5)
+        {
+            ErrorMessage = NO_COLONY;
         }
 
         if (citizenId >= 0 && ErrorMessage == null)
