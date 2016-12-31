@@ -55,45 +55,24 @@ public class KillCitizenCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        final int colonyId = getIthArgument(args, 0, -1);
-        final int citizenId = getIthArgument(args, 1, -1);
+        final int colonyId = GetColonyAndCitizen.getColonyId(sender, args);
+        final int citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
         //todo add this in a feature update when we added argument parsing and permission handling.
-        //No citizen or citizen defined.
-        if (colonyId == -1 || citizenId == -1)
+        if (GetColonyAndCitizen.getErrors(colonyId, citizenId) == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
-            return;
+            final Colony colony = ColonyManager.getColony(colonyId);
+            final CitizenData citizenData = colony.getCitizen(citizenId);
+            final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, entityCitizen.getEntityId(), entityCitizen.getName())));
+            final BlockPos position = entityCitizen.getPosition();
+            sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+            sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
+            server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
         }
-
-        //Wasn't able to get the citizen from the colony.
-        final Colony colony = ColonyManager.getColony(colonyId);
-        if (colony == null)
+        else
         {
-            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
-            return;
+            sender.addChatMessage(new TextComponentString(GetColonyAndCitizen.getErrors(colonyId, citizenId)));
         }
-
-        final CitizenData citizenData = colony.getCitizen(citizenId);
-        if (citizenData == null)
-        {
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DATA_NULL, citizenId, colonyId)));
-            return;
-        }
-
-        //Wasn't able to get the entity from the citizenData.
-        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-        if (entityCitizen == null)
-        {
-            sender.addChatMessage(new TextComponentString(String.format(ENTITY_CITIZEN_NULL, citizenId, colonyId)));
-            return;
-        }
-
-        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, entityCitizen.getEntityId(), entityCitizen.getName())));
-        final BlockPos position = entityCitizen.getPosition();
-        sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-        sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
-
-        server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
     }
 
     @NotNull

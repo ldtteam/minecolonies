@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.typesafe.config.ConfigException;
 import net.minecraft.command.ICommandSender;
 import org.jetbrains.annotations.NotNull;
 
@@ -94,18 +95,24 @@ public abstract class GetColonyAndCitizen
             for (int i = 1
                    ; i <= ColonyManager.getColony(colonyId).getCitizens().size(); i++)
             {
-                if (ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
+                try
                 {
-                    citizenId = i;
+                    if (ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
+                    {
+                        citizenId = i;
+                    }
+                }
+                catch (NullPointerException e)
+                {
+                    continue;
                 }
             }
 
         }
         else if (args.length == 4 && colonyId >= 0)
         {
-            final List<CitizenData> citizens = new ArrayList<>(ColonyManager.getColony(colonyId).getCitizens().values());
             citizenName = args[1] + " " + args[2] + " " + args[3];
-            for (int i = 1; i <= citizens.size(); i++)
+            for (int i = 1; i <= ColonyManager.getColony(colonyId).getCitizens().size(); i++)
             {
                 if (ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
                 {
