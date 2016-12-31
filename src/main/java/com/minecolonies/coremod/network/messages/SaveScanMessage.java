@@ -1,14 +1,22 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.util.ClientStructureWrapper;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.handler.codec.EncoderException;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
 
 /**
  * Handles sendScanMessages.
@@ -41,7 +49,33 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        nbttagcompound = ByteBufUtils.readTag(buf);
+        PacketBuffer pb = new PacketBuffer(buf);
+        ByteBufInputStream stream = new ByteBufInputStream(pb);
+
+        try
+        {
+            nbttagcompound = CompressedStreamTools.read(stream, new NBTSizeTracker(200097152L));
+        }
+        catch (RuntimeException e)
+        {
+            Log.getLogger().info("Structure to big to be processed", e);
+        }
+        catch (IOException e)
+        {
+            Log.getLogger().info("Problem at retrieving structure on server.", e);
+        }
+        finally
+        {
+            try
+            {
+                stream.close();
+            }
+            catch (IOException e)
+            {
+                Log.getLogger().info("Problem at retrieving structure on server.", e);
+            }
+        }
+
         storeLocation = ByteBufUtils.readUTF8String(buf);
     }
 
