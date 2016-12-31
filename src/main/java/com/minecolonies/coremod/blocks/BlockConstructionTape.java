@@ -3,17 +3,28 @@ package com.minecolonies.coremod.blocks;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
 import com.minecolonies.coremod.lib.Constants;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import static net.minecraft.util.EnumFacing.NORTH;
+import static net.minecraft.util.EnumFacing.fromAngle;
 
 /**
  * This block is used as a substitution block for the Builder.
@@ -22,6 +33,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class BlockConstructionTape extends Block
 {
+
+    /**
+     * The position it faces.
+     */
+    public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
     /**
      * The hardness this block has.
@@ -39,30 +55,24 @@ public class BlockConstructionTape extends Block
     private static final float RESISTANCE = 1F;
 
     /**
-     * The bounding box.
+     * Start of the collision box at y.
      */
-    protected static final AxisAlignedBB[] BOUNDING_BOXES = new AxisAlignedBB[] {
-            new AxisAlignedBB(0.375D, 0.0D, 0.375D, 0.625D, 1.0D, 0.625D),
-            new AxisAlignedBB(0.375D, 0.0D, 0.375D, 0.625D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.375D, 0.625D, 1.0D, 0.625D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.375D, 0.625D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.375D, 0.0D, 0.0D, 0.625D, 1.0D, 0.625D),
-            new AxisAlignedBB(0.375D, 0.0D, 0.0D, 0.625D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.625D, 1.0D, 0.625D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.625D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.375D, 0.0D, 0.375D, 1.0D, 1.0D, 0.625D),
-            new AxisAlignedBB(0.375D, 0.0D, 0.375D, 1.0D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.375D, 1.0D, 1.0D, 0.625D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.375D, 1.0D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.375D, 0.0D, 0.0D, 1.0D, 1.0D, 0.625D),
-            new AxisAlignedBB(0.375D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 0.625D),
-            new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 1.0D, 1.0D)};
-    public static final    AxisAlignedBB   PILLAR_AABB    = new AxisAlignedBB(0.375D, 0.0D, 0.375D, 0.625D, 1.5D, 0.625D);
-    public static final    AxisAlignedBB   SOUTH_AABB     = new AxisAlignedBB(0.375D, 0.0D, 0.625D, 0.625D, 1.5D, 1.0D);
-    public static final    AxisAlignedBB   WEST_AABB      = new AxisAlignedBB(0.0D, 0.0D, 0.375D, 0.375D, 1.5D, 0.625D);
-    public static final    AxisAlignedBB   NORTH_AABB     = new AxisAlignedBB(0.375D, 0.0D, 0.0D, 0.625D, 1.5D, 0.375D);
-    public static final    AxisAlignedBB   EAST_AABB      = new AxisAlignedBB(0.625D, 0.0D, 0.375D, 1.0D, 1.5D, 0.625D);
+    private static final double BOTTOM_COLLISION = 0.0;
+
+    /**
+     * Start of the collision box at x and z.
+     */
+    private static final double START_COLLISION = 0.1;
+
+    /**
+     * End of the collision box.
+     */
+    private static final double END_COLLISION = 0.9;
+
+    /**
+     * Height of the collision box.
+     */
+    private static final double HEIGHT_COLLISION = 1.5;
 
     /**
      * Constructor for the Substitution block.
@@ -90,16 +100,9 @@ public class BlockConstructionTape extends Block
     }
 
     @Override
-    public boolean isFullCube(IBlockState state)
+    public int getMetaFromState(@NotNull final IBlockState state)
     {
-        return false;
-    }
-
-    @Override
-
-    public boolean isPassable(IBlockAccess worldIn, BlockPos pos)
-    {
-        return false;
+        return state.getValue(FACING).getIndex();
     }
 
     @SideOnly(Side.CLIENT)
@@ -109,25 +112,65 @@ public class BlockConstructionTape extends Block
         return true;
     }
 
-    /**
-     * Used to determine ambient occlusion and culling when rebuilding chunks for render.
-     *
-     * @return true
-     */
-    //todo: remove once we no longer need to support this
-    @SuppressWarnings("deprecation")
     @Override
     public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
     }
 
-    /**
-     * Convert the BlockState into the correct metadata value
-     */
+    @NotNull
     @Override
-    public int getMetaFromState(IBlockState state)
+    protected BlockStateContainer createBlockState()
     {
-        return 0;
+        return new BlockStateContainer(this, FACING);
+    }
+
+    @NotNull
+    @Override
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer()
+    {
+        return BlockRenderLayer.SOLID;
+    }
+
+    @Override
+    public boolean isFullCube(final IBlockState state)
+    {
+        return false;
+    }
+
+    @Override
+    public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
+    {
+        return false;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
+    {
+        return new AxisAlignedBB((float) START_COLLISION,
+                (float) BOTTOM_COLLISION,
+                (float) START_COLLISION,
+                (float) END_COLLISION,
+                (float) HEIGHT_COLLISION,
+                (float) END_COLLISION);
+    }
+
+    // =======================================================================
+    // ======================= Rendering & IBlockState =======================
+    // =======================================================================
+    @Override
+    public IBlockState onBlockPlaced(
+            final World worldIn,
+            final BlockPos pos,
+            final EnumFacing facing,
+            final float hitX,
+            final float hitY,
+            final float hitZ,
+            final int meta,
+            @Nullable final EntityLivingBase placer)
+    {
+        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 }
