@@ -69,6 +69,7 @@ public class Colony implements IColony
     private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH = 500;
     private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH  = 1000;
     private static final int    CHECK_WAYPOINT_EVERY        = 100;
+    private static final int    MAX_CITIZENS_COUNTER        = 100;
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -948,7 +949,7 @@ public class Colony implements IColony
             CitizenData citizenData = data;
             if (citizenData == null)
             {
-                for (int i = 1; i <= 100; i++)
+                for (int i = 1; i <= MAX_CITIZENS_COUNTER; i++)
                 {
                     if (getCitizen(i) == null)
                     {
