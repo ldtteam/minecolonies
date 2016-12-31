@@ -1,13 +1,9 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.typesafe.config.ConfigException;
 import net.minecraft.command.ICommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
