@@ -14,6 +14,13 @@ import java.util.UUID;
  */
 public abstract class GetColonyAndCitizen
 {
+
+    private static final String ONLY_NUMBERS       = "Please only use numbers for the %s ID!";
+    private static final String TOO_MANY_ARGUMENTS = "Too many arguments!";
+    private static final String UNKNOWN_ERROR      = "Unknown Error!";
+    private static final String NOT_FOUND          = "%s not found";
+
+
     public static int colonyId;
     public static int citizenId;
 
@@ -133,19 +140,19 @@ public abstract class GetColonyAndCitizen
         }
         else if (colonyId == -1)
         {
-            ErrorMessage = "Please only use numbers for the colony ID!";
+            ErrorMessage = String.format(ONLY_NUMBERS, "colony");
         }
         else if (colonyId == -2)
         {
-            ErrorMessage = "Too many arguments!";
+            ErrorMessage = TOO_MANY_ARGUMENTS;
         }
         else if (colonyId == -3)
         {
-            ErrorMessage = "Unknown Error!";
+            ErrorMessage = UNKNOWN_ERROR;
         }
         else if (colonyId == -4)
         {
-            ErrorMessage = "Colony not found!";
+            ErrorMessage = String.format(NOT_FOUND, "Colony");
         }
 
         if (citizenId >= 0 && ErrorMessage == null)
@@ -154,19 +161,19 @@ public abstract class GetColonyAndCitizen
         }
         else if (citizenId == -1 && ErrorMessage == null)
         {
-            ErrorMessage = "Please only use numbers for the citizen ID!";
+            ErrorMessage = String.format(ONLY_NUMBERS, "citizen");
         }
         else if (citizenId == -2 && ErrorMessage == null)
         {
-            ErrorMessage = "Too many arguments!";
+            ErrorMessage = TOO_MANY_ARGUMENTS;
         }
         else if (citizenId == -3 && ErrorMessage == null)
         {
-            ErrorMessage = "Unknown Error!";
+            ErrorMessage = UNKNOWN_ERROR;
         }
         else if (citizenId == -4 && ErrorMessage == null)
         {
-            ErrorMessage = "Citizen not found!";
+            ErrorMessage = String.format(NOT_FOUND, "Citizen");
         }
 
         return ErrorMessage;
