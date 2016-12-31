@@ -7,6 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.MoverType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -164,8 +165,8 @@ public final class EntityFishHook extends Entity
         this.motionZ = Math.cos(this.rotationYaw / HALF_CIRCLE * Math.PI) * Math.cos(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
         this.motionY = -Math.sin(this.rotationPitch / HALF_CIRCLE * Math.PI) * f;
         this.setPosition(this.motionX, this.motionY, this.motionZ, 1.5, 1.0);
-        fishingSpeedEnchantment = EnchantmentHelper.getLureModifier(citizen);
-        fishingLootEnchantment = EnchantmentHelper.getLuckOfSeaModifier(citizen);
+        fishingSpeedEnchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.LURE, citizen.getHeldItemMainhand());
+        fishingLootEnchantment = EnchantmentHelper.getEnchantmentLevel(Enchantments.LUCK_OF_THE_SEA, citizen.getHeldItemMainhand());
     }
 
     /**
