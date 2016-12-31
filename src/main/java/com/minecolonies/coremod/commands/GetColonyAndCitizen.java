@@ -10,7 +10,7 @@ import java.util.UUID;
  * Get the Colony ID and Citizen ID out of a command.
  */
 
-class GetColonyAndCitizen
+public final class GetColonyAndCitizen
 {
 
     private static final String ONLY_NUMBERS                = "Please only use numbers for the %s ID!";
@@ -23,6 +23,7 @@ class GetColonyAndCitizen
     private static final int    UNKNOWN_ERROR_CODE          = -3;
     private static final int    NOT_FOUND_CODE              = -4;
     private static final int    NO_COLONY_CODE              = -5;
+    private static final int    NO_ARGUMENT_LENGTH          = 0;
     private static final int    SHORT_ARGUMENT_LENGTH       = 1;
     private static final int    NORMAL_ARGUMENT_LENGTH      = 2;
     private static final int    NAME_ARGUMENT_LENGTH        = 3;
@@ -48,7 +49,7 @@ class GetColonyAndCitizen
         {
             try
             {
-                colonyId = Integer.parseInt(args[0]);
+                colonyId = Integer.parseInt(args[NO_ARGUMENT_LENGTH]);
             }
             catch (NumberFormatException e)
             {
@@ -74,12 +75,9 @@ class GetColonyAndCitizen
         {
             colonyId = UNKNOWN_ERROR_CODE;
         }
-        if (colonyId >= 0)
+        if (colonyId >= 0 && ColonyManager.getColony(colonyId) == null)
         {
-            if (ColonyManager.getColony(colonyId) == null)
-            {
-                colonyId = NOT_FOUND_CODE;
-            }
+            colonyId = NOT_FOUND_CODE;
         }
 
 
@@ -101,7 +99,7 @@ class GetColonyAndCitizen
         {
             try
             {
-                citizenId = Integer.parseInt(args[1]);
+                citizenId = Integer.parseInt(args[SHORT_ARGUMENT_LENGTH]);
             }
             catch (NumberFormatException e)
             {
@@ -112,7 +110,7 @@ class GetColonyAndCitizen
         {
             try
             {
-                citizenId = Integer.parseInt(args[0]);
+                citizenId = Integer.parseInt(args[NO_ARGUMENT_LENGTH]);
             }
             catch (NumberFormatException e)
             {
@@ -121,23 +119,20 @@ class GetColonyAndCitizen
         }
         else if (args.length == NAME_ARGUMENT_LENGTH && colonyId >= 0)
         {
-            citizenName = args[0] + " " + args[1] + " " + args[2];
+            citizenName = args[NO_ARGUMENT_LENGTH] + " " + args[SHORT_ARGUMENT_LENGTH] + " " + args[NORMAL_ARGUMENT_LENGTH];
             for (int i = 1
                    ; i <= ColonyManager.getColony(colonyId).getCitizens().size(); i++)
             {
-                if (ColonyManager.getColony(colonyId).getCitizen(i).getName() != null)
+                if (ColonyManager.getColony(colonyId).getCitizen(i).getName() != null && ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
                 {
-                    if (ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
-                    {
-                        citizenId = i;
-                    }
+                    citizenId = i;
                 }
             }
 
         }
         else if (args.length == ID_AND_NAME_ARGUMENT_LENGTH && colonyId >= 0)
         {
-            citizenName = args[1] + " " + args[2] + " " + args[3];
+            citizenName = args[SHORT_ARGUMENT_LENGTH] + " " + args[NORMAL_ARGUMENT_LENGTH] + " " + args[NAME_ARGUMENT_LENGTH];
             for (int i = 1; i <= ColonyManager.getColony(colonyId).getCitizens().size(); i++)
             {
                 if (ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
@@ -154,12 +149,9 @@ class GetColonyAndCitizen
         {
             citizenId = UNKNOWN_ERROR_CODE;
         }
-        if (citizenId >= 0 && colonyId >= 0)
+        if (citizenId >= 0 && colonyId >= 0 && ColonyManager.getColony(colonyId).getCitizen(citizenId) == null)
         {
-            if (ColonyManager.getColony(colonyId).getCitizen(citizenId) == null)
-            {
-                citizenId = NOT_FOUND_CODE;
-            }
+            citizenId = NOT_FOUND_CODE;
         }
         return citizenId;
     }
