@@ -132,7 +132,6 @@ public final class GetColonyAndCitizen
                     citizenId = i;
                 }
             }
-
         }
         else if (args.length == ID_AND_NAME_ARGUMENT_LENGTH && colonyId >= 0)
         {
