@@ -227,7 +227,8 @@ public class InventoryUtils
     {
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
         {
-            if (inventory.getStackInSlot(slot) == ItemStack.EMPTY)
+            ItemStack stack = inventory.getStackInSlot(slot);
+            if (stack == ItemStack.EMPTY || stack.getCount() < 1)
             {
                 return slot;
             }
