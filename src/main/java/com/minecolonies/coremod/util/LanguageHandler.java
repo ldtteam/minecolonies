@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +44,7 @@ public final class LanguageHandler
      */
     public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String message)
     {
-        player.sendMessage(new TextComponentString(message));
+        player.sendMessage(new TextComponentTranslation(message));
     }
 
     /**
