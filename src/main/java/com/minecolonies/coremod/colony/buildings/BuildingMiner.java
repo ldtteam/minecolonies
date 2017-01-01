@@ -659,7 +659,7 @@ public class BuildingMiner extends AbstractBuildingWorker
         @Override
         public Skill getSecondarySkill()
         {
-            return Skill.CHARISMA;
+            return Skill.ENDURANCE;
         }
     }
 }
