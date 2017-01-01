@@ -1,10 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.util.ClientStructureWrapper;
+import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
-import io.netty.handler.codec.EncoderException;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
@@ -58,7 +57,7 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
         }
         catch (RuntimeException e)
         {
-            Log.getLogger().info("Structure to big to be processed", e);
+            Log.getLogger().info("Structure too big to be processed", e);
         }
         catch (IOException e)
         {
