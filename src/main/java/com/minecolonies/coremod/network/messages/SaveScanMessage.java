@@ -7,7 +7,6 @@ import io.netty.buffer.ByteBufInputStream;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -48,8 +47,7 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        PacketBuffer pb = new PacketBuffer(buf);
-        ByteBufInputStream stream = new ByteBufInputStream(pb);
+        ByteBufInputStream stream = new ByteBufInputStream(buf);
 
         try
         {

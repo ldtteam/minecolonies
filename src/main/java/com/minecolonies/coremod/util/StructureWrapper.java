@@ -351,7 +351,7 @@ public final class StructureWrapper
      */
     public BlockPos getOffsetPosition()
     {
-        return position.subtract(getOffset());
+        return getPosition().subtract(getOffset());
     }
 
     /**
