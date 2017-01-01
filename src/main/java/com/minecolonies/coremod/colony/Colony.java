@@ -948,9 +948,13 @@ public class Colony implements IColony
             CitizenData citizenData = data;
             if (citizenData == null)
             {
-                /**This ensures that citizen IDs are getting reused.
-                 * That's needed to prevent bugs when calling IDs that are not used.
-                 */
+                return;
+            }
+            else
+            {
+                //This ensures that citizen IDs are getting reused.
+                //That's needed to prevent bugs when calling IDs that are not used.
+
                 for (int i = 1; i <= citizenData.getColony().getMaxCitizens(); i++)
                 {
                     if (getCitizen(i) == null)

@@ -51,10 +51,18 @@ public class KillCitizenCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+        int colonyId;
+        int citizenId;
         try
         {
-            final int colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
-            final int citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
+            colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
+            citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
+        }
+        catch (IllegalArgumentException e)
+        {
+            sender.addChatMessage(new TextComponentString(e.getMessage()));
+            return;
+        }
             final Colony colony = ColonyManager.getColony(colonyId);
             final CitizenData citizenData = colony.getCitizen(citizenId);
             final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
@@ -63,11 +71,6 @@ public class KillCitizenCommand extends AbstractSingleCommand
             sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
             sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
             server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
-        }
-        catch (IllegalArgumentException e)
-        {
-            sender.addChatMessage(new TextComponentString(e.getMessage()));
-        }
     }
 
     @NotNull

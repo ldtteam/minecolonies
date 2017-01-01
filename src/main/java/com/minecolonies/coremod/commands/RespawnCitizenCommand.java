@@ -47,11 +47,18 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+        int colonyId;
+        int citizenId;
         try
         {
-            final int colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
-            final int citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
-
+            colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
+            citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
+        }
+        catch (IllegalArgumentException e)
+        {
+            sender.addChatMessage(new TextComponentString(e.getMessage()));
+            return;
+        }
             final Colony colony = ColonyManager.getColony(colonyId);
             final CitizenData citizenData = colony.getCitizen(citizenId);
             final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
@@ -63,11 +70,6 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
 
             Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
             server.addScheduledTask(entityCitizen::setDead);
-        }
-        catch (IllegalArgumentException e)
-        {
-            sender.addChatMessage(new TextComponentString(e.getMessage()));
-        }
     }
     @NotNull
     @Override
