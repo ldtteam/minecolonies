@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
@@ -23,12 +24,15 @@ public final class GetColonyAndCitizen
     private static final int    UNKNOWN_ERROR_CODE          = -3;
     private static final int    NOT_FOUND_CODE              = -4;
     private static final int    NO_COLONY_CODE              = -5;
-    private static final int    NO_ARGUMENT_LENGTH          = 0;
     private static final int    SHORT_ARGUMENT_LENGTH       = 1;
     private static final int    NORMAL_ARGUMENT_LENGTH      = 2;
     private static final int    NAME_ARGUMENT_LENGTH        = 3;
     private static final int    ID_AND_NAME_ARGUMENT_LENGTH = 4;
     private static final int    TOO_MANY_ARGUMENTS_LENGTH   = 5;
+    private static final int    ARGUMENT_ZERO               = 0;
+    private static final int    ARGUMENT_ONE                = 1;
+    private static final int    ARGUMENT_TWO                = 2;
+    private static final int    ARGUMENT_THREE              = 3;
 
     private GetColonyAndCitizen()
     {
@@ -37,19 +41,19 @@ public final class GetColonyAndCitizen
 
     /**
      * Getting the colony ID.
-     * @param sender    The sender of the command
-     * @param args      The given arguments
-     * @return Returns colony ID (Integer)
+     * @param mayorID   The ID of the mayor.
+     * @param world     The world.
+     * @param args      The arguments.
+     * @return Return colony ID.
      */
-    public static int getColonyId(@NotNull final ICommandSender sender, @NotNull final String... args)
+    public static int getColonyId(@NotNull final UUID mayorID, @NotNull final World world, @NotNull final String... args)
     {
         int colonyId;
-        final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
         if (args.length == NORMAL_ARGUMENT_LENGTH || args.length == ID_AND_NAME_ARGUMENT_LENGTH)
         {
             try
             {
-                colonyId = Integer.parseInt(args[NO_ARGUMENT_LENGTH]);
+                colonyId = Integer.parseInt(args[ARGUMENT_ZERO]);
             }
             catch (NumberFormatException e)
             {
@@ -58,13 +62,13 @@ public final class GetColonyAndCitizen
         }
         else if (args.length == SHORT_ARGUMENT_LENGTH || args.length == NAME_ARGUMENT_LENGTH)
         {
-            if (ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID) == null)
+            if (ColonyManager.getIColonyByOwner(world, mayorID) == null)
             {
                 colonyId = NO_COLONY_CODE;
             }
             else
             {
-                colonyId = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID).getID();
+                colonyId = ColonyManager.getIColonyByOwner(world, mayorID).getID();
             }
         }
         else if (args.length >= TOO_MANY_ARGUMENTS_LENGTH)
@@ -90,7 +94,7 @@ public final class GetColonyAndCitizen
      * @param args              The given arguments
      * @return Returns citizen ID
      */
-    public static int getCitizenId(@NotNull final int colonyId, @NotNull final String... args)
+    public static int getCitizenId(final int colonyId, @NotNull final String... args)
     {
         int citizenId;
         String citizenName;
@@ -99,7 +103,7 @@ public final class GetColonyAndCitizen
         {
             try
             {
-                citizenId = Integer.parseInt(args[SHORT_ARGUMENT_LENGTH]);
+                citizenId = Integer.parseInt(args[ARGUMENT_ONE]);
             }
             catch (NumberFormatException e)
             {
@@ -110,7 +114,7 @@ public final class GetColonyAndCitizen
         {
             try
             {
-                citizenId = Integer.parseInt(args[NO_ARGUMENT_LENGTH]);
+                citizenId = Integer.parseInt(args[ARGUMENT_ZERO]);
             }
             catch (NumberFormatException e)
             {
@@ -119,7 +123,7 @@ public final class GetColonyAndCitizen
         }
         else if (args.length == NAME_ARGUMENT_LENGTH && colonyId >= 0)
         {
-            citizenName = args[NO_ARGUMENT_LENGTH] + " " + args[SHORT_ARGUMENT_LENGTH] + " " + args[NORMAL_ARGUMENT_LENGTH];
+            citizenName = args[ARGUMENT_ZERO] + " " + args[ARGUMENT_ONE] + " " + args[ARGUMENT_TWO];
             for (int i = 1
                    ; i <= ColonyManager.getColony(colonyId).getCitizens().size(); i++)
             {
@@ -132,7 +136,7 @@ public final class GetColonyAndCitizen
         }
         else if (args.length == ID_AND_NAME_ARGUMENT_LENGTH && colonyId >= 0)
         {
-            citizenName = args[SHORT_ARGUMENT_LENGTH] + " " + args[NORMAL_ARGUMENT_LENGTH] + " " + args[NAME_ARGUMENT_LENGTH];
+            citizenName = args[ARGUMENT_ONE] + " " + args[ARGUMENT_TWO] + " " + args[ARGUMENT_THREE];
             for (int i = 1; i <= ColonyManager.getColony(colonyId).getCitizens().size(); i++)
             {
                 if (ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))

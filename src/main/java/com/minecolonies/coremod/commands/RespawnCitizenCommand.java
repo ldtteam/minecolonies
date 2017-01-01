@@ -47,7 +47,7 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        final int colonyId = GetColonyAndCitizen.getColonyId(sender, args);
+        final int colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
         final int citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
 
         if (GetColonyAndCitizen.getErrors(colonyId, citizenId) == null)
