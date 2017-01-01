@@ -97,7 +97,7 @@ public final class EntityFishHook extends Entity
     /**
      * Chance to get rare drops while fishing. Higher value leads to a lower chance.
      */
-    private static final double INCREASE_RARENESS_MODIFIER = 20.0;
+    private static final double INCREASE_RARENESS_MODIFIER = 5.0;
 
     /**
      * The citizen who threw this rod.
