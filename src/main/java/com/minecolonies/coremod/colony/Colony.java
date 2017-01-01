@@ -80,19 +80,24 @@ public class Colony implements IColony
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
-    private final WorkManager         workManager      = new WorkManager(this);
-    private final MaterialSystem      materialSystem   = new MaterialSystem();
+    private final WorkManager                     workManager      = new WorkManager(this);
+    private final MaterialSystem                  materialSystem   = new MaterialSystem();
+    @NotNull
+    private final Map<BlockPos, AbstractBuilding> buildings        = new HashMap<>();
+    //  Citizenry
+    @NotNull
+    private final Map<Integer, CitizenData>       citizens         = new HashMap<>();
     //  Runtime Data
     @Nullable
-    private       World               world            = null;
+    private       World                           world            = null;
     //  Updates and Subscriptions
     @NotNull
-    private       Set<EntityPlayerMP> subscribers      = new HashSet<>();
-    private       boolean             isDirty          = false;
-    private       boolean             isCitizensDirty  = false;
-    private       boolean             isBuildingsDirty = false;
-    private       boolean             manualHiring     = false;
-    private       boolean             isFieldsDirty    = false;
+    private       Set<EntityPlayerMP>             subscribers      = new HashSet<>();
+    private       boolean                         isDirty          = false;
+    private       boolean                         isCitizensDirty  = false;
+    private       boolean                         isBuildingsDirty = false;
+    private       boolean                         manualHiring     = false;
+    private       boolean                         isFieldsDirty    = false;
     private       String              name             = "ERROR(Wasn't placed by player)";
     private BlockPos         center;
     //  Administration/permissions
@@ -100,11 +105,6 @@ public class Colony implements IColony
     private Permissions      permissions;
     @Nullable
     private BuildingTownHall townHall;
-    @NotNull
-    private final Map<BlockPos, AbstractBuilding> buildings    = new HashMap<>();
-    //  Citizenry
-    @NotNull
-    private final Map<Integer, CitizenData>       citizens     = new HashMap<>();
     private       int                             topCitizenId = 0;
     private       int                             maxCitizens  = Configurations.maxCitizens;
     private       int                             killedMobs   = 0;
@@ -948,7 +948,21 @@ public class Colony implements IColony
             CitizenData citizenData = data;
             if (citizenData == null)
             {
-                topCitizenId++;
+                return;
+            }
+            else
+            {
+                //This ensures that citizen IDs are getting reused.
+                //That's needed to prevent bugs when calling IDs that are not used.
+
+                for (int i = 1; i <= citizenData.getColony().getMaxCitizens(); i++)
+                {
+                    if (getCitizen(i) == null)
+                    {
+                        topCitizenId = i;
+                        break;
+                    }
+                }
                 citizenData = new CitizenData(topCitizenId, this);
                 citizenData.initializeFromEntity(entity);
 
