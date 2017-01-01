@@ -254,7 +254,7 @@ public class WalkToProxy
             //If he is on the same Y level as his target and both underground, don't use a proxy. Just don't.
             else if (targetY <= levelDepth)
             {
-                return target;
+                return getProxy(target, worker.getPosition(), distanceToPath);
             }
         }
 
