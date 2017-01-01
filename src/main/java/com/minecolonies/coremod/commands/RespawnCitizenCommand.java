@@ -47,11 +47,11 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        final int colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
-        final int citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
-
-        if (GetColonyAndCitizen.getErrors(colonyId, citizenId) == null)
+        try
         {
+            final int colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
+            final int citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
+
             final Colony colony = ColonyManager.getColony(colonyId);
             final CitizenData citizenData = colony.getCitizen(citizenId);
             final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
@@ -64,12 +64,11 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
             Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
             server.addScheduledTask(entityCitizen::setDead);
         }
-        else
+        catch (IllegalArgumentException e)
         {
-            sender.addChatMessage(new TextComponentString(GetColonyAndCitizen.getErrors(colonyId, citizenId)));
+            sender.addChatMessage(new TextComponentString(e.getMessage()));
         }
     }
-
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
