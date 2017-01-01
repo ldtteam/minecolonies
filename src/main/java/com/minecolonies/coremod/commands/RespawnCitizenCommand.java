@@ -25,11 +25,7 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
     public static final  String DESC                            = "respawn";
     private static final String CITIZEN_DESCRIPTION             = "§2ID: §f %d §2 Name: §f %s";
     private static final String REMOVED_MESSAGE                 = "Has been removed";
-    private static final String NO_COLONY_CITIZEN_FOUND_MESSAGE = "No citizen %d found in colony %d.";
     private static final String COORDINATES_XYZ                 = "§4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String CITIZEN_DATA_NULL               = "Couldn't find citizen client side representation of %d in %d";
-    private static final String ENTITY_CITIZEN_NULL             = "Couldn't find entity of %d in %d";
-    private static final String COLONY_NULL                     = "Couldn't find colony %d";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -51,55 +47,30 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        final int colonyId = getIthArgument(args, 0, -1);
-        final int citizenId = getIthArgument(args, 1, -1);
-
-        //todo add this in a feature update when we added argument parsing and permission handling.
-        /*if(colonyId == -1)
+        int colonyId;
+        int citizenId;
+        try
         {
-            colonyId = getColonyId(sender);
-        }*/
-
-        //No citizen or citizen defined.
-        if (colonyId == -1 || citizenId == -1)
+            colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
+            citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
+        }
+        catch (IllegalArgumentException e)
         {
-            sender.sendMessage(new TextComponentString(String.format(NO_COLONY_CITIZEN_FOUND_MESSAGE, citizenId, colonyId)));
+            sender.sendMessage(new TextComponentString(e.getMessage()));
             return;
         }
+            final Colony colony = ColonyManager.getColony(colonyId);
+            final CitizenData citizenData = colony.getCitizen(citizenId);
+            final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
+            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+            final BlockPos position = entityCitizen.getPosition();
+            sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
 
-        //Wasn't able to get the citizen from the colony.
-        final Colony colony = ColonyManager.getColony(colonyId);
-        if (colony == null)
-        {
-            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
-            return;
-        }
+            sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
 
-        final CitizenData citizenData = colony.getCitizen(citizenId);
-        if (citizenData == null)
-        {
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DATA_NULL, citizenId, colonyId)));
-            return;
-        }
-
-        //Wasn't able to get the entity from the citizenData.
-        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-        if (entityCitizen == null)
-        {
-            sender.sendMessage(new TextComponentString(String.format(ENTITY_CITIZEN_NULL, citizenId, colonyId)));
-            return;
-        }
-
-        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, entityCitizen.getEntityId(), entityCitizen.getName())));
-        final BlockPos position = entityCitizen.getPosition();
-        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-
-        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
-
-        Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
-        server.addScheduledTask(entityCitizen::setDead);
+            Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
+            server.addScheduledTask(entityCitizen::setDead);
     }
-
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
