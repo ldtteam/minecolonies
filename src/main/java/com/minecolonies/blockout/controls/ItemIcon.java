@@ -52,8 +52,11 @@ public class ItemIcon extends Pane
     @Override
     protected void drawSelf(final int mx, final int my)
     {
-        mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
-        mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, itemStack, x, y);
-        GlStateManager.disableLighting();
+        if(itemStack != null)
+        {
+            mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
+            mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, itemStack, x, y);
+            GlStateManager.disableLighting();
+        }
     }
 }
