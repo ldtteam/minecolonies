@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -160,7 +159,6 @@ public class WalkToProxy
 
         if (currentProxy != null && !EntityUtils.isWorkerAtSiteWithMove(worker, currentProxy.getX(), currentProxy.getY(), currentProxy.getZ(), range))
         {
-            Log.getLogger().info("Walk to block" + currentProxy);
             //only walk to the block
             return !onMove;
         }

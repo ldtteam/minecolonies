@@ -946,15 +946,10 @@ public class Colony implements IColony
             @Nullable final EntityCitizen entity = new EntityCitizen(world);
 
             CitizenData citizenData = data;
-            if (citizenData == null)
-            {
-                return;
-            }
-            else
+            if (citizenData != null)
             {
                 //This ensures that citizen IDs are getting reused.
                 //That's needed to prevent bugs when calling IDs that are not used.
-
                 for (int i = 1; i <= citizenData.getColony().getMaxCitizens(); i++)
                 {
                     if (getCitizen(i) == null)
@@ -963,18 +958,18 @@ public class Colony implements IColony
                         break;
                     }
                 }
-                citizenData = new CitizenData(topCitizenId, this);
-                citizenData.initializeFromEntity(entity);
+            }
+            citizenData = new CitizenData(topCitizenId, this);
+            citizenData.initializeFromEntity(entity);
 
-                citizens.put(citizenData.getId(), citizenData);
+            citizens.put(citizenData.getId(), citizenData);
 
-                if (getMaxCitizens() == getCitizens().size())
-                {
-                    //TODO: add Colony Name prefix?
-                    LanguageHandler.sendPlayersLocalizedMessage(
-                      this.getMessageEntityPlayers(),
-                      "tile.blockHutTownHall.messageMaxSize");
-                }
+            if (getMaxCitizens() == getCitizens().size())
+            {
+                //TODO: add Colony Name prefix?
+                LanguageHandler.sendPlayersLocalizedMessage(
+                        this.getMessageEntityPlayers(),
+                        "tile.blockHutTownHall.messageMaxSize");
             }
 
             entity.setColony(this, citizenData);
