@@ -346,11 +346,15 @@ public final class BlockUtils
 
     private static int getDamageValue(final Block block, @NotNull final IBlockState blockState)
     {
+        if(block instanceof BlockFarmland)
+        {
+            return 0;
+        }
         if (block instanceof BlockCocoa)
         {
             return EnumDyeColor.BROWN.getDyeDamage();
         }
-        else if (block instanceof BlockDirt && !(blockState.getBlock() instanceof BlockFarmland))
+        else if (block instanceof BlockDirt)
         {
             return blockState.getValue(BlockDirt.VARIANT).getMetadata();
         }
@@ -378,6 +382,7 @@ public final class BlockUtils
         }
         else
         {
+            //todo farmland doesn't have damage at all, sucker!
             return block.damageDropped(blockState);
         }
     }
