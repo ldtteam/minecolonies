@@ -350,7 +350,7 @@ public final class BlockUtils
         {
             return EnumDyeColor.BROWN.getDyeDamage();
         }
-        else if (block instanceof BlockDirt && !(block instanceof BlockFarmland))
+        else if (block instanceof BlockDirt && !(blockState.getBlock() instanceof BlockFarmland))
         {
             return blockState.getValue(BlockDirt.VARIANT).getMetadata();
         }
