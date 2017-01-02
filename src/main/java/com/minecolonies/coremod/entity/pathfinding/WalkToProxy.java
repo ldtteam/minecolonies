@@ -112,8 +112,8 @@ public class WalkToProxy
             this.target = target;
         }
 
-        final double distanceToPath = worker.getColonyJob() instanceof JobBuilder ?
-                BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target) : BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
+        final double distanceToPath = worker.getColonyJob() instanceof JobBuilder
+                ? BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target) : BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
@@ -288,7 +288,7 @@ public class WalkToProxy
                 Node lastNode = null;
                 for(Map.Entry<Point2D, Node> node : level.getNodes().entrySet())
                 {
-                    double distanceToNode = node.getKey().distance(worker.getPosition().getX(), worker.getPosition().getZ());
+                    final double distanceToNode = node.getKey().distance(worker.getPosition().getX(), worker.getPosition().getZ());
                     if(distanceToNode < closestNode)
                     {
                         lastNode = node.getValue();
@@ -322,7 +322,7 @@ public class WalkToProxy
                     }
                 }
 
-                if(proxyList.size() != 0)
+                if(!proxyList.isEmpty())
                 {
                     return proxyList.get(0);
                 }
