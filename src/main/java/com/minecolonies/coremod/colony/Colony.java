@@ -946,6 +946,8 @@ public class Colony implements IColony
             @Nullable final EntityCitizen entity = new EntityCitizen(world);
 
             CitizenData citizenData = data;
+            if (citizenData == null)
+            {
                 //This ensures that citizen IDs are getting reused.
                 //That's needed to prevent bugs when calling IDs that are not used.
                 for (int i = 1; i <= this.getMaxCitizens(); i++)
@@ -956,6 +958,7 @@ public class Colony implements IColony
                         break;
                     }
                 }
+            }
             citizenData = new CitizenData(topCitizenId, this);
             citizenData.initializeFromEntity(entity);
 
