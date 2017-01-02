@@ -1,11 +1,13 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.citizen.miner.*;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.EntityUtils;
 import net.minecraft.util.math.BlockPos;
@@ -14,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Proxy handling walkToX tasks.
@@ -24,19 +27,31 @@ public class WalkToProxy
      * The distance the worker can path directly without the proxy.
      */
     private static final int MIN_RANGE_FOR_DIRECT_PATH = 400;
+
     /**
      * The min distance a worker has to have to a proxy.
      */
     private static final int MIN_DISTANCE = 25;
+
     /**
      * The worker entity associated with the proxy.
      */
     private final EntityCitizen worker;
+
     /**
      * The current proxy the citizen paths to.
      */
     private BlockPos currentProxy;
+
+    /**
+     * List of proxies the worker has to follow.
+     */
     private ArrayList<BlockPos> proxyList = new ArrayList<>();
+
+    /**
+     * Current target the worker has.
+     */
+    private BlockPos target;
 
     /**
      * Creates a walkToProxy for a certain worker.
@@ -92,6 +107,12 @@ public class WalkToProxy
      */
     public boolean walkToBlock(@NotNull BlockPos target, int range, boolean onMove)
     {
+        if(!target.equals(this.target))
+        {
+            reset();
+            this.target = target;
+        }
+
         final double distanceToPath = worker.getColonyJob() instanceof JobBuilder ?
                 BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target) : BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
 
@@ -139,6 +160,7 @@ public class WalkToProxy
 
         if (currentProxy != null && !EntityUtils.isWorkerAtSiteWithMove(worker, currentProxy.getX(), currentProxy.getY(), currentProxy.getZ(), range))
         {
+            Log.getLogger().info("Walk to block" + currentProxy);
             //only walk to the block
             return !onMove;
         }
@@ -173,6 +195,16 @@ public class WalkToProxy
         }
 
         return proxyPoint;
+    }
+
+    //todo reset on target change. Store target.
+    /**
+     * Reset the proxy.
+     */
+    public void reset()
+    {
+        currentProxy = null;
+        proxyList = new ArrayList<>();
     }
 
     /**
@@ -254,7 +286,49 @@ public class WalkToProxy
             //If he is on the same Y level as his target and both underground, don't use a proxy. Just don't.
             else if (targetY <= levelDepth)
             {
-                return getProxy(target, worker.getPosition(), distanceToPath);
+                double closestNode = Double.MAX_VALUE;
+                Node lastNode = null;
+                for(Map.Entry<Point2D, Node> node : level.getNodes().entrySet())
+                {
+                    double distanceToNode = node.getKey().distance(worker.getPosition().getX(), worker.getPosition().getZ());
+                    if(distanceToNode < closestNode)
+                    {
+                        lastNode = node.getValue();
+                        closestNode = distanceToNode;
+                    }
+                }
+
+                if(lastNode != null && lastNode.getParent() != null)
+                {
+                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(lastNode.getParent());
+                    while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
+                    {
+                        proxyList.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
+                        currentNode = level.getNode(currentNode.getParent());
+                    }
+                }
+
+                if(level.getRandomNode().getParent() != null)
+                {
+                    final List<BlockPos> nodesToTarget = new ArrayList<>();
+                    com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
+                    while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
+                    {
+                        nodesToTarget.add(new BlockPos(currentNode.getX(), levelDepth, currentNode.getZ()));
+                        currentNode = level.getNode(currentNode.getParent());
+                    }
+
+                    for (int i = nodesToTarget.size() - 1; i >= 0; i--)
+                    {
+                        proxyList.add(nodesToTarget.get(i));
+                    }
+                }
+
+                if(proxyList.size() != 0)
+                {
+                    return proxyList.get(0);
+                }
+                return target;
             }
         }
 
