@@ -286,7 +286,7 @@ public class WalkToProxy
             {
                 double closestNode = Double.MAX_VALUE;
                 Node lastNode = null;
-                for(Map.Entry<Point2D, Node> node : level.getNodes().entrySet())
+                for(final Map.Entry<Point2D, Node> node : level.getNodes().entrySet())
                 {
                     final double distanceToNode = node.getKey().distance(worker.getPosition().getX(), worker.getPosition().getZ());
                     if(distanceToNode < closestNode)
