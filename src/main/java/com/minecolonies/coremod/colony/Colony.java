@@ -946,32 +946,32 @@ public class Colony implements IColony
             @Nullable final EntityCitizen entity = new EntityCitizen(world);
 
             CitizenData citizenData = data;
-            if (citizenData != null)
+            if (citizenData == null)
             {
                 //This ensures that citizen IDs are getting reused.
                 //That's needed to prevent bugs when calling IDs that are not used.
-                for (int i = 1; i <= citizenData.getColony().getMaxCitizens(); i++)
+                for (int i = 1; i <= this.getMaxCitizens(); i++)
                 {
-                    if (getCitizen(i) == null)
+                    if (this.getCitizen(i) == null)
                     {
                         topCitizenId = i;
                         break;
                     }
                 }
+
+                citizenData = new CitizenData(topCitizenId, this);
+                citizenData.initializeFromEntity(entity);
+
+                citizens.put(citizenData.getId(), citizenData);
+
+                if (getMaxCitizens() == getCitizens().size())
+                {
+                    //TODO: add Colony Name prefix?
+                    LanguageHandler.sendPlayersLocalizedMessage(
+                            this.getMessageEntityPlayers(),
+                            "tile.blockHutTownHall.messageMaxSize");
+                }
             }
-            citizenData = new CitizenData(topCitizenId, this);
-            citizenData.initializeFromEntity(entity);
-
-            citizens.put(citizenData.getId(), citizenData);
-
-            if (getMaxCitizens() == getCitizens().size())
-            {
-                //TODO: add Colony Name prefix?
-                LanguageHandler.sendPlayersLocalizedMessage(
-                        this.getMessageEntityPlayers(),
-                        "tile.blockHutTownHall.messageMaxSize");
-            }
-
             entity.setColony(this, citizenData);
 
             entity.setPosition(spawnPoint.getX() + 0.5D, spawnPoint.getY() + 0.1D, spawnPoint.getZ() + 0.5D);
