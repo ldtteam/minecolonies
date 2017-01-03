@@ -132,7 +132,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
           /**
            * Spawn entities on the structure.
            */
-          new AITarget(SPAWN_STEP, () -> AIState.IDLE),
+          new AITarget(SPAWN_STEP, () generateStructureGenerator(this::spawnEntity, AIState.COMPLETE_BUILD)),
           /**
            * Finalize the building and give back control to the ai.
            */
@@ -157,7 +157,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
                         "entity.builder.messageBuildComplete",
                         structureName);
-                ((JobBuilder) job).getStructure().getEntities().forEach(this::spawnEntity);
 
                 final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
                 if (wo == null)
@@ -946,8 +945,59 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
-    private void spawnEntity(@Nullable final Entity entity)
+    private AIState spawnEntity()
     {
+        if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
+        {
+            //Fill workFrom with the position from where the builder should build.
+            //also ensure we are at that position.
+            if (!walkToConstructionSite())
+            {
+                return false;
+            }
+
+            if (structureBlock.block == null
+                    || structureBlock.doesStructureBlockEqualWorldBlock()
+                    || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
+            {
+                //findNextBlock count was reached and we can ignore this block
+                return true;
+            }
+
+            @Nullable Block block = structureBlock.block;
+            @Nullable IBlockState blockState = structureBlock.metadata;
+            if(structureBlock.block == ModBlocks.blockSolidSubstitution)
+            {
+                if(!(job instanceof JobMiner && structureBlock.worldBlock instanceof BlockOre)
+                        && structureBlock.worldMetadata.getMaterial().isSolid())
+                {
+                    return true;
+                }
+                block = getSolidSubstitution(structureBlock.blockPosition);
+                blockState = block.getDefaultState();
+
+            }
+
+            worker.faceBlock(structureBlock.blockPosition);
+
+            //should never happen
+            if (block == null)
+            {
+                @NotNull final BlockPos local = structureBlock.blockPosition;
+                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
+                return true;
+            }
+
+            //We need to deal with materials
+            if (!Configurations.builderInfiniteResources
+                    && !handleMaterials(block, blockState))
+            {
+                return false;
+            }
+
+            placeBlockAt(block, blockState, structureBlock.blockPosition);
+        }
+        return true;
         if (entity != null && job instanceof JobBuilder)
         {
             final BlockPos pos = ((JobBuilder) job).getStructure().getOffsetPosition();
