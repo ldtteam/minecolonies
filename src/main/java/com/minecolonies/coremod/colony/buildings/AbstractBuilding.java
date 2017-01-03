@@ -484,7 +484,7 @@ public abstract class AbstractBuilding
      */
     public TileEntityColonyBuilding getTileEntity()
     {
-        if (tileEntity == null && colony.getWorld().getBlockState(location).getBlock() != null)
+        if ((tileEntity == null && colony.getWorld().getBlockState(location).getBlock() != null) || tileEntity.isInvalid())
         {
             final TileEntity te = getColony().getWorld().getTileEntity(location);
             if (te instanceof TileEntityColonyBuilding)
