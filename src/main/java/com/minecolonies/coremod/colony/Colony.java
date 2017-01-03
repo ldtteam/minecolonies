@@ -98,16 +98,16 @@ public class Colony implements IColony
     private       boolean                         isBuildingsDirty = false;
     private       boolean                         manualHiring     = false;
     private       boolean                         isFieldsDirty    = false;
-    private       String              name             = "ERROR(Wasn't placed by player)";
+    private       String                          name             = "ERROR(Wasn't placed by player)";
     private BlockPos         center;
     //  Administration/permissions
     @NotNull
     private Permissions      permissions;
     @Nullable
     private BuildingTownHall townHall;
-    private       int                             topCitizenId = 0;
-    private       int                             maxCitizens  = Configurations.maxCitizens;
-    private       int                             killedMobs   = 0;
+    private int topCitizenId = 0;
+    private int maxCitizens  = Configurations.maxCitizens;
+    private int killedMobs   = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -950,9 +950,9 @@ public class Colony implements IColony
             {
                 //This ensures that citizen IDs are getting reused.
                 //That's needed to prevent bugs when calling IDs that are not used.
-                for (int i = 1; i <= citizenData.getColony().getMaxCitizens(); i++)
+                for (int i = 1; i <= this.getMaxCitizens(); i++)
                 {
-                    if (getCitizen(i) == null)
+                    if (this.getCitizen(i) == null)
                     {
                         topCitizenId = i;
                         break;
@@ -968,8 +968,8 @@ public class Colony implements IColony
             {
                 //TODO: add Colony Name prefix?
                 LanguageHandler.sendPlayersLocalizedMessage(
-                        this.getMessageEntityPlayers(),
-                        "tile.blockHutTownHall.messageMaxSize");
+                  this.getMessageEntityPlayers(),
+                  "tile.blockHutTownHall.messageMaxSize");
             }
 
             entity.setColony(this, citizenData);
