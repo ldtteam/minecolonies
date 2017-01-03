@@ -878,7 +878,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return false;
         }
 
-        final int slot = worker.findFirstSlotInInventoryWith(stack.getItem());
+        final int slot = worker.findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
         if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);

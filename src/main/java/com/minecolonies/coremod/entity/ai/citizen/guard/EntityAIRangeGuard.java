@@ -170,7 +170,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        worker.setHeldItem(worker.findFirstSlotInInventoryWith(Items.BOW));
+        worker.setHeldItem(worker.findFirstSlotInInventoryWith(Items.BOW, -1));
         return super.searchTarget();
     }
 

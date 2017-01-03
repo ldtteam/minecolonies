@@ -10,7 +10,10 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.RecipesCrafting;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.registry.GameData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -998,7 +1001,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 continue;
             }
-            final int countOfItem = worker.getItemCountInInventory(stack.getItem());
+            final int countOfItem = worker.getItemCountInInventory(stack.getItem(), stack.getItemDamage());
             if (countOfItem < stack.stackSize)
             {
                 final int itemsLeft = stack.stackSize - countOfItem;

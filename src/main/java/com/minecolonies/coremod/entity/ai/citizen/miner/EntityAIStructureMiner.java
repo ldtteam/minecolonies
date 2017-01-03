@@ -178,7 +178,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @NotNull
     private String getRenderMetaTorch()
     {
-        if (worker.hasItemInInventory(Blocks.TORCH))
+        if (worker.hasItemInInventory(Blocks.TORCH, -1))
         {
             return RENDER_META_TORCH;
         }
@@ -702,7 +702,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final IBlockState metadata)
     {
-        final int slot = worker.findFirstSlotInInventoryWith(block);
+        final int slot = worker.findFirstSlotInInventoryWith(block, block.getMetaFromState(metadata));
         if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);

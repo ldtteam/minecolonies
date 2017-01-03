@@ -56,12 +56,13 @@ public class InventoryUtils
      *
      * @param inventory Inventory to filter in
      * @param block     Block to filter
+     * @param itemDamage the damage value.
      * @return List of item stacks
      */
     @NotNull
-    public static List<ItemStack> filterInventory(@NotNull final IInventory inventory, final Block block)
+    public static List<ItemStack> filterInventory(@NotNull final IInventory inventory, final Block block, int itemDamage)
     {
-        return filterInventory(inventory, getItemFromBlock(block));
+        return filterInventory(inventory, getItemFromBlock(block), itemDamage);
     }
 
     /**
@@ -69,10 +70,11 @@ public class InventoryUtils
      *
      * @param inventory  Inventory to get items from
      * @param targetItem Item to look for
+     * @param itemDamage the damage value.
      * @return List of item stacks with the given item in inventory
      */
     @NotNull
-    public static List<ItemStack> filterInventory(@NotNull final IInventory inventory, @Nullable final Item targetItem)
+    public static List<ItemStack> filterInventory(@NotNull final IInventory inventory, @Nullable final Item targetItem, int itemDamage)
     {
         @NotNull final ArrayList<ItemStack> filtered = new ArrayList<>();
         if (targetItem == null)
@@ -83,7 +85,7 @@ public class InventoryUtils
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
         {
             final ItemStack stack = inventory.getStackInSlot(slot);
-            if (compareItems(stack, targetItem))
+            if (compareItems(stack, targetItem, itemDamage))
             {
                 filtered.add(stack);
             }
@@ -107,11 +109,12 @@ public class InventoryUtils
      *
      * @param itemStack  ItemStack to check.
      * @param targetItem Item to check.
+     * @param itemDamage the item damage value.
      * @return True when item in item stack is equal to target item.
      */
-    private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem)
+    private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, int itemDamage)
     {
-        return itemStack != null && itemStack.getItem() == targetItem;
+        return itemStack != null && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
     }
 
     /**
@@ -119,11 +122,12 @@ public class InventoryUtils
      *
      * @param inventory Inventory to check.
      * @param block     Block to find.
+     * @param itemDamage the damage value.
      * @return Index of the first occurrence.
      */
-    public static int findFirstSlotInInventoryWith(@NotNull final IInventory inventory, final Block block)
+    public static int findFirstSlotInInventoryWith(@NotNull final IInventory inventory, final Block block, int itemDamage)
     {
-        return findFirstSlotInInventoryWith(inventory, getItemFromBlock(block));
+        return findFirstSlotInInventoryWith(inventory, getItemFromBlock(block), itemDamage);
     }
 
     /**
@@ -131,13 +135,14 @@ public class InventoryUtils
      *
      * @param inventory  Inventory to check
      * @param targetItem Item to find
+     * @param itemDamage the damage value.
      * @return Index of the first occurrence
      */
-    public static int findFirstSlotInInventoryWith(@NotNull final IInventory inventory, final Item targetItem)
+    public static int findFirstSlotInInventoryWith(@NotNull final IInventory inventory, final Item targetItem, int itemDamage)
     {
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
         {
-            if (compareItems(inventory.getStackInSlot(slot), targetItem))
+            if (compareItems(inventory.getStackInSlot(slot), targetItem, itemDamage))
             {
                 return slot;
             }
@@ -152,11 +157,12 @@ public class InventoryUtils
      *
      * @param inventory Inventory to scan
      * @param block     block to count
+     * @param itemDamage the damage value
      * @return Amount of occurences
      */
-    public static int getItemCountInInventory(@NotNull final IInventory inventory, final Block block)
+    public static int getItemCountInInventory(@NotNull final IInventory inventory, final Block block, int itemDamage)
     {
-        return getItemCountInInventory(inventory, getItemFromBlock(block));
+        return getItemCountInInventory(inventory, getItemFromBlock(block), itemDamage);
     }
 
     /**
@@ -164,12 +170,13 @@ public class InventoryUtils
      *
      * @param inventory  Inventory to scan
      * @param targetitem Item to count
+     * @param itemDamage the item damage value.
      * @return Amount of occurences
      */
-    public static int getItemCountInInventory(@NotNull final IInventory inventory, final Item targetitem)
+    public static int getItemCountInInventory(@NotNull final IInventory inventory, final Item targetitem, int itemDamage)
     {
         int count = 0;
-        for (@NotNull final ItemStack is : filterInventory(inventory, targetitem))
+        for (@NotNull final ItemStack is : filterInventory(inventory, targetitem, itemDamage))
         {
             count += is.stackSize;
         }
@@ -182,11 +189,12 @@ public class InventoryUtils
      *
      * @param inventory Inventory to scan
      * @param block     Block to count
+     * @param itemDamage the damage value.
      * @return True when in inventory, otherwise false
      */
-    public static boolean hasitemInInventory(@NotNull final IInventory inventory, final Block block)
+    public static boolean hasitemInInventory(@NotNull final IInventory inventory, final Block block, int itemDamage)
     {
-        return hasitemInInventory(inventory, getItemFromBlock(block));
+        return hasitemInInventory(inventory, getItemFromBlock(block), itemDamage);
     }
 
 
@@ -199,11 +207,12 @@ public class InventoryUtils
      *
      * @param inventory Inventory to scan
      * @param item      Item to count
+     * @param itemDamage the damage value of the item.
      * @return True when in inventory, otherwise false
      */
-    public static boolean hasitemInInventory(@NotNull final IInventory inventory, final Item item)
+    public static boolean hasitemInInventory(@NotNull final IInventory inventory, final Item item, int itemDamage)
     {
-        return getItemCountInInventory(inventory, item) > 0;
+        return getItemCountInInventory(inventory, item, itemDamage) > 0;
     }
 
     /**
