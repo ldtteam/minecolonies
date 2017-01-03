@@ -15,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
@@ -607,5 +608,20 @@ public final class StructureWrapper
     public StructureProxy structure()
     {
         return structure;
+    }
+
+    /**
+     * Calculate the current block in the structure.
+     *
+     * @return the current block or null if not initialized.
+     */
+    @Nullable
+    public Template.BlockInfo getBlockInfo()
+    {
+        if (this.progressPos.equals(NULL_POS))
+        {
+            return null;
+        }
+        return this.structure.getBlockInfo(this.progressPos);
     }
 }

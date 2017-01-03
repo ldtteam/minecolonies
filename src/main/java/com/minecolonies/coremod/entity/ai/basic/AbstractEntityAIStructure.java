@@ -27,6 +27,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -744,12 +745,24 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return true;
         }
 
+        //todo get item here if != null and reduce stack
+        Item secondaryItem = null;
+        if(job instanceof JobBuilder && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
+        {
+            secondaryItem = Item.getByNameOrId(((JobBuilder) job).getStructure().getBlockInfo().tileentityData.getTag("Item").toString());
+        }
+
         if (isBlockFree(block, block.getMetaFromState(blockState)))
         {
             return true;
         }
 
-        return !checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState));
+        if(secondaryItem == null || isBlockFree(Block.getBlockFromItem(secondaryItem), 0))
+        {
+            return !checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState));
+        }
+
+        return !checkOrRequestItems(BlockUtils.getItemStackFromBlockState(blockState)) && !checkOrRequestItems(new ItemStack(secondaryItem));
     }
 
     /**
@@ -824,6 +837,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
+        Item secondaryItem = null;
         if (block instanceof BlockDoor)
         {
             if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
@@ -857,6 +871,24 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         {
             return true;
         }
+        else if(block instanceof BlockFlowerPot)
+        {
+            if (!world.setBlockState(pos, blockState, 0x03))
+            {
+                return false;
+            }
+
+            if(job instanceof JobBuilder)
+            {
+                secondaryItem = Item.getByNameOrId(((JobBuilder) job).getStructure().getBlockInfo().tileentityData.getTag("Item").toString());
+            }
+
+            TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(pos);
+            if(tileentityflowerpot != null && secondaryItem != null)
+            {
+                tileentityflowerpot.setFlowerPotData(secondaryItem, 0);
+            }
+        }
         else
         {
             if (!world.setBlockState(pos, blockState, 0x03))
@@ -884,6 +916,20 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             getInventory().decrStackSize(slot, 1);
             reduceNeededResources(block);
         }
+
+        if(secondaryItem == null)
+        {
+            return true;
+        }
+
+        //todo place it....
+        final int secondarySlot = worker.findFirstSlotInInventoryWith(secondaryItem, 0);
+        if (secondarySlot != -1)
+        {
+            getInventory().decrStackSize(secondarySlot, 1);
+            //todo add these to: reduceNeededResources();
+        }
+
         return true;
     }
 

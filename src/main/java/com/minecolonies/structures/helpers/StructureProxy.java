@@ -26,12 +26,11 @@ public class StructureProxy
     private final Structure structure;
     private final List<TileEntity> tileEntities = new ArrayList<>();
     private final List<Entity>     entities     = new ArrayList<>();
-    private Block[][][]       blocks;
-    private IBlockState[][][] metadata;
-    private int               width;
-    private int               height;
-    private int               length;
-    private BlockPos          offset;
+    private Template.BlockInfo[][][] blocks;
+    private int                      width;
+    private int                      height;
+    private int                      length;
+    private BlockPos                 offset;
 
     /**
      * @param worldObj the world.
@@ -51,14 +50,12 @@ public class StructureProxy
         this.height = size.getY();
         this.length = size.getZ();
 
-        this.blocks = new Block[width][height][length];
-        this.metadata = new IBlockState[width][height][length];
+        this.blocks = new Template.BlockInfo[width][height][length];
 
         for (final Template.BlockInfo info : structure.getBlockInfo())
         {
             final BlockPos tempPos = info.pos;
-            blocks[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info.blockState.getBlock();
-            metadata[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info.blockState;
+            blocks[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;
 
             if (info.blockState.getBlock() instanceof AbstractBlockHut)
             {
@@ -128,7 +125,18 @@ public class StructureProxy
      */
     public IBlockState getBlockState(@NotNull final BlockPos pos)
     {
-        return metadata[pos.getX()][pos.getY()][pos.getZ()];
+        return blocks[pos.getX()][pos.getY()][pos.getZ()].blockState;
+    }
+
+    /**
+     * Getter of the BlockInfo at a certain position.
+     *
+     * @param pos the position.
+     * @return the blockState.
+     */
+    public Template.BlockInfo getBlockInfo(@NotNull final BlockPos pos)
+    {
+        return blocks[pos.getX()][pos.getY()][pos.getZ()];
     }
 
     /**
@@ -203,16 +211,7 @@ public class StructureProxy
      */
     private void removeTileEntity(final BlockPos pos)
     {
-        final Iterator<TileEntity> iterator = this.tileEntities.iterator();
-
-        while (iterator.hasNext())
-        {
-            final TileEntity tileEntity = iterator.next();
-            if (tileEntity.getPos().equals(pos))
-            {
-                iterator.remove();
-            }
-        }
+        this.tileEntities.removeIf(tileEntity -> tileEntity.getPos().equals(pos));
     }
 
     /**
@@ -261,15 +260,7 @@ public class StructureProxy
             return;
         }
 
-        final Iterator<Entity> iterator = this.entities.iterator();
-        while (iterator.hasNext())
-        {
-            final Entity e = iterator.next();
-            if (entity.getUniqueID().equals(e.getUniqueID()))
-            {
-                iterator.remove();
-            }
-        }
+        this.entities.removeIf(e -> entity.getUniqueID().equals(e.getUniqueID()));
     }
 
     /**
@@ -332,8 +323,7 @@ public class StructureProxy
         this.height = size.getY();
         this.length = size.getZ();
 
-        this.blocks = new Block[width][height][length];
-        this.metadata = new IBlockState[width][height][length];
+        this.blocks = new Template.BlockInfo[width][height][length];
 
         int minX = 0;
         int minY = 0;
@@ -373,8 +363,7 @@ public class StructureProxy
             final int y = tempPos.getY() + minY;
             final int z = tempPos.getZ() + minZ;
 
-            this.blocks[x][y][z] = info.blockState.getBlock();
-            this.metadata[x][y][z] = info.blockState;
+            this.blocks[x][y][z] = info;
 
             if (info.blockState.getBlock() instanceof AbstractBlockHut)
             {
