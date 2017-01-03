@@ -958,18 +958,19 @@ public class Colony implements IColony
                         break;
                     }
                 }
-            }
-            citizenData = new CitizenData(topCitizenId, this);
-            citizenData.initializeFromEntity(entity);
 
-            citizens.put(citizenData.getId(), citizenData);
+                citizenData = new CitizenData(topCitizenId, this);
+                citizenData.initializeFromEntity(entity);
 
-            if (getMaxCitizens() == getCitizens().size())
-            {
-                //TODO: add Colony Name prefix?
-                LanguageHandler.sendPlayersLocalizedMessage(
-                  this.getMessageEntityPlayers(),
-                  "tile.blockHutTownHall.messageMaxSize");
+                citizens.put(citizenData.getId(), citizenData);
+
+                if (getMaxCitizens() == getCitizens().size())
+                {
+                    //TODO: add Colony Name prefix?
+                    LanguageHandler.sendPlayersLocalizedMessage(
+                            this.getMessageEntityPlayers(),
+                            "tile.blockHutTownHall.messageMaxSize");
+                }
             }
 
             entity.setColony(this, citizenData);

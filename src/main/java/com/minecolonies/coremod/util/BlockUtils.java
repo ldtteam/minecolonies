@@ -29,19 +29,19 @@ public final class BlockUtils
      */
     @NotNull
     private static final List<BiPredicate<Block, IBlockState>> freeToPlaceBlocks =
-      Arrays.asList(
-        (block, iBlockState) -> block.equals(Blocks.AIR),
-        (block, iBlockState) -> iBlockState.getMaterial().isLiquid(),
-        (block, iBlockState) -> BlockUtils.isWater(block.getDefaultState()),
-        (block, iBlockState) -> block.equals(Blocks.LEAVES),
-        (block, iBlockState) -> block.equals(Blocks.LEAVES2),
-        (block, iBlockState) -> block.equals(Blocks.DOUBLE_PLANT),
-        (block, iBlockState) -> block.equals(Blocks.GRASS),
-        (block, iBlockState) -> block instanceof BlockDoor
-                                  && iBlockState != null
-                                  && iBlockState.getValue(PropertyBool.create("upper"))
+            Arrays.asList(
+                    (block, iBlockState) -> block.equals(Blocks.AIR),
+                    (block, iBlockState) -> iBlockState.getMaterial().isLiquid(),
+                    (block, iBlockState) -> BlockUtils.isWater(block.getDefaultState()),
+                    (block, iBlockState) -> block.equals(Blocks.LEAVES),
+                    (block, iBlockState) -> block.equals(Blocks.LEAVES2),
+                    (block, iBlockState) -> block.equals(Blocks.DOUBLE_PLANT),
+                    (block, iBlockState) -> block.equals(Blocks.GRASS),
+                    (block, iBlockState) -> block instanceof BlockDoor
+                            && iBlockState != null
+                            && iBlockState.getValue(PropertyBool.create("upper"))
 
-      );
+            );
 
     /**
      * Private constructor to hide the public one.
@@ -83,7 +83,7 @@ public final class BlockUtils
     public static boolean shouldNeverBeMessedWith(final Block block)
     {
         return block instanceof AbstractBlockHut
-                 || Objects.equals(block, Blocks.BEDROCK);
+                || Objects.equals(block, Blocks.BEDROCK);
     }
 
     /**
@@ -154,7 +154,7 @@ public final class BlockUtils
     public static boolean isWater(final IBlockState iBlockState)
     {
         return Objects.equals(iBlockState, Blocks.WATER.getDefaultState())
-                 || Objects.equals(iBlockState, Blocks.FLOWING_WATER.getDefaultState());
+                || Objects.equals(iBlockState, Blocks.FLOWING_WATER.getDefaultState());
     }
 
     /**
@@ -167,7 +167,7 @@ public final class BlockUtils
     public static boolean isBlockSeed(@NotNull final World world, @NotNull final BlockPos pos)
     {
         return BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())) != null
-                 && BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())).getItem() instanceof ItemSeeds;
+                && BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())).getItem() instanceof ItemSeeds;
     }
 
     /**
@@ -237,13 +237,13 @@ public final class BlockUtils
         else if (blockState.getBlock() instanceof BlockDoor)
         {
             final Item item = blockState.getBlock() == Blocks.IRON_DOOR ? Items.IRON_DOOR
-                                : (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
-                                     : (blockState.getBlock() == Blocks.BIRCH_DOOR ? Items.BIRCH_DOOR
-                                          : (blockState.getBlock() == Blocks.JUNGLE_DOOR ? Items.JUNGLE_DOOR
-                                               : (blockState.getBlock() == Blocks.ACACIA_DOOR ? Items.ACACIA_DOOR
+                    : (blockState.getBlock() == Blocks.SPRUCE_DOOR ? Items.SPRUCE_DOOR
+                            : (blockState.getBlock() == Blocks.BIRCH_DOOR ? Items.BIRCH_DOOR
+                                    : (blockState.getBlock() == Blocks.JUNGLE_DOOR ? Items.JUNGLE_DOOR
+                                            : (blockState.getBlock() == Blocks.ACACIA_DOOR ? Items.ACACIA_DOOR
                                                     : (blockState.getBlock() == Blocks.DARK_OAK_DOOR
-                                                         ? Items.DARK_OAK_DOOR
-                                                         : Items.OAK_DOOR)))));
+                                                            ? Items.DARK_OAK_DOOR
+                                                            : Items.OAK_DOOR)))));
 
             return item == null ? Item.getItemFromBlock(blockState.getBlock()) : item;
         }
@@ -272,8 +272,8 @@ public final class BlockUtils
         {
             // Not really sure what we want to do here...
             return blockState.getValue(BlockPistonExtension.TYPE) == BlockPistonExtension.EnumPistonType.STICKY
-                     ? Item.getItemFromBlock(Blocks.STICKY_PISTON)
-                     : Item.getItemFromBlock(Blocks.PISTON);
+                    ? Item.getItemFromBlock(Blocks.STICKY_PISTON)
+                    : Item.getItemFromBlock(Blocks.PISTON);
         }
         else if (blockState.getBlock() instanceof BlockRedstoneComparator)
         {
@@ -350,12 +350,12 @@ public final class BlockUtils
         {
             return EnumDyeColor.BROWN.getDyeDamage();
         }
-        else if (block instanceof BlockDirt)
+        else if (block instanceof BlockDirt && !(blockState.getBlock() instanceof BlockFarmland))
         {
             return blockState.getValue(BlockDirt.VARIANT).getMetadata();
         }
         else if (block instanceof BlockDoublePlant
-                   && blockState.getValue(BlockDoublePlant.HALF) == BlockDoublePlant.EnumBlockHalf.LOWER)
+                && blockState.getValue(BlockDoublePlant.HALF) == BlockDoublePlant.EnumBlockHalf.LOWER)
         {
             //If upper part we can't do much here
             return blockState.getValue(BlockDoublePlant.VARIANT).getMeta();
