@@ -41,40 +41,34 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
      */
     public SaveScanMessage(final NBTTagCompound nbttagcompound, final String storeAt)
     {
-        this.nbttagcompound = nbttagcompound;
         this.storeLocation = storeAt;
+        this.nbttagcompound = nbttagcompound;
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        PacketBuffer buffer = new PacketBuffer(buf);
-        int i =  buffer.readerIndex();
-        byte b0 = buffer.readByte();
-        if(b0 != 0)
-        {
-            buffer.readerIndex(i);
-            try (ByteBufInputStream stream = new ByteBufInputStream(buffer);)
-            {
-                nbttagcompound = CompressedStreamTools.read(stream, new NBTSizeTracker(50097152L));
-            }
-            catch (RuntimeException e)
-            {
-                Log.getLogger().info("Structure too big to be processed", e);
-            }
-            catch (IOException e)
-            {
-                Log.getLogger().info("Problem at retrieving structure on server.", e);
-            }
-        }
         storeLocation = ByteBufUtils.readUTF8String(buf);
+
+        try (ByteBufInputStream stream = new ByteBufInputStream(buf);)
+        {
+            nbttagcompound = CompressedStreamTools.read(stream, NBTSizeTracker.INFINITE);
+        }
+        catch (RuntimeException e)
+        {
+            Log.getLogger().info("Structure too big to be processed", e);
+        }
+        catch (IOException e)
+        {
+            Log.getLogger().info("Problem at retrieving structure on server.", e);
+        }
     }
 
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        ByteBufUtils.writeTag(buf, nbttagcompound);
         ByteBufUtils.writeUTF8String(buf, storeLocation);
+        ByteBufUtils.writeTag(buf, nbttagcompound);
     }
 
     @Nullable
