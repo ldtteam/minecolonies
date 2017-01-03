@@ -745,11 +745,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return true;
         }
 
-        //todo get item here if != null and reduce stack
         Item secondaryItem = null;
         if(job instanceof JobBuilder && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
         {
-            secondaryItem = Item.getByNameOrId(((JobBuilder) job).getStructure().getBlockInfo().tileentityData.getTag("Item").toString());
+            secondaryItem = Item.getByNameOrId(((JobBuilder) job).getStructure().getBlockInfo().tileentityData.getString("Item"));
         }
 
         if (isBlockFree(block, block.getMetaFromState(blockState)))
@@ -880,7 +879,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if(job instanceof JobBuilder)
             {
-                secondaryItem = Item.getByNameOrId(((JobBuilder) job).getStructure().getBlockInfo().tileentityData.getTag("Item").toString());
+                secondaryItem = Item.getByNameOrId(((JobBuilder) job).getStructure().getBlockInfo().tileentityData.getString("Item"));
             }
 
             TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(pos);
