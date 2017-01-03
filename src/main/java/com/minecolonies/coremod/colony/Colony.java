@@ -98,16 +98,16 @@ public class Colony implements IColony
     private       boolean                         isBuildingsDirty = false;
     private       boolean                         manualHiring     = false;
     private       boolean                         isFieldsDirty    = false;
-    private       String              name             = "ERROR(Wasn't placed by player)";
+    private       String                          name             = "ERROR(Wasn't placed by player)";
     private BlockPos         center;
     //  Administration/permissions
     @NotNull
     private Permissions      permissions;
     @Nullable
     private BuildingTownHall townHall;
-    private       int                             topCitizenId = 0;
-    private       int                             maxCitizens  = Configurations.maxCitizens;
-    private       int                             killedMobs   = 0;
+    private int topCitizenId = 0;
+    private int maxCitizens  = Configurations.maxCitizens;
+    private int killedMobs   = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -948,33 +948,28 @@ public class Colony implements IColony
             CitizenData citizenData = data;
             if (citizenData == null)
             {
-                return;
-            }
-            else
-            {
                 //This ensures that citizen IDs are getting reused.
                 //That's needed to prevent bugs when calling IDs that are not used.
-
-                for (int i = 1; i <= citizenData.getColony().getMaxCitizens(); i++)
+                for (int i = 1; i <= this.getMaxCitizens(); i++)
                 {
-                    if (getCitizen(i) == null)
+                    if (this.getCitizen(i) == null)
                     {
                         topCitizenId = i;
                         break;
                     }
                 }
-                citizenData = new CitizenData(topCitizenId, this);
-                citizenData.initializeFromEntity(entity);
+            }
+            citizenData = new CitizenData(topCitizenId, this);
+            citizenData.initializeFromEntity(entity);
 
-                citizens.put(citizenData.getId(), citizenData);
+            citizens.put(citizenData.getId(), citizenData);
 
-                if (getMaxCitizens() == getCitizens().size())
-                {
-                    //TODO: add Colony Name prefix?
-                    LanguageHandler.sendPlayersLocalizedMessage(
-                      this.getMessageEntityPlayers(),
-                      "tile.blockHutTownHall.messageMaxSize");
-                }
+            if (getMaxCitizens() == getCitizens().size())
+            {
+                //TODO: add Colony Name prefix?
+                LanguageHandler.sendPlayersLocalizedMessage(
+                  this.getMessageEntityPlayers(),
+                  "tile.blockHutTownHall.messageMaxSize");
             }
 
             entity.setColony(this, citizenData);
