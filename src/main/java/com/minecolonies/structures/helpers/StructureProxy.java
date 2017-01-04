@@ -47,7 +47,7 @@ public class StructureProxy
         this.blocks = new Template.BlockInfo[width][height][length];
         this.entities = new Template.EntityInfo[width][height][length];
 
-        for(Template.EntityInfo info: structure.getTileEntities())
+        for(final Template.EntityInfo info: structure.getTileEntities())
         {
             final BlockPos tempPos = info.blockPos;
             entities[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;

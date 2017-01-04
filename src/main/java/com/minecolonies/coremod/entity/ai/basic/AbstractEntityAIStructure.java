@@ -579,7 +579,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 {
                     if(((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
                     {
-                        Item secondaryItem = Item.getByNameOrId(((JobBuilder) job).getStructure().getBlockInfo().tileentityData.getString("Item"));
+                        final Item secondaryItem = Item.getByNameOrId(((JobBuilder) job).getStructure().getBlockInfo().tileentityData.getString("Item"));
                         if(secondaryItem != null)
                         {
                             ((BuildingBuilder) building).addNeededResource(Block.getBlockFromItem(secondaryItem), 1);
@@ -951,7 +951,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 secondaryItem = Item.getByNameOrId(((JobBuilder) job).getStructure().getBlockInfo().tileentityData.getString("Item"));
             }
 
-            TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(pos);
+            final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(pos);
             if(tileentityflowerpot != null && secondaryItem != null)
             {
                 tileentityflowerpot.setFlowerPotData(secondaryItem, 0);

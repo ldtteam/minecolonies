@@ -52,7 +52,7 @@ public class InventoryUtils
     }
 
     /**
-     * {@link #filterInventory(IInventory, Item, Integer)}.
+     * {@link #filterInventory(IInventory, Item, int)}.
      *
      * @param inventory Inventory to filter in
      * @param block     Block to filter
@@ -131,7 +131,7 @@ public class InventoryUtils
     }
 
     /**
-     * {@link #findFirstSlotInInventoryWith(IInventory, Block, Integer)}.
+     * {@link #findFirstSlotInInventoryWith(IInventory, Block, int)}.
      *
      * @param inventory  Inventory to check
      * @param targetItem Item to find
@@ -153,7 +153,7 @@ public class InventoryUtils
     }
 
     /**
-     * {@link #getItemCountInInventory(IInventory, Item, Integer)}.
+     * {@link #getItemCountInInventory(IInventory, Item, int)}.
      *
      * @param inventory Inventory to scan
      * @param block     block to count
@@ -185,7 +185,7 @@ public class InventoryUtils
 
     /**
      * Checks if a player has an block in the inventory.
-     * Checked by {@link #getItemCountInInventory(IInventory, Block, Integer)} &gt; 0;
+     * Checked by {@link #getItemCountInInventory(IInventory, Block, int)} &gt; 0;
      *
      * @param inventory Inventory to scan
      * @param block     Block to count
@@ -203,7 +203,7 @@ public class InventoryUtils
 
     /**
      * Checks if a player has an item in the inventory.
-     * Checked by {@link #getItemCountInInventory(IInventory, Item, Integer)} &gt; 0;
+     * Checked by {@link #getItemCountInInventory(IInventory, Item, int)} &gt; 0;
      *
      * @param inventory Inventory to scan
      * @param item      Item to count
