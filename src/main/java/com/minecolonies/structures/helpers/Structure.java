@@ -5,7 +5,6 @@ import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.fake.FakeEntity;
 import com.minecolonies.structures.fake.FakeWorld;
 import com.minecolonies.structures.lib.ModelHolder;
-import com.sun.xml.internal.ws.util.StreamUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -41,7 +40,6 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Structure class, used to store, create, get structures.
