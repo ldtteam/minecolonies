@@ -1072,7 +1072,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 }
 
                 entity.setUniqueId(UUID.randomUUID());
-                final double rotationYaw = entity.getMirroredYaw(settings.getMirror()) + (entity.rotationYaw - entity.getRotatedYaw(settings.getRotation()));
+                final double rotationYaw
+                        = (double)entity.getMirroredYaw(settings.getMirror()) + ((double)entity.rotationYaw - (double)entity.getRotatedYaw(settings.getRotation()));
                 entity.setLocationAndAngles(
                         pos.getX(),
                         pos.getY(),
