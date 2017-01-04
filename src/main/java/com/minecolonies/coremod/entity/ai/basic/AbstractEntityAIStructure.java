@@ -1058,11 +1058,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
                 for(final ItemStack stack: request)
                 {
-                    if(checkOrRequestItems(stack))
+                    if (checkOrRequestItems(stack))
                     {
                         return false;
                     }
+                }
 
+                for(final ItemStack stack: request)
+                {
+                    if(stack == null)
+                    {
+                        continue;
+                    }
                     final int slot = worker.findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
                     if (slot != -1)
                     {

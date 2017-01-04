@@ -47,21 +47,22 @@ public class StructureProxy
         this.blocks = new Template.BlockInfo[width][height][length];
         this.entities = new Template.EntityInfo[width][height][length];
 
-        for(final Template.EntityInfo info: structure.getTileEntities())
-        {
-            final BlockPos tempPos = info.blockPos;
-            entities[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;
-        }
-
         for (final Template.BlockInfo info : structure.getBlockInfo())
         {
             final BlockPos tempPos = info.pos;
             blocks[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;
+            entities[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = null;
 
             if (info.blockState.getBlock() instanceof AbstractBlockHut)
             {
                 offset = info.pos;
             }
+        }
+
+        for(final Template.EntityInfo info: structure.getTileEntities())
+        {
+            final BlockPos tempPos = info.blockPos;
+            entities[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;
         }
     }
 
