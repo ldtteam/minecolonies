@@ -518,15 +518,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (entityInfo != null)
             {
-                Entity entity;
-                try
-                {
-                    entity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
-                }
-                catch (Exception e)
-                {
-                    entity = null;
-                }
+                Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
 
                 if (entity != null)
                 {
@@ -1014,21 +1006,31 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
+    /**
+     * Get the entity of an entityInfo object.
+     * @param entityInfo the input.
+     * @return the output object or null.
+     */
+    @Nullable
+    private Entity getEntityFromEntityInfoOrNull(Template.EntityInfo entityInfo)
+    {
+        try
+        {
+            return EntityList.createEntityFromNBT(entityInfo.entityData, world);
+        }
+        catch (Exception e)
+        {
+            Log.getLogger().info("Couldn't restore entitiy", e);
+            return null;
+        }
+    }
+
     private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
     {
         final Template.EntityInfo entityInfo = currentBlock.entity;
         if (entityInfo != null && job instanceof JobBuilder)
         {
-            Entity entity;
-            try
-            {
-                entity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
-            }
-            catch (Exception e)
-            {
-                Log.getLogger().info("Couldn't restore entitiy", e);
-                entity = null;
-            }
+            final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
 
             final PlacementSettings settings = ((JobBuilder) job).getStructure().structure().getStructure().getSettings();
 
