@@ -1001,7 +1001,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         if (secondarySlot != -1)
         {
             getInventory().decrStackSize(secondarySlot, 1);
-            //todo add these to: reduceNeededResources();
+            reduceNeededResources(Block.getBlockFromItem(secondaryItem));
         }
 
         return true;
@@ -1067,6 +1067,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     {
                         return false;
                     }
+
+                    final int slot = worker.findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
+                    if (slot != -1)
+                    {
+                        getInventory().decrStackSize(slot, 1);
+                        reduceNeededResources(Block.getBlockFromItem(stack.getItem()));
+                    }
                 }
 
                 entity.setUniqueId(UUID.randomUUID());
@@ -1080,16 +1087,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 if(!world.spawnEntityInWorld(entity))
                 {
                     Log.getLogger().info("Failed to spawn entity");
-                }
-
-                for(final ItemStack stack: request)
-                {
-                    final int slot = worker.findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
-                    if (slot != -1)
-                    {
-                        getInventory().decrStackSize(slot, 1);
-                        //todo reduceNeededResources(block);
-                    }
                 }
             }
         }
