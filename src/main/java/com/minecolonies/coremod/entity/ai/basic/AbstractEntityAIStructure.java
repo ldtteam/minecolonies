@@ -518,7 +518,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             if (entityInfo != null)
             {
-                Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
+                final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
 
                 if (entity != null)
                 {
