@@ -6,16 +6,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,8 +23,7 @@ import java.util.List;
 public class StructureProxy
 {
     private final Structure structure;
-    private final List<TileEntity> tileEntities = new ArrayList<>();
-    private final List<Entity>     entities     = new ArrayList<>();
+    private Template.EntityInfo[][][] entities;
     private Template.BlockInfo[][][] blocks;
     private int                      width;
     private int                      height;
@@ -51,6 +49,13 @@ public class StructureProxy
         this.length = size.getZ();
 
         this.blocks = new Template.BlockInfo[width][height][length];
+        this.entities = new Template.EntityInfo[width][height][length];
+
+        for(Template.EntityInfo info: structure.getTileEntities())
+        {
+            final BlockPos tempPos = info.blockPos;
+            entities[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;
+        }
 
         for (final Template.BlockInfo info : structure.getBlockInfo())
         {
@@ -140,53 +145,13 @@ public class StructureProxy
     }
 
     /**
-     * return a tileEntity at a certain position.
-     *
-     * @param pos the position.
-     * @return the tileEntity.
-     */
-    public TileEntity getTileEntity(final BlockPos pos)
-    {
-        for (final TileEntity tileEntity : this.tileEntities)
-        {
-            if (tileEntity.getPos().equals(pos))
-            {
-                return tileEntity;
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * Return a list of tileEntities.
      *
      * @return list of them.
      */
-    public List<TileEntity> getTileEntities()
+    public List<Template.EntityInfo> getTileEntities()
     {
-        return this.tileEntities;
-    }
-
-    /**
-     * Sets tileEntities.
-     *
-     * @param pos        at position.
-     * @param tileEntity the entity to set.
-     */
-    public void setTileEntity(final BlockPos pos, final TileEntity tileEntity)
-    {
-        if (isInvalid(pos))
-        {
-            return;
-        }
-
-        removeTileEntity(pos);
-
-        if (tileEntity != null)
-        {
-            this.tileEntities.add(tileEntity);
-        }
+        return this.structure.getTileEntities();
     }
 
     /**
@@ -205,62 +170,15 @@ public class StructureProxy
     }
 
     /**
-     * Removes a tileEntity at a position.
+     * Getter of the EntityInfo at a certain position.
      *
-     * @param pos the position to remove it at.
+     * @param pos the position.
+     * @return the blockState.
      */
-    private void removeTileEntity(final BlockPos pos)
+    @Nullable
+    public Template.EntityInfo getEntityinfo(@NotNull final BlockPos pos)
     {
-        this.tileEntities.removeIf(tileEntity -> tileEntity.getPos().equals(pos));
-    }
-
-    /**
-     * Return all entities.
-     *
-     * @return the list of entities.
-     */
-    @NotNull
-    public List<Entity> getEntities()
-    {
-        return this.entities;
-    }
-
-    /**
-     * Add an entitiy.
-     *
-     * @param entity the entity to add.
-     */
-    public void addEntity(final Entity entity)
-    {
-        if (entity == null || entity instanceof EntityPlayer)
-        {
-            return;
-        }
-
-        for (final Entity e : this.entities)
-        {
-            if (entity.getUniqueID().equals(e.getUniqueID()))
-            {
-                return;
-            }
-        }
-
-        this.entities.add(entity);
-    }
-
-    /**
-     * Remove a certain entitiy.
-     *
-     * @param entity that should be removed.
-     */
-    public void removeEntity(final Entity entity)
-    {
-        if (entity == null)
-        {
-            return;
-        }
-
-        this.entities.removeIf(e -> entity.getUniqueID().equals(e.getUniqueID()));
+        return entities[pos.getX()][pos.getY()][pos.getZ()];
     }
 
     /**

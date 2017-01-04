@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -165,7 +166,6 @@ public final class StructureWrapper
         @NotNull final List<BlockPos> delayedBlocks = new ArrayList<>();
 
         //structure.getBlockInfo()[0].pos
-
         for (int j = 0; j < structure.getHeight(); j++)
         {
             for (int k = 0; k < structure.getLength(); k++)
@@ -195,9 +195,6 @@ public final class StructureWrapper
                     {
                         delayedBlocks.add(localPos);
                     }
-
-                    //setTileEntity checks for null and ignores it.
-                    world.setTileEntity(worldPos, structure.getTileEntity(localPos));
                 }
             }
         }
@@ -507,25 +504,12 @@ public final class StructureWrapper
     }
 
     /**
-     * @return The current local tile entity.
-     */
-    @Nullable
-    public TileEntity getTileEntity()
-    {
-        if (this.progressPos.equals(NULL_POS))
-        {
-            return null;
-        }
-        return this.structure.getTileEntity(this.progressPos);
-    }
-
-    /**
      * @return A list of all the entities in the structure.
      */
     @NotNull
-    public List<Entity> getEntities()
+    public List<Template.EntityInfo> getEntities()
     {
-        return structure.getEntities();
+        return structure.getTileEntities();
     }
 
     /**
@@ -623,5 +607,21 @@ public final class StructureWrapper
             return null;
         }
         return this.structure.getBlockInfo(this.progressPos);
+    }
+
+    /**
+     * Calculate the current entity in the structure.
+     *
+     * @param pos the position.
+     * @return the entityInfo.
+     */
+    @Nullable
+    public Template.EntityInfo getEntityinfo()
+    {
+        if (this.progressPos.equals(NULL_POS))
+        {
+            return null;
+        }
+        return this.structure.getEntityinfo(this.progressPos);
     }
 }

@@ -21,21 +21,31 @@ import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
+import net.minecraft.entity.EntityList;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.gen.structure.template.PlacementSettings;
+import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.geom.Point2D;
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -128,11 +138,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
           /**
            * Decorate the AbstractBuilding with torches etc.
            */
-          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.COMPLETE_BUILD)),
+          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.SPAWN_STEP)),
           /**
            * Spawn entities on the structure.
            */
-          new AITarget(SPAWN_STEP, () generateStructureGenerator(this::spawnEntity, AIState.COMPLETE_BUILD)),
+          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.COMPLETE_BUILD)),
           /**
            * Finalize the building and give back control to the ai.
            */
@@ -153,10 +163,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if(job instanceof JobBuilder)
             {
                 final String structureName = ((AbstractJobStructure) job).getStructure().getName();
-
                 LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
                         "entity.builder.messageBuildComplete",
                         structureName);
+
 
                 final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
                 if (wo == null)
@@ -382,6 +392,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         else if(state.equals(AIState.DECORATION_STEP))
         {
             currentStructure.setStage(Structure.Stage.DECORATE);
+        }
+        else if(state.equals(AIState.SPAWN_STEP))
+        {
+            currentStructure.setStage(Structure.Stage.SPAWN);
         }
         else if(state.equals(AIState.COMPLETE_BUILD))
         {
@@ -920,7 +934,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return true;
         }
 
-        //todo place it....
         final int secondarySlot = worker.findFirstSlotInInventoryWith(secondaryItem, 0);
         if (secondarySlot != -1)
         {
@@ -945,94 +958,43 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
-    private AIState spawnEntity()
+    private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
     {
-        if (!BlockUtils.shouldNeverBeMessedWith(structureBlock.worldBlock))
+        Template.EntityInfo entityInfo = currentBlock.entity;
+        if (entityInfo != null && job instanceof JobBuilder)
         {
-            //Fill workFrom with the position from where the builder should build.
-            //also ensure we are at that position.
-            if (!walkToConstructionSite())
+            Entity entity;
+            try
             {
-                return false;
+                entity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
+            }
+            catch (Exception e)
+            {
+                Log.getLogger().info("Couldn't restore entitiy", e);
+                entity = null;
             }
 
-            if (structureBlock.block == null
-                    || structureBlock.doesStructureBlockEqualWorldBlock()
-                    || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR))
-            {
-                //findNextBlock count was reached and we can ignore this block
-                return true;
-            }
+            PlacementSettings settings = ((JobBuilder) job).getStructure().structure().getStructure().getSettings();
 
-            @Nullable Block block = structureBlock.block;
-            @Nullable IBlockState blockState = structureBlock.metadata;
-            if(structureBlock.block == ModBlocks.blockSolidSubstitution)
+            BlockPos pos = currentBlock.blockPosition;
+            if (entity != null)
             {
-                if(!(job instanceof JobMiner && structureBlock.worldBlock instanceof BlockOre)
-                        && structureBlock.worldMetadata.getMaterial().isSolid())
+                entity.setUniqueId(UUID.randomUUID());
+                float f = entity.getMirroredYaw(settings.getMirror());
+                f = f + (entity.rotationYaw - entity.getRotatedYaw(settings.getRotation()));
+                entity.setLocationAndAngles(
+                        pos.getX(),
+                        pos.getY(),
+                        pos.getZ(),
+                        f,
+                        entity.rotationPitch);
+                if(!world.spawnEntityInWorld(entity))
                 {
-                    return true;
+                    Log.getLogger().info("Failed to spawn entity");
                 }
-                block = getSolidSubstitution(structureBlock.blockPosition);
-                blockState = block.getDefaultState();
-
             }
-
-            worker.faceBlock(structureBlock.blockPosition);
-
-            //should never happen
-            if (block == null)
-            {
-                @NotNull final BlockPos local = structureBlock.blockPosition;
-                Log.getLogger().error(String.format("StructureProxy has null block at %s - local(%s)", currentStructure.getCurrentBlockPosition(), local));
-                return true;
-            }
-
-            //We need to deal with materials
-            if (!Configurations.builderInfiniteResources
-                    && !handleMaterials(block, blockState))
-            {
-                return false;
-            }
-
-            placeBlockAt(block, blockState, structureBlock.blockPosition);
         }
         return true;
-        if (entity != null && job instanceof JobBuilder)
-        {
-            final BlockPos pos = ((JobBuilder) job).getStructure().getOffsetPosition();
-
-            if (entity instanceof EntityHanging)
-            {
-                @NotNull final EntityHanging entityHanging = (EntityHanging) entity;
-
-                entityHanging.posX += pos.getX();
-                entityHanging.posY += pos.getY();
-                entityHanging.posZ += pos.getZ();
-                //also sets position based on tile
-                entityHanging.setPosition(
-                        entityHanging.getHangingPosition().getX(),
-                        entityHanging.getHangingPosition().getY(),
-                        entityHanging.getHangingPosition().getZ());
-
-                entityHanging.setWorld(world);
-                entityHanging.dimension = world.provider.getDimension();
-
-                world.spawnEntityInWorld(entityHanging);
-            }
-            else if (entity instanceof EntityMinecart)
-            {
-                @Nullable final EntityMinecart minecart = (EntityMinecart) entity;
-                minecart.posX += pos.getX();
-                minecart.posY += pos.getY();
-                minecart.posZ += pos.getZ();
-
-                minecart.setWorld(world);
-                minecart.dimension = world.provider.getDimension();
-
-                world.spawnEntityInWorld(minecart);
-            }
-        }
     }
 
     /**
