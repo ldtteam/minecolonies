@@ -23,6 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.init.Blocks;
@@ -38,12 +39,15 @@ import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
@@ -508,8 +512,59 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final JobBuilder builderJob = (JobBuilder) job;
         while (builderJob.getStructure().findNextBlock())
         {
-            @Nullable final Block block = builderJob.getStructure().getBlock();
-            @NotNull final IBlockState blockState = builderJob.getStructure().getBlockState();
+            @Nullable final Template.BlockInfo blockInfo = builderJob.getStructure().getBlockInfo();
+            @Nullable final Template.EntityInfo entityInfo = builderJob.getStructure().getEntityinfo();
+
+            if(blockInfo == null)
+            {
+                continue;
+            }
+
+            @Nullable final IBlockState blockState = blockInfo.blockState;
+            @Nullable final Block block = blockState.getBlock();
+
+            if (entityInfo != null)
+            {
+                Entity entity;
+                try
+                {
+                    entity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
+                }
+                catch (Exception e)
+                {
+                    entity = null;
+                }
+
+                if (entity != null)
+                {
+                    final List<ItemStack> request = new ArrayList<>();
+                    if(entity instanceof EntityItemFrame)
+                    {
+                        final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
+                        stack.stackSize = 1;
+                        request.add(stack);
+                        request.add(new ItemStack(Items.ITEM_FRAME, 1));
+                    }
+                    else if(entity instanceof EntityArmorStand)
+                    {
+                        request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                        entity.getArmorInventoryList().forEach(request::add);
+                    }
+                    else
+                    {
+                        request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                    }
+
+                    for(final ItemStack stack: request)
+                    {
+                        final AbstractBuilding building = getOwnBuilding();
+                        if (building instanceof BuildingBuilder)
+                        {
+                            ((BuildingBuilder) building).addNeededResource(Block.getBlockFromItem(stack.getItem()), 1);
+                        }
+                    }
+                }
+            }
 
             if (builderJob.getStructure().doesStructureBlockEqualWorldBlock()
                     || (blockState instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
@@ -529,6 +584,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final AbstractBuilding building = getOwnBuilding();
                 if (building instanceof BuildingBuilder)
                 {
+                    if(((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
+                    {
+                        Item secondaryItem = Item.getByNameOrId(((JobBuilder) job).getStructure().getBlockInfo().tileentityData.getString("Item"));
+                        if(secondaryItem != null)
+                        {
+                            ((BuildingBuilder) building).addNeededResource(Block.getBlockFromItem(secondaryItem), 1);
+                        }
+                    }
                     ((BuildingBuilder) building).addNeededResource(block, 1);
                 }
             }
@@ -960,7 +1023,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
     {
-        Template.EntityInfo entityInfo = currentBlock.entity;
+        final Template.EntityInfo entityInfo = currentBlock.entity;
         if (entityInfo != null && job instanceof JobBuilder)
         {
             Entity entity;
@@ -974,23 +1037,59 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 entity = null;
             }
 
-            PlacementSettings settings = ((JobBuilder) job).getStructure().structure().getStructure().getSettings();
+            final PlacementSettings settings = ((JobBuilder) job).getStructure().structure().getStructure().getSettings();
 
-            BlockPos pos = currentBlock.blockPosition;
+            final BlockPos pos = currentBlock.blockPosition;
             if (entity != null)
             {
+                final List<ItemStack> request = new ArrayList<>();
+
+                if(entity instanceof EntityItemFrame)
+                {
+                    final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
+                    stack.stackSize = 1;
+                    request.add(stack);
+                    request.add(new ItemStack(Items.ITEM_FRAME, 1));
+                }
+                else if(entity instanceof EntityArmorStand)
+                {
+                    request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                    entity.getArmorInventoryList().forEach(request::add);
+                }
+                else
+                {
+                    request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                }
+
+                for(final ItemStack stack: request)
+                {
+                    if(checkOrRequestItems(stack))
+                    {
+                        return false;
+                    }
+                }
+
                 entity.setUniqueId(UUID.randomUUID());
-                float f = entity.getMirroredYaw(settings.getMirror());
-                f = f + (entity.rotationYaw - entity.getRotatedYaw(settings.getRotation()));
+                final double rotationYaw = entity.getMirroredYaw(settings.getMirror()) + (entity.rotationYaw - entity.getRotatedYaw(settings.getRotation()));
                 entity.setLocationAndAngles(
                         pos.getX(),
                         pos.getY(),
                         pos.getZ(),
-                        f,
+                        (float) rotationYaw,
                         entity.rotationPitch);
                 if(!world.spawnEntityInWorld(entity))
                 {
                     Log.getLogger().info("Failed to spawn entity");
+                }
+
+                for(final ItemStack stack: request)
+                {
+                    final int slot = worker.findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
+                    if (slot != -1)
+                    {
+                        getInventory().decrStackSize(slot, 1);
+                        //todo reduceNeededResources(block);
+                    }
                 }
             }
         }
