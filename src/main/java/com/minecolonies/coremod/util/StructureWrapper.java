@@ -608,8 +608,6 @@ public final class StructureWrapper
 
     /**
      * Calculate the current entity in the structure.
-     *
-     * @param pos the position.
      * @return the entityInfo.
      */
     @Nullable
