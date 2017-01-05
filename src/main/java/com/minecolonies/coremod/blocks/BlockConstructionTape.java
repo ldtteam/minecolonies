@@ -42,7 +42,7 @@ public class BlockConstructionTape extends Block
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 5F;
+    private static final float BLOCK_HARDNESS = 50.0F;
 
     /**
      * This blocks name.
@@ -52,7 +52,7 @@ public class BlockConstructionTape extends Block
     /**
      * The resistance this block has.
      */
-    private static final float RESISTANCE = 1F;
+    private static final float RESISTANCE = 2000.0F;
 
     /**
      * Start of the collision box at y.
@@ -60,19 +60,33 @@ public class BlockConstructionTape extends Block
     private static final double BOTTOM_COLLISION = 0.0;
 
     /**
-     * Start of the collision box at x and z.
+     * Start of the collision box at x.
      */
-    private static final double START_COLLISION = 0.1;
+    private static final double START_COLLISION_X = 0.0;
 
     /**
      * End of the collision box.
      */
-    private static final double END_COLLISION = 0.9;
+    private static final double END_COLLISION_X = 1.0;
+
+    /**
+     * Start of the collision box at z.
+     */
+    private static final double START_COLLISION_Z = 0.4375;
+
+    /**
+     * End of the collision box.
+     */
+    private static final double END_COLLISION_Z = 0.5625;
 
     /**
      * Height of the collision box.
      */
-    private static final double HEIGHT_COLLISION = 1.5;
+    private static final double HEIGHT_COLLISION = 1.0;
+    /**
+     * How much light goes through the block.
+     */
+    private static final int LIGHT_OPACITY = 0;
 
     /**
      * Constructor for the Substitution block.
@@ -97,6 +111,8 @@ public class BlockConstructionTape extends Block
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
+        setLightOpacity(LIGHT_OPACITY);
+        setBlockUnbreakable();
     }
 
     @Override
@@ -142,18 +158,18 @@ public class BlockConstructionTape extends Block
     @Override
     public boolean isPassable(final IBlockAccess worldIn, final BlockPos pos)
     {
-        return false;
+        return true;
     }
 
     @Override
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
-        return new AxisAlignedBB((float) START_COLLISION,
+        return new AxisAlignedBB((float) START_COLLISION_X,
                 (float) BOTTOM_COLLISION,
-                (float) START_COLLISION,
-                (float) END_COLLISION,
+                (float) START_COLLISION_Z,
+                (float) END_COLLISION_X,
                 (float) HEIGHT_COLLISION,
-                (float) END_COLLISION);
+                (float) END_COLLISION_Z);
     }
 
     // =======================================================================
