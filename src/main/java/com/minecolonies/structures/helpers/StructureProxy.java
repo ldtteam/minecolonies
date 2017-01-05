@@ -175,6 +175,10 @@ public class StructureProxy
     @Nullable
     public Template.EntityInfo getEntityinfo(@NotNull final BlockPos pos)
     {
+        if(entities[pos.getX()][pos.getY()].length == 0)
+        {
+            return null;
+        }
         return entities[pos.getX()][pos.getY()][pos.getZ()];
     }
 
@@ -239,6 +243,7 @@ public class StructureProxy
         this.length = size.getZ();
 
         this.blocks = new Template.BlockInfo[width][height][length];
+        this.entities = new Template.EntityInfo[width][height][length];
 
         int minX = 0;
         int minY = 0;
@@ -279,6 +284,7 @@ public class StructureProxy
             final int z = tempPos.getZ() + minZ;
 
             this.blocks[x][y][z] = info;
+            this.entities[x][y][z] = null;
 
             if (info.blockState.getBlock() instanceof AbstractBlockHut)
             {
@@ -286,6 +292,17 @@ public class StructureProxy
                 offset = info.pos.add(minX, minY, minZ);
             }
         }
+
+        for(final Template.EntityInfo info: structure.getTileEntities())
+        {
+            final BlockPos tempPos = info.blockPos;
+            final int x = tempPos.getX() + minX;
+            final int y = tempPos.getY() + minY;
+            final int z = tempPos.getZ() + minZ;
+
+            this.entities[x][y][z] = info;
+        }
+
         updateOffSetIfDecoration(foundHut, size, times, minX, minY, minZ);
     }
 
