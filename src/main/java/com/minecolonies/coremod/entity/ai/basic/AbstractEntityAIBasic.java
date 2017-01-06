@@ -365,7 +365,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return NEEDS_ITEM;
             }
 
-            requestWithoutSpam(first.getDisplayName());
+            requestWithoutSpam(first.stackSize + " " + first.getDisplayName());
         }
         return NEEDS_ITEM;
     }
@@ -999,12 +999,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 continue;
             }
             final int countOfItem = worker.getItemCountInInventory(stack.getItem(), stack.getItemDamage());
-            if (countOfItem < stack.stackSize)
+            if (countOfItem < 1)
             {
                 final int itemsLeft = stack.stackSize - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
                 itemsCurrentlyNeeded.add(requiredStack);
                 allClear = false;
+            }
+            else
+            {
+                itemsCurrentlyNeeded.clear();
             }
         }
         if (allClear)

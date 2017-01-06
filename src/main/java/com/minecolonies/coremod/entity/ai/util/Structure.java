@@ -257,7 +257,7 @@ public class Structure
         }
 
         //put the building into place
-        tempSchematic.rotate(rotation);
+        tempSchematic.rotate(rotation, targetWorld, buildingLocation);
         tempSchematic.setPosition(buildingLocation);
         if (blockProgress != null)
         {

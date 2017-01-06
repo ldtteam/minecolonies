@@ -296,7 +296,8 @@ public abstract class AbstractJob
                 neededItem.stackSize -= itemsToRemove;
                 stackCopy.stackSize -= itemsToRemove;
 
-                if (neededItem.stackSize == 0)
+                //Deativate this for now in order to keep working even if not all items are given.
+                //if (neededItem.stackSize == 0)
                 {
                     itemsNeeded.remove(neededItem);
                 }

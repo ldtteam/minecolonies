@@ -256,6 +256,35 @@ public class Structure
     /**
      * Get entity info with specific setting.
      *
+     * @param entityInfo the entity to transform.
+     * @param world      world the entity is in.
+     * @param pos        the position it is at.
+     * @param settings   the settings.
+     * @return the entity info aray.
+     */
+    public Template.EntityInfo transformEntityInfoWithSettings(final Template.EntityInfo entityInfo, final World world, final BlockPos pos, final PlacementSettings settings)
+    {
+        final Entity finalEntity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
+        final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfo.pos).add(new Vec3d(pos));
+
+        if (finalEntity != null)
+        {
+            finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREE);
+            //Don't remove that line. Seems like it is doing nothing but it changes behavior!
+            final double rotation =
+                    (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
+            finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, finalEntity.getRotatedYaw(settings.getRotation()), finalEntity.rotationPitch);
+
+            NBTTagCompound nbttagcompound = new NBTTagCompound();
+            finalEntity.writeToNBTOptional(nbttagcompound);
+            return new Template.EntityInfo(finalEntity.getPositionVector(), pos, nbttagcompound);
+        }
+        return null;
+    }
+
+    /**
+     * Get entity info with specific setting.
+     *
      * @param world    world the entity is in.
      * @param pos      the position it is at.
      * @param settings the settings.
@@ -277,7 +306,7 @@ public class Structure
             {
                 finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREE);
                 final double rotation =
-                  (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
+                        (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
                 finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, (float) rotation, finalEntity.rotationPitch);
             }
             entityList[i] = finalEntity;
@@ -348,11 +377,11 @@ public class Structure
             {
                 final TileEntityRendererDispatcher terd = TileEntityRendererDispatcher.instance;
                 terd.func_190056_a(fakeWorld,
-                  Minecraft.getMinecraft().renderEngine,
-                  Minecraft.getMinecraft().fontRendererObj,
-                  new FakeEntity(fakeWorld),
-                  null,
-                  0.0F);
+                        Minecraft.getMinecraft().renderEngine,
+                        Minecraft.getMinecraft().fontRendererObj,
+                        new FakeEntity(fakeWorld),
+                        null,
+                        0.0F);
                 GL11.glPushMatrix();
                 terd.renderEngine = Minecraft.getMinecraft().renderEngine;
                 terd.preDrawBatch();
@@ -364,7 +393,14 @@ public class Structure
         }
     }
 
-    private static Vec3d transformedVec3d(final PlacementSettings settings, final Vec3d vec)
+    /**
+     * Transform a Vec3d with placement settings.
+     *
+     * @param settings the settings.
+     * @param vec      the vector.
+     * @return the new vector.
+     */
+    public static Vec3d transformedVec3d(final PlacementSettings settings, final Vec3d vec)
     {
         final Mirror mirrorIn = settings.getMirror();
         final Rotation rotationIn = settings.getRotation();
@@ -399,12 +435,12 @@ public class Structure
     }
 
     private void renderGhostBlock(
-                                   final World world,
-                                   final ModelHolder holder,
-                                   final EntityPlayer player,
-                                   final BlockRenderLayer layer,
-                                   final boolean existingModel,
-                                   final float partialTicks)
+            final World world,
+            final ModelHolder holder,
+            final EntityPlayer player,
+            final BlockRenderLayer layer,
+            final boolean existingModel,
+            final float partialTicks)
     {
         final double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
         final double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
@@ -485,6 +521,7 @@ public class Structure
 
     /**
      * Get all additional entities.
+     *
      * @return list of entities.
      */
     public List<Template.EntityInfo> getTileEntities()
@@ -494,6 +531,7 @@ public class Structure
 
     /**
      * Get the Placement settings of the structure.
+     *
      * @return the settings.
      */
     public PlacementSettings getSettings()

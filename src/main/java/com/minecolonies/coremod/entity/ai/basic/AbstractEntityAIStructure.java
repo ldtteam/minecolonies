@@ -3,6 +3,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -119,9 +120,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         super(job);
         this.registerTargets(
+
           /**
-          * Select the appropriate State to do next.
-          */
+           * Check if tasks should be executed.
+           */
+          new AITarget(this::checkIfCanceled, IDLE),
+          /**
+           * Select the appropriate State to do next.
+           */
           new AITarget(START_BUILDING, this::startBuilding),
           /**
            * Check if we have to build something.
@@ -160,7 +166,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 ((JobBuilder) job).complete();
             }
 
-            if(job instanceof JobBuilder)
+            if(job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null)
             {
                 final String structureName = ((AbstractJobStructure) job).getStructure().getName();
                 LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
@@ -495,9 +501,27 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 ((AbstractJobStructure) job).setStructure(null);
             }
 
-            ((AbstractJobStructure) job).getStructure().rotate(rotateTimes);
+            ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position);
             ((AbstractJobStructure) job).getStructure().setPosition(position);
         }
+    }
+
+    private boolean checkIfCanceled()
+    {
+        if(job instanceof JobBuilder)
+        {
+            final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
+
+            if (wo == null)
+            {
+                super.resetTask();
+                ((JobBuilder) job).setWorkOrder(null);
+                workFrom = null;
+                ((JobBuilder) job).setStructure(null);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -547,9 +571,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     for(final ItemStack stack: request)
                     {
                         final AbstractBuilding building = getOwnBuilding();
-                        if (building instanceof BuildingBuilder)
+                        if (building instanceof BuildingBuilder && stack != null && stack.getItem() != null)
                         {
-                            ((BuildingBuilder) building).addNeededResource(Block.getBlockFromItem(stack.getItem()), 1, stack.getMetadata());
+                            ((BuildingBuilder) building).addNeededResource(stack, 1);
                         }
                     }
                 }
@@ -580,13 +604,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
                         for(ItemStack stack: itemList)
                         {
-                            if(!isBlockFree(stack) && checkOrRequestItems(stack))
+                            if(!isBlockFree(stack))
                             {
-                                ((BuildingBuilder) building).addNeededResource(Block.getBlockFromItem(stack.getItem()), 1, stack.getMetadata());
+                                ((BuildingBuilder) building).addNeededResource(stack, 1);
                             }
                         }
                     }
-                    ((BuildingBuilder) building).addNeededResource(block, 1, block.getMetaFromState(blockState));
+
+                    ((BuildingBuilder) building).addNeededResource(BlockUtils.getItemStackFromBlockState(blockState),1);
                 }
             }
         }
@@ -601,7 +626,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
-        if((job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder().isCleared()) || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
+        if((job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() != null && ((JobBuilder) job).getWorkOrder().isCleared()) || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
         {
             return true;
         }
@@ -817,20 +842,38 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
-        if(job instanceof JobBuilder && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
+        if(job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null
+                && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
         {
             itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
         }
 
         for(ItemStack stack: itemList)
         {
-            if(!isBlockFree(stack) && checkOrRequestItems(stack))
+            if(!isBlockFree(stack) && checkOrRequestItems(getTotalAmount(stack)))
             {
                 return false;
             }
         }
 
         return true;
+    }
+
+    /**
+     * Check how much of a certain stuck is actually required.
+     * @param stack the stack to check.
+     * @return the new stack with the correct amount.
+     */
+    private ItemStack getTotalAmount(ItemStack stack)
+    {
+        AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        if(buildingWorker instanceof BuildingBuilder)
+        {
+            //todo not working correctly yet! is running around strangely!
+            ItemStack tempStack = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
+            return tempStack == null ? stack : tempStack.copy();
+        }
+        return stack;
     }
 
     /**
@@ -901,8 +944,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
         else
         {
-            final Item item = Item.getItemFromBlock(block);
-            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : new ItemStack(item, 1));
+            final ItemStack item = BlockUtils.getItemStackFromBlockState(blockState);
+            worker.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, item == null ? null : item);
 
             if (!placeBlock(coords, block, blockState))
             {
@@ -987,6 +1030,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(pos);
                 tileentityflowerpot.readFromNBT(((JobBuilder) job).getStructure().getBlockInfo().tileentityData);
+                world.setTileEntity(pos, tileentityflowerpot);
             }
         }
         else
@@ -1014,7 +1058,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
-            reduceNeededResources(block, stack.getMetadata());
+            reduceNeededResources(stack);
         }
 
         if(secondaryItem == null)
@@ -1026,7 +1070,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         if (secondarySlot != -1)
         {
             getInventory().decrStackSize(secondarySlot, 1);
-            reduceNeededResources(Block.getBlockFromItem(secondaryItem), stack.getMetadata());
+            reduceNeededResources(new ItemStack(secondaryItem, 1));
         }
 
         return true;
@@ -1035,15 +1079,15 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     /**
      * Reduces the needed resources by 1.
      *
-     * @param block the block which has been used now.
+     * @param stack the stack which has been used now.
      * @param metaData
      */
-    public void reduceNeededResources(final Block block, final int metaData)
+    public void reduceNeededResources(final ItemStack stack)
     {
         final AbstractBuilding workerBuilding = this.getOwnBuilding();
         if (workerBuilding instanceof BuildingBuilder)
         {
-            ((BuildingBuilder) workerBuilding).reduceNeededResource(block, 1, metaData);
+            ((BuildingBuilder) workerBuilding).reduceNeededResource(stack, 1);
         }
     }
 
@@ -1069,10 +1113,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
     {
         final Template.EntityInfo entityInfo = currentBlock.entity;
-        if (entityInfo != null && job instanceof JobBuilder)
+        if (entityInfo != null && job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null)
         {
             final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
-
             final PlacementSettings settings = ((JobBuilder) job).getStructure().structure().getStructure().getSettings();
 
             final BlockPos pos = currentBlock.blockPosition;
@@ -1115,7 +1158,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     if (slot != -1)
                     {
                         getInventory().decrStackSize(slot, 1);
-                        reduceNeededResources(Block.getBlockFromItem(stack.getItem()), stack.getMetadata());
+                        reduceNeededResources(stack);
                     }
                 }
 

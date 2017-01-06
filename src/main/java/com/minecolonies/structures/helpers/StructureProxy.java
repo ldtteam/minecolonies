@@ -3,6 +3,7 @@ package com.minecolonies.structures.helpers;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -152,21 +153,6 @@ public class StructureProxy
     }
 
     /**
-     * Checks if a position is inside the structure.
-     *
-     * @param pos the position.
-     * @return true if so.
-     */
-    private boolean isInvalid(final BlockPos pos)
-    {
-        final int x = pos.getX();
-        final int y = pos.getY();
-        final int z = pos.getZ();
-
-        return (x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.length);
-    }
-
-    /**
      * Getter of the EntityInfo at a certain position.
      *
      * @param pos the position.
@@ -216,8 +202,10 @@ public class StructureProxy
      * Rotate the structure depending on the direction it's facing.
      *
      * @param times times to rotate.
+     * @param world the world to rotate it in.
+     * @param rotatePos the pos to rotate it around.
      */
-    public void rotate(final int times)
+    public void rotate(final int times, World world, BlockPos rotatePos)
     {
         final Rotation rotation;
         switch (times)
@@ -275,8 +263,9 @@ public class StructureProxy
         minY = Math.abs(minY);
         minZ = Math.abs(minZ);
         boolean foundHut = false;
+        PlacementSettings settings = new PlacementSettings().setRotation(rotation);
 
-        for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
+        for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(settings))
         {
             final BlockPos tempPos = info.pos;
             final int x = tempPos.getX() + minX;
@@ -295,14 +284,14 @@ public class StructureProxy
 
         for(final Template.EntityInfo info: structure.getTileEntities())
         {
-            final BlockPos tempPos = info.blockPos;
+            Template.EntityInfo newInfo = structure.transformEntityInfoWithSettings(info, world, Template.transformedBlockPos(settings, info.blockPos), settings);
+
+            final BlockPos tempPos = newInfo.blockPos;
             final int x = tempPos.getX() + minX;
             final int y = tempPos.getY() + minY;
             final int z = tempPos.getZ() + minZ;
-
-            this.entities[x][y][z] = info;
+            this.entities[x][y][z] = newInfo;
         }
-
         updateOffSetIfDecoration(foundHut, size, times, minX, minY, minZ);
     }
 

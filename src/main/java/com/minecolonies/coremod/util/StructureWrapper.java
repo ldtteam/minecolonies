@@ -132,7 +132,7 @@ public final class StructureWrapper
         try
         {
             @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
-            structureWrapper.rotate(rotations);
+            structureWrapper.rotate(rotations, worldObj, pos);
             structureWrapper.placeStructure(pos);
         }
         catch (final IllegalStateException e)
@@ -145,10 +145,12 @@ public final class StructureWrapper
      * Rotates the structure x times.
      *
      * @param times times to rotate.
+     * @param world world it's rotating it in.
+     * @param rotatePos position to rotate it around.
      */
-    public void rotate(final int times)
+    public void rotate(final int times, World world, BlockPos rotatePos)
     {
-        structure.rotate(times);
+        structure.rotate(times, world, rotatePos);
     }
 
     /**

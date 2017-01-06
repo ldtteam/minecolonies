@@ -63,7 +63,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
            * If IDLE - switch to start working.
            */
           new AITarget(IDLE, START_WORKING),
-          new AITarget(this::checkIfCanceled, IDLE),
           new AITarget(this::checkIfExecute, this::getState),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding)
         );
@@ -81,30 +80,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return Blocks.DIRT;
         }
         return filler.getBlock();
-    }
-
-    private boolean checkIfCanceled()
-    {
-        final WorkOrderBuild wo = job.getWorkOrder();
-
-        if (wo == null)
-        {
-            cancelTask();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Resets the builders current task.
-     */
-    public void cancelTask()
-    {
-        super.resetTask();
-        job.setWorkOrder(null);
-        workFrom = null;
-        job.setStructure(null);
     }
 
     private boolean checkIfExecute()
