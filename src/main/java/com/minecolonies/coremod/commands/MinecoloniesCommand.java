@@ -19,6 +19,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         .put(ColoniesCommand.DESC, new ColoniesCommand(DESC))
         .put(ColonyCommand.DESC, new ColonyCommand(DESC))
         .put(CitizensCommand.DESC, new CitizensCommand(DESC))
+        .put(ColonyTPCommand.DESC, new ColonyTPCommand(DESC))
         .build();
 
     /**
