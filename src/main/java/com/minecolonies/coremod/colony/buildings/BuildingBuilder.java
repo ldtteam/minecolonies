@@ -185,7 +185,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * Add a new resource to the needed list.
      *  @param res    the resource.
      * @param amount the amount.
-     * @param metaData the metaData.
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {

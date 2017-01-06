@@ -1080,7 +1080,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * Reduces the needed resources by 1.
      *
      * @param stack the stack which has been used now.
-     * @param metaData
      */
     public void reduceNeededResources(final ItemStack stack)
     {
