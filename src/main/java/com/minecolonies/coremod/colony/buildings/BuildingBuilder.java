@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +46,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     /**
      * Contains all resources needed for a certain build.
      */
-    private HashMap<Block, Integer> neededResources = new HashMap<>();
+    private HashMap<IBlockState, Integer> neededResources = new HashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -134,7 +135,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final IBlockState state = NBTUtil.readBlockState(neededRes);
             final int amount = neededRes.getInteger(TAG_AMOUNT);
-            neededResources.put(state.getBlock(), amount);
+            neededResources.put(state, amount);
         }
     }
 
@@ -143,10 +144,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         super.writeToNBT(compound);
         @NotNull final NBTTagList neededResTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<Block, Integer> entry : neededResources.entrySet())
+        for (@NotNull final Map.Entry<IBlockState, Integer> entry : neededResources.entrySet())
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
-            NBTUtil.writeBlockState(neededRes, entry.getKey().getDefaultState());
+            NBTUtil.writeBlockState(neededRes, entry.getKey());
             neededRes.setInteger(TAG_AMOUNT, entry.getValue());
 
             neededResTagList.appendTag(neededRes);
@@ -166,9 +167,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         buf.writeInt(neededResources.size());
 
-        for (@NotNull final Map.Entry<Block, Integer> entry : neededResources.entrySet())
+        for (@NotNull final Map.Entry<IBlockState, Integer> entry : neededResources.entrySet())
         {
-            ByteBufUtils.writeUTF8String(buf, entry.getKey().getLocalizedName());
+            ByteBufUtils.writeUTF8String(buf, entry.getKey().getBlock().getLocalizedName());
             buf.writeInt(entry.getValue());
         }
     }
@@ -178,25 +179,26 @@ public class BuildingBuilder extends AbstractBuildingWorker
      *
      * @return a new Hashmap.
      */
-    public Map<Block, Integer> getNeededResources()
+    public Map<IBlockState, Integer> getNeededResources()
     {
         return new HashMap<>(neededResources);
     }
 
     /**
      * Add a new resource to the needed list.
-     *
-     * @param res    the resource.
+     *  @param res    the resource.
      * @param amount the amount.
+     * @param metaData the metaData.
      */
-    public void addNeededResource(Block res, int amount)
+    public void addNeededResource(@Nullable final Block res, final int amount, final int metaData)
     {
         int preAmount = 0;
         if (this.neededResources.containsKey(res))
         {
             preAmount = this.neededResources.get(res);
         }
-        this.neededResources.put(res, preAmount + amount);
+        IBlockState state = res.getStateFromMeta(metaData);
+        this.neededResources.put(state == null ? res.getDefaultState() : state, preAmount + amount);
         this.markDirty();
     }
 
@@ -205,8 +207,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
      *
      * @param res    the resource.
      * @param amount the amount.
+     * @param metaData the damage value.
      */
-    public void reduceNeededResource(Block res, int amount)
+    public void reduceNeededResource(final Block res, final int amount, final int metaData)
     {
         int preAmount = 0;
         if (this.neededResources.containsKey(res))
@@ -220,7 +223,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
         else
         {
-            this.neededResources.put(res, preAmount - amount);
+            IBlockState state = res.getStateFromMeta(metaData);
+
+            this.neededResources.put(state == null ? res.getDefaultState() : state, preAmount - amount);
         }
         this.markDirty();
     }

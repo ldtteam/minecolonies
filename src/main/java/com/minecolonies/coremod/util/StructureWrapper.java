@@ -279,6 +279,8 @@ public final class StructureWrapper
     {
         final IBlockState structureBlockState = structure.getBlockState(this.getLocalPosition());
         final Block structureBlock = structureBlockState.getBlock();
+        final Template.EntityInfo entityInfo = structure.getEntityinfo(this.getLocalPosition());
+
 
         //All worldBlocks are equal the substitution block
         if (structureBlock == ModBlocks.blockSubstitution)
@@ -299,6 +301,12 @@ public final class StructureWrapper
         else if (structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
         {
             return true;
+        }
+
+        if(entityInfo != null)
+        {
+            return false;
+            //todo get entity at position.
         }
 
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
