@@ -6,6 +6,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
@@ -282,17 +283,18 @@ public class StructureProxy
             }
         }
 
+        updateOffSetIfDecoration(foundHut, size, times, minX, minY, minZ);
+
         for(final Template.EntityInfo info: structure.getTileEntities())
         {
-            Template.EntityInfo newInfo = structure.transformEntityInfoWithSettings(info, world, Template.transformedBlockPos(settings, info.blockPos), settings);
-
-            final BlockPos tempPos = newInfo.blockPos;
+            Template.EntityInfo newInfo = structure.transformEntityInfoWithSettings(info, world, rotatePos.subtract(offset).add(new BlockPos(minX, minY, minZ)), settings);
+            //289 74 157 - 289.9 76.5, 157.5
+            final BlockPos tempPos = Template.transformedBlockPos(settings, info.blockPos);
             final int x = tempPos.getX() + minX;
             final int y = tempPos.getY() + minY;
             final int z = tempPos.getZ() + minZ;
             this.entities[x][y][z] = newInfo;
         }
-        updateOffSetIfDecoration(foundHut, size, times, minX, minY, minZ);
     }
 
     /**

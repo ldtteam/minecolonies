@@ -47,14 +47,24 @@ import java.util.List;
 public class Structure
 {
     /**
-     * Rotation by 90 degree.
+     * Rotation by 90°.
      */
-    private static final double NINETY_DEGREE = 90D;
+    private static final double NINETY_DEGREES = 90D;
+
+    /**
+     * Rotation by 270°.
+     */
+    private static final double TWO_HUNDRED_SEVENTY_DEGREES = 270D;
+
+    /**
+     * Rotation by 180°.
+     */
+    private static final double ONE_HUNDED_EIGHTY_DEGREES = 270D;
 
     /**
      * Used for scale.
      */
-    private static final double SCALE = 1.001;
+    private static final double SCALE                    = 1.001;
 
     /**
      * Template of the structure.
@@ -268,21 +278,47 @@ public class Structure
     public Template.EntityInfo transformEntityInfoWithSettings(final Template.EntityInfo entityInfo, final World world, final BlockPos pos, final PlacementSettings settings)
     {
         final Entity finalEntity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
+
+        //err might be here? only use pos? or don't add?
         final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfo.pos).add(new Vec3d(pos));
 
         if (finalEntity != null)
         {
-            finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREE);
-            //Don't remove that line. Seems like it is doing nothing but it changes behavior!
-            final double rotation =
-                    (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
-            finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, finalEntity.getRotatedYaw(settings.getRotation()), finalEntity.rotationPitch);
+            finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
+            final double rotationYaw
+                    = (double)finalEntity.getMirroredYaw(settings.getMirror()) + ((double)finalEntity.rotationYaw - (double)finalEntity.getRotatedYaw(settings.getRotation()));
+
+            finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord,
+                    (float) rotationYaw, finalEntity.rotationPitch);
 
             NBTTagCompound nbttagcompound = new NBTTagCompound();
             finalEntity.writeToNBTOptional(nbttagcompound);
-            return new Template.EntityInfo(finalEntity.getPositionVector(), pos, nbttagcompound);
+            return new Template.EntityInfo(entityInfo.pos, entityInfo.blockPos, nbttagcompound);
         }
+
         return null;
+    }
+
+
+    /**
+     * Transforms the entity's current yaw with the given Rotation and returns it. This does not have a side-effect.
+     * @param transformRotation the incoming rotation.
+     * @param previousYaw the previous rotation yaw.
+     * @return the new rotation yaw.
+     */
+    public double getRotatedYaw(Rotation transformRotation, double previousYaw)
+    {
+        switch (transformRotation)
+        {
+            case CLOCKWISE_180:
+                return previousYaw + NINETY_DEGREES;
+            case COUNTERCLOCKWISE_90:
+                return previousYaw + TWO_HUNDRED_SEVENTY_DEGREES;
+            case CLOCKWISE_90:
+                return previousYaw + ONE_HUNDED_EIGHTY_DEGREES;
+            default:
+                return previousYaw;
+        }
     }
 
     /**
@@ -307,7 +343,7 @@ public class Structure
 
             if (finalEntity != null)
             {
-                finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREE);
+                finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
                 final double rotation =
                         (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
                 finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, (float) rotation, finalEntity.rotationPitch);

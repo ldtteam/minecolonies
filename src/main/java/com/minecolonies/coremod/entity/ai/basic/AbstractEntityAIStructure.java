@@ -1115,9 +1115,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         if (entityInfo != null && job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null)
         {
             final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
-            final PlacementSettings settings = ((JobBuilder) job).getStructure().structure().getStructure().getSettings();
-
-            final BlockPos pos = currentBlock.blockPosition;
             if (entity != null)
             {
                 final List<ItemStack> request = new ArrayList<>();
@@ -1162,13 +1159,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 }
 
                 entity.setUniqueId(UUID.randomUUID());
-                final double rotationYaw
-                        = (double)entity.getMirroredYaw(settings.getMirror()) + ((double)entity.rotationYaw - (double)entity.getRotatedYaw(settings.getRotation()));
                 entity.setLocationAndAngles(
-                        pos.getX(),
-                        pos.getY(),
-                        pos.getZ(),
-                        (float) rotationYaw,
+                        entity.posX,
+                        entity.posY,
+                        entity.posZ,
+                        entity.rotationYaw,
                         entity.rotationPitch);
                 if(!world.spawnEntityInWorld(entity))
                 {
