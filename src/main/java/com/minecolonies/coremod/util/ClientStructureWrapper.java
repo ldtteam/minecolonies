@@ -31,10 +31,12 @@ public final class ClientStructureWrapper
      * Handles the save message of scans.
      *
      * @param nbttagcompound compound to store.
-     * @param storeLocation  where to store it at.
+     * @param currentMillis  milli seconds for fileName.
      */
-    public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final String storeLocation)
+    public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
     {
+        final String storeLocation = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis + ".nbt");
+
         final File file = new File(Minecraft.getMinecraft().mcDataDir, storeLocation);
         createScanDirectory(Minecraft.getMinecraft().world);
 

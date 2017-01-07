@@ -23,7 +23,7 @@ import java.io.IOException;
 public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessage, IMessage>
 {
     private NBTTagCompound nbttagcompound;
-    private String         storeLocation;
+    private long           currentMillis;
 
     /**
      * Public standard constructor.
@@ -37,45 +37,54 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
      * Send a scan compound to the client.
      *
      * @param nbttagcompound the stream.
-     * @param storeAt        string describing where to store the scan.
+     * @param currentMillis  long describing the current millis at create time.
      */
-    public SaveScanMessage(final NBTTagCompound nbttagcompound, final String storeAt)
+    public SaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
     {
-        this.storeLocation = storeAt;
+        this.currentMillis = currentMillis;
         this.nbttagcompound = nbttagcompound;
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        storeLocation = ByteBufUtils.readUTF8String(buf);
-
-        try (ByteBufInputStream stream = new ByteBufInputStream(buf);)
+        PacketBuffer buffer = new PacketBuffer(buf);
+        int i =  buffer.readerIndex();
+        byte b0 = buffer.readByte();
+        if(b0 != 0)
         {
-            nbttagcompound = CompressedStreamTools.read(stream, NBTSizeTracker.INFINITE);
+            buffer.readerIndex(i);
+            try (ByteBufInputStream stream = new ByteBufInputStream(buffer);)
+            {
+                nbttagcompound = CompressedStreamTools.read(stream, NBTSizeTracker.INFINITE);
+            }
+            catch (RuntimeException e)
+            {
+                Log.getLogger().info("Structure too big to be processed", e);
+            }
+            catch (IOException e)
+            {
+                Log.getLogger().info("Problem at retrieving structure on server.", e);
+            }
         }
-        catch (RuntimeException e)
-        {
-            Log.getLogger().info("Structure too big to be processed", e);
-        }
-        catch (IOException e)
-        {
-            Log.getLogger().info("Problem at retrieving structure on server.", e);
-        }
+        currentMillis = buf.readLong();
     }
 
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        ByteBufUtils.writeUTF8String(buf, storeLocation);
         ByteBufUtils.writeTag(buf, nbttagcompound);
+        buf.writeLong(currentMillis);
     }
 
     @Nullable
     @Override
     public IMessage onMessage(@NotNull final SaveScanMessage message, final MessageContext ctx)
     {
-        ClientStructureWrapper.handleSaveScanMessage(message.nbttagcompound, message.storeLocation);
+        if(message.nbttagcompound != null)
+        {
+            ClientStructureWrapper.handleSaveScanMessage(message.nbttagcompound, message.currentMillis);
+        }
         return null;
     }
 }

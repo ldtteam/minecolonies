@@ -129,13 +129,14 @@ public class ItemScanTool extends AbstractItemMinecolonies
         final MinecraftServer minecraftserver = world.getMinecraftServer();
         final TemplateManager templatemanager = worldserver.getStructureTemplateManager();
 
-        final String currentMillis = Long.toString(System.currentTimeMillis());
-        final String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis + ".nbt");
+        final long currentMillis = System.currentTimeMillis();
+        final String currentMillisString = Long.toString(currentMillis);
+        final String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillisString + ".nbt");
 
         final Template template = templatemanager.getTemplate(minecraftserver, new ResourceLocation(fileName));
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
         
-        MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), fileName), (EntityPlayerMP) player);
+        MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), currentMillis), (EntityPlayerMP) player);
     }
 }
