@@ -31,10 +31,6 @@ public class ColonyTPCommand extends AbstractSingleCommand
     private static final int STARTING_Y = 250;
     private static final double ADDS_TWENTY_PERCENT = 1.20;
     private static final double SAFETY_DROP = 3;
-
-    private ICommandSender sender;
-    private EntityPlayer player = (EntityPlayer)sender;
-    private World world = player.getEntityWorld();
     private String badTp = "";
     private Boolean isSafe = false;
     private Boolean colNear = true;
@@ -44,7 +40,6 @@ public class ColonyTPCommand extends AbstractSingleCommand
     private int z = 0;
     private int b = 0;
     private BlockPos blockPos = new BlockPos(x,y,z);
-    private Block blocks= sender.getEntityWorld().getBlockState(blockPos).getBlock();
 
     ColonyTPCommand(@NotNull final String... parents)
     {
@@ -77,27 +72,27 @@ public class ColonyTPCommand extends AbstractSingleCommand
             x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
             y = STARTING_Y;
             z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-            player.addChatMessage(new TextComponentString("Buckle up buttercup, this aint no joy ride!!!"));
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this aint no joy ride!!!"));
             /* send info to look for land */
-            findLand(blockPos);
+            findLand(blockPos, sender.getEntityWorld());
             /* ok now we take the new coords and do our other checks */
             /* send info to look for lava or water */
             findLavaWater(sender, blockPos);
             /* Take the return and determine if good or bad */
             if (isSafe)
             {
-                findColony(blockPos);
+                findColony(blockPos, sender.getEntityWorld());
             }
                 /* send info to look to see if another colony is near */
             if (!colNear)
             {
-                player.setPositionAndUpdate(blockPos.getX(), blockPos.getY() + SAFETY_DROP, blockPos.getZ());
+                sender.getCommandSenderEntity().setPositionAndUpdate(blockPos.getX(), blockPos.getY() + SAFETY_DROP, blockPos.getZ());
             }
             else
             {
                 if (b > ATTEMPTS)
                 {
-                    player.addChatMessage(new TextComponentString("" + badTp + "  Try again in a moment."));
+                    sender.getCommandSenderEntity().addChatMessage(new TextComponentString("" + badTp + "  Try again in a moment."));
                 }
             }
         }
@@ -112,9 +107,9 @@ public class ColonyTPCommand extends AbstractSingleCommand
      * @param blockPos for the current block LOC
      * @return blockPos to be used for the TP
      */
-    private BlockPos findLand(BlockPos blockPos)
+    private BlockPos findLand(BlockPos blockPos, World world)
     {
-
+        Block blocks = world.getBlockState(blockPos).getBlock();
         int a = 0;
         int ycheck = y;
         /* we are doing a binary check to limit the amount of checks (usually 9 this wa) */
@@ -155,7 +150,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
      */
     private boolean findLavaWater(@NotNull ICommandSender sender, BlockPos blockPos)
     {
-        blocks= sender.getEntityWorld().getBlockState(blockPos).getBlock();
+        Block blocks= sender.getEntityWorld().getBlockState(blockPos).getBlock();
 
         /* take the coords and check to see if that block is water or lava*/
         if (blocks == Blocks.LAVA || blocks == Blocks.WATER)
@@ -183,7 +178,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
      * @param blockPos for the current block LOC
      * @return colNear false=no true=yes
      */
-    private boolean findColony(BlockPos blockPos)
+    private boolean findColony(BlockPos blockPos, World world)
     {
         Colony nearestCol = ColonyManager.getClosestColony(world, blockPos);
         /* get individual coords to do the math */
