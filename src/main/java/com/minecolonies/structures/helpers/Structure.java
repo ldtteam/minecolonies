@@ -291,7 +291,7 @@ public class Structure
             finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord,
                     (float) rotationYaw, finalEntity.rotationPitch);
 
-            NBTTagCompound nbttagcompound = new NBTTagCompound();
+            final NBTTagCompound nbttagcompound = new NBTTagCompound();
             finalEntity.writeToNBTOptional(nbttagcompound);
             return new Template.EntityInfo(entityInfo.pos, entityInfo.blockPos, nbttagcompound);
         }

@@ -281,8 +281,6 @@ public final class StructureWrapper
     {
         final IBlockState structureBlockState = structure.getBlockState(this.getLocalPosition());
         final Block structureBlock = structureBlockState.getBlock();
-        final Template.EntityInfo entityInfo = structure.getEntityinfo(this.getLocalPosition());
-
 
         //All worldBlocks are equal the substitution block
         if (structureBlock == ModBlocks.blockSubstitution)
@@ -305,6 +303,7 @@ public final class StructureWrapper
             return true;
         }
 
+        final Template.EntityInfo entityInfo = structure.getEntityinfo(this.getLocalPosition());
         if(entityInfo != null)
         {
             return false;

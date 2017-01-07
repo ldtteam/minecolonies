@@ -39,7 +39,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * Tags to store the needed resourced to nbt.
      */
     private static final String TAG_RESOURCE_LIST = "resourcesItem";
-    private static final String TAG_AMOUNT        = "amount";
 
     /**
      * Contains all resources needed for a certain build.

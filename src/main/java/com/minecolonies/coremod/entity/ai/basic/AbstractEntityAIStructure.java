@@ -38,7 +38,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -599,10 +598,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 {
                     if(((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
                     {
-                        List<ItemStack> itemList = new ArrayList<>();
+                        final List<ItemStack> itemList = new ArrayList<>();
                         itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
 
-                        for(ItemStack stack: itemList)
+                        for(final ItemStack stack: itemList)
                         {
                             if(!isBlockFree(stack))
                             {
@@ -626,7 +625,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
-        if((job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() != null && ((JobBuilder) job).getWorkOrder().isCleared()) || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
+        if((job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() != null && ((JobBuilder) job).getWorkOrder().isCleared())
+                || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
         {
             return true;
         }
@@ -840,7 +840,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return true;
         }
 
-        List<ItemStack> itemList = new ArrayList<>();
+        final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
         if(job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null
                 && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
@@ -848,7 +848,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
         }
 
-        for(ItemStack stack: itemList)
+        for(final ItemStack stack: itemList)
         {
             if(!isBlockFree(stack) && checkOrRequestItems(getTotalAmount(stack)))
             {
@@ -864,26 +864,28 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param stack the stack to check.
      * @return the new stack with the correct amount.
      */
-    private ItemStack getTotalAmount(ItemStack stack)
+    @Nullable
+    private ItemStack getTotalAmount(@Nullable final ItemStack stack)
     {
-        AbstractBuildingWorker buildingWorker = getOwnBuilding();
+        final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         if(buildingWorker instanceof BuildingBuilder)
         {
             //todo not working correctly yet! is running around strangely!
-            ItemStack tempStack = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
+            final ItemStack tempStack = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
             return tempStack == null ? stack : tempStack.copy();
         }
         return stack;
     }
 
     /**
-     *((JobBuilder) job).getStructure().getBlockInfo().tileentityData
-     * @return
+     * Get itemStack of tileEntityData. Retrieve the data from the tileEntity.
+     * @param compound the tileEntity stored in a compound.
+     * @return the list of itemstacks.
      */
     private List<ItemStack> getItemStacksOfTileEntity(NBTTagCompound compound)
     {
-        List<ItemStack> items = new ArrayList<>();
-        TileEntity tileEntity = TileEntity.create(world, compound);
+        final List<ItemStack> items = new ArrayList<>();
+        final TileEntity tileEntity = TileEntity.create(world, compound);
         if(tileEntity instanceof TileEntityFlowerPot)
         {
             items.add(((TileEntityFlowerPot) tileEntity).getFlowerItemStack());
@@ -892,7 +894,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         {
             for(int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
             {
-                ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
+                final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
                 if(stack != null)
                 {
                     items.add(stack);
@@ -985,7 +987,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        Item secondaryItem = null;
         if (block instanceof BlockDoor)
         {
             if (blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.LOWER))
@@ -1061,6 +1062,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             reduceNeededResources(stack);
         }
 
+        final Item secondaryItem = null;
         if(secondaryItem == null)
         {
             return true;
