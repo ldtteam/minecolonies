@@ -6,7 +6,6 @@ import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -35,11 +34,8 @@ public class ColonyTPCommand extends AbstractSingleCommand
     private Boolean isSafe = false;
     private Boolean colNear = true;
     private Random rnd = new Random();
-    private int x = 0;
-    private int y = 0;
-    private int z = 0;
-    private int b = 0;
-    private BlockPos blockPos = new BlockPos(x,y,z);
+
+
 
     ColonyTPCommand(@NotNull final String... parents)
     {
@@ -64,35 +60,43 @@ public class ColonyTPCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
+        int b = 0;
+
+        sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this aint no joy ride!!!"));
         /* This is where all the magic happens */
         /*we will try up to 4 times to locate a safe area. then we have the player try again*/
         while (b <= ATTEMPTS)
         {
             b++;
-            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-            y = STARTING_Y;
-            z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this aint no joy ride!!!"));
+            int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+            int z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+
+            BlockPos blockPos = new BlockPos(x,STARTING_Y,z);
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("1:" + blockPos));
             /* send info to look for land */
             findLand(blockPos, sender.getEntityWorld());
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("2:" + blockPos));
             /* ok now we take the new coords and do our other checks */
             /* send info to look for lava or water */
             findLavaWater(sender, blockPos);
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("3:" + blockPos));
             /* Take the return and determine if good or bad */
             if (isSafe)
             {
                 findColony(blockPos, sender.getEntityWorld());
             }
                 /* send info to look to see if another colony is near */
-            if (!colNear)
+            if (colNear)
             {
                 sender.getCommandSenderEntity().setPositionAndUpdate(blockPos.getX(), blockPos.getY() + SAFETY_DROP, blockPos.getZ());
+                break;
             }
             else
             {
                 if (b > ATTEMPTS)
                 {
                     sender.getCommandSenderEntity().addChatMessage(new TextComponentString("" + badTp + "  Try again in a moment."));
+                    b=0;
                 }
             }
         }
@@ -107,34 +111,35 @@ public class ColonyTPCommand extends AbstractSingleCommand
      * @param blockPos for the current block LOC
      * @return blockPos to be used for the TP
      */
-    private BlockPos findLand(BlockPos blockPos, World world)
+    private static BlockPos findLand(BlockPos blockPos, World world)
     {
         Block blocks = world.getBlockState(blockPos).getBlock();
-        int a = 0;
-        int ycheck = y;
-        /* we are doing a binary check to limit the amount of checks (usually 9 this wa) */
 
+        int a = 0;
+        int y;
+        int ycheck = blockPos.getY();
+        /* we are doing a binary check to limit the amount of checks (usually 9 this wa) */
         while (a < NUMBER_OF_TRIES)
         {
             a++;
 
             if (blocks == Blocks.AIR && world.canSeeSky(blockPos))
             {
-                this.blockPos = blockPos.down(y/2);
-                y=y/2;
+                y = blockPos.getY()/2;
+                blockPos = new BlockPos( blockPos.getX(),y, blockPos.getZ());
             }
             else
             {
-                this.blockPos = blockPos.up(y/2);
-                y=y+y/2;
+                y = blockPos.getY()+(blockPos.getY()/2);
+                blockPos = new BlockPos( blockPos.getX(),y, blockPos.getZ());
             }
 
             /* this jumps us out when the y doesn't change anymore */
-            if (ycheck==y)
+            if (ycheck==blockPos.getY())
             {
                 break;
             }
-            ycheck=y;
+            ycheck=blockPos.getY();
         }
 
         return blockPos;
@@ -185,9 +190,9 @@ public class ColonyTPCommand extends AbstractSingleCommand
         int cx = nearestCol != null ? nearestCol.getCenter().getX() : 0;
         int cz = nearestCol != null ? nearestCol.getCenter().getZ() : 0;
         /* from the random X for the TP */
-        double px = x;
+        double px = blockPos.getX();
         /* from the random Z for the TP */
-        double pz = z;
+        double pz = blockPos.getZ();
 
         double dist = Math.sqrt(Math.pow(cx - px, 2.0) + (Math.pow(cz - pz, 2.0)));
                         /* grab the working distance and do our check now that we have distance from nearest colony*/
