@@ -539,44 +539,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 continue;
             }
 
+            requestEntityToBuildingIfRequired(entityInfo);
+
             @Nullable final IBlockState blockState = blockInfo.blockState;
             @Nullable final Block block = blockState.getBlock();
-
-
-            if (entityInfo != null)
-            {
-                final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
-
-                if (entity != null)
-                {
-                    final List<ItemStack> request = new ArrayList<>();
-                    if(entity instanceof EntityItemFrame)
-                    {
-                        final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                        stack.stackSize = 1;
-                        request.add(stack);
-                        request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
-                    }
-                    else if(entity instanceof EntityArmorStand)
-                    {
-                        request.add(entity.getPickedResult(new RayTraceResult(worker)));
-                        entity.getArmorInventoryList().forEach(request::add);
-                    }
-                    else
-                    {
-                        request.add(entity.getPickedResult(new RayTraceResult(worker)));
-                    }
-
-                    for(final ItemStack stack: request)
-                    {
-                        final AbstractBuilding building = getOwnBuilding();
-                        if (building instanceof BuildingBuilder && stack != null && stack.getItem() != null)
-                        {
-                            ((BuildingBuilder) building).addNeededResource(stack, 1);
-                        }
-                    }
-                }
-            }
 
             if (builderJob.getStructure().doesStructureBlockEqualWorldBlock()
                     || (blockState instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
@@ -596,25 +562,77 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 final AbstractBuilding building = getOwnBuilding();
                 if (building instanceof BuildingBuilder)
                 {
-                    if(((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
-                    {
-                        final List<ItemStack> itemList = new ArrayList<>();
-                        itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
-
-                        for(final ItemStack stack: itemList)
-                        {
-                            if(!isBlockFree(stack))
-                            {
-                                ((BuildingBuilder) building).addNeededResource(stack, 1);
-                            }
-                        }
-                    }
-
-                    ((BuildingBuilder) building).addNeededResource(BlockUtils.getItemStackFromBlockState(blockState),1);
+                    requestBlockToBuildingIfRequired((BuildingBuilder) building, blockState);
                 }
             }
         }
         builderJob.getWorkOrder().setRequested(true);
+    }
+
+    /**
+     * Add blocks to the builder building if he needs it.
+     * @param building the building.
+     * @param blockState the block to add.
+     */
+    private void requestBlockToBuildingIfRequired(BuildingBuilder building, IBlockState blockState)
+    {
+        if(((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
+
+            for(final ItemStack stack: itemList)
+            {
+                if(!isBlockFree(stack))
+                {
+                     building.addNeededResource(stack, 1);
+                }
+            }
+        }
+
+        building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState),1);
+    }
+
+    /**
+     * Adds entities to the builder building if he needs it.
+     * @param entityInfo
+     */
+    private void requestEntityToBuildingIfRequired(Template.EntityInfo entityInfo)
+    {
+        if (entityInfo != null)
+        {
+            final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
+
+            if (entity != null)
+            {
+                final List<ItemStack> request = new ArrayList<>();
+                if(entity instanceof EntityItemFrame)
+                {
+                    final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
+                    stack.stackSize = 1;
+                    request.add(stack);
+                    request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
+                }
+                else if(entity instanceof EntityArmorStand)
+                {
+                    request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                    entity.getArmorInventoryList().forEach(request::add);
+                }
+                else
+                {
+                    request.add(entity.getPickedResult(new RayTraceResult(worker)));
+                }
+
+                for(final ItemStack stack: request)
+                {
+                    final AbstractBuilding building = getOwnBuilding();
+                    if (building instanceof BuildingBuilder && stack != null && stack.getItem() != null)
+                    {
+                        ((BuildingBuilder) building).addNeededResource(stack, 1);
+                    }
+                }
+            }
+        }
     }
 
 
@@ -1104,7 +1122,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         {
             return EntityList.createEntityFromNBT(entityInfo.entityData, world);
         }
-        catch (Exception e)
+        catch (RuntimeException e)
         {
             Log.getLogger().info("Couldn't restore entitiy", e);
             return null;
