@@ -14,7 +14,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -26,10 +25,12 @@ public class ColonyTPCommand extends AbstractSingleCommand
 {
     public static final  String DESC = "ctp";
     private static final int NUMBER_OF_TRIES = 10;
+    private static final int ATTEMPTS = 3;
     private static final int UPPER_BOUNDS = 100_000;
     private static final int LOWER_BOUNDS = 10;
     private static final int STARTING_Y = 250;
     private static final double ADDS_TWENTY_PERCENT = 1.20;
+    private static final double SAFETY_DROP = 3;
 
     private ICommandSender sender;
     private EntityPlayer player = (EntityPlayer)sender;
@@ -38,11 +39,13 @@ public class ColonyTPCommand extends AbstractSingleCommand
     private Boolean isSafe = false;
     private Boolean colNear = true;
     private Random rnd = new Random();
-    private int x = rnd.nextInt(UPPER_BOUNDS)-LOWER_BOUNDS;
-    private int y = STARTING_Y;
-    private int z = rnd.nextInt(UPPER_BOUNDS)-LOWER_BOUNDS;
+    private int x = 0;
+    private int y = 0;
+    private int z = 0;
+    private int b = 0;
     private BlockPos blockPos = new BlockPos(x,y,z);
     private Block blocks= sender.getEntityWorld().getBlockState(blockPos).getBlock();
+
     ColonyTPCommand(@NotNull final String... parents)
     {
         super(parents);
@@ -55,36 +58,59 @@ public class ColonyTPCommand extends AbstractSingleCommand
         return super.getCommandUsage(sender) + "ctp";
     }
 
+    /**
+     * this checks that you are not in the air or underground
+     * and if so it will look up and down for a good landing spot
+     * before TP
+     *
+     * @param server for the current server
+     * @param sender for the player that is to be TP'd
+     */
     @Override
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
         /* This is where all the magic happens */
-        if (sender instanceof EntityPlayer)
+        /*we will try up to 4 times to locate a safe area. then we have the player try again*/
+        while (b <= ATTEMPTS)
         {
+            b++;
+            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+            y = STARTING_Y;
+            z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
             player.addChatMessage(new TextComponentString("Buckle up buttercup, this aint no joy ride!!!"));
             /* send info to look for land */
             findLand(blockPos);
             /* ok now we take the new coords and do our other checks */
             /* send info to look for lava or water */
-            findLavaWater(sender,blockPos);
+            findLavaWater(sender, blockPos);
             /* Take the return and determine if good or bad */
-            if(isSafe)
+            if (isSafe)
             {
                 findColony(blockPos);
             }
                 /* send info to look to see if another colony is near */
-            if(!colNear)
+            if (!colNear)
             {
                 player.setPositionAndUpdate(blockPos.getX(), blockPos.getY() + SAFETY_DROP, blockPos.getZ());
             }
             else
             {
-                player.addChatMessage(new TextComponentString("" + badTp + "  Try again in a moment."));
+                if (b > ATTEMPTS)
+                {
+                    player.addChatMessage(new TextComponentString("" + badTp + "  Try again in a moment."));
+                }
             }
         }
+
     }
+
     /**
-     *  this checks that you are not in the air or underground before TP using the BlockPos for the block LOC
+     * this checks that you are not in the air or underground
+     * and if so it will look up and down for a good landing spot
+     * before TP
+     *
+     * @param blockPos for the current block LOC
+     * @return blockPos to be used for the TP
      */
     private BlockPos findLand(BlockPos blockPos)
     {
@@ -120,7 +146,12 @@ public class ColonyTPCommand extends AbstractSingleCommand
     }
 
     /**
-     *  this checks for Lava or water before TP using the BlockPos for the block LOC
+     * this checks that you are not in water or lava
+     * before TP
+     *
+     * @param blockPos for the current block LOC
+     * @param sender uses the player to get the world
+     * @return isSafe true=safe false=water or lava
      */
     private boolean findLavaWater(@NotNull ICommandSender sender, BlockPos blockPos)
     {
@@ -146,7 +177,11 @@ public class ColonyTPCommand extends AbstractSingleCommand
         return isSafe;
     }
     /**
-     *  this checks to see if we are too close to a colony before TP using the BlockPos for the block LOC
+     * this checks that you are not in water or lava
+     * before TP
+     *
+     * @param blockPos for the current block LOC
+     * @return colNear false=no true=yes
      */
     private boolean findColony(BlockPos blockPos)
     {
@@ -170,7 +205,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
         {
             /* bad tp, bad -- abort TP  Too close to a colony */
             badTp = "Trust me, you would not have liked your neighbors!";
-            colNear = false;
+            colNear = true;
         }
         return colNear;
     }
