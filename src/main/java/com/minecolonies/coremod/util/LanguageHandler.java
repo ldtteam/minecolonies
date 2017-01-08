@@ -44,6 +44,7 @@ public final class LanguageHandler
      */
     public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String message)
     {
+        Log.getLogger().info("Send player message: " + message);
         player.sendMessage(new TextComponentTranslation(message));
     }
 
