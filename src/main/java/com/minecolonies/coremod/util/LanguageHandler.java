@@ -81,9 +81,10 @@ public final class LanguageHandler
     @SuppressWarnings("deprecation")
     public static String getString(final String key, final String defaultValue)
     {
+        return new TextComponentTranslation(key).getFormattedText();
         //todo: use TextComponentTranslation like mojang wants us to
         //using fully qualified name to remove deprecation warning on import
-        return net.minecraft.util.text.translation.I18n.translateToLocal(key);
+        //net.minecraft.util.text.translation.I18n.translateToLocal(key);
     }
 
     /**
