@@ -27,7 +27,6 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -1063,7 +1062,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return true;
         }
 
-        final List<ItemStack> itemList = new ArrayList<>();
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
         if (stack == null)
         {
@@ -1071,6 +1069,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return false;
         }
 
+        final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(stack);
         if(job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null
                 && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
