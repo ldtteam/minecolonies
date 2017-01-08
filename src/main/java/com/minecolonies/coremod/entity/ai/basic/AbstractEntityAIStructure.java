@@ -609,9 +609,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 if(entity instanceof EntityItemFrame)
                 {
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                    stack.stackSize = 1;
-                    request.add(stack);
-                    request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
+                    if(stack != null)
+                    {
+                        stack.stackSize = 1;
+                        request.add(stack);
+                        request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
+                    }
                 }
                 else if(entity instanceof EntityArmorStand)
                 {
@@ -1142,9 +1145,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 if(entity instanceof EntityItemFrame)
                 {
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                    stack.stackSize = 1;
-                    request.add(stack);
-                    request.add(new ItemStack(Items.ITEM_FRAME, 1));
+                    if(stack != null)
+                    {
+                        stack.stackSize = 1;
+                        request.add(stack);
+                        request.add(new ItemStack(Items.ITEM_FRAME, 1));
+                    }
                 }
                 else if(entity instanceof EntityArmorStand)
                 {

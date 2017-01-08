@@ -703,7 +703,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final IBlockState metadata)
     {
-        final int slot = worker.findFirstSlotInInventoryWith(block, block.getMetaFromState(metadata));
+        final int slot;
+        if(block instanceof BlockLadder)
+        {
+            slot = worker.findFirstSlotInInventoryWith(block, -1);
+        }
+        else
+        {
+            slot = worker.findFirstSlotInInventoryWith(block, block.getMetaFromState(metadata));
+        }
         if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
