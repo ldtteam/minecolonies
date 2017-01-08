@@ -507,18 +507,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
     private boolean checkIfCanceled()
     {
-        if(job instanceof JobBuilder)
+        if(job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() == null)
         {
-            final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
-
-            if (wo == null)
-            {
-                super.resetTask();
-                ((JobBuilder) job).setWorkOrder(null);
-                workFrom = null;
-                ((JobBuilder) job).setStructure(null);
-                return true;
-            }
+            super.resetTask();
+            workFrom = null;
+            ((JobBuilder) job).setStructure(null);
+            return true;
         }
         return false;
     }
@@ -646,7 +640,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
-        if((job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() != null && ((JobBuilder) job).getWorkOrder().isCleared())
+        if ((job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() != null && ((JobBuilder) job).getWorkOrder().isCleared())
                 || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
         {
             return true;
@@ -891,7 +885,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         if(buildingWorker instanceof BuildingBuilder)
         {
-            //todo not working correctly yet! is running around strangely!
             final ItemStack tempStack = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
             return tempStack == null ? stack : tempStack.copy();
         }
@@ -1048,6 +1041,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 return false;
             }
 
+            //This creates the flowerPot tileEntity from its BlockInfo to set the required data into the world.
             if(job instanceof JobBuilder && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
             {
                 final TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) world.getTileEntity(pos);
@@ -1069,6 +1063,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return true;
         }
 
+        final List<ItemStack> itemList = new ArrayList<>();
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
         if (stack == null)
         {
@@ -1076,24 +1071,24 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return false;
         }
 
-        final int slot = worker.findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
-        if (slot != -1)
+        itemList.add(stack);
+        if(job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null
+                && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
         {
-            getInventory().decrStackSize(slot, 1);
-            reduceNeededResources(stack);
+            itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
         }
 
-        final Item secondaryItem = null;
-        if(secondaryItem == null)
+        for(final ItemStack tempStack: itemList)
         {
-            return true;
-        }
-
-        final int secondarySlot = worker.findFirstSlotInInventoryWith(secondaryItem, 0);
-        if (secondarySlot != -1)
-        {
-            getInventory().decrStackSize(secondarySlot, 1);
-            reduceNeededResources(new ItemStack(secondaryItem, 1));
+            if(tempStack != null)
+            {
+                final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
+                if (slot != -1)
+                {
+                    getInventory().decrStackSize(slot, 1);
+                    reduceNeededResources(tempStack);
+                }
+            }
         }
 
         return true;
