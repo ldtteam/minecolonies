@@ -871,7 +871,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         for(final ItemStack stack: itemList)
         {
-            if(!isBlockFree(stack) && checkOrRequestItems(getTotalAmount(stack)))
+            if(stack != null && !isBlockFree(stack) && checkOrRequestItems(getTotalAmount(stack)))
             {
                 return false;
             }

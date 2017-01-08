@@ -538,7 +538,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean hoeIfAble(final BlockPos position, final Field field)
     {
-        if (shouldHoe(position, field) && checkForHoe())
+        if (shouldHoe(position, field) && !checkForHoe())
         {
             equipHoe();
             worker.swingArm(worker.getActiveHand());
