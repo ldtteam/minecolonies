@@ -19,7 +19,8 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 
@@ -178,7 +179,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @NotNull
     private String getRenderMetaTorch()
     {
-        if (worker.hasItemInInventory(Blocks.TORCH))
+        if (worker.hasItemInInventory(Blocks.TORCH, -1))
         {
             return RENDER_META_TORCH;
         }
@@ -702,7 +703,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final IBlockState metadata)
     {
-        final int slot = worker.findFirstSlotInInventoryWith(block);
+        final int slot;
+        if(block instanceof BlockLadder)
+        {
+            slot = worker.findFirstSlotInInventoryWith(block, -1);
+        }
+        else
+        {
+            slot = worker.findFirstSlotInInventoryWith(block, block.getMetaFromState(metadata));
+        }
         if (slot != -1)
         {
             getInventory().decrStackSize(slot, 1);
