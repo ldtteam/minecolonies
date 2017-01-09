@@ -400,37 +400,4 @@ public final class BlockUtils
     {
         return block == Blocks.GRAVEL || block == Blocks.STONEBRICK;
     }
-
-    /**
-     * Getter for a Block from an itemStack.
-     * @param stack the incoming itemStack
-     * @return the outgoing block
-     */
-    public static Block getBlockFromItemStack(final ItemStack stack)
-    {
-        Block block = Block.getBlockFromItem(stack.getItem());
-
-        if(block != null)
-        {
-            return block;
-        }
-
-        if(stack.getItem() instanceof ItemDoor)
-        {
-            return stack.getItem() == Items.OAK_DOOR ? Blocks.OAK_DOOR
-                    : stack.getItem() == Items.SPRUCE_DOOR ? Blocks.SPRUCE_DOOR
-                            : stack.getItem() == Items.BIRCH_DOOR ? Blocks.BIRCH_DOOR
-                                    : stack.getItem() == Items.IRON_DOOR ? Blocks.IRON_DOOR
-                                            : stack.getItem() == Items.ACACIA_DOOR ? Blocks.ACACIA_DOOR
-                                                    : stack.getItem() == Items.DARK_OAK_DOOR ? Blocks.DARK_OAK_DOOR
-                                                            : stack.getItem() == Items.JUNGLE_DOOR ? Blocks.JUNGLE_DOOR
-                                                                    : Blocks.OAK_DOOR;
-        }
-        else if(stack.getItem() instanceof ItemBed)
-        {
-            return Blocks.BED;
-        }
-
-        return block;
-    }
 }

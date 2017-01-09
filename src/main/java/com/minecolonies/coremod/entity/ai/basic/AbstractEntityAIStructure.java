@@ -582,10 +582,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             for (final ItemStack stack : itemList)
             {
-                if (!isBlockFree(BlockUtils.getBlockFromItemStack(stack), stack.getMetadata()))
-                {
-                    building.addNeededResource(stack, 1);
-                }
+                building.addNeededResource(stack, 1);
             }
         }
 
@@ -858,7 +855,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             return true;
         }
 
-        //todo door not working?
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
         if (job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null
@@ -869,7 +865,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         for (final ItemStack stack : itemList)
         {
-            if (stack != null && !isBlockFree(BlockUtils.getBlockFromItemStack(stack), stack.getMetadata()) && checkOrRequestItems(getTotalAmount(stack)))
+            if (stack != null && checkOrRequestItems(getTotalAmount(stack)))
             {
                 return false;
             }
@@ -938,7 +934,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 || block.equals(Blocks.LEAVES)
                 || block.equals(Blocks.LEAVES2)
                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
-                || (block instanceof BlockDoor && Utils.testFlag(metadata, 0x08))
                 || block.equals(Blocks.GRASS);
     }
 
