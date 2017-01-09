@@ -7,8 +7,11 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.util.*;
-import net.minecraft.block.*;
+import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.coremod.util.Log;
+import com.minecolonies.coremod.util.Utils;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -60,7 +63,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
            * If IDLE - switch to start working.
            */
           new AITarget(IDLE, START_WORKING),
-          new AITarget(this::checkIfCanceled, IDLE),
           new AITarget(this::checkIfExecute, this::getState),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding)
         );
@@ -78,30 +80,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
             return Blocks.DIRT;
         }
         return filler.getBlock();
-    }
-
-    private boolean checkIfCanceled()
-    {
-        final WorkOrderBuild wo = job.getWorkOrder();
-
-        if (wo == null)
-        {
-            cancelTask();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Resets the builders current task.
-     */
-    public void cancelTask()
-    {
-        super.resetTask();
-        job.setWorkOrder(null);
-        workFrom = null;
-        job.setStructure(null);
     }
 
     private boolean checkIfExecute()
