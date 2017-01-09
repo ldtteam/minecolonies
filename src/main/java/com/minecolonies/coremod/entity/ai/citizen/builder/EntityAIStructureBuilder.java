@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
@@ -27,25 +28,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
-    private static final int    INTELLIGENCE_MULTIPLIER       = 2;
+    private static final int INTELLIGENCE_MULTIPLIER = 2;
 
     /**
      * How often should strength factor into the builders skill modifier.
      */
-    private static final int    STRENGTH_MULTIPLIER           = 1;
+    private static final int STRENGTH_MULTIPLIER = 1;
 
     /**
      * After how many actions should the builder dump his inventory.
      */
-    private static final int    ACTIONS_UNTIL_DUMP            = 1024;
-
-
-
-    /**
-     * Position where the Builders constructs from.
-     */
-    @Nullable
-    private              BlockPos workFrom       = null;
+    private static final int ACTIONS_UNTIL_DUMP = 1024;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -56,11 +49,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         super(job);
         super.registerTargets(
-          /**
-           * If IDLE - switch to start working.
-           */
           new AITarget(IDLE, START_WORKING),
-          new AITarget(this::checkIfCanceled, IDLE),
           new AITarget(this::checkIfExecute, this::getState),
           new AITarget(START_WORKING, this::startWorkingAtOwnBuilding)
         );
@@ -73,34 +62,17 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     public Block getSolidSubstitution(BlockPos location)
     {
         final IBlockState filler = world.getBiome(location).fillerBlock;
-        if(filler.getBlock() instanceof BlockFalling)
+        if (filler.getBlock() instanceof BlockFalling)
         {
             return Blocks.DIRT;
         }
         return filler.getBlock();
     }
 
-    private boolean checkIfCanceled()
-    {
-        final WorkOrderBuild wo = job.getWorkOrder();
-
-        if (wo == null)
-        {
-            cancelTask();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Resets the builders current task.
-     */
-    public void cancelTask()
+    private void cancelTask()
     {
         super.resetTask();
         job.setWorkOrder(null);
-        workFrom = null;
         job.setStructure(null);
     }
 
@@ -108,12 +80,13 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         setDelay(1);
 
-        if (!job.hasWorkOrder())
+        final WorkOrderBuild wo = job.getWorkOrder();
+
+        if (wo == null)
         {
+            cancelTask();
             return true;
         }
-
-        final WorkOrderBuild wo = job.getWorkOrder();
 
         if (job.getColony().getBuilding(wo.getBuildingLocation()) == null && !(wo instanceof WorkOrderBuildDecoration))
         {
@@ -133,7 +106,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         if (!job.hasStructure())
         {
-            workFrom = null;
             loadStructure();
 
             final WorkOrderBuild wo = job.getWorkOrder();

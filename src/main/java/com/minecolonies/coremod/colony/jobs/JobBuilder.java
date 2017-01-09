@@ -2,11 +2,13 @@ package com.minecolonies.coremod.colony.jobs;
 
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.builder.EntityAIStructureBuilder;
+import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public class JobBuilder extends AbstractJobStructure
 {
+    private final EntityAIStructureBuilder jobAI;
     /**
      * Tag to store the workOrder id.
      */
@@ -25,7 +28,7 @@ public class JobBuilder extends AbstractJobStructure
     /**
      * The id of the current workOrder.
      */
-    private   int              workOrderId;
+    private int workOrderId;
 
     /**
      * Instantiates builder job.
@@ -35,6 +38,7 @@ public class JobBuilder extends AbstractJobStructure
     public JobBuilder(final CitizenData entity)
     {
         super(entity);
+        this.jobAI = new EntityAIStructureBuilder(this);
     }
 
     @Override
@@ -75,7 +79,7 @@ public class JobBuilder extends AbstractJobStructure
     @Override
     public AbstractAISkeleton<JobBuilder> generateAI()
     {
-        return new EntityAIStructureBuilder(this);
+        return jobAI;
     }
 
     /**
@@ -167,5 +171,21 @@ public class JobBuilder extends AbstractJobStructure
         {
             workOrderId = order.getID();
         }
+    }
+
+    public void cancelCurrentJob()
+    {
+        this.jobAI.resetTask();
+
+        final Colony colony = this.getCitizen().getColony();
+        if (colony != null)
+        {
+            colony.getWorkManager().removeWorkOrder(this.getWorkOrder());
+            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageBuildCancel",
+              this.getStructure().getName());
+        }
+        this.setStructure(null);
+        this.setWorkOrder(null);
     }
 }

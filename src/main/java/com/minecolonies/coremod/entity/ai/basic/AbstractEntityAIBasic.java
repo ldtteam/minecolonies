@@ -27,7 +27,7 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends AbstractAISkeleton<J>
 {
 
-    public static final  int             EXCEPTION_TIMEOUT       = 100;
+    public static final int EXCEPTION_TIMEOUT = 100;
     /**
      * Time in ticks to wait until the next check for items.
      */
@@ -43,7 +43,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Hit a block every x ticks when mining.
      */
-    private static final int             HIT_EVERY_X_TICKS       = 5;
+    private static final int HIT_EVERY_X_TICKS = 5;
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
@@ -52,21 +52,21 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Will be cleared on restart, be aware!
      */
     @NotNull
-    private final        List<ItemStack> itemsNeeded             = new ArrayList<>();
+    private final List<ItemStack> itemsNeeded = new ArrayList<>();
     /**
      * The block the ai is currently working at or wants to work.
      */
     @Nullable
-    protected            BlockPos        currentWorkingLocation  = null;
+    protected BlockPos currentWorkingLocation = null;
     /**
      * The block the ai is currently standing at or wants to stand.
      */
     @Nullable
-    protected            BlockPos        currentStandingLocation = null;
+    protected BlockPos currentStandingLocation = null;
     /**
      * The time in ticks until the next action is made.
      */
-    private              int             delay                   = 0;
+    private int delay = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between @see #itemsNeeded and
@@ -77,11 +77,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Will be cleared on restart, be aware!
      */
     @NotNull
-    private              List<ItemStack> itemsCurrentlyNeeded    = new ArrayList<>();
+    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
     /**
      * This flag tells if we need a shovel, will be set on tool needs.
      */
-    private              boolean         needsShovel             = false;
+    private boolean needsShovel = false;
 
     /**
      * This flag tells if we need an axe, will be set on tool needs.
@@ -1166,5 +1166,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected final void incrementActionsDone()
     {
         actionsDone++;
+    }
+
+    public void resetTask()
+    {
+        super.resetTask();
+        this.clearActionsDone();
+        this.clearWorkTarget();
+        //TODO: this should reset state of AI to IDLE no mater in what state is currently - currently still w8ing for tools.
     }
 }
