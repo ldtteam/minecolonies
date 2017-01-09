@@ -13,7 +13,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,12 +64,12 @@ public class Structure
         /**
          * The block.
          */
-        public final Block block;
+        public final Block       block;
 
         /**
          * The position of the block.
          */
-        public final BlockPos blockPosition;
+        public final BlockPos    blockPosition;
 
         /**
          * The metadata of the block.
@@ -80,12 +79,12 @@ public class Structure
         /**
          * The item of the block.
          */
-        public final Item item;
+        public final Item        item;
 
         /**
          * The world block at the same position.
          */
-        public final Block worldBlock;
+        public final Block       worldBlock;
 
         /**
          * The metadata of the world block at the same position.
@@ -93,29 +92,20 @@ public class Structure
         public final IBlockState worldMetadata;
 
         /**
-         * The entityInfo block.
-         */
-        public final Template.EntityInfo entity;
-
-        /**
          * Create one immutable Block containing all information needed.
          *
          * @param block         the minecraft block this block has.
          * @param blockPosition the BlockPos this block has.
          * @param metadata      the metadata this block has.
-         * @param entity        the entity in the structure.
          * @param item          the item needed to place this block
          * @param worldBlock    the block to be replaced with the structure block
          * @param worldMetadata the metadata of the world block
          */
-        public StructureBlock(
-                final Block block, final BlockPos blockPosition, final IBlockState metadata, final Template.EntityInfo entity,
-                final Item item, final Block worldBlock, final IBlockState worldMetadata)
+        public StructureBlock(final Block block, final BlockPos blockPosition, final IBlockState metadata, final Item item, final Block worldBlock, final IBlockState worldMetadata)
         {
             this.block = block;
             this.blockPosition = blockPosition;
             this.metadata = metadata;
-            this.entity = entity;
             this.item = item;
             this.worldBlock = worldBlock;
             this.worldMetadata = worldMetadata;
@@ -123,7 +113,6 @@ public class Structure
 
         /**
          * Checks if the structureBlock equals the worldBlock.
-         *
          * @return true if so.
          */
         public boolean doesStructureBlockEqualWorldBlock()
@@ -156,7 +145,7 @@ public class Structure
         }
     }
 
-    private       Stage            stage;
+    private Stage                  stage;
     /**
      * The internal structure loaded.
      */
@@ -193,12 +182,12 @@ public class Structure
      * @throws StructureException when there is an error loading the structure file
      */
     public Structure(
-            final World targetWorld,
-            final BlockPos buildingLocation,
-            final String structureFileName,
-            final int rotation,
-            final Stage stageProgress,
-            final BlockPos blockProgress) throws StructureException
+                      final World targetWorld,
+                      final BlockPos buildingLocation,
+                      final String structureFileName,
+                      final int rotation,
+                      final Stage stageProgress,
+                      final BlockPos blockProgress) throws StructureException
     {
         this.structure = loadStructure(targetWorld, buildingLocation, structureFileName, rotation, stageProgress, blockProgress);
         this.stage = stageProgress;
@@ -207,9 +196,8 @@ public class Structure
 
     /**
      * Create a new building task.
-     *
-     * @param targetWorld   the world.
-     * @param structure     the structure.
+     * @param targetWorld the world.
+     * @param structure the structure.
      * @param stageProgress the stage to start off with.
      */
     public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
@@ -232,18 +220,18 @@ public class Structure
      */
     @Nullable
     private static StructureWrapper loadStructure(
-            @Nullable final World targetWorld,
-            @Nullable final BlockPos buildingLocation,
-            @Nullable final String schematicFileName,
-            final int rotation,
-            final Stage stageProgress,
-            @Nullable final BlockPos blockProgress)
-            throws StructureException
+                                                   @Nullable final World targetWorld,
+                                                   @Nullable final BlockPos buildingLocation,
+                                                   @Nullable final String schematicFileName,
+                                                   final int rotation,
+                                                   final Stage stageProgress,
+                                                   @Nullable final BlockPos blockProgress)
+      throws StructureException
     {
         if (targetWorld == null || buildingLocation == null || schematicFileName == null)
         {
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
-                    targetWorld, buildingLocation, schematicFileName));
+              targetWorld, buildingLocation, schematicFileName));
         }
         @Nullable StructureWrapper tempSchematic = null;
         //failsafe for faulty structure files
@@ -257,7 +245,7 @@ public class Structure
         }
 
         //put the building into place
-        tempSchematic.rotate(rotation, targetWorld, buildingLocation);
+        tempSchematic.rotate(rotation);
         tempSchematic.setPosition(buildingLocation);
         if (blockProgress != null)
         {
@@ -275,7 +263,7 @@ public class Structure
     public static boolean checkBlocksEqual(@NotNull final StructureBlock blocksToTest)
     {
         return blocksToTest.block == blocksToTest.worldBlock
-                && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);
+                 && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);
     }
 
     /**
@@ -317,8 +305,8 @@ public class Structure
         {
             case CLEAR:
                 return advanceBlocks(this.structure::decrementBlock,
-                        structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
-                                || structureBlock.worldBlock == Blocks.AIR);
+                  structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
+                          || structureBlock.worldBlock == Blocks.AIR);
             case BUILD:
                 return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
                         && structureBlock.block == Blocks.AIR
@@ -326,10 +314,7 @@ public class Structure
             case DECORATE:
                 return advanceBlocks(this.structure::decrementBlock, structureBlock ->
                         structureBlock.doesStructureBlockEqualWorldBlock()
-                                || structureBlock.metadata.getMaterial().isSolid());
-            case SPAWN:
-                return advanceBlocks(this.structure::incrementBlock, structureBlock ->
-                        structureBlock.entity == null);
+                        || structureBlock.metadata.getMaterial().isSolid());
             default:
                 return Result.NEW_BLOCK;
         }
@@ -369,13 +354,12 @@ public class Structure
     public StructureBlock getCurrentBlock()
     {
         return new StructureBlock(
-                this.structure.getBlock(),
-                this.structure.getBlockPosition(),
-                this.structure.getBlockState(),
-                this.structure.getEntityinfo(),
-                this.structure.getItem(),
-                BlockPosUtil.getBlock(targetWorld, this.structure.getBlockPosition()),
-                BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition())
+                                   this.structure.getBlock(),
+                                   this.structure.getBlockPosition(),
+                                   this.structure.getBlockState(),
+                                   this.structure.getItem(),
+                                   BlockPosUtil.getBlock(targetWorld, this.structure.getBlockPosition()),
+                                   BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition())
         );
     }
 

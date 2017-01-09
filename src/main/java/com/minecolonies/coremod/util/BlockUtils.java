@@ -11,7 +11,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -254,7 +253,7 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockFlowerPot)
         {
-             return Items.FLOWER_POT;
+            return Items.FLOWER_POT;
         }
         else if (blockState.getBlock() instanceof BlockFurnace)
         {
@@ -341,17 +340,10 @@ public final class BlockUtils
         }
         else
         {
-            return GameData.getBlockItemMap().get(blockState.getBlock());
+            return Item.getItemFromBlock(blockState.getBlock());
         }
     }
 
-    /**
-     * Get the damage value from a block and blockState, where the block is the placeable and obtainable block.
-     * The blockstate might differ from the block.
-     * @param block the block.
-     * @param blockState the state.
-     * @return the int damage value.
-     */
     private static int getDamageValue(final Block block, @NotNull final IBlockState blockState)
     {
         if (block instanceof BlockCocoa)
