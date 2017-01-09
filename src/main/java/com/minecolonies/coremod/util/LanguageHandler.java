@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -42,10 +41,18 @@ public final class LanguageHandler
      * @param player the player to send to.
      * @param message the message to send.
      */
-    public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String message)
+    public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String... message)
     {
         Log.getLogger().info("Send player message: " + message);
-        player.sendMessage(new TextComponentTranslation(message));
+        if(message.length > 0)
+        {
+            TextComponentTranslation translation = new TextComponentTranslation(message[0]);
+            for(int i = 1; i < message.length; i++)
+            {
+                translation.appendSibling(new TextComponentTranslation(message[i]));
+            }
+            player.sendMessage(translation);
+        }
     }
 
     /**
@@ -78,13 +85,10 @@ public final class LanguageHandler
      * @param defaultValue the value to return if no key is found.
      * @return Localized string.
      */
-    @SuppressWarnings("deprecation")
     public static String getString(final String key, final String defaultValue)
     {
-        return new TextComponentTranslation(key).getFormattedText();
-        //todo: use TextComponentTranslation like mojang wants us to
-        //using fully qualified name to remove deprecation warning on import
-        //net.minecraft.util.text.translation.I18n.translateToLocal(key);
+        String result = new TextComponentTranslation(key).getFormattedText();
+        return result.isEmpty() ? defaultValue : result;
     }
 
     /**
