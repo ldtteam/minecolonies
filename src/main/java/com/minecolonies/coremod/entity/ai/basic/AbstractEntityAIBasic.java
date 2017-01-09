@@ -365,7 +365,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return NEEDS_ITEM;
             }
 
-            requestWithoutSpam(first.stackSize + " " + first.getDisplayName());
+            requestWithoutSpam(first.getDisplayName());
         }
         return NEEDS_ITEM;
     }
@@ -977,7 +977,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return new ItemStack(tempStorage.getItem(), dump, tempStorage.getDamageValue());
     }
 
-
     /**
      * Require that items are in the workers inventory.
      * This safeguard ensures you have said items before you execute a task.
@@ -987,20 +986,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return false if they are in inventory
      */
     protected boolean checkOrRequestItems(@Nullable final ItemStack... items)
-    {
-        return checkOrRequestItems(true, items);
-    }
-
-    /**
-     * Require that items are in the workers inventory.
-     * This safeguard ensures you have said items before you execute a task.
-     * Please stop execution on false returned.
-     *
-     * @param useItemDamage compare the itemDamage of the values.
-     * @param items the items needed
-     * @return false if they are in inventory
-     */
-    protected boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
     {
         if (items == null)
         {
@@ -1013,25 +998,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 continue;
             }
-            final int countOfItem;
-            if(useItemDamage)
-            {
-                countOfItem = worker.getItemCountInInventory(stack.getItem(), stack.getItemDamage());
-            }
-            else
-            {
-                countOfItem = worker.getItemCountInInventory(stack.getItem(), -1);
-            }
-            if (countOfItem < 1)
+            final int countOfItem = worker.getItemCountInInventory(stack.getItem());
+            if (countOfItem < stack.stackSize)
             {
                 final int itemsLeft = stack.stackSize - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
                 itemsCurrentlyNeeded.add(requiredStack);
                 allClear = false;
-            }
-            else
-            {
-                itemsCurrentlyNeeded.clear();
             }
         }
         if (allClear)

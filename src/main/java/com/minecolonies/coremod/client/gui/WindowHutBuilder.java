@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.Pane;
+import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
