@@ -39,6 +39,7 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGuard>
 {
+    //todo guards don't request their bows swords and have problems at night.
     /**
      * Worker gets this distance times building level away from his building to patrol.
      */
