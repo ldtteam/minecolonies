@@ -365,7 +365,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return NEEDS_ITEM;
             }
 
-            requestWithoutSpam(first.stackSize + " " + first.getDisplayName());
+            requestWithoutSpam(first.getCount() + " " + first.getDisplayName());
         }
         return NEEDS_ITEM;
     }
@@ -1024,7 +1024,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if (countOfItem < 1)
             {
-                final int itemsLeft = stack.stackSize - countOfItem;
+                final int itemsLeft = stack.getCount() - countOfItem;
                 @NotNull final ItemStack requiredStack = new ItemStack(stack.getItem(), itemsLeft);
                 itemsCurrentlyNeeded.add(requiredStack);
                 allClear = false;

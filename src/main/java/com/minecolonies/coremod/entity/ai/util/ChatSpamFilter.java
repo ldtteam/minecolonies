@@ -99,7 +99,7 @@ public class ChatSpamFilter
             speechRepeat = 0;
         }
 
-        worker.sendLocalizedChat(key, (Object[]) chat);
+        worker.sendLocalizedChat(key, (String[]) chat);
         speechDelayString = key + Arrays.toString(chat);
 
         // (BASE_TIMEOUT << speechRepeat) is the same as BASE_TIMEOUT * pow(2, speachRepeat), but uses integers

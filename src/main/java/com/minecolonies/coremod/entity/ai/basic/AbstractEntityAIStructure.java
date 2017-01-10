@@ -27,6 +27,7 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -606,7 +607,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (stack != null)
                     {
-                        stack.stackSize = 1;
+                        stack.setCount(1);
                         request.add(stack);
                         request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
                     }
@@ -1134,7 +1135,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (stack != null)
                     {
-                        stack.stackSize = 1;
+                        stack.setCount(1);
                         request.add(stack);
                         request.add(new ItemStack(Items.ITEM_FRAME, 1));
                     }
@@ -1158,17 +1159,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                             return false;
                         }
                     }
-
-<<<<<<<
-                world.spawnEntity(entityHanging);
-            }
-            else if (entity instanceof EntityMinecart)
-            {
-                @Nullable final EntityMinecart minecart = (EntityMinecart) entity;
-                minecart.posX += pos.getX();
-                minecart.posY += pos.getY();
-                minecart.posZ += pos.getZ();
-=======
                     for (final ItemStack stack : request)
                     {
                         if (stack == null)
@@ -1183,14 +1173,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                         }
                     }
                 }
->>>>>>>
 
-<<<<<<<
-                minecart.setWorld(world);
-                minecart.dimension = world.provider.getDimension();
-
-                world.spawnEntity(minecart);
-=======
                 entity.setUniqueId(UUID.randomUUID());
                 entity.setLocationAndAngles(
                         entity.posX,
@@ -1198,11 +1181,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                         entity.posZ,
                         entity.rotationYaw,
                         entity.rotationPitch);
-                if (!world.spawnEntityInWorld(entity))
+                if (!world.spawnEntity(entity))
                 {
                     Log.getLogger().info("Failed to spawn entity");
                 }
->>>>>>>
             }
         }
         return true;
