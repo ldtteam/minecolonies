@@ -47,11 +47,6 @@ public final class LanguageHandler
     public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String key, final Object... message)
     {
         TextComponentTranslation translation = null;
-
-        if(message.length == 0)
-        {
-        }
-
         for(Object object: message)
         {
             if(translation == null)
