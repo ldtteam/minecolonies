@@ -605,7 +605,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 if (entity instanceof EntityItemFrame)
                 {
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                    if (stack != null)
+                    if (stack != null && stack != ItemStack.EMPTY)
                     {
                         stack.setCount(1);
                         request.add(stack);
@@ -625,7 +625,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 for (final ItemStack stack : request)
                 {
                     final AbstractBuilding building = getOwnBuilding();
-                    if (building instanceof BuildingBuilder && stack != null && stack.getItem() != null)
+                    if (building instanceof BuildingBuilder && stack != null && stack.getItem() != null && stack != ItemStack.EMPTY)
                     {
                         ((BuildingBuilder) building).addNeededResource(stack, 1);
                     }
@@ -866,7 +866,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         for (final ItemStack stack : itemList)
         {
-            if (stack != null && checkOrRequestItems(getTotalAmount(stack)))
+            if (stack != null && stack != ItemStack.EMPTY && checkOrRequestItems(getTotalAmount(stack)))
             {
                 return false;
             }
@@ -912,7 +912,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
             {
                 final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
-                if (stack != null)
+                if (stack != null && stack != ItemStack.EMPTY)
                 {
                     items.add(stack);
                 }
@@ -1072,7 +1072,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
         for (final ItemStack tempStack : itemList)
         {
-            if (tempStack != null)
+            if (tempStack != null && tempStack != ItemStack.EMPTY)
             {
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
                 if (slot != -1)
@@ -1133,7 +1133,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 if (entity instanceof EntityItemFrame)
                 {
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
-                    if (stack != null)
+                    if (stack != null && stack != ItemStack.EMPTY)
                     {
                         stack.setCount(1);
                         request.add(stack);

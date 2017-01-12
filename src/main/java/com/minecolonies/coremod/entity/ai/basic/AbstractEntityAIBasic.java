@@ -552,7 +552,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
-        chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.toolRequest", tool, InventoryUtils.swapToolGrade(hutLevel)));
+        chatSpamFilter.talkWithoutSpam("entity.worker.toolRequest", tool, InventoryUtils.swapToolGrade(hutLevel));
         return true;
     }
 
