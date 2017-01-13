@@ -1083,11 +1083,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if (Configurations.builderBuildBlockDelay > 0 && block != Blocks.AIR)
-        {
-            setDelay(Configurations.builderBuildBlockDelay);
-        }
-
         return true;
     }
 
