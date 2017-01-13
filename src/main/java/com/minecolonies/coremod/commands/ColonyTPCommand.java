@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.block.Block;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
@@ -18,26 +19,35 @@ import java.util.List;
 import java.util.Random;
 
 /**
- *  this command is made to TP a player to a safe random spot that is not to close to another colony
+ * this command is made to TP a player to a safe random spot that is not to close to another colony
+ * Need to add a configs permissions check
+ * Need to allow OPs to send players ./mc ctp (Player) if player is not allowed
  */
 public class ColonyTPCommand extends AbstractSingleCommand
 {
     public static final  String DESC = "ctp";
-    private static final int ATTEMPTS = 3;
+    private static final int ATTEMPTS = 4;
     private static final int UPPER_BOUNDS = 100_000;
-    private static final int LOWER_BOUNDS = 10;
+    private static final int LOWER_BOUNDS = 50_000;
     private static final int STARTING_Y = 250;
     private static final double ADDS_TWENTY_PERCENT = 1.20;
     private static final double SAFETY_DROP = 4;
 
-
     private Random rnd = new Random();
 
+    ColonyTPCommand( @NotNull final String...parents)
+        {
+            super(parents);
+        }
 
-
-    ColonyTPCommand(@NotNull final String... parents)
+    private boolean canCommandSenderUseCommand(@NotNull final ICommandSender sender)
     {
-        super(parents);
+        if (!Configurations.canPlayerUseCTPCommand )
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!"));
+            return false;
+        }
+        return true;
     }
 
     @NotNull
@@ -47,23 +57,21 @@ public class ColonyTPCommand extends AbstractSingleCommand
         return super.getCommandUsage(sender) + "ctp";
     }
 
-    /**
-     * this checks that you are not in the air or underground
-     * and if so it will look up and down for a good landing spot
-     * before TP
-     *
-     * @param server for the current server
-     * @param sender for the player that is to be TP'd
-     */
-
     @Override
     public void execute(@NotNull MinecraftServer server,  @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
-        int b = 0;
-         sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this aint no joy ride!!!"));
+        boolean chkPlayer = canCommandSenderUseCommand(sender);
+
+        if (!chkPlayer)
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!"));
+            return;
+        }
+        sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this aint no joy ride!!!"));
         /* This is where all the magic happens */
         /*we will try up to 4 times to locate a safe area. then we have the player try again*/
 
+        int b = 0;
         while (b <= ATTEMPTS)
         {
             b++;
@@ -123,13 +131,6 @@ public class ColonyTPCommand extends AbstractSingleCommand
         {
             blockPos = new BlockPos( blockPos.getX(),mid, blockPos.getZ());
             Block blocks = world.getBlockState(blockPos).getBlock();
-            /* this jumps us out when the y is good */
-            /*if (blocks != Blocks.AIR && world.canSeeSky(blockPos))
-            {
-                foundland = blockPos;
-                return foundland;
-            }*/
-
             if (blocks == Blocks.AIR && world.canSeeSky(blockPos))
             {
                 top = mid - 1;
@@ -147,7 +148,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
     }
 
     /**
-     * this checks that you are not in water or lava
+     * this checks that you are not in liquid.  Will check for all liquids, even those from other mods
      * before TP
      *
      * @param blockPos for the current block LOC
@@ -166,7 +167,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
         return isSafe;
     }
     /**
-     * this checks that you are not in water or lava
+     * this checks that you are not too close to another colony
      * before TP
      *
      * @param blockPos for the current block LOC

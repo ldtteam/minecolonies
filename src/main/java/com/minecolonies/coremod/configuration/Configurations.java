@@ -14,6 +14,8 @@ public class Configurations
     public static boolean enableColonyProtection = true;
     public static boolean turnOffExplosionsInColonies = true;
 
+    public static boolean canPlayerUseCTPCommand = true;
+
     //TODO change to false when material handling is implemented
     public static boolean deliverymanInfiniteResources = true;
 

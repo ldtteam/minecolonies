@@ -48,6 +48,7 @@ public final class ConfigurationHandler
             builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "builderInfiniteResources", builderInfiniteResources, "Does Builder have infinite resources?").getBoolean();
             enableColonyProtection = config.get(CATEGORY_GAMEPLAY, "enableColonyProtection", enableColonyProtection, "Enable the automatic colony protection?").getBoolean();
             turnOffExplosionsInColonies = config.get(CATEGORY_GAMEPLAY, "turnOffExplosionsInColonies", turnOffExplosionsInColonies, "Turn off explosions inside the colonies radius?").getBoolean();
+            canPlayerUseCTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCTPCommand", canPlayerUseCTPCommand, "Players can use the MC TP Command or not").getBoolean();
 
             deliverymanInfiniteResources =
               config.get(CATEGORY_GAMEPLAY, "deliverymanInfiniteResources", deliverymanInfiniteResources, "Does Deliveryman have infinite resources?").getBoolean();
