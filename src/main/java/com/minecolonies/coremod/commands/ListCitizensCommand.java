@@ -59,7 +59,13 @@ public class ListCitizensCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        final int colonyId = getIthArgument(args, 0, getColonyId(sender));
+        int colonyId = getIthArgument(args, 0, -1);
+
+        if (colonyId == -1)
+        {
+            colonyId = getColonyId(sender);
+        }
+
         final Colony colony = ColonyManager.getColony(colonyId);
 
         if (colony == null)
