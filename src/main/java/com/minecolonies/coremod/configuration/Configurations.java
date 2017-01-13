@@ -10,6 +10,8 @@ public class Configurations
     public static       boolean allowInfiniteSupplyChests    = false;
     public static       int     citizenRespawnInterval       = 30;
     public static       boolean builderInfiniteResources     = false;
+    public static       int     builderBuildBlockDelay       = 0;
+    public static       int     blockMiningDelayModifier     = 1000;
 
     public static boolean enableColonyProtection = true;
     public static boolean turnOffExplosionsInColonies = true;
