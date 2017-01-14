@@ -258,7 +258,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (structureBlock.block == null
                     || structureBlock.doesStructureBlockEqualWorldBlock()
                     || structureBlock.metadata.getMaterial().isSolid()
-                    || (structureBlock.block instanceof BlockBed && structureBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                    || (structureBlock.block instanceof BlockBed && structureBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
                     || (structureBlock.block instanceof BlockDoor && structureBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
                 //findNextBlock count was reached and we can ignore this block
@@ -304,7 +304,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (structureBlock.block == null
                     || structureBlock.doesStructureBlockEqualWorldBlock()
                     || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR)
-                    || (structureBlock.block instanceof BlockBed && structureBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                    || (structureBlock.block instanceof BlockBed && structureBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
                     || (structureBlock.block instanceof BlockDoor && structureBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
                 //findNextBlock count was reached and we can ignore this block
@@ -1002,15 +1002,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
         else if (block instanceof BlockBed)
         {
-            world.setBlockState(pos, blockState, 0x03);
             final EnumFacing facing = blockState.getValue(BlockBed.FACING);
 
             //Set other part of the bed, to the opposite PartType
             if (blockState.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT)
             {
                 //pos.offset(facing) will get the other part of the bed
-                world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
                 world.setBlockState(pos.offset(facing), blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0x03);
+                world.setBlockState(pos, blockState.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT), 0x03);
             }
             else
             {
