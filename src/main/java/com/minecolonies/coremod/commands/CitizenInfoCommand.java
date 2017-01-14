@@ -56,8 +56,14 @@ public class CitizenInfoCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId;
+        int colonyId = getIthArgument(args, 1, -1);
         int citizenId;
+
+        if (colonyId==-1)
+        {
+            colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
+        }
+
         try
         {
             colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
@@ -68,22 +74,26 @@ public class CitizenInfoCommand extends AbstractSingleCommand
             sender.sendMessage(new TextComponentString(e.getMessage()));
             return;
         }
-            final Colony colony = ColonyManager.getColony(colonyId);
-            final CitizenData citizenData = colony.getCitizen(citizenId);
-            final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
+
+        final Colony colony = ColonyManager.getColony(colonyId);
+        final CitizenData citizenData = colony.getCitizen(citizenId);
+        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
+
+        if ( entityCitizen != null)
+        {
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
-              citizenData.getId(),
-              citizenData.getName())));
+                citizenData.getId(),
+                citizenData.getName())));
             final BlockPos citizenPosition = entityCitizen.getPosition();
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_POSITION,
-              citizenPosition.getX(),
-              citizenPosition.getY(),
-              citizenPosition.getZ())));
+                citizenPosition.getX(),
+                citizenPosition.getY(),
+                citizenPosition.getZ())));
             final BlockPos homePosition = entityCitizen.getHomePosition();
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_HOME_POSITION,
-              homePosition.getX(),
-              homePosition.getY(),
-              homePosition.getZ())));
+                homePosition.getX(),
+                homePosition.getY(),
+                homePosition.getZ())));
             if (entityCitizen.getWorkBuilding() == null)
             {
                 sender.sendMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION_NULL)));
@@ -92,23 +102,24 @@ public class CitizenInfoCommand extends AbstractSingleCommand
             {
                 final BlockPos workingPosition = entityCitizen.getWorkBuilding().getLocation();
                 sender.sendMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION,
-                  workingPosition.getX(),
-                  workingPosition.getY(),
-                  workingPosition.getZ())));
+                    workingPosition.getX(),
+                    workingPosition.getY(),
+                    workingPosition.getZ())));
             }
+            
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
-              entityCitizen.getHealth(),
-              entityCitizen.getMaxHealth())));
+                entityCitizen.getHealth(),
+                entityCitizen.getMaxHealth())));
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_LEVEL_AND_AGE,
-              entityCitizen.getLevel(),
-              entityCitizen.getAge(),
-              entityCitizen.getExperienceLevel())));
+                entityCitizen.getLevel(),
+                entityCitizen.getAge(),
+                entityCitizen.getExperienceLevel())));
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_SKILLS,
-              entityCitizen.getCharisma(),
-              entityCitizen.getDexterity(),
-              entityCitizen.getEndurance(),
-              entityCitizen.getIntelligence(),
-              entityCitizen.getStrength())));
+                entityCitizen.getCharisma(),
+                entityCitizen.getDexterity(),
+                entityCitizen.getEndurance(),
+                entityCitizen.getIntelligence(),
+                entityCitizen.getStrength())));
             if (entityCitizen.getColonyJob() == null)
             {
                 sender.sendMessage(new TextComponentString(String.format(CITIZEN_JOB_NULL)));
@@ -118,9 +129,10 @@ public class CitizenInfoCommand extends AbstractSingleCommand
             {
                 sender.sendMessage(new TextComponentString(String.format(CITIZEN_JOB, entityCitizen.getWorkBuilding().getJobName())));
                 sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESIRED_ACTIVITY,
-                  entityCitizen.getDesiredActivity(),
-                  entityCitizen.getColonyJob().getNameTagDescription())));
+                    entityCitizen.getDesiredActivity(),
+                    entityCitizen.getColonyJob().getNameTagDescription())));
             }
+        }
     }
 
     @NotNull
