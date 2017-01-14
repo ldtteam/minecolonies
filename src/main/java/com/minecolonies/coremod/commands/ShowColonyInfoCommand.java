@@ -53,7 +53,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int colonyId = -1;
-        UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
+        UUID mayorID = null;
 
         if (args.length != 0)
         {
@@ -70,6 +70,11 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         final IColony tempColony;
         if (colonyId == -1)
         {
+            if (mayorID == null)
+            {
+                mayorID = sender.getCommandSenderEntity().getUniqueID();
+            }
+
             tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
         }
         else
