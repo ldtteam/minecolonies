@@ -1141,8 +1141,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     {
                         stack.setCount(1);
                         request.add(stack);
-                        request.add(new ItemStack(Items.ITEM_FRAME, 1));
                     }
+                    request.add(new ItemStack(Items.ITEM_FRAME, 1));
                 }
                 else if (entity instanceof EntityArmorStand)
                 {
