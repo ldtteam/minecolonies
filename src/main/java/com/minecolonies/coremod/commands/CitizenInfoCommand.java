@@ -82,16 +82,16 @@ public class CitizenInfoCommand extends AbstractSingleCommand
 
         if ( entityCitizen != null)
         {
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
                 citizenData.getId(),
                 citizenData.getName())));
             final BlockPos citizenPosition = entityCitizen.getPosition();
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_POSITION,
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_POSITION,
                 citizenPosition.getX(),
                 citizenPosition.getY(),
                 citizenPosition.getZ())));
             final BlockPos homePosition = entityCitizen.getHomePosition();
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_HOME_POSITION,
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_HOME_POSITION,
                 homePosition.getX(),
                 homePosition.getY(),
                 homePosition.getZ())));
@@ -102,20 +102,20 @@ public class CitizenInfoCommand extends AbstractSingleCommand
             else
             {
                 final BlockPos workingPosition = entityCitizen.getWorkBuilding().getLocation();
-                sender.sendMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION,
+                sender.addChatMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION,
                     workingPosition.getX(),
                     workingPosition.getY(),
                     workingPosition.getZ())));
             }
             
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
                 entityCitizen.getHealth(),
                 entityCitizen.getMaxHealth())));
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_LEVEL_AND_AGE,
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_LEVEL_AND_AGE,
                 entityCitizen.getLevel(),
                 entityCitizen.getAge(),
                 entityCitizen.getExperienceLevel())));
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_SKILLS,
+            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_SKILLS,
                 entityCitizen.getCharisma(),
                 entityCitizen.getDexterity(),
                 entityCitizen.getEndurance(),
@@ -128,8 +128,8 @@ public class CitizenInfoCommand extends AbstractSingleCommand
             }
             else
             {
-                sender.sendMessage(new TextComponentString(String.format(CITIZEN_JOB, entityCitizen.getWorkBuilding().getJobName())));
-                sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESIRED_ACTIVITY,
+                sender.addChatMessage(new TextComponentString(String.format(CITIZEN_JOB, entityCitizen.getWorkBuilding().getJobName())));
+                sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESIRED_ACTIVITY,
                     entityCitizen.getDesiredActivity(),
                     entityCitizen.getColonyJob().getNameTagDescription())));
             }
