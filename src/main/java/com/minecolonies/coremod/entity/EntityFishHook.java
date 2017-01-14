@@ -705,8 +705,8 @@ public final class EntityFishHook extends Entity
     {
         //Reduce random to get more fish drops
         double random = this.world.rand.nextDouble() / INCREASE_RARENESS_MODIFIER;
-        double speedBonus = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
-        double lootBonus = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
+        double speedBonus = 0.18 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
+        double lootBonus = 0.09 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
         //clamp_float gives the values an upper limit
         speedBonus = MathHelper.clamp((float) speedBonus, 0.0F, 1.0F);
         lootBonus = MathHelper.clamp((float) lootBonus, 0.0F, 1.0F);
