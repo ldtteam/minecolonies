@@ -15,7 +15,6 @@ import net.minecraft.block.BlockCrops;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.IPlantable;
@@ -209,8 +208,8 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (shouldTryToGetSeed)
         {
-            final int slot = worker.findFirstSlotInInventoryWith(currentField.getSeed());
-            final ItemStack seeds = new ItemStack(currentField.getSeed());
+            final ItemStack seeds = currentField.getSeed();
+            final int slot = worker.findFirstSlotInInventoryWith(seeds.getItem(), seeds.getItemDamage());
             if (slot != -1)
             {
                 requestSeeds = false;
@@ -225,7 +224,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 shouldTryToGetSeed = requestSeeds;
                 if (requestSeeds)
                 {
-                    chatSpamFilter.talkWithoutSpam("entity.farmer.NeedSeed", currentField.getSeed().getItemStackDisplayName(seeds));
+                    chatSpamFilter.talkWithoutSpam("entity.farmer.NeedSeed", seeds.getItem().getItemStackDisplayName(seeds));
                 }
             }
         }
@@ -496,7 +495,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
             if (blockState.getBlock() instanceof IGrowable
                   && (
                        !(blockState.getBlock() instanceof BlockCrops)
-                         || ((BlockCrops) blockState.getBlock()).getItem(world, position.up(), blockState) != new ItemStack(field.getSeed()))
+                         || ((BlockCrops) blockState.getBlock()).getItem(world, position.up(), blockState) != field.getSeed())
               )
             {
                 mineBlock(position.up());
@@ -539,7 +538,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      */
     private boolean hoeIfAble(final BlockPos position, final Field field)
     {
-        if (shouldHoe(position, field))
+        if (shouldHoe(position, field) && !checkForHoe())
         {
             equipHoe();
             worker.swingArm(worker.getActiveHand());
@@ -562,7 +561,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         @Nullable final ItemStack itemStack = BlockUtils.getItemStackFromBlockState(world.getBlockState(position.up()));
 
-        if (itemStack != null && itemStack.getItem() == field.getSeed())
+        if (itemStack != null && itemStack.getItem() == field.getSeed().getItem())
         {
             requestSeeds = false;
         }
@@ -577,16 +576,16 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
      * @param item     the crop.
      * @param position the location.
      */
-    private boolean plantCrop(final Item item, @NotNull final BlockPos position)
+    private boolean plantCrop(final ItemStack item, @NotNull final BlockPos position)
     {
-        final int slot = worker.findFirstSlotInInventoryWith(item);
+        final int slot = worker.findFirstSlotInInventoryWith(item.getItem(), item.getItemDamage());
         if (slot == -1)
         {
             return false;
         }
         else
         {
-            @NotNull final IPlantable seed = (IPlantable) item;
+            @NotNull final IPlantable seed = (IPlantable) item.getItem();
             world.setBlockState(position.up(), seed.getPlant(world, position));
             getInventory().decrStackSize(slot, 1);
             requestSeeds = false;

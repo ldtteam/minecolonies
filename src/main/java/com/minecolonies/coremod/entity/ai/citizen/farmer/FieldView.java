@@ -54,7 +54,7 @@ public class FieldView
         this.id = field.getID();
         this.taken = field.isTaken();
         this.owner = field.getOwner();
-        this.item = field.getSeed();
+        this.item = field.getSeed() == null ? null : field.getSeed().getItem();
     }
 
     /**

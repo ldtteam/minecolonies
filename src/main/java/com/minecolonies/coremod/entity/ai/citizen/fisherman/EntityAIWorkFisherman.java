@@ -202,7 +202,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private AIState prepareForFishing()
     {
-        if (checkOrRequestItems(new ItemStack(Items.FISHING_ROD)))
+        if (checkOrRequestItems(false, new ItemStack(Items.FISHING_ROD)))
         {
             playNeedRodSound();
             return getState();
@@ -279,7 +279,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasitemInInventory(getInventory(), Items.FISH);
+        return InventoryUtils.hasitemInInventory(getInventory(), Items.FISH, -1);
     }
 
     /**
@@ -289,7 +289,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasRodButNotEquipped()
     {
-        return worker.hasItemInInventory(Items.FISHING_ROD) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
+        return worker.hasItemInInventory(Items.FISHING_ROD, -1) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
     }
 
     /**
@@ -566,7 +566,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private AIState isReadyToFish()
     {
         //We really do have our Rod in our inventory?
-        if (!worker.hasItemInInventory(Items.FISHING_ROD))
+        if (!worker.hasItemInInventory(Items.FISHING_ROD, -1))
         {
             return PREPARING;
         }

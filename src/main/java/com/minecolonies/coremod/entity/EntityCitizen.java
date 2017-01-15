@@ -1272,66 +1272,72 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Returns the first slot in the inventory with a specific item.
      *
      * @param targetItem the item.
+     * @param itemDamage the damage value
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(final Item targetItem)
+    public int findFirstSlotInInventoryWith(final Item targetItem, int itemDamage)
     {
-        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), targetItem);
+        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), targetItem, itemDamage);
     }
 
     /**
      * Returns the first slot in the inventory with a specific block.
      *
      * @param block the block.
+     * @param itemDamage the damage value
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(final Block block)
+    public int findFirstSlotInInventoryWith(final Block block, int itemDamage)
     {
-        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), block);
+        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), block, itemDamage);
     }
 
     /**
      * Returns the amount of a certain block in the inventory.
      *
      * @param block the block.
+     * @param itemDamage the damage value
      * @return the quantity.
      */
-    public int getItemCountInInventory(final Block block)
+    public int getItemCountInInventory(final Block block, int itemDamage)
     {
-        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), block);
+        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), block, itemDamage);
     }
 
     /**
      * Returns the amount of a certain item in the inventory.
      *
      * @param targetItem the block.
+     * @param itemDamage the damage value.
      * @return the quantity.
      */
-    public int getItemCountInInventory(final Item targetItem)
+    public int getItemCountInInventory(final Item targetItem, int itemDamage)
     {
-        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), targetItem);
+        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), targetItem, itemDamage);
     }
 
     /**
      * Checks if citizen has a certain block in the inventory.
      *
      * @param block the block.
+     * @param itemDamage the damage value
      * @return true if so.
      */
-    public boolean hasItemInInventory(final Block block)
+    public boolean hasItemInInventory(final Block block, int itemDamage)
     {
-        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), block);
+        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), block, itemDamage);
     }
 
     /**
      * Checks if citizen has a certain item in the inventory.
      *
      * @param item the item.
+     * @param itemDamage the damage value
      * @return true if so.
      */
-    public boolean hasItemInInventory(final Item item)
+    public boolean hasItemInInventory(final Item item, int itemDamage)
     {
-        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), item);
+        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), item, itemDamage);
     }
 
     /**
