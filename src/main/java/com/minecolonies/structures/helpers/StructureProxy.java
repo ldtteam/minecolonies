@@ -2,20 +2,16 @@ package com.minecolonies.structures.helpers;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.util.BlockPosUtil;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -24,14 +20,12 @@ import java.util.List;
 public class StructureProxy
 {
     private final Structure structure;
-    private final List<TileEntity> tileEntities = new ArrayList<>();
-    private final List<Entity>     entities     = new ArrayList<>();
-    private Block[][][]       blocks;
-    private IBlockState[][][] metadata;
-    private int               width;
-    private int               height;
-    private int               length;
-    private BlockPos          offset;
+    private Template.EntityInfo[][][] entities;
+    private Template.BlockInfo[][][] blocks;
+    private int                      width;
+    private int                      height;
+    private int                      length;
+    private BlockPos                 offset;
 
     /**
      * @param worldObj the world.
@@ -51,19 +45,25 @@ public class StructureProxy
         this.height = size.getY();
         this.length = size.getZ();
 
-        this.blocks = new Block[width][height][length];
-        this.metadata = new IBlockState[width][height][length];
+        this.blocks = new Template.BlockInfo[width][height][length];
+        this.entities = new Template.EntityInfo[width][height][length];
 
         for (final Template.BlockInfo info : structure.getBlockInfo())
         {
             final BlockPos tempPos = info.pos;
-            blocks[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info.blockState.getBlock();
-            metadata[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info.blockState;
+            blocks[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;
+            entities[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = null;
 
             if (info.blockState.getBlock() instanceof AbstractBlockHut)
             {
                 offset = info.pos;
             }
+        }
+
+        for(final Template.EntityInfo info: structure.getTileEntities())
+        {
+            final BlockPos tempPos = info.blockPos;
+            entities[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;
         }
     }
 
@@ -128,26 +128,18 @@ public class StructureProxy
      */
     public IBlockState getBlockState(@NotNull final BlockPos pos)
     {
-        return metadata[pos.getX()][pos.getY()][pos.getZ()];
+        return blocks[pos.getX()][pos.getY()][pos.getZ()].blockState;
     }
 
     /**
-     * return a tileEntity at a certain position.
+     * Getter of the BlockInfo at a certain position.
      *
      * @param pos the position.
-     * @return the tileEntity.
+     * @return the blockState.
      */
-    public TileEntity getTileEntity(final BlockPos pos)
+    public Template.BlockInfo getBlockInfo(@NotNull final BlockPos pos)
     {
-        for (final TileEntity tileEntity : this.tileEntities)
-        {
-            if (tileEntity.getPos().equals(pos))
-            {
-                return tileEntity;
-            }
-        }
-
-        return null;
+        return blocks[pos.getX()][pos.getY()][pos.getZ()];
     }
 
     /**
@@ -155,121 +147,25 @@ public class StructureProxy
      *
      * @return list of them.
      */
-    public List<TileEntity> getTileEntities()
+    public List<Template.EntityInfo> getTileEntities()
     {
-        return this.tileEntities;
+        return this.structure.getTileEntities();
     }
 
     /**
-     * Sets tileEntities.
-     *
-     * @param pos        at position.
-     * @param tileEntity the entity to set.
-     */
-    public void setTileEntity(final BlockPos pos, final TileEntity tileEntity)
-    {
-        if (isInvalid(pos))
-        {
-            return;
-        }
-
-        removeTileEntity(pos);
-
-        if (tileEntity != null)
-        {
-            this.tileEntities.add(tileEntity);
-        }
-    }
-
-    /**
-     * Checks if a position is inside the structure.
+     * Getter of the EntityInfo at a certain position.
      *
      * @param pos the position.
-     * @return true if so.
+     * @return the blockState.
      */
-    private boolean isInvalid(final BlockPos pos)
+    @Nullable
+    public Template.EntityInfo getEntityinfo(@NotNull final BlockPos pos)
     {
-        final int x = pos.getX();
-        final int y = pos.getY();
-        final int z = pos.getZ();
-
-        return (x < 0 || y < 0 || z < 0 || x >= this.width || y >= this.height || z >= this.length);
-    }
-
-    /**
-     * Removes a tileEntity at a position.
-     *
-     * @param pos the position to remove it at.
-     */
-    private void removeTileEntity(final BlockPos pos)
-    {
-        final Iterator<TileEntity> iterator = this.tileEntities.iterator();
-
-        while (iterator.hasNext())
+        if(entities[pos.getX()][pos.getY()].length == 0)
         {
-            final TileEntity tileEntity = iterator.next();
-            if (tileEntity.getPos().equals(pos))
-            {
-                iterator.remove();
-            }
+            return null;
         }
-    }
-
-    /**
-     * Return all entities.
-     *
-     * @return the list of entities.
-     */
-    @NotNull
-    public List<Entity> getEntities()
-    {
-        return this.entities;
-    }
-
-    /**
-     * Add an entitiy.
-     *
-     * @param entity the entity to add.
-     */
-    public void addEntity(final Entity entity)
-    {
-        if (entity == null || entity instanceof EntityPlayer)
-        {
-            return;
-        }
-
-        for (final Entity e : this.entities)
-        {
-            if (entity.getUniqueID().equals(e.getUniqueID()))
-            {
-                return;
-            }
-        }
-
-        this.entities.add(entity);
-    }
-
-    /**
-     * Remove a certain entitiy.
-     *
-     * @param entity that should be removed.
-     */
-    public void removeEntity(final Entity entity)
-    {
-        if (entity == null)
-        {
-            return;
-        }
-
-        final Iterator<Entity> iterator = this.entities.iterator();
-        while (iterator.hasNext())
-        {
-            final Entity e = iterator.next();
-            if (entity.getUniqueID().equals(e.getUniqueID()))
-            {
-                iterator.remove();
-            }
-        }
+        return entities[pos.getX()][pos.getY()][pos.getZ()];
     }
 
     /**
@@ -306,8 +202,10 @@ public class StructureProxy
      * Rotate the structure depending on the direction it's facing.
      *
      * @param times times to rotate.
+     * @param world the world to rotate it in.
+     * @param rotatePos the pos to rotate it around.
      */
-    public void rotate(final int times)
+    public void rotate(final int times, World world, BlockPos rotatePos)
     {
         final Rotation rotation;
         switch (times)
@@ -332,8 +230,8 @@ public class StructureProxy
         this.height = size.getY();
         this.length = size.getZ();
 
-        this.blocks = new Block[width][height][length];
-        this.metadata = new IBlockState[width][height][length];
+        this.blocks = new Template.BlockInfo[width][height][length];
+        this.entities = new Template.EntityInfo[width][height][length];
 
         int minX = 0;
         int minY = 0;
@@ -365,16 +263,17 @@ public class StructureProxy
         minY = Math.abs(minY);
         minZ = Math.abs(minZ);
         boolean foundHut = false;
+        final PlacementSettings settings = new PlacementSettings().setRotation(rotation);
 
-        for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(new PlacementSettings().setRotation(rotation)))
+        for (final Template.BlockInfo info : structure.getBlockInfoWithSettings(settings))
         {
             final BlockPos tempPos = info.pos;
             final int x = tempPos.getX() + minX;
             final int y = tempPos.getY() + minY;
             final int z = tempPos.getZ() + minZ;
 
-            this.blocks[x][y][z] = info.blockState.getBlock();
-            this.metadata[x][y][z] = info.blockState;
+            this.blocks[x][y][z] = info;
+            this.entities[x][y][z] = null;
 
             if (info.blockState.getBlock() instanceof AbstractBlockHut)
             {
@@ -382,7 +281,19 @@ public class StructureProxy
                 offset = info.pos.add(minX, minY, minZ);
             }
         }
+
         updateOffSetIfDecoration(foundHut, size, times, minX, minY, minZ);
+
+        for(final Template.EntityInfo info: structure.getTileEntities())
+        {
+            final Template.EntityInfo newInfo = structure.transformEntityInfoWithSettings(info, world, rotatePos.subtract(offset).add(new BlockPos(minX, minY, minZ)), settings);
+            //289 74 157 - 289.9 76.5, 157.5
+            final BlockPos tempPos = Template.transformedBlockPos(settings, info.blockPos);
+            final int x = tempPos.getX() + minX;
+            final int y = tempPos.getY() + minY;
+            final int z = tempPos.getZ() + minZ;
+            this.entities[x][y][z] = newInfo;
+        }
     }
 
     /**

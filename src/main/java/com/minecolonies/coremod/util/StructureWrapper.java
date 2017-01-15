@@ -8,13 +8,12 @@ import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.template.Template;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import org.jetbrains.annotations.NotNull;
@@ -133,7 +132,7 @@ public final class StructureWrapper
         try
         {
             @NotNull final StructureWrapper structureWrapper = new StructureWrapper(worldObj, name);
-            structureWrapper.rotate(rotations);
+            structureWrapper.rotate(rotations, worldObj, pos);
             structureWrapper.placeStructure(pos);
         }
         catch (final IllegalStateException e)
@@ -146,10 +145,12 @@ public final class StructureWrapper
      * Rotates the structure x times.
      *
      * @param times times to rotate.
+     * @param world world it's rotating it in.
+     * @param rotatePos position to rotate it around.
      */
-    public void rotate(final int times)
+    public void rotate(final int times, World world, BlockPos rotatePos)
     {
-        structure.rotate(times);
+        structure.rotate(times, world, rotatePos);
     }
 
     /**
@@ -164,7 +165,6 @@ public final class StructureWrapper
         @NotNull final List<BlockPos> delayedBlocks = new ArrayList<>();
 
         //structure.getBlockInfo()[0].pos
-
         for (int j = 0; j < structure.getHeight(); j++)
         {
             for (int k = 0; k < structure.getLength(); k++)
@@ -194,9 +194,6 @@ public final class StructureWrapper
                     {
                         delayedBlocks.add(localPos);
                     }
-
-                    //setTileEntity checks for null and ignores it.
-                    world.setTileEntity(worldPos, structure.getTileEntity(localPos));
                 }
             }
         }
@@ -304,6 +301,13 @@ public final class StructureWrapper
         else if (structureBlock instanceof BlockStairs && structureBlockState == worldBlockState)
         {
             return true;
+        }
+
+        final Template.EntityInfo entityInfo = structure.getEntityinfo(this.getLocalPosition());
+        if(entityInfo != null)
+        {
+            return false;
+            //todo get entity at position.
         }
 
         //had this problem in a super flat world, causes builder to sit doing nothing because placement failed
@@ -506,25 +510,12 @@ public final class StructureWrapper
     }
 
     /**
-     * @return The current local tile entity.
-     */
-    @Nullable
-    public TileEntity getTileEntity()
-    {
-        if (this.progressPos.equals(NULL_POS))
-        {
-            return null;
-        }
-        return this.structure.getTileEntity(this.progressPos);
-    }
-
-    /**
      * @return A list of all the entities in the structure.
      */
     @NotNull
-    public List<Entity> getEntities()
+    public List<Template.EntityInfo> getEntities()
     {
-        return structure.getEntities();
+        return structure.getTileEntities();
     }
 
     /**
@@ -607,5 +598,34 @@ public final class StructureWrapper
     public StructureProxy structure()
     {
         return structure;
+    }
+
+    /**
+     * Calculate the current block in the structure.
+     *
+     * @return the current block or null if not initialized.
+     */
+    @Nullable
+    public Template.BlockInfo getBlockInfo()
+    {
+        if (this.progressPos.equals(NULL_POS))
+        {
+            return null;
+        }
+        return this.structure.getBlockInfo(this.progressPos);
+    }
+
+    /**
+     * Calculate the current entity in the structure.
+     * @return the entityInfo.
+     */
+    @Nullable
+    public Template.EntityInfo getEntityinfo()
+    {
+        if (this.progressPos.equals(NULL_POS))
+        {
+            return null;
+        }
+        return this.structure.getEntityinfo(this.progressPos);
     }
 }

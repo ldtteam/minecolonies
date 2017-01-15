@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.controls.Button;
-import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.BuildingDeliveryman;
 import com.minecolonies.coremod.lib.Constants;
 import org.jetbrains.annotations.NotNull;
