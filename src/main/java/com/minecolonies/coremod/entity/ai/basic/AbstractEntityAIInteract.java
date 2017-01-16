@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import com.minecolonies.coremod.configuration.Configurations;
 
 import java.util.List;
 
@@ -26,7 +27,6 @@ import java.util.List;
  */
 public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends AbstractEntityAICrafting<J>
 {
-    private static final double DELAY_MODIFIER       = 1000.0D;
     /**
      * The amount of xp the entity gains per block mined.
      */
@@ -180,7 +180,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         {
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
-        return (int) ((DELAY_MODIFIER
+
+        return (int) ((Configurations.blockMiningDelayModifier
                          * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
                         * (double) world.getBlockState(pos).getBlockHardness(world, pos)
                         / (double) (worker.getHeldItemMainhand().getItem()
