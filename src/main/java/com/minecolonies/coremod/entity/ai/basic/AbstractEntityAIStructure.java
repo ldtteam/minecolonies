@@ -1046,6 +1046,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
+        if(block instanceof BlockContainer && job instanceof JobBuilder)
+        {
+            BlockPos buildingLocation = ((JobBuilder) job).getWorkOrder().getBuildingLocation();
+            AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
+            if(building instanceof AbstractBuildingWorker)
+            {
+                ((AbstractBuildingWorker) building).addContainerPosition(pos);
+            }
+        }
+
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
         if (isBlockFree(block, block.getMetaFromState(blockState)))
         {
