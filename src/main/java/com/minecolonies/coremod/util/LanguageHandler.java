@@ -35,7 +35,7 @@ public final class LanguageHandler
      */
     public static void sendPlayerLocalizedMessage(@NotNull final EntityPlayer player, final String key, final String... args)
     {
-        sendPlayerMessage(player, key, args);
+        sendPlayerMessage(player, key, (Object[])args);
     }
 
     /**
@@ -101,7 +101,7 @@ public final class LanguageHandler
      */
     public static void sendPlayersLocalizedMessage(final List<EntityPlayer> players, final String key, final String... args)
     {
-        sendPlayersMessage(players, key, args);
+        sendPlayersMessage(players, key, (Object[])args);
     }
 
     /**
