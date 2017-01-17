@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Basic inventory for the citizens.
@@ -91,7 +92,11 @@ public class InventoryCitizen implements IInventory
         {
             customName = title;
         }
-        this.allInventories = Arrays.<NonNullList<ItemStack>>asList(new NonNullList[] {this.mainInventory, this.armorInventory, this.offHandInventory});
+        this.allInventories = new ArrayList<NonNullList<ItemStack>>();
+        this.allInventories.add(this.mainInventory);
+        this.allInventories.add(this.armorInventory);
+        this.allInventories.add(this.offHandInventory);
+
         this.itemStack = ItemStack.EMPTY;
     }
 
@@ -107,7 +112,10 @@ public class InventoryCitizen implements IInventory
         {
             customName = title;
         }
-        this.allInventories = Arrays.<NonNullList<ItemStack>>asList(new NonNullList[] {this.mainInventory, this.armorInventory, this.offHandInventory});
+        this.allInventories = new ArrayList<NonNullList<ItemStack>>();
+        this.allInventories.add(this.mainInventory);
+        this.allInventories.add(this.armorInventory);
+        this.allInventories.add(this.offHandInventory);
         this.itemStack = ItemStack.EMPTY;
     }
 
