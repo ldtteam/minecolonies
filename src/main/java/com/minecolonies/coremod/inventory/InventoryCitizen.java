@@ -391,7 +391,7 @@ public class InventoryCitizen implements IInventory
     {
         for (int i = 0; i < this.mainInventory.size(); ++i)
         {
-            if (!(this.mainInventory.get(i)).isEmpty() && InventoryCitizen.stackEqualExact(stack, (ItemStack)this.mainInventory.get(i)))
+            if (!(this.mainInventory.get(i)).isEmpty() && InventoryCitizen.stackEqualExact(stack, this.mainInventory.get(i)))
             {
                 return i;
             }
@@ -561,7 +561,7 @@ public class InventoryCitizen implements IInventory
         {
             for (int i = 0; i < this.mainInventory.size(); ++i)
             {
-                if (this.canMergeStacks((ItemStack)this.mainInventory.get(i), itemStackIn))
+                if (this.canMergeStacks(this.mainInventory.get(i), itemStackIn))
                 {
                     return i;
                 }
@@ -1000,7 +1000,7 @@ public class InventoryCitizen implements IInventory
 
         for (List<ItemStack> list : this.allInventories)
         {
-            Iterator iterator = list.iterator();
+            Iterator<ItemStack> iterator = list.iterator();
 
             while (true)
             {
@@ -1009,7 +1009,7 @@ public class InventoryCitizen implements IInventory
                     continue label19;
                 }
 
-                ItemStack itemstack = (ItemStack)iterator.next();
+                ItemStack itemstack = iterator.next();
 
                 if (!itemstack.isEmpty() && itemstack.isItemEqual(itemStackIn))
                 {
