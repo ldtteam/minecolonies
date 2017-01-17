@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import com.minecolonies.coremod.tileentities.TileEntityWareHouse;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -10,9 +10,9 @@ import org.jetbrains.annotations.NotNull;
  * No different from {@link AbstractBlockHut}
  */
 
-public class BlockHutDeliveryman extends AbstractBlockHut
+public class BlockHutWareHouse extends AbstractBlockHut
 {
-    protected BlockHutDeliveryman()
+    protected BlockHutWareHouse()
     {
         //No different from Abstract parent
         super();
@@ -22,7 +22,7 @@ public class BlockHutDeliveryman extends AbstractBlockHut
     @Override
     public String getName()
     {
-        return "blockHutDeliveryman";
+        return "blockHutWareHouse";
     }
 
     @NotNull
@@ -30,6 +30,6 @@ public class BlockHutDeliveryman extends AbstractBlockHut
     public TileEntity createNewTileEntity(final World world, final int meta)
     {
         //Creates a tile entity for our building
-        return new TileEntityColonyBuilding();
+        return new TileEntityWareHouse();
     }
 }

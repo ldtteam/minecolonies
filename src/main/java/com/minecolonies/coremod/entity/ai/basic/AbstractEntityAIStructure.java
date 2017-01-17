@@ -1046,13 +1046,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if(block instanceof BlockContainer && job instanceof JobBuilder)
+        if(block instanceof BlockChest && job instanceof JobBuilder)
         {
             BlockPos buildingLocation = ((JobBuilder) job).getWorkOrder().getBuildingLocation();
             AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
-            if(building instanceof AbstractBuildingWorker)
+            if(building instanceof AbstractBuilding)
             {
-                ((AbstractBuildingWorker) building).addContainerPosition(pos);
+                ((AbstractBuilding) building).addContainerPosition(pos);
             }
         }
 

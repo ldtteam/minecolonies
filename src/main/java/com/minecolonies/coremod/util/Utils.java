@@ -25,6 +25,7 @@ public final class Utils
     public static final String SHOVEL  = "shovel";
     public static final String AXE     = "axe";
     public static final String HOE     = "hoe";
+    public static final String WEAPON  = "weapon";
 
     /**
      * The compound id for fortune enchantment.

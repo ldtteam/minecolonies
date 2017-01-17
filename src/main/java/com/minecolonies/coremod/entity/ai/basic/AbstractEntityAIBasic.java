@@ -403,6 +403,61 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
+     * Check all chests in the worker hut for a required tool.
+     * @param tool the type of tool requested (amount is ignored)
+     * @return true if a stack of that type was found
+     */
+    public boolean isToolInHut(final String tool)
+    {
+        @Nullable final AbstractBuildingWorker building = getOwnBuilding();
+
+        boolean hasItem;
+        if(building != null)
+        {
+            hasItem = isToolInTileEntity(building.getTileEntity(), tool);
+
+            if(hasItem)
+            {
+                return true;
+            }
+
+            for(BlockPos pos : building.getAdditionalCountainers())
+            {
+                TileEntity entity = world.getTileEntity(pos);
+                if(entity instanceof TileEntityChest)
+                {
+                    hasItem = isToolInTileEntity((TileEntityChest) entity, tool);
+
+                    if(hasItem)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     * @param entity the tileEntity chest or building.
+     * @param tool the tool.
+     * @return true if found the tool.
+     */
+    public boolean isToolInTileEntity(TileEntityChest entity, final String tool)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> Utils.isTool(stack, tool),
+                this::takeItemStackFromChest
+        );
+    }
+
+    /**
      * Finds the first @see ItemStack the type of {@code is}.
      * It will be taken from the chest and placed in the workers inventory.
      * Make sure that the worker stands next the chest to not break immersion.
@@ -488,11 +543,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public void takeItemStackFromChest(@NotNull final Tuple<Integer, IInventory> tuple)
     {
-        @Nullable final AbstractBuildingWorker ownBuilding = getOwnBuilding();
-        if (ownBuilding == null)
-        {
-            return;
-        }
         InventoryUtils.takeStackInSlot(tuple.getSecond(), worker.getInventoryCitizen(), tuple.getFirst());
     }
 
@@ -559,17 +609,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.toolRequest", tool, InventoryUtils.swapToolGrade(hutLevel)));
         return true;
-    }
-
-    private boolean isToolInHut(final String tool)
-    {
-        @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        return buildingWorker != null
-                 && InventoryFunctions.matchFirstInInventoryWithInventory(
-          buildingWorker.getTileEntity(),
-          stack -> Utils.isTool(stack, tool),
-          this::takeItemStackFromChest
-        );
     }
 
     /**

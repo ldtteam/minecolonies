@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityChest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -242,6 +244,74 @@ public class InventoryUtils
             }
         }
         return -1;
+    }
+
+    /**
+     * Checks if the inventory contains the following tool.
+     * @param entity the tileEntity chest or building.
+     * @param tool the tool.
+     * @return true if found the tool.
+     */
+    public static boolean isToolInTileEntity(TileEntityChest entity, final String tool)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> Utils.isTool(stack, tool),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     *
+     * @param entity inventory to check in.
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
+     */
+    public static boolean isPickaxeInTileEntity(TileEntityChest entity, final int minlevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> Utils.checkIfPickaxeQualifies(
+                        minlevel,
+                        Utils.getMiningLevel(stack, Utils.PICKAXE)
+                ),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     *
+     * @param entity inventory to check in.
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
+     */
+    public static boolean isPickaxeInTileEntity(InventoryCitizen entity, final int minlevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> Utils.checkIfPickaxeQualifies(
+                        minlevel,
+                        Utils.getMiningLevel(stack, Utils.PICKAXE)
+                ),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Checks if the inventory contains the following tool.
+     * @param inventoryCitizen the inventory citizen.
+     * @param tool the tool.
+     * @return true if found the tool.
+     */
+    public static boolean isToolInTileEntity(InventoryCitizen inventoryCitizen, final String tool)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                inventoryCitizen,
+                stack -> Utils.isTool(stack, tool),
+                InventoryFunctions::doNothing
+        );
     }
 
     /**

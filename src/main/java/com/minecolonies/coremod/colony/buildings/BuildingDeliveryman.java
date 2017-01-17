@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutDeliveryman;
+import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -20,7 +21,10 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
 
     private static final String DELIVERYMAN = "Deliveryman";
 
-    private static final String TAG_DELIVERY = "delivery";
+    /**
+     * Building the deliveryman will deliver somethingTo
+     */
+    private AbstractBuilding buildingToDeliver;
 
     /**
      * Instantiates a new warehouse building.
@@ -31,6 +35,24 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     public BuildingDeliveryman(final Colony c, final BlockPos l)
     {
         super(c, l);
+    }
+
+    /**
+     * Set the building the deliveryman should deliver to.
+     * @param building building to deliver to.
+     */
+    public void setBuildingToDeliver(AbstractBuilding building)
+    {
+        this.buildingToDeliver = building;
+    }
+
+    /**
+     * Get the building the deliveryman should deliver to.
+     * @return the building.
+     */
+    public AbstractBuilding getBuildingToDeliver()
+    {
+        return this.buildingToDeliver;
     }
 
     @NotNull
@@ -64,17 +86,12 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
-
-        final NBTTagCompound deliveryCompound = compound.getCompoundTag(TAG_DELIVERY);
     }
 
     @Override
     public void writeToNBT(@NotNull final NBTTagCompound compound)
     {
         super.writeToNBT(compound);
-
-        @NotNull final NBTTagCompound deliveryCompound = new NBTTagCompound();
-        compound.setTag(TAG_DELIVERY, deliveryCompound);
     }
 
     @Override
@@ -104,7 +121,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
         @Override
         public Window getWindow()
         {
-            return new WindowHutDeliveryman(this);
+            return new WindowHutWorkerPlaceholder<>(this, DELIVERYMAN);
         }
 
         @Override
