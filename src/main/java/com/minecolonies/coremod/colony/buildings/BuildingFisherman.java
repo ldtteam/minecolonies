@@ -8,8 +8,13 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobFisherman;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import net.minecraft.init.Items;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The fishermans building.
@@ -46,6 +51,22 @@ public class BuildingFisherman extends AbstractBuildingWorker
     public String getSchematicName()
     {
         return FISHERMAN;
+    }
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    public Map<ItemStorage, Integer> needXForWorker()
+    {
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
+        keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
+
+        return keepX;
     }
 
     /**

@@ -691,20 +691,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
-     */
-    @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return stack != null && Utils.isHoe(stack);
-    }
-
-    /**
      * Returns the farmer's worker instance. Called from outside this class.
      *
      * @return citizen object

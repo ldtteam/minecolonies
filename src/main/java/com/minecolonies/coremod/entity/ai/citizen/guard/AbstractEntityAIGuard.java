@@ -267,16 +267,6 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         }
     }
 
-    @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return stack != null
-                 && (stack.getItem() instanceof ItemArmor
-                       || stack.getItem() instanceof ItemTool
-                       || stack.getItem() instanceof ItemSword
-                       || stack.getItem() instanceof ItemBow);
-    }
-
     /**
      * Chooses a target from the list.
      *

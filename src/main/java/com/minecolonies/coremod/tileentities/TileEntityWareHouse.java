@@ -2,9 +2,11 @@ package com.minecolonies.coremod.tileentities;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryFunctions;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -300,6 +302,86 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         super.writeToNBT(compound);
         return compound;
+    }
+
+    /**
+     * Dump the inventory of a citizen into the warehouse.
+     * Go through all items and search the right chest to dump it in.
+     * @param inventoryCitizen
+     */
+    public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
+    {
+        for(int i = 0; i < inventoryCitizen.getSizeInventory(); i++)
+        {
+            ItemStack stack = inventoryCitizen.getStackInSlot(i);
+
+            if(stack == null || stack.getItem() == null || stack.stackSize == 0)
+            {
+                continue;
+            }
+            TileEntityChest chest = searchRightChestForStack(stack);
+            if(chest == null)
+            {
+                //todo notify player
+                return;
+            }
+            InventoryUtils.addItemStackToInventory(chest, stack);
+            inventoryCitizen.removeStackFromSlot(i);
+        }
+
+    }
+
+    /**
+     * Search the right chest for an itemStack.
+     * @param stack the stack to dump.
+     * @return the tile entity of the chest
+     */
+    @Nullable
+    private TileEntityChest searchRightChestForStack(@NotNull final ItemStack stack)
+    {
+        if(InventoryUtils.findFirstSlotInInventoryWith(this, stack.getItem(), stack.getItemDamage()) != -1 && InventoryUtils.getOpenSlot(this) != -1)
+        {
+            return this;
+        }
+
+        for(BlockPos pos : getBuilding().getAdditionalCountainers())
+        {
+            TileEntity entity = worldObj.getTileEntity(pos);
+            if(entity instanceof TileEntityChest
+                    && InventoryUtils.findFirstSlotInInventoryWith((TileEntityChest) entity, stack.getItem(), stack.getItemDamage()) != -1
+                    && InventoryUtils.getOpenSlot(this) != -1)
+            {
+                return this;
+            }
+        }
+
+        return searchMostEmptySlot();
+    }
+
+    /**
+     * Search for the chest with the least items in it.
+     * @return the tileEntity of this chest.
+     */
+    @Nullable
+    private TileEntityChest searchMostEmptySlot()
+    {
+        int freeSlots = 0;
+        TileEntityChest emptiestChest = null;
+        for(BlockPos pos : getBuilding().getAdditionalCountainers())
+        {
+            TileEntity entity = worldObj.getTileEntity(pos);
+            if(entity instanceof TileEntityChest && InventoryUtils.getOpenSlot(this) != -1)
+            {
+                int tempFreeSlots = ((TileEntityChest) entity).getSizeInventory() - InventoryUtils.getAmountOfStacks((IInventory) entity);
+                if(freeSlots < tempFreeSlots)
+                {
+                    freeSlots = tempFreeSlots;
+                    emptiestChest = (TileEntityChest) entity;
+                }
+            }
+        }
+
+        return emptiestChest;
     }
 
 }

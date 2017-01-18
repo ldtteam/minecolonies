@@ -1,27 +1,25 @@
 package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingDeliveryman;
-import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +49,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private List<ItemStack> itemsToDeliver = new ArrayList<>();
 
     /**
+     * Next target the deliveryman should gather stuff at.
+     */
+    private BlockPos gatherTarget = null;
+
+    /**
      * Initialize the deliveryman and add all his tasks.
      *
      * @param deliveryman the job he has.
@@ -62,7 +65,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 /**
                  * Check if tasks should be executed.
                  */
-                new AITarget(INIT, () -> IDLE),
                 new AITarget(this::checkIfExecute, IDLE),
                 new AITarget(IDLE, () -> START_WORKING),
                 new AITarget(START_WORKING, this::checkWareHouse),
@@ -83,7 +85,92 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public AIState gather()
     {
+        if(gatherTarget == null)
+        {
+            gatherTarget = getRandomBuilding();
+        }
+
+        if(gatherTarget == null)
+        {
+            return GATHERING;
+        }
+
+        if(!worker.isWorkerAtSiteWithMove(gatherTarget, MIN_DISTANCE_TO_WAREHOUSE))
+        {
+            return GATHERING;
+        }
+
+        Colony colony = getOwnBuilding().getColony();
+        if(colony != null)
+        {
+            AbstractBuilding building = colony.getBuilding(gatherTarget);
+            gatherFromBuilding(building);
+            return DUMPING;
+        }
         return START_WORKING;
+    }
+
+    /**
+     * Gather not needed Items from building.
+     * @param building building to gather it from.
+     */
+    private void gatherFromBuilding(final AbstractBuilding building)
+    {
+        for(int i = 0 ; i < building.getTileEntity().getSizeInventory(); i++)
+        {
+            ItemStack stack = building.getTileEntity().getStackInSlot(i);
+
+            boolean needsItem = false;
+            if(building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
+            {
+                needsItem = true;
+            }
+            //todo count how much of the itemStack has to be left behind.
+            for(Map.Entry<ItemStorage, Integer> entry: building.needXForWorker().entrySet())
+            {
+                if(entry.getKey().getItem() == stack.getItem() && entry.getKey().getDamageValue() == stack.getItemDamage())
+                {
+                    needsItem = true;
+                }
+            }
+
+            if(!needsItem)
+            {
+                if(!worker.getInventoryCitizen().addItemStackToInventory(stack))
+                {
+                    return;
+                }
+                building.getTileEntity().removeStackFromSlot(i);
+            }
+        }
+    }
+
+    /**
+     * Gets a random building from his colony.
+     *
+     * @return a random blockPos.
+     */
+    @Nullable
+    private BlockPos getRandomBuilding()
+    {
+        if (worker.getColony() == null || getOwnBuilding() == null)
+        {
+            return null;
+        }
+
+        final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
+        final Object[] buildingArray = buildingList.toArray();
+
+        final int random = worker.getRandom().nextInt(buildingArray.length);
+        final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
+
+        if (building instanceof BuildingWareHouse
+                || building instanceof BuildingDeliveryman || building instanceof BuildingTownHall)
+        {
+            return null;
+        }
+
+        return building.getLocation();
     }
 
     /**
@@ -92,8 +179,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     public AIState dump()
     {
+        if(!worker.isWorkerAtSiteWithMove(wareHouse.getLocation(), MIN_DISTANCE_TO_WAREHOUSE))
+        {
+            return DUMPING;
+        }
+
+        wareHouse.getTileEntity().dumpInventoryIntoWareHouse(worker.getInventoryCitizen());
+        gatherTarget = null;
+
         return START_WORKING;
     }
+
 
     /**
      * Deliver the items to the hut.
@@ -126,6 +222,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         workerInventory.removeStackFromSlot(i);
                     }
                 }
+                buildingToDeliver.setOnGoingDelivery(false);
             }
         }
         return START_WORKING;
@@ -210,6 +307,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
         else
         {
+            //todo take at least the amount of items he needs.
             ItemStack stack = itemsToDeliver.get(0);
             position = wareHouse.getTileEntity().getPositionOfChestWithItemStack(stack);
         }

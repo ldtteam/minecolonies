@@ -39,10 +39,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private static final int        LADDER_SEARCH_RANGE = 10;
     private static final int        SHAFT_RADIUS        = 3;
     private static final int        SAFE_CHECK_RANGE    = 5;
-    /**
-     * Amount of items to be kept.
-     */
-    private static final int STACK_MAX_SIZE     = 64;
 
     /**
      * Possible rotations.
@@ -184,40 +180,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             return RENDER_META_TORCH;
         }
         return "";
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    protected Map<ItemStorage, Integer> needXForWorker()
-    {
-        final Map<ItemStorage, Integer> keepX = new HashMap<>();
-        final ItemStack stackLadder = new ItemStack(Blocks.LADDER);
-        final ItemStack stackFence = new ItemStack(Blocks.OAK_FENCE);
-        final ItemStack stackTorch = new ItemStack(Blocks.TORCH);
-        final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
-        final ItemStack stackSlab = new ItemStack(Blocks.WOODEN_SLAB);
-        final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
-
-        keepX.put(new ItemStorage(stackLadder.getItem(), stackLadder.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackFence.getItem(), stackFence.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackTorch.getItem(), stackTorch.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackCobble.getItem(), stackCobble.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackSlab.getItem(), stackSlab.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackPlanks.getItem(), stackPlanks.getItemDamage(), 0, false), STACK_MAX_SIZE);
-
-        return keepX;
-    }
-
-    @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return Utils.isMiningTool(stack);
     }
 
     @NotNull

@@ -8,14 +8,25 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The lumberjacks building.
  */
 public class BuildingLumberjack extends AbstractBuildingWorker
 {
+    /**
+     * Tool type the lumberjack needs.
+     */
+    private static final String TOOL_TYPE_AXE = "axe";
     /**
      * The maximum upgrade of the building.
      */
@@ -28,6 +39,11 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      * The hut description.
      */
     private static final String LUMBERJACK_HUT_NAME = "lumberjackHut";
+
+    /**
+     * Sets the amount of saplings the lumberjack should keep.
+     */
+    private static final int SAPLINGS_TO_KEEP = 10;
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -79,6 +95,49 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
         }
+    }
+
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return isStackAxe(stack);
+    }
+
+    /**
+     * Check if a stack is an axe.
+     * todo: use parent code
+     *
+     * @param stack the stack to check.
+     * @return true if an axe.
+     */
+    private static boolean isStackAxe(@Nullable final ItemStack stack)
+    {
+        return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
+    }
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    public Map<ItemStorage, Integer> needXForWorker()
+    {
+        final Map<ItemStorage, Integer> keepX = new HashMap<>();
+        final ItemStack stack = new ItemStack(Blocks.SAPLING);
+        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
+
+        return keepX;
     }
 
     /**

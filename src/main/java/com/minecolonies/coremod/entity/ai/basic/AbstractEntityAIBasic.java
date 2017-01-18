@@ -216,6 +216,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             return IDLE;
         }
 
+        if(getState() == INIT)
+        {
+            return IDLE;
+        }
+
         return null;
     }
 
@@ -335,7 +340,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return NEEDS_ITEM;
             }
 
-            requestWithoutSpam(first.stackSize + " " + first.getDisplayName());
+            if(!getOwnBuilding().hasOnGoingDelivery())
+            {
+                requestWithoutSpam(first.stackSize + " " + first.getDisplayName());
+            }
         }
         return NEEDS_ITEM;
     }
@@ -607,7 +615,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
-        chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.toolRequest", tool, InventoryUtils.swapToolGrade(hutLevel)));
+        if(!getOwnBuilding().hasOnGoingDelivery())
+        {
+            chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.toolRequest", tool, InventoryUtils.swapToolGrade(hutLevel)));
+        }
         return true;
     }
 
@@ -852,7 +863,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean dumpOneMoreSlot()
     {
-        return dumpOneMoreSlot(this::neededForWorker);
+        return dumpOneMoreSlot(getOwnBuilding()::neededForWorker);
     }
 
     /**
@@ -900,7 +911,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         //Items already kept in the inventory
         final Map<ItemStorage, Integer> alreadyKept = new HashMap<>();
-        final Map<ItemStorage, Integer> shouldKeep = this.needXForWorker();
+        final Map<ItemStorage, Integer> shouldKeep = getOwnBuilding().needXForWorker();
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 
@@ -908,18 +919,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  && (walkToBuilding()
                        || InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(),
           (i, stack) -> !(stack == null || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, i)));
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    protected Map<ItemStorage, Integer> needXForWorker()
-    {
-        return new HashMap<>();
     }
 
     /**
@@ -1096,19 +1095,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     protected InventoryCitizen getInventory()
     {
         return worker.getInventoryCitizen();
-    }
-
-    /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
-     */
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return false;
     }
 
     /**

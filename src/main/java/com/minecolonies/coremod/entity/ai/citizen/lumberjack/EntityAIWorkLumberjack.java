@@ -29,8 +29,6 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberjack>
 {
-    private static final String TOOL_TYPE_AXE = "axe";
-
     /**
      * The render name to render logs.
      */
@@ -83,11 +81,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Is used to collect falling saplings from the ground.
      */
     private static final int MAX_WAITING_TIME = 100;
-
-    /**
-     * Sets the amount of saplings the lumberjack should keep.
-     */
-    private static final int SAPLINGS_TO_KEEP = 10;
 
     /**
      * Number of ticks to wait for tree.
@@ -659,49 +652,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     protected void updateRenderMetaData()
     {
         worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    protected Map<ItemStorage, Integer> needXForWorker()
-    {
-        final Map<ItemStorage, Integer> keepX = new HashMap<>();
-        final ItemStack stack = new ItemStack(Blocks.SAPLING);
-        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
-
-        return keepX;
-    }
-
-    /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
-     */
-    @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return isStackAxe(stack);
-    }
-
-    /**
-     * Check if a stack is an axe.
-     * todo: use parent code
-     *
-     * @param stack the stack to check.
-     * @return true if an axe.
-     */
-    private static boolean isStackAxe(@Nullable final ItemStack stack)
-    {
-        return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
     }
 
     /**

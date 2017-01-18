@@ -293,22 +293,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    protected Map<ItemStorage, Integer> needXForWorker()
-    {
-        final Map<ItemStorage, Integer> keepX = new HashMap<>();
-        keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
-
-        return keepX;
-    }
-
-    /**
      * If the job class has no water object the fisherman should search water.
      *
      * @return the next AIState the fisherman should switch to, after executing this method.
