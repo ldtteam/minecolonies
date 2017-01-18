@@ -395,8 +395,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-        //todo tell player that deliveryman can't find a warehouse.
-        Log.getLogger().info("Unable to find wareHouse");
+        worker.sendLocalizedChat("com.minecolonies.coremod.job.deliveryman.noWarehouse");
         return true;
     }
 }

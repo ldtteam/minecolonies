@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryFunctions;
 import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -67,7 +68,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 if (i == index)
                 {
-                    if(buildingEntry.getValue() instanceof AbstractBuildingWorker && !list.contains(buildingEntry.getValue()) && ((AbstractBuildingWorker) buildingEntry.getValue()).needsAnything())
+                    if(buildingEntry.getValue() instanceof AbstractBuildingWorker
+                            && !list.contains(buildingEntry.getValue())
+                            && ((AbstractBuildingWorker) buildingEntry.getValue()).needsAnything())
                     {
                         checkInWareHouse((AbstractBuildingWorker) buildingEntry.getValue());
                     }
@@ -322,7 +325,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             TileEntityChest chest = searchRightChestForStack(stack);
             if(chest == null)
             {
-                //todo notify player
+                LanguageHandler.sendPlayersLocalizedMessage(getColony().getMessageEntityPlayers(), "com.minecolonies.coremod.wareHouse.full");
                 return;
             }
             InventoryUtils.addItemStackToInventory(chest, stack);

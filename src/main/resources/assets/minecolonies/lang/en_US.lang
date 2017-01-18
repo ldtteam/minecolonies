@@ -117,7 +117,9 @@ com.minecolonies.coremod.gui.citizen.skills=Skills
 com.minecolonies.coremod.gui.townHall.repair=Repair Town Hall
 achievement.upgrade.lumberjack.max.desc=Deforestation
 tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
-com.minecolonies.coremod.gui.workerHuts.warehouse=Warehouse
+com.minecolonies.coremod.gui.workerHuts.wareHouse=Warehouse
+com.minecolonies.coremod.gui.workerHuts.deliveryman=Deliveryman
+
 entity.miner.messageRequiresBetterHut=Please upgrade my hut to dig deeper!
 com.minecolonies.coremod.gui.townHall.recall=Recall Citizens
 item.scepterSteel.point=Point one saved
@@ -245,3 +247,9 @@ tile.minecolonies.blockSolidSubstitution.name=Solid-Placeholderblock
 
 entity.worker.toolRequest=I need a %s of a maximum grade of %s.
 entity.worker.pickaxeRequest=I need a pickaxe of at least %s grade and at maximum %s grade.
+
+com.minecolonies.coremod.wareHouse.full=The Warehouse is full, please upgrade or make space.
+com.minecolonies.coremod.job.deliveryman.noWarehouse=Please upgrade or build a Warehouse for me to work at.
+
+
+//todo tile wareHouse and deliveryman + coremod.gui for both.
