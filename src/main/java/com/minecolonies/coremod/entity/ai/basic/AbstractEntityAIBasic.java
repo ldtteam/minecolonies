@@ -347,14 +347,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     @NotNull
     private AIState lookForNeededItems()
-    {   
+    {
         /*
         * This Function causes "itemsCurrentlyNeeded.isEmpty()= ALWAYS EMPTY" which results in
         * "if (itemsCurrentlyNeeded.isEmpty()) -> return IDLE" to be alwys true. therefore never checking his chest when actually building
         */
         syncNeededItemsWithInventory();
         if (itemsCurrentlyNeeded.isEmpty())
-        {   
+        {
             itemsNeeded.clear();
             job.clearItemsNeeded();
             return IDLE;
@@ -1007,7 +1007,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * @return false if they are in inventory
      */
     protected boolean checkOrRequestItems(final boolean useItemDamage, @Nullable final ItemStack... items)
-    {        
+    {
         if (items == null)
         {
             return false;
