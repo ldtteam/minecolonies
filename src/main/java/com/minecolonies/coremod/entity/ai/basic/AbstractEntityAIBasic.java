@@ -392,9 +392,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return true;
             }
 
-            for(BlockPos pos : building.getAdditionalCountainers())
+            for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getTileEntity(pos);
                 if(entity instanceof TileEntityChest)
                 {
                     hasItem = isInTileEntity((TileEntityChest) entity, is);

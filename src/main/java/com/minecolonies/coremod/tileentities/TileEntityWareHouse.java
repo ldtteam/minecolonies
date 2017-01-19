@@ -253,9 +253,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 return true;
             }
 
-            for(BlockPos pos : building.getAdditionalCountainers())
+            for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                TileEntity entity = worldObj.getTileEntity(pos);
+                final TileEntity entity = worldObj.getTileEntity(pos);
                 if(entity instanceof TileEntityChest)
                 {
                     if(tool.equals(Utils.PICKAXE))

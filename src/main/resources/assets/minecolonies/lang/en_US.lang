@@ -252,5 +252,3 @@ com.minecolonies.coremod.gui.workerHuts.buildingWareHouse=Warehouse
 
 tile.minecolonies.blockHutDeliveryman.name=Deliveryman
 com.minecolonies.coremod.gui.workerHuts.Deliveryman=Deliveryman
-
-//todo tile wareHouse and deliveryman + coremod.gui for both.

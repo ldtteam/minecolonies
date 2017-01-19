@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.entity.ai.item.handling;
 
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**

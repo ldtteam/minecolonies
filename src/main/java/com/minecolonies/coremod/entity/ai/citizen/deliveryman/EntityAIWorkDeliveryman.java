@@ -260,7 +260,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             final AbstractBuilding buildingToDeliver = ((BuildingDeliveryman) ownBuilding).getBuildingToDeliver();
             if(buildingToDeliver != null)
             {
-                boolean ableToDeliver = wareHouse.getTileEntity().checkInWareHouse(buildingToDeliver);
+                final boolean ableToDeliver = wareHouse.getTileEntity().checkInWareHouse(buildingToDeliver);
                 if(!ableToDeliver)
                 {
                     return START_WORKING;
@@ -322,12 +322,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         BlockPos position;
         if(itemsToDeliver.isEmpty())
         {
-            String tool = buildingToDeliver.getRequiredTool();
+            final String tool = buildingToDeliver.getRequiredTool();
             position = wareHouse.getTileEntity().getPositionOfChestWithTool(tool, Utils.PICKAXE.equals(tool) ? buildingToDeliver.getNeededPickaxeLevel() : -1);
         }
         else
         {
-            ItemStack stack = itemsToDeliver.get(0);
+            final ItemStack stack = itemsToDeliver.get(0);
             position = wareHouse.getTileEntity().getPositionOfChestWithItemStack(stack);
         }
 
