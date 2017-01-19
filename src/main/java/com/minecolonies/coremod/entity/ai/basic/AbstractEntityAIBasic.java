@@ -349,8 +349,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private AIState lookForNeededItems()
     {
         /*
-        * This Function causes "itemsCurrentlyNeeded.isEmpty()= ALWAYS EMPTY" which results in
-        * "if (itemsCurrentlyNeeded.isEmpty()) -> return IDLE" to be alwys true. therefore never checking his chest when actually building
+        * This Function causes "itemsCurrentlyNeeded.isEmpty()" to be always true.
+        * as the result "if (itemsCurrentlyNeeded.isEmpty()) {return IDLE}" will ever match. 
+        * therefore never checking his chest and requesting materials when in the block placement process
         */
         syncNeededItemsWithInventory();
         if (itemsCurrentlyNeeded.isEmpty())
@@ -1046,9 +1047,13 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         itemsNeeded.clear();
         Collections.addAll(itemsNeeded, items);
-        //emergency workaround so the worker will tell what he needs (ignoring the content of his chest) since he is not able to check it in the issued state
+        /*
+        * emergency workaround so the worker will tell what he needs (ignoring the content of his chest)
+        * since he is not able to check it in the issued state
+        */
         final ItemStack itn = itemsCurrentlyNeeded.get(0);
         requestWithoutSpam(itn.getCount() + " " + itn.getDisplayName()+" Please put it in my Inventory");
+        //end of workaround
         return true;
     }
 
