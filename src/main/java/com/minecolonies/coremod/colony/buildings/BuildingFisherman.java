@@ -61,7 +61,7 @@ public class BuildingFisherman extends AbstractBuildingWorker
      * @return a list of objects which should be kept.
      */
     @Override
-    public Map<ItemStorage, Integer> needXForWorker()
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
         final Map<ItemStorage, Integer> keepX = new HashMap<>();
         keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);

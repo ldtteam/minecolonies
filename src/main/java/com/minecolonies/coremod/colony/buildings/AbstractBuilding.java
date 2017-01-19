@@ -842,7 +842,7 @@ public abstract class AbstractBuilding
      *
      * @return a list of objects which should be kept.
      */
-    public Map<ItemStorage, Integer> needXForWorker()
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
         return new HashMap<>();
     }

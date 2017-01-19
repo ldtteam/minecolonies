@@ -130,6 +130,17 @@ public final class Utils
     }
 
     /**
+     * Check if a stack is an axe.
+     *
+     * @param stack the stack to check.
+     * @return true if an axe.
+     */
+    public static boolean isStackAxe(@Nullable final ItemStack stack)
+    {
+        return stack != null && stack.getItem().getToolClasses(stack).contains(AXE);
+    }
+
+    /**
      * Checks if an item serves as a weapon.
      *
      * @param stack the stack to analyze.

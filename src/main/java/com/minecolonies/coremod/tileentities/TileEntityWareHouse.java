@@ -279,6 +279,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     }
 
 
+
     /**
      * Finds the first @see ItemStack the type of {@code is}.
      * It will be taken from the chest and placed in the workers inventory.

@@ -7,7 +7,6 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.WalkToProxy;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
@@ -429,9 +428,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return true;
             }
 
-            for(BlockPos pos : building.getAdditionalCountainers())
+            for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                TileEntity entity = world.getTileEntity(pos);
+                final TileEntity entity = world.getTileEntity(pos);
                 if(entity instanceof TileEntityChest)
                 {
                     hasItem = isToolInTileEntity((TileEntityChest) entity, tool);
@@ -911,7 +910,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         //Items already kept in the inventory
         final Map<ItemStorage, Integer> alreadyKept = new HashMap<>();
-        final Map<ItemStorage, Integer> shouldKeep = getOwnBuilding().needXForWorker();
+        final Map<ItemStorage, Integer> shouldKeep = getOwnBuilding().getRequiredItemsAndAmount();
 
         @Nullable final AbstractBuildingWorker buildingWorker = getOwnBuilding();
 

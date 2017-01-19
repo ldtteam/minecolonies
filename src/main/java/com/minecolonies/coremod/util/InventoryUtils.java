@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;

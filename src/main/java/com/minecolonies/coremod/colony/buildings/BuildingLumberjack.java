@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.coremod.util.Utils;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -23,10 +24,6 @@ import java.util.Map;
  */
 public class BuildingLumberjack extends AbstractBuildingWorker
 {
-    /**
-     * Tool type the lumberjack needs.
-     */
-    private static final String TOOL_TYPE_AXE = "axe";
     /**
      * The maximum upgrade of the building.
      */
@@ -108,19 +105,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     @Override
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
-        return isStackAxe(stack);
-    }
-
-    /**
-     * Check if a stack is an axe.
-     * todo: use parent code
-     *
-     * @param stack the stack to check.
-     * @return true if an axe.
-     */
-    private static boolean isStackAxe(@Nullable final ItemStack stack)
-    {
-        return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
+        return Utils.isStackAxe(stack);
     }
 
     /**
@@ -131,7 +116,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      * @return a list of objects which should be kept.
      */
     @Override
-    public Map<ItemStorage, Integer> needXForWorker()
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
         final Map<ItemStorage, Integer> keepX = new HashMap<>();
         final ItemStack stack = new ItemStack(Blocks.SAPLING);

@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.client.gui.WindowHomeBuilding;
-import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -61,7 +59,7 @@ public class BuildingWareHouse extends AbstractBuilding
      * @param buildingWorker the building of the worker.
      * @return true if able to register or already registered
      */
-    public boolean registerWithWareHouse(AbstractBuildingWorker buildingWorker)
+    public boolean registerWithWareHouse(BuildingDeliveryman buildingWorker)
     {
         if(registeredDeliverymen.contains(buildingWorker.getID()))
         {
@@ -82,9 +80,9 @@ public class BuildingWareHouse extends AbstractBuilding
      * @param buildingWorker
      * @return
      */
-    public boolean canAccessWareHouse(AbstractBuildingWorker buildingWorker)
+    public boolean canAccessWareHouse(BuildingDeliveryman buildingWorker)
     {
-        if(registeredDeliverymen.contains(buildingWorker))
+        if(registeredDeliverymen.contains(buildingWorker.getID()))
         {
             return true;
         }
