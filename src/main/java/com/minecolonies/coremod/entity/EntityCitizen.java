@@ -123,7 +123,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Base movement speed of every citizen.
      */
-    private static final double BASE_MOVEMENT_SPEED = 0.3D;
+    public static final double BASE_MOVEMENT_SPEED = 0.3D;
 
     /**
      * Base pathfinding range of the citizen.

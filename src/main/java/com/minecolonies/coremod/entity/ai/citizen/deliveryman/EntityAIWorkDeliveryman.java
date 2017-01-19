@@ -35,6 +35,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     private static final int MIN_DISTANCE_TO_WAREHOUSE = 5;
 
     /**
+     * Walking speed double at this level.
+     */
+    private static final double WALKING_SPEED_MULTIPLIER  = 25;
+
+    /**
      * Warehouse the deliveryman is assigned to.
      */
     private BuildingWareHouse wareHouse = null;
@@ -227,6 +232,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         workerInventory.removeStackFromSlot(i);
                     }
                 }
+                worker.addExperience(1.0D);
                 buildingToDeliver.setOnGoingDelivery(false);
             }
         }
@@ -379,6 +385,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean checkIfExecute()
     {
+        worker.setAIMoveSpeed((float) (worker.BASE_MOVEMENT_SPEED + worker.BASE_MOVEMENT_SPEED * worker.getLevel()/WALKING_SPEED_MULTIPLIER));
+
         if(wareHouse != null && wareHouse.getTileEntity() != null)
         {
             return false;

@@ -101,7 +101,7 @@ public class BuildingWareHouse extends AbstractBuilding
     @Override
     public int getMaxBuildingLevel()
     {
-        return 5;
+        return 3;
     }
 
     @Override

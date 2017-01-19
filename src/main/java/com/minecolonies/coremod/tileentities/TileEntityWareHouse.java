@@ -373,7 +373,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         for(BlockPos pos : getBuilding().getAdditionalCountainers())
         {
             TileEntity entity = worldObj.getTileEntity(pos);
-            if(entity instanceof TileEntityChest && InventoryUtils.getOpenSlot(this) != -1)
+            if(entity instanceof TileEntityChest && InventoryUtils.getOpenSlot((IInventory) entity) != -1)
             {
                 int tempFreeSlots = ((TileEntityChest) entity).getSizeInventory() - InventoryUtils.getAmountOfStacks((IInventory) entity);
                 if(freeSlots < tempFreeSlots)
