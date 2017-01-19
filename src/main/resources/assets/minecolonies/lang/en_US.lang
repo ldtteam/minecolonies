@@ -52,7 +52,6 @@ achievement.size.city.desc=The Capital
 tile.minecolonies.blockHutBuilder.name=Builder's Hut
 com.minecolonies.coremod.gui.citizen.skills.dexterity=Dexterity: %d
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
-com.minecolonies.coremod.job.Deliveryman=Deliveryman
 com.minecolonies.coremod.job.Builder=Builder
 entity.builder.messageNeedMaterial=I need %s (Amount: %d)
 com.minecolonies.coremod.gui.citizen.skills.charisma=Charisma: %d
@@ -117,8 +116,6 @@ com.minecolonies.coremod.gui.citizen.skills=Skills
 com.minecolonies.coremod.gui.townHall.repair=Repair Town Hall
 achievement.upgrade.lumberjack.max.desc=Deforestation
 tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
-com.minecolonies.coremod.gui.workerHuts.wareHouse=Warehouse
-com.minecolonies.coremod.gui.workerHuts.deliveryman=Deliveryman
 
 entity.miner.messageRequiresBetterHut=Please upgrade my hut to dig deeper!
 com.minecolonies.coremod.gui.townHall.recall=Recall Citizens
@@ -133,7 +130,6 @@ com.minecolonies.coremod.gui.workerHuts.minerNodeList=Levels
 com.minecolonies.coremod.gui.workerHuts.resourceList=Required Resources
 com.minecolonies.coremod.job.Miner=Miner
 com.minecolonies.coremod.gui.warehouse.toBlacksmith=Deliver to Blacksmith:
-tile.minecolonies.blockHutWarehouse.name=Warehouse
 tile.minecolonies.blockHutFarmer.name=Farm
 tile.blockHutTownHall.messageTooFar=Too far away from your Colony
 com.minecolonies.coremod.gui.citizen.skills.strength=Strength: %d
@@ -251,5 +247,10 @@ entity.worker.pickaxeRequest=I need a pickaxe of at least %s grade and at maximu
 com.minecolonies.coremod.wareHouse.full=The Warehouse is full, please upgrade or make space.
 com.minecolonies.coremod.job.deliveryman.noWarehouse=Please upgrade or build a Warehouse for me to work at.
 
+tile.minecolonies.blockHutWareHouse.name=Warehouse
+com.minecolonies.coremod.gui.workerHuts.buildingWareHouse=Warehouse
+
+tile.minecolonies.blockHutDeliveryman.name=Deliveryman
+com.minecolonies.coremod.gui.workerHuts.Deliveryman=Deliveryman
 
 //todo tile wareHouse and deliveryman + coremod.gui for both.
