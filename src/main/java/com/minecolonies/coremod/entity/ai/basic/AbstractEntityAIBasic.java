@@ -238,15 +238,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @return IDLE if all ready, else stay in INIT
      */
-    @NotNull
+    @Nullable
     private AIState initSafetyChecks()
     {
-        //Something fatally wrong? Wait for re-init...
-        if (null == getOwnBuilding())
+        if(null == getOwnBuilding())
         {
-            return INIT;
+            if(getState() == INIT)
+            {
+                return INIT;
+            }
+
+            return IDLE;
         }
-        return IDLE;
+
+        if(getState() == INIT)
+        {
+            return IDLE;
+        }
+
+        return null;
     }
 
     /**
