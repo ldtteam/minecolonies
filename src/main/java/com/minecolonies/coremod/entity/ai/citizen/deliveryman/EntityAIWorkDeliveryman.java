@@ -144,6 +144,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 }
             }
 
+            if(building instanceof BuildingBuilder)
+            {
+                if(((BuildingBuilder) building).requiresResourceForBuilding(stack))
+                {
+                    needsItem = true;
+                }
+            }
+
             if(!needsItem)
             {
                 if(!worker.getInventoryCitizen().addItemStackToInventory(stack))

@@ -246,6 +246,16 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * Check if the builder requires a certain ItemStack for the current construction.
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    public boolean requiresResourceForBuilding(ItemStack stack)
+    {
+        return neededResources.containsKey(stack.getDisplayName());
+    }
+
+    /**
      * Provides a view of the builder building class.
      */
     public static class View extends AbstractBuildingWorker.View
