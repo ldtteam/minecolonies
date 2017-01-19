@@ -34,7 +34,7 @@ public class BuildingWareHouse extends AbstractBuilding
     private static final String TAG_DELIVERYMAN = "Deliveryman";
 
     /**
-     * The list of deliverymen registered to this building
+     * The list of deliverymen registered to this building.
      */
     private static final List<BlockPos> registeredDeliverymen = new ArrayList<>();
 
@@ -137,7 +137,7 @@ public class BuildingWareHouse extends AbstractBuilding
     @Override
     public TileEntityWareHouse getTileEntity()
     {
-        Colony colony = getColony();
+        final Colony colony = getColony();
         if ((tileEntity == null || tileEntity.isInvalid()) && colony != null && colony.getWorld().getBlockState(this.getLocation()).getBlock() != null)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(this.getLocation());

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.lib.Constants;
 import org.jetbrains.annotations.NotNull;

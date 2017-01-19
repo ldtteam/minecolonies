@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.blockout.views.Window;
-import com.minecolonies.coremod.client.gui.WindowHutDeliveryman;
 import com.minecolonies.coremod.client.gui.WindowHutWorkerPlaceholder;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;

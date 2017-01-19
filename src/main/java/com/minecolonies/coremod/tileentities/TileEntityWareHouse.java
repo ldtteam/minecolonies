@@ -409,7 +409,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
             if(entity instanceof TileEntityChest && InventoryUtils.getOpenSlot((IInventory) entity) != -1)
             {
-                int tempFreeSlots = ((TileEntityChest) entity).getSizeInventory() - InventoryUtils.getAmountOfStacks((IInventory) entity);
+                final int tempFreeSlots = ((TileEntityChest) entity).getSizeInventory() - InventoryUtils.getAmountOfStacks((IInventory) entity);
                 if(freeSlots < tempFreeSlots)
                 {
                     freeSlots = tempFreeSlots;
