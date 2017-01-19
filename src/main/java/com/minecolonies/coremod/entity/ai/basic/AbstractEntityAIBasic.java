@@ -349,9 +349,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private AIState lookForNeededItems()
     {
         /*
-        * This Function causes "itemsCurrentlyNeeded.isEmpty()" to be always true.
+        * "syncNeededItemsWithInventory()" causes "itemsCurrentlyNeeded.isEmpty()" to be always true.
         * as the result "if (itemsCurrentlyNeeded.isEmpty()) {return IDLE}" will ever match. 
         * therefore never checking his chest and requesting materials when in the block placement process
+        *
+        * DO NOT DELETE THIS FUNCTION
+        * or the builder will be unable to continue building since his inventory will not be updated
         */
         syncNeededItemsWithInventory();
         if (itemsCurrentlyNeeded.isEmpty())
