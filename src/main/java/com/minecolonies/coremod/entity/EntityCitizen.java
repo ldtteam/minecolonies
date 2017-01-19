@@ -1531,7 +1531,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         statusMessages.put(key + msg[0], ticksExisted);
 
-        TextComponentTranslation requiredItem = new TextComponentTranslation(key, msg);
+        TextComponentTranslation requiredItem = new TextComponentTranslation(key, (Object[])msg);
         TextComponentString citizenDescription = new TextComponentString(" ");
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
 
