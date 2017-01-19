@@ -255,7 +255,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                final TileEntity entity = worldObj.getTileEntity(pos);
+                @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
                 if(entity instanceof TileEntityChest)
                 {
                     if(tool.equals(Utils.PICKAXE))
