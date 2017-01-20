@@ -317,7 +317,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     /**
      * Dump the inventory of a citizen into the warehouse.
      * Go through all items and search the right chest to dump it in.
-     * @param inventoryCitizen
+     * @param inventoryCitizen the inventory of the citizen
      */
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {

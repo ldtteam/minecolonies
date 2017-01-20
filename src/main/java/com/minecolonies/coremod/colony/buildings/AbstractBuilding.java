@@ -948,7 +948,7 @@ public abstract class AbstractBuilding
 
     /**
      * Set if the worker needs a axe.
-     * @param needsShovel true or false.
+     * @param needsAxe true or false.
      */
     public void setNeedsAxe(final boolean needsAxe)
     {
@@ -957,7 +957,7 @@ public abstract class AbstractBuilding
 
     /**
      * Set if the worker needs a hoe.
-     * @param needsShovel true or false.
+     * @param needsHoe true or false.
      */
     public void setNeedsHoe(final boolean needsHoe)
     {
@@ -966,7 +966,7 @@ public abstract class AbstractBuilding
 
     /**
      * Set if the worker needs a pickaxe.
-     * @param needsShovel true or false.
+     * @param needsPickaxe true or false.
      */
     public void setNeedsPickaxe(final boolean needsPickaxe)
     {
@@ -975,7 +975,7 @@ public abstract class AbstractBuilding
 
     /**
      * Set if the worker needs a weapon.
-     * @param needsShovel true or false.
+     * @param needsWeapon true or false.
      */
     public void setNeedsWeapon(final boolean needsWeapon)
     {
@@ -1036,7 +1036,7 @@ public abstract class AbstractBuilding
 
     /**
      * Set the needed pickaxe level of the worker.
-     * @param needsShovel the mining level.
+     * @param needsPickaxeLevel the mining level.
      */
     public void setNeedsPickaxeLevel(final int needsPickaxeLevel)
     {

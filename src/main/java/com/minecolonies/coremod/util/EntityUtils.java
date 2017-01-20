@@ -4,7 +4,6 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.math.BlockPos;
@@ -110,7 +109,6 @@ public final class EntityUtils
      * Recalls the citizen, notifies player if not successful.
      * @param spawnPoint the spawnPoint.
      * @param citizen the citizen.
-     * @param player the player.
      * @return true if succesful.
      */
     public static boolean setSpawnPoint(@Nullable BlockPos spawnPoint, @NotNull EntityCitizen citizen)

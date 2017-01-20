@@ -77,8 +77,8 @@ public class BuildingWareHouse extends AbstractBuilding
 
     /**
      * Check if deliveryman is allowed to access warehouse.
-     * @param buildingWorker
-     * @return
+     * @param buildingWorker the building of the deliveryman.
+     * @return true if able to.
      */
     public boolean canAccessWareHouse(BuildingDeliveryman buildingWorker)
     {
