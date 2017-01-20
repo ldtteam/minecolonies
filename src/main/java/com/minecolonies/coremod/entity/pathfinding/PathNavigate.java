@@ -71,6 +71,15 @@ public class PathNavigate extends PathNavigateGround
         return this.entity.getPositionVector();
     }
 
+    /**
+     * Get the destination from the path.
+     * @return the destionation position.
+     */
+    public BlockPos getDestination()
+    {
+        return destination;
+    }
+
     @Nullable
     @Override
     public Path getPathToPos(final BlockPos pos)

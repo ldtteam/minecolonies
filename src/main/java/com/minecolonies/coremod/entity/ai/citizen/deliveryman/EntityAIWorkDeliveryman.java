@@ -42,7 +42,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     /**
      * Min distance to chest to take something out of it.
      */
-    private static final int MIN_DISTANCE_TO_CHEST       = 3;
+    private static final int MIN_DISTANCE_TO_CHEST = 2;
+
+    /**
+     * The base movement speed of the deliveryman.
+     */
+    private static final double BASE_MOVEMENT_SPEED = 0.2D;
+
+    /**
+     * Delay in ticks between every inventory operation.
+     */
+    private static final int DUMP_AND_GATHER_DELAY  = 10;
 
     /**
      * Warehouse the deliveryman is assigned to.
@@ -121,7 +131,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if(colony != null)
         {
             final AbstractBuilding building = colony.getBuilding(gatherTarget);
-            if(gatherFromBuilding(building))
+            if(building == null)
+            {
+                gatherTarget = null;
+                return GATHERING;
+            }
+            if(gatherFromBuilding(building) || cannotHoldMoreItems())
             {
                 this.alreadyKept = new ArrayList<>();
                 this.currentSlot = 0;
@@ -131,6 +146,22 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return GATHERING;
         }
         return START_WORKING;
+    }
+
+    /**
+     * Check if the worker can hold that much items.
+     * It depends on his building level.
+     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
+     * That's 2^buildingLevel-1.
+     * @return
+     */
+    private boolean cannotHoldMoreItems()
+    {
+        if(getOwnBuilding().getBuildingLevel() >= getOwnBuilding().getMaxBuildingLevel())
+        {
+            return false;
+        }
+        return InventoryUtils.getAmountOfStacks(worker.getInventoryCitizen()) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
     }
 
     /**
@@ -151,7 +182,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return false;
         }
 
-        building.getTileEntity().removeStackFromSlot(currentSlot);
+        worker.getInventoryCitizen().addItemStackToInventory(building.getTileEntity().removeStackFromSlot(currentSlot));
+        setDelay(DUMP_AND_GATHER_DELAY);
         return false;
     }
 
@@ -258,7 +290,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 final InventoryCitizen workerInventory  = worker.getInventoryCitizen();
                 for(int i = 0; i < workerInventory.getSizeInventory(); i++)
                 {
-                   final  ItemStack stack = workerInventory.getStackInSlot(i);
+                    final  ItemStack stack = workerInventory.getStackInSlot(i);
                     if(stack == null)
                     {
                         continue;
@@ -315,6 +347,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 }
 
                 gatherItems(buildingToDeliver);
+                setDelay(DUMP_AND_GATHER_DELAY);
                 return GATHER_IN_WAREHOUSE;
             }
         }
@@ -422,7 +455,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean checkIfExecute()
     {
-        worker.setAIMoveSpeed((float) (worker.BASE_MOVEMENT_SPEED + worker.BASE_MOVEMENT_SPEED * worker.getLevel()/WALKING_SPEED_MULTIPLIER));
+        worker.setAIMoveSpeed((float) (BASE_MOVEMENT_SPEED + BASE_MOVEMENT_SPEED * worker.getLevel()/WALKING_SPEED_MULTIPLIER));
 
         if(wareHouse != null && wareHouse.getTileEntity() != null)
         {

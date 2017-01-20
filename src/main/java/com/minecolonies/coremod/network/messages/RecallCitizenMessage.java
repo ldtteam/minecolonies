@@ -6,10 +6,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
-import com.minecolonies.coremod.util.Utils;
+import com.minecolonies.coremod.util.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -102,33 +99,13 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                         @Nullable final BlockPos spawnPoint =
                                 Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER);
 
-                        setSpawnPoint(spawnPoint, citizen, player);
+                        if(!EntityUtils.setSpawnPoint(spawnPoint, citizen))
+                        {
+                            LanguageHandler.sendPlayerMessage(player, LanguageHandler.format("com.minecolonies.coremod.workerHuts.recallFail"));
+                        }
                     }
                 }
             }
         }
-    }
-
-    /**
-     * Recalls the citizen, notifies player if not successful.
-     * @param spawnPoint the spawnPoint.
-     * @param citizen the citizen.
-     * @param player the player.
-     */
-    private static void setSpawnPoint(@Nullable BlockPos spawnPoint, @NotNull EntityCitizen citizen, @NotNull EntityPlayer player)
-    {
-        if(spawnPoint == null)
-        {
-            LanguageHandler.sendPlayerMessage(player, LanguageHandler.format("com.minecolonies.coremod.workerHuts.recallFail"));
-            return;
-        }
-
-        citizen.setLocationAndAngles(
-                spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
-                spawnPoint.getY(),
-                spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-                citizen.rotationYaw,
-                citizen.rotationPitch);
-        citizen.getNavigator().clearPathEntity();
     }
 }
