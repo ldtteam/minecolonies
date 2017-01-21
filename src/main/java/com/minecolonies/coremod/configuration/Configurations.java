@@ -14,7 +14,16 @@ public class Configurations
     public static boolean enableColonyProtection = true;
     public static boolean turnOffExplosionsInColonies = true;
 
-    public static boolean canPlayerUseCTPCommand = true;
+    /* Command configs */
+    public static boolean canPlayerUseCitizensInfoCommand = false;
+    public static boolean canPlayerUseCitizensCommand = false;
+    public static boolean canPlayerUseCTPCommand = false;
+    public static boolean canPlayerUseDeleteColonyCommand = false;
+    public static boolean canPlayerUseKillCitizensCommand = false;
+    public static boolean canPlayerUseListCitizensCommand = false;
+    public static boolean canPlayerRespawnCitizensCommand = false;
+    public static boolean canPlayerUseShowColonyInfoCommand = false;
+
 
     //TODO change to false when material handling is implemented
     public static boolean deliverymanInfiniteResources = true;
@@ -322,6 +331,7 @@ public class Configurations
                                            "Clark",
                                            "Fletcher",
                                            "Harris",
+                                           "Hurd",
                                            "Jackson",
                                            "Johnson",
                                            "Jones",
@@ -329,6 +339,7 @@ public class Configurations
                                            "Miller",
                                            "Robinson",
                                            "Smith",
+                                           "Stout",
                                            "Taylor",
                                            "Wallgreen",
                                            "White",

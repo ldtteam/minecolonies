@@ -3,20 +3,25 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
 
 /**
  * this command is made to TP a player to a safe random spot that is not to close to another colony
@@ -35,46 +40,51 @@ public class ColonyTPCommand extends AbstractSingleCommand
 
     private Random rnd = new Random();
 
-    ColonyTPCommand( @NotNull final String...parents)
-        {
-            super(parents);
-        }
 
-    private boolean canCommandSenderUseCommand(@NotNull final ICommandSender sender)
+    ColonyTPCommand( @NotNull final String...parents)
     {
-        if (!Configurations.canPlayerUseCTPCommand )
-        {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!"));
-            return false;
-        }
-        return true;
+        super(parents);
     }
 
     @NotNull
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
     {
-        return super.getCommandUsage(sender) + "ctp";
+        return super.getCommandUsage(sender) + "ctp" + "<playerName>";
     }
 
     @Override
-    public void execute(@NotNull MinecraftServer server,  @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
-    {
-        boolean chkPlayer = canCommandSenderUseCommand(sender);
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException {
 
+        boolean chkPlayer = canCommandSenderUseCommand(COLONYTP);
+
+        /* this checks config to see if player is allowed to use the command */
         if (!chkPlayer)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!"));
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;
         }
+        /* Check if this is an OP */
+        boolean chkPerms = isPlayerOpped(sender, "ctp");
+        /* If this is an OP we will let them TP a player */
+        if (args.length != 0 && !Configurations.canPlayerUseCTPCommand && chkPerms)
+        {
+            /* lets be sure the player wants a TP and that the OP is not just Trolling */
+
+            World world = Minecraft.getMinecraft().theWorld;
+            EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
+            sender = player;
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("TPin Player: "+sender));
+        }
+
         sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this aint no joy ride!!!"));
         /* This is where all the magic happens */
         /*we will try up to 4 times to locate a safe area. then we have the player try again*/
 
-        int b = 0;
-        while (b <= ATTEMPTS)
+        int attCounter = 0;
+        while (attCounter <= ATTEMPTS)
         {
-            b++;
+            attCounter++;
             int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
             int z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
             boolean areaSafe;
@@ -97,12 +107,12 @@ public class ColonyTPCommand extends AbstractSingleCommand
             if (!closetoCol)
             {
                 /* everything checks out good make the TP and jump out*/
-                        sender.getCommandSenderEntity().setPositionAndUpdate(blockPos.getX(), blockPos.getY() + SAFETY_DROP, blockPos.getZ());
+                sender.getCommandSenderEntity().setPositionAndUpdate(blockPos.getX(), blockPos.getY() + SAFETY_DROP, blockPos.getZ());
                 break;
             }
             else
             {
-                if (b > ATTEMPTS)
+                if (attCounter > ATTEMPTS)
                 {
                     sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
                 }

@@ -48,7 +48,16 @@ public final class ConfigurationHandler
             builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "builderInfiniteResources", builderInfiniteResources, "Does Builder have infinite resources?").getBoolean();
             enableColonyProtection = config.get(CATEGORY_GAMEPLAY, "enableColonyProtection", enableColonyProtection, "Enable the automatic colony protection?").getBoolean();
             turnOffExplosionsInColonies = config.get(CATEGORY_GAMEPLAY, "turnOffExplosionsInColonies", turnOffExplosionsInColonies, "Turn off explosions inside the colonies radius?").getBoolean();
+
+            /* Configs for commands */
+            canPlayerUseCitizensInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizensInfoCommand", canPlayerUseCitizensInfoCommand, "Players get CitizensInfoCommand").getBoolean();
+            canPlayerUseCitizensCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizensCommand", canPlayerUseCitizensCommand, "Players get CitizensCommand").getBoolean();
             canPlayerUseCTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCTPCommand", canPlayerUseCTPCommand, "Players can use the MC TP Command or not").getBoolean();
+            canPlayerUseDeleteColonyCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseDeleteColonyCommand", canPlayerUseDeleteColonyCommand, "Players get DeleteColonyCommand").getBoolean();
+            canPlayerUseKillCitizensCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseKillCitizensCommand", canPlayerUseKillCitizensCommand, "Players get KillCitizensCommand").getBoolean();
+            canPlayerUseListCitizensCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseListCitizensCommand", canPlayerUseListCitizensCommand, "Players get ListCitizensCommand").getBoolean();
+            canPlayerRespawnCitizensCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerRespawnCitizensCommand", canPlayerRespawnCitizensCommand, "Players get RespawnCitizensCommand").getBoolean();
+            canPlayerUseShowColonyInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseShowColonyInfoCommand", canPlayerUseShowColonyInfoCommand, "Players get ShowColonyInfoCommand").getBoolean();
 
             deliverymanInfiniteResources =
               config.get(CATEGORY_GAMEPLAY, "deliverymanInfiniteResources", deliverymanInfiniteResources, "Does Deliveryman have infinite resources?").getBoolean();

@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -10,7 +13,10 @@ public abstract class AbstractSingleCommand implements ISubCommand
 {
 
     private final String[] parents;
-
+    enum Commands
+    {
+        CITIZENSINFO, CITIZENS, COLONIES, COLONY, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, MINECOLONIES, RESPAWNCITIZENS, SHOWCOLONYINFO
+    }
     /**
      * Initialize this SubCommand with it's parents.
      *
@@ -56,5 +62,43 @@ public abstract class AbstractSingleCommand implements ISubCommand
             sb.append(parent).append(' ');
         }
         return sb.toString();
+    }
+
+    /**
+     * Will check the config file to see if players are allowed to use the command that is sent here
+     *
+     * @param theCommand which command to check if the player can use it
+     * @return boolean
+     */
+    @NotNull
+    public boolean canCommandSenderUseCommand(Commands theCommand)
+    {
+        switch (theCommand)
+        {
+            case CITIZENSINFO: return Configurations.canPlayerUseCitizensInfoCommand;
+            case CITIZENS: return Configurations.canPlayerUseCitizensCommand;
+            case COLONYTP: return Configurations.canPlayerUseCTPCommand;
+            case DELETECOLONY: return Configurations.canPlayerUseDeleteColonyCommand;
+            case KILLCITIZENS: return Configurations.canPlayerUseKillCitizensCommand;
+            case LISTCITIZENS: return Configurations.canPlayerUseListCitizensCommand;
+            case RESPAWNCITIZENS: return Configurations.canPlayerRespawnCitizensCommand;
+            case SHOWCOLONYINFO: return Configurations.canPlayerUseShowColonyInfoCommand;
+        }
+        return false;
+    }
+
+    /**
+     * Will check to see if play is Opped for the given command name
+     *
+     * @param sender to check the player using the command
+     * @param cmdName the name of the command to be checked
+     * @return boolean
+     */
+    @NotNull
+    public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
+    {
+        boolean checkedDone;
+        checkedDone= FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(3,cmdName);
+        return checkedDone;
     }
 }

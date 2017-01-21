@@ -56,6 +56,7 @@ public class CommandEntryPoint extends CommandBase
     }
 
     /**
+     * Removed so we can control this at the config
      * Only allow OP's execute the commands.
      *
      * @return the int permission level (3 for OP).
