@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

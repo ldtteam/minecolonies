@@ -299,9 +299,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         continue;
                     }
 
-                    if(InventoryUtils.addItemStackToInventory(buildingToDeliver.getTileEntity(), stack))
+                    if(buildingToDeliver.transferStack(stack, world))
                     {
                         workerInventory.removeStackFromSlot(i);
+                    }
+                    else
+                    {
+                        worker.sendLocalizedChat("com.minecolonies.coremod.job.deliveryman.workerChestFull");
                     }
                 }
                 worker.addExperience(1.0D);

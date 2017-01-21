@@ -11,10 +11,7 @@ import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
-import com.minecolonies.coremod.util.Utils;
+import com.minecolonies.coremod.util.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
@@ -24,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -1075,6 +1073,32 @@ public abstract class AbstractBuilding
         }
 
         return "";
+    }
+
+    /**
+     * Try to transfer a stack to one of the inventories of the building.
+     * @param stack the stack to transfer.
+     * @param world the world to do it in.
+     * @return true if was able to.
+     */
+    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    {
+        if(tileEntity == null || InventoryUtils.isInventoryFull(tileEntity))
+        {
+            for(final BlockPos pos: containerList)
+            {
+                final TileEntity tempTileEntity = world.getTileEntity(pos);
+                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                {
+                    return InventoryUtils.addItemStackToInventory((IInventory) tempTileEntity, stack);
+                }
+            }
+        }
+        else
+        {
+            return InventoryUtils.addItemStackToInventory(tileEntity, stack);
+        }
+        return false;
     }
 
     //------------------------- Ending Required Tools/Item handling -------------------------//
