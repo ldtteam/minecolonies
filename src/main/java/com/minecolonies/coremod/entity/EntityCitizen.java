@@ -169,7 +169,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private String lastJob                             = "";
     /**
-     * If the entitiy is stuck for 2 minutes do something
+     * If the entitiy is stuck for 2 minutes do something.
      */
     private static final int MAX_STUCK_TIME = 20*60*2;
     private static Field navigatorField;
@@ -1593,10 +1593,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         statusMessages.put(key + msg[0], ticksExisted);
 
-        TextComponentTranslation requiredItem = new TextComponentTranslation(key, msg);
-        TextComponentString citizenDescription = new TextComponentString(" ");
+        final TextComponentTranslation requiredItem = new TextComponentTranslation(key, msg);
+        final TextComponentString citizenDescription = new TextComponentString(" ");
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
-        TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
+        final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),  this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
     }

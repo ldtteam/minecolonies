@@ -33,6 +33,11 @@ public class WalkToProxy
     private static final int MIN_DISTANCE = 25;
 
     /**
+     * Lead the miner to the other side of the shaft.
+     */
+    private static final int OTHER_SIDE_OF_SHAFT = 6;
+
+    /**
      * The worker entity associated with the proxy.
      */
     private final EntityCitizen worker;
@@ -256,7 +261,11 @@ public class WalkToProxy
 
 
                 //Then add the ladder position as the latest node.
-                proxyList.add(new BlockPos(ladderPos.getX() + building.getVectorX() * 6, level.getDepth(), ladderPos.getZ() + building.getVectorZ() * 6));
+                proxyList.add(
+                        new BlockPos(
+                                ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT
+                                , level.getDepth()
+                                , ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
 
                 if(level.getRandomNode().getParent() != null)
                 {
