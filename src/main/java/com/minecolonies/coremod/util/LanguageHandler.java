@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
@@ -32,28 +34,55 @@ public final class LanguageHandler
      * @param key    unlocalized key.
      * @param args   Objects for String.format().
      */
-    public static void sendPlayerLocalizedMessage(@NotNull final EntityPlayer player, final String key, final Object... args)
+    public static void sendPlayerLocalizedMessage(@NotNull final EntityPlayer player, final String key, final String... args)
     {
-        sendPlayerMessage(player, format(key, args));
+        sendPlayerMessage(player, key, args);
     }
 
     /**
      * Send a message to the player.
      * @param player the player to send to.
+     * @param key the key of the message.
      * @param message the message to send.
      */
-    public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String... message)
+    public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String key, final Object... message)
     {
-        Log.getLogger().info("Send player message: " + message);
-        if(message.length > 0)
+        TextComponentTranslation translation = null;
+
+        if(message.length == 0)
         {
-            TextComponentTranslation translation = new TextComponentTranslation(message[0]);
-            for(int i = 1; i < message.length; i++)
-            {
-                translation.appendSibling(new TextComponentTranslation(message[i]));
-            }
-            player.sendMessage(translation);
         }
+
+        for(Object object: message)
+        {
+            if(translation == null)
+            {
+                if (object instanceof ITextComponent)
+                {
+                    translation = new TextComponentTranslation(key);
+                }
+                else
+                {
+                    translation = new TextComponentTranslation(key, object);
+                    continue;
+                }
+            }
+            if(object instanceof ITextComponent)
+            {
+                translation.appendSibling((ITextComponent) object);
+            }
+            else if(object instanceof String)
+            {
+                translation.appendText((String) object);
+            }
+        }
+
+        if(translation == null)
+        {
+            translation = new TextComponentTranslation(key);
+        }
+
+        player.sendMessage(translation);
     }
 
     /**
@@ -65,31 +94,8 @@ public final class LanguageHandler
      */
     public static String format(final String key, final Object... args)
     {
-        return String.format(getString(key), args);
-    }
-
-    /**
-     * Localize a non-formatted string.
-     *
-     * @param key unlocalized key.
-     * @return Localized string.
-     */
-    public static String getString(final String key)
-    {
-        return getString(key, key);
-    }
-
-    /**
-     * Localize a non-formatted string.
-     *
-     * @param key          unlocalized key.
-     * @param defaultValue the value to return if no key is found.
-     * @return Localized string.
-     */
-    public static String getString(final String key, final String defaultValue)
-    {
-        String result = new TextComponentTranslation(key).getFormattedText();
-        return result.isEmpty() ? defaultValue : result;
+        String result = new TextComponentTranslation(key, args).getFormattedText();
+        return result.isEmpty() ? key : result;
     }
 
     /**
@@ -99,18 +105,19 @@ public final class LanguageHandler
      * @param key     unlocalized key.
      * @param args    Objects for String.format().
      */
-    public static void sendPlayersLocalizedMessage(final List<EntityPlayer> players, final String key, final Object... args)
+    public static void sendPlayersLocalizedMessage(final List<EntityPlayer> players, final String key, final String... args)
     {
-        sendPlayersMessage(players, format(key, args));
+        sendPlayersMessage(players, key, args);
     }
 
     /**
      * Send message to a list of players.
      *
      * @param players the list of players.
+     * @param key key of the message.
      * @param message the message.
      */
-    public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String message)
+    public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String key, final Object... message)
     {
         if (players == null || players.isEmpty())
         {
@@ -118,7 +125,7 @@ public final class LanguageHandler
         }
         for (@NotNull final EntityPlayer player : players)
         {
-            sendPlayerMessage(player, message);
+            sendPlayerMessage(player, key, message);
         }
     }
 }

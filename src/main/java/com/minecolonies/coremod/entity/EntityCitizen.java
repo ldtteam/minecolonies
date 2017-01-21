@@ -40,6 +40,9 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -620,14 +623,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageGuardDead",
-                  citizenData.getName(), (int) posX, (int) posY, (int) posZ);
+                        citizenData.getName(), Integer.toString((int)posX), Integer.toString((int) posY), Integer.toString((int) posZ));
             }
             else
             {
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageColonistDead",
-                  citizenData.getName(), (int) posX, (int) posY, (int) posZ);
+                  citizenData.getName(), Integer.toString((int)posX), Integer.toString((int) posY), Integer.toString((int) posZ));
             }
             colony.removeCitizen(getCitizenData());
         }
@@ -1572,9 +1575,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param key  the key to retrieve the string.
      * @param args additional arguments.
      */
-    public void sendLocalizedChat(final String key, final Object... args)
+    public void sendLocalizedChat(final String key, final String... args)
     {
-        sendChat(LanguageHandler.format(key, args));
+        sendChat(key, args);
     }
 
     /**
@@ -1582,19 +1585,20 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param msg the message string.
      */
-    private void sendChat(@Nullable final String msg)
+    private void sendChat(final String key, @Nullable final String... msg)
     {
-        if (msg == null || msg.length() == 0 || statusMessages.containsKey(msg))
+        if (msg == null || msg.length == 0 || statusMessages.containsKey(key))
         {
             return;
         }
 
-        statusMessages.put(msg, ticksExisted);
+        statusMessages.put(key + msg[0], ticksExisted);
 
-        LanguageHandler.sendPlayersMessage(
-          colony.getMessageEntityPlayers(),
-          //TODO does this need to go through the LanguageHandler#format?
-          LanguageHandler.format(this.getColonyJob().getName()) + " " + this.getCustomNameTag() + ": " + msg);
+        TextComponentTranslation requiredItem = new TextComponentTranslation(key, msg);
+        TextComponentString citizenDescription = new TextComponentString(" ");
+        citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
+
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), this.getColonyJob().getName(), citizenDescription, requiredItem);
     }
 
     /**
