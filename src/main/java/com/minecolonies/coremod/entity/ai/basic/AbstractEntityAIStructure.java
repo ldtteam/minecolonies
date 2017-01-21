@@ -607,7 +607,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (stack != null)
                     {
-                        stack.setCount(1);
+                        stack.stackSize++;
                         request.add(stack);
                         request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
                     }
@@ -1145,7 +1145,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (stack != null)
                     {
-                        stack.setCount(1);
+                        stack.stackSize++;
                         request.add(stack);
                     }
                     request.add(new ItemStack(Items.ITEM_FRAME, 1));
@@ -1191,7 +1191,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                         entity.posZ,
                         entity.rotationYaw,
                         entity.rotationPitch);
-                if (!world.spawnEntity(entity))
+                if (!world.spawnEntityInWorld(entity))
                 {
                     Log.getLogger().info("Failed to spawn entity");
                 }

@@ -77,7 +77,7 @@ public final class LanguageHandler
             translation = new TextComponentTranslation(key);
         }
 
-        player.sendMessage(translation);
+        player.addChatComponentMessage(translation);
     }
 
     /**

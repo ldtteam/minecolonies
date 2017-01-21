@@ -342,7 +342,7 @@ public class InventoryField implements IInventory
     @Override
     public ITextComponent getDisplayName()
     {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
+        return new TextComponentTranslation(this.getName());
     }
 
     /**

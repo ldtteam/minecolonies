@@ -131,7 +131,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (int i = 0; i < neededResTagList.tagCount(); ++i)
         {
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
-            final ItemStack stack = new ItemStack(neededRes);
+            final ItemStack stack = ItemStack.loadItemStackFromNBT(neededRes);
             neededResources.put(stack.getUnlocalizedName(), stack);
         }
     }
@@ -166,7 +166,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getValue().getDisplayName());
-            buf.writeInt(entry.getValue().getCount());
+            buf.writeInt(entry.getValue().stackSize);
 
         }
     }
@@ -191,9 +191,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
         int preAmount = 0;
         if (this.neededResources.containsKey(res.getUnlocalizedName()))
         {
-            preAmount = this.neededResources.get(res.getUnlocalizedName()).getCount();
+            preAmount = this.neededResources.get(res.getUnlocalizedName()).stackSize;
         }
-        res.setCount(preAmount + amount);
+        res.stackSize = preAmount + amount;
         this.neededResources.put(res.getUnlocalizedName(), res);
         this.markDirty();
     }
@@ -222,7 +222,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         int preAmount = 0;
         if (this.neededResources.containsKey(res.getUnlocalizedName()))
         {
-            preAmount = this.neededResources.get(res.getUnlocalizedName()).getCount();
+            preAmount = this.neededResources.get(res.getUnlocalizedName()).stackSize;
         }
 
         if (preAmount - amount <= 0)
@@ -231,7 +231,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
         else
         {
-            this.neededResources.get(res.getUnlocalizedName()).setCount(preAmount - amount);
+            this.neededResources.get(res.getUnlocalizedName()).stackSize = preAmount - amount;
         }
         this.markDirty();
     }
