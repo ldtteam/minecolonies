@@ -167,9 +167,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private String lastJob                             = "";
     /**
-     * If the entitiy is stuck for 5 minutes do something
+     * If the entitiy is stuck for 2 minutes do something
      */
-    private static final int MAX_STUCK_TIME = 20*60*5;
+    private static final int MAX_STUCK_TIME = 20*60*2;
     private static Field navigatorField;
     private final InventoryCitizen inventory;
     @NotNull
