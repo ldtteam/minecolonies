@@ -72,7 +72,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                             && !list.contains(buildingEntry.getValue())
                             && ((AbstractBuildingWorker) buildingEntry.getValue()).needsAnything())
                     {
-                        checkInWareHouse((AbstractBuildingWorker) buildingEntry.getValue());
+                        checkInWareHouse((AbstractBuildingWorker) buildingEntry.getValue(), true);
                     }
                     this.index++;
                 }
@@ -98,9 +98,10 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     /**
      * Check if the required items by the building are in the wareHouse.
      * @param buildingEntry the building requesting.
+     * @param addToList if is in warehouse should add to the list?
      * @return true if has something in warehouse to deliver.
      */
-    public boolean checkInWareHouse(final AbstractBuilding buildingEntry)
+    public boolean checkInWareHouse(final AbstractBuilding buildingEntry, boolean addToList)
     {
         if(buildingEntry.areItemsNeeded())
         {
@@ -113,8 +114,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
                 if(isInHut(stack))
                 {
-                    buildingEntry.setOnGoingDelivery(true);
-                    list.add(buildingEntry);
+                    if(addToList)
+                    {
+                        buildingEntry.setOnGoingDelivery(true);
+                        list.add(buildingEntry);
+                    }
                     return true;
                 }
             }
@@ -123,8 +127,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         final String tool = buildingEntry.getRequiredTool();
         if(!tool.isEmpty() && isToolInHut(tool))
         {
-            buildingEntry.setOnGoingDelivery(true);
-            list.add(buildingEntry);
+            if(addToList)
+            {
+                buildingEntry.setOnGoingDelivery(true);
+                list.add(buildingEntry);
+            }
             return true;
         }
         buildingEntry.setOnGoingDelivery(false);
