@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Utility methods for the inventories.
  */
-public class InventoryUtils
+public final class InventoryUtils
 {
 
     public static final int FREE_TOOL_CHOICE_LEVEL   = 4;
@@ -571,7 +571,7 @@ public class InventoryUtils
             else
             {
                 ItemStack stack = inventory.getStackInSlot(slot);
-                if (stack == null || stack == ItemStack.EMPTY)
+                if (stack == null || stack == ItemStack.EMPTY || stack.getCount() == 0)
                 {
                     stack = new ItemStack(item, 0, itemStack.getItemDamage());
 

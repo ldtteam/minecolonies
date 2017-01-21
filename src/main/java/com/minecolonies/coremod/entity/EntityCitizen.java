@@ -1531,11 +1531,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         statusMessages.put(key + msg[0], ticksExisted);
 
-        TextComponentTranslation requiredItem = new TextComponentTranslation(key, (Object[])msg);
-        TextComponentString citizenDescription = new TextComponentString(" ");
+        final TextComponentTranslation requiredItem = new TextComponentTranslation(key, (Object[])msg);
+        final TextComponentString citizenDescription = new TextComponentString(" ");
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
+        final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), this.getColony().getName() + ":", this.getColonyJob().getName(), citizenDescription, requiredItem);
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
     }
 
     /**
