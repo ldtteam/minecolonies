@@ -2,9 +2,7 @@ package com.minecolonies.coremod.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,7 +46,7 @@ public final class LanguageHandler
     public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String key, final Object... message)
     {
         TextComponentTranslation translation = null;
-        for(Object object: message)
+        for(final Object object: message)
         {
             if(translation == null)
             {
@@ -89,7 +87,7 @@ public final class LanguageHandler
      */
     public static String format(final String key, final Object... args)
     {
-        String result = new TextComponentTranslation(key, args).getFormattedText();
+        final String result = new TextComponentTranslation(key, args).getFormattedText();
         return result.isEmpty() ? key : result;
     }
 
