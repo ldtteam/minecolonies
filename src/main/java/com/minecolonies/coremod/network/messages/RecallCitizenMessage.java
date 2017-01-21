@@ -24,7 +24,6 @@ import org.jetbrains.annotations.Nullable;
  */
 public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, IMessage>
 {
-    private static final double MIDDLE_BLOCK_OFFSET = 0.5D;
     private int      colonyId;
     private BlockPos buildingId;
 
