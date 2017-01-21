@@ -547,7 +547,8 @@ public final class InventoryUtils
             }
             else
             {
-                if (inventory.getStackInSlot(slot) == null && inventory.getStackInSlot(slot) != ItemStack.EMPTY)
+                final ItemStack stack = inventory.getStackInSlot(slot);
+                if (stack == null || stack == ItemStack.EMPTY || stack.getCount() == 0)
                 {
                     inventory.setInventorySlotContents(slot, itemStack.copy());
                 }
