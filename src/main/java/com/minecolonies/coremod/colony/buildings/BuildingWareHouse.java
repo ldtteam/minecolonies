@@ -117,13 +117,18 @@ public class BuildingWareHouse extends AbstractBuilding
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
         super.readFromNBT(compound);
+
+        registeredDeliverymen.clear();
         final NBTTagList deliverymanTagList = compound.getTagList(TAG_DELIVERYMAN, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < deliverymanTagList.tagCount(); i++)
         {
             final BlockPos pos = NBTUtil.getPosFromTag(deliverymanTagList.getCompoundTagAt(i));
             if(getColony() != null && getColony().getBuilding(pos) instanceof AbstractBuildingWorker)
             {
-                registeredDeliverymen.add(new Vec3d(pos));
+                if(!registeredDeliverymen.contains(new Vec3d(pos)))
+                {
+                    registeredDeliverymen.add(new Vec3d(pos));
+                }
             }
         }
     }
