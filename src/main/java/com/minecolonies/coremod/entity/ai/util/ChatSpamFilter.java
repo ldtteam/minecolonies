@@ -77,7 +77,7 @@ public class ChatSpamFilter
      * @param key  the translation key
      * @param chat the chat message
      */
-    public void talkWithoutSpam(final String key, final String... chat)
+    public void talkWithoutSpam(final String key, final Object... chat)
     {
         @NotNull final String curstring = key + Arrays.toString(chat);
         if (Objects.equals(speechDelayString, curstring))
@@ -99,7 +99,7 @@ public class ChatSpamFilter
             speechRepeat = 0;
         }
 
-        worker.sendLocalizedChat(key, (String[]) chat);
+        worker.sendLocalizedChat(key, chat);
         speechDelayString = key + Arrays.toString(chat);
 
         // (BASE_TIMEOUT << speechRepeat) is the same as BASE_TIMEOUT * pow(2, speachRepeat), but uses integers

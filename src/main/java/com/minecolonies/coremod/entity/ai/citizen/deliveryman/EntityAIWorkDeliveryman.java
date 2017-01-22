@@ -9,6 +9,7 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.coremod.util.ServerUtils;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -417,7 +418,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             if (itemsToDeliver.isEmpty())
             {
+
+                this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
+                this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
+                this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
+
                 isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool());
+
+                //this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 0);
+                //this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
+                //this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
             }
             else
             {

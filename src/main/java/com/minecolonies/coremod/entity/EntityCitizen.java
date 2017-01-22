@@ -622,14 +622,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageGuardDead",
-                        citizenData.getName(), Integer.toString((int)posX), Integer.toString((int) posY), Integer.toString((int) posZ));
+                        citizenData.getName(), (int)posX, (int) posY, (int) posZ);
             }
             else
             {
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageColonistDead",
-                  citizenData.getName(), Integer.toString((int)posX), Integer.toString((int) posY), Integer.toString((int) posZ));
+                  citizenData.getName(), (int) posX, (int) posY, (int) posZ);
             }
             colony.removeCitizen(getCitizenData());
         }
@@ -1580,7 +1580,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param key  the key to retrieve the string.
      * @param args additional arguments.
      */
-    public void sendLocalizedChat(final String key, final String... args)
+    public void sendLocalizedChat(final String key, final Object... args)
     {
         sendChat(key, args);
     }
@@ -1590,7 +1590,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param msg the message string.
      */
-    private void sendChat(final String key, @Nullable final String... msg)
+    private void sendChat(final String key, @Nullable final Object... msg)
     {
         if (msg == null || msg.length == 0 || statusMessages.containsKey(key))
         {

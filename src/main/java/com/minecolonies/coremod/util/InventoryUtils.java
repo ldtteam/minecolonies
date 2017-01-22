@@ -271,7 +271,7 @@ public class InventoryUtils
     {
         return InventoryFunctions.matchFirstInInventoryWithInventory(
                 entity,
-                stack -> Utils.checkIfPickaxeQualifies(
+                stack -> stack != null && Utils.checkIfPickaxeQualifies(
                         minlevel,
                         Utils.getMiningLevel(stack, Utils.PICKAXE)
                 ),

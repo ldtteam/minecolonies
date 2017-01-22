@@ -306,7 +306,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 {
                     if(tool.equals(Utils.PICKAXE))
                     {
-                        hasItem = InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), building.getNeededPickaxeLevel());
+                        hasItem = InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, building.getNeededPickaxeLevel());
                     }
                     else
                     {
