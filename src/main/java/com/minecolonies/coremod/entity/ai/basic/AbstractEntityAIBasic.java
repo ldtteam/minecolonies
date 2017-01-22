@@ -732,7 +732,12 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return true;
             }
-            chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.pickaxeRequest", InventoryUtils.swapToolGrade(minlevel), InventoryUtils.swapToolGrade(hutLevel)));
+            if (!getOwnBuilding().hasOnGoingDelivery())
+            {
+                chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.pickaxeRequest",
+                        InventoryUtils.swapToolGrade(minlevel),
+                        InventoryUtils.swapToolGrade(hutLevel)));
+            }
         }
 
         return getOwnBuilding().needsPickaxe();

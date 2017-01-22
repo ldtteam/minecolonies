@@ -122,19 +122,23 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                     return true;
                 }
             }
+            buildingEntry.setOnGoingDelivery(false);
         }
 
         final String tool = buildingEntry.getRequiredTool();
-        if(!tool.isEmpty() && isToolInHut(tool))
+        if(!tool.isEmpty())
         {
-            if(addToList)
+            if(isToolInHut(tool))
             {
-                buildingEntry.setOnGoingDelivery(true);
-                list.add(buildingEntry);
+                if (addToList)
+                {
+                    buildingEntry.setOnGoingDelivery(true);
+                    list.add(buildingEntry);
+                }
+                return true;
             }
-            return true;
+            buildingEntry.setOnGoingDelivery(false);
         }
-        buildingEntry.setOnGoingDelivery(false);
         return false;
     }
 
@@ -146,13 +150,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     public boolean isInHut(@Nullable final ItemStack is)
     {
         @Nullable final AbstractBuilding building = getBuilding();
-
-        boolean hasItem;
         if(building != null)
         {
-            hasItem = isInTileEntity(building.getTileEntity(), is);
-
-            if(hasItem)
+            if(isInTileEntity(building.getTileEntity(), is))
             {
                 return true;
             }
@@ -160,14 +160,9 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
                 @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
-                if(entity instanceof TileEntityChest)
+                if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, is))
                 {
-                    hasItem = isInTileEntity((TileEntityChest) entity, is);
-
-                    if(hasItem)
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }
