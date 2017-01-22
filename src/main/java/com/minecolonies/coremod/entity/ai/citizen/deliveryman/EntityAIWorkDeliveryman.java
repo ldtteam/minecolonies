@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.entity.ai.citizen.deliveryman;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.*;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
@@ -429,7 +428,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
-                setDelay(10);
+                setDelay(DUMP_AND_GATHER_DELAY);
                 return;
             }
             this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 0);
