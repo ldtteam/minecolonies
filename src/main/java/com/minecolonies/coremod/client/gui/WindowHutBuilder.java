@@ -2,6 +2,7 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Label;
+import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
@@ -23,7 +24,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final String PAGE_RESOURCES              = "resourceActions";
     private static final String VIEW_PAGES = "pages";
     private final BuildingBuilder.View builder;
-    private       Map<String, Integer> resources;
+    private       Map<String, BuildingBuilder.AmountPair> resources;
+    private static final int missingColor = Color.getByName("red",0);
 
     /**
      * Constructor for window builder hut.
@@ -44,7 +46,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     {
         if (builder.getColony().getBuilding(builder.getID()) != null)
         {
-            resources = builder.getNeededResources();
+            resources = builder.getAvailableNeededResources();
         }
     }
 
@@ -82,12 +84,20 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             {
                 final Object obj = entries[index];
 
-                if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof String && ((Map.Entry) obj).getValue() instanceof Integer)
+                if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof String && ((Map.Entry) obj).getValue() instanceof BuildingBuilder.AmountPair)
                 {
                     @NotNull final String key = (String) ((Map.Entry) obj).getKey();
-                    final int value = (Integer) ((Map.Entry) obj).getValue();
-                    rowPane.findPaneOfTypeByID("resource", Label.class).setLabelText(key);
-                    rowPane.findPaneOfTypeByID("amount", Label.class).setLabelText(Integer.toString(value));
+                    final BuildingBuilder.AmountPair amount = (BuildingBuilder.AmountPair) ((Map.Entry) obj).getValue();
+                    Label resourceLabel = rowPane.findPaneOfTypeByID("resource", Label.class);
+                    Label neededLabel = rowPane.findPaneOfTypeByID("amount", Label.class);
+                    if (amount.getAvailable() < amount.getNeeded())
+                    {
+                        resourceLabel.setColor(missingColor,missingColor);
+                        neededLabel.setColor(missingColor,missingColor);
+                    }
+
+                    resourceLabel.setLabelText(key);
+                    neededLabel.setLabelText(Integer.toString(amount.getAvailable()) + " / " + Integer.toString(amount.getNeeded()));
                 }
             }
         });

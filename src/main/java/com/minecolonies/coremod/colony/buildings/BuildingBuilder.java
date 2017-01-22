@@ -8,12 +8,16 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.util.InventoryUtils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +48,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * Contains all resources needed for a certain build.
      */
     private HashMap<String, ItemStack> neededResources = new HashMap<>();
+    /**
+     * Contains all resources available in the chest or builder inventory needed for a certain build.
+     */
+    private HashMap<String, Integer> resourcesAvailable = new HashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -151,6 +159,31 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * Hold the pair of number of avaliable and needed StackItem
+     */
+    public static class AmountPair
+    {
+        private int amountAvailable;
+        private int amountNeeded;
+
+        AmountPair(final int a, final int n)
+        {
+            amountAvailable = a;
+            amountNeeded = n;
+        }
+
+        public int getAvailable()
+        {
+            return amountAvailable;
+        }
+
+        public int getNeeded()
+        {
+            return amountNeeded;
+        }
+    }
+
+    /**
      * Method to serialize data to send it to the view.
      *
      * @param buf the used ByteBuffer.
@@ -160,14 +193,18 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         super.serializeToView(buf);
 
-        buf.writeInt(neededResources.size());
+        updateAvailableResources();
 
+        buf.writeInt(neededResources.size());
         for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getValue().getDisplayName());
+            buf.writeInt(resourcesAvailable.get(entry.getKey()));
             buf.writeInt(entry.getValue().getCount());
+            
 
         }
+
     }
 
     /**
@@ -232,11 +269,42 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * Update the available resources (from the chest or builder's inventory)
+     * which are needed for the build
+     */
+    private void updateAvailableResources()
+    {
+        final EntityCitizen tempCitizen = getWorkerEntity();
+        InventoryCitizen builderInventory = null;
+        if (tempCitizen!=null)
+        {
+            builderInventory = tempCitizen.getInventoryCitizen();
+        }
+        final IInventory chestInventory = this.getTileEntity();
+
+
+        for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
+        {
+            int amountAvailable=0;
+
+            if (builderInventory!=null)
+            {
+                amountAvailable += InventoryUtils.getItemCountInInventory(builderInventory, entry.getValue().getItem(), -1);
+            }
+            if (chestInventory!=null)
+            {
+                amountAvailable += InventoryUtils.getItemCountInInventory(chestInventory, entry.getValue().getItem(), -1);
+            }
+            resourcesAvailable.put(entry.getKey(), amountAvailable);
+        }
+    }
+
+    /**
      * Provides a view of the builder building class.
      */
     public static class View extends AbstractBuildingWorker.View
     {
-        private HashMap<String, Integer> neededResources;
+        private HashMap<String, BuildingBuilder.AmountPair> availableNeededResources;
 
         /**
          * Public constructor of the view, creates an instance of it.
@@ -267,13 +335,15 @@ public class BuildingBuilder extends AbstractBuildingWorker
             super.deserialize(buf);
 
             final int size = buf.readInt();
-            neededResources = new HashMap<>();
+            availableNeededResources = new HashMap<>();
 
             for (int i = 0; i < size; i++)
             {
                 final String block = ByteBufUtils.readUTF8String(buf);
-                final int amount = buf.readInt();
-                neededResources.put(block, amount);
+                final int amountAvailable = buf.readInt();
+                final int amountNeeded = buf.readInt();
+                final AmountPair amount = new AmountPair(amountAvailable,amountNeeded);
+                availableNeededResources.put(block, amount);
             }
         }
 
@@ -282,9 +352,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
          *
          * @return a copy of the HashMap(String, Object).
          */
-        public Map<String, Integer> getNeededResources()
+        public Map<String, BuildingBuilder.AmountPair> getAvailableNeededResources()
         {
-            return new HashMap<>(neededResources);
+            return new HashMap<>(availableNeededResources);
         }
 
         @NotNull
