@@ -7,6 +7,7 @@ import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
@@ -307,7 +308,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     }
                     else
                     {
-                        worker.sendLocalizedChat("com.minecolonies.coremod.job.deliveryman.workerChestFull");
+                        chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull", "");
                     }
                 }
                 worker.addExperience(1.0D);
@@ -513,7 +514,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-        worker.sendLocalizedChat("com.minecolonies.coremod.job.deliveryman.noWarehouse", "");
+        chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.noWarehouse", "");
         return true;
     }
 }
