@@ -7,7 +7,6 @@ import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
