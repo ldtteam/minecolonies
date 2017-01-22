@@ -414,7 +414,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final TileEntity tileEntity = world.getTileEntity(position);
         if(tileEntity instanceof TileEntityChest)
         {
-            if(((TileEntityChest) tileEntity).getChestType().)
+            //todo do open close event there if open then close if closed open and delay.
             this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
