@@ -1136,7 +1136,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 checkForPickaxe(required);
                 break;
             default:
-                Log.getLogger().error("Invalid tool " + tool + " at " + worker.getColony().getName() + " : " + worker.getName() +"not implemented as tool!");
+                Log.getLogger().error("Invalid tool " + tool + " at " + worker.getColony().getName() + " : " + worker.getName() +" not implemented as tool!");
         }
     }
 
