@@ -687,7 +687,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return true;
             }
-            chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.pickaxeRequest", InventoryUtils.swapToolGrade(minlevel), InventoryUtils.swapToolGrade(hutLevel)));
+            chatSpamFilter.talkWithoutSpam("entity.worker.pickaxeRequest", InventoryUtils.swapToolGrade(minlevel), InventoryUtils.swapToolGrade(hutLevel));
         }
 
         return needsPickaxe;
@@ -760,7 +760,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return true;
             }
-            requestWithoutSpam(LanguageHandler.format("com.minecolonies.coremod.job.guard.needWeapon"));
+            requestWithoutSpam("com.minecolonies.coremod.job.guard.needWeapon");
         }
         return needsWeapon;
     }
@@ -1136,7 +1136,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 checkForPickaxe(required);
                 break;
             default:
-                Log.getLogger().error("Invalid tool " + tool + " not implemented as tool!");
+                Log.getLogger().error("Invalid tool " + tool + " at " + worker.getColony().getName() + " : " + worker.getName() +"not implemented as tool!");
         }
     }
 
