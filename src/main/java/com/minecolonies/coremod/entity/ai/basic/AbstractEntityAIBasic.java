@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
@@ -169,9 +170,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private boolean inventoryNeedsDump()
     {
-        return worker.isInventoryFull()
+        return (worker.isInventoryFull()
                  || actionsDone >= getActionsDoneUntilDumping()
-                 || wantInventoryDumped();
+                 || wantInventoryDumped())
+                && !(job instanceof JobDeliveryman);
     }
 
     /**
