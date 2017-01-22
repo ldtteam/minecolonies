@@ -550,6 +550,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     public void takeItemStackFromChest(@NotNull final Tuple<Integer, IInventory> tuple)
     {
+        if(tuple.getSecond() instanceof TileEntityChest)
+        {
+            tuple.getSecond().openInventory(worker.getColony().getPermissions().getOwner());
+        }
         InventoryUtils.takeStackInSlot(tuple.getSecond(), worker.getInventoryCitizen(), tuple.getFirst());
     }
 
