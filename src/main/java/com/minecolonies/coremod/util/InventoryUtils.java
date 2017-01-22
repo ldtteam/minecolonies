@@ -288,7 +288,7 @@ public class InventoryUtils
      * @param maxLevel the tools max level.
      * @return true if a pickaxe was found
      */
-    public static boolean isPickaxeInTileEntity(TileEntityChest entity, final int minlevel, final int maxLevel)
+    public static boolean isPickaxeInTileEntity(IInventory entity, final int minlevel, final int maxLevel)
     {
         return InventoryFunctions.matchFirstInInventoryWithInventory(
                 entity,
