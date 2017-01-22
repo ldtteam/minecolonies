@@ -64,7 +64,7 @@ public class BuildingDeliveryman extends AbstractBuildingWorker
     @Override
     public int getMaxBuildingLevel()
     {
-        return 4;
+        return 5;
     }
 
     @NotNull

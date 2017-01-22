@@ -249,13 +249,14 @@ public class InventoryUtils
      * Checks if the inventory contains the following tool.
      * @param entity the tileEntity chest or building.
      * @param tool the tool.
+     * @param toolLevel to check.
      * @return true if found the tool.
      */
     public static boolean isToolInTileEntity(IInventory entity, final String tool, int toolLevel)
     {
         return InventoryFunctions.matchFirstInInventoryWithInventory(
                 entity,
-                stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(tool, entity, toolLevel),
+                stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(tool, stack, toolLevel),
                 InventoryFunctions::doNothing
         );
     }
@@ -727,6 +728,31 @@ public class InventoryUtils
                 return true;
             }
         }
+        return false;
+    }
+
+    /**
+     * Verifies if there is one tool with an acceptable level
+     * in a worker's inventory.
+     *
+     * @param tool      the type of tool needed
+     * @param stack     the stack to test.
+     * @param hutLevel  the worker's hut level
+     * @return true if tool is acceptable
+     */
+    public static boolean hasToolLevel(final String tool, final ItemStack stack, final int hutLevel)
+    {
+        if (stack == null)
+        {
+            return false;
+        }
+
+        final int level = Utils.getMiningLevel(stack, tool);
+        if (Utils.isTool(stack, tool) && verifyToolLevel(stack, level, hutLevel))
+        {
+            return true;
+        }
+
         return false;
     }
 
