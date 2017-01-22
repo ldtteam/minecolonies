@@ -8,10 +8,10 @@ public class Configurations
     public static       int     townHallPadding              = 20;
     public static       boolean supplyChests                 = true;
     public static       boolean allowInfiniteSupplyChests    = false;
-    public static       int     citizenRespawnInterval       = 30;
+    public static       int     citizenRespawnInterval       = 240;
     public static       boolean builderInfiniteResources     = false;
-    public static       int     builderBuildBlockDelay       = 0;
-    public static       int     blockMiningDelayModifier     = 1000;
+    public static       int     builderBuildBlockDelay       = 15;
+    public static       int     blockMiningDelayModifier     = 125;
 
     public static boolean enableColonyProtection = true;
     public static boolean turnOffExplosionsInColonies = true;
