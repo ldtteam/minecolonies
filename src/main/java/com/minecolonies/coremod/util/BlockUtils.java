@@ -354,7 +354,7 @@ public final class BlockUtils
      */
     private static int getDamageValue(final Block block, @NotNull final IBlockState blockState)
     {
-        if(block instanceof BlockFarmland)
+        if(block instanceof BlockFarmland || blockState.getBlock() instanceof BlockFarmland)
         {
             return 0;
         }
