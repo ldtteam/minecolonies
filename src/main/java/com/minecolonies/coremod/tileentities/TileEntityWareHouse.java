@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -165,12 +166,12 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         final AbstractBuilding wareHouse = getBuilding();
         if(wareHouse instanceof BuildingWareHouse)
         {
-            for(final BlockPos pos : ((BuildingWareHouse) wareHouse).getRegisteredDeliverymen())
+            for(final Vec3d pos : ((BuildingWareHouse) wareHouse).getRegisteredDeliverymen())
             {
                 final Colony colony = getColony();
                 if(colony != null)
                 {
-                    final AbstractBuilding building = colony.getBuilding(pos);
+                    final AbstractBuilding building = colony.getBuilding(new BlockPos(pos));
                     if(building instanceof BuildingDeliveryman)
                     {
                         return ((BuildingDeliveryman) building).getBuildingToDeliver() != null

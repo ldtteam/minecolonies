@@ -12,6 +12,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,7 +38,7 @@ public class BuildingWareHouse extends AbstractBuilding
     /**
      * The list of deliverymen registered to this building.
      */
-    private static final List<BlockPos> registeredDeliverymen = new ArrayList<>();
+    private static final List<Vec3d> registeredDeliverymen = new ArrayList<>();
 
     /**
      * The tileEntity of the building.
@@ -62,7 +63,7 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public boolean registerWithWareHouse(BuildingDeliveryman buildingWorker)
     {
-        if(registeredDeliverymen.contains(buildingWorker.getID()))
+        if(registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
         {
             return true;
         }
@@ -72,7 +73,7 @@ public class BuildingWareHouse extends AbstractBuilding
             return false;
         }
 
-        registeredDeliverymen.add(buildingWorker.getID());
+        registeredDeliverymen.add(new Vec3d(buildingWorker.getID()));
         return true;
     }
 
@@ -83,7 +84,7 @@ public class BuildingWareHouse extends AbstractBuilding
      */
     public boolean canAccessWareHouse(BuildingDeliveryman buildingWorker)
     {
-        if(registeredDeliverymen.contains(buildingWorker.getID()))
+        if(registeredDeliverymen.contains(new Vec3d(buildingWorker.getID())))
         {
             return true;
         }
@@ -94,7 +95,7 @@ public class BuildingWareHouse extends AbstractBuilding
      * Get the deliverymen connected with this building.
      * @return the unmodifiable List of positions of them.
      */
-    public List<BlockPos> getRegisteredDeliverymen()
+    public List<Vec3d> getRegisteredDeliverymen()
     {
         return Collections.unmodifiableList(registeredDeliverymen);
     }
@@ -122,7 +123,7 @@ public class BuildingWareHouse extends AbstractBuilding
             final BlockPos pos = NBTUtil.getPosFromTag(deliverymanTagList.getCompoundTagAt(i));
             if(getColony() != null && getColony().getBuilding(pos) instanceof AbstractBuildingWorker)
             {
-                registeredDeliverymen.add(pos);
+                registeredDeliverymen.add(new Vec3d(pos));
             }
         }
     }
@@ -132,9 +133,9 @@ public class BuildingWareHouse extends AbstractBuilding
     {
         super.writeToNBT(compound);
         @NotNull final NBTTagList levelTagList = new NBTTagList();
-        for (@NotNull final BlockPos deliverymanBuilding : registeredDeliverymen)
+        for (@NotNull final Vec3d deliverymanBuilding : registeredDeliverymen)
         {
-            levelTagList.appendTag(NBTUtil.createPosTag(deliverymanBuilding));
+            levelTagList.appendTag(NBTUtil.createPosTag(new BlockPos(deliverymanBuilding)));
         }
         compound.setTag(TAG_DELIVERYMAN, levelTagList);
     }
