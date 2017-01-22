@@ -388,7 +388,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (requiredTool.equals(Utils.PICKAXE))
         {
-            return InventoryUtils.isPickaxeInTileEntity(worker.getInventoryCitizen(), buildingToDeliver.getNeededPickaxeLevel());
+            return InventoryUtils.isPickaxeInTileEntity(worker.getInventoryCitizen(), buildingToDeliver.getNeededPickaxeLevel(), buildingToDeliver.getBuildingLevel());
         }
         return InventoryUtils.isToolInTileEntity(worker.getInventoryCitizen(), requiredTool, buildingToDeliver.getBuildingLevel());
     }
