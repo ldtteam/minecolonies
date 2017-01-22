@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -87,6 +88,15 @@ public class BuildingWareHouse extends AbstractBuilding
             return true;
         }
         return false;
+    }
+
+    /**
+     * Get the deliverymen connected with this building.
+     * @return the unmodifiable List of positions of them.
+     */
+    public List<BlockPos> getRegisteredDeliverymen()
+    {
+        return Collections.unmodifiableList(registeredDeliverymen);
     }
 
     @NotNull

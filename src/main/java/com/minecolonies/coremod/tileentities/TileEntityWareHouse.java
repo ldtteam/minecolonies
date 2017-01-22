@@ -1,7 +1,11 @@
 package com.minecolonies.coremod.tileentities;
 
+import com.minecolonies.blockout.Log;
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.colony.buildings.BuildingDeliveryman;
+import com.minecolonies.coremod.colony.buildings.BuildingWareHouse;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryFunctions;
 import com.minecolonies.coremod.util.InventoryUtils;
@@ -92,6 +96,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             return null;
         }
+        Log.getLogger().info("Get the task to fullfil it: " + list.get(0).getSchematicName());
         return list.remove(0);
     }
 
@@ -101,13 +106,13 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * @param addToList if is in warehouse should add to the list?
      * @return true if has something in warehouse to deliver.
      */
-    public boolean checkInWareHouse(final AbstractBuilding buildingEntry, boolean addToList)
+    public boolean checkInWareHouse(@NotNull final AbstractBuilding buildingEntry, boolean addToList)
     {
         if(buildingEntry.areItemsNeeded())
         {
             for(final ItemStack stack : buildingEntry.getNeededItems())
             {
-                if(stack == null)
+                if(stack == null || (deliveryManHasBuildingAsTask(buildingEntry) && addToList))
                 {
                     continue;
                 }
@@ -116,13 +121,19 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 {
                     if(addToList)
                     {
+                        Log.getLogger().info("Add " + buildingEntry.getSchematicName() + " to delivery list");
                         buildingEntry.setOnGoingDelivery(true);
                         list.add(buildingEntry);
                     }
                     return true;
                 }
             }
-            buildingEntry.setOnGoingDelivery(false);
+            if (list.contains(buildingEntry))
+            {
+                Log.getLogger().info("Remove " + buildingEntry.getSchematicName() + " to delivery list");
+                list.remove(buildingEntry);
+                buildingEntry.setOnGoingDelivery(false);
+            }
         }
 
         final String tool = buildingEntry.getRequiredTool();
@@ -132,12 +143,45 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 if (addToList)
                 {
+                    Log.getLogger().info("Add " + buildingEntry.getSchematicName() + " to delivery list");
                     buildingEntry.setOnGoingDelivery(true);
                     list.add(buildingEntry);
                 }
                 return true;
             }
-            buildingEntry.setOnGoingDelivery(false);
+            if (list.contains(buildingEntry))
+            {
+                Log.getLogger().info("Remove " + buildingEntry.getSchematicName() + " to delivery list");
+                list.remove(buildingEntry);
+                buildingEntry.setOnGoingDelivery(false);
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Check if a building is being delivery by on of the warehouses deliverymen.
+     * @param buildingEntry the building to check.
+     * @return true if so.
+     */
+    private boolean deliveryManHasBuildingAsTask(@NotNull final AbstractBuilding buildingEntry)
+    {
+        final AbstractBuilding wareHouse = getBuilding();
+        if(wareHouse instanceof BuildingWareHouse)
+        {
+            for(final BlockPos pos : ((BuildingWareHouse) wareHouse).getRegisteredDeliverymen())
+            {
+                final Colony colony = getColony();
+                if(colony != null)
+                {
+                    final AbstractBuilding building = colony.getBuilding(pos);
+                    if(building instanceof BuildingDeliveryman)
+                    {
+                        return ((BuildingDeliveryman) building).getBuildingToDeliver() != null
+                                && ((BuildingDeliveryman) building).getBuildingToDeliver().getLocation() == buildingEntry.getLocation();
+                    }
+                }
+            }
         }
         return false;
     }

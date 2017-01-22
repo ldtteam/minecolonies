@@ -310,6 +310,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 }
                 worker.addExperience(1.0D);
                 buildingToDeliver.setOnGoingDelivery(false);
+                ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
             }
         }
         return START_WORKING;
@@ -331,6 +332,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 final boolean ableToDeliver = wareHouse.getTileEntity().checkInWareHouse(buildingToDeliver, false);
                 if(!ableToDeliver)
                 {
+                    buildingToDeliver.setOnGoingDelivery(false);
                     return START_WORKING;
                 }
                 itemsToDeliver = new ArrayList<>(buildingToDeliver.getNeededItems());
@@ -440,15 +442,16 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return START_WORKING;
         }
 
-        @Nullable final AbstractBuilding buildingToDeliver = wareHouse.getTileEntity().getTask();
-        if(buildingToDeliver == null)
-        {
-            return GATHERING;
-        }
-
         final AbstractBuildingWorker ownBuilding = getOwnBuilding();
+
+        @Nullable final AbstractBuilding buildingToDeliver = wareHouse.getTileEntity().getTask();
         if(ownBuilding instanceof BuildingDeliveryman)
         {
+            if (buildingToDeliver == null)
+            {
+                ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
+                return GATHERING;
+            }
             ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(buildingToDeliver);
         }
 
