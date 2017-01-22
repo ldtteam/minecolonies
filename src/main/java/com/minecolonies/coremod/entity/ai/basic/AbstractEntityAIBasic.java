@@ -916,7 +916,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             final ItemStorage tempStorage = new ItemStorage(stack.getItem(), stack.getItemDamage(), stack.getCount(), false);
             final ItemStack tempStack = handleKeepX(alreadyKept, shouldKeep, tempStorage);
-            if (tempStack == null || tempStack.getCount() == 0)
+            if (tempStack == null || tempStack == ItemStack.EMPTY || tempStack.getCount() == 0)
             {
                 return false;
             }
