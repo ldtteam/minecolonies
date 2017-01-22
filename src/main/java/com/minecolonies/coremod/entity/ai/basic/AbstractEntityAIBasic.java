@@ -809,7 +809,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (isInventoryAndChestFull())
         {
-            chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
+            chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull", "");
         }
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);
