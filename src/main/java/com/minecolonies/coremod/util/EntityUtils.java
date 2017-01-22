@@ -81,7 +81,8 @@ public final class EntityUtils
                 Blocks.SNOW_LAYER,
                 Blocks.TALLGRASS,
                 Blocks.RED_FLOWER,
-                Blocks.YELLOW_FLOWER);
+                Blocks.YELLOW_FLOWER,
+                Blocks.CARPET);
 
             worker.setLocationAndAngles(
               spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,

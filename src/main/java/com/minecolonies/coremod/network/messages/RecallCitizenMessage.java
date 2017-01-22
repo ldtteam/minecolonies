@@ -95,7 +95,13 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                     if (citizen != null && world != null)
                     {
                         @Nullable final BlockPos spawnPoint =
-                                Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER);
+                                Utils.scanForBlockNearPoint(world, loc, 1, 0, 1, 2,
+                                        Blocks.AIR,
+                                        Blocks.SNOW_LAYER,
+                                        Blocks.TALLGRASS,
+                                        Blocks.RED_FLOWER,
+                                        Blocks.YELLOW_FLOWER,
+                                        Blocks.CARPET);
 
                         if(!EntityUtils.setSpawnPoint(spawnPoint, citizen))
                         {

@@ -852,7 +852,13 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
                 @Nullable final BlockPos spawnPoint =
                         Utils.scanForBlockNearPoint
-                                (worldObj, newNavigator.getDestination(), 1, 0, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER, Blocks.TALLGRASS, Blocks.RED_FLOWER, Blocks.YELLOW_FLOWER);
+                                (worldObj, newNavigator.getDestination(), 1, 0, 1, 2,
+                                        Blocks.AIR,
+                                        Blocks.SNOW_LAYER,
+                                        Blocks.TALLGRASS,
+                                        Blocks.RED_FLOWER,
+                                        Blocks.YELLOW_FLOWER,
+                                        Blocks.CARPET);
 
                 EntityUtils.setSpawnPoint(spawnPoint, this);
                 if (colony != null)
