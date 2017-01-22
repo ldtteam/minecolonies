@@ -285,6 +285,26 @@ public class InventoryUtils
      *
      * @param entity inventory to check in.
      * @param minlevel the needed pickaxe level
+     * @param maxLevel the tools max level.
+     * @return true if a pickaxe was found
+     */
+    public static boolean isPickaxeInTileEntity(TileEntityChest entity, final int minlevel, final int maxLevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> stack != null && Utils.checkIfPickaxeQualifies(
+                        minlevel,
+                        Utils.getMiningLevel(stack, Utils.PICKAXE)) && InventoryUtils.hasToolLevel(Utils.PICKAXE, stack, maxLevel
+                ),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     *
+     * @param entity inventory to check in.
+     * @param minlevel the needed pickaxe level
      * @return true if a pickaxe was found
      */
     public static boolean isPickaxeInTileEntity(InventoryCitizen entity, final int minlevel)

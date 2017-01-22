@@ -358,9 +358,15 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     return DELIVERY;
                 }
 
-                gatherItems(buildingToDeliver);
-                setDelay(DUMP_AND_GATHER_DELAY);
-                return GATHER_IN_WAREHOUSE;
+                if(gatherItems(buildingToDeliver))
+                {
+                    setDelay(DUMP_AND_GATHER_DELAY);
+                    return GATHER_IN_WAREHOUSE;
+                }
+
+                ((BuildingDeliveryman) ownBuilding).setBuildingToDeliver(null);
+                itemsToDeliver.clear();
+                return START_WORKING;
             }
         }
         return START_WORKING;
@@ -392,8 +398,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      * Gathers only one stack of the item.
      *
      * @param buildingToDeliver building to deliver to.
+     * @return true if continue, false if not succuesful
      */
-    private void gatherItems(@NotNull final AbstractBuilding buildingToDeliver)
+    private boolean gatherItems(@NotNull final AbstractBuilding buildingToDeliver)
     {
         BlockPos position;
         if (itemsToDeliver.isEmpty())
@@ -412,12 +419,12 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (position == null)
         {
-            return;
+            return false;
         }
 
         if (!worker.isWorkerAtSiteWithMove(position, MIN_DISTANCE_TO_CHEST))
         {
-            return;
+            return true;
         }
 
         final TileEntity tileEntity = world.getTileEntity(position);
@@ -429,26 +436,28 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
                 setDelay(DUMP_AND_GATHER_DELAY);
-                return;
+                return true;
             }
             this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 0);
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
             this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
 
-
-            if (itemsToDeliver.isEmpty())
+            if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(), buildingToDeliver.getBuildingLevel()))
             {
-                 isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(), buildingToDeliver.getBuildingLevel());
+                return false;
             }
-            else
+            else if(!itemsToDeliver.isEmpty())
             {
                 final ItemStack stack = itemsToDeliver.get(0);
                 if (isInTileEntity((TileEntityChest) tileEntity, stack))
                 {
                     itemsToDeliver.remove(0);
+                    return true;
                 }
+                return false;
             }
         }
+        return true;
     }
 
     /**
