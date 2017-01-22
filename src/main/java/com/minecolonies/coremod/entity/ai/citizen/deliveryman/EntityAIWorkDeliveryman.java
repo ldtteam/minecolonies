@@ -513,7 +513,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             }
         }
 
-        worker.sendLocalizedChat("com.minecolonies.coremod.job.deliveryman.noWarehouse");
+        worker.sendLocalizedChat("com.minecolonies.coremod.job.deliveryman.noWarehouse", "");
         return true;
     }
 }
