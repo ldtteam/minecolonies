@@ -9,7 +9,6 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.ServerUtils;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -247,8 +246,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final int random = worker.getRandom().nextInt(buildingArray.length);
         final AbstractBuilding building = (AbstractBuilding) buildingArray[random];
 
-        if (building instanceof BuildingWareHouse
-                || building instanceof BuildingDeliveryman || building instanceof BuildingTownHall)
+        if (building instanceof BuildingWareHouse || building instanceof BuildingTownHall)
         {
             return null;
         }
@@ -381,7 +379,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             return InventoryUtils.isPickaxeInTileEntity(worker.getInventoryCitizen(), buildingToDeliver.getNeededPickaxeLevel());
         }
-        return InventoryUtils.isToolInTileEntity(worker.getInventoryCitizen(), requiredTool);
+        return InventoryUtils.isToolInTileEntity(worker.getInventoryCitizen(), requiredTool, buildingToDeliver.getBuildingLevel());
     }
 
     /**
@@ -395,7 +393,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         if(itemsToDeliver.isEmpty())
         {
             final String tool = buildingToDeliver.getRequiredTool();
-            position = wareHouse.getTileEntity().getPositionOfChestWithTool(tool, Utils.PICKAXE.equals(tool) ? buildingToDeliver.getNeededPickaxeLevel() : -1);
+            position = wareHouse.getTileEntity().getPositionOfChestWithTool(tool, Utils.PICKAXE.equals(tool) ? buildingToDeliver.getNeededPickaxeLevel() : -1, buildingToDeliver);
         }
         else
         {
@@ -416,18 +414,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final TileEntity tileEntity = world.getTileEntity(position);
         if(tileEntity instanceof TileEntityChest)
         {
+            if(((TileEntityChest) tileEntity).getChestType().)
+            this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
+            this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
+            this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
+
             if (itemsToDeliver.isEmpty())
             {
-
-                this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
-                this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
-                this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
-
-                isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool());
-
-                //this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 0);
-                //this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
-                //this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
+                isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(), buildingToDeliver.getBuildingLevel());
             }
             else
             {

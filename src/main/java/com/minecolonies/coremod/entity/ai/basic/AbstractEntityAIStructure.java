@@ -934,7 +934,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 || block.equals(Blocks.LEAVES)
                 || block.equals(Blocks.LEAVES2)
                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
-                || block.equals(Blocks.GRASS);
+                || block.equals(Blocks.GRASS)
+                || block.equals(ModBlocks.blockSolidSubstitution);
     }
 
     private void placeBlockAt(@NotNull final Block block, @NotNull final IBlockState blockState, @NotNull final BlockPos coords)

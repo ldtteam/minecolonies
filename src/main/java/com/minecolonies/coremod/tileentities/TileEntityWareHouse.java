@@ -121,7 +121,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 {
                     if(addToList)
                     {
-                        Log.getLogger().info("Add " + buildingEntry.getSchematicName() + " to delivery list");
                         buildingEntry.setOnGoingDelivery(true);
                         list.add(buildingEntry);
                     }
@@ -130,7 +129,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
             if (list.contains(buildingEntry))
             {
-                Log.getLogger().info("Remove " + buildingEntry.getSchematicName() + " to delivery list");
                 list.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
@@ -139,11 +137,10 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         final String tool = buildingEntry.getRequiredTool();
         if(!tool.isEmpty())
         {
-            if(isToolInHut(tool))
+            if(isToolInHut(tool, buildingEntry))
             {
                 if (addToList)
                 {
-                    Log.getLogger().info("Add " + buildingEntry.getSchematicName() + " to delivery list");
                     buildingEntry.setOnGoingDelivery(true);
                     list.add(buildingEntry);
                 }
@@ -151,7 +148,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
             if (list.contains(buildingEntry))
             {
-                Log.getLogger().info("Remove " + buildingEntry.getSchematicName() + " to delivery list");
                 list.remove(buildingEntry);
                 buildingEntry.setOnGoingDelivery(false);
             }
@@ -247,15 +243,18 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      * Check for a certain item and return the position of the chest containing it.
      * @param tool the tool to search for.
      * @param minLevel the minLevel of the pickaxe
+     * @param requestingBuilding the building requesting it.
      * @return the position or null.
      */
-    public BlockPos getPositionOfChestWithTool(@NotNull final String tool,final int minLevel)
+    public BlockPos getPositionOfChestWithTool(@NotNull final String tool,final int minLevel, @NotNull final AbstractBuilding requestingBuilding)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
         if(building != null)
         {
-            if((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), minLevel)) || InventoryUtils.isToolInTileEntity(building.getTileEntity(), tool))
+            if((minLevel != -1
+                    && InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), minLevel))
+                    || InventoryUtils.isToolInTileEntity(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel()))
             {
                 return building.getLocation();
             }
@@ -264,7 +263,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 final TileEntity entity = worldObj.getTileEntity(pos);
                 if (entity instanceof TileEntityChest && ((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, minLevel))
-                        || InventoryUtils.isToolInTileEntity((TileEntityChest) entity, tool)))
+                        || InventoryUtils.isToolInTileEntity((TileEntityChest) entity, tool, requestingBuilding.getBuildingLevel())))
                 {
                     return pos;
                 }
@@ -276,9 +275,10 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     /**
      * Check all chests in the worker hut for a required tool.
      * @param tool the type of tool requested (amount is ignored)
+     * @param requestingBuilding the building requesting it.
      * @return true if a stack of that type was found
      */
-    public boolean isToolInHut(final String tool)
+    public boolean isToolInHut(final String tool, @NotNull final AbstractBuilding requestingBuilding)
     {
         @Nullable final AbstractBuilding building = getBuilding();
 
@@ -287,11 +287,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             if(tool.equals(Utils.PICKAXE))
             {
-                hasItem = InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), building.getNeededPickaxeLevel());
+                hasItem = InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), requestingBuilding.getNeededPickaxeLevel());
             }
             else
             {
-                hasItem = InventoryUtils.isToolInTileEntity(building.getTileEntity(), tool);
+                hasItem = InventoryUtils.isToolInTileEntity(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel());
             }
 
             if(hasItem)
@@ -306,11 +306,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 {
                     if(tool.equals(Utils.PICKAXE))
                     {
-                        hasItem = InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, building.getNeededPickaxeLevel());
+                        hasItem = InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, requestingBuilding.getNeededPickaxeLevel());
                     }
                     else
                     {
-                        hasItem = InventoryUtils.isToolInTileEntity((TileEntityChest) entity, tool);
+                        hasItem = InventoryUtils.isToolInTileEntity((TileEntityChest) entity, tool, requestingBuilding.getBuildingLevel());
                     }
 
                     if(hasItem)

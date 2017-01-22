@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
@@ -470,6 +471,25 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      * @param entity the tileEntity chest or building.
+     * @param tool the tool.
+     * @param toolLevel the min tool level.
+     * @return true if found the tool.
+     */
+    public boolean isToolInTileEntity(TileEntityChest entity, final String tool, int toolLevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(tool, entity, toolLevel),
+                this::takeItemStackFromChest
+        );
+    }
+
+    /**
+     * Finds the first @see ItemStack the type of {@code is}.
+     * It will be taken from the chest and placed in the workers inventory.
+     * Make sure that the worker stands next the chest to not break immersion.
+     * Also make sure to have inventory space for the stack.
+     * @param entity the tileEntity chest or building.
      * @param is the itemStack.
      * @return true if found the stack.
      */
@@ -734,9 +754,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             }
             if (!getOwnBuilding().hasOnGoingDelivery())
             {
-                chatSpamFilter.talkWithoutSpam(LanguageHandler.format("entity.worker.pickaxeRequest",
+                chatSpamFilter.talkWithoutSpam("entity.worker.pickaxeRequest",
                         InventoryUtils.swapToolGrade(minlevel),
-                        InventoryUtils.swapToolGrade(hutLevel)));
+                        InventoryUtils.swapToolGrade(hutLevel));
             }
         }
 
@@ -810,7 +830,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return true;
             }
-            requestWithoutSpam(LanguageHandler.format("com.minecolonies.coremod.job.guard.needWeapon"));
+            requestWithoutSpam("com.minecolonies.coremod.job.guard.needWeapon");
         }
         return getOwnBuilding().needsWeapon();
     }

@@ -251,11 +251,11 @@ public class InventoryUtils
      * @param tool the tool.
      * @return true if found the tool.
      */
-    public static boolean isToolInTileEntity(TileEntityChest entity, final String tool)
+    public static boolean isToolInTileEntity(IInventory entity, final String tool, int toolLevel)
     {
         return InventoryFunctions.matchFirstInInventoryWithInventory(
                 entity,
-                stack -> Utils.isTool(stack, tool),
+                stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(tool, entity, toolLevel),
                 InventoryFunctions::doNothing
         );
     }
@@ -715,7 +715,7 @@ public class InventoryUtils
      * @param hutLevel  the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(final String tool, @NotNull final InventoryCitizen inventory, final int hutLevel)
+    public static boolean hasToolLevel(final String tool, @NotNull final IInventory inventory, final int hutLevel)
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
