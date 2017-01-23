@@ -59,7 +59,10 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         super.update();
 
-        if(getColony() != null)
+        final AbstractBuilding wareHouseBuilding = getBuilding();
+        if(getColony() != null
+                && wareHouseBuilding instanceof BuildingWareHouse
+                && !((BuildingWareHouse) wareHouseBuilding).getRegisteredDeliverymen().isEmpty())
         {
             final Map<BlockPos, AbstractBuilding> buildingMap = getColony().getBuildings();
 
