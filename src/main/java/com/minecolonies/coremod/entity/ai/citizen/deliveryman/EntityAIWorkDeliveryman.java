@@ -122,7 +122,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
         if (gatherTarget == null)
         {
-            return GATHERING;
+            return START_WORKING;
         }
 
         if (!worker.isWorkerAtSiteWithMove(gatherTarget, MIN_DISTANCE_TO_WAREHOUSE))
@@ -137,7 +137,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             if (building == null)
             {
                 gatherTarget = null;
-                return GATHERING;
+                return START_WORKING;
             }
             if (gatherFromBuilding(building) || cannotHoldMoreItems())
             {
