@@ -2,7 +2,6 @@ package com.minecolonies.coremod.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,9 +46,34 @@ public final class LanguageHandler
     public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String key, final Object... message)
     {
         TextComponentTranslation translation = null;
-        for(Object object: message)
+
+        int onlyArgsUntil = 0;
+        for (Object object : message)
         {
-            if(translation == null)
+            if (object instanceof ITextComponent || object instanceof TextComponentTranslation)
+            {
+                if(onlyArgsUntil == 0)
+                {
+                    onlyArgsUntil = -1;
+                }
+                break;
+            }
+            onlyArgsUntil++;
+        }
+
+        if (onlyArgsUntil >= 0)
+        {
+            Object[] args = new Object[onlyArgsUntil];
+            for(int i = 0; i < onlyArgsUntil; i++)
+            {
+                args[i] = message[i];
+            }
+            translation = new TextComponentTranslation(key, args);
+        }
+
+        for (Object object : message)
+        {
+            if (translation == null)
             {
                 if (object instanceof ITextComponent)
                 {
@@ -61,17 +85,28 @@ public final class LanguageHandler
                     continue;
                 }
             }
-            if(object instanceof ITextComponent)
+            if (object instanceof ITextComponent)
             {
                 translation.appendSibling((ITextComponent) object);
             }
-            else if(object instanceof String)
+            else if (object instanceof String)
             {
-                translation.appendText((String) object);
+                boolean isInArgs = false;
+                for(Object obj: translation.getFormatArgs())
+                {
+                    if(obj.equals(object))
+                    {
+                        isInArgs = true;
+                    }
+                }
+                if(!isInArgs)
+                {
+                    translation.appendText((String) object);
+                }
             }
         }
 
-        if(translation == null)
+        if (translation == null)
         {
             translation = new TextComponentTranslation(key);
         }
@@ -99,9 +134,9 @@ public final class LanguageHandler
      * @param key     unlocalized key.
      * @param args    Objects for String.format().
      */
-    public static void sendPlayersLocalizedMessage(final List<EntityPlayer> players, final String key, final String... args)
+    public static void sendPlayersLocalizedMessage(final List<EntityPlayer> players, final String key, final Object... args)
     {
-        sendPlayersMessage(players, key, (Object[])args);
+        sendPlayersMessage(players, key, args);
     }
 
     /**

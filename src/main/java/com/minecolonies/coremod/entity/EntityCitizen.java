@@ -40,7 +40,6 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
@@ -617,14 +616,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageGuardDead",
-                        citizenData.getName(), Integer.toString((int)posX), Integer.toString((int) posY), Integer.toString((int) posZ));
+                        citizenData.getName(), (int)posX, (int) posY, (int) posZ);
             }
             else
             {
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageColonistDead",
-                  citizenData.getName(), Integer.toString((int)posX), Integer.toString((int) posY), Integer.toString((int) posZ));
+                  citizenData.getName(), (int) posX, (int) posY, (int) posZ);
             }
             colony.removeCitizen(getCitizenData());
         }
@@ -1540,11 +1539,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         statusMessages.put(key + msg[0], ticksExisted);
 
-        TextComponentTranslation requiredItem = new TextComponentTranslation(key, (Object[])msg);
-        TextComponentString citizenDescription = new TextComponentString(" ");
+        final TextComponentTranslation requiredItem = new TextComponentTranslation(key, (Object[])msg);
+        final TextComponentString citizenDescription = new TextComponentString(" ");
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
+        final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), this.getColonyJob().getName(), citizenDescription, requiredItem);
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
     }
 
     /**

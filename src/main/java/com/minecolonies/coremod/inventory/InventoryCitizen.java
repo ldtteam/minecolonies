@@ -24,10 +24,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * Basic inventory for the citizens.
@@ -875,7 +874,7 @@ public class InventoryCitizen implements IInventory
     @Override
     public int getSizeInventory()
     {
-        return this.mainInventory.size() + this.armorInventory.size() + this.offHandInventory.size();
+        return this.mainInventory.size();
     }
 
     /**
