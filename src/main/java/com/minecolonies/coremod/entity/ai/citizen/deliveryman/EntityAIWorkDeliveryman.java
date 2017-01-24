@@ -8,6 +8,7 @@ import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.item.ItemStack;
@@ -309,13 +310,13 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     else
                     {
                         @Nullable final ItemStack tempStack = buildingToDeliver.forceTransferStack(stack, world);
-                        if(tempStack != null)
+                        if(tempStack == null)
                         {
-                            workerInventory.addItemStackToInventory(tempStack);
+                            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull", "");
                         }
                         else
                         {
-                            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull", "");
+                            workerInventory.addItemStackToInventory(tempStack);
                         }
                     }
                 }
@@ -439,17 +440,20 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final TileEntity tileEntity = world.getTileEntity(position);
         if (tileEntity instanceof TileEntityChest)
         {
-            if(((TileEntityChest) tileEntity).numPlayersUsing == 0)
+            if(!(tileEntity instanceof TileEntityColonyBuilding))
             {
-                this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
+                if (((TileEntityChest) tileEntity).numPlayersUsing == 0)
+                {
+                    this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
+                    this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
+                    this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
+                    setDelay(DUMP_AND_GATHER_DELAY);
+                    return true;
+                }
+                this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 0);
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
                 this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
-                setDelay(DUMP_AND_GATHER_DELAY);
-                return true;
             }
-            this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 0);
-            this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
-            this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
 
             if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(), buildingToDeliver.getBuildingLevel()))
             {
