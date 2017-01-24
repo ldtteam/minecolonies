@@ -1102,7 +1102,7 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Try to transfer a stack to one of the inventories of the building and force the transfer
+     * Try to transfer a stack to one of the inventories of the building and force the transfer.
      * @param stack the stack to transfer.
      * @param world the world to do it in.
      * @return the itemStack which has been replaced
