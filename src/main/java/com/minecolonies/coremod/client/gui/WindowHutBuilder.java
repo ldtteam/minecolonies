@@ -2,14 +2,19 @@ package com.minecolonies.coremod.client.gui;
 
 import com.minecolonies.blockout.Pane;
 import com.minecolonies.blockout.controls.Label;
+import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Map;
+import com.minecolonies.coremod.util.Log;
+
+import java.util.*;
 
 /**
  * Window for the builder hut.
@@ -19,13 +24,29 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     /**
      * The builders gui file.
      */
-    private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
-    private static final String LIST_RESOURCES              = "resources";
-    private static final String PAGE_RESOURCES              = "resourceActions";
-    private static final String VIEW_PAGES = "pages";
-    private final BuildingBuilder.View builder;
-    private       Map<String, BuildingBuilder.AmountPair> resources;
+    private static final String HUT_BUILDER_RESOURCE_SUFFIX        = ":gui/windowhutbuilder.xml";
+    private static final String LIST_RESOURCES                     = "resources";
+    private static final String PAGE_RESOURCES                     = "resourceActions";
+    private static final String VIEW_PAGES                         = "pages";
+    private static final String RESOURCE_NAME                      = "resourceName";
+    private static final String RESOURCE_AVAILABLE_NEEDED          = "resourceAvailableNeeded";
+    private static final String RESOURCE_ADD                       = "resourceAdd";
+    private static final String RESOURCE_ID                        = "resourceId";
+    private static final int RESOURCE_ID_POSITION                  = 3;
+    private static final String RESOURCE_QUANTITY_MISSING          = "resourceQuantity";
+    private static final int RESOURCE_QUANTITY_MISSING_POSITION    = 4;
+
     private static final int missingColor = Color.getByName("red",0);
+
+    private final BuildingBuilder.View builder;
+
+    /**
+     * List of ressources needed.
+     */
+    @NotNull
+    private final List<BuildingBuilder.BuildingBuilderResource> resources = new ArrayList<>();
+
+
 
     /**
      * Constructor for window builder hut.
@@ -37,6 +58,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
         this.builder = building;
         pullResourcesFromHut();
+        registerButton(RESOURCE_ADD, this::transferItems);
     }
 
     /**
@@ -46,7 +68,22 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     {
         if (builder.getColony().getBuilding(builder.getID()) != null)
         {
-            resources = builder.getAvailableNeededResources();
+            Log.getLogger().info("Update gui ressources needed: resources.size() + "+resources.size());
+            resources.clear();
+            resources.addAll(builder.getResources().values());
+            for (int i =0; i<resources.size();i++)
+            {
+                BuildingBuilder.BuildingBuilderResource resource = resources.get(i);
+                Log.getLogger().info("onUpdate 5: "+resource.getName()+" => " + Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
+            }
+            Collections.sort(resources, new Comparator<BuildingBuilder.BuildingBuilderResource>() 
+                {
+                    @Override
+                    public int compare(BuildingBuilder.BuildingBuilderResource resource1, BuildingBuilder.BuildingBuilderResource resource2)
+                    {
+                        return (resource1.getAvailable()-resource1.getNeeded())-(resource2.getAvailable()-resource2.getNeeded());
+                    }
+                });
         }
     }
 
@@ -68,8 +105,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         super.onOpened();
         pullResourcesFromHut();
 
-        final Object[] entries = resources.entrySet().toArray();
-
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
         resourceList.setDataProvider(new ScrollingList.DataProvider()
         {
@@ -78,29 +113,40 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             {
                 return resources.size();
             }
-
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final Object obj = entries[index];
-
-                if (obj instanceof Map.Entry && ((Map.Entry) obj).getKey() instanceof String && ((Map.Entry) obj).getValue() instanceof BuildingBuilder.AmountPair)
-                {
-                    @NotNull final String key = (String) ((Map.Entry) obj).getKey();
-                    final BuildingBuilder.AmountPair amount = (BuildingBuilder.AmountPair) ((Map.Entry) obj).getValue();
-                    Label resourceLabel = rowPane.findPaneOfTypeByID("resource", Label.class);
-                    Label neededLabel = rowPane.findPaneOfTypeByID("amount", Label.class);
-                    if (amount.getAvailable() < amount.getNeeded())
+                    final BuildingBuilder.BuildingBuilderResource resource = resources.get(index);
+                    Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
+                    Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
+                    Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
+                    final int quantityMissing = resource.getNeeded() - resource.getAvailable();
+                    if (quantityMissing>0)
                     {
                         resourceLabel.setColor(missingColor,missingColor);
                         neededLabel.setColor(missingColor,missingColor);
+
+                    }
+                    else
+                    {
+                        addButton.disable();
                     }
 
-                    resourceLabel.setLabelText(key);
-                    neededLabel.setLabelText(Integer.toString(amount.getAvailable()) + " / " + Integer.toString(amount.getNeeded()));
-                }
+                    //position the addRessource Button to the right
+                    final int buttonX = rowPane.getWidth() - addButton.getWidth() - (rowPane.getHeight() - addButton.getHeight()) / 2;
+                    final int buttonY = (rowPane.getHeight() - addButton.getHeight())/2;
+                    addButton.setPosition(buttonX,buttonY);
+
+                    resourceLabel.setLabelText(resource.getName());
+                    Log.getLogger().info("onUpdate 3: "+resource.getName());
+                    neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
+                    Log.getLogger().info("onUpdate 3: "+Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
+                    rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(resource.getItemId()));
+                    rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(quantityMissing));
+
             }
         });
+    
     }
 
     @Override
@@ -113,4 +159,24 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             window.findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class).refreshElementPanes();
         }
     }
+
+    /**
+     * On Button click transfert Items.
+     *
+     * @param button the clicked button.
+     */
+    private void transferItems(@NotNull final Button button)
+    {
+
+        @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(RESOURCE_ID_POSITION);
+        final int resourceId = Integer.parseInt(idLabel.getLabelText());
+        @NotNull final Label quantityLabel = (Label) button.getParent().getChildren().get(RESOURCE_QUANTITY_MISSING_POSITION);
+        final int quantity = Integer.parseInt(quantityLabel.getLabelText());
+        final String buttonLabel = button.getID();
+
+        Log.getLogger().info("Send TransferItemsRequestMessage resourceId="+resourceId+", quantity="+quantity);
+        MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, resourceId, quantity));
+    }
+
+
 }
