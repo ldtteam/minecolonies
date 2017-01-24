@@ -11,6 +11,9 @@ import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
+import com.minecolonies.coremod.util.InventoryUtils;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -35,7 +38,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final String RESOURCE_QUANTITY_MISSING          = "resourceQuantity";
     private static final int RESOURCE_QUANTITY_MISSING_POSITION    = 4;
 
-    private static final int missingColor = Color.getByName("red",0);
+    private static final int red       = Color.getByName("red",0);
+    private static final int orange    = Color.getByName("orange",0);
+    private static final int darkgreen = Color.getByName("red",0);
 
     private final BuildingBuilder.View builder;
 
@@ -65,17 +70,21 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     private void pullResourcesFromHut()
     {
-        AbstractBuilding.View newView = builder.getColony().getBuilding(builder.getID());
+        final AbstractBuilding.View newView = builder.getColony().getBuilding(builder.getID());
         if (newView != null && newView instanceof BuildingBuilder.View)
         {
-            BuildingBuilder.View updatedBuilder = (BuildingBuilder.View)newView;
+            final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
 
+            final InventoryPlayer inventory = this.mc.player.inventory;
+ 
 
             resources.clear();
-            resources.addAll(updatedBuilder.getResources().values());
+            resources.addAll(updatedView.getResources().values());
             for (int i =0; i<resources.size();i++)
             {
-                BuildingBuilder.BuildingBuilderResource resource = resources.get(i);
+                final BuildingBuilder.BuildingBuilderResource resource = resources.get(i);
+                final Item item = Item.getItemById(resource.getItemId());
+                resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, item, -1));
             }
 
             Collections.sort(resources, new Comparator<BuildingBuilder.BuildingBuilderResource>() 
@@ -125,8 +134,22 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                     final int quantityMissing = resource.getNeeded() - resource.getAvailable();
                     if (quantityMissing>0)
                     {
-                        resourceLabel.setColor(missingColor,missingColor);
-                        neededLabel.setColor(missingColor,missingColor);
+                        if (resource.getPlayerAmount()>=quantityMissing)
+                        {
+                            resourceLabel.setColor(darkgreen);
+                            neededLabel.setColor(darkgreen);
+                        }
+                        else if (resource.getPlayerAmount() == 0)
+                        {
+                            resourceLabel.setColor(red,red);
+                            neededLabel.setColor(red,red);
+                        }
+                        else
+                        {
+                            resourceLabel.setColor(orange,orange);
+                            neededLabel.setColor(orange,orange);
+                        }
+
 
                     }
                     else

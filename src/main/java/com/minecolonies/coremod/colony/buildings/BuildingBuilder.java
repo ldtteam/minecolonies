@@ -168,6 +168,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         private int itemId;
         private int amountAvailable;
         private int amountNeeded;
+        private int amountPlayer;
 
         BuildingBuilderResource(final String name, final int itemId, final int amountAvailable, final int amountNeeded)
         {
@@ -175,6 +176,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             this.itemId = itemId;
             this.amountAvailable = amountAvailable;
             this.amountNeeded = amountNeeded;
+            this.amountPlayer = 0;
         }
 
         public String getName()
@@ -201,6 +203,16 @@ public class BuildingBuilder extends AbstractBuildingWorker
         public int getNeeded()
         {
             return amountNeeded;
+        }
+
+        public void setPlayerAmount(final int amount)
+        {
+            amountPlayer = amount;
+        }
+
+        public int getPlayerAmount()
+        {
+            return amountPlayer;
         }
     }
 
