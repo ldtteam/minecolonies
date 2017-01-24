@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.util;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
+import net.minecraft.util.text.TextComponentBase;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -64,9 +65,31 @@ public class ChatSpamFilter
      *
      * @param chat the Item Name
      */
-    public void requestWithoutSpam(@NotNull final String chat)
+    public void requestWithoutSpam(@NotNull final TextComponentBase chat)
     {
         talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
+    }
+
+    /**
+     * Get a describing string of an Object array.
+     * @param chat the object array.
+     * @return the describing string.
+     */
+    public String getStringOfChat(final Object[] chat)
+    {
+        StringBuilder tempString = new StringBuilder();
+        for(Object object: chat)
+        {
+            if(object instanceof TextComponentBase)
+            {
+                tempString.append(((TextComponentBase) object).getUnformattedText());
+            }
+            else
+            {
+                tempString.append(object);
+            }
+        }
+        return tempString.toString();
     }
 
     /**
@@ -79,7 +102,7 @@ public class ChatSpamFilter
      */
     public void talkWithoutSpam(final String key, final Object... chat)
     {
-        @NotNull final String curstring = key + Arrays.toString(chat);
+        @NotNull final String curstring = key + getStringOfChat(chat);
         if (Objects.equals(speechDelayString, curstring))
         {
             if (speechDelay > worker.getOffsetTicks())
@@ -100,7 +123,7 @@ public class ChatSpamFilter
         }
 
         worker.sendLocalizedChat(key, chat);
-        speechDelayString = key + Arrays.toString(chat);
+        speechDelayString = key + getStringOfChat(chat);
 
         // (BASE_TIMEOUT << speechRepeat) is the same as BASE_TIMEOUT * pow(2, speachRepeat), but uses integers
         speechDelay = Math.min(BASE_TIMEOUT << speechRepeat, MAX_TIMEOUT) + worker.getOffsetTicks();

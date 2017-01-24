@@ -16,6 +16,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -343,7 +346,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if(!getOwnBuilding().hasOnGoingDelivery())
             {
-                requestWithoutSpam(first.stackSize + " " + first.getDisplayName());
+                requestWithoutSpam(new TextComponentString(first.stackSize + " " + first.getDisplayName()));
             }
         }
         return NEEDS_ITEM;
@@ -510,7 +513,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      *
      * @param chat the Item Name
      */
-    private void requestWithoutSpam(@NotNull final String chat)
+    private void requestWithoutSpam(@NotNull final TextComponentBase chat)
     {
         chatSpamFilter.requestWithoutSpam(chat);
     }
@@ -831,7 +834,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return true;
             }
-            requestWithoutSpam("com.minecolonies.coremod.job.guard.needWeapon");
+            requestWithoutSpam(new TextComponentTranslation("com.minecolonies.coremod.job.guard.needWeapon"));
         }
         return getOwnBuilding().needsWeapon();
     }

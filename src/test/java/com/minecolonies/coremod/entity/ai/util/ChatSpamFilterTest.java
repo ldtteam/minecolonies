@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.util;
 
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.test.AbstractTest;
+import net.minecraft.util.text.TextComponentString;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -29,42 +30,42 @@ public class ChatSpamFilterTest extends AbstractTest
     @Test
     public void testFilterFirst()
     {
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         verify(citizen).sendLocalizedChat(any(), any());
     }
 
     @Test
     public void testFilterFiltering()
     {
-        filter.requestWithoutSpam(MESSAGE_1);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         verify(citizen).sendLocalizedChat(any(), any());
     }
 
     @Test
     public void testFilterRelease()
     {
-        filter.requestWithoutSpam(MESSAGE_1);
-        filter.requestWithoutSpam(MESSAGE_2);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_2));
         verify(citizen, times(2)).sendLocalizedChat(any(), any());
     }
 
     @Test
     public void testFilterReleaseAndFilter()
     {
-        filter.requestWithoutSpam(MESSAGE_1);
-        filter.requestWithoutSpam(MESSAGE_2);
-        filter.requestWithoutSpam(MESSAGE_2);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_2));
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_2));
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         verify(citizen, times(3)).sendLocalizedChat(any(), any());
     }
 
     @Test
     public void testFilterTimeout()
     {
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
 
         verify(citizen, times(2)).sendLocalizedChat(any(), any());
     }
@@ -72,13 +73,13 @@ public class ChatSpamFilterTest extends AbstractTest
     @Test
     public void testFilterTimeoutLonger()
     {
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 3);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 7);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
 
         verify(citizen, times(4)).sendLocalizedChat(any(), any());
     }
@@ -86,22 +87,22 @@ public class ChatSpamFilterTest extends AbstractTest
     @Test
     public void testFilterTimeoutMax()
     {
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 3);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 7);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 15);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
 
         verify(citizen, times(5)).sendLocalizedChat(any(), any());
 
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 15 + MAX_TIMEOUT);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
         when(citizen.getOffsetTicks()).thenReturn(BASE_TIMEOUT * 15 + MAX_TIMEOUT * 2);
-        filter.requestWithoutSpam(MESSAGE_1);
+        filter.requestWithoutSpam(new TextComponentString(MESSAGE_1));
 
         verify(citizen, times(7)).sendLocalizedChat(any(), any());
     }
