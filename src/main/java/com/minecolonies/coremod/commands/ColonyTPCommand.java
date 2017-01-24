@@ -30,10 +30,13 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
  */
 public class ColonyTPCommand extends AbstractSingleCommand
 {
+
+    int getBounds = Configurations.maxDistanceFromWorldSpawn;
+
     public static final  String DESC = "ctp";
     private static final int ATTEMPTS = 4;
-    private static final int UPPER_BOUNDS = 100_000;
-    private static final int LOWER_BOUNDS = 50_000;
+    private static final int UPPER_BOUNDS = Configurations.maxDistanceFromWorldSpawn * 2;
+    private static final int LOWER_BOUNDS = Configurations.maxDistanceFromWorldSpawn;
     private static final int STARTING_Y = 250;
     private static final double ADDS_TWENTY_PERCENT = 1.20;
     private static final double SAFETY_DROP = 4;

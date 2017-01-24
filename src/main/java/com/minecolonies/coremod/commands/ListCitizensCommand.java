@@ -4,8 +4,12 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.util.ServerUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -13,12 +17,17 @@ import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.LISTCITIZENS;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CITIZENSINFO;
 
 /**
  * List all colonies.
@@ -61,6 +70,21 @@ public class ListCitizensCommand extends AbstractSingleCommand
     {
         final int colonyId = getIthArgument(args, 0, getColonyId(sender));
         final Colony colony = ColonyManager.getColony(colonyId);
+
+            /* check if sender is permitted to do this :: OFFICER or MAYOR */
+        boolean chkPlayer = canCommandSenderUseCommand(LISTCITIZENS);
+
+        World world = Minecraft.getMinecraft().theWorld;
+        EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
+            /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
+        if (!chkPlayer)
+        {
+                /* here we see if they have colony rank to do this command */
+            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) && !colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER)) {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                return;
+            }
+        }
 
         if (colony == null)
         {

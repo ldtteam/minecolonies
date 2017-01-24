@@ -2,7 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.text.TextComponentString;
+
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     private final String[] parents;
     enum Commands
     {
-        CITIZENSINFO, CITIZENS, COLONIES, COLONY, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, MINECOLONIES, RESPAWNCITIZENS, SHOWCOLONYINFO
+        CITIZENSINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER
     }
     /**
      * Initialize this SubCommand with it's parents.
@@ -76,13 +76,13 @@ public abstract class AbstractSingleCommand implements ISubCommand
         switch (theCommand)
         {
             case CITIZENSINFO: return Configurations.canPlayerUseCitizensInfoCommand;
-            case CITIZENS: return Configurations.canPlayerUseCitizensCommand;
             case COLONYTP: return Configurations.canPlayerUseCTPCommand;
-            case DELETECOLONY: return Configurations.canPlayerUseDeleteColonyCommand;
             case KILLCITIZENS: return Configurations.canPlayerUseKillCitizensCommand;
             case LISTCITIZENS: return Configurations.canPlayerUseListCitizensCommand;
             case RESPAWNCITIZENS: return Configurations.canPlayerRespawnCitizensCommand;
             case SHOWCOLONYINFO: return Configurations.canPlayerUseShowColonyInfoCommand;
+            case ADDOFFICER: return Configurations.canPlayerUseAddOfficerCommand;
+            case DELETECOLONY: return Configurations.canPlayerUseDeleteColonyCommand;
         }
         return false;
     }
