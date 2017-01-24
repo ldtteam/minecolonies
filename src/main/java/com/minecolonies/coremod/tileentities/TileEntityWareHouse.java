@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.tileentities;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -100,7 +99,6 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             return null;
         }
-        Log.getLogger().info("Get the task to fullfil it: " + list.get(0).getSchematicName());
         return list.remove(0);
     }
 
