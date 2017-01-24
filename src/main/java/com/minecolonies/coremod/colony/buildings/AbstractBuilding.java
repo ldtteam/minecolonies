@@ -828,7 +828,7 @@ public abstract class AbstractBuilding
      */
     public List<BlockPos> getAdditionalCountainers()
     {
-        return Collections.unmodifiableList(containerList);
+        return new ArrayList<>(containerList);
     }
 
     //------------------------- Starting Required Tools/Item handling -------------------------//

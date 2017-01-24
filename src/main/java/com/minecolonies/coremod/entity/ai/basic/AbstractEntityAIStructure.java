@@ -516,6 +516,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             super.resetTask();
             workFrom = null;
             ((JobBuilder) job).setStructure(null);
+            ((JobBuilder) job).setWorkOrder(null);
+            currentStructure = null;
             return true;
         }
         return false;
