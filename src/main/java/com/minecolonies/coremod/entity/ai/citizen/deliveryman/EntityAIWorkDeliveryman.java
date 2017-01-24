@@ -313,6 +313,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         {
                             workerInventory.addItemStackToInventory(tempStack);
                         }
+                        else
+                        {
+                            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull", "");
+                        }
                     }
                 }
                 worker.addExperience(1.0D);
