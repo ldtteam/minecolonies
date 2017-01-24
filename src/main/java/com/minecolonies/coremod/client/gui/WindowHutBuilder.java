@@ -6,13 +6,12 @@ import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import org.jetbrains.annotations.NotNull;
-
-import com.minecolonies.coremod.util.Log;
 
 import java.util.*;
 
@@ -66,16 +65,19 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     private void pullResourcesFromHut()
     {
-        if (builder.getColony().getBuilding(builder.getID()) != null)
+        AbstractBuilding.View newView = builder.getColony().getBuilding(builder.getID());
+        if (newView != null && newView instanceof BuildingBuilder.View)
         {
-            Log.getLogger().info("Update gui ressources needed: resources.size() + "+resources.size());
+            BuildingBuilder.View updatedBuilder = (BuildingBuilder.View)newView;
+
+
             resources.clear();
-            resources.addAll(builder.getResources().values());
+            resources.addAll(updatedBuilder.getResources().values());
             for (int i =0; i<resources.size();i++)
             {
                 BuildingBuilder.BuildingBuilderResource resource = resources.get(i);
-                Log.getLogger().info("onUpdate 5: "+resource.getName()+" => " + Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
             }
+
             Collections.sort(resources, new Comparator<BuildingBuilder.BuildingBuilderResource>() 
                 {
                     @Override
@@ -138,9 +140,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                     addButton.setPosition(buttonX,buttonY);
 
                     resourceLabel.setLabelText(resource.getName());
-                    Log.getLogger().info("onUpdate 3: "+resource.getName());
                     neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
-                    Log.getLogger().info("onUpdate 3: "+Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
                     rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(resource.getItemId()));
                     rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(quantityMissing));
 
@@ -174,7 +174,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         final int quantity = Integer.parseInt(quantityLabel.getLabelText());
         final String buttonLabel = button.getID();
 
-        Log.getLogger().info("Send TransferItemsRequestMessage resourceId="+resourceId+", quantity="+quantity);
         MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, resourceId, quantity));
     }
 

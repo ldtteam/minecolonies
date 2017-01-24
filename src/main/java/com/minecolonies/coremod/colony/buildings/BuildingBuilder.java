@@ -23,8 +23,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.minecolonies.coremod.util.Log;
-
 import java.util.ArrayList;
 import java.util.*;
 
@@ -216,8 +214,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         super.serializeToView(buf);
 
-        Log.getLogger().info("BuildingBuilder.serializeToView");
-
         updateAvailableResources();
 
         buf.writeInt(neededResources.size());
@@ -369,9 +365,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             super.deserialize(buf);
 
             final int size = buf.readInt();
-            Log.getLogger().info("Deserialization: resources.size()=>"+resources.size());
             resources.clear();
-            Log.getLogger().info("Deserialization: resources.size()=>"+resources.size());
 
             for (int i = 0; i < size; i++)
             {
@@ -381,8 +375,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
                 final int amountNeeded = buf.readInt();
                 final BuildingBuilderResource resource = new BuildingBuilderResource(block, itemId, amountAvailable,amountNeeded);
                 resources.put(block, resource);
-                Log.getLogger().info("Deserialization: i="+i+" block="+block+" itemId="+itemId+" available="+amountAvailable+" needed="+amountNeeded);
-                Log.getLogger().info("resources.size()=>"+resources.size());
             }
         }
 

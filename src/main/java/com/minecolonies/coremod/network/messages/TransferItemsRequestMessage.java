@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -15,10 +16,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
-import com.minecolonies.coremod.util.Log;
-
 /**
- * Transfert items from the player inventory to the Builder's chest
+ * Transfer some items from the player inventory to the Builder's chest
  * Created: January 20, 2017
  *
  * @author xavierh
@@ -120,8 +119,6 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         {
             building.getTileEntity().markDirty();
         }
-
-        Log.getLogger().info("TransferItemsRequestMessage Transfert "+amountToTake+" items of "+ itemStack.getDisplayName() );
 
         int amountToRemoveFromPlayer = amountToTake - remainingItemStack.getCount();
 
