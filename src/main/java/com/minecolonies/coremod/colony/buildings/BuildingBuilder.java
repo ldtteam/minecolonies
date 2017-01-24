@@ -252,7 +252,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public boolean requiresResourceForBuilding(ItemStack stack)
     {
-        return neededResources.containsKey(stack.getDisplayName());
+        return neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     /**

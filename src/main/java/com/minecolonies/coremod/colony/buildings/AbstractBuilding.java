@@ -1101,6 +1101,33 @@ public abstract class AbstractBuilding
         return false;
     }
 
+    /**
+     * Try to transfer a stack to one of the inventories of the building and force the transfer
+     * @param stack the stack to transfer.
+     * @param world the world to do it in.
+     * @return the itemStack which has been replaced
+     */
+    @Nullable
+    public ItemStack forceTransferStack(final ItemStack stack, final World world)
+    {
+        if(tileEntity == null)
+        {
+            for(final BlockPos pos: containerList)
+            {
+                final TileEntity tempTileEntity = world.getTileEntity(pos);
+                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                {
+                    return InventoryUtils.forceItemStackToInventory((IInventory) tempTileEntity, stack, this);
+                }
+            }
+        }
+        else
+        {
+            return InventoryUtils.forceItemStackToInventory(tileEntity, stack, this);
+        }
+        return null;
+    }
+
     //------------------------- Ending Required Tools/Item handling -------------------------//
 
     /**

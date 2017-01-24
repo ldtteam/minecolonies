@@ -4,7 +4,6 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.util.text.TextComponentBase;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -77,8 +76,8 @@ public class ChatSpamFilter
      */
     public String getStringOfChat(final Object[] chat)
     {
-        StringBuilder tempString = new StringBuilder();
-        for(Object object: chat)
+        final StringBuilder tempString = new StringBuilder();
+        for(final Object object: chat)
         {
             if(object instanceof TextComponentBase)
             {

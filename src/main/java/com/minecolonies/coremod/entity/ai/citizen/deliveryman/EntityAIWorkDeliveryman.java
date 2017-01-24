@@ -220,9 +220,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      *
      * @param building the building to check for.
      * @param stack    the stack to stack with.
+     * @param localAlreadyKept already kept resources.
      * @return true if required.
      */
-    private static boolean workerRequiresItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
+    public static boolean workerRequiresItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
     {
         return (building instanceof BuildingBuilder && ((BuildingBuilder) building).requiresResourceForBuilding(stack))
                 || (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
@@ -307,7 +308,11 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     }
                     else
                     {
-                        chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull", "");
+                        @Nullable final ItemStack tempStack = buildingToDeliver.forceTransferStack(stack, world);
+                        if(tempStack != null)
+                        {
+                            workerInventory.addItemStackToInventory(tempStack);
+                        }
                     }
                 }
                 worker.addExperience(1.0D);

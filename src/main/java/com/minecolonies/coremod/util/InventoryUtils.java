@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
+import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
@@ -823,5 +827,33 @@ public class InventoryUtils
             default:
                 return "";
         }
+    }
+
+    /**
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     *
+     * @param inventory Inventory to add itemstack to.
+     * @param itemStack ItemStack to add.
+     * @param building the building.
+     * @return itemStack which has been replaced.
+     */
+    @Nullable
+    public static ItemStack forceItemStackToInventory(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack, @NotNull final AbstractBuilding building)
+    {
+        if(!addItemStackToInventory(inventory, itemStack))
+        {
+            final List<ItemStorage> localAlreadyKept = new ArrayList<>();
+            for(int i = 0; i < inventory.getSizeInventory(); i++)
+            {
+                final ItemStack localStack = inventory.getStackInSlot(i);
+                if(!EntityAIWorkDeliveryman.workerRequiresItem(building, localStack, localAlreadyKept))
+                {
+                    final ItemStack removedStack = inventory.removeStackFromSlot(i);
+                    inventory.setInventorySlotContents(i, itemStack.copy());
+                    return removedStack.copy();
+                }
+            }
+        }
+        return null;
     }
 }
