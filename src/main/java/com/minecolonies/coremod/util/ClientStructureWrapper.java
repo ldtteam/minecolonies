@@ -31,11 +31,13 @@ public final class ClientStructureWrapper
      * Handles the save message of scans.
      *
      * @param nbttagcompound compound to store.
-     * @param storeLocation  where to store it at.
+     * @param currentMillis  the current milliseconds.
      */
-    public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final String storeLocation)
+    public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final String currentMillis)
     {
-        final File file = new File(Minecraft.getMinecraft().mcDataDir, storeLocation);
+        final String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", "", currentMillis + ".nbt");
+
+        final File file = new File(Minecraft.getMinecraft().mcDataDir, fileName);
         createScanDirectory(Minecraft.getMinecraft().theWorld);
 
         try (OutputStream outputstream = new FileOutputStream(file))
@@ -50,7 +52,7 @@ public final class ClientStructureWrapper
         }
 
         LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer,
-          LanguageHandler.format("item.scepterSteel.scanSuccess", storeLocation));
+          LanguageHandler.format("item.scepterSteel.scanSuccess", fileName));
     }
 
     /**

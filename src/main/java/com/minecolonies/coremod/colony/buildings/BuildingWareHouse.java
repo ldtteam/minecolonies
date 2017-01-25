@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.views.Window;
+import com.minecolonies.coremod.blocks.BlockHutDeliveryman;
 import com.minecolonies.coremod.client.gui.WindowWareHouseBuilding;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
@@ -17,6 +19,7 @@ import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -70,11 +73,29 @@ public class BuildingWareHouse extends AbstractBuilding
 
         if(registeredDeliverymen.size() >= getBuildingLevel())
         {
+            Log.getLogger().info(getColony().getName() + " " + Arrays.toString(registeredDeliverymen.toArray()));
+            checkForRegisteredDeliverymen();
             return false;
         }
 
         registeredDeliverymen.add(new Vec3d(buildingWorker.getID()));
         return true;
+    }
+
+    /**
+     * Check the registered deliverymen and see if one of their huts got destroyed.
+     */
+    private void checkForRegisteredDeliverymen()
+    {
+        final List<Vec3d> registeredDeliverymenCopy = new ArrayList<>(registeredDeliverymen);
+        for(final Vec3d pos: registeredDeliverymenCopy)
+        {
+            final Colony colony = getColony();
+            if(colony != null && colony.getWorld() != null && !(colony.getWorld().getBlockState(new BlockPos(pos)) instanceof BlockHutDeliveryman))
+            {
+                registeredDeliverymen.remove(pos);
+            }
+        }
     }
 
     /**
