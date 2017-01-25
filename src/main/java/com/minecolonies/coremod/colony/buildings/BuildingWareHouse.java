@@ -73,8 +73,11 @@ public class BuildingWareHouse extends AbstractBuilding
 
         if(registeredDeliverymen.size() >= getBuildingLevel())
         {
-            Log.getLogger().info(getColony().getName() + " " + Arrays.toString(registeredDeliverymen.toArray()));
-            checkForRegisteredDeliverymen();
+            if(!registeredDeliverymen.isEmpty())
+            {
+                Log.getLogger().info(getColony().getName() + " " + Arrays.toString(registeredDeliverymen.toArray()));
+                checkForRegisteredDeliverymen();
+            }
             return false;
         }
 
@@ -91,7 +94,8 @@ public class BuildingWareHouse extends AbstractBuilding
         for(final Vec3d pos: registeredDeliverymenCopy)
         {
             final Colony colony = getColony();
-            if(colony != null && colony.getWorld() != null && !(colony.getWorld().getBlockState(new BlockPos(pos)) instanceof BlockHutDeliveryman))
+            if(colony != null && colony.getWorld() != null
+                    && (!(colony.getWorld().getBlockState(new BlockPos(pos)) instanceof BlockHutDeliveryman) || colony.isCoordInColony(colony.getWorld(), new BlockPos(pos))))
             {
                 registeredDeliverymen.remove(pos);
             }
@@ -144,12 +148,9 @@ public class BuildingWareHouse extends AbstractBuilding
         for (int i = 0; i < deliverymanTagList.tagCount(); i++)
         {
             final BlockPos pos = NBTUtil.getPosFromTag(deliverymanTagList.getCompoundTagAt(i));
-            if(getColony() != null && getColony().getBuilding(pos) instanceof AbstractBuildingWorker)
+            if(getColony() != null && getColony().getBuilding(pos) instanceof AbstractBuildingWorker && !registeredDeliverymen.contains(new Vec3d(pos)))
             {
-                if(!registeredDeliverymen.contains(new Vec3d(pos)))
-                {
-                    registeredDeliverymen.add(new Vec3d(pos));
-                }
+                registeredDeliverymen.add(new Vec3d(pos));
             }
         }
     }

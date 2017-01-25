@@ -519,7 +519,15 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final Map<BlockPos, AbstractBuilding> buildings = job.getColony().getBuildings();
         for (final AbstractBuilding building : buildings.values())
         {
-            if (building instanceof BuildingWareHouse && ((BuildingWareHouse) building).registerWithWareHouse((BuildingDeliveryman) this.getOwnBuilding()))
+            if(building == null)
+            {
+                continue;
+            }
+
+            final Colony buildingColony = building.getColony();
+            final Colony ownColony = worker.getColony();
+            if (building instanceof BuildingWareHouse && ownColony != null && buildingColony != null && buildingColony.getID() == ownColony.getID()
+                    && ((BuildingWareHouse) building).registerWithWareHouse((BuildingDeliveryman) this.getOwnBuilding()))
             {
                 wareHouse = (BuildingWareHouse) building;
                 return false;
