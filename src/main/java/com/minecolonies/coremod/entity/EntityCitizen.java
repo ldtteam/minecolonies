@@ -848,7 +848,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
                 @Nullable final BlockPos spawnPoint =
                         Utils.scanForBlockNearPoint
-                                (worldObj, newNavigator.getDestination(), 1, 0, 1, 2,
+                                (world, newNavigator.getDestination(), 1, 0, 1, 2,
                                         Blocks.AIR,
                                         Blocks.SNOW_LAYER,
                                         Blocks.TALLGRASS,
@@ -1574,7 +1574,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * @param key  the key to retrieve the string.
      * @param args additional arguments.
      */
-    public void sendLocalizedChat(final String key, final String... args)
+    public void sendLocalizedChat(final String key, final Object... args)
     {
         sendChat(key, args);
     }

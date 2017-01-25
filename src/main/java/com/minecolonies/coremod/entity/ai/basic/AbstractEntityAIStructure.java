@@ -609,7 +609,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (stack != null && stack != ItemStack.EMPTY)
                     {
-                        stack.stackSize++;
+                        stack.setCount(stack.getCount() + 1);;
                         request.add(stack);
                         request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
                     }
@@ -1065,7 +1065,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         @Nullable final ItemStack stack = BlockUtils.getItemStackFromBlockState(blockState);
-        if (stack == null)
+        if (stack == null || stack == ItemStack.EMPTY)
         {
             Log.getLogger().error("Block causes NPE: " + blockState.getBlock());
             return false;
@@ -1149,7 +1149,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (stack != null && stack != ItemStack.EMPTY)
                     {
-                        stack.stackSize++;
+                        stack.setCount(stack.getCount() + 1);
                         request.add(stack);
                     }
                     request.add(new ItemStack(Items.ITEM_FRAME, 1));
@@ -1175,7 +1175,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     }
                     for (final ItemStack stack : request)
                     {
-                        if (stack == null)
+                        if (stack == null || stack == ItemStack.EMPTY)
                         {
                             continue;
                         }

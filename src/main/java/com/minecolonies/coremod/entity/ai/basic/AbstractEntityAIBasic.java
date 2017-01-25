@@ -359,7 +359,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if(!getOwnBuilding().hasOnGoingDelivery())
             {
-                requestWithoutSpam(new TextComponentString(first.stackSize + " " + first.getDisplayName()));
+                requestWithoutSpam(new TextComponentString(first.getCount() + " " + first.getDisplayName()));
             }
         }
         return NEEDS_ITEM;
@@ -964,7 +964,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         return buildingWorker != null
                 && (walkToBuilding()
                 || InventoryFunctions.matchFirstInInventory(worker.getInventoryCitizen(),
-                (i, stack) -> !(stack == null || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, i)));
+                (i, stack) -> !(stack == null || stack == ItemStack.EMPTY || keepIt.test(stack)) && shouldDumpItem(alreadyKept, shouldKeep, buildingWorker, stack, i)));
     }
 
     /**
@@ -1097,7 +1097,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean allClear = true;
         for (final @Nullable ItemStack stack : items)
         {
-            if (stack == null || stack.getItem() == null)
+            if (stack == null || stack.getItem() == null || stack == ItemStack.EMPTY)
             {
                 continue;
             }

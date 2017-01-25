@@ -11,6 +11,7 @@ import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -114,7 +115,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             for(final ItemStack stack : buildingEntry.getNeededItems())
             {
-                if(stack == null || (deliveryManHasBuildingAsTask(buildingEntry) && addToList))
+                if(stack == null || stack == ItemStack.EMPTY || (deliveryManHasBuildingAsTask(buildingEntry) && addToList))
                 {
                     continue;
                 }
@@ -201,7 +202,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
+                @Nullable final TileEntity entity = world.getTileEntity(pos);
                 if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, is))
                 {
                     return true;
@@ -231,7 +232,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                final TileEntity entity = worldObj.getTileEntity(pos);
+                final TileEntity entity = world.getTileEntity(pos);
                 if(entity instanceof TileEntityChest && isInTileEntity((TileEntityChest) entity, stack))
                 {
                     return pos;
@@ -263,7 +264,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(@NotNull final BlockPos pos : building.getAdditionalCountainers())
             {
-                final TileEntity entity = worldObj.getTileEntity(pos);
+                final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest && ((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, minLevel, building.getBuildingLevel()))
                         || InventoryUtils.isToolInTileEntity((TileEntityChest) entity, tool, requestingBuilding.getBuildingLevel())))
                 {
@@ -303,7 +304,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
             for(final BlockPos pos : building.getAdditionalCountainers())
             {
-                @Nullable final TileEntity entity = worldObj.getTileEntity(pos);
+                @Nullable final TileEntity entity = world.getTileEntity(pos);
                 if(entity instanceof TileEntityChest)
                 {
                     if(tool.equals(Utils.PICKAXE))
@@ -343,7 +344,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 && InventoryFunctions
                 .matchFirstInInventoryWithInventory(
                         entity,
-                        stack -> stack != null && is.isItemEqual(stack),
+                        stack -> stack != null && stack != ItemStack.EMPTY && is.isItemEqual(stack),
                         InventoryFunctions::doNothing
                 );
     }
@@ -373,7 +374,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
 
-            if(stack == null || stack.getItem() == null || stack.stackSize == 0)
+            if(stack == null || stack.getItem() == null || stack.getCount() == 0 || stack == ItemStack.EMPTY)
             {
                 continue;
             }
@@ -404,7 +405,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
 
         for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = worldObj.getTileEntity(pos);
+            final TileEntity entity = world.getTileEntity(pos);
             if(entity instanceof TileEntityChest
                     && InventoryUtils.findFirstSlotInInventoryWith((TileEntityChest) entity, stack.getItem(), stack.getItemDamage()) != -1
                     && InventoryUtils.getOpenSlot(this) != -1)
@@ -427,7 +428,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     {
         for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = worldObj.getTileEntity(pos);
+            final TileEntity entity = world.getTileEntity(pos);
             if(entity instanceof TileEntityChest
                     && InventoryUtils.findFirstSlotInInventoryWith((TileEntityChest) entity, stack.getItem(), -1) != -1
                     && InventoryUtils.getOpenSlot(this) != -1)
@@ -449,7 +450,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         TileEntityChest emptiestChest = null;
         for(@NotNull final BlockPos pos : getBuilding().getAdditionalCountainers())
         {
-            final TileEntity entity = worldObj.getTileEntity(pos);
+            final TileEntity entity = world.getTileEntity(pos);
             if(entity == null)
             {
                 getBuilding().removeContainerPosition(pos);

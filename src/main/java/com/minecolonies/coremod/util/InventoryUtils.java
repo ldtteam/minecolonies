@@ -118,7 +118,7 @@ public final class InventoryUtils
      */
     private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, int itemDamage)
     {
-        return itemStack != null && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
+        return itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
     }
 
     /**
@@ -296,7 +296,7 @@ public final class InventoryUtils
     {
         return InventoryFunctions.matchFirstInInventoryWithInventory(
                 entity,
-                stack -> stack != null && Utils.checkIfPickaxeQualifies(
+                stack -> stack != null && stack != ItemStack.EMPTY && Utils.checkIfPickaxeQualifies(
                         minlevel,
                         Utils.getMiningLevel(stack, Utils.PICKAXE)) && InventoryUtils.hasToolLevel(Utils.PICKAXE, stack, maxLevel
                 ),
@@ -718,6 +718,7 @@ public final class InventoryUtils
         {
             final ItemStack inventoryItem = inventory.getStackInSlot(i);
             if (inventoryItem != null
+                  && inventoryItem != ItemStack.EMPTY
                   && inventoryItem.getItem() == itemStack.getItem()
                   && inventoryItem.isStackable()
                   && inventoryItem.getCount() < inventoryItem.getMaxStackSize()
@@ -767,7 +768,7 @@ public final class InventoryUtils
      */
     public static boolean hasToolLevel(final String tool, final ItemStack stack, final int hutLevel)
     {
-        if (stack == null)
+        if (stack == null || stack == ItemStack.EMPTY)
         {
             return false;
         }

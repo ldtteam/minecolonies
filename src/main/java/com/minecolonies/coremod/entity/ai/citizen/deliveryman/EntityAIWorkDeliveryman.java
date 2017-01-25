@@ -181,7 +181,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
-        if (stack == null || workerRequiresItem(building, stack, alreadyKept))
+        if (stack == null || stack == ItemStack.EMPTY|| workerRequiresItem(building, stack, alreadyKept))
         {
             return false;
         }
@@ -298,7 +298,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 for (int i = 0; i < workerInventory.getSizeInventory(); i++)
                 {
                     final ItemStack stack = workerInventory.getStackInSlot(i);
-                    if (stack == null)
+                    if (stack == null || stack == ItemStack.EMPTY)
                     {
                         continue;
                     }
@@ -445,14 +445,14 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 if (((TileEntityChest) tileEntity).numPlayersUsing == 0)
                 {
                     this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 1);
-                    this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
-                    this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
+                    this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType(), true);
+                    this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType(), true);
                     setDelay(DUMP_AND_GATHER_DELAY);
                     return true;
                 }
                 this.world.addBlockEvent(tileEntity.getPos(), tileEntity.getBlockType(), 1, 0);
-                this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType());
-                this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType());
+                this.world.notifyNeighborsOfStateChange(tileEntity.getPos(), tileEntity.getBlockType(), true);
+                this.world.notifyNeighborsOfStateChange(tileEntity.getPos().down(), tileEntity.getBlockType(), true);
             }
 
             if (itemsToDeliver.isEmpty() && !isToolInTileEntity((TileEntityChest) tileEntity, buildingToDeliver.getRequiredTool(), buildingToDeliver.getBuildingLevel()))

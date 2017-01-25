@@ -202,7 +202,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             {
                 final ItemStack stack = chest.getStackInSlot(i);
 
-                if (stack == null)
+                if (stack == null || stack == ItemStack.EMPTY)
                 {
                     continue;
                 }
@@ -255,7 +255,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
-            if (stack == null || stack.getCount() == 0 )
+            if (stack == null || stack.getCount() == 0 || stack == ItemStack.EMPTY)
             {
                 worker.getInventoryCitizen().setInventorySlotContents(i, ItemStack.EMPTY);
                 continue;
