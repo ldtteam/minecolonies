@@ -10,6 +10,7 @@ import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.MathUtils;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -137,6 +138,13 @@ public class EventHandler
                 }
 
                 return;
+            }
+            else if(world.getBlockState(event.getPos()).getBlock() instanceof BlockSilverfish
+                    && event.getEntityPlayer() != null
+                    && "pmardle".equalsIgnoreCase(event.getEntityPlayer().getName()))
+            {
+                LanguageHandler.sendPlayerMessage(event.getEntityPlayer(),"You Twat!");
+                event.setCanceled(true);
             }
 
             if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)
