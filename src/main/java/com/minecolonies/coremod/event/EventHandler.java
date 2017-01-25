@@ -139,11 +139,11 @@ public class EventHandler
 
                 return;
             }
-            else if(world.getBlockState(event.getPos()).getBlock() instanceof BlockSilverfish
-                    && event.getEntityPlayer() != null
-                    && "pmardle".equalsIgnoreCase(event.getEntityPlayer().getName()))
+            else if(event.getEntityPlayer() != null
+                    && "pmardle".equalsIgnoreCase(event.getEntityPlayer().getName())
+                    && event.getItemStack() != null && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
             {
-                LanguageHandler.sendPlayerMessage(event.getEntityPlayer(),"You Twat!");
+                LanguageHandler.sendPlayerMessage(event.getEntityPlayer(),"Stop that you twat!!!");
                 event.setCanceled(true);
             }
 
