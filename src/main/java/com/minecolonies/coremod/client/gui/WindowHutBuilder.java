@@ -41,6 +41,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final int red       = Color.getByName("red",0);
     private static final int orange    = Color.getByName("orange",0);
     private static final int darkgreen = Color.getByName("red",0);
+    private static final int black = Color.getByName("black",0);
 
     private final BuildingBuilder.View builder;
 
@@ -134,6 +135,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                     final int quantityMissing = resource.getNeeded() - resource.getAvailable();
                     if (quantityMissing>0)
                     {
+                        addButton.enable();
                         if (resource.getPlayerAmount()>=quantityMissing)
                         {
                             resourceLabel.setColor(darkgreen);
@@ -149,12 +151,12 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                             resourceLabel.setColor(orange,orange);
                             neededLabel.setColor(orange,orange);
                         }
-
-
                     }
                     else
                     {
                         addButton.disable();
+                        resourceLabel.setColor(black,black);
+                        neededLabel.setColor(black,black);
                     }
 
                     //position the addRessource Button to the right
