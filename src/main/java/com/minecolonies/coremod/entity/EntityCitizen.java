@@ -26,6 +26,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -126,7 +127,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Base movement speed of every citizen.
      */
-    private static final double BASE_MOVEMENT_SPEED = 0.3D;
+    public static final double BASE_MOVEMENT_SPEED = 0.3D;
 
     /**
      * Base pathfinding range of the citizen.
@@ -168,6 +169,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * The last job of the citizen.
      */
     private String lastJob                             = "";
+    /**
+     * If the entitiy is stuck for 2 minutes do something.
+     */
+    private static final int MAX_STUCK_TIME = 20*60*2;
     private static Field navigatorField;
     private final InventoryCitizen inventory;
     @NotNull
@@ -194,6 +199,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private Colony      colony;
     @Nullable
     private CitizenData citizenData;
+
+    /**
+     * The entities current Position.
+     */
+    private BlockPos currentPosition = null;
+
+    /**
+     * Time the entitiy is at the same position already.
+     */
+    private int stuckTime = 0;
+
 
     /**
      * Citizen constructor.
@@ -791,6 +807,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
+            checkIfStuck();
             if (world.isDaytime() && !world.isRaining())
             {
                 SoundUtils.playRandomSound(world, this);
@@ -808,6 +825,52 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         checkHeal();
         super.onLivingUpdate();
+    }
+
+    private void checkIfStuck()
+    {
+        if(this.currentPosition == null)
+        {
+            this.currentPosition = this.getPosition();
+            return;
+        }
+
+        if(this.currentPosition.equals(this.getPosition()) && newNavigator != null && newNavigator.getDestination() != null)
+        {
+            stuckTime++;
+            if(stuckTime >= MAX_STUCK_TIME)
+            {
+                if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
+                {
+                    stuckTime = 0;
+                    return;
+                }
+
+                @Nullable final BlockPos spawnPoint =
+                        Utils.scanForBlockNearPoint
+                                (worldObj, newNavigator.getDestination(), 1, 0, 1, 2,
+                                        Blocks.AIR,
+                                        Blocks.SNOW_LAYER,
+                                        Blocks.TALLGRASS,
+                                        Blocks.RED_FLOWER,
+                                        Blocks.YELLOW_FLOWER,
+                                        Blocks.CARPET);
+
+                EntityUtils.setSpawnPoint(spawnPoint, this);
+                if (colony != null)
+                {
+                    Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
+                }
+                stuckTime = 0;
+            }
+        }
+        else
+        {
+            stuckTime = 0;
+            this.currentPosition = this.getPosition();
+        }
+
+        this.currentPosition = this.getPosition();
     }
 
     /**
@@ -1521,7 +1584,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param msg the message string.
      */
-    private void sendChat(final String key, @Nullable final String... msg)
+    private void sendChat(final String key, @Nullable final Object... msg)
     {
         if (msg == null || msg.length == 0 || statusMessages.containsKey(key))
         {
@@ -1530,12 +1593,12 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         statusMessages.put(key + msg[0], ticksExisted);
 
-        final TextComponentTranslation requiredItem = new TextComponentTranslation(key, (Object[])msg);
+        final TextComponentTranslation requiredItem = new TextComponentTranslation(key, msg);
         final TextComponentString citizenDescription = new TextComponentString(" ");
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
         final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),  this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
     }
 
     /**

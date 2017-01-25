@@ -517,6 +517,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             super.resetTask();
             workFrom = null;
             ((JobBuilder) job).setStructure(null);
+            ((JobBuilder) job).setWorkOrder(null);
+            currentStructure = null;
             return true;
         }
         return false;
@@ -607,7 +609,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (stack != null && stack != ItemStack.EMPTY)
                     {
-                        stack.setCount(1);
+                        stack.stackSize++;
                         request.add(stack);
                         request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
                     }
@@ -935,7 +937,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 || block.equals(Blocks.LEAVES)
                 || block.equals(Blocks.LEAVES2)
                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
-                || block.equals(Blocks.GRASS);
+                || block.equals(Blocks.GRASS)
+                || block.equals(ModBlocks.blockSolidSubstitution);
     }
 
     private void placeBlockAt(@NotNull final Block block, @NotNull final IBlockState blockState, @NotNull final BlockPos coords)
@@ -1048,6 +1051,13 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
+        if(block instanceof BlockChest && job instanceof JobBuilder)
+        {
+            final BlockPos buildingLocation = ((JobBuilder) job).getWorkOrder().getBuildingLocation();
+            final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
+            building.addContainerPosition(pos);
+        }
+
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
         if (isBlockFree(block, block.getMetaFromState(blockState)))
         {
@@ -1139,7 +1149,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (stack != null && stack != ItemStack.EMPTY)
                     {
-                        stack.setCount(1);
+                        stack.stackSize++;
                         request.add(stack);
                     }
                     request.add(new ItemStack(Items.ITEM_FRAME, 1));

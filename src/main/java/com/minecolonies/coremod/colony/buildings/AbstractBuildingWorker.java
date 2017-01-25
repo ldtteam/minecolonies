@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -17,7 +18,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public abstract class AbstractBuildingWorker extends AbstractBuildingHut
 {
+    /**
+     * Tag used to store the worker to nbt.
+     */
     private static final String TAG_WORKER = "worker";
+
+    /**
+     * The citizenData of the assigned worker.
+     */
     private CitizenData worker;
 
     /**
@@ -69,6 +77,19 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     public CitizenData getWorker()
     {
         return worker;
+    }
+
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return false;
     }
 
     /**

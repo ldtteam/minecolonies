@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Helper class for localization and sending player messages.
@@ -34,7 +35,7 @@ public final class LanguageHandler
      */
     public static void sendPlayerLocalizedMessage(@NotNull final EntityPlayer player, final String key, final String... args)
     {
-        sendPlayerMessage(player, key, (Object[])args);
+        sendPlayerMessage(player, key, args);
     }
 
     /**
@@ -111,7 +112,7 @@ public final class LanguageHandler
             translation = new TextComponentTranslation(key);
         }
 
-        player.sendMessage(translation);
+        player.addChatComponentMessage(translation);
     }
 
     /**
@@ -123,7 +124,7 @@ public final class LanguageHandler
      */
     public static String format(final String key, final Object... args)
     {
-        String result = new TextComponentTranslation(key, args).getFormattedText();
+        final String result = new TextComponentTranslation(key, args).getFormattedText();
         return result.isEmpty() ? key : result;
     }
 

@@ -29,7 +29,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
 
-    private static final String DEFAULT_STYLE = "default";
+    private static final String DEFAULT_STYLE = "wooden";
 
     protected BlockPos buildingLocation;
     protected int      buildingRotation;
