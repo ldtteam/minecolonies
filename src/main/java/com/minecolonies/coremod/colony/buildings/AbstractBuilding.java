@@ -199,7 +199,7 @@ public abstract class AbstractBuilding
     /**
      * The building style.
      */
-    private String style = "default";
+    private String style = "wooden";
 
     /**
      * Made to check if the building has to update the server/client.
@@ -329,7 +329,7 @@ public abstract class AbstractBuilding
         if ("".equals(style))
         {
             Log.getLogger().warn("Loaded empty style, setting to default");
-            style = "default";
+            style = "wooden";
         }
 
         if (MaterialSystem.isEnabled)
