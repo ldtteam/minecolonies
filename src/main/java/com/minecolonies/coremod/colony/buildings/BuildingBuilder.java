@@ -164,6 +164,14 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public static class BuildingBuilderResource
     {
+        public enum RessourceAvailability
+        {
+            NOT_NEEDED,
+            DONT_HAVE,
+            NEED_MORE,
+            HAVE_ENOUGHT
+        }
+
         private String name;
         private int itemId;
         private int amountAvailable;
@@ -213,6 +221,28 @@ public class BuildingBuilder extends AbstractBuildingWorker
         public int getPlayerAmount()
         {
             return amountPlayer;
+        }
+
+        public RessourceAvailability getAvailabilityStatus()
+        {
+            if (amountNeeded >amountAvailable)
+            {
+                if (amountPlayer==0)
+                {
+                    return RessourceAvailability.DONT_HAVE;
+                }
+                if (amountPlayer<(amountNeeded-amountAvailable))
+                {
+                    return RessourceAvailability.NEED_MORE;
+                }
+                return RessourceAvailability.HAVE_ENOUGHT;
+            }
+            return RessourceAvailability.NOT_NEEDED;
+        }
+
+        public String toString()
+        {
+            return name + "(id:" +itemId+ " p:"+amountPlayer+" a:" +amountAvailable+" n:"+amountNeeded+") => "+getAvailabilityStatus().name();
         }
     }
 

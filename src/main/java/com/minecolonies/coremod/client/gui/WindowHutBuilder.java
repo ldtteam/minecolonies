@@ -12,6 +12,7 @@ import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
     private static final int red       = Color.getByName("red",0);
     private static final int orange    = Color.getByName("orange",0);
-    private static final int darkgreen = Color.getByName("red",0);
+    private static final int darkgreen = Color.getByName("darkgreen",0);
     private static final int black = Color.getByName("black",0);
 
     private final BuildingBuilder.View builder;
@@ -81,19 +82,30 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
             resources.clear();
             resources.addAll(updatedView.getResources().values());
+            Log.getLogger().info("New list of ressources");
             for (int i =0; i<resources.size();i++)
             {
                 final BuildingBuilder.BuildingBuilderResource resource = resources.get(i);
                 final Item item = Item.getItemById(resource.getItemId());
                 resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, item, -1));
+                Log.getLogger().info(resource.toString());
             }
 
             Collections.sort(resources, new Comparator<BuildingBuilder.BuildingBuilderResource>() 
                 {
+                    /**
+                     * We want the item availalable in the player inventory first and the one not needed last
+                     * In alphabetical order otherwise
+                     */
                     @Override
                     public int compare(BuildingBuilder.BuildingBuilderResource resource1, BuildingBuilder.BuildingBuilderResource resource2)
                     {
-                        return (resource1.getAvailable()-resource1.getNeeded())-(resource2.getAvailable()-resource2.getNeeded());
+                        if  (resource1.getAvailabilityStatus()==resource2.getAvailabilityStatus())
+                        {
+                            return resource1.getName().compareTo(resource2.getName());
+                        }
+    
+                        return (resource2.getAvailabilityStatus().compareTo(resource1.getAvailabilityStatus()));
                     }
                 });
         }
@@ -132,31 +144,31 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                     Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
                     Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
                     Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
-                    final int quantityMissing = resource.getNeeded() - resource.getAvailable();
-                    if (quantityMissing>0)
+
+                    switch (resource.getAvailabilityStatus())
                     {
-                        addButton.enable();
-                        if (resource.getPlayerAmount()>=quantityMissing)
-                        {
+                        case DONT_HAVE:
+                            addButton.enable();
+                            resourceLabel.setColor(red);
+                            neededLabel.setColor(red);
+                            break;
+                        case NEED_MORE:
+                            addButton.enable();
+                            resourceLabel.setColor(orange);
+                            neededLabel.setColor(orange);
+                            break;
+                        case HAVE_ENOUGHT:
+                            addButton.enable();
                             resourceLabel.setColor(darkgreen);
                             neededLabel.setColor(darkgreen);
-                        }
-                        else if (resource.getPlayerAmount() == 0)
-                        {
-                            resourceLabel.setColor(red,red);
-                            neededLabel.setColor(red,red);
-                        }
-                        else
-                        {
-                            resourceLabel.setColor(orange,orange);
-                            neededLabel.setColor(orange,orange);
-                        }
-                    }
-                    else
-                    {
-                        addButton.disable();
-                        resourceLabel.setColor(black,black);
-                        neededLabel.setColor(black,black);
+                            break;
+                        case NOT_NEEDED:
+                        default:
+                            addButton.disable();
+                            resourceLabel.setColor(black,black);
+                            neededLabel.setColor(black,black);
+                            break;
+
                     }
 
                     //position the addRessource Button to the right
@@ -167,7 +179,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                     resourceLabel.setLabelText(resource.getName());
                     neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
                     rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(resource.getItemId()));
-                    rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(quantityMissing));
+                    rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getNeeded()-resource.getAvailable()));
 
             }
         });
