@@ -939,7 +939,11 @@ public class Colony implements IColony
             return;
         }
 
-        @Nullable final BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, townHallLocation, 1, 1, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
+        @Nullable final BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, townHallLocation, 1, 1, 1, 2,
+                Blocks.AIR,
+                Blocks.SNOW_LAYER,
+                Blocks.CARPET,
+                Blocks.TALLGRASS);
 
         if (spawnPoint != null)
         {

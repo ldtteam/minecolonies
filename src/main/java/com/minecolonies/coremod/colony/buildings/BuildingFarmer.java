@@ -15,7 +15,9 @@ import com.minecolonies.coremod.network.messages.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -185,6 +187,20 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
         }
+    }
+
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return stack != null && Utils.isHoe(stack);
     }
 
     @NotNull

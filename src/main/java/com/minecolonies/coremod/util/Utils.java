@@ -25,6 +25,7 @@ public final class Utils
     public static final String SHOVEL  = "shovel";
     public static final String AXE     = "axe";
     public static final String HOE     = "hoe";
+    public static final String WEAPON  = "weapon";
 
     /**
      * The compound id for fortune enchantment.
@@ -126,6 +127,17 @@ public final class Utils
             }
         }
         return false;
+    }
+
+    /**
+     * Check if a stack is an axe.
+     *
+     * @param stack the stack to check.
+     * @return true if an axe.
+     */
+    public static boolean isStackAxe(@Nullable final ItemStack stack)
+    {
+        return stack != null && stack.getItem().getToolClasses(stack).contains(AXE);
     }
 
     /**
@@ -371,7 +383,7 @@ public final class Utils
             //empty hand is best on blocks who don't care (0 better 1)
             return stack == null ? 0 : 1;
         }
-        if (stack == null)
+        if (stack == null || stack == ItemStack.EMPTY)
         {
             return -1;
         }

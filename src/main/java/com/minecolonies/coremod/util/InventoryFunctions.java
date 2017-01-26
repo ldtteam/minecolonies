@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,6 +46,29 @@ public class InventoryFunctions
             if (tester.test(stack))
             {
                 action.accept(slot);
+                return true;
+            }
+            return false;
+        });
+    }
+
+    /**
+     * Search for a stack in an Inventory matching the predicate.
+     *
+     * @param inventory the inventory to search in
+     * @param tester    the function to use for testing slots
+     * @param action    the function to use if a slot matches
+     * @return true if it found a stack
+     */
+    public static boolean matchFirstInInventoryWithInventory(
+            final IInventory inventory, @NotNull final Predicate<ItemStack> tester,
+            @NotNull final Consumer<Tuple<Integer, IInventory>> action)
+    {
+        return matchFirstInInventory(inventory, inv -> slot -> stack ->
+        {
+            if (tester.test(stack))
+            {
+                action.accept(new Tuple<>(slot, inventory));
                 return true;
             }
             return false;

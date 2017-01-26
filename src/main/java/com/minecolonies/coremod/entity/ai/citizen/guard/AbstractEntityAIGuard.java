@@ -21,7 +21,8 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.*;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
@@ -201,7 +202,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
             {
                 final ItemStack stack = chest.getStackInSlot(i);
 
-                if (stack == null)
+                if (stack == null || stack == ItemStack.EMPTY)
                 {
                     continue;
                 }
@@ -254,7 +255,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
-            if (stack == null || stack.getCount() == 0 )
+            if (stack == null || stack.getCount() == 0 || stack == ItemStack.EMPTY)
             {
                 worker.getInventoryCitizen().setInventorySlotContents(i, ItemStack.EMPTY);
                 continue;
@@ -265,16 +266,6 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                 worker.setItemStackToSlot(((ItemArmor) stack.getItem()).armorType, stack);
             }
         }
-    }
-
-    @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return stack != null
-                 && (stack.getItem() instanceof ItemArmor
-                       || stack.getItem() instanceof ItemTool
-                       || stack.getItem() instanceof ItemSword
-                       || stack.getItem() instanceof ItemBow);
     }
 
     /**

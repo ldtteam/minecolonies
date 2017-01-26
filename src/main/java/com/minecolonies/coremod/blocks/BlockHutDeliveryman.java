@@ -1,5 +1,8 @@
 package com.minecolonies.coremod.blocks;
 
+import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -20,5 +23,13 @@ public class BlockHutDeliveryman extends AbstractBlockHut
     public String getName()
     {
         return "blockHutDeliveryman";
+    }
+
+    @NotNull
+    @Override
+    public TileEntity createNewTileEntity(final World world, final int meta)
+    {
+        //Creates a tile entity for our building
+        return new TileEntityColonyBuilding();
     }
 }
