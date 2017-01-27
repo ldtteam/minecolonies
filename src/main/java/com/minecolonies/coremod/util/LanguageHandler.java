@@ -33,7 +33,7 @@ public final class LanguageHandler
      * @param key    unlocalized key.
      * @param args   Objects for String.format().
      */
-    public static void sendPlayerLocalizedMessage(@NotNull final EntityPlayer player, final String key, final String... args)
+    public static void sendPlayerLocalizedMessage(@NotNull final EntityPlayer player, final String key, final Object... args)
     {
         sendPlayerMessage(player, key, args);
     }
