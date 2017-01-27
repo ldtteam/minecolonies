@@ -1054,8 +1054,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         * emergency workaround so the worker will tell what he needs (ignoring the content of his chest)
         * since he is not able to check it in the issued state
         */
-        final ItemStack itn = itemsCurrentlyNeeded.get(0);
-        requestWithoutSpam(itn.getCount() + " " + itn.getDisplayName()+" Please put it in my Inventory");
+        if (!itemsCurrentlyNeeded.isEmpty()){
+            final ItemStack itn = itemsCurrentlyNeeded.get(0);
+            requestWithoutSpam(itn.getCount() + " " + itn.getDisplayName()+" Please put it in my Inventory");
+        };
         //end of workaround
         return true;
     }
