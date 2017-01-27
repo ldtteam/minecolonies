@@ -313,7 +313,8 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         @Nullable final ItemStack tempStack = buildingToDeliver.forceTransferStack(stack, world);
                         if(tempStack == null)
                         {
-                            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull", new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
+                            chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull"
+                                    , new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
                         }
                         else
                         {
