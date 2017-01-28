@@ -64,18 +64,33 @@ public class ChatSpamFilter
      *
      * @param chat the Item Name
      */
-    public void requestWithoutSpam(@NotNull final TextComponentBase chat)
+    public void requestTextComponentWithoutSpam(@NotNull final TextComponentBase chat)
     {
         talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
     }
+
+    /**
+     * Request an Item without spamming the chat.
+     *
+     * @param chat the Item Name
+     */
+    public void requestTextStringWithoutSpam(@NotNull final String chat)
+    {
+        talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
+    }
+
 
     /**
      * Get a describing string of an Object array.
      * @param chat the object array.
      * @return the describing string.
      */
-    public String getStringOfChat(final Object[] chat)
+    public String getStringOfChat(final Object... chat)
     {
+        if(chat.length == 0)
+        {
+            return "";
+        }
         final StringBuilder tempString = new StringBuilder();
         for(final Object object: chat)
         {

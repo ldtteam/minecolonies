@@ -326,9 +326,9 @@ public abstract class AbstractBuilding
 
         rotation = compound.getInteger(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
-        if ("".equals(style))
+        if (style.isEmpty())
         {
-            Log.getLogger().warn("Loaded empty style, setting to default");
+            Log.getLogger().warn("Loaded empty style, setting to wooden");
             style = "wooden";
         }
 
@@ -824,7 +824,7 @@ public abstract class AbstractBuilding
 
     /**
      * Get all additional containers which belong to the building.
-     * @return a unmodifiable list of the container positions.
+     * @return a copy of the list to avoid currentModification exception.
      */
     public List<BlockPos> getAdditionalCountainers()
     {
@@ -842,7 +842,7 @@ public abstract class AbstractBuilding
      */
     public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
-        return new HashMap<>();
+        return Collections.emptyMap();
     }
 
     /**

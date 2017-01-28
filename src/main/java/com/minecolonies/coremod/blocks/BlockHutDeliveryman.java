@@ -24,12 +24,4 @@ public class BlockHutDeliveryman extends AbstractBlockHut
     {
         return "blockHutDeliveryman";
     }
-
-    @NotNull
-    @Override
-    public TileEntity createNewTileEntity(final World world, final int meta)
-    {
-        //Creates a tile entity for our building
-        return new TileEntityColonyBuilding();
-    }
 }

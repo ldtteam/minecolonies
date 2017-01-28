@@ -609,7 +609,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                     final ItemStack stack = ((EntityItemFrame) entity).getDisplayedItem();
                     if (stack != null && stack != ItemStack.EMPTY)
                     {
-                        stack.setCount(stack.getCount() + 1);;
+                        stack.setCount(1);
                         request.add(stack);
                         request.add(new ItemStack(Items.ITEM_FRAME, 1, stack.getItemDamage()));
                     }
