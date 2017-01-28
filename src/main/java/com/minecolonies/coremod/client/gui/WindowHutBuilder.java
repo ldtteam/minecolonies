@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Log;
@@ -132,6 +133,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     public void onOpened()
     {
         super.onOpened();
+
         pullResourcesFromHut();
 
         final ScrollingList resourceList = findPaneOfTypeByID(LIST_RESOURCES, ScrollingList.class);
@@ -188,6 +190,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
             }
         });
+
+        //Make sure we have a fresh view
+        MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
     
     }
 
