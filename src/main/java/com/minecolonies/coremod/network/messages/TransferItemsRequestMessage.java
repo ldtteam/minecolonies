@@ -61,7 +61,8 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
      * Creates a build request message.
      *
      * @param building AbstractBuilding of the request.
-     * @param mode     Mode of the request, 1 is repair, 0 is build.
+     * @param itemStack to be take from the player for the building
+     * @param quantity of item needed to be transfered
      */
     public TransferItemsRequestMessage(@NotNull final AbstractBuilding.View building, final ItemStack itemStack, final int quantity)
     {
@@ -123,7 +124,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
 
         ItemStack remainingItemStack = InventoryUtils.setOverSizedStack(building.getTileEntity(), itemStackToTake);
 
-        if (remainingItemStack.getCount()>0) //we still have some to drop, let's try the additional chest now
+        if (remainingItemStack.getCount()>0) //we still have some to drop, let's try the additional chests now
         {
             final World world = colony.getWorld();
             for(final BlockPos pos : building.getAdditionalCountainers())
