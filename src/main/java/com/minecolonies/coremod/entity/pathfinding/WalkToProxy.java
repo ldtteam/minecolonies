@@ -267,7 +267,7 @@ public class WalkToProxy
                                 , level.getDepth()
                                 , ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
 
-                if(level.getRandomNode().getParent() != null)
+                if(level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {
                     final List<BlockPos> nodesToTarget = new ArrayList<>();
                     com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
