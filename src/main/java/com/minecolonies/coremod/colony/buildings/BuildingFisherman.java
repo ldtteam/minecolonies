@@ -30,6 +30,8 @@ public class BuildingFisherman extends AbstractBuildingWorker
      */
     private static final String FISHERMAN          = "Fisherman";
 
+    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
+
     /**
      * Public constructor of the building, creates an object of the building.
      *
@@ -39,6 +41,8 @@ public class BuildingFisherman extends AbstractBuildingWorker
     public BuildingFisherman(final Colony c, final BlockPos l)
     {
         super(c, l);
+
+        keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
     }
 
     /**
@@ -63,9 +67,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
     @Override
     public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Integer> keepX = new HashMap<>();
-        keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
-
         return keepX;
     }
 

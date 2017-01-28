@@ -42,6 +42,8 @@ public class BuildingLumberjack extends AbstractBuildingWorker
      */
     private static final int SAPLINGS_TO_KEEP = 10;
 
+    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
+
     /**
      * Public constructor of the building, creates an object of the building.
      *
@@ -51,6 +53,9 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public BuildingLumberjack(final Colony c, final BlockPos l)
     {
         super(c, l);
+
+        final ItemStack stack = new ItemStack(Blocks.SAPLING);
+        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
     }
 
     /**
@@ -118,10 +123,6 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     @Override
     public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Integer> keepX = new HashMap<>();
-        final ItemStack stack = new ItemStack(Blocks.SAPLING);
-        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
-
         return keepX;
     }
 
