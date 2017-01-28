@@ -20,6 +20,8 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -353,16 +355,15 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     private void updateAvailableResources()
     {
-        final EntityCitizen tempCitizen = getWorkerEntity();
+        final EntityCitizen builder = getWorkerEntity();
         resourcesAvailable.clear();
 
 
         InventoryCitizen builderInventory = null;
-        if (tempCitizen!=null)
+        if (builder!=null)
         {
-            builderInventory = tempCitizen.getInventoryCitizen();
+            builderInventory = builder.getInventoryCitizen();
         }
-        final IInventory chestInventory = this.getTileEntity();
 
 
         for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
@@ -379,11 +380,26 @@ public class BuildingBuilder extends AbstractBuildingWorker
             {
                 resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory(builderInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
             }
+
+            final IInventory chestInventory = this.getTileEntity();
             if (chestInventory!=null)
             {
                 resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory(chestInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
             }
-            
+
+            //Count in the additional chests as well
+            if (builder!=null)
+            {
+                for(final BlockPos pos : getAdditionalCountainers())
+                {
+                    final TileEntity entity = builder.world.getTileEntity(pos);
+                    if(entity instanceof TileEntityChest)
+                    {
+                        resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory((TileEntityChest)entity, entry.getValue().getItem(), entry.getValue().getItemDamage()));
+                    }
+                }
+            }
+
             resourcesAvailable.put(entry.getKey(), resource);
         }
     }
