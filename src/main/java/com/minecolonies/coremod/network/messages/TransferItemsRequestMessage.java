@@ -12,10 +12,14 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
+
 
 import com.minecolonies.coremod.util.Log;
 
@@ -112,21 +116,30 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         }
 
         final Item item = message.itemStack.getItem();
-        Log.getLogger().info("Asked to transfert"+message.itemStack.getDisplayName());
-        Log.getLogger().info("Asked to transfert"+message.itemStack.toString());
-        Log.getLogger().info("Asked to transfert id="+message.itemStack.getDisplayName()+ " d:"+message.itemStack.getItemDamage()+" m:"+message.itemStack.getMetadata());
-        //final ItemStack itemStack = new ItemStack(item, message.quantity);
-        //Log.getLogger().info("Asked to transfert"+message.itemStack.getDisplayName());
         
         final int amountInPlayer = InventoryUtils.getItemCountInInventory(player.inventory, item, message.itemStack.getMetadata());
-        Log.getLogger().info("amountInPlayer="+amountInPlayer);
         final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(player.inventory, item, message.itemStack.getItemDamage()));
-
-
         ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
-        //itemStackToTake.getItem().setMetadata(message.itemStack.getMetadata());
-        final ItemStack remainingItemStack = InventoryUtils.setOverSizedStack(building.getTileEntity(), itemStackToTake);
-        if (remainingItemStack.getCount() != remainingItemStack.getCount())
+
+        ItemStack remainingItemStack = InventoryUtils.setOverSizedStack(building.getTileEntity(), itemStackToTake);
+
+        if (remainingItemStack.getCount()>0) //we still have some to drop, let's try the additional chest now
+        {
+            final World world = colony.getWorld();
+            for(final BlockPos pos : building.getAdditionalCountainers())
+            {
+                final TileEntity entity = world.getTileEntity(pos);
+                if(entity instanceof TileEntityChest)
+                {
+                    remainingItemStack = InventoryUtils.setOverSizedStack((TileEntityChest)entity, remainingItemStack);
+                    if (remainingItemStack.getCount()==0)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        if (remainingItemStack.getCount() != itemStackToTake.getCount()) //Only doing this at the moment as the additional chest do not detect new content
         {
             building.getTileEntity().markDirty();
         }
