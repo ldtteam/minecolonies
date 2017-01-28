@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import com.minecolonies.coremod.util.Log;
 
 /**
- * Transfer some items from the player inventory to the Builder's chest
+ * Send a message to the server to mark the building dirty
  * Created: January 20, 2017
  *
  * @author xavierh
@@ -45,7 +45,6 @@ public class MarkBuildingDirtyMessage  extends AbstractMessage<MarkBuildingDirty
      */
     public MarkBuildingDirtyMessage()
     {
-
         super();
     }
 
@@ -53,7 +52,6 @@ public class MarkBuildingDirtyMessage  extends AbstractMessage<MarkBuildingDirty
      * Creates a build request message.
      *
      * @param building AbstractBuilding of the request.
-     * @param mode     Mode of the request, 1 is repair, 0 is build.
      */
     public MarkBuildingDirtyMessage(@NotNull final AbstractBuilding.View building)
     {
