@@ -127,11 +127,11 @@ public final class LanguageHandler
         final String result;
         if(args.length == 0)
         {
-            result = new TextComponentTranslation(key).getFormattedText();
+            result = new TextComponentTranslation(key).getUnformattedText();
         }
         else
         {
-            result = new TextComponentTranslation(key, args).getFormattedText();
+            result = new TextComponentTranslation(key, args).getUnformattedText();
         }
         return result.isEmpty() ? key : result;
     }
