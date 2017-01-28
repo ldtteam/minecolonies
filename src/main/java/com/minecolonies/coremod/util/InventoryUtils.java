@@ -1,10 +1,14 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityChest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,7 +118,7 @@ public final class InventoryUtils
      */
     private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, int itemDamage)
     {
-        return itemStack != null && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
+        return itemStack != null && itemStack != ItemStack.EMPTY && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
     }
 
     /**
@@ -243,6 +247,95 @@ public final class InventoryUtils
             }
         }
         return -1;
+    }
+
+    /**
+     * Checks if the inventory contains the following tool.
+     * @param entity the tileEntity chest or building.
+     * @param tool the tool.
+     * @param toolLevel to check.
+     * @return true if found the tool.
+     */
+    public static boolean isToolInTileEntity(IInventory entity, final String tool, int toolLevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(tool, stack, toolLevel),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     *
+     * @param entity inventory to check in.
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
+     */
+    public static boolean isPickaxeInTileEntity(TileEntityChest entity, final int minlevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> stack != null && Utils.checkIfPickaxeQualifies(
+                        minlevel,
+                        Utils.getMiningLevel(stack, Utils.PICKAXE)
+                ),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     *
+     * @param entity inventory to check in.
+     * @param minlevel the needed pickaxe level
+     * @param maxLevel the tools max level.
+     * @return true if a pickaxe was found
+     */
+    public static boolean isPickaxeInTileEntity(IInventory entity, final int minlevel, final int maxLevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> stack != null && stack != ItemStack.EMPTY && Utils.checkIfPickaxeQualifies(
+                        minlevel,
+                        Utils.getMiningLevel(stack, Utils.PICKAXE)) && InventoryUtils.hasToolLevel(Utils.PICKAXE, stack, maxLevel
+                ),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     *
+     * @param entity inventory to check in.
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
+     */
+    public static boolean isPickaxeInTileEntity(InventoryCitizen entity, final int minlevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> Utils.checkIfPickaxeQualifies(
+                        minlevel,
+                        Utils.getMiningLevel(stack, Utils.PICKAXE)
+                ),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Checks if the inventory contains the following tool.
+     * @param inventoryCitizen the inventory citizen.
+     * @param tool the tool.
+     * @return true if found the tool.
+     */
+    public static boolean isToolInTileEntity(InventoryCitizen inventoryCitizen, final String tool)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                inventoryCitizen,
+                stack -> Utils.isTool(stack, tool),
+                InventoryFunctions::doNothing
+        );
     }
 
     /**
@@ -656,6 +749,7 @@ public final class InventoryUtils
         {
             final ItemStack inventoryItem = inventory.getStackInSlot(i);
             if (inventoryItem != null
+                  && inventoryItem != ItemStack.EMPTY
                   && inventoryItem.getItem() == itemStack.getItem()
                   && inventoryItem.isStackable()
                   && inventoryItem.getCount() < inventoryItem.getMaxStackSize()
@@ -679,7 +773,7 @@ public final class InventoryUtils
      * @param hutLevel  the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(final String tool, @NotNull final InventoryCitizen inventory, final int hutLevel)
+    public static boolean hasToolLevel(final String tool, @NotNull final IInventory inventory, final int hutLevel)
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
@@ -691,6 +785,31 @@ public final class InventoryUtils
                 return true;
             }
         }
+        return false;
+    }
+
+    /**
+     * Verifies if there is one tool with an acceptable level
+     * in a worker's inventory.
+     *
+     * @param tool      the type of tool needed
+     * @param stack     the stack to test.
+     * @param hutLevel  the worker's hut level
+     * @return true if tool is acceptable
+     */
+    public static boolean hasToolLevel(final String tool, final ItemStack stack, final int hutLevel)
+    {
+        if (stack == null || stack == ItemStack.EMPTY)
+        {
+            return false;
+        }
+
+        final int level = Utils.getMiningLevel(stack, tool);
+        if (Utils.isTool(stack, tool) && verifyToolLevel(stack, level, hutLevel))
+        {
+            return true;
+        }
+
         return false;
     }
 
@@ -741,5 +860,33 @@ public final class InventoryUtils
             default:
                 return "";
         }
+    }
+
+    /**
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     *
+     * @param inventory Inventory to add itemstack to.
+     * @param itemStack ItemStack to add.
+     * @param building the building.
+     * @return itemStack which has been replaced.
+     */
+    @Nullable
+    public static ItemStack forceItemStackToInventory(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack, @NotNull final AbstractBuilding building)
+    {
+        if(!addItemStackToInventory(inventory, itemStack))
+        {
+            final List<ItemStorage> localAlreadyKept = new ArrayList<>();
+            for(int i = 0; i < inventory.getSizeInventory(); i++)
+            {
+                final ItemStack localStack = inventory.getStackInSlot(i);
+                if(!EntityAIWorkDeliveryman.workerRequiresItem(building, localStack, localAlreadyKept))
+                {
+                    final ItemStack removedStack = inventory.removeStackFromSlot(i);
+                    inventory.setInventorySlotContents(i, itemStack.copy());
+                    return removedStack.copy();
+                }
+            }
+        }
+        return null;
     }
 }

@@ -10,6 +10,7 @@ import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.MathUtils;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSilverfish;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -137,6 +138,13 @@ public class EventHandler
                 }
 
                 return;
+            }
+            else if(event.getEntityPlayer() != null
+                    && "pmardle".equalsIgnoreCase(event.getEntityPlayer().getName())
+                    && event.getItemStack() != null && Block.getBlockFromItem(event.getItemStack().getItem()) instanceof BlockSilverfish)
+            {
+                LanguageHandler.sendPlayerMessage(event.getEntityPlayer(),"Stop that you twat!!!");
+                event.setCanceled(true);
             }
 
             if (player.getHeldItemMainhand() == null || player.getHeldItemMainhand().getItem() == null)

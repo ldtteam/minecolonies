@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -300,6 +301,19 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * Can be overriden by implementations to specify which tools are useful for the worker.
+     * When dumping he will keep these.
+     *
+     * @param stack the stack to decide on
+     * @return if should be kept or not.
+     */
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return Utils.isMiningTool(stack);
+    }
+
+    /**
      * Reduce a resource of the needed list.
      *
      * @param res    the resource.
@@ -372,6 +386,16 @@ public class BuildingBuilder extends AbstractBuildingWorker
             
             resourcesAvailable.put(entry.getKey(), resource);
         }
+    }
+
+    /*
+     * Check if the builder requires a certain ItemStack for the current construction.
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    public boolean requiresResourceForBuilding(ItemStack stack)
+    {
+        return neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     /**

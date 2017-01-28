@@ -52,7 +52,6 @@ achievement.size.city.desc=The Capital
 tile.minecolonies.blockHutBuilder.name=Builder's Hut
 com.minecolonies.coremod.gui.citizen.skills.dexterity=Dexterity: %d
 tile.blockHut.messageNoPermission=You don't have permission to open huts in %s.
-com.minecolonies.coremod.job.Deliveryman=Deliveryman
 com.minecolonies.coremod.job.Builder=Builder
 entity.builder.messageNeedMaterial=I need %s (Amount: %d)
 com.minecolonies.coremod.gui.citizen.skills.charisma=Charisma: %d
@@ -75,12 +74,23 @@ com.minecolonies.coremod.gui.hiring.off=Automatic
 com.minecolonies.coremod.gui.workerHuts.settings=Settings
 achievement.size.town=Town
 tile.minecolonies.blockHutTownHall.name=Town Hall
+
+
+
 tile.minecolonies.blockHutField.name=Field
 com.minecolonies.coremod.gui.workerHuts.Farmer=Farmer
+
+
+tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
+
+com.minecolonies.coremod.job.Deliveryman=Deliveryman
+com.minecolonies.coremod.job.Farmer=Farmer
+com.minecolonies.coremod.job.Miner=Miner
+com.minecolonies.coremod.job.Fisherman=Fisherman
+
 com.minecolonies.coremod.gui.workerHuts.fire=Fire Worker
 achievement.upgrade.builder.max.desc=What a powerful man
 tile.blockHutTownHall.messageMaxSize=Colony has reached max size
-com.minecolonies.coremod.job.Fisherman=Fisherman
 item.scepterSteel.point2=Point two saved, right click again to save the schematic
 com.minecolonies.coremod.gui.townHall.build=Build Town Hall
 entity.miner.messageNeedBlockAndItem=I need %s!
@@ -102,7 +112,7 @@ com.minecolonies.coremod.gui.citizen.skills=Skills
 com.minecolonies.coremod.gui.townHall.repair=Repair Town Hall
 achievement.upgrade.lumberjack.max.desc=Deforestation
 tile.minecolonies.blockHutFisherman.name=Fisherman's Hut
-com.minecolonies.coremod.gui.workerHuts.warehouse=Warehouse
+
 entity.miner.messageRequiresBetterHut=Please upgrade my hut to dig deeper!
 com.minecolonies.coremod.gui.townHall.recall=Recall Citizens
 item.scepterSteel.point=Point one saved
@@ -114,16 +124,14 @@ achievement.upgrade.townhall.max=I am the King!
 achievement.upgrade.townhall.max.desc=What a King!
 com.minecolonies.coremod.gui.workerHuts.minerNodeList=Levels
 com.minecolonies.coremod.gui.workerHuts.resourceList=Required Resources
-com.minecolonies.coremod.job.Miner=Miner
 com.minecolonies.coremod.gui.warehouse.toBlacksmith=Deliver to Blacksmith:
-tile.minecolonies.blockHutWarehouse.name=Warehouse
 tile.minecolonies.blockHutFarmer.name=Farm
 tile.blockHutTownHall.messageTooFar=Too far away from your Colony
 com.minecolonies.coremod.gui.citizen.skills.strength=Strength: %d
 item.scepterSteel.scanSuccess=Scan successfully saved as %s
 com.minecolonies.coremod.gui.workerHuts.fisherman=Fisherman's Hut
 item.supplyChestDeployer.invalid=You must be near a big pool of water
-entity.builder.messageNoBuilder=You need a builder in order to build or upgrade this building. 
+entity.builder.messageNoBuilder=You need a builder in order to build or upgrade this building.
 tile.blockHutTownHall.messageInvalidWorld=You can't place a town hall in this world type
 item.minecolonies.scepterGold.name=Building Tool
 com.minecolonies.coremod.gui.workerHuts.workOrderAdded=Construction added to build queue.
@@ -142,14 +150,13 @@ com.minecolonies.coremod.gui.townHall.jobHiring=Worker Hiring Mode:
 com.minecolonies.coremod.gui.workerHuts.hire=Hire Worker
 achievement.upgrade.miner.first.desc=Diggy diggy hole
 achievement.upgrade.colonist.first.desc=A place to live
-com.minecolonies.coremod.job.Farmer=Farmer
 com.minecolonies.coremod.gui.workerHuts.minerHut=Miner
 entity.builder.messageBuildComplete=Finished building %s
 item.minecolonies.scepterSteel.name=Scan Tool
 item.caliper.message.same=That's the same block.
 entity.worker.inventoryFullChestFull=Please make space in my building chest. I am not able to dump my inventory.
 com.minecolonies.coremod.gui.townHall.currentSpecialization=Current Specialization:
-tile.blockHut.messageNoPermissionPlace=You don't have permission to place huts in %s.
+
 com.minecolonies.coremod.gui.workerHuts.workOrder=Work Orders
 achievement.upgrade.fisher.first=A fisherman.
 achievement.upgrade.fisher.first.desc=I like fish.
@@ -172,16 +179,21 @@ com.minecolonies.coremod.gui.workerHuts.farmerHut.unused=unused
 com.minecolonies.coremod.gui.scarecrow.user=Field used by: %s
 com.minecolonies.coremod.gui.scarecrow.user.noone=no-one
 com.minecolonies.coremod.gui.buildtool.nohutininventory=The hut was not found in your inventory.
+
 com.minecolonies.coremod.gui.debugScreen.noCloseColony=No close colony!
 com.minecolonies.coremod.gui.debugScreen.nextColony=Next colony is %d blocks away (%d required to place a colony)
 com.minecolonies.coremod.gui.debugScreen.blocksFromCenter=%d blocks from the center.
+
 com.minecolonies.coremod.gui.workerHuts.GuardTower=Guard Tower
 com.minecolonies.coremod.job.guard.name=GuardTower
 com.minecolonies.coremod.job.Guard=Guard
 com.minecolonies.coremod.gui.workerHuts.level0=Please construct the hut to hire a worker.
 com.minecolonies.coremod.job.guard.needWeapon=a weapon!
 tile.minecolonies.blockHutGuardTower.name=GuardTower
+
+
 tile.blockHutTownHall.messageGuardDead=The guard %s has died at %d %d %d!
+
 com.minecolonies.coremod.gui.workerHuts.guardActions=Guard-actions:
 com.minecolonies.coremod.gui.workerHuts.assign=Assign the guard to the job:
 com.minecolonies.coremod.gui.workerHuts.patrol=Find patrol target:
@@ -190,24 +202,45 @@ com.minecolonies.coremod.gui.workerHuts.knight=Knight
 com.minecolonies.coremod.gui.workerHuts.ranger=Ranger
 com.minecolonies.coremod.gui.workerHuts.modeM=Manually
 com.minecolonies.coremod.gui.workerHuts.modeA=Automatically
+
 com.minecolonies.coremod.gui.workerHuts.retrieveOff=Off
 com.minecolonies.coremod.gui.workerHuts.retrieveOn=On
+
 com.minecolonies.coremod.gui.workerHuts.task.guard=Guard
 com.minecolonies.coremod.gui.workerHuts.task.patrol=Patrol
 com.minecolonies.coremod.gui.workerHuts.task.follow=Follow
 item.minecolonies.scepterGuard.name=Guard-scepter
+
 com.minecolonies.coremod.gui.workerHuts.targetPatrol=Set patrol positions.
 com.minecolonies.coremod.gui.workerHuts.targetGuard=Set guarding target.
 com.minecolonies.coremod.gui.workerHuts.setTarget="Disabled"
+
 com.minecolonies.coremod.gui.workerHuts.noSpace=Please make space in your inventory in order to use this functionality.
+
 com.minecolonies.coremod.job.guard.tool.taskPatrol=Right click on a block to add it as patrol target. Double click to close the tool.
 com.minecolonies.coremod.job.guard.tool.taskGuard=Right click on a block to set it as guard spot.
+
 com.minecolonies.coremod.job.guard.switch=Switched to guarding since the player is out of sight.
+
 com.minecolonies.coremod.job.guard.toolClickPatrol=Added position %s as new patrolling target for guard%s.
 com.minecolonies.coremod.job.guard.toolClickGuard=Set position %s as new guarding target for guard%s.
+
 com.minecolonies.coremod.job.guard.toolDoubleClick=Finished adding new patrol-targets.
+
 com.minecolonies.coremod.workerHuts.recallFail=Recall failed - Please make more space around the location.
+
 tile.minecolonies.blockSubstitution.name=Placeholderblock
 tile.minecolonies.blockSolidSubstitution.name=Solid-Placeholderblock
+
 entity.worker.toolRequest=I need a %s of a maximum grade of %s.
 entity.worker.pickaxeRequest=I need a pickaxe of at least %s grade and at maximum %s grade.
+
+com.minecolonies.coremod.wareHouse.full=The Warehouse is full, please upgrade or make space.
+com.minecolonies.coremod.job.deliveryman.noWarehouse=Please upgrade or build a Warehouse for me to work at.
+com.minecolonies.coremod.job.deliveryman.workerChestFull=Can't deliver because of a full worker chest.
+
+tile.minecolonies.blockHutWareHouse.name=Warehouse
+com.minecolonies.coremod.gui.workerHuts.buildingWareHouse=Warehouse
+
+tile.minecolonies.blockHutDeliveryman.name=Deliveryman
+com.minecolonies.coremod.gui.workerHuts.Deliveryman=Deliveryman
