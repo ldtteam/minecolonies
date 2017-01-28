@@ -143,19 +143,14 @@ public class Structure
         return template;
     }
 
-    public boolean isTemplateNull()
-    {
-        return template == null;
-    }
-
     /**
      * Checks if the template is null.
      *
-     * @return true if it's not.
+     * @return true if the template is null.
      */
-    public boolean doesExist()
+    public boolean isTemplateMissing()
     {
-        return !isTemplateNull();
+        return template == null;
     }
 
     public Template.BlockInfo[] getBlockInfo()
