@@ -155,7 +155,7 @@ public class Structure
      */
     public boolean doesExist()
     {
-        return template == null ? false : true;
+        return !isTemplateNull();
     }
 
     public Template.BlockInfo[] getBlockInfo()
