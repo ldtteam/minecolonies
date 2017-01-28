@@ -1,8 +1,5 @@
 package com.minecolonies.coremod.blocks;
 
-import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 /**
