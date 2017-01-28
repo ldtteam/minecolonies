@@ -22,6 +22,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -487,5 +488,28 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             return Skill.STRENGTH;
         }
+    }
+
+    @Override
+    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    {
+        if (super.transferStack(stack, world))
+        {
+            this.markDirty();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public ItemStack forceTransferStack(final ItemStack stack, final World world)
+    {
+        final ItemStack itemStack = super.forceTransferStack(stack, world);
+        if (itemStack != null)
+        {
+            this.markDirty();
+            return itemStack;
+        }
+        return itemStack;
     }
 }
