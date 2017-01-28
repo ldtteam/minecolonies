@@ -248,7 +248,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         public String toString()
         {
-            return name + "(p:"+amountPlayer+" a:" +amountAvailable+" n:"+amountNeeded+") => "+getAvailabilityStatus().name();
+            final int itemId=Item.getIdFromItem(itemStack.getItem());
+            final int damage=itemStack.getItemDamage();
+            return name + "(p:"+amountPlayer+" a:" +amountAvailable+" n:"+amountNeeded+" id="+itemId+" damage="+damage+") => "+getAvailabilityStatus().name();
         }
     }
 
@@ -263,16 +265,23 @@ public class BuildingBuilder extends AbstractBuildingWorker
         super.serializeToView(buf);
 
         updateAvailableResources();
-
+        Log.getLogger().info("SERIALIZE");
         buf.writeInt(neededResources.size());
         for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
         {
-            ByteBufUtils.writeUTF8String(buf, entry.getValue().getDisplayName());
-            BuildingBuilderResource resource = resourcesAvailable.get(entry.getKey());
-            ByteBufUtils.writeItemStack(buf, resource.getItemStack());
+            final BuildingBuilderResource resource = resourcesAvailable.get(entry.getKey());
+            //ByteBufUtils.writeUTF8String(buf, entry.getValue().getDisplayName());
+            //ByteBufUtils.writeItemStack(buf, resource.getItemStack());
+            final int itemId = Item.getIdFromItem(resource.itemStack.getItem());
+            final int damage = resource.getItemStack().getItemDamage();
+            Log.getLogger().info("itemId="+itemId+" damage="+damage);
+            buf.writeInt(itemId);
+            buf.writeInt(damage);
             buf.writeInt(resource.getAvailable());
             buf.writeInt(entry.getValue().getCount());
+            Log.getLogger().info(resource.toString());
         }
+            Log.getLogger().info("------------------------");
 
     }
 
@@ -452,16 +461,24 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
             final int size = buf.readInt();
             resources.clear();
+            Log.getLogger().info("DESERIALIZE");
 
             for (int i = 0; i < size; i++)
             {
-                final String block = ByteBufUtils.readUTF8String(buf);
-                final ItemStack itemStack = ByteBufUtils.readItemStack(buf);
+                //Serialising the ItemStack give a bad ItemStack sometimes using itemId + damage instead
+                //final ItemStack itemStack = ByteBufUtils.readItemStack(buf);
+                final int itemId = buf.readInt();
+                final int damage = buf.readInt();
+                final ItemStack itemStack = new ItemStack(Item.getByNameOrId(Integer.toString(itemId)),1,damage);
+                Log.getLogger().info("itemId="+itemId+" damage="+damage);
                 final int amountAvailable = buf.readInt();
                 final int amountNeeded = buf.readInt();
-                final BuildingBuilderResource resource = new BuildingBuilderResource(block, itemStack, amountAvailable,amountNeeded);
-                resources.put(block, resource);
+
+                final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack.getDisplayName(), itemStack, amountAvailable,amountNeeded);
+                Log.getLogger().info(resource.toString());
+                resources.put(itemStack.getDisplayName(), resource);
             }
+            Log.getLogger().info("++++++++++++++++++");
         }
 
         /**

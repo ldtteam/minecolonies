@@ -92,9 +92,11 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                 final BuildingBuilder.BuildingBuilderResource resource = resources.get(i);
                 final Item item = resource.getItemStack().getItem();
                 Log.getLogger().info("resource.getItemStack().getDisplayName()=>"+resource.getItemStack().getDisplayName());
+                Log.getLogger().info(resource.toString());
                 resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, item, resource.getItemStack().getItemDamage()));
                 Log.getLogger().info("resource.getPlayerAmount()=>"+resource.getPlayerAmount());
                 Log.getLogger().info(resource.toString());
+                Log.getLogger().info("*************************");
             }
 
             Collections.sort(resources, new Comparator<BuildingBuilder.BuildingBuilderResource>() 
