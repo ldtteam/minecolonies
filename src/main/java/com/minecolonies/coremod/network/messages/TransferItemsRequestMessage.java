@@ -13,8 +13,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
+
+import com.minecolonies.coremod.util.Log;
 
 /**
  * Transfer some items from the player inventory to the Builder's chest
@@ -35,7 +38,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
     /**
      * How many item need to be transfer from the player inventory to the building chest
      */
-    private int      itemId;
+    private ItemStack      itemStack;
     /**
      * How many item need to be transfer from the player inventory to the building chest
      */
@@ -46,6 +49,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
      */
     public TransferItemsRequestMessage()
     {
+
         super();
     }
 
@@ -55,12 +59,12 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
      * @param building AbstractBuilding of the request.
      * @param mode     Mode of the request, 1 is repair, 0 is build.
      */
-    public TransferItemsRequestMessage(@NotNull final AbstractBuilding.View building, final int itemId, final int quantity)
+    public TransferItemsRequestMessage(@NotNull final AbstractBuilding.View building, final ItemStack itemStack, final int quantity)
     {
         super();
         this.colonyId   = building.getColony().getID();
         this.buildingId = building.getID();
-        this.itemId     = itemId;
+        this.itemStack  = itemStack;
         this.quantity   = quantity;
 
     }
@@ -68,10 +72,10 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        colonyId = buf.readInt();
+        colonyId   = buf.readInt();
         buildingId = BlockPosUtil.readFromByteBuf(buf);
-        itemId = buf.readInt();
-        quantity = buf.readInt();
+        itemStack  = ByteBufUtils.readItemStack(buf);
+        quantity   = buf.readInt();
     }
 
     @Override
@@ -79,7 +83,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
-        buf.writeInt(itemId);
+	ByteBufUtils.writeItemStack(buf,itemStack);
         buf.writeInt(quantity);
     }
 
@@ -107,13 +111,20 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
             return;
         }
 
-        final Item item = Item.getItemById(message.itemId);
-        final ItemStack itemStack = new ItemStack(item, message.quantity);
-        final int amountInPlayer = InventoryUtils.getItemCountInInventory(player.inventory, item, -1);
-        final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(player.inventory, item, -1));
+        final Item item = message.itemStack.getItem();
+        Log.getLogger().info("Asked to transfert"+message.itemStack.getDisplayName());
+        Log.getLogger().info("Asked to transfert"+message.itemStack.toString());
+        Log.getLogger().info("Asked to transfert id="+message.itemStack.getDisplayName()+ " d:"+message.itemStack.getItemDamage()+" m:"+message.itemStack.getMetadata());
+        //final ItemStack itemStack = new ItemStack(item, message.quantity);
+        //Log.getLogger().info("Asked to transfert"+message.itemStack.getDisplayName());
+        
+        final int amountInPlayer = InventoryUtils.getItemCountInInventory(player.inventory, item, message.itemStack.getMetadata());
+        Log.getLogger().info("amountInPlayer="+amountInPlayer);
+        final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(player.inventory, item, message.itemStack.getItemDamage()));
 
 
-        final ItemStack itemStackToTake = new ItemStack(item, amountToTake);
+        ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
+        //itemStackToTake.getItem().setMetadata(message.itemStack.getMetadata());
         final ItemStack remainingItemStack = InventoryUtils.setOverSizedStack(building.getTileEntity(), itemStackToTake);
         if (remainingItemStack.getCount() != remainingItemStack.getCount())
         {
@@ -124,7 +135,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
 
         while (amountToRemoveFromPlayer > 0)
         {
-            final int slot = InventoryUtils.findFirstSlotInInventoryWith(player.inventory, item, -1);
+            final int slot = InventoryUtils.findFirstSlotInInventoryWith(player.inventory, item, message.itemStack.getItemDamage());
             final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
             amountToRemoveFromPlayer-=itemsTaken.getCount();
         }

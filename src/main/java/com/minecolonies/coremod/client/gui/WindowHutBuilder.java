@@ -15,9 +15,12 @@ import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+
+import com.minecolonies.coremod.util.Log;
 
 /**
  * Window for the builder hut.
@@ -86,8 +89,10 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             for (int i =0; i<resources.size();i++)
             {
                 final BuildingBuilder.BuildingBuilderResource resource = resources.get(i);
-                final Item item = Item.getItemById(resource.getItemId());
-                resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, item, -1));
+                final Item item = resource.getItemStack().getItem();
+                Log.getLogger().info("resource.getItemStack().getDisplayName()=>"+resource.getItemStack().getDisplayName());
+                resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, item, resource.getItemStack().getItemDamage()));
+                Log.getLogger().info("resource.getPlayerAmount()=>"+resource.getPlayerAmount());
                 Log.getLogger().info(resource.toString());
             }
 
@@ -148,14 +153,14 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                     switch (resource.getAvailabilityStatus())
                     {
                         case DONT_HAVE:
-                            addButton.enable();
+                            addButton.disable();
                             resourceLabel.setColor(red);
                             neededLabel.setColor(red);
                             break;
                         case NEED_MORE:
                             addButton.enable();
-                            resourceLabel.setColor(orange);
-                            neededLabel.setColor(orange);
+                            resourceLabel.setColor(red);
+                            neededLabel.setColor(red);
                             break;
                         case HAVE_ENOUGHT:
                             addButton.enable();
@@ -178,7 +183,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
                     resourceLabel.setLabelText(resource.getName());
                     neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
-                    rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(resource.getItemId()));
+                    rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
                     rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getNeeded()-resource.getAvailable()));
 
             }
@@ -206,12 +211,14 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     {
 
         @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(RESOURCE_ID_POSITION);
-        final int resourceId = Integer.parseInt(idLabel.getLabelText());
+        final int index = Integer.parseInt(idLabel.getLabelText());
+        @NotNull final ItemStack itemStack = resources.get(index).getItemStack();
+        Log.getLogger().info("GUI: Want to transfert "+itemStack.getDisplayName());
         @NotNull final Label quantityLabel = (Label) button.getParent().getChildren().get(RESOURCE_QUANTITY_MISSING_POSITION);
         final int quantity = Integer.parseInt(quantityLabel.getLabelText());
         final String buttonLabel = button.getID();
 
-        MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, resourceId, quantity));
+        MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity));
     }
 
 

@@ -12,19 +12,21 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.*;
+
+import com.minecolonies.coremod.util.Log;
 
 /**
  * The builders building.
@@ -173,15 +175,15 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
 
         private String name;
-        private int itemId;
+        private ItemStack itemStack;
         private int amountAvailable;
         private int amountNeeded;
         private int amountPlayer;
 
-        BuildingBuilderResource(final String name, final int itemId, final int amountAvailable, final int amountNeeded)
+        BuildingBuilderResource(final String name, final ItemStack itemStack, final int amountAvailable, final int amountNeeded)
         {
             this.name = name;
-            this.itemId = itemId;
+            this.itemStack = itemStack;
             this.amountAvailable = amountAvailable;
             this.amountNeeded = amountNeeded;
             this.amountPlayer = 0;
@@ -192,9 +194,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
             return name;
         }
 
-        public int getItemId()
+        public ItemStack getItemStack()
         {
-            return itemId;
+            return itemStack;
         }
 
 
@@ -242,7 +244,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         public String toString()
         {
-            return name + "(id:" +itemId+ " p:"+amountPlayer+" a:" +amountAvailable+" n:"+amountNeeded+") => "+getAvailabilityStatus().name();
+            return name + "(p:"+amountPlayer+" a:" +amountAvailable+" n:"+amountNeeded+") => "+getAvailabilityStatus().name();
         }
     }
 
@@ -263,7 +265,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             ByteBufUtils.writeUTF8String(buf, entry.getValue().getDisplayName());
             BuildingBuilderResource resource = resourcesAvailable.get(entry.getKey());
-            buf.writeInt(resource.getItemId());
+            ByteBufUtils.writeItemStack(buf, resource.getItemStack());
             buf.writeInt(resource.getAvailable());
             buf.writeInt(entry.getValue().getCount());
         }
@@ -352,19 +354,20 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
         {
             ItemStack itemStack = entry.getValue();
+            Log.getLogger().info("Need "+itemStack.getDisplayName());
             BuildingBuilderResource resource = resourcesAvailable.get(entry.getKey());
             if (resource == null)
             {
-                resource = new BuildingBuilderResource(entry.getValue().getDisplayName(), Item.getIdFromItem(itemStack.getItem()),0,itemStack.getCount());
+                resource = new BuildingBuilderResource(entry.getValue().getDisplayName(), itemStack,0,itemStack.getCount());
             }
 
             if (builderInventory!=null)
             {
-                resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory(builderInventory, entry.getValue().getItem(), -1));
+                resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory(builderInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
             }
             if (chestInventory!=null)
             {
-                resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory(chestInventory, entry.getValue().getItem(), -1));
+                resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory(chestInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
             }
             
             resourcesAvailable.put(entry.getKey(), resource);
@@ -412,10 +415,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
             for (int i = 0; i < size; i++)
             {
                 final String block = ByteBufUtils.readUTF8String(buf);
-                final int itemId = buf.readInt();
+                final ItemStack itemStack = ByteBufUtils.readItemStack(buf);
                 final int amountAvailable = buf.readInt();
                 final int amountNeeded = buf.readInt();
-                final BuildingBuilderResource resource = new BuildingBuilderResource(block, itemId, amountAvailable,amountNeeded);
+                final BuildingBuilderResource resource = new BuildingBuilderResource(block, itemStack, amountAvailable,amountNeeded);
                 resources.put(block, resource);
             }
         }

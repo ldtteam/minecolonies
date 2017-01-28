@@ -380,14 +380,14 @@ public final class InventoryUtils
         while (stackSize > 0)
         {
             final int itemCount = Math.min(stackSize, stack.getMaxStackSize());
-            final ItemStack items = new ItemStack(stack.getItem(), itemCount);
+            final ItemStack items = new ItemStack(stack.getItem(), itemCount, stack.getItemDamage());
             stackSize-=itemCount;
             final ItemStack remainingItems = setStack(inventory,items);
             stackSize+=remainingItems.getCount();
             if (items.getCount()==remainingItems.getCount())
                 break; 
         }
-        return new ItemStack(stack.getItem(), stackSize);
+        return new ItemStack(stack.getItem(), stackSize, stack.getItemDamage());
 
     }
 
