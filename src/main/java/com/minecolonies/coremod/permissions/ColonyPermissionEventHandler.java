@@ -10,6 +10,7 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -185,7 +186,8 @@ public class ColonyPermissionEventHandler
                 cancelEvent(event);
             }
 
-            if(Configurations.enableColonyProtection && event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer)
+            if(Configurations.enableColonyProtection && (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer
+                    || event.getWorld().getTileEntity(event.getPos()) instanceof IInventory))
             {
                 final Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
 
