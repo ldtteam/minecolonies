@@ -800,22 +800,15 @@ public class Colony implements IColony
               .filter(ColonyUtils::isCitizenMissingFromWorld)
               .forEach(CitizenData::clearCitizenEntity);
 
+            // TODO evaluate if this block is needed anymore
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if ((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event))
+            if ((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event) && townHall != null)
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
-                citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null)
-                  .forEach(citizen ->
-                  {
-                      if (townHall != null)
-                      {
-                          Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
-                          spawnCitizen(citizen);
-                      }
-                  });
+                citizens.values().forEach(CitizenData::getCitizenEntity);
             }
 
             //  Cleanup Buildings whose Blocks have gone AWOL
@@ -939,11 +932,11 @@ public class Colony implements IColony
             return;
         }
 
-        @Nullable final BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, townHallLocation, 1, 1, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
+        final BlockPos spawnPoint = EntityUtils.getSpawnPoint(world, townHallLocation);
 
         if (spawnPoint != null)
         {
-            @Nullable final EntityCitizen entity = new EntityCitizen(world);
+            final EntityCitizen entity = new EntityCitizen(world);
 
             CitizenData citizenData = data;
             if (citizenData == null)

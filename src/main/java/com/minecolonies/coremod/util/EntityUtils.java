@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -263,5 +264,29 @@ public final class EntityUtils
         final Material material = world.getBlockState(blockPos).getMaterial();
         return material.isSolid()
                  || material.isLiquid();
+    }
+
+    /**
+     * Get a safe spawnpoint near a location.
+     *
+     * @param nearPoint the point to search near.
+     * @return The spawn position.
+     */
+    @Nullable
+    public static BlockPos getSpawnPoint(World world, BlockPos nearPoint)
+    {
+        return Utils.scanForBlockNearPoint(
+                world,
+                nearPoint,
+                1,
+                1,
+                1,
+                2,
+                Blocks.AIR,
+                Blocks.SNOW_LAYER,
+                Blocks.TALLGRASS,
+                Blocks.RED_FLOWER,
+                Blocks.YELLOW_FLOWER,
+                Blocks.CARPET);
     }
 }
