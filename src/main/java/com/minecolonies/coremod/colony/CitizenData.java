@@ -145,13 +145,20 @@ public class CitizenData
     }
 
     /**
-     * return the entity instance of the citizen data.
+     * Return the entity instance of the citizen data. Respawn the citizen if needed.
      *
      * @return {@link EntityCitizen} of the citizen data.
      */
+    //TODO evaluate if this is nullable. Will spawnCitizen fail?
     @Nullable
     public EntityCitizen getCitizenEntity()
     {
+        if (entity == null)
+        {
+            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", this.getColony().getID(), this.getId()));
+            this.getColony().spawnCitizen(this);
+        }
+
         return entity;
     }
 
