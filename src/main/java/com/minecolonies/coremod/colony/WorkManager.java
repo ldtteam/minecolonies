@@ -1,14 +1,9 @@
 package com.minecolonies.coremod.colony;
 
-import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.citizen.builder.EntityAIStructureBuilder;
 import com.minecolonies.coremod.entity.ai.citizen.builder.PlaceAndRemoveConstructionTape;
-import com.minecolonies.coremod.entity.ai.util.Structure;
 import com.minecolonies.coremod.util.Log;
-import javafx.concurrent.Worker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
@@ -70,12 +65,15 @@ public class WorkManager
      */
     public void removeWorkOrder(final int orderId)
     {
-        if (getWorkOrder(orderId) instanceof WorkOrderBuild && colony != null && colony.getWorld() != null)
+        if(colony != null)
         {
-            PlaceAndRemoveConstructionTape.removeConstructionTape(((WorkOrderBuild) getWorkOrder(orderId)), colony.getWorld());
+            if (getWorkOrder(orderId) instanceof WorkOrderBuild && colony.getWorld() != null)
+            {
+                PlaceAndRemoveConstructionTape.removeConstructionTape((WorkOrderBuild) getWorkOrder(orderId), colony.getWorld());
+            }
+            workOrders.remove(orderId);
+            colony.removeWorkOrder(orderId);
         }
-        workOrders.remove(orderId);
-        colony.removeWorkOrder(orderId);
     }
 
     /**
@@ -231,10 +229,9 @@ public class WorkManager
         }
         if (order instanceof WorkOrderBuild && colony != null && colony.getWorld() != null)
         {
-            PlaceAndRemoveConstructionTape.placeConstructionTape(((WorkOrderBuild) order), colony.getWorld());
+            PlaceAndRemoveConstructionTape.placeConstructionTape((WorkOrderBuild) order, colony.getWorld());
         }
         workOrders.put(order.getID(), order);
-
     }
 
     /**
