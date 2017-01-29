@@ -135,7 +135,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             workFrom = null;
             loadStructure();
-
             final WorkOrderBuild wo = job.getWorkOrder();
             if (wo == null)
             {

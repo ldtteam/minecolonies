@@ -28,6 +28,7 @@ public final class ModBlocks
     public static final Block blockHutField          = new BlockHutField();
     public static final Block blockHutGuardTower     = new BlockHutGuardTower();
     public static final Block blockConstructionTape  = new BlockConstructionTape();
+    public static final Block blockConstructionTapeC  = new BlockConstructionTapeC();
 
 
     // Deactivated for now
