@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -287,7 +288,17 @@ public abstract class AbstractJob
     @Nullable
     public ItemStack removeItemNeeded(@NotNull final ItemStack stack)
     {
+
+
         @NotNull final ItemStack stackCopy = stack.copy();
+        //if stack is AIR, stack.isItemEqual(neededItem) will be always true
+        //and itemsNeeded would be empty
+        //There is probably a better way to check for air item
+        if (stack.getItemDamage()==0 && Item.getIdFromItem(stack.getItem()) == 0)
+        {
+            return stackCopy;
+            
+        }
         for (@NotNull final ItemStack neededItem : itemsNeeded)
         {
             if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
