@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
@@ -342,7 +341,7 @@ public class InventoryField implements IInventory
     @Override
     public ITextComponent getDisplayName()
     {
-        return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
+        return new TextComponentTranslation(this.getName());
     }
 
     /**

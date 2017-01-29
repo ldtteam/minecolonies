@@ -4,11 +4,9 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -266,63 +264,5 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         //TODO This is called every tick the GUI is open. Is that bad?
         return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
-    }
-
-    //-----------------------------Material Handling--------------------------------
-    @Override
-    public ItemStack decrStackSize(final int index, final int quantity)
-    {
-        final ItemStack removed = super.decrStackSize(index, quantity);
-
-        removeStackFromMaterialStore(removed);
-
-        return removed;
-    }
-
-    @Override
-    public ItemStack removeStackFromSlot(final int index)
-    {
-        final ItemStack removed = super.removeStackFromSlot(index);
-
-        removeStackFromMaterialStore(removed);
-
-        return removed;
-    }
-
-    @Override
-    public void setInventorySlotContents(final int index, final ItemStack stack)
-    {
-        final ItemStack previous = getStackInSlot(index);
-        removeStackFromMaterialStore(previous);
-
-        super.setInventorySlotContents(index, stack);
-
-        addStackToMaterialStore(stack);
-    }
-
-    private void addStackToMaterialStore(final ItemStack stack)
-    {
-        if (stack == null)
-        {
-            return;
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
-        }
-    }
-
-    private void removeStackFromMaterialStore(final ItemStack stack)
-    {
-        if (stack == null)
-        {
-            return;
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
-        }
     }
 }

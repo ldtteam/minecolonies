@@ -86,17 +86,17 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         {
             findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
         }
-        findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class).setLabelText(LanguageHandler.getString(getBuildingName()) + " " + building.getBuildingLevel());
+        findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class).setLabelText(LanguageHandler.format(getBuildingName()) + " " + building.getBuildingLevel());
 
         if (building.getBuildingLevel() == 0)
         {
-            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.coremod.gui.workerHuts.build"));
+            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
             findPaneByID(BUTTON_REPAIR).disable();
         }
         else if (building.isBuildingMaxLevel())
         {
             final Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-            button.setLabel(LanguageHandler.getString("com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable"));
+            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable"));
             button.disable();
         }
     }

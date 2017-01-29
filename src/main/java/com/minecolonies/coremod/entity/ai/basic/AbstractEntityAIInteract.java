@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -10,7 +11,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ForgeHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import com.minecolonies.coremod.configuration.Configurations;
 
 import java.util.List;
 

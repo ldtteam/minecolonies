@@ -280,7 +280,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void loadDecorationMode()
     {
-        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.coremod.gui.buildtool.decoration"));
+        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decoration"));
 
         hutDec.addAll(Structures.getDecorations());
 
@@ -292,7 +292,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void loadHutMode()
     {
-        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.coremod.gui.buildtool.hut"));
+        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.hut"));
 
         final InventoryPlayer inventory = this.mc.thePlayer.inventory;
 
@@ -312,7 +312,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if (hutDec.isEmpty())
         {
             final Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
-            buttonHutDec.setLabel(LanguageHandler.getString(
+            buttonHutDec.setLabel(LanguageHandler.format(
               Settings.instance.isInHutMode() ? "com.minecolonies.coremod.gui.buildtool.nohut" : "com.minecolonies.coremod.gui.buildtool.nodecoration"));
             buttonHutDec.setEnabled(false);
             final Button buttonStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
