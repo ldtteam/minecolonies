@@ -30,8 +30,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.*;
 
-import com.minecolonies.coremod.util.Log;
-
 /**
  * The builders building.
  */
@@ -265,23 +263,18 @@ public class BuildingBuilder extends AbstractBuildingWorker
         super.serializeToView(buf);
 
         updateAvailableResources();
-        Log.getLogger().info("SERIALIZE");
         buf.writeInt(neededResources.size());
         for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
         {
             final BuildingBuilderResource resource = resourcesAvailable.get(entry.getKey());
-            //ByteBufUtils.writeUTF8String(buf, entry.getValue().getDisplayName());
-            //ByteBufUtils.writeItemStack(buf, resource.getItemStack());
+            //ByteBufUtils.writeItemStack() is Buggy, serialize itemId and danage separately;
             final int itemId = Item.getIdFromItem(resource.itemStack.getItem());
             final int damage = resource.getItemStack().getItemDamage();
-            Log.getLogger().info("itemId="+itemId+" damage="+damage);
             buf.writeInt(itemId);
             buf.writeInt(damage);
             buf.writeInt(resource.getAvailable());
             buf.writeInt(entry.getValue().getCount());
-            Log.getLogger().info(resource.toString());
         }
-            Log.getLogger().info("------------------------");
 
     }
 
@@ -379,7 +372,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
         {
             ItemStack itemStack = entry.getValue();
-            Log.getLogger().info("Need "+itemStack.getDisplayName());
             BuildingBuilderResource resource = resourcesAvailable.get(entry.getKey());
             if (resource == null)
             {
@@ -461,7 +453,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
             final int size = buf.readInt();
             resources.clear();
-            Log.getLogger().info("DESERIALIZE");
 
             for (int i = 0; i < size; i++)
             {
@@ -470,15 +461,12 @@ public class BuildingBuilder extends AbstractBuildingWorker
                 final int itemId = buf.readInt();
                 final int damage = buf.readInt();
                 final ItemStack itemStack = new ItemStack(Item.getByNameOrId(Integer.toString(itemId)),1,damage);
-                Log.getLogger().info("itemId="+itemId+" damage="+damage);
                 final int amountAvailable = buf.readInt();
                 final int amountNeeded = buf.readInt();
 
                 final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack.getDisplayName(), itemStack, amountAvailable,amountNeeded);
-                Log.getLogger().info(resource.toString());
                 resources.put(itemStack.getDisplayName(), resource);
             }
-            Log.getLogger().info("++++++++++++++++++");
         }
 
         /**

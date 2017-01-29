@@ -13,7 +13,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -86,17 +85,11 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
             resources.clear();
             resources.addAll(updatedView.getResources().values());
-            Log.getLogger().info("New list of ressources");
             for (int i =0; i<resources.size();i++)
             {
                 final BuildingBuilder.BuildingBuilderResource resource = resources.get(i);
                 final Item item = resource.getItemStack().getItem();
-                Log.getLogger().info("resource.getItemStack().getDisplayName()=>"+resource.getItemStack().getDisplayName());
-                Log.getLogger().info(resource.toString());
                 resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, item, resource.getItemStack().getItemDamage()));
-                Log.getLogger().info("resource.getPlayerAmount()=>"+resource.getPlayerAmount());
-                Log.getLogger().info(resource.toString());
-                Log.getLogger().info("*************************");
             }
 
             Collections.sort(resources, new Comparator<BuildingBuilder.BuildingBuilderResource>() 
@@ -220,7 +213,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(RESOURCE_ID_POSITION);
         final int index = Integer.parseInt(idLabel.getLabelText());
         @NotNull final ItemStack itemStack = resources.get(index).getItemStack();
-        Log.getLogger().info("GUI: Want to transfert "+itemStack.getDisplayName());
         @NotNull final Label quantityLabel = (Label) button.getParent().getChildren().get(RESOURCE_QUANTITY_MISSING_POSITION);
         final int quantity = Integer.parseInt(quantityLabel.getLabelText());
         final String buttonLabel = button.getID();
