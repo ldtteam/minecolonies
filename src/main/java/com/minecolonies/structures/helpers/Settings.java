@@ -54,12 +54,12 @@ public final class Settings
     @Nullable
     public Structure getActiveStructure()
     {
-        if (structure != null && structure.isTemplateNull())
+        if (structure != null && structure.isTemplateMissing())
         {
-
             this.structure = null;
         }
-        return this.structure == null ? null : this.structure;
+
+        return this.structure;
     }
 
     /**
