@@ -20,6 +20,8 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CITIZENSINFO;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SHOWCOLONYINFO;
 
 /**
@@ -63,20 +65,15 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
 
         colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
 
-            /* check if sender is permitted to do this :: OFFICER or MAYOR */
-        boolean chkPlayer = canCommandSenderUseCommand(SHOWCOLONYINFO);
-
         Colony colony = ColonyManager.getColony(colonyId);
         World world = Minecraft.getMinecraft().theWorld;
         EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
-            /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
-        if (!chkPlayer)
+        /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
+        /* here we see if they have colony rank to do this command */
+        if (!canPlayerUseCommand(player, SHOWCOLONYINFO))
         {
-                /* here we see if they have colony rank to do this command */
-            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) && !colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER)) {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
-                return;
-            }
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+            return;
         }
         if (args.length != 0)
         {

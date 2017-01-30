@@ -1,8 +1,15 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.util.ServerUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,6 +71,19 @@ public abstract class AbstractSingleCommand implements ISubCommand
         return sb.toString();
     }
 
+
+    @NotNull
+    public boolean canPlayerUseCommand(EntityPlayer player, Commands theCommand,@NotNull final String... args)
+    {
+        int colonyId;
+        int citizenId;
+
+        colonyId = GetColonyAndCitizen.getColonyId(player.getCommandSenderEntity().getUniqueID(), player.getEntityWorld(), args);
+        citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
+
+        Colony chkColony = ColonyManager.getColony(colonyId);
+        return canCommandSenderUseCommand(theCommand) && !chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) && !chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
+    }
     /**
      * Will check the config file to see if players are allowed to use the command that is sent here
      *

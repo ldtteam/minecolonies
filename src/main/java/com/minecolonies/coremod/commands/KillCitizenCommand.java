@@ -76,11 +76,13 @@ public class KillCitizenCommand extends AbstractSingleCommand
             /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
             if (!chkPlayer)
             {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                return;
+            }
                 /* here we see if they have colony rank to do this command */
-                if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER)) {
-                    sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
-                    return;
-                }
+            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER)) {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                return;
             }
         }
         catch (IllegalArgumentException e)

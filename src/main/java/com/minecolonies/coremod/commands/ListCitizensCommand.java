@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CITIZENSINFO;
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RESPAWNCITIZENS;
 
 /**
  * List all colonies.
@@ -71,19 +72,14 @@ public class ListCitizensCommand extends AbstractSingleCommand
         final int colonyId = getIthArgument(args, 0, getColonyId(sender));
         final Colony colony = ColonyManager.getColony(colonyId);
 
-            /* check if sender is permitted to do this :: OFFICER or MAYOR */
-        boolean chkPlayer = canCommandSenderUseCommand(LISTCITIZENS);
-
         World world = Minecraft.getMinecraft().theWorld;
         EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
-            /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
-        if (!chkPlayer)
+        /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
+        /* here we see if they have colony rank to do this command */
+        if (!canPlayerUseCommand(player, LISTCITIZENS))
         {
-                /* here we see if they have colony rank to do this command */
-            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) && !colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER)) {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
-                return;
-            }
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+            return;
         }
 
         if (colony == null)
