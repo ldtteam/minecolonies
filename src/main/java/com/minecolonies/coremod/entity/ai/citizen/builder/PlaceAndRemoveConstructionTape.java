@@ -1,26 +1,15 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
-import com.minecolonies.coremod.colony.jobs.JobBuilder;
-import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
-import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
-import com.minecolonies.coremod.entity.ai.util.ChatSpamFilter;
 import com.minecolonies.coremod.util.BlockUtils;
-import com.minecolonies.coremod.util.ServerUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
-import net.java.games.input.Component;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -52,6 +41,7 @@ public final class PlaceAndRemoveConstructionTape
         int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
         int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
         int y  = wrapper.getPosition().getY();
+
         if (x1 < x3)
         {
             for (int i = x1; i <= x3; i++)
@@ -93,6 +83,14 @@ public final class PlaceAndRemoveConstructionTape
                 world.setBlockState(row4, ModBlocks.blockConstructionTape.getDefaultState());
             }
         }
+        BlockPos corner1 = new BlockPos(x1, y, z1);
+        BlockPos corner2 = new BlockPos(x1, y, z3);
+        BlockPos corner3 = new BlockPos(x3, y, z1);
+        BlockPos corner4 = new BlockPos(x3, y, z3);
+        world.setBlockState(corner1, ModBlocks.blockConstructionTapeC.getDefaultState());
+        world.setBlockState(corner2, ModBlocks.blockConstructionTapeC.getDefaultState());
+        world.setBlockState(corner3, ModBlocks.blockConstructionTapeC.getDefaultState());
+        world.setBlockState(corner4, ModBlocks.blockConstructionTapeC.getDefaultState());
     }
     public static void removeConstructionTape(@NotNull WorkOrderBuild workOrder,@NotNull World world)
     {
