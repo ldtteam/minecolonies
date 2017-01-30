@@ -179,12 +179,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public static class BuildingBuilderResource
     {
-        final private String name;
-        final private ItemStack itemStack;
-        final private int amountNeeded;
-        private int amountAvailable;
-        private int amountPlayer;
-
         /**
          * Availability status of the resource.
          * according to the builder's chest, inventory and the player's inventory
@@ -196,6 +190,12 @@ public class BuildingBuilder extends AbstractBuildingWorker
             NEED_MORE,
             HAVE_ENOUGHT
         }
+
+        private int amountAvailable;
+        private int amountPlayer;
+        final private String name;
+        final private ItemStack itemStack;
+        final private int amountNeeded;
 
         BuildingBuilderResource(final String name, final ItemStack itemStack, final int amountAvailable, final int amountNeeded)
         {
