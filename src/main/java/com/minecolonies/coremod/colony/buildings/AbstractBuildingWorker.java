@@ -29,19 +29,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     private CitizenData worker;
 
     /**
-     * Available skills of the citizens.
-     */
-    public enum Skill
-    {
-        STRENGTH,
-        ENDURANCE,
-        CHARISMA,
-        INTELLIGENCE,
-        DEXTERITY,
-        PLACEHOLDER
-    }
-
-    /**
      * The abstract constructor of the building.
      *
      * @param c the colony
@@ -51,14 +38,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     {
         super(c, l);
     }
-
-    /**
-     * The abstract method which returns the name of the job.
-     *
-     * @return the job name.
-     */
-    @NotNull
-    public abstract String getJobName();
 
     /**
      * The abstract method which creates a job for the building.
@@ -80,19 +59,6 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
     }
 
     /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
-     */
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return false;
-    }
-
-    /**
      * Set the worker of the current building.
      *
      * @param citizen {@link CitizenData} of the worker
@@ -109,7 +75,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         {
             final EntityCitizen tempCitizen = worker.getCitizenEntity();
             worker.setWorkBuilding(null);
-            if(tempCitizen != null)
+            if (tempCitizen != null)
             {
                 tempCitizen.setLastJob(getJobName());
             }
@@ -121,7 +87,7 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         if (worker != null)
         {
             final EntityCitizen tempCitizen = citizen.getCitizenEntity();
-            if(tempCitizen != null && !tempCitizen.getLastJob().equals(getJobName()))
+            if (tempCitizen != null && !tempCitizen.getLastJob().equals(getJobName()))
             {
                 citizen.resetExperienceAndLevel();
             }
@@ -129,6 +95,19 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         }
 
         markDirty();
+    }
+
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return false;
     }
 
     /**
@@ -207,6 +186,14 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         return citizen == worker;
     }
 
+    /**
+     * The abstract method which returns the name of the job.
+     *
+     * @return the job name.
+     */
+    @NotNull
+    public abstract String getJobName();
+
     @Override
     public void removeCitizen(final CitizenData citizen)
     {
@@ -248,6 +235,19 @@ public abstract class AbstractBuildingWorker extends AbstractBuildingHut
         super.serializeToView(buf);
 
         buf.writeInt(worker == null ? 0 : worker.getId());
+    }
+
+    /**
+     * Available skills of the citizens.
+     */
+    public enum Skill
+    {
+        STRENGTH,
+        ENDURANCE,
+        CHARISMA,
+        INTELLIGENCE,
+        DEXTERITY,
+        PLACEHOLDER
     }
 
     /**

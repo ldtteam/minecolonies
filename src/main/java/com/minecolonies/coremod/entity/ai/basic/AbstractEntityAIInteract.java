@@ -42,7 +42,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int    MIN_WORKING_RANGE             = 12;
+    private static final int    MIN_WORKING_RANGE    = 12;
 
     /**
      * Creates the abstract part of the AI.

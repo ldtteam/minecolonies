@@ -185,7 +185,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
         //Make sure we have a fresh view
         MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
-    
     }
 
     @Override

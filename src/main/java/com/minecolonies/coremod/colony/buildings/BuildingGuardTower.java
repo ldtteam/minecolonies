@@ -318,16 +318,6 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         return patrolTargets.get(0);
     }
 
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return stack != null
-                && (stack.getItem() instanceof ItemArmor
-                || stack.getItem() instanceof ItemTool
-                || stack.getItem() instanceof ItemSword
-                || stack.getItem() instanceof ItemBow);
-    }
-
     /**
      * The name of the baker's job.
      *
@@ -351,6 +341,16 @@ public class BuildingGuardTower extends AbstractBuildingWorker
     public AbstractJob createJob(final CitizenData citizen)
     {
         return new JobGuard(citizen);
+    }
+
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return stack != null
+                 && (stack.getItem() instanceof ItemArmor
+                       || stack.getItem() instanceof ItemTool
+                       || stack.getItem() instanceof ItemSword
+                       || stack.getItem() instanceof ItemBow);
     }
 
     @Override
@@ -617,7 +617,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         @Override
         public Skill getPrimarySkill()
         {
-            if(GuardJob.KNIGHT.equals(job))
+            if (GuardJob.KNIGHT.equals(job))
             {
                 return Skill.STRENGTH;
             }
@@ -629,7 +629,7 @@ public class BuildingGuardTower extends AbstractBuildingWorker
         @Override
         public Skill getSecondarySkill()
         {
-            if(GuardJob.KNIGHT.equals(job))
+            if (GuardJob.KNIGHT.equals(job))
             {
                 return Skill.ENDURANCE;
             }

@@ -35,22 +35,22 @@ public class BlockHutTownHall extends AbstractBlockHut
 
     @Override
     public void onBlockPlacedBy(
-            @NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
+                                 @NotNull final World worldIn, @NotNull final BlockPos pos, final IBlockState state, final EntityLivingBase placer, final ItemStack stack)
     {
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
-        if(worldIn.isRemote)
+        if (worldIn.isRemote)
         {
             return;
         }
 
-        if(placer.getActiveHand().equals(EnumHand.MAIN_HAND))
+        if (placer.getActiveHand().equals(EnumHand.MAIN_HAND))
         {
             final Colony colony = ColonyManager.getClosestColony(worldIn, pos);
 
             if ((colony == null
-                    || BlockPosUtil.getDistance2D(colony.getCenter(), pos) >= Configurations.workingRangeTownHall * 2 + Configurations.townHallPadding)
-                    && placer instanceof EntityPlayer)
+                   || BlockPosUtil.getDistance2D(colony.getCenter(), pos) >= Configurations.workingRangeTownHall * 2 + Configurations.townHallPadding)
+                  && placer instanceof EntityPlayer)
             {
 
                 ColonyManager.createColony(worldIn, pos, (EntityPlayer) placer);

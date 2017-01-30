@@ -50,6 +50,7 @@ public class TextField extends Pane
 
     /**
      * Public constructor to instantiate the field with params.
+     *
      * @param params the parameters for the textField.
      */
     public TextField(@NotNull final PaneParams params)

@@ -93,17 +93,17 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     {
         super(deliveryman);
         super.registerTargets(
-                /**
-                 * Check if tasks should be executed.
-                 */
-                new AITarget(this::checkIfExecute, IDLE),
-                new AITarget(IDLE, () -> START_WORKING),
-                new AITarget(START_WORKING, this::checkWareHouse),
-                new AITarget(PREPARE_DELIVERY, this::prepareDelivery),
-                new AITarget(GATHER_IN_WAREHOUSE, this::gatherItemsFromWareHouse),
-                new AITarget(DELIVERY, this::deliver),
-                new AITarget(GATHERING, this::gather),
-                new AITarget(DUMPING, this::dump)
+          /**
+           * Check if tasks should be executed.
+           */
+          new AITarget(this::checkIfExecute, IDLE),
+          new AITarget(IDLE, () -> START_WORKING),
+          new AITarget(START_WORKING, this::checkWareHouse),
+          new AITarget(PREPARE_DELIVERY, this::prepareDelivery),
+          new AITarget(GATHER_IN_WAREHOUSE, this::gatherItemsFromWareHouse),
+          new AITarget(DELIVERY, this::deliver),
+          new AITarget(GATHERING, this::gather),
+          new AITarget(DUMPING, this::dump)
 
         );
         worker.setSkillModifier(2 * worker.getCitizenData().getEndurance() + worker.getCitizenData().getCharisma());
@@ -154,86 +154,6 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the worker can hold that much items.
-     * It depends on his building level.
-     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
-     * That's 2^buildingLevel-1.
-     */
-    private boolean cannotHoldMoreItems()
-    {
-        if (getOwnBuilding().getBuildingLevel() >= getOwnBuilding().getMaxBuildingLevel())
-        {
-            return false;
-        }
-        return InventoryUtils.getAmountOfStacks(worker.getInventoryCitizen()) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
-    }
-
-    /**
-     * Gather not needed Items from building.
-     *
-     * @param building building to gather it from.
-     * @return true when finished.
-     */
-    private boolean gatherFromBuilding(@NotNull final AbstractBuilding building)
-    {
-        if (currentSlot >= building.getTileEntity().getSizeInventory())
-        {
-            return true;
-        }
-
-        final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
-        if (stack == null || stack == ItemStack.EMPTY|| workerRequiresItem(building, stack, alreadyKept))
-        {
-            return false;
-        }
-
-        worker.getInventoryCitizen().addItemStackToInventory(building.getTileEntity().removeStackFromSlot(currentSlot));
-        building.markDirty();
-        setDelay(DUMP_AND_GATHER_DELAY);
-        return false;
-    }
-
-    /**
-     * Check if the worker requires a certain amount of that item and if the deliveryman already kept it.
-     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
-     *
-     * @param building         the building of the worker.
-     * @param stack            the stack to check it with.
-     * @param localAlreadyKept already kept items.
-     * @return true if deliveryman should leave it behind.
-     */
-    private static boolean buildingRequiresCertainAmountOfItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
-    {
-        for (final Map.Entry<ItemStorage, Integer> entry : building.getRequiredItemsAndAmount().entrySet())
-        {
-            if (entry.getKey().getItem() == stack.getItem()
-                    && entry.getKey().getDamageValue() == stack.getItemDamage()
-                    && !localAlreadyKept.contains(entry.getKey()))
-            {
-                localAlreadyKept.add(entry.getKey());
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Check if worker of a certain building requires the item now.
-     * Or the builder for the current task.
-     *
-     * @param building the building to check for.
-     * @param stack    the stack to stack with.
-     * @param localAlreadyKept already kept resources.
-     * @return true if required.
-     */
-    public static boolean workerRequiresItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
-    {
-        return (building instanceof BuildingBuilder && ((BuildingBuilder) building).requiresResourceForBuilding(stack))
-                || (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
-                || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
-    }
-
-    /**
      * Gets a random building from his colony.
      *
      * @return a random blockPos.
@@ -258,6 +178,86 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         return building.getLocation();
+    }
+
+    /**
+     * Gather not needed Items from building.
+     *
+     * @param building building to gather it from.
+     * @return true when finished.
+     */
+    private boolean gatherFromBuilding(@NotNull final AbstractBuilding building)
+    {
+        if (currentSlot >= building.getTileEntity().getSizeInventory())
+        {
+            return true;
+        }
+
+        final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
+        if (stack == null || stack == ItemStack.EMPTY || workerRequiresItem(building, stack, alreadyKept))
+        {
+            return false;
+        }
+
+        worker.getInventoryCitizen().addItemStackToInventory(building.getTileEntity().removeStackFromSlot(currentSlot));
+        building.markDirty();
+        setDelay(DUMP_AND_GATHER_DELAY);
+        return false;
+    }
+
+    /**
+     * Check if the worker can hold that much items.
+     * It depends on his building level.
+     * Level 1: 1 stack Level 2: 2 stacks, 4 stacks, 8, unlimited.
+     * That's 2^buildingLevel-1.
+     */
+    private boolean cannotHoldMoreItems()
+    {
+        if (getOwnBuilding().getBuildingLevel() >= getOwnBuilding().getMaxBuildingLevel())
+        {
+            return false;
+        }
+        return InventoryUtils.getAmountOfStacks(worker.getInventoryCitizen()) >= Math.pow(2, getOwnBuilding().getBuildingLevel() - 1.0D);
+    }
+
+    /**
+     * Check if worker of a certain building requires the item now.
+     * Or the builder for the current task.
+     *
+     * @param building         the building to check for.
+     * @param stack            the stack to stack with.
+     * @param localAlreadyKept already kept resources.
+     * @return true if required.
+     */
+    public static boolean workerRequiresItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
+    {
+        return (building instanceof BuildingBuilder && ((BuildingBuilder) building).requiresResourceForBuilding(stack))
+                 || (building instanceof AbstractBuildingWorker && ((AbstractBuildingWorker) building).neededForWorker(stack))
+                 || buildingRequiresCertainAmountOfItem(building, stack, localAlreadyKept);
+    }
+
+    /**
+     * Check if the worker requires a certain amount of that item and if the deliveryman already kept it.
+     * Always leave one stack behind if the worker requires a certain amount of it. Just to be sure.
+     *
+     * @param building         the building of the worker.
+     * @param stack            the stack to check it with.
+     * @param localAlreadyKept already kept items.
+     * @return true if deliveryman should leave it behind.
+     */
+    private static boolean buildingRequiresCertainAmountOfItem(AbstractBuilding building, ItemStack stack, List<ItemStorage> localAlreadyKept)
+    {
+        for (final Map.Entry<ItemStorage, Integer> entry : building.getRequiredItemsAndAmount().entrySet())
+        {
+            if (entry.getKey().getItem() == stack.getItem()
+                  && entry.getKey().getDamageValue() == stack.getItemDamage()
+                  && !localAlreadyKept.contains(entry.getKey()))
+            {
+                localAlreadyKept.add(entry.getKey());
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -312,10 +312,10 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     else
                     {
                         @Nullable final ItemStack tempStack = buildingToDeliver.forceTransferStack(stack, world);
-                        if(tempStack == null)
+                        if (tempStack == null)
                         {
                             chatSpamFilter.talkWithoutSpam("com.minecolonies.coremod.job.deliveryman.workerChestFull"
-                                    , new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
+                              , new TextComponentString(" :" + buildingToDeliver.getSchematicName()));
                         }
                         else
                         {
@@ -371,7 +371,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                     return DELIVERY;
                 }
 
-                if(gatherItems(buildingToDeliver))
+                if (gatherItems(buildingToDeliver))
                 {
                     setDelay(DUMP_AND_GATHER_DELAY);
                     return GATHER_IN_WAREHOUSE;
@@ -420,9 +420,9 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         {
             final String tool = buildingToDeliver.getRequiredTool();
             position = wareHouse.getTileEntity()
-                    .getPositionOfChestWithTool(tool,
-                            Utils.PICKAXE.equals(tool) ? buildingToDeliver.getNeededPickaxeLevel() : buildingToDeliver.getBuildingLevel(),
-                            buildingToDeliver);
+                         .getPositionOfChestWithTool(tool,
+                           Utils.PICKAXE.equals(tool) ? buildingToDeliver.getNeededPickaxeLevel() : buildingToDeliver.getBuildingLevel(),
+                           buildingToDeliver);
         }
         else
         {
@@ -443,7 +443,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final TileEntity tileEntity = world.getTileEntity(position);
         if (tileEntity instanceof TileEntityChest)
         {
-            if(!(tileEntity instanceof TileEntityColonyBuilding))
+            if (!(tileEntity instanceof TileEntityColonyBuilding))
             {
                 if (((TileEntityChest) tileEntity).numPlayersUsing == 0)
                 {
@@ -462,7 +462,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             {
                 return false;
             }
-            else if(!itemsToDeliver.isEmpty())
+            else if (!itemsToDeliver.isEmpty())
             {
                 final ItemStack stack = itemsToDeliver.get(0);
                 if (isInTileEntity((TileEntityChest) tileEntity, stack))
@@ -522,7 +522,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         final Map<BlockPos, AbstractBuilding> buildings = job.getColony().getBuildings();
         for (final AbstractBuilding building : buildings.values())
         {
-            if(building == null)
+            if (building == null)
             {
                 continue;
             }
@@ -530,7 +530,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             final Colony buildingColony = building.getColony();
             final Colony ownColony = worker.getColony();
             if (building instanceof BuildingWareHouse && ownColony != null && buildingColony != null && buildingColony.getID() == ownColony.getID()
-                    && ((BuildingWareHouse) building).registerWithWareHouse((BuildingDeliveryman) this.getOwnBuilding()))
+                  && ((BuildingWareHouse) building).registerWithWareHouse((BuildingDeliveryman) this.getOwnBuilding()))
             {
                 wareHouse = (BuildingWareHouse) building;
                 return false;

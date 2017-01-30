@@ -135,6 +135,19 @@ public class BuildingBuilder extends AbstractBuildingWorker
         return new JobBuilder(citizen);
     }
 
+    /**
+     * Can be overriden by implementations to specify which tools are useful for the worker.
+     * When dumping he will keep these.
+     *
+     * @param stack the stack to decide on
+     * @return if should be kept or not.
+     */
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return Utils.isMiningTool(stack);
+    }
+
     @Override
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
@@ -289,7 +302,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Add a new resource to the needed list.
-     *  @param res    the resource.
+     *
+     * @param res    the resource.
      * @param amount the amount.
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
@@ -302,19 +316,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
         res.setCount(preAmount + amount);
         this.neededResources.put(res.getUnlocalizedName(), res);
         this.markDirty();
-    }
-
-    /**
-     * Can be overriden by implementations to specify which tools are useful for the worker.
-     * When dumping he will keep these.
-     *
-     * @param stack the stack to decide on
-     * @return if should be kept or not.
-     */
-    @Override
-    public boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return Utils.isMiningTool(stack);
     }
 
     /**
@@ -407,6 +408,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /*
      * Check if the builder requires a certain ItemStack for the current construction.
+     *
      * @param stack the stack to test.
      * @return true if so.
      */

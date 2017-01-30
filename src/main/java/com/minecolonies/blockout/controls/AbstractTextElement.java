@@ -13,27 +13,27 @@ public abstract class AbstractTextElement extends Pane
     /**
      * Texture of the abstractTextElement.
      */
-    protected static final ResourceLocation TEXTURE       = new ResourceLocation("textures/gui/widgets.png");
+    protected static final ResourceLocation TEXTURE = new ResourceLocation("textures/gui/widgets.png");
 
     /**
      * The scale of the element.
      */
-    protected              double           scale         = 1.0;
+    protected double scale = 1.0;
 
     /**
      * How the text aligns in it.
      */
-    protected              Alignment        textAlignment = Alignment.MIDDLE_LEFT;
+    protected Alignment textAlignment = Alignment.MIDDLE_LEFT;
 
     /**
      * The standard text color.
      */
-    protected              int              textColor     = 0xffffff;
+    protected int textColor = 0xffffff;
 
     /**
      * The default state for shadows.
      */
-    protected              boolean          shadow        = false;
+    protected boolean shadow = false;
 
     /**
      * Creates an instance of the abstractTextElement.

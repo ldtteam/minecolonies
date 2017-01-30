@@ -105,30 +105,6 @@ public final class EntityUtils
         return true;
     }
 
-
-    /**
-     * Recalls the citizen, notifies player if not successful.
-     * @param spawnPoint the spawnPoint.
-     * @param citizen the citizen.
-     * @return true if succesful.
-     */
-    public static boolean setSpawnPoint(@Nullable BlockPos spawnPoint, @NotNull EntityCitizen citizen)
-    {
-        if(spawnPoint == null)
-        {
-            return false;
-        }
-
-        citizen.setLocationAndAngles(
-                spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
-                spawnPoint.getY(),
-                spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-                citizen.rotationYaw,
-                citizen.rotationPitch);
-        citizen.getNavigator().clearPathEntity();
-        return true;
-    }
-
     /**
      * Returns whether or not the worker is within a specific range of his working site.
      *
@@ -174,6 +150,30 @@ public final class EntityUtils
     public static boolean tryMoveLivingToXYZ(@NotNull final EntityLiving living, final int x, final int y, final int z, final double speed)
     {
         return living.getNavigator().tryMoveToXYZ(x, y, z, speed);
+    }
+
+    /**
+     * Recalls the citizen, notifies player if not successful.
+     *
+     * @param spawnPoint the spawnPoint.
+     * @param citizen    the citizen.
+     * @return true if succesful.
+     */
+    public static boolean setSpawnPoint(@Nullable BlockPos spawnPoint, @NotNull EntityCitizen citizen)
+    {
+        if (spawnPoint == null)
+        {
+            return false;
+        }
+
+        citizen.setLocationAndAngles(
+          spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
+          spawnPoint.getY(),
+          spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
+          citizen.rotationYaw,
+          citizen.rotationPitch);
+        citizen.getNavigator().clearPathEntity();
+        return true;
     }
 
     /**
@@ -301,17 +301,17 @@ public final class EntityUtils
     public static BlockPos getSpawnPoint(World world, BlockPos nearPoint)
     {
         return Utils.scanForBlockNearPoint(
-                world,
-                nearPoint,
-                1,
-                1,
-                1,
-                2,
-                Blocks.AIR,
-                Blocks.SNOW_LAYER,
-                Blocks.TALLGRASS,
-                Blocks.RED_FLOWER,
-                Blocks.YELLOW_FLOWER,
-                Blocks.CARPET);
+          world,
+          nearPoint,
+          1,
+          1,
+          1,
+          2,
+          Blocks.AIR,
+          Blocks.SNOW_LAYER,
+          Blocks.TALLGRASS,
+          Blocks.RED_FLOWER,
+          Blocks.YELLOW_FLOWER,
+          Blocks.CARPET);
     }
 }

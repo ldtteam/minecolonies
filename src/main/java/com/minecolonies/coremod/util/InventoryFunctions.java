@@ -53,29 +53,6 @@ public class InventoryFunctions
     }
 
     /**
-     * Search for a stack in an Inventory matching the predicate.
-     *
-     * @param inventory the inventory to search in
-     * @param tester    the function to use for testing slots
-     * @param action    the function to use if a slot matches
-     * @return true if it found a stack
-     */
-    public static boolean matchFirstInInventoryWithInventory(
-            final IInventory inventory, @NotNull final Predicate<ItemStack> tester,
-            @NotNull final Consumer<Tuple<Integer, IInventory>> action)
-    {
-        return matchFirstInInventory(inventory, inv -> slot -> stack ->
-        {
-            if (tester.test(stack))
-            {
-                action.accept(new Tuple<>(slot, inventory));
-                return true;
-            }
-            return false;
-        });
-    }
-
-    /**
      * Topmost matchFirst function, will stop after it finds the first itemstack.
      *
      * @param inventory the inventory to search in
@@ -124,6 +101,29 @@ public class InventoryFunctions
             }
         }
         return foundOne;
+    }
+
+    /**
+     * Search for a stack in an Inventory matching the predicate.
+     *
+     * @param inventory the inventory to search in
+     * @param tester    the function to use for testing slots
+     * @param action    the function to use if a slot matches
+     * @return true if it found a stack
+     */
+    public static boolean matchFirstInInventoryWithInventory(
+                                                              final IInventory inventory, @NotNull final Predicate<ItemStack> tester,
+                                                              @NotNull final Consumer<Tuple<Integer, IInventory>> action)
+    {
+        return matchFirstInInventory(inventory, inv -> slot -> stack ->
+        {
+            if (tester.test(stack))
+            {
+                action.accept(new Tuple<>(slot, inventory));
+                return true;
+            }
+            return false;
+        });
     }
 
     /**

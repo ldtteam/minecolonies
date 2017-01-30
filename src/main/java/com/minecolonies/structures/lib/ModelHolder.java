@@ -23,27 +23,27 @@ public class ModelHolder
     /**
      * Position the model is at.
      */
-    public final BlockPos        pos;
+    public final BlockPos pos;
 
     /**
      * Actual state of the model.
      */
-    public final IBlockState     actualState;
+    public final IBlockState actualState;
 
     /**
      * Extended state of that model.
      */
-    public final IBlockState     extendedState;
+    public final IBlockState extendedState;
 
     /**
      * Tile entity of the model.
      */
-    public final TileEntity      te;
+    public final TileEntity te;
 
     /**
      * The model of the model.
      */
-    public final IBakedModel     model;
+    public final IBakedModel model;
 
     /**
      * Quads to render for the model.
@@ -77,6 +77,7 @@ public class ModelHolder
 
     /**
      * Checks if it is rendered.
+     *
      * @return true if so.
      */
     public boolean isRendered()
@@ -86,6 +87,7 @@ public class ModelHolder
 
     /**
      * Sets if it rendered.
+     *
      * @param rendered state to set.
      */
     public void setRendered(final boolean rendered)

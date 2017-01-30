@@ -358,6 +358,7 @@ public class Permissions implements IPermissions
 
     /**
      * Returns an unmodifiable map of the players list.
+     *
      * @return map of UUIDs and player objects.
      */
     @NotNull
@@ -466,18 +467,6 @@ public class Permissions implements IPermissions
             permissionMap.put(rank, Utils.unsetFlag(flags, action.flag));
             markDirty();
         }
-    }    /**
-     * Returns the rank belonging to the UUID.
-     *
-     * @param id UUID that you want to check rank of.
-     * @return Rank of the UUID.
-     */
-    @NotNull
-    @Override
-    public Rank getRank(final UUID id)
-    {
-        final Player player = players.get(id);
-        return player != null ? player.rank : Rank.NEUTRAL;
     }
 
     /**
@@ -490,6 +479,18 @@ public class Permissions implements IPermissions
     {
         permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.flag));
         markDirty();
+    }    /**
+     * Returns the rank belonging to the UUID.
+     *
+     * @param id UUID that you want to check rank of.
+     * @return Rank of the UUID.
+     */
+    @NotNull
+    @Override
+    public Rank getRank(final UUID id)
+    {
+        final Player player = players.get(id);
+        return player != null ? player.rank : Rank.NEUTRAL;
     }
 
     /**
@@ -623,10 +624,6 @@ public class Permissions implements IPermissions
     public boolean isSubscriber(@NotNull final EntityPlayer player)
     {
         return isSubscriber(player.getGameProfile().getId());
-    }    @Override
-    public boolean isColonyMember(@NotNull final EntityPlayer player)
-    {
-        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**
@@ -648,6 +645,10 @@ public class Permissions implements IPermissions
     public boolean isDirty()
     {
         return dirty;
+    }    @Override
+    public boolean isColonyMember(@NotNull final EntityPlayer player)
+    {
+        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**

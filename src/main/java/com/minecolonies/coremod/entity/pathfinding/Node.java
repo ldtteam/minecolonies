@@ -20,33 +20,33 @@ public class Node implements Comparable<Node>
      * The position of the node.
      */
     @NotNull
-    public final  BlockPos pos;
+    public final BlockPos pos;
 
     /**
      * The hash of the node.
      */
-    private final int      hash;
+    private final int hash;
 
     /**
      * The parent of the node (Node preceding this node).
      */
     @Nullable
-    public        Node     parent;
+    public Node parent;
 
     /**
      * Added counter.
      */
-    private         int      counterAdded;
+    private int counterAdded;
 
     /**
      * Visited counter.
      */
-    private        int      counterVisited;
+    private int counterVisited;
 
     /**
      * Number of steps.
      */
-    private        int      steps;
+    private int steps;
 
     /**
      * The cost of the node.
@@ -69,12 +69,12 @@ public class Node implements Comparable<Node>
     /**
      * Checks if the node has been closed already.
      */
-    private boolean closed     = false;
+    private boolean closed = false;
 
     /**
      * Checks if the node is on a ladder.
      */
-    private boolean ladder   = false;
+    private boolean ladder = false;
 
     /**
      * Checks if the node is in water.
@@ -162,6 +162,7 @@ public class Node implements Comparable<Node>
 
     /**
      * Checks if node is closed.
+     *
      * @return true if so.
      */
     public boolean isClosed()
@@ -171,6 +172,7 @@ public class Node implements Comparable<Node>
 
     /**
      * Checks if node is on a ladder.
+     *
      * @return true if so.
      */
     public boolean isLadder()
@@ -180,6 +182,7 @@ public class Node implements Comparable<Node>
 
     /**
      * Checks if node is in water.
+     *
      * @return true if so.
      */
     public boolean isSwimming()
@@ -197,6 +200,7 @@ public class Node implements Comparable<Node>
 
     /**
      * Getter for the visited counter.
+     *
      * @return the amount.
      */
     public int getCounterVisited()
@@ -206,6 +210,7 @@ public class Node implements Comparable<Node>
 
     /**
      * Setter for the visited counter.
+     *
      * @param counterVisited amount to set.
      */
     public void setCounterVisited(final int counterVisited)
@@ -215,6 +220,7 @@ public class Node implements Comparable<Node>
 
     /**
      * Getter of the score of the node.
+     *
      * @return the score.
      */
     public double getScore()
@@ -223,7 +229,18 @@ public class Node implements Comparable<Node>
     }
 
     /**
+     * Sets the node score.
+     *
+     * @param score the score.
+     */
+    public void setScore(final double score)
+    {
+        this.score = score;
+    }
+
+    /**
      * Getter of the cost of the node.
+     *
      * @return the cost.
      */
     public double getCost()
@@ -232,12 +249,33 @@ public class Node implements Comparable<Node>
     }
 
     /**
+     * Sets the node cost.
+     *
+     * @param cost the cost.
+     */
+    public void setCost(final double cost)
+    {
+        this.cost = cost;
+    }
+
+    /**
      * Getter of the steps.
+     *
      * @return the steps.
      */
     public int getSteps()
     {
         return steps;
+    }
+
+    /**
+     * Sets the amount of steps.
+     *
+     * @param steps the amount.
+     */
+    public void setSteps(final int steps)
+    {
+        this.steps = steps;
     }
 
     /**
@@ -258,6 +296,7 @@ public class Node implements Comparable<Node>
 
     /**
      * Getter of the heuristic.
+     *
      * @return the heuristic.
      */
     public double getHeuristic()
@@ -266,34 +305,8 @@ public class Node implements Comparable<Node>
     }
 
     /**
-     * Sets the added counter.
-     * @param counterAdded amount to set.
-     */
-    public void setCounterAdded(final int counterAdded)
-    {
-        this.counterAdded = counterAdded;
-    }
-
-    /**
-     * Sets the amount of steps.
-     * @param steps the amount.
-     */
-    public void setSteps(final int steps)
-    {
-        this.steps = steps;
-    }
-
-    /**
-     * Sets the node cost.
-     * @param cost the cost.
-     */
-    public void setCost(final double cost)
-    {
-        this.cost = cost;
-    }
-
-    /**
      * Sets the node heuristic.
+     *
      * @param heuristic the heuristic.
      */
     public void setHeuristic(final double heuristic)
@@ -302,20 +315,22 @@ public class Node implements Comparable<Node>
     }
 
     /**
-     * Sets the node score.
-     * @param score the score.
-     */
-    public void setScore(final double score)
-    {
-        this.score = score;
-    }
-
-    /**
      * Getter of the added counter.
+     *
      * @return the amount.
      */
     public int getCounterAdded()
     {
         return counterAdded;
+    }
+
+    /**
+     * Sets the added counter.
+     *
+     * @param counterAdded amount to set.
+     */
+    public void setCounterAdded(final int counterAdded)
+    {
+        this.counterAdded = counterAdded;
     }
 }

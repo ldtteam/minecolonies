@@ -74,21 +74,18 @@ public class WindowHireWorker extends Window implements Button.Handler
      * Colors the following string in orange.
      */
     private static final String YELLOW_STRING = "§e";
-
-    /**
-     * Contains all the citizens.
-     */
-    private List<CitizenDataView> citizens = new ArrayList<>();
-
     /**
      * The view of the current building.
      */
     private final AbstractBuilding.View building;
-
     /**
      * The colony.
      */
     private final ColonyView colony;
+    /**
+     * Contains all the citizens.
+     */
+    private List<CitizenDataView> citizens = new ArrayList<>();
 
     /**
      * Constructor for the window when the player wants to hire a worker for a certain job.
@@ -158,24 +155,24 @@ public class WindowHireWorker extends Window implements Button.Handler
                     final AbstractBuildingWorker.Skill secondary = ((AbstractBuildingWorker.View) building).getSecondarySkill();
 
                     @NotNull final String strength = (primary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? GREEN_STRING
-                            : (secondary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? YELLOW_STRING : ""))
-                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()) + " §f ";
+                                                        : (secondary.equals(AbstractBuildingWorker.Skill.STRENGTH) ? YELLOW_STRING : ""))
+                                                       + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.strength", citizen.getStrength()) + " §f ";
 
                     @NotNull final String charisma = (primary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? GREEN_STRING
-                            : (secondary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? YELLOW_STRING : ""))
-                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()) + " §f ";
+                                                        : (secondary.equals(AbstractBuildingWorker.Skill.CHARISMA) ? YELLOW_STRING : ""))
+                                                       + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.charisma", citizen.getCharisma()) + " §f ";
 
                     @NotNull final String dexterity = (primary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? GREEN_STRING
-                            : (secondary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? YELLOW_STRING : ""))
-                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()) + " §f ";
+                                                         : (secondary.equals(AbstractBuildingWorker.Skill.DEXTERITY) ? YELLOW_STRING : ""))
+                                                        + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.dexterity", citizen.getDexterity()) + " §f ";
 
                     @NotNull final String endurance = (primary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? GREEN_STRING
-                            : (secondary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? YELLOW_STRING : ""))
-                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()) + " §f ";
+                                                         : (secondary.equals(AbstractBuildingWorker.Skill.ENDURANCE) ? YELLOW_STRING : ""))
+                                                        + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.endurance", citizen.getEndurance()) + " §f ";
 
                     @NotNull final String intelligence = (primary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? GREEN_STRING
-                            : (secondary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? YELLOW_STRING : ""))
-                            +  LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getStrength()) + " §f ";
+                                                            : (secondary.equals(AbstractBuildingWorker.Skill.INTELLIGENCE) ? YELLOW_STRING : ""))
+                                                           + LanguageHandler.format("com.minecolonies.coremod.gui.citizen.skills.intelligence", citizen.getStrength()) + " §f ";
 
                     //Creates the list of attributes for each citizen
                     @NotNull final String attributes = strength + charisma + dexterity + endurance + intelligence;

@@ -32,14 +32,15 @@ public class ItemCompost extends AbstractItemMinecolonies
 
     /**
      * /whenever player right click a block with this "compost item", call this method.
-     * @param stack the right clicked stack.
+     *
+     * @param stack    the right clicked stack.
      * @param playerIn the player doing it.
-     * @param worldIn the world.
-     * @param pos the position.
-     * @param side the side he clicks it.
-     * @param hitX the x hit position.
-     * @param hitY the y hit position.
-     * @param hitZ the z hit position.
+     * @param worldIn  the world.
+     * @param pos      the position.
+     * @param side     the side he clicks it.
+     * @param hitX     the x hit position.
+     * @param hitY     the y hit position.
+     * @param hitZ     the z hit position.
      * @return true if succesful.
      */
     public boolean onItemUse(

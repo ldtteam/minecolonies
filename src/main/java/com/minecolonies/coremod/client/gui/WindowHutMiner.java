@@ -24,9 +24,9 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     private static final String BUTTON_CURRENTLEVEL       = "changeToLevel";
     private static final String VIEW_PAGES                = "pages";
     private static final String HUT_MINER_RESOURCE_SUFFIX = ":gui/windowhutminer.xml";
+    private final BuildingMiner.View miner;
     private       int[]              levels;
     private       ScrollingList      levelList;
-    private final BuildingMiner.View miner;
 
     /**
      * Constructor for the window of the miner hut.
@@ -87,7 +87,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     @Override
     public void onButtonClicked(@NotNull final Button button)
     {
-        if(button.getID().equals(BUTTON_CURRENTLEVEL))
+        if (button.getID().equals(BUTTON_CURRENTLEVEL))
         {
             final int row = levelList.getListElementIndexByPane(button);
             if (row != miner.current && row >= 0 && row < levels.length)
@@ -102,6 +102,13 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
         }
     }
 
+    @NotNull
+    @Override
+    public String getBuildingName()
+    {
+        return "com.minecolonies.coremod.gui.workerHuts.minerHut";
+    }
+
     @Override
     public void onUpdate()
     {
@@ -111,13 +118,6 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
             pullLevelsFromHut();
             window.findPaneOfTypeByID(LIST_LEVELS, ScrollingList.class).refreshElementPanes();
         }
-    }
-
-    @NotNull
-    @Override
-    public String getBuildingName()
-    {
-        return "com.minecolonies.coremod.gui.workerHuts.minerHut";
     }
 }
 

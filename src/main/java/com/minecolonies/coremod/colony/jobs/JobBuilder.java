@@ -25,7 +25,7 @@ public class JobBuilder extends AbstractJobStructure
     /**
      * The id of the current workOrder.
      */
-    private   int              workOrderId;
+    private int workOrderId;
 
     /**
      * Instantiates builder job.

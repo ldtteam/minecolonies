@@ -20,9 +20,9 @@ import java.util.List;
 public class AddOfficerCommand extends AbstractSingleCommand
 {
 
-    public static final  String       DESC                            = "addOfficer";
-    private static final String       SUCCESS_MESSAGE             = "Succesfully added Player %s to colony %d";
-    private static final String       COLONY_NULL                     = "Couldn't find colony %d.";
+    public static final  String DESC            = "addOfficer";
+    private static final String SUCCESS_MESSAGE = "Succesfully added Player %s to colony %d";
+    private static final String COLONY_NULL     = "Couldn't find colony %d.";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -53,7 +53,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             playerName = args[1];
         }
 
-        if(playerName == null || playerName.isEmpty())
+        if (playerName == null || playerName.isEmpty())
         {
             playerName = sender.getName();
         }

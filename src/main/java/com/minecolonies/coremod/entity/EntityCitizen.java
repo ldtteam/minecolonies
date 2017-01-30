@@ -56,6 +56,10 @@ import java.util.*;
  */
 public class EntityCitizen extends EntityAgeable implements INpc
 {
+    /**
+     * Base movement speed of every citizen.
+     */
+    public static final double BASE_MOVEMENT_SPEED = 0.3D;
     private static final DataParameter<Integer> DATA_TEXTURE         = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_LEVEL           = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<Integer> DATA_IS_FEMALE       = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
@@ -63,22 +67,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final DataParameter<Integer> DATA_CITIZEN_ID      = EntityDataManager.<Integer>createKey(EntityCitizen.class, DataSerializers.VARINT);
     private static final DataParameter<String>  DATA_MODEL           = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
     private static final DataParameter<String>  DATA_RENDER_METADATA = EntityDataManager.<String>createKey(EntityCitizen.class, DataSerializers.STRING);
-
     /**
      * The movement speed for the citizen to run away.
      */
     private static final int MOVE_AWAY_SPEED = 2;
-
     /**
      * The range for the citizen to move away.
      */
     private static final int MOVE_AWAY_RANGE = 6;
-
     /**
      * Number of ticks to heal the citizens.
      */
     private static final int HEAL_CITIZENS_AFTER = 100;
-
     /**
      * Tag's to save data to NBT.
      */
@@ -86,49 +86,35 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private static final String TAG_CITIZEN        = "citizen";
     private static final String TAG_HELD_ITEM_SLOT = "HeldItemSlot";
     private static final String TAG_STATUS         = "status";
-    private static final String TAG_LAST_JOB           = "lastJob";
-
-
+    private static final String TAG_LAST_JOB       = "lastJob";
     /**
      * The delta yaw value for looking at things.
      */
     private static final float FACING_DELTA_YAW = 10F;
-
     /**
      * The range in which we can hear a block break sound.
      */
     private static final double BLOCK_BREAK_SOUND_RANGE = 16.0D;
-
     /**
      * The range in which someone will see the particles from a block breaking.
      */
     private static final double BLOCK_BREAK_PARTICLE_RANGE = 16.0D;
-
     /**
      * Divide experience by a factor to ensure more levels fit in an int.
      */
     private static final double EXP_DIVIDER = 100.0;
-
     /**
      * Chance the citizen will rant about bad weather. 20 ticks per 60 seconds = 5 minutes.
      */
     private static final int RANT_ABOUT_WEATHER_CHANCE = 20 * 60 * 5;
-
     /**
      * Quantity to be moved to rotate without actually moving.
      */
     private static final double MOVE_MINIMAL = 0.01D;
-
     /**
      * Base max health of the citizen.
      */
     private static final double BASE_MAX_HEALTH = 20D;
-
-    /**
-     * Base movement speed of every citizen.
-     */
-    public static final double BASE_MOVEMENT_SPEED = 0.3D;
-
     /**
      * Base pathfinding range of the citizen.
      */
@@ -166,23 +152,23 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private static final double RANGE_TO_BE_HOME       = 16;
     /**
-     * The last job of the citizen.
-     */
-    private String lastJob                             = "";
-    /**
      * If the entitiy is stuck for 2 minutes do something.
      */
-    private static final int MAX_STUCK_TIME = 20*60*2;
-    private static Field navigatorField;
-    private final InventoryCitizen inventory;
+    private static final int    MAX_STUCK_TIME         = 20 * 60 * 2;
+    private static Field            navigatorField;
+    private final  InventoryCitizen inventory;
     @NotNull
     private final Map<String, Integer> statusMessages = new HashMap<>();
     private final PathNavigate newNavigator;
     protected Status                   status  = Status.IDLE;
+    /**
+     * The last job of the citizen.
+     */
+    private              String lastJob                = "";
     private   RenderBipedCitizen.Model modelId = RenderBipedCitizen.Model.SETTLER;
-    private       String           renderMetadata;
-    private       ResourceLocation texture;
-    private       int              colonyId;
+    private String           renderMetadata;
+    private ResourceLocation texture;
+    private int              colonyId;
     private int citizenId = 0;
     private int         level;
     private int         textureId;
@@ -209,7 +195,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Time the entitiy is at the same position already.
      */
     private int stuckTime = 0;
-
 
     /**
      * Citizen constructor.
@@ -461,7 +446,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         final double goToZ = zDifference > 0 ? MOVE_MINIMAL : -MOVE_MINIMAL;
 
         //Have to move the entity minimally into the direction to render his new rotation.
-        moveEntityWithHeading((float)goToX, (float)goToZ);
+        moveEntityWithHeading((float) goToX, (float) goToZ);
     }
 
     /**
@@ -632,7 +617,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 LanguageHandler.sendPlayersLocalizedMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageGuardDead",
-                        citizenData.getName(), (int)posX, (int) posY, (int) posZ);
+                  citizenData.getName(), (int) posX, (int) posY, (int) posZ);
             }
             else
             {
@@ -836,71 +821,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         super.onLivingUpdate();
     }
 
-    private void checkIfStuck()
-    {
-        if(this.currentPosition == null)
-        {
-            this.currentPosition = this.getPosition();
-            return;
-        }
-
-        if(this.currentPosition.equals(this.getPosition()) && newNavigator != null && newNavigator.getDestination() != null)
-        {
-            stuckTime++;
-            if(stuckTime >= MAX_STUCK_TIME)
-            {
-                if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
-                {
-                    stuckTime = 0;
-                    return;
-                }
-
-                @Nullable final BlockPos spawnPoint =
-                        Utils.scanForBlockNearPoint
-                                (world, newNavigator.getDestination(), 1, 0, 1, 2,
-                                        Blocks.AIR,
-                                        Blocks.SNOW_LAYER,
-                                        Blocks.TALLGRASS,
-                                        Blocks.RED_FLOWER,
-                                        Blocks.YELLOW_FLOWER,
-                                        Blocks.CARPET);
-
-                EntityUtils.setSpawnPoint(spawnPoint, this);
-                if (colony != null)
-                {
-                    Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
-                }
-                stuckTime = 0;
-            }
-        }
-        else
-        {
-            stuckTime = 0;
-            this.currentPosition = this.getPosition();
-        }
-
-        this.currentPosition = this.getPosition();
-    }
-
-    /**
-     * Sets the last job of the citizen.
-     * @param jobName the job he last had.
-     */
-    public void setLastJob(@NotNull String jobName)
-    {
-        this.lastJob = jobName;
-    }
-
-    /**
-     * Getter for the last job.
-     * @return the last job he had.
-     */
-    @NotNull
-    public String getLastJob()
-    {
-        return this.lastJob;
-    }
-
     private void updateColonyClient()
     {
         if (dataManager.isDirty())
@@ -962,6 +882,52 @@ public class EntityCitizen extends EntityAgeable implements INpc
                 }
             }
         }
+    }
+
+    private void checkIfStuck()
+    {
+        if (this.currentPosition == null)
+        {
+            this.currentPosition = this.getPosition();
+            return;
+        }
+
+        if (this.currentPosition.equals(this.getPosition()) && newNavigator != null && newNavigator.getDestination() != null)
+        {
+            stuckTime++;
+            if (stuckTime >= MAX_STUCK_TIME)
+            {
+                if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
+                {
+                    stuckTime = 0;
+                    return;
+                }
+
+                @Nullable final BlockPos spawnPoint =
+                  Utils.scanForBlockNearPoint
+                          (world, newNavigator.getDestination(), 1, 0, 1, 2,
+                            Blocks.AIR,
+                            Blocks.SNOW_LAYER,
+                            Blocks.TALLGRASS,
+                            Blocks.RED_FLOWER,
+                            Blocks.YELLOW_FLOWER,
+                            Blocks.CARPET);
+
+                EntityUtils.setSpawnPoint(spawnPoint, this);
+                if (colony != null)
+                {
+                    Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
+                }
+                stuckTime = 0;
+            }
+        }
+        else
+        {
+            stuckTime = 0;
+            this.currentPosition = this.getPosition();
+        }
+
+        this.currentPosition = this.getPosition();
     }
 
     /**
@@ -1135,6 +1101,27 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
+     * Getter for the last job.
+     *
+     * @return the last job he had.
+     */
+    @NotNull
+    public String getLastJob()
+    {
+        return this.lastJob;
+    }
+
+    /**
+     * Sets the last job of the citizen.
+     *
+     * @param jobName the job he last had.
+     */
+    public void setLastJob(@NotNull String jobName)
+    {
+        this.lastJob = jobName;
+    }
+
+    /**
      * Getter of the citizens random object.
      *
      * @return random object.
@@ -1299,7 +1286,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         }
         else
         {
-            if(this.getNavigator() != null && (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0))
+            if (this.getNavigator() != null && (this.getNavigator().getPath() != null && this.getNavigator().getPath().getCurrentPathLength() == 0))
             {
                 this.getNavigator().clearPathEntity();
             }
@@ -1351,7 +1338,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Returns the first slot in the inventory with a specific block.
      *
-     * @param block the block.
+     * @param block      the block.
      * @param itemDamage the damage value
      * @return the slot.
      */
@@ -1363,7 +1350,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Returns the amount of a certain block in the inventory.
      *
-     * @param block the block.
+     * @param block      the block.
      * @param itemDamage the damage value
      * @return the quantity.
      */
@@ -1387,7 +1374,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Checks if citizen has a certain block in the inventory.
      *
-     * @param block the block.
+     * @param block      the block.
      * @param itemDamage the damage value
      * @return true if so.
      */
@@ -1399,7 +1386,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Checks if citizen has a certain item in the inventory.
      *
-     * @param item the item.
+     * @param item       the item.
      * @param itemDamage the damage value
      * @return true if so.
      */
@@ -1602,7 +1589,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         final TextComponentTranslation requiredItem;
 
-        if(msg.length == 0)
+        if (msg.length == 0)
         {
             requiredItem = new TextComponentTranslation(key);
         }
@@ -1616,7 +1603,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
         final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
 
-        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),  this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
     }
 
     /**

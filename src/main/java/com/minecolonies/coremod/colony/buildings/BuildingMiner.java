@@ -38,7 +38,7 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Amount of items to be kept.
      */
-    private static final int STACK_MAX_SIZE     = 64;
+    private static final int    STACK_MAX_SIZE     = 64;
     /**
      * The NBT Tag to store the floorBlock.
      */
@@ -129,28 +129,29 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * Max depth the miner reaches at level 3.
      */
-    private static final int MAX_DEPTH_LEVEL_3 = 5;
+    private static final int         MAX_DEPTH_LEVEL_3  = 5;
     /**
      * Stores the levels of the miners mine. This could be a map with (depth,level).
      */
     @NotNull
-    private final List<Level> levels      = new ArrayList<>();
+    private final        List<Level> levels             = new ArrayList<>();
+    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
     /**
      * True if shaft is at bottom limit.
      */
-    public  boolean clearedShaft       = false;
+    public               boolean     clearedShaft       = false;
     /**
      * Defines the material used for the structure of the horizontal shaft.
      */
-    private Block   shaftBlock         = Blocks.PLANKS;
+    private              Block       shaftBlock         = Blocks.PLANKS;
     /**
      * Defines the material used for the fence of the shaft.
      */
-    private Block   fenceBlock         = Blocks.OAK_FENCE;
+    private              Block       fenceBlock         = Blocks.OAK_FENCE;
     /**
      * Here we can detect multiples of 5.
      */
-    private int     startingLevelShaft = 0;
+    private              int         startingLevelShaft = 0;
     /**
      * The location of the topmost cobblestone the ladder starts at.
      */
@@ -186,9 +187,7 @@ public class BuildingMiner extends AbstractBuildingWorker
     /**
      * True if a ladder is found.
      */
-    private       boolean     foundLadder = false;
-
-    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
+    private boolean foundLadder = false;
 
     /**
      * Required constructor.
@@ -257,6 +256,19 @@ public class BuildingMiner extends AbstractBuildingWorker
     }
 
     /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    {
+        return keepX;
+    }
+
+    /**
      * Getter of the job description.
      *
      * @return the description of the miners job.
@@ -285,19 +297,6 @@ public class BuildingMiner extends AbstractBuildingWorker
     public boolean neededForWorker(@Nullable final ItemStack stack)
     {
         return Utils.isMiningTool(stack);
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
     }
 
     /**

@@ -64,7 +64,7 @@ public class Structure
     /**
      * Used for scale.
      */
-    private static final double SCALE                    = 1.001;
+    private static final double SCALE = 1.001;
 
     /**
      * Template of the structure.
@@ -233,7 +233,7 @@ public class Structure
 
         for (final Entity anEntityList : entityList)
         {
-            if(anEntityList != null)
+            if (anEntityList != null)
             {
                 Minecraft.getMinecraft().getRenderManager().renderEntityStatic(anEntityList, 0.0F, true);
             }
@@ -264,61 +264,6 @@ public class Structure
     /**
      * Get entity info with specific setting.
      *
-     * @param entityInfo the entity to transform.
-     * @param world      world the entity is in.
-     * @param pos        the position it is at.
-     * @param settings   the settings.
-     * @return the entity info aray.
-     */
-    public Template.EntityInfo transformEntityInfoWithSettings(final Template.EntityInfo entityInfo, final World world, final BlockPos pos, final PlacementSettings settings)
-    {
-        final Entity finalEntity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
-
-        //err might be here? only use pos? or don't add?
-        final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfo.pos).add(new Vec3d(pos));
-
-        if (finalEntity != null)
-        {
-            finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
-            final double rotationYaw
-                    = (double)finalEntity.getMirroredYaw(settings.getMirror()) + ((double)finalEntity.rotationYaw - (double)finalEntity.getRotatedYaw(settings.getRotation()));
-
-            finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord,
-                    (float) rotationYaw, finalEntity.rotationPitch);
-
-            final NBTTagCompound nbttagcompound = new NBTTagCompound();
-            finalEntity.writeToNBTOptional(nbttagcompound);
-            return new Template.EntityInfo(entityInfo.pos, entityInfo.blockPos, nbttagcompound);
-        }
-
-        return null;
-    }
-
-
-    /**
-     * Transforms the entity's current yaw with the given Rotation and returns it. This does not have a side-effect.
-     * @param transformRotation the incoming rotation.
-     * @param previousYaw the previous rotation yaw.
-     * @return the new rotation yaw.
-     */
-    public double getRotatedYaw(Rotation transformRotation, double previousYaw)
-    {
-        switch (transformRotation)
-        {
-            case CLOCKWISE_180:
-                return previousYaw + NINETY_DEGREES;
-            case COUNTERCLOCKWISE_90:
-                return previousYaw + TWO_HUNDRED_SEVENTY_DEGREES;
-            case CLOCKWISE_90:
-                return previousYaw + ONE_HUNDED_EIGHTY_DEGREES;
-            default:
-                return previousYaw;
-        }
-    }
-
-    /**
-     * Get entity info with specific setting.
-     *
      * @param world    world the entity is in.
      * @param pos      the position it is at.
      * @param settings the settings.
@@ -340,7 +285,7 @@ public class Structure
             {
                 finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
                 final double rotation =
-                        (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
+                  (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - finalEntity.getRotatedYaw(settings.getRotation()));
                 finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord, (float) rotation, finalEntity.rotationPitch);
             }
             entityList[i] = finalEntity;
@@ -469,12 +414,12 @@ public class Structure
     }
 
     private void renderGhostBlock(
-            final World world,
-            final ModelHolder holder,
-            final EntityPlayer player,
-            final BlockRenderLayer layer,
-            final boolean existingModel,
-            final float partialTicks)
+                                   final World world,
+                                   final ModelHolder holder,
+                                   final EntityPlayer player,
+                                   final BlockRenderLayer layer,
+                                   final boolean existingModel,
+                                   final float partialTicks)
     {
         final double dx = player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTicks;
         final double dy = player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTicks;
@@ -551,6 +496,61 @@ public class Structure
     private int getTint(final World world, final IBlockState actualState, final BlockPos pos, final int alpha, final int tintIndex)
     {
         return alpha | this.mc.getBlockColors().colorMultiplier(actualState, world, pos, tintIndex);
+    }
+
+    /**
+     * Get entity info with specific setting.
+     *
+     * @param entityInfo the entity to transform.
+     * @param world      world the entity is in.
+     * @param pos        the position it is at.
+     * @param settings   the settings.
+     * @return the entity info aray.
+     */
+    public Template.EntityInfo transformEntityInfoWithSettings(final Template.EntityInfo entityInfo, final World world, final BlockPos pos, final PlacementSettings settings)
+    {
+        final Entity finalEntity = EntityList.createEntityFromNBT(entityInfo.entityData, world);
+
+        //err might be here? only use pos? or don't add?
+        final Vec3d entityVec = Structure.transformedVec3d(settings, entityInfo.pos).add(new Vec3d(pos));
+
+        if (finalEntity != null)
+        {
+            finalEntity.prevRotationYaw = (float) (finalEntity.getMirroredYaw(settings.getMirror()) - NINETY_DEGREES);
+            final double rotationYaw
+              = (double) finalEntity.getMirroredYaw(settings.getMirror()) + ((double) finalEntity.rotationYaw - (double) finalEntity.getRotatedYaw(settings.getRotation()));
+
+            finalEntity.setLocationAndAngles(entityVec.xCoord, entityVec.yCoord, entityVec.zCoord,
+              (float) rotationYaw, finalEntity.rotationPitch);
+
+            final NBTTagCompound nbttagcompound = new NBTTagCompound();
+            finalEntity.writeToNBTOptional(nbttagcompound);
+            return new Template.EntityInfo(entityInfo.pos, entityInfo.blockPos, nbttagcompound);
+        }
+
+        return null;
+    }
+
+    /**
+     * Transforms the entity's current yaw with the given Rotation and returns it. This does not have a side-effect.
+     *
+     * @param transformRotation the incoming rotation.
+     * @param previousYaw       the previous rotation yaw.
+     * @return the new rotation yaw.
+     */
+    public double getRotatedYaw(Rotation transformRotation, double previousYaw)
+    {
+        switch (transformRotation)
+        {
+            case CLOCKWISE_180:
+                return previousYaw + NINETY_DEGREES;
+            case COUNTERCLOCKWISE_90:
+                return previousYaw + TWO_HUNDRED_SEVENTY_DEGREES;
+            case CLOCKWISE_90:
+                return previousYaw + ONE_HUNDED_EIGHTY_DEGREES;
+            default:
+                return previousYaw;
+        }
     }
 
     /**

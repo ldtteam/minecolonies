@@ -27,6 +27,7 @@ public class ItemIcon extends Pane
 
     /**
      * Constructor instantiating the itemIcon with specified parameters.
+     *
      * @param params the parameters.
      */
     public ItemIcon(final PaneParams params)
@@ -52,7 +53,7 @@ public class ItemIcon extends Pane
     @Override
     protected void drawSelf(final int mx, final int my)
     {
-        if(itemStack != null)
+        if (itemStack != null)
         {
             mc.getRenderItem().renderItemAndEffectIntoGUI(itemStack, x, y);
             mc.getRenderItem().renderItemOverlays(mc.fontRendererObj, itemStack, x, y);

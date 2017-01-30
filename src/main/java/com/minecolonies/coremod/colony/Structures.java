@@ -34,11 +34,11 @@ public final class Structures
 
     private static final String                    SCHEMATIC_EXTENSION   = ".nbt";
     private static final String                    SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
-    //Hut, Styles
-    private static       Map<String, List<String>> hutStyleMap           = new HashMap<>();
     //Hut, Levels
     @NotNull
     private static final Map<String, Integer>      hutLevelsMap          = new HashMap<>();
+    //Hut, Styles
+    private static       Map<String, List<String>> hutStyleMap           = new HashMap<>();
     //Decoration, Style
     private static       Map<String, List<String>> decorationStyleMap    = new HashMap<>();
 
