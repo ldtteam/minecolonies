@@ -1,10 +1,8 @@
 package com.minecolonies.coremod.network.messages;
 
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Log;
@@ -20,8 +18,6 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
 
-
-import com.minecolonies.coremod.util.Log;
 
 /**
  * Transfer some items from the player inventory to the Builder's chest
@@ -117,7 +113,6 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         }
 
         final Item item = message.itemStack.getItem();
-        
         final int amountInPlayer = InventoryUtils.getItemCountInInventory(player.inventory, item, message.itemStack.getMetadata());
         final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(player.inventory, item, message.itemStack.getItemDamage()));
         ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
@@ -140,8 +135,9 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
                 }
             }
         }
-        if (remainingItemStack.getCount() != itemStackToTake.getCount()) //Only doing this at the moment as the additional chest do not detect new content
+        if (remainingItemStack.getCount() != itemStackToTake.getCount())
         {
+            //Only doing this at the moment as the additional chest do not detect new content
             building.getTileEntity().markDirty();
         }
 
