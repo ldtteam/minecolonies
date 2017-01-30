@@ -84,7 +84,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
     {
         buf.writeInt(colonyId);
         BlockPosUtil.writeToByteBuf(buf, buildingId);
-	ByteBufUtils.writeItemStack(buf,itemStack);
+        ByteBufUtils.writeItemStack(buf,itemStack);
         buf.writeInt(quantity);
     }
 

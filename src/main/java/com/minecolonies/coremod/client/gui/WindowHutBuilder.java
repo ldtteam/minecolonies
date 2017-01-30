@@ -7,7 +7,10 @@ import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.BuildingBuilderView;
+
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
@@ -23,7 +26,7 @@ import java.util.*;
 /**
  * Window for the builder hut.
  */
-public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilder.View>
+public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuilderView>
 {
     /**
      * The builders gui file.
@@ -44,7 +47,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final int DARKGREEN = Color.getByName("darkgreen",0);
     private static final int BLACK     = Color.getByName("black",0);
 
-    private final BuildingBuilder.View builder;
+    private final BuildingBuilderView builder;
 
     /**
      * List of ressources needed.
@@ -57,9 +60,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     /**
      * Constructor for window builder hut.
      *
-     * @param building {@link com.minecolonies.coremod.colony.buildings.BuildingBuilder.View}.
+     * @param building {@link com.minecolonies.coremod.colony.buildings.BuildingBuilderView}.
      */
-    public WindowHutBuilder(final BuildingBuilder.View building)
+    public WindowHutBuilder(final BuildingBuilderView building)
     {
         super(building, Constants.MOD_ID + HUT_BUILDER_RESOURCE_SUFFIX);
         this.builder = building;
@@ -73,9 +76,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private void pullResourcesFromHut()
     {
         final AbstractBuilding.View newView = builder.getColony().getBuilding(builder.getID());
-        if (newView instanceof BuildingBuilder.View)
+        if (newView instanceof BuildingBuilderView)
         {
-            final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
+            final BuildingBuilderView updatedView = (BuildingBuilderView) newView;
             final InventoryPlayer inventory = this.mc.player.inventory;
  
             resources.clear();

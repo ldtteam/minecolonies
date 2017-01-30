@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import com.minecolonies.coremod.util.Log;
 
 /**
- * Send a message to the server to mark the building dirty
+ * Send a message to the server to mark the building as dirty.
  * Created: January 20, 2017
  *
  * @author xavierh

@@ -1,11 +1,9 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.client.gui.WindowHutBuilder;
+import com.minecolonies.coremod.colony.buildings.BuildingBuilderView;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -23,7 +21,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -180,6 +177,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public static class BuildingBuilderResource
     {
+        /**
+         * Availibiyity status of the resource.
+         * according to the builder's chest, inventory and the player's inventory
+         */
         public enum RessourceAvailability
         {
             NOT_NEEDED,
@@ -188,8 +189,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
             HAVE_ENOUGHT
         }
 
-        private String name;
-        private ItemStack itemStack;
+        final private String name;
+        final private ItemStack itemStack;
         private int amountAvailable;
         private int amountNeeded;
         private int amountPlayer;
@@ -279,7 +280,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
         {
             final BuildingBuilderResource resource = resourcesAvailable.get(entry.getKey());
-            //ByteBufUtils.writeItemStack() is Buggy, serialize itemId and danage separately;
+            //ByteBufUtils.writeItemStack() is Buggy, serialize itemId and damage separately;
             final int itemId = Item.getIdFromItem(resource.itemStack.getItem());
             final int damage = resource.getItemStack().getItemDamage();
             buf.writeInt(itemId);
@@ -370,7 +371,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
         {
-            ItemStack itemStack = entry.getValue();
+            final ItemStack itemStack = entry.getValue();
             BuildingBuilderResource resource = resourcesAvailable.get(entry.getKey());
             if (resource == null)
             {
@@ -396,7 +397,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
                     final TileEntity entity = builder.world.getTileEntity(pos);
                     if(entity instanceof TileEntityChest)
                     {
-                        resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory((TileEntityChest)entity, entry.getValue().getItem(), entry.getValue().getItemDamage()));
+                        resource.setAvailable(resource.getAvailable() 
+                            + InventoryUtils.getItemCountInInventory((TileEntityChest)entity, entry.getValue().getItem(), entry.getValue().getItemDamage()));
                     }
                 }
             }
@@ -414,84 +416,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public boolean requiresResourceForBuilding(ItemStack stack)
     {
         return neededResources.containsKey(stack.getUnlocalizedName());
-    }
-
-    /**
-     * Provides a view of the builder building class.
-     */
-    public static class View extends AbstractBuildingWorker.View
-    {
-        private final HashMap<String, BuildingBuilder.BuildingBuilderResource> resources = new HashMap<>();
-
-        /**
-         * Public constructor of the view, creates an instance of it.
-         *
-         * @param c the colony.
-         * @param l the position.
-         */
-        public View(final ColonyView c, final BlockPos l)
-        {
-            super(c, l);
-        }
-
-        /**
-         * Gets the blockOut Window.
-         *
-         * @return the window of the builder building.
-         */
-        @NotNull
-        @Override
-        public Window getWindow()
-        {
-            return new WindowHutBuilder(this);
-        }
-
-        @Override
-        public void deserialize(@NotNull ByteBuf buf)
-        {
-            super.deserialize(buf);
-
-            final int size = buf.readInt();
-            resources.clear();
-
-            for (int i = 0; i < size; i++)
-            {
-                //Serialising the ItemStack give a bad ItemStack sometimes using itemId + damage instead
-                //final ItemStack itemStack = ByteBufUtils.readItemStack(buf);
-                final int itemId = buf.readInt();
-                final int damage = buf.readInt();
-                final ItemStack itemStack = new ItemStack(Item.getByNameOrId(Integer.toString(itemId)),1,damage);
-                final int amountAvailable = buf.readInt();
-                final int amountNeeded = buf.readInt();
-                final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack.getDisplayName(), itemStack, amountAvailable,amountNeeded);
-                resources.put(itemStack.getDisplayName(), resource);
-            }
-        }
-
-        /**
-         * Getter for the needed resources.
-         *
-         * @return a copy of the HashMap(String, Object).
-         */
-
-        public Map<String, BuildingBuilder.BuildingBuilderResource> getResources()
-        {
-            return Collections.unmodifiableMap(resources);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.INTELLIGENCE;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.STRENGTH;
-        }
     }
 
     @Override
