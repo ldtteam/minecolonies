@@ -77,6 +77,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
      * @return Name of the block.
      */
     public abstract String getName();
+
     @NotNull
     @Override
     public TileEntity createNewTileEntity(final World world, final int meta)
@@ -182,15 +183,15 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 
     @Override
     public boolean onBlockActivated(
-            final World worldIn,
-            final BlockPos pos,
-            final IBlockState state,
-            final EntityPlayer playerIn,
-            final EnumHand hand,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ)
+                                     final World worldIn,
+                                     final BlockPos pos,
+                                     final IBlockState state,
+                                     final EntityPlayer playerIn,
+                                     final EnumHand hand,
+                                     final EnumFacing facing,
+                                     final float hitX,
+                                     final float hitY,
+                                     final float hitZ)
     {
         /*
         If the world is client, open the gui of the building
@@ -200,8 +201,8 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
             @Nullable final AbstractBuilding.View building = ColonyManager.getBuildingView(pos);
 
             if (building != null
-                    && building.getColony() != null
-                    && building.getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS))
+                  && building.getColony() != null
+                  && building.getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS))
             {
                 building.openGui();
             }
@@ -213,19 +214,19 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     @NotNull
     @Override
     public IBlockState getStateForPlacement(
-            final World worldIn,
-            final BlockPos pos,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ,
-            final int meta,
-            final EntityLivingBase placer)
+                                             final World worldIn,
+                                             final BlockPos pos,
+                                             final EnumFacing facing,
+                                             final float hitX,
+                                             final float hitY,
+                                             final float hitZ,
+                                             final int meta,
+                                             final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
-    
+
     /**
      * Event-Handler for placement of this block.
      * <p>

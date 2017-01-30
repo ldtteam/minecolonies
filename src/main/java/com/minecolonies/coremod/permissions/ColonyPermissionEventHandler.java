@@ -125,7 +125,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final ExplosionEvent.Detonate event)
     {
-        if(!Configurations.enableColonyProtection || !Configurations.turnOffExplosionsInColonies)
+        if (!Configurations.enableColonyProtection || !Configurations.turnOffExplosionsInColonies)
         {
             return;
         }
@@ -155,8 +155,8 @@ public class ColonyPermissionEventHandler
     public void on(final ExplosionEvent.Start event)
     {
         if (Configurations.enableColonyProtection
-                && Configurations.turnOffExplosionsInColonies
-                && colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
+              && Configurations.turnOffExplosionsInColonies
+              && colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
         {
             cancelEvent(event);
         }
@@ -181,13 +181,13 @@ public class ColonyPermissionEventHandler
             final Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
             // Huts
             if (block instanceof AbstractBlockHut
-                    && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_HUTS))
+                  && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_HUTS))
             {
                 cancelEvent(event);
             }
 
-            if(Configurations.enableColonyProtection && (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer
-                    || event.getWorld().getTileEntity(event.getPos()) instanceof IInventory))
+            if (Configurations.enableColonyProtection && (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer
+                                                            || event.getWorld().getTileEntity(event.getPos()) instanceof IInventory))
             {
                 final Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
 
@@ -197,14 +197,13 @@ public class ColonyPermissionEventHandler
                 }
             }
 
-            if(event.getItemStack() != null
-                    && event.getItemStack().getItem() instanceof ItemMonsterPlacer
-                    && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.PLACE_HUTS))
+            if (event.getItemStack() != null
+                  && event.getItemStack().getItem() instanceof ItemMonsterPlacer
+                  && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.PLACE_HUTS))
             {
                 cancelEvent(event);
             }
         }
-
     }
 
     /**
@@ -278,7 +277,7 @@ public class ColonyPermissionEventHandler
     public void on(final AttackEntityEvent event)
     {
         final EntityPlayer playerIn = event.getEntityPlayer();
-        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()) && event.getTarget() instanceof EntityCitizen )
+        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()) && event.getTarget() instanceof EntityCitizen)
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 

@@ -58,19 +58,6 @@ public class BuildingFisherman extends AbstractBuildingWorker
     }
 
     /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
-    {
-        return keepX;
-    }
-
-    /**
      * Getter of the max building level.
      *
      * @return the integer.
@@ -97,6 +84,19 @@ public class BuildingFisherman extends AbstractBuildingWorker
         {
             this.getColony().triggerAchievement(ModAchievements.achievementUpgradeFisherMax);
         }
+    }
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    {
+        return keepX;
     }
 
     /**

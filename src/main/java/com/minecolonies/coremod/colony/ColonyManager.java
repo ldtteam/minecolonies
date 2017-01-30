@@ -63,18 +63,18 @@ public final class ColonyManager
     @NotNull
     private static final Map<Integer, List<Colony>> coloniesByWorld       = new HashMap<>();
     /**
-     * The last colony id.
-     */
-    private static       int                        topColonyId           = 0;
-    /**
      * The list of colony views.
      */
     @NotNull
     private static final Map<Integer, ColonyView>   colonyViews           = new HashMap<>();
     /**
+     * The last colony id.
+     */
+    private static       int                        topColonyId           = 0;
+    /**
      * Amount of worlds loaded.
      */
-    private static int numWorldsLoaded;
+    private static int     numWorldsLoaded;
     /**
      * Whether the colonyManager should persist data.
      */

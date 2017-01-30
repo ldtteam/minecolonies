@@ -21,7 +21,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final String HUT_BUILDER_RESOURCE_SUFFIX = ":gui/windowhutbuilder.xml";
     private static final String LIST_RESOURCES              = "resources";
     private static final String PAGE_RESOURCES              = "resourceActions";
-    private static final String VIEW_PAGES = "pages";
+    private static final String VIEW_PAGES                  = "pages";
     private final BuildingBuilder.View builder;
     private       Map<String, Integer> resources;
 

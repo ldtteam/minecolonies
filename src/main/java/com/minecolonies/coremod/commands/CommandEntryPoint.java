@@ -75,10 +75,10 @@ public class CommandEntryPoint extends CommandBase
     @NotNull
     @Override
     public List<String> getTabCompletions(
-                                                 @NotNull final MinecraftServer server,
-                                                 @NotNull final ICommandSender sender,
-                                                 @NotNull final String[] args,
-                                                 @Nullable final BlockPos pos)
+                                           @NotNull final MinecraftServer server,
+                                           @NotNull final ICommandSender sender,
+                                           @NotNull final String[] args,
+                                           @Nullable final BlockPos pos)
     {
         return root.getTabCompletionOptions(server, sender, args, pos);
     }

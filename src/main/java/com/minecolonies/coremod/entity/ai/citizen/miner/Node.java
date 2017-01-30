@@ -12,7 +12,6 @@ import java.awt.geom.Point2D;
  * When a node is completed we should add the surrounding nodes to level as AVAILABLE
  * also note that we don't want node (0, -1) because there will be a ladder on the back
  * wall of the initial node, and we cant put the connection through the ladder
- *
  */
 public class Node
 {
@@ -40,13 +39,16 @@ public class Node
      * Z position of the node.
      */
     private final double z;
-
+    /**
+     * Central position of parent node.
+     */
+    @Nullable
+    private final Point2D parent;
     /**
      * Style of the node.
      */
     @NotNull
     private NodeType style;
-
     /**
      * Status of the node.
      */
@@ -54,18 +56,11 @@ public class Node
     private NodeStatus status;
 
     /**
-     * Central position of parent node.
-     */
-    @Nullable
-    private final Point2D parent;
-
-
-    /**
      * Initializes the node.
      * Requires a location in the node as parameters
      *
-     * @param x X-coordinate in the node
-     * @param z Z-coordinate in the node
+     * @param x      X-coordinate in the node
+     * @param z      Z-coordinate in the node
      * @param parent the parent of the node.
      */
     public Node(final double x, final double z, @Nullable Point2D parent)
@@ -104,7 +99,6 @@ public class Node
         return node;
     }
 
-
     /**
      * Writes the node to a NBT-compound.
      *
@@ -118,31 +112,11 @@ public class Node
         compound.setString(TAG_STYLE, style.name());
         compound.setString(TAG_STATUS, status.name());
 
-        if(parent != null)
+        if (parent != null)
         {
             compound.setDouble(TAG_PARENTX, parent.getX());
             compound.setDouble(TAG_PARENTZ, parent.getY());
         }
-    }
-
-    /**
-     * Returns the x-coordinate in the node.
-     *
-     * @return x-coordinate
-     */
-    public double getX()
-    {
-        return x;
-    }
-
-    /**
-     * Returns the z-coordinate in the node.
-     *
-     * @return z-coordinate
-     */
-    public double getZ()
-    {
-        return z;
     }
 
     /**
@@ -182,10 +156,10 @@ public class Node
     public String toString()
     {
         return "Node{" + "x=" + x
-                + ", z=" + z
-                + ", style=" + style
-                + ", status=" + status
-                + '}';
+                 + ", z=" + z
+                 + ", style=" + style
+                 + ", status=" + status
+                 + '}';
     }
 
     /**
@@ -217,6 +191,26 @@ public class Node
     public Point2D.Double getNorthNodeCenter()
     {
         return new Point2D.Double(getX(), getZ() - DISTANCE_TO_NEXT_NODE);
+    }
+
+    /**
+     * Returns the x-coordinate in the node.
+     *
+     * @return x-coordinate
+     */
+    public double getX()
+    {
+        return x;
+    }
+
+    /**
+     * Returns the z-coordinate in the node.
+     *
+     * @return z-coordinate
+     */
+    public double getZ()
+    {
+        return z;
     }
 
     /**

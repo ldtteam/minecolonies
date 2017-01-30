@@ -39,12 +39,12 @@ public abstract class AbstractPathJob implements Callable<Path>
     private static final   BlockPos BLOCKPOS_IDENTITY     = new BlockPos(0, 0, 0);
     private static final   BlockPos BLOCKPOS_UP           = new BlockPos(0, 1, 0);
     private static final   BlockPos BLOCKPOS_DOWN         = new BlockPos(0, -1, 0);
-    private static final   BlockPos BLOCKPOS_NORTH = new BlockPos(0, 0, -1);
-    private static final   BlockPos BLOCKPOS_SOUTH = new BlockPos(0, 0, 1);
-    private static final   BlockPos BLOCKPOS_EAST  = new BlockPos(1, 0, 0);
-    private static final   BlockPos BLOCKPOS_WEST  = new BlockPos(-1, 0, 0);
-    private static final   int      MAX_Y          = 256;
-    private static final   int      MIN_Y          = 0;
+    private static final   BlockPos BLOCKPOS_NORTH        = new BlockPos(0, 0, -1);
+    private static final   BlockPos BLOCKPOS_SOUTH        = new BlockPos(0, 0, 1);
+    private static final   BlockPos BLOCKPOS_EAST         = new BlockPos(1, 0, 0);
+    private static final   BlockPos BLOCKPOS_WEST         = new BlockPos(-1, 0, 0);
+    private static final   int      MAX_Y                 = 256;
+    private static final   int      MIN_Y                 = 0;
 
     /**
      * Additional cost of jumping and dropping - base 1.
@@ -59,7 +59,7 @@ public abstract class AbstractPathJob implements Callable<Path>
     /**
      * Additional cost of swimming - base 1.
      */
-    private static final double SWIM_COST       = 5D;
+    private static final double SWIM_COST = 5D;
 
     /**
      * Distance which is considered to be too close to a fence.
@@ -288,6 +288,7 @@ public abstract class AbstractPathJob implements Callable<Path>
 
     /**
      * Compute the cost (immediate 'g' value) of moving from the parent space to the new space.
+     *
      * @param dPos       The delta from the parent to the new space; assumes dx,dy,dz in range of [-1..1].
      * @param isSwimming true is the current node would require the citizen to swim.
      * @param onPath     checks if the node is on a path.
@@ -433,7 +434,7 @@ public abstract class AbstractPathJob implements Callable<Path>
         if (Configurations.pathfindingDebugVerbosity == DEBUG_VERBOSITY_FULL)
         {
             Log.getLogger().info(String.format("Examining node [%d,%d,%d] ; g=%f ; f=%f",
-                    currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.getCost(), currentNode.getScore()));
+              currentNode.pos.getX(), currentNode.pos.getY(), currentNode.pos.getZ(), currentNode.getCost(), currentNode.getScore()));
         }
     }
 

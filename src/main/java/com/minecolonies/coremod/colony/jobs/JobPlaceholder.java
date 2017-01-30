@@ -13,6 +13,7 @@ public class JobPlaceholder extends AbstractJob
 {
     /**
      * Instantiates the placeholder job.
+     *
      * @param entity the entity.
      */
     public JobPlaceholder(final CitizenData entity)

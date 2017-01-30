@@ -100,27 +100,27 @@ public final class EntityFishHook extends Entity
      * Chance to get rare drops while fishing. Higher value leads to a lower chance.
      */
     private static final double INCREASE_RARENESS_MODIFIER = 5.0;
-
+    /**
+     * entity creation time.
+     * Used to check it the hook got stuck.
+     */
+    private final long creationTime;
     /**
      * The citizen who threw this rod.
      */
     private EntityCitizen citizen;
-
     /**
      * The fishing speed enchantment level on the rod that threw this hook.
      */
     private int fishingSpeedEnchantment;
-
     /**
      * The fishing loot enchantment level on the rod that threw this hook.
      */
     private int fishingLootEnchantment;
-
     /**
      * If this hook is in the ground.
      */
     private boolean inGround;
-
     /**
      * A counter for at what position in the shaking movement the hook is.
      */
@@ -129,13 +129,6 @@ public final class EntityFishHook extends Entity
     private int    countdownFishNear;
     private int    countdownFishBites;
     private double relativeRotation;
-
-    /**
-     * entity creation time.
-     * Used to check it the hook got stuck.
-     */
-    private final long creationTime;
-
     /**
      * When a fish is on the hook, this will be true.
      */
@@ -682,10 +675,10 @@ public final class EntityFishHook extends Entity
         entityitem.motionZ = distanceZ * 0.1;
         this.world.spawnEntity(entityitem);
         citizen.world.spawnEntity(new EntityXPOrb(citizen.world,
-                                                             citizenPosX,
-                                                             citizenPosY + 0.D,
-                                                             citizenPosZ + 0.5,
-                                                             this.rand.nextInt(6) + 1));
+                                                   citizenPosX,
+                                                   citizenPosY + 0.D,
+                                                   citizenPosZ + 0.5,
+                                                   this.rand.nextInt(6) + 1));
     }
 
     /**

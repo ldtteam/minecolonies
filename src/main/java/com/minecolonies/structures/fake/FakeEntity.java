@@ -41,7 +41,7 @@ public class FakeEntity extends Entity
     @Override
     protected void writeEntityToNBT(@NotNull final NBTTagCompound compound)
     {
-		 /*
+         /*
          * Intentionally left empty.
          */
     }

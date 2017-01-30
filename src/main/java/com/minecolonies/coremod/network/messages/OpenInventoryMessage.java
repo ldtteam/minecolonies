@@ -185,9 +185,9 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
             @NotNull final InventoryField inventoryField = ColonyManager.getColony(message.colonyId).getField(message.tePos).getInventoryField();
             if (!StringUtils.isNullOrEmpty(message.name))
             {
-               // inventoryField.setCustomName(message.name);
+                // inventoryField.setCustomName(message.name);
             }
-            player.openGui(MineColonies.instance, 1, player.getEntityWorld(),  player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
+            player.openGui(MineColonies.instance, 1, player.getEntityWorld(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
         }
     }
 

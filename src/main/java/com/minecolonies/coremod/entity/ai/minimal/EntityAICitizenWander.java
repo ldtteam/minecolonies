@@ -14,10 +14,10 @@ import org.jetbrains.annotations.NotNull;
 public class EntityAICitizenWander extends EntityAIBase
 {
     private final EntityCitizen citizen;
+    private final double        speed;
     private       double        xPosition;
     private       double        yPosition;
     private       double        zPosition;
-    private final double        speed;
 
     /**
      * Instantiates this task.
@@ -91,8 +91,8 @@ public class EntityAICitizenWander extends EntityAIBase
         }
 
         while (returnHeight >= 1 && citizen.world.isAirBlock(new BlockPos(MathHelper.floor(position.xCoord),
-                                                                              (int) returnHeight,
-                                                                              MathHelper.floor(position.zCoord))))
+                                                                           (int) returnHeight,
+                                                                           MathHelper.floor(position.zCoord))))
         {
             returnHeight -= 1.0D;
         }

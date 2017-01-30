@@ -88,7 +88,7 @@ public final class ServerUtils
      * Uses {@link ServerUtils#getPlayerFromPermPlayer(Permissions.Player, World)}.
      *
      * @param players The list of players to convert.
-     * @param world an instance of the world.
+     * @param world   an instance of the world.
      * @return A list of {@link EntityPlayer}s
      */
     @NotNull
@@ -112,7 +112,7 @@ public final class ServerUtils
      * Passes this {@link Permissions.Player#getID()} to {@link ServerUtils#getPlayerFromUUID(UUID, World)}.
      *
      * @param player The {@link Permissions.Player} to convert
-     * @param world an instance of the world.
+     * @param world  an instance of the world.
      * @return The {@link EntityPlayer} reference.
      */
     @Nullable
@@ -126,7 +126,7 @@ public final class ServerUtils
      * <p>
      * Found on <a href="http://jabelarminecraft.blogspot.de/p/minecraft-forge-172-finding-block.html">jabelarminecraft.</a>
      *
-     * @param uuid the uuid to search for
+     * @param uuid  the uuid to search for
      * @param world an instance of the world.
      * @return The player the player if found or null
      */

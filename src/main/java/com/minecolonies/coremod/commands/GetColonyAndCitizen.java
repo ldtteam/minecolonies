@@ -19,15 +19,15 @@ public final class GetColonyAndCitizen
     private static final String NOT_FOUND                   = "%s not found!";
     private static final String NO_COLONY                   = "You haven't got a colony!";
     private static final int    SHORT_ARGUMENT_LENGTH       = 1;
-    private static final int NORMAL_ARGUMENT_LENGTH      = 2;
-    private static final int NAME_ARGUMENT_LENGTH        = 3;
-    private static final int ID_AND_NAME_ARGUMENT_LENGTH = 4;
-    private static final int TOO_MANY_ARGUMENTS_LENGTH   = 5;
-    private static final int ARGUMENT_ZERO               = 0;
-    private static final int ARGUMENT_ONE                = 1;
-    private static final int ARGUMENT_TWO                = 2;
-    private static final int ARGUMENT_THREE              = 3;
-    private static final int STANDARD_CITIZEN_ID         = 0;
+    private static final int    NORMAL_ARGUMENT_LENGTH      = 2;
+    private static final int    NAME_ARGUMENT_LENGTH        = 3;
+    private static final int    ID_AND_NAME_ARGUMENT_LENGTH = 4;
+    private static final int    TOO_MANY_ARGUMENTS_LENGTH   = 5;
+    private static final int    ARGUMENT_ZERO               = 0;
+    private static final int    ARGUMENT_ONE                = 1;
+    private static final int    ARGUMENT_TWO                = 2;
+    private static final int    ARGUMENT_THREE              = 3;
+    private static final int    STANDARD_CITIZEN_ID         = 0;
 
     private GetColonyAndCitizen()
     {
@@ -36,9 +36,10 @@ public final class GetColonyAndCitizen
 
     /**
      * Getting the colony ID.
-     * @param mayorID   The ID of the mayor.
-     * @param world     The world.
-     * @param args      The arguments.
+     *
+     * @param mayorID The ID of the mayor.
+     * @param world   The world.
+     * @param args    The arguments.
      * @return Return colony ID.
      */
     public static int getColonyId(@NotNull final UUID mayorID, @NotNull final World world, @NotNull final String... args)
@@ -85,8 +86,9 @@ public final class GetColonyAndCitizen
 
     /**
      * Getting the citizen ID.
-     * @param colonyId          The colony ID for getting the citizen ID
-     * @param args              The given arguments
+     *
+     * @param colonyId The colony ID for getting the citizen ID
+     * @param args     The given arguments
      * @return Returns citizen ID
      */
     public static int getCitizenId(@NotNull int colonyId, @NotNull final String... args)

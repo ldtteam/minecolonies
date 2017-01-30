@@ -20,21 +20,19 @@ import java.util.List;
  */
 public class CitizenInfoCommand extends AbstractSingleCommand
 {
-    public static final  String       DESC                            = "citizenInfo";
-    private static final String       CITIZEN_DESCRIPTION             = "§2ID: §f %d §2 Name: §f %s";
-    private static final String       CITIZEN_LEVEL_AND_AGE           = "§2Level: §f%s §2Age: §f%s §2Experience: §f%s";
-    private static final String       CITIZEN_SKILLS                  = "§2Charisma: §f%s §2Dexterity: §f%s §2Endurance: §f%s\n§2Intelligence: §f%s §2Strength: §f%s";
-    private static final String       CITIZEN_JOB                     = "§2Job: §f%s";
-    private static final String       CITIZEN_JOB_NULL                = "§2Job: §fUnemployed";
-    private static final String       CITIZEN_HEALTH                  = "§2Health: §f%s §2Max Health: §f%s";
-    private static final String       CITIZEN_DESIRED_ACTIVITY        = "§2Desired activity: §f%s §2Current Activity: §f%s";
-    private static final String       CITIZEN_HOME_POSITION           = "§2Home position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_WORK_POSITION           = "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_POSITION                = "§2Citizen position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_WORK_POSITION_NULL      = "§2Work position: §4No work position found!";
-    private static final String       CITIZEN_NO_ACTIVITY             = "§4No activity is being desired or executed!";
-
-
+    public static final  String DESC                       = "citizenInfo";
+    private static final String CITIZEN_DESCRIPTION        = "§2ID: §f %d §2 Name: §f %s";
+    private static final String CITIZEN_LEVEL_AND_AGE      = "§2Level: §f%s §2Age: §f%s §2Experience: §f%s";
+    private static final String CITIZEN_SKILLS             = "§2Charisma: §f%s §2Dexterity: §f%s §2Endurance: §f%s\n§2Intelligence: §f%s §2Strength: §f%s";
+    private static final String CITIZEN_JOB                = "§2Job: §f%s";
+    private static final String CITIZEN_JOB_NULL           = "§2Job: §fUnemployed";
+    private static final String CITIZEN_HEALTH             = "§2Health: §f%s §2Max Health: §f%s";
+    private static final String CITIZEN_DESIRED_ACTIVITY   = "§2Desired activity: §f%s §2Current Activity: §f%s";
+    private static final String CITIZEN_HOME_POSITION      = "§2Home position: §4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String CITIZEN_WORK_POSITION      = "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String CITIZEN_POSITION           = "§2Citizen position: §4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String CITIZEN_WORK_POSITION_NULL = "§2Work position: §4No work position found!";
+    private static final String CITIZEN_NO_ACTIVITY        = "§4No activity is being desired or executed!";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -59,7 +57,7 @@ public class CitizenInfoCommand extends AbstractSingleCommand
         int colonyId = getIthArgument(args, 1, -1);
         int citizenId;
 
-        if (colonyId==-1)
+        if (colonyId == -1)
         {
             colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
         }
@@ -79,21 +77,21 @@ public class CitizenInfoCommand extends AbstractSingleCommand
         final CitizenData citizenData = colony.getCitizen(citizenId);
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
 
-        if ( entityCitizen != null)
+        if (entityCitizen != null)
         {
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
-                citizenData.getId(),
-                citizenData.getName())));
+              citizenData.getId(),
+              citizenData.getName())));
             final BlockPos citizenPosition = entityCitizen.getPosition();
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_POSITION,
-                citizenPosition.getX(),
-                citizenPosition.getY(),
-                citizenPosition.getZ())));
+              citizenPosition.getX(),
+              citizenPosition.getY(),
+              citizenPosition.getZ())));
             final BlockPos homePosition = entityCitizen.getHomePosition();
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_HOME_POSITION,
-                homePosition.getX(),
-                homePosition.getY(),
-                homePosition.getZ())));
+              homePosition.getX(),
+              homePosition.getY(),
+              homePosition.getZ())));
             if (entityCitizen.getWorkBuilding() == null)
             {
                 sender.sendMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION_NULL)));
@@ -102,24 +100,24 @@ public class CitizenInfoCommand extends AbstractSingleCommand
             {
                 final BlockPos workingPosition = entityCitizen.getWorkBuilding().getLocation();
                 sender.sendMessage(new TextComponentString(String.format(CITIZEN_WORK_POSITION,
-                    workingPosition.getX(),
-                    workingPosition.getY(),
-                    workingPosition.getZ())));
+                  workingPosition.getX(),
+                  workingPosition.getY(),
+                  workingPosition.getZ())));
             }
-            
+
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
-                entityCitizen.getHealth(),
-                entityCitizen.getMaxHealth())));
+              entityCitizen.getHealth(),
+              entityCitizen.getMaxHealth())));
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_LEVEL_AND_AGE,
-                entityCitizen.getLevel(),
-                entityCitizen.getAge(),
-                entityCitizen.getExperienceLevel())));
+              entityCitizen.getLevel(),
+              entityCitizen.getAge(),
+              entityCitizen.getExperienceLevel())));
             sender.sendMessage(new TextComponentString(String.format(CITIZEN_SKILLS,
-                entityCitizen.getCharisma(),
-                entityCitizen.getDexterity(),
-                entityCitizen.getEndurance(),
-                entityCitizen.getIntelligence(),
-                entityCitizen.getStrength())));
+              entityCitizen.getCharisma(),
+              entityCitizen.getDexterity(),
+              entityCitizen.getEndurance(),
+              entityCitizen.getIntelligence(),
+              entityCitizen.getStrength())));
             if (entityCitizen.getColonyJob() == null)
             {
                 sender.sendMessage(new TextComponentString(String.format(CITIZEN_JOB_NULL)));
@@ -129,8 +127,8 @@ public class CitizenInfoCommand extends AbstractSingleCommand
             {
                 sender.sendMessage(new TextComponentString(String.format(CITIZEN_JOB, entityCitizen.getWorkBuilding().getJobName())));
                 sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESIRED_ACTIVITY,
-                    entityCitizen.getDesiredActivity(),
-                    entityCitizen.getColonyJob().getNameTagDescription())));
+                  entityCitizen.getDesiredActivity(),
+                  entityCitizen.getColonyJob().getNameTagDescription())));
             }
         }
     }

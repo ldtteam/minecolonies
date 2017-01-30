@@ -24,10 +24,10 @@ public class EntityAICitizenAvoidEntity extends EntityAIBase
     private final EntityCitizen           theEntity;
     private final double                  farSpeed;
     private final double                  nearSpeed;
-    @Nullable
-    private       Entity                  closestLivingEntity;
     private final float                   distanceFromEntity;
     private final Class<? extends Entity> targetEntityClass;
+    @Nullable
+    private       Entity                  closestLivingEntity;
 
     /**
      * Constructor.

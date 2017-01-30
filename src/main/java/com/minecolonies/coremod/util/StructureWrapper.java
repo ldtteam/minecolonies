@@ -47,14 +47,14 @@ public final class StructureWrapper
      */
     private final StructureProxy structure;
     /**
+     * The name this structure has.
+     */
+    private final String         name;
+    /**
      * The anchor position this structure will be
      * placed on in the minecraft world.
      */
     private       BlockPos       position;
-    /**
-     * The name this structure has.
-     */
-    private final String         name;
 
     /**
      * Load a structure into this world.
@@ -359,11 +359,35 @@ public final class StructureWrapper
     }
 
     /**
+     * Base position of the structure.
+     *
+     * @return BlockPos representing where the structure is.
+     */
+    public BlockPos getPosition()
+    {
+        if (position == null)
+        {
+            return new BlockPos(0, 0, 0);
+        }
+        return position;
+    }
+
+    /**
      * @return Where the hut (or any offset) is in the structure.
      */
     public BlockPos getOffset()
     {
         return structure.getOffset();
+    }
+
+    /**
+     * Set the position, used when loading.
+     *
+     * @param position Where the structure is in the world.
+     */
+    public void setPosition(final BlockPos position)
+    {
+        this.position = position;
     }
 
     /**
@@ -428,22 +452,6 @@ public final class StructureWrapper
             return null;
         }
         return this.structure.getBlockState(this.progressPos);
-    }
-
-    /**
-     * Calculate the current block in the structure.
-     *
-     * @return the current block or null if not initialized.
-     */
-    @Nullable
-    public Block getBlock()
-    {
-        @Nullable final IBlockState state = getBlockState();
-        if (state == null)
-        {
-            return null;
-        }
-        return state.getBlock();
     }
 
     /**
@@ -519,30 +527,6 @@ public final class StructureWrapper
     }
 
     /**
-     * Base position of the structure.
-     *
-     * @return BlockPos representing where the structure is.
-     */
-    public BlockPos getPosition()
-    {
-        if (position == null)
-        {
-            return new BlockPos(0, 0, 0);
-        }
-        return position;
-    }
-
-    /**
-     * Set the position, used when loading.
-     *
-     * @param position Where the structure is in the world.
-     */
-    public void setPosition(final BlockPos position)
-    {
-        this.position = position;
-    }
-
-    /**
      * Calculate the item needed to place the current block in the structure.
      *
      * @return an item or null if not initialized.
@@ -558,6 +542,22 @@ public final class StructureWrapper
         }
 
         return BlockUtils.getItemStackFromBlockState(blockState).getItem();
+    }
+
+    /**
+     * Calculate the current block in the structure.
+     *
+     * @return the current block or null if not initialized.
+     */
+    @Nullable
+    public Block getBlock()
+    {
+        @Nullable final IBlockState state = getBlockState();
+        if (state == null)
+        {
+            return null;
+        }
+        return state.getBlock();
     }
 
     /**

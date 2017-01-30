@@ -49,9 +49,9 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         PacketBuffer buffer = new PacketBuffer(buf);
-        int i =  buffer.readerIndex();
+        int i = buffer.readerIndex();
         byte b0 = buffer.readByte();
-        if(b0 != 0)
+        if (b0 != 0)
         {
             buffer.readerIndex(i);
             try (ByteBufInputStream stream = new ByteBufInputStream(buffer);)
@@ -81,7 +81,7 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
     @Override
     public IMessage onMessage(@NotNull final SaveScanMessage message, final MessageContext ctx)
     {
-        if(message.nbttagcompound != null)
+        if (message.nbttagcompound != null)
         {
             ClientStructureWrapper.handleSaveScanMessage(message.nbttagcompound, message.currentMillis);
         }

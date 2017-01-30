@@ -129,7 +129,7 @@ public class Field extends Container
     /**
      * The max width/length of a field.
      */
-    private static final int MAX_RANGE     = 5;
+    private static final int MAX_RANGE = 5;
 
     /**
      * The colony of the field.

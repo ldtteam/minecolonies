@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Helper class for localization and sending player messages.
@@ -40,8 +39,9 @@ public final class LanguageHandler
 
     /**
      * Send a message to the player.
-     * @param player the player to send to.
-     * @param key the key of the message.
+     *
+     * @param player  the player to send to.
+     * @param key     the key of the message.
      * @param message the message to send.
      */
     public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String key, final Object... message)
@@ -53,7 +53,7 @@ public final class LanguageHandler
         {
             if (object instanceof ITextComponent || object instanceof TextComponentTranslation)
             {
-                if(onlyArgsUntil == 0)
+                if (onlyArgsUntil == 0)
                 {
                     onlyArgsUntil = -1;
                 }
@@ -65,7 +65,7 @@ public final class LanguageHandler
         if (onlyArgsUntil >= 0)
         {
             final Object[] args = new Object[onlyArgsUntil];
-            for(int i = 0; i < onlyArgsUntil; i++)
+            for (int i = 0; i < onlyArgsUntil; i++)
             {
                 args[i] = message[i];
             }
@@ -93,14 +93,14 @@ public final class LanguageHandler
             else if (object instanceof String)
             {
                 boolean isInArgs = false;
-                for(Object obj: translation.getFormatArgs())
+                for (Object obj : translation.getFormatArgs())
                 {
-                    if(obj.equals(object))
+                    if (obj.equals(object))
                     {
                         isInArgs = true;
                     }
                 }
-                if(!isInArgs)
+                if (!isInArgs)
                 {
                     translation.appendText((String) object);
                 }
@@ -125,7 +125,7 @@ public final class LanguageHandler
     public static String format(final String key, final Object... args)
     {
         final String result;
-        if(args.length == 0)
+        if (args.length == 0)
         {
             result = new TextComponentTranslation(key).getUnformattedText();
         }
@@ -152,7 +152,7 @@ public final class LanguageHandler
      * Send message to a list of players.
      *
      * @param players the list of players.
-     * @param key key of the message.
+     * @param key     key of the message.
      * @param message the message.
      */
     public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String key, final Object... message)

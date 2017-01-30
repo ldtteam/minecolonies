@@ -25,15 +25,15 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
 public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 {
 
-    private static final String     RENDER_META_TORCH         = "Torch";
-    private static final int        NODE_DISTANCE       = 7;
+    private static final String RENDER_META_TORCH   = "Torch";
+    private static final int    NODE_DISTANCE       = 7;
     /**
      * Return to chest after 3 stacks.
      */
-    private static final int        MAX_BLOCKS_MINED    = 3 * 64;
-    private static final int        LADDER_SEARCH_RANGE = 10;
-    private static final int        SHAFT_RADIUS        = 3;
-    private static final int        SAFE_CHECK_RANGE    = 5;
+    private static final int    MAX_BLOCKS_MINED    = 3 * 64;
+    private static final int    LADDER_SEARCH_RANGE = 10;
+    private static final int    SHAFT_RADIUS        = 3;
+    private static final int    SAFE_CHECK_RANGE    = 5;
 
     /**
      * Possible rotations.
@@ -55,7 +55,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     @Nullable
     private BlockPos currentStandingPosition;
     @Nullable
-    private Node    workingNode    = null;
+    private Node workingNode = null;
 
     /**
      * Constructor for the Miner.
@@ -86,16 +86,16 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         worker.setCanPickUpLoot(true);
     }
 
-    @Override
-    public Block getSolidSubstitution(BlockPos ignored)
-    {
-        return Blocks.COBBLESTONE;
-    }
-
     private static boolean isOre(final Block block)
     {
         //TODO make this more sophisticated
         return block instanceof BlockOre;
+    }
+
+    @Override
+    public Block getSolidSubstitution(BlockPos ignored)
+    {
+        return Blocks.COBBLESTONE;
     }
 
     //Miner wants to work but is not at building
@@ -108,6 +108,43 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         //Miner is at building
         return PREPARING;
+    }
+
+    @Override
+    protected BuildingMiner getOwnBuilding()
+    {
+        return (BuildingMiner) worker.getWorkBuilding();
+    }
+
+    /**
+     * Calculates after how many actions the ai should dump it's inventory.
+     * <p>
+     * Override this to change the value.
+     *
+     * @return the number of actions done before item dump.
+     */
+    @Override
+    protected int getActionsDoneUntilDumping()
+    {
+        return MAX_BLOCKS_MINED;
+    }
+
+    @Override
+    protected void updateRenderMetaData()
+    {
+        @NotNull final String renderMetaData = getRenderMetaTorch();
+        //TODO: Have pickaxe etc. displayed?
+        worker.setRenderMetadata(renderMetaData);
+    }
+
+    @NotNull
+    private String getRenderMetaTorch()
+    {
+        if (worker.hasItemInInventory(Blocks.TORCH, -1))
+        {
+            return RENDER_META_TORCH;
+        }
+        return "";
     }
 
     @NotNull
@@ -138,43 +175,6 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private boolean walkToLadder()
     {
         return walkToBlock(getOwnBuilding().getLadderLocation());
-    }
-
-    /**
-     * Calculates after how many actions the ai should dump it's inventory.
-     * <p>
-     * Override this to change the value.
-     *
-     * @return the number of actions done before item dump.
-     */
-    @Override
-    protected int getActionsDoneUntilDumping()
-    {
-        return MAX_BLOCKS_MINED;
-    }
-
-    @Override
-    protected BuildingMiner getOwnBuilding()
-    {
-        return (BuildingMiner) worker.getWorkBuilding();
-    }
-
-    @Override
-    protected void updateRenderMetaData()
-    {
-        @NotNull final String renderMetaData = getRenderMetaTorch();
-        //TODO: Have pickaxe etc. displayed?
-        worker.setRenderMetadata(renderMetaData);
-    }
-
-    @NotNull
-    private String getRenderMetaTorch()
-    {
-        if (worker.hasItemInInventory(Blocks.TORCH, -1))
-        {
-            return RENDER_META_TORCH;
-        }
-        return "";
     }
 
     @NotNull
@@ -514,15 +514,15 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         final int vectorX = workingNode.getX() < workingNode.getParent().getX() ? -1 : (workingNode.getX() > workingNode.getParent().getX() ? 1 : 0);
         final int vectorZ = workingNode.getZ() < workingNode.getParent().getY() ? -1 : (workingNode.getZ() > workingNode.getParent().getY() ? 1 : 0);
 
-        if(vectorX == -1)
+        if (vectorX == -1)
         {
             rotation = ROTATE_TWICE;
         }
-        else if(vectorZ == -1)
+        else if (vectorZ == -1)
         {
             rotation = ROTATE_THREE_TIMES;
         }
-        else if(vectorZ == 1)
+        else if (vectorZ == 1)
         {
             rotation = ROTATE_ONCE;
         }
@@ -561,12 +561,13 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     /**
      * Initiates structure loading.
-     * @param mineNode the node to load it for.
+     *
+     * @param mineNode  the node to load it for.
      * @param direction the direction it faces.
      */
     private void initStructure(final Node mineNode, final int rotateTimes, BlockPos structurePos)
     {
-        if(mineNode == null)
+        if (mineNode == null)
         {
             loadStructure("miner/minerMainShaft", getRotationFromVector(), structurePos);
         }
@@ -590,23 +591,24 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
     /**
      * Return number of rotation for our building, for the main shaft.
+     *
      * @return the rotation.
      */
     private int getRotationFromVector()
     {
-        if(getOwnBuilding().getVectorX() == 1)
+        if (getOwnBuilding().getVectorX() == 1)
         {
             return ROTATE_ONCE;
         }
-        else if(getOwnBuilding().getVectorZ() == 1)
+        else if (getOwnBuilding().getVectorZ() == 1)
         {
             return ROTATE_TWICE;
         }
-        else if(getOwnBuilding().getVectorX() == -1)
+        else if (getOwnBuilding().getVectorX() == -1)
         {
             return ROTATE_THREE_TIMES;
         }
-        else if(getOwnBuilding().getVectorZ() == -1)
+        else if (getOwnBuilding().getVectorZ() == -1)
         {
             return ROTATE_FOUR_TIMES;
         }
@@ -644,7 +646,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 
         workingNode = null;
 
-        if(job.getStructure() != null)
+        if (job.getStructure() != null)
         {
             return CLEAR_STEP;
         }
@@ -661,7 +663,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final IBlockState metadata)
     {
         final int slot;
-        if(block instanceof BlockLadder)
+        if (block instanceof BlockLadder)
         {
             slot = worker.findFirstSlotInInventoryWith(block, -1);
         }
