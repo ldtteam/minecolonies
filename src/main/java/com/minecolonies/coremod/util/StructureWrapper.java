@@ -144,8 +144,8 @@ public final class StructureWrapper
     /**
      * Rotates the structure x times.
      *
-     * @param times times to rotate.
-     * @param world world it's rotating it in.
+     * @param times     times to rotate.
+     * @param world     world it's rotating it in.
      * @param rotatePos position to rotate it around.
      */
     public void rotate(final int times, World world, BlockPos rotatePos)
@@ -304,7 +304,7 @@ public final class StructureWrapper
         }
 
         final Template.EntityInfo entityInfo = structure.getEntityinfo(this.getLocalPosition());
-        if(entityInfo != null)
+        if (entityInfo != null)
         {
             return false;
             //todo get entity at position.
@@ -412,7 +412,7 @@ public final class StructureWrapper
 
     private boolean isBlockNonSolid()
     {
-        return getBlock() != null && !getBlockState().getMaterial().isSolid();
+        return getBlockState() != null && !getBlockState().getMaterial().isSolid();
     }
 
     /**
@@ -469,7 +469,7 @@ public final class StructureWrapper
 
     private boolean isBlockSolid()
     {
-        return getBlock() != null && (getBlockState().getMaterial().isSolid());
+        return getBlockState() != null && getBlockState().getMaterial().isSolid();
     }
 
     /**
@@ -617,6 +617,7 @@ public final class StructureWrapper
 
     /**
      * Calculate the current entity in the structure.
+     *
      * @return the entityInfo.
      */
     @Nullable
