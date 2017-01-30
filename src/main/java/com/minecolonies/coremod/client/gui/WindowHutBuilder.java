@@ -43,9 +43,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final int RESOURCE_QUANTITY_MISSING_POSITION    = 4;
 
     private static final int red       = Color.getByName("red",0);
-    private static final int orange    = Color.getByName("orange",0);
     private static final int darkgreen = Color.getByName("darkgreen",0);
-    private static final int black = Color.getByName("black",0);
+    private static final int black     = Color.getByName("black",0);
 
     private final BuildingBuilder.View builder;
 
