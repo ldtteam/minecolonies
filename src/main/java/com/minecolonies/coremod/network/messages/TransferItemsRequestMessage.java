@@ -54,7 +54,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
     }
 
     /**
-     * Creates a build request message.
+     * Creates a Transfer Items request message.
      *
      * @param building AbstractBuilding of the request.
      * @param itemStack to be take from the player for the building
