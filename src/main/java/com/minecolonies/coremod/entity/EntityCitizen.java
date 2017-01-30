@@ -339,6 +339,15 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return level;
     }
 
+    public void onInventoryChanged()
+    {
+        final AbstractBuildingWorker building = citizenData.getWorkBuilding();
+        if (building!=null)
+        {
+            building.markDirty();
+        }
+    }
+
     public void setRenderMetadata(final String metadata)
     {
         renderMetadata = metadata;

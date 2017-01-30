@@ -32,6 +32,7 @@ public final class Color
         nameToColorMap.put("dimgray", 0x696969);
         nameToColorMap.put("lightgray", 0xD3D3D3);
         nameToColorMap.put("slategray", 0x708090);
+        nameToColorMap.put("darkgreen", 0x006400);
     }
     private Color()
     {

@@ -469,6 +469,11 @@ public final class InventoryUtils
     @Nullable
     public static ItemStack setStack(@NotNull final IInventory inventory, @Nullable final ItemStack stack)
     {
+        if (stack !=null && stack.getCount() > stack.getMaxStackSize())
+        {
+            Log.getLogger().warn("InventoryUtils.setStack: stack size bigger than the max stack size. Please contact a minecolonnies developer.");
+        }
+
         if (stack != null && stack != ItemStack.EMPTY)
         {
             @Nullable ItemStack returnStack = stack.copy();
@@ -504,6 +509,32 @@ public final class InventoryUtils
             return returnStack;
         }
         return ItemStack.EMPTY;
+    }
+
+    /**
+     * {@link #setStack(IInventory, ItemStack)}.
+     * Tries to put an itemStack into Inventory, unlike setStack, allow to use a ItemStack bigger than the maximum stack size allowed for the item
+     *
+     * @param inventory the inventory to set the stack in.
+     * @param stack     Item stack with items to be transferred, the stack can be bigger than allowed
+     * @return returns null if successful, or stack of remaining items, BE AWARE that the remaining stack can be bigger than the maximum stack size
+     */
+    @Nullable
+    public static ItemStack setOverSizedStack(@NotNull final IInventory inventory, @Nullable final ItemStack stack)
+    {
+        int stackSize = stack.getCount();
+        while (stackSize > 0)
+        {
+            final int itemCount = Math.min(stackSize, stack.getMaxStackSize());
+            final ItemStack items = new ItemStack(stack.getItem(), itemCount, stack.getItemDamage());
+            stackSize-=itemCount;
+            final ItemStack remainingItems = setStack(inventory,items);
+            stackSize+=remainingItems.getCount();
+            if (items.getCount()==remainingItems.getCount())
+                break; 
+        }
+        return new ItemStack(stack.getItem(), stackSize, stack.getItemDamage());
+
     }
 
     /**

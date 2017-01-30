@@ -8,19 +8,26 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The builders building.
@@ -45,6 +52,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * Contains all resources needed for a certain build.
      */
     private HashMap<String, ItemStack> neededResources = new HashMap<>();
+    /**
+     * Contains all resources available in the chest or builder inventory needed for a certain build.
+     */
+    private HashMap<String, BuildingBuilder.BuildingBuilderResource> resourcesAvailable = new HashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -165,6 +176,95 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * Hold the pair of number of avaliable and needed StackItem
+     */
+    public static class BuildingBuilderResource
+    {
+        public enum RessourceAvailability
+        {
+            NOT_NEEDED,
+            DONT_HAVE,
+            NEED_MORE,
+            HAVE_ENOUGHT
+        }
+
+        private String name;
+        private ItemStack itemStack;
+        private int amountAvailable;
+        private int amountNeeded;
+        private int amountPlayer;
+
+        BuildingBuilderResource(final String name, final ItemStack itemStack, final int amountAvailable, final int amountNeeded)
+        {
+            this.name = name;
+            this.itemStack = itemStack;
+            this.amountAvailable = amountAvailable;
+            this.amountNeeded = amountNeeded;
+            this.amountPlayer = 0;
+        }
+
+        public String getName()
+        {
+            return name;
+        }
+
+        public ItemStack getItemStack()
+        {
+            return itemStack;
+        }
+
+
+        public int getAvailable()
+        {
+            return amountAvailable;
+        }
+
+        public void setAvailable(final int amount)
+        {
+            amountAvailable=amount;
+        }
+
+        public int getNeeded()
+        {
+            return amountNeeded;
+        }
+
+        public void setPlayerAmount(final int amount)
+        {
+            amountPlayer = amount;
+        }
+
+        public int getPlayerAmount()
+        {
+            return amountPlayer;
+        }
+
+        public RessourceAvailability getAvailabilityStatus()
+        {
+            if (amountNeeded >amountAvailable)
+            {
+                if (amountPlayer==0)
+                {
+                    return RessourceAvailability.DONT_HAVE;
+                }
+                if (amountPlayer<(amountNeeded-amountAvailable))
+                {
+                    return RessourceAvailability.NEED_MORE;
+                }
+                return RessourceAvailability.HAVE_ENOUGHT;
+            }
+            return RessourceAvailability.NOT_NEEDED;
+        }
+
+        public String toString()
+        {
+            final int itemId=Item.getIdFromItem(itemStack.getItem());
+            final int damage=itemStack.getItemDamage();
+            return name + "(p:"+amountPlayer+" a:" +amountAvailable+" n:"+amountNeeded+" id="+itemId+" damage="+damage+") => "+getAvailabilityStatus().name();
+        }
+    }
+
+    /**
      * Method to serialize data to send it to the view.
      *
      * @param buf the used ByteBuffer.
@@ -174,11 +274,17 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         super.serializeToView(buf);
 
+        updateAvailableResources();
         buf.writeInt(neededResources.size());
-
         for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
         {
-            ByteBufUtils.writeUTF8String(buf, entry.getValue().getDisplayName());
+            final BuildingBuilderResource resource = resourcesAvailable.get(entry.getKey());
+            //ByteBufUtils.writeItemStack() is Buggy, serialize itemId and danage separately;
+            final int itemId = Item.getIdFromItem(resource.itemStack.getItem());
+            final int damage = resource.getItemStack().getItemDamage();
+            buf.writeInt(itemId);
+            buf.writeInt(damage);
+            buf.writeInt(resource.getAvailable());
             buf.writeInt(entry.getValue().getCount());
         }
     }
@@ -246,6 +352,60 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * Update the available resources (from the chest or builder's inventory)
+     * which are needed for the build
+     */
+    private void updateAvailableResources()
+    {
+        final EntityCitizen builder = getWorkerEntity();
+        resourcesAvailable.clear();
+
+
+        InventoryCitizen builderInventory = null;
+        if (builder!=null)
+        {
+            builderInventory = builder.getInventoryCitizen();
+        }
+
+
+        for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
+        {
+            ItemStack itemStack = entry.getValue();
+            BuildingBuilderResource resource = resourcesAvailable.get(entry.getKey());
+            if (resource == null)
+            {
+                resource = new BuildingBuilderResource(entry.getValue().getDisplayName(), itemStack,0,itemStack.getCount());
+            }
+
+            if (builderInventory!=null)
+            {
+                resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory(builderInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
+            }
+
+            final IInventory chestInventory = this.getTileEntity();
+            if (chestInventory!=null)
+            {
+                resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory(chestInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
+            }
+
+            //Count in the additional chests as well
+            if (builder!=null)
+            {
+                for(final BlockPos pos : getAdditionalCountainers())
+                {
+                    final TileEntity entity = builder.world.getTileEntity(pos);
+                    if(entity instanceof TileEntityChest)
+                    {
+                        resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory((TileEntityChest)entity, entry.getValue().getItem(), entry.getValue().getItemDamage()));
+                    }
+                }
+            }
+
+            resourcesAvailable.put(entry.getKey(), resource);
+        }
+    }
+
+    /*
      * Check if the builder requires a certain ItemStack for the current construction.
      *
      * @param stack the stack to test.
@@ -261,7 +421,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public static class View extends AbstractBuildingWorker.View
     {
-        private HashMap<String, Integer> neededResources;
+        private final HashMap<String, BuildingBuilder.BuildingBuilderResource> resources = new HashMap<>();
 
         /**
          * Public constructor of the view, creates an instance of it.
@@ -292,14 +452,31 @@ public class BuildingBuilder extends AbstractBuildingWorker
             super.deserialize(buf);
 
             final int size = buf.readInt();
-            neededResources = new HashMap<>();
+            resources.clear();
 
             for (int i = 0; i < size; i++)
             {
-                final String block = ByteBufUtils.readUTF8String(buf);
-                final int amount = buf.readInt();
-                neededResources.put(block, amount);
+                //Serialising the ItemStack give a bad ItemStack sometimes using itemId + damage instead
+                //final ItemStack itemStack = ByteBufUtils.readItemStack(buf);
+                final int itemId = buf.readInt();
+                final int damage = buf.readInt();
+                final ItemStack itemStack = new ItemStack(Item.getByNameOrId(Integer.toString(itemId)),1,damage);
+                final int amountAvailable = buf.readInt();
+                final int amountNeeded = buf.readInt();
+                final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack.getDisplayName(), itemStack, amountAvailable,amountNeeded);
+                resources.put(itemStack.getDisplayName(), resource);
             }
+        }
+
+        /**
+         * Getter for the needed resources.
+         *
+         * @return a copy of the HashMap(String, Object).
+         */
+
+        public Map<String, BuildingBuilder.BuildingBuilderResource> getResources()
+        {
+            return Collections.unmodifiableMap(resources);
         }
 
         @NotNull
@@ -315,15 +492,28 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             return Skill.STRENGTH;
         }
+    }
 
-        /**
-         * Getter for the needed resources.
-         *
-         * @return a copy of the HashMap(String, Object).
-         */
-        public Map<String, Integer> getNeededResources()
+    @Override
+    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    {
+        if (super.transferStack(stack, world))
         {
-            return new HashMap<>(neededResources);
+            this.markDirty();
+            return true;
         }
+        return false;
+    }
+
+    @Override
+    public ItemStack forceTransferStack(final ItemStack stack, final World world)
+    {
+        final ItemStack itemStack = super.forceTransferStack(stack, world);
+        if (itemStack != null)
+        {
+            this.markDirty();
+            return itemStack;
+        }
+        return itemStack;
     }
 }
