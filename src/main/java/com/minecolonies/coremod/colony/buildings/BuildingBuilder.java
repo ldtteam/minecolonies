@@ -1,7 +1,6 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.buildings.BuildingBuilderView;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
@@ -180,6 +179,12 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public static class BuildingBuilderResource
     {
+        final private String name;
+        final private ItemStack itemStack;
+        final private int amountNeeded;
+        private int amountAvailable;
+        private int amountPlayer;
+
         /**
          * Availability status of the resource.
          * according to the builder's chest, inventory and the player's inventory
@@ -191,12 +196,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
             NEED_MORE,
             HAVE_ENOUGHT
         }
-
-        final private String name;
-        final private ItemStack itemStack;
-        private int amountAvailable;
-        private int amountNeeded;
-        private int amountPlayer;
 
         BuildingBuilderResource(final String name, final ItemStack itemStack, final int amountAvailable, final int amountNeeded)
         {
@@ -360,8 +359,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
-     * Update the available resources (from the chest or builder's inventory)
-     * which are needed for the build
+     * Update the available resources. 
+     * which are needed for the build and in the builder's chest or inventory
      */
     private void updateAvailableResources()
     {
@@ -387,13 +386,15 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
             if (builderInventory!=null)
             {
-                resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory(builderInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
+                resource.setAvailable(resource.getAvailable() 
+                    + InventoryUtils.getItemCountInInventory(builderInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
             }
 
             final IInventory chestInventory = this.getTileEntity();
             if (chestInventory!=null)
             {
-                resource.setAvailable(resource.getAvailable() + InventoryUtils.getItemCountInInventory(chestInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
+                resource.setAvailable(resource.getAvailable() 
+                    + InventoryUtils.getItemCountInInventory(chestInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
             }
 
             //Count in the additional chests as well

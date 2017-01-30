@@ -187,8 +187,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         addButton.setPosition(buttonX,buttonY);
 
         resourceLabel.setLabelText(resource.getName());
-        final int missing = (resource.getAvailable()-resource.getNeeded());
-        final String missingItems = (missing>0)?"+"+Integer.toString(missing):Integer.toString(missing);
+        final int missing = resource.getAvailable()-resource.getNeeded();
+        final String missingItems = (missing>0)?("+"+Integer.toString(missing)):Integer.toString(missing);
         neededLabel.setLabelText(missingItems+"  "+Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getNeeded()-resource.getAvailable()));

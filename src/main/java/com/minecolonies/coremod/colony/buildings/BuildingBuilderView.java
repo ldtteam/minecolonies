@@ -7,7 +7,6 @@ import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -62,7 +61,8 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
             final ItemStack itemStack = new ItemStack(Item.getByNameOrId(Integer.toString(itemId)),1,damage);
             final int amountAvailable = buf.readInt();
             final int amountNeeded = buf.readInt();
-            final BuildingBuilder.BuildingBuilderResource resource = new BuildingBuilder.BuildingBuilderResource(itemStack.getDisplayName(), itemStack, amountAvailable,amountNeeded);
+            final BuildingBuilder.BuildingBuilderResource resource = 
+                new BuildingBuilder.BuildingBuilderResource(itemStack.getDisplayName(), itemStack, amountAvailable,amountNeeded);
             resources.put(itemStack.getDisplayName(), resource);
         }
     }
