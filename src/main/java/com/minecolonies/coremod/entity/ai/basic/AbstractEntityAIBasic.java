@@ -371,9 +371,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     {
         job.clearItemsNeeded();
         itemsNeeded.forEach(job::addItemNeeded);
-        
         InventoryUtils.getInventoryAsList(worker.getInventoryCitizen()).forEach(job::removeItemNeeded);
-
         getOwnBuilding().setItemsCurrentlyNeeded(job.getItemsNeeded());
     }
 
