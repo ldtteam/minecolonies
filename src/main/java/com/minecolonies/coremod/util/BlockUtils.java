@@ -167,8 +167,7 @@ public final class BlockUtils
      */
     public static boolean isBlockSeed(@NotNull final World world, @NotNull final BlockPos pos)
     {
-        return BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())) != null
-                 && BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())).getItem() instanceof ItemSeeds;
+        return BlockUtils.getItem(world.getBlockState(pos.up())) instanceof ItemSeeds;
     }
 
     /**
