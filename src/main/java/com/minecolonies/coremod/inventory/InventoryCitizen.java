@@ -645,20 +645,13 @@ public class InventoryCitizen implements IInventory
                     return itemStackIn.getCount() < i;
                 }
             }
-            catch (Exception throwable)
+            catch (RuntimeException exception)
             {
-                CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Adding item to inventory");
+                CrashReport crashreport = CrashReport.makeCrashReport(exception, "Adding item to inventory");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
-                crashreportcategory.addCrashSection("Item ID", Integer.valueOf(Item.getIdFromItem(itemStackIn.getItem())));
-                crashreportcategory.addCrashSection("Item data", Integer.valueOf(itemStackIn.getMetadata()));
-                crashreportcategory.setDetail("Item name", new ICrashReportDetail<String>()
-                {
-                    @Override
-                    public String call() throws Exception
-                    {
-                        return itemStackIn.getDisplayName();
-                    }
-                });
+                crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
+                crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
+                crashreportcategory.setDetail("Item name", itemStackIn::getDisplayName);
                 throw new ReportedException(crashreport);
             }
         }
