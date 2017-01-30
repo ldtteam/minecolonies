@@ -920,10 +920,11 @@ public class Colony implements IColony
      * Spawn citizen if his entity is null.
      * @param data his data
      */
-    public void spawnCitizenIfNull(final CitizenData data)
+    public void spawnCitizenIfNull(@NotNull final CitizenData data)
     {
         if(data.getCitizenEntity() == null)
         {
+            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", this.getID(), data.getId()));
             spawnCitizen(data);
         }
     }
