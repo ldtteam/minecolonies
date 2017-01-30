@@ -137,7 +137,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
 
         if (building.hasNoFields())
         {
-            chatSpamFilter.talkWithoutSpam("entity.farmer.noFreeFields", "");
+            chatSpamFilter.talkWithoutSpam("entity.farmer.noFreeFields");
             return AIState.PREPARING;
         }
 
@@ -201,7 +201,7 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     {
         if (currentField.getSeed() == null)
         {
-            chatSpamFilter.talkWithoutSpam("entity.farmer.noSeedSet", "");
+            chatSpamFilter.talkWithoutSpam("entity.farmer.noSeedSet");
             buildingFarmer.setCurrentField(null);
             return false;
         }

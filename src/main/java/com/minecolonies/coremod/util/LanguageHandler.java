@@ -49,7 +49,7 @@ public final class LanguageHandler
         TextComponentTranslation translation = null;
 
         int onlyArgsUntil = 0;
-        for (Object object : message)
+        for (final Object object : message)
         {
             if (object instanceof ITextComponent || object instanceof TextComponentTranslation)
             {
@@ -64,7 +64,7 @@ public final class LanguageHandler
 
         if (onlyArgsUntil >= 0)
         {
-            Object[] args = new Object[onlyArgsUntil];
+            final Object[] args = new Object[onlyArgsUntil];
             for(int i = 0; i < onlyArgsUntil; i++)
             {
                 args[i] = message[i];
@@ -72,7 +72,7 @@ public final class LanguageHandler
             translation = new TextComponentTranslation(key, args);
         }
 
-        for (Object object : message)
+        for (final Object object : message)
         {
             if (translation == null)
             {
@@ -124,7 +124,15 @@ public final class LanguageHandler
      */
     public static String format(final String key, final Object... args)
     {
-        final String result = new TextComponentTranslation(key, args).getFormattedText();
+        final String result;
+        if(args.length == 0)
+        {
+            result = new TextComponentTranslation(key).getUnformattedText();
+        }
+        else
+        {
+            result = new TextComponentTranslation(key, args).getUnformattedText();
+        }
         return result.isEmpty() ? key : result;
     }
 

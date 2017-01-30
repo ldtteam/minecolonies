@@ -34,7 +34,7 @@ public class StructureProxy
     {
         this.structure = new Structure(worldObj, name, new PlacementSettings());
 
-        if(structure.isTemplateNull())
+        if(structure.isTemplateMissing())
         {
             return;
         }

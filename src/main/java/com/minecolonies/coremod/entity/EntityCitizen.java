@@ -1595,14 +1595,23 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     private void sendChat(final String key, @Nullable final Object... msg)
     {
-        if (msg == null || msg.length == 0 || statusMessages.containsKey(key))
+        if (msg == null || statusMessages.containsKey(key))
         {
             return;
         }
 
-        statusMessages.put(key + msg[0], ticksExisted);
+        final TextComponentTranslation requiredItem;
 
-        final TextComponentTranslation requiredItem = new TextComponentTranslation(key, msg);
+        if(msg.length == 0)
+        {
+            requiredItem = new TextComponentTranslation(key);
+        }
+        else
+        {
+            statusMessages.put(key + msg[0], ticksExisted);
+            requiredItem = new TextComponentTranslation(key, msg);
+        }
+
         final TextComponentString citizenDescription = new TextComponentString(" ");
         citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
         final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");

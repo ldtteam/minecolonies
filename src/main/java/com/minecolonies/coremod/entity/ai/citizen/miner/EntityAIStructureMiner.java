@@ -186,7 +186,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
             //If the miner hut has been placed too deep.
             if (getOwnBuilding().getNumberOfLevels() == 0)
             {
-                chatSpamFilter.talkWithoutSpam("entity.miner.messageRequiresBetterHut", "");
+                chatSpamFilter.talkWithoutSpam("entity.miner.messageRequiresBetterHut");
                 getOwnBuilding().clearedShaft = false;
                 return IDLE;
             }

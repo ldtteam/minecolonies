@@ -20,7 +20,6 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentBase;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -359,7 +358,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if(!getOwnBuilding().hasOnGoingDelivery())
             {
-                requestWithoutSpam(new TextComponentString(first.getCount() + " " + first.getDisplayName()));
+                requestWithoutSpam(first.getCount() + " " + first.getDisplayName());
             }
         }
         return NEEDS_ITEM;
@@ -530,7 +529,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private void requestWithoutSpam(@NotNull final TextComponentBase chat)
     {
-        chatSpamFilter.requestWithoutSpam(chat);
+        chatSpamFilter.requestTextComponentWithoutSpam(chat);
+    }
+
+    /**
+     * Request an Item without spamming the chat.
+     *
+     * @param chat the Item Name
+     */
+    private void requestWithoutSpam(@NotNull final String chat)
+    {
+        chatSpamFilter.requestTextStringWithoutSpam(chat);
     }
 
     /**
@@ -895,7 +904,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         if (isInventoryAndChestFull())
         {
-            chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull", "");
+            chatSpamFilter.talkWithoutSpam("entity.worker.inventoryFullChestFull");
         }
         //collect items that are nice to have if they are available
         this.itemsNiceToHave().forEach(this::isInHut);

@@ -188,6 +188,8 @@ public class BuildingMiner extends AbstractBuildingWorker
      */
     private       boolean     foundLadder = false;
 
+    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
+
     /**
      * Required constructor.
      *
@@ -197,6 +199,20 @@ public class BuildingMiner extends AbstractBuildingWorker
     public BuildingMiner(final Colony c, final BlockPos l)
     {
         super(c, l);
+
+        final ItemStack stackLadder = new ItemStack(Blocks.LADDER);
+        final ItemStack stackFence = new ItemStack(Blocks.OAK_FENCE);
+        final ItemStack stackTorch = new ItemStack(Blocks.TORCH);
+        final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
+        final ItemStack stackSlab = new ItemStack(Blocks.WOODEN_SLAB);
+        final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
+
+        keepX.put(new ItemStorage(stackLadder.getItem(), stackLadder.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackFence.getItem(), stackFence.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackTorch.getItem(), stackTorch.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackCobble.getItem(), stackCobble.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackSlab.getItem(), stackSlab.getItemDamage(), 0, false), STACK_MAX_SIZE);
+        keepX.put(new ItemStorage(stackPlanks.getItem(), stackPlanks.getItemDamage(), 0, false), STACK_MAX_SIZE);
     }
 
     /**
@@ -281,21 +297,6 @@ public class BuildingMiner extends AbstractBuildingWorker
     @Override
     public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
     {
-        final Map<ItemStorage, Integer> keepX = new HashMap<>();
-        final ItemStack stackLadder = new ItemStack(Blocks.LADDER);
-        final ItemStack stackFence = new ItemStack(Blocks.OAK_FENCE);
-        final ItemStack stackTorch = new ItemStack(Blocks.TORCH);
-        final ItemStack stackCobble = new ItemStack(Blocks.COBBLESTONE);
-        final ItemStack stackSlab = new ItemStack(Blocks.WOODEN_SLAB);
-        final ItemStack stackPlanks = new ItemStack(Blocks.PLANKS);
-
-        keepX.put(new ItemStorage(stackLadder.getItem(), stackLadder.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackFence.getItem(), stackFence.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackTorch.getItem(), stackTorch.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackCobble.getItem(), stackCobble.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackSlab.getItem(), stackSlab.getItemDamage(), 0, false), STACK_MAX_SIZE);
-        keepX.put(new ItemStorage(stackPlanks.getItem(), stackPlanks.getItemDamage(), 0, false), STACK_MAX_SIZE);
-
         return keepX;
     }
 
