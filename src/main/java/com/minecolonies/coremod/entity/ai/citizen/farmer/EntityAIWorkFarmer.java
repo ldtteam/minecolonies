@@ -175,6 +175,17 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
     }
 
     /**
+     * Returns the farmer's work building.
+     *
+     * @return building instance
+     */
+    @Override
+    protected BuildingFarmer getOwnBuilding()
+    {
+        return (BuildingFarmer) worker.getWorkBuilding();
+    }
+
+    /**
      * Searches and adds a field that has not been taken yet for the farmer and then adds it to the list.
      */
     private void searchAndAddFields()
@@ -342,6 +353,22 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }*/
         }
         return true;
+    }
+
+    /**
+     * Called to check when the InventoryShouldBeDumped.
+     *
+     * @return true if the conditions are met
+     */
+    @Override
+    protected boolean wantInventoryDumped()
+    {
+        if (shouldDumpInventory)
+        {
+            shouldDumpInventory = false;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -661,33 +688,6 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
                 return AIState.PREPARING;
             }
         }
-    }
-
-    /**
-     * Called to check when the InventoryShouldBeDumped.
-     *
-     * @return true if the conditions are met
-     */
-    @Override
-    protected boolean wantInventoryDumped()
-    {
-        if (shouldDumpInventory)
-        {
-            shouldDumpInventory = false;
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Returns the farmer's work building.
-     *
-     * @return building instance
-     */
-    @Override
-    protected BuildingFarmer getOwnBuilding()
-    {
-        return (BuildingFarmer) worker.getWorkBuilding();
     }
 
     /**

@@ -18,13 +18,13 @@ import java.util.List;
  */
 public class StructureProxy
 {
-    private final Structure structure;
-    private Template.EntityInfo[][][] entities;
-    private Template.BlockInfo[][][] blocks;
-    private int                      width;
-    private int                      height;
-    private int                      length;
-    private BlockPos                 offset;
+    private final Structure                 structure;
+    private       Template.EntityInfo[][][] entities;
+    private       Template.BlockInfo[][][]  blocks;
+    private       int                       width;
+    private       int                       height;
+    private       int                       length;
+    private       BlockPos                  offset;
 
     /**
      * @param worldObj the world.
@@ -34,7 +34,7 @@ public class StructureProxy
     {
         this.structure = new Structure(worldObj, name, new PlacementSettings());
 
-        if(structure.isTemplateMissing())
+        if (structure.isTemplateMissing())
         {
             return;
         }
@@ -59,7 +59,7 @@ public class StructureProxy
             }
         }
 
-        for(final Template.EntityInfo info: structure.getTileEntities())
+        for (final Template.EntityInfo info : structure.getTileEntities())
         {
             final BlockPos tempPos = info.blockPos;
             entities[tempPos.getX()][tempPos.getY()][tempPos.getZ()] = info;
@@ -112,6 +112,7 @@ public class StructureProxy
 
     /**
      * Getter for the structure.
+     *
      * @return the structure object.
      */
     public Structure getStructure()
@@ -160,7 +161,7 @@ public class StructureProxy
     @Nullable
     public Template.EntityInfo getEntityinfo(@NotNull final BlockPos pos)
     {
-        if(entities[pos.getX()][pos.getY()].length == 0)
+        if (entities[pos.getX()][pos.getY()].length == 0)
         {
             return null;
         }
@@ -200,8 +201,8 @@ public class StructureProxy
     /**
      * Rotate the structure depending on the direction it's facing.
      *
-     * @param times times to rotate.
-     * @param world the world to rotate it in.
+     * @param times     times to rotate.
+     * @param world     the world to rotate it in.
      * @param rotatePos the pos to rotate it around.
      */
     public void rotate(final int times, World world, BlockPos rotatePos)
@@ -283,7 +284,7 @@ public class StructureProxy
 
         updateOffSetIfDecoration(foundHut, size, times, minX, minY, minZ);
 
-        for(final Template.EntityInfo info: structure.getTileEntities())
+        for (final Template.EntityInfo info : structure.getTileEntities())
         {
             final Template.EntityInfo newInfo = structure.transformEntityInfoWithSettings(info, world, rotatePos.subtract(offset).add(new BlockPos(minX, minY, minZ)), settings);
             //289 74 157 - 289.9 76.5, 157.5

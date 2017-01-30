@@ -148,9 +148,9 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
-                && (!tempColony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS)
-                && !(block instanceof BlockHutTownHall
-                && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.workingRangeTownHall * 2 + Configurations.townHallPadding)))
+              && (!tempColony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS)
+                    && !(block instanceof BlockHutTownHall
+                           && BlockPosUtil.getDistance2D(tempColony.getCenter(), buildPos) >= Configurations.workingRangeTownHall * 2 + Configurations.townHallPadding)))
         {
             return;
         }

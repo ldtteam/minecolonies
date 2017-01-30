@@ -109,8 +109,8 @@ public class Structure
          * @param worldMetadata the metadata of the world block
          */
         public StructureBlock(
-                final Block block, final BlockPos blockPosition, final IBlockState metadata, final Template.EntityInfo entity,
-                final Item item, final Block worldBlock, final IBlockState worldMetadata)
+                               final Block block, final BlockPos blockPosition, final IBlockState metadata, final Template.EntityInfo entity,
+                               final Item item, final Block worldBlock, final IBlockState worldMetadata)
         {
             this.block = block;
             this.blockPosition = blockPosition;
@@ -133,8 +133,8 @@ public class Structure
 
             //All worldBlocks are equal the substitution block
             if (structureBlock == ModBlocks.blockSubstitution
-                    || (structureBlock == ModBlocks.blockSolidSubstitution && worldMetadata.getMaterial().isSolid()
-                    && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR))
+                  || (structureBlock == ModBlocks.blockSolidSubstitution && worldMetadata.getMaterial().isSolid()
+                        && !(worldBlock instanceof BlockOre) && worldBlock != Blocks.AIR))
             {
                 return true;
             }
@@ -155,8 +155,6 @@ public class Structure
             return structureBlockState.equals(worldBlockState);
         }
     }
-
-    private       Stage            stage;
     /**
      * The internal structure loaded.
      */
@@ -166,6 +164,7 @@ public class Structure
      * the targetWorld to build the structure in.
      */
     private final World            targetWorld;
+    private       Stage            stage;
 
     /**
      * Create a new building task.
@@ -193,28 +192,14 @@ public class Structure
      * @throws StructureException when there is an error loading the structure file
      */
     public Structure(
-            final World targetWorld,
-            final BlockPos buildingLocation,
-            final String structureFileName,
-            final int rotation,
-            final Stage stageProgress,
-            final BlockPos blockProgress) throws StructureException
+                      final World targetWorld,
+                      final BlockPos buildingLocation,
+                      final String structureFileName,
+                      final int rotation,
+                      final Stage stageProgress,
+                      final BlockPos blockProgress) throws StructureException
     {
         this.structure = loadStructure(targetWorld, buildingLocation, structureFileName, rotation, stageProgress, blockProgress);
-        this.stage = stageProgress;
-        this.targetWorld = targetWorld;
-    }
-
-    /**
-     * Create a new building task.
-     *
-     * @param targetWorld   the world.
-     * @param structure     the structure.
-     * @param stageProgress the stage to start off with.
-     */
-    public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
-    {
-        this.structure = structure;
         this.stage = stageProgress;
         this.targetWorld = targetWorld;
     }
@@ -232,18 +217,18 @@ public class Structure
      */
     @Nullable
     private static StructureWrapper loadStructure(
-            @Nullable final World targetWorld,
-            @Nullable final BlockPos buildingLocation,
-            @Nullable final String schematicFileName,
-            final int rotation,
-            final Stage stageProgress,
-            @Nullable final BlockPos blockProgress)
-            throws StructureException
+                                                   @Nullable final World targetWorld,
+                                                   @Nullable final BlockPos buildingLocation,
+                                                   @Nullable final String schematicFileName,
+                                                   final int rotation,
+                                                   final Stage stageProgress,
+                                                   @Nullable final BlockPos blockProgress)
+      throws StructureException
     {
         if (targetWorld == null || buildingLocation == null || schematicFileName == null)
         {
             throw new StructureException(String.format("Some parameters were null! (targetWorld: %s), (buildingLocation: %s), (schematicFileName: %s)",
-                    targetWorld, buildingLocation, schematicFileName));
+              targetWorld, buildingLocation, schematicFileName));
         }
         @Nullable StructureWrapper tempSchematic = null;
         //failsafe for faulty structure files
@@ -267,6 +252,20 @@ public class Structure
     }
 
     /**
+     * Create a new building task.
+     *
+     * @param targetWorld   the world.
+     * @param structure     the structure.
+     * @param stageProgress the stage to start off with.
+     */
+    public Structure(final World targetWorld, final StructureWrapper structure, final Stage stageProgress)
+    {
+        this.structure = structure;
+        this.stage = stageProgress;
+        this.targetWorld = targetWorld;
+    }
+
+    /**
      * Check if the worldBlock equals the schematicBlock.
      *
      * @param blocksToTest the blocks to test.
@@ -275,7 +274,7 @@ public class Structure
     public static boolean checkBlocksEqual(@NotNull final StructureBlock blocksToTest)
     {
         return blocksToTest.block == blocksToTest.worldBlock
-                && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);
+                 && Objects.equals(blocksToTest.metadata, blocksToTest.worldMetadata);
     }
 
     /**
@@ -317,19 +316,19 @@ public class Structure
         {
             case CLEAR:
                 return advanceBlocks(this.structure::decrementBlock,
-                        structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
-                                || structureBlock.worldBlock == Blocks.AIR);
+                  structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
+                                      || structureBlock.worldBlock == Blocks.AIR);
             case BUILD:
                 return advanceBlocks(this.structure::incrementBlock, structureBlock -> structureBlock.doesStructureBlockEqualWorldBlock()
-                        && structureBlock.block == Blocks.AIR
-                        && !structureBlock.metadata.getMaterial().isSolid());
+                                                                                         && structureBlock.block == Blocks.AIR
+                                                                                         && !structureBlock.metadata.getMaterial().isSolid());
             case DECORATE:
                 return advanceBlocks(this.structure::decrementBlock, structureBlock ->
-                        structureBlock.doesStructureBlockEqualWorldBlock()
-                                || structureBlock.metadata.getMaterial().isSolid());
+                                                                       structureBlock.doesStructureBlockEqualWorldBlock()
+                                                                         || structureBlock.metadata.getMaterial().isSolid());
             case SPAWN:
                 return advanceBlocks(this.structure::incrementBlock, structureBlock ->
-                        structureBlock.entity == null);
+                                                                       structureBlock.entity == null);
             default:
                 return Result.NEW_BLOCK;
         }
@@ -369,13 +368,13 @@ public class Structure
     public StructureBlock getCurrentBlock()
     {
         return new StructureBlock(
-                this.structure.getBlock(),
-                this.structure.getBlockPosition(),
-                this.structure.getBlockState(),
-                this.structure.getEntityinfo(),
-                this.structure.getItem(),
-                BlockPosUtil.getBlock(targetWorld, this.structure.getBlockPosition()),
-                BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition())
+                                   this.structure.getBlock(),
+                                   this.structure.getBlockPosition(),
+                                   this.structure.getBlockState(),
+                                   this.structure.getEntityinfo(),
+                                   this.structure.getItem(),
+                                   BlockPosUtil.getBlock(targetWorld, this.structure.getBlockPosition()),
+                                   BlockPosUtil.getBlockState(targetWorld, this.structure.getBlockPosition())
         );
     }
 

@@ -35,46 +35,38 @@ public class Level
     private static final int ROTATE_TWICE       = 2;
     private static final int ROTATE_THREE_TIMES = 3;
     private static final int MAX_ROTATIONS      = 4;
-
-
-    /**
-     * The depth of the level stored as the y coordinate.
-     */
-    private int depth;
-
     /**
      * Random object needed for some tasks.
      */
     private static final Random rand = new Random();
-
     /**
      * Number to choose random types. It's random.nextInt(RANDOM_TYPES),
      */
     private static final int RANDOM_TYPES = 4;
-
-    /**
-     * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
-     */
-    @NotNull
-    private final HashMap<Point2D, Node> nodes = new HashMap<>();
-
     /**
      * Comparator to compare two nodes, for the priority queue.
      */
     @NotNull
     private static final Comparator<Node> NODE_COMPARATOR = (Node n1, Node n2) -> rand.nextInt(100) > 50 ? 1 : -1;
-
+    /**
+     * The hashMap of nodes, check for nodes with the tuple of the parent x and z.
+     */
+    @NotNull
+    private final HashMap<Point2D, Node> nodes = new HashMap<>();
     /**
      * The queue of open Nodes. Get a new node to work on here.
      */
     @NotNull
     private final Queue<Node> openNodes = new PriorityQueue<>(11, NODE_COMPARATOR);
-
+    /**
+     * The depth of the level stored as the y coordinate.
+     */
+    private int depth;
     /**
      * The node of the ladder.
      */
     @Nullable
-    private Node       ladderNode = null;
+    private Node ladderNode = null;
 
     /**
      * Private constructor, used to create the level from NBT.
@@ -121,9 +113,9 @@ public class Level
         nodeCenterList.add(ladderNode.getEastNodeCenter());
         nodeCenterList.add(ladderNode.getWesthNodeCenter());
 
-        for(final Point2D.Double pos: nodeCenterList)
+        for (final Point2D.Double pos : nodeCenterList)
         {
-            if(cobbleCenter.equals(pos) || ladderCenter.equals(pos))
+            if (cobbleCenter.equals(pos) || ladderCenter.equals(pos))
             {
                 continue;
             }
@@ -131,80 +123,6 @@ public class Level
             tempNode.setStyle(TUNNEL);
             nodes.put(pos, tempNode);
             openNodes.add(tempNode);
-        }
-    }
-
-    /**
-     * Getter for a random Node in the level.
-     * @return any random node.
-     */
-    public Node getRandomNode()
-    {
-        return openNodes.peek();
-    }
-
-    /**
-     * Closes the first Node in the list (Has been returned previously probably).
-     * Then creates the new nodes connected to it.
-     * @param rotation the rotation of the node.
-     */
-    public void closeNextNode(int rotation)
-    {
-        final Node tempNode = openNodes.poll();
-        final List<Point2D.Double> nodeCenterList = new ArrayList<>();
-
-        switch(tempNode.getStyle())
-        {
-            case TUNNEL:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
-                break;
-            case BEND:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
-                break;
-            case CROSSROAD:
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
-                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
-                break;
-            default:
-                return;
-        }
-
-        for(final Point2D.Double pos: nodeCenterList)
-        {
-            if(nodes.containsKey(pos))
-            {
-                continue;
-            }
-            final Node tempNodeToAdd = new Node(pos.getX(), pos.getY(), new Point2D.Double(tempNode.getX(), tempNode.getZ()));
-            final int randNumber = rand.nextInt(RANDOM_TYPES);
-            tempNodeToAdd.setStyle(randNumber <= 1 ? TUNNEL : (randNumber == 2 ? BEND : CROSSROAD));
-            nodes.put(pos, tempNodeToAdd);
-            openNodes.add(tempNodeToAdd);
-        }
-        nodes.get(new Point2D.Double(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
-    }
-
-    /**
-     * GEts the next node position from the currentNode the rotation of it and the additional rotation.
-     * @param node the node.
-     * @param rotation the rotation.
-     * @param additionalRotation the additional rotation.
-     * @return center of the new node.
-     */
-    private static Point2D.Double getNextNodePositionFromNodeWithRotation(Node node, int rotation, int additionalRotation)
-    {
-        final int realRotation = Math.floorMod(rotation + additionalRotation, MAX_ROTATIONS);
-        switch(realRotation)
-        {
-            case ROTATE_ONCE:
-                return node.getSouthNodeCenter();
-            case ROTATE_TWICE:
-                return node.getWesthNodeCenter();
-            case ROTATE_THREE_TIMES:
-                return node.getNorthNodeCenter();
-            default:
-                return node.getEastNodeCenter();
         }
     }
 
@@ -243,6 +161,83 @@ public class Level
         return level;
     }
 
+    /**
+     * Getter for a random Node in the level.
+     *
+     * @return any random node.
+     */
+    public Node getRandomNode()
+    {
+        return openNodes.peek();
+    }
+
+    /**
+     * Closes the first Node in the list (Has been returned previously probably).
+     * Then creates the new nodes connected to it.
+     *
+     * @param rotation the rotation of the node.
+     */
+    public void closeNextNode(int rotation)
+    {
+        final Node tempNode = openNodes.poll();
+        final List<Point2D.Double> nodeCenterList = new ArrayList<>();
+
+        switch (tempNode.getStyle())
+        {
+            case TUNNEL:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
+                break;
+            case BEND:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                break;
+            case CROSSROAD:
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, 0));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_ONCE));
+                nodeCenterList.add(getNextNodePositionFromNodeWithRotation(tempNode, rotation, ROTATE_THREE_TIMES));
+                break;
+            default:
+                return;
+        }
+
+        for (final Point2D.Double pos : nodeCenterList)
+        {
+            if (nodes.containsKey(pos))
+            {
+                continue;
+            }
+            final Node tempNodeToAdd = new Node(pos.getX(), pos.getY(), new Point2D.Double(tempNode.getX(), tempNode.getZ()));
+            final int randNumber = rand.nextInt(RANDOM_TYPES);
+            tempNodeToAdd.setStyle(randNumber <= 1 ? TUNNEL : (randNumber == 2 ? BEND : CROSSROAD));
+            nodes.put(pos, tempNodeToAdd);
+            openNodes.add(tempNodeToAdd);
+        }
+        nodes.get(new Point2D.Double(tempNode.getX(), tempNode.getZ())).setStatus(Node.NodeStatus.COMPLETED);
+    }
+
+    /**
+     * GEts the next node position from the currentNode the rotation of it and the additional rotation.
+     *
+     * @param node               the node.
+     * @param rotation           the rotation.
+     * @param additionalRotation the additional rotation.
+     * @return center of the new node.
+     */
+    private static Point2D.Double getNextNodePositionFromNodeWithRotation(Node node, int rotation, int additionalRotation)
+    {
+        final int realRotation = Math.floorMod(rotation + additionalRotation, MAX_ROTATIONS);
+        switch (realRotation)
+        {
+            case ROTATE_ONCE:
+                return node.getSouthNodeCenter();
+            case ROTATE_TWICE:
+                return node.getWesthNodeCenter();
+            case ROTATE_THREE_TIMES:
+                return node.getNorthNodeCenter();
+            default:
+                return node.getEastNodeCenter();
+        }
+    }
+
     @NotNull
     @Override
     public String toString()
@@ -279,7 +274,6 @@ public class Level
             openNodeTagList.appendTag(nodeCompound);
         }
         compound.setTag(TAG_OPEN_NODES, openNodeTagList);
-
     }
 
     @NotNull
@@ -316,6 +310,7 @@ public class Level
 
     /**
      * Returns a node by its key from the map.
+     *
      * @param key the Point2D key.
      * @return the Node.
      */

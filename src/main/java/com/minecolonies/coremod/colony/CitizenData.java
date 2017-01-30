@@ -49,10 +49,10 @@ public class CitizenData
      * The unique citizen id.
      */
     private final int                    id;
+    private final Colony                 colony;
     private       String                 name;
     private       boolean                female;
     private       int                    textureId;
-    private final Colony                 colony;
     @Nullable
     private       BuildingHome           homeBuilding;
     @Nullable
@@ -183,6 +183,26 @@ public class CitizenData
     }
 
     /**
+     * Returns the colony of the citizen.
+     *
+     * @return colony of the citizen.
+     */
+    public Colony getColony()
+    {
+        return colony;
+    }
+
+    /**
+     * Returns the id of the citizen.
+     *
+     * @return id of the citizen.
+     */
+    public int getId()
+    {
+        return id;
+    }
+
+    /**
      * Create a CitizenData View given it's saved NBTTagCompound.
      *
      * @param id  The citizen's id.
@@ -281,26 +301,6 @@ public class CitizenData
     private static char getRandomLetter(@NotNull final Random rand)
     {
         return (char) (rand.nextInt(LETTERS_IN_THE_ALPHABET) + 'A');
-    }
-
-    /**
-     * Returns the id of the citizen.
-     *
-     * @return id of the citizen.
-     */
-    public int getId()
-    {
-        return id;
-    }
-
-    /**
-     * Returns the colony of the citizen.
-     *
-     * @return colony of the citizen.
-     */
-    public Colony getColony()
-    {
-        return colony;
     }
 
     /**
@@ -630,15 +630,6 @@ public class CitizenData
     }
 
     /**
-     * Resets the experience and the experience level of the citizen.
-     */
-    public void resetExperienceAndLevel()
-    {
-        this.level = 0;
-        this.experience = 0;
-    }
-
-    /**
      * Returns the experience of the citizen.
      *
      * @return experience of the citizen.
@@ -696,5 +687,14 @@ public class CitizenData
     public int getDexterity()
     {
         return dexterity;
+    }
+
+    /**
+     * Resets the experience and the experience level of the citizen.
+     */
+    public void resetExperienceAndLevel()
+    {
+        this.level = 0;
+        this.experience = 0;
     }
 }

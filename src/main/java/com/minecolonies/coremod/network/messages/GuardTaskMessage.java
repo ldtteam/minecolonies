@@ -17,13 +17,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage>
 {
-    private int colonyId;
+    private int      colonyId;
     private BlockPos buildingId;
-    private int job;
-    private boolean assignmentMode;
-    private boolean patrollingMode;
-    private boolean retrieval;
-    private int task;
+    private int      job;
+    private boolean  assignmentMode;
+    private boolean  patrollingMode;
+    private boolean  retrieval;
+    private int      task;
 
     /**
      * Empty standard constructor.
@@ -35,12 +35,13 @@ public class GuardTaskMessage extends AbstractMessage<GuardTaskMessage, IMessage
 
     /**
      * Creates an instance of the guard task message.
-     * @param building the building.
-     * @param job the new job.
+     *
+     * @param building       the building.
+     * @param job            the new job.
      * @param assignmentMode the new assignment mode.
      * @param patrollingMode the new patrolling mode.
-     * @param retrieval the new retrievel mode.
-     * @param task the new task.
+     * @param retrieval      the new retrievel mode.
+     * @param task           the new task.
      */
     public GuardTaskMessage(
                              @NotNull final BuildingGuardTower.View building,

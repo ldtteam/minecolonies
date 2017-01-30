@@ -157,21 +157,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
     }
 
-    @Override
-    public void update()
-    {
-        super.update();
-
-        if (!world.isRemote && colonyId == 0)
-        {
-            final Colony tempColony = ColonyManager.getColony(world, this.getPosition());
-            if (tempColony != null)
-            {
-                colonyId = tempColony.getID();
-            }
-        }
-    }
-
     /**
      * Sets the colony of the tile entity.
      *
@@ -219,8 +204,6 @@ public class TileEntityColonyBuilding extends TileEntityChest
         return c == null ? null : c.getBuilding(getPosition());
     }
 
-
-
     @Override
     public void readFromNBT(final NBTTagCompound compound)
     {
@@ -246,6 +229,21 @@ public class TileEntityColonyBuilding extends TileEntityChest
         */
         compound.setInteger(TAG_COLONY, colonyId);
         return compound;
+    }
+
+    @Override
+    public void update()
+    {
+        super.update();
+
+        if (!world.isRemote && colonyId == 0)
+        {
+            final Colony tempColony = ColonyManager.getColony(world, this.getPosition());
+            if (tempColony != null)
+            {
+                colonyId = tempColony.getID();
+            }
+        }
     }
 
     @Override

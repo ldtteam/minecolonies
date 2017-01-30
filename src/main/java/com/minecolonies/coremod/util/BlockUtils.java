@@ -167,32 +167,7 @@ public final class BlockUtils
      */
     public static boolean isBlockSeed(@NotNull final World world, @NotNull final BlockPos pos)
     {
-        return BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())) != null
-                 && BlockUtils.getItemStackFromBlockState(world.getBlockState(pos.up())).getItem() instanceof ItemSeeds;
-    }
-
-    /**
-     * Mimics pick block.
-     *
-     * @param blockState the block and state we are creating an ItemStack for.
-     * @return ItemStack fromt the BlockState.
-     */
-    public static ItemStack getItemStackFromBlockState(@NotNull final IBlockState blockState)
-    {
-        final Item item = getItem(blockState);
-
-        if (item == null)
-        {
-            return null;
-        }
-
-        Block block = blockState.getBlock();
-        if (item instanceof ItemBlock)
-        {
-            block = Block.getBlockFromItem(item);
-        }
-
-        return new ItemStack(item, 1, getDamageValue(block, blockState));
+        return BlockUtils.getItem(world.getBlockState(pos.up())) instanceof ItemSeeds;
     }
 
     private static Item getItem(@NotNull final IBlockState blockState)
@@ -254,7 +229,7 @@ public final class BlockUtils
         }
         else if (blockState.getBlock() instanceof BlockFlowerPot)
         {
-             return Items.FLOWER_POT;
+            return Items.FLOWER_POT;
         }
         else if (blockState.getBlock() instanceof BlockFurnace)
         {
@@ -346,15 +321,40 @@ public final class BlockUtils
     }
 
     /**
+     * Mimics pick block.
+     *
+     * @param blockState the block and state we are creating an ItemStack for.
+     * @return ItemStack fromt the BlockState.
+     */
+    public static ItemStack getItemStackFromBlockState(@NotNull final IBlockState blockState)
+    {
+        final Item item = getItem(blockState);
+
+        if (item == null)
+        {
+            return null;
+        }
+
+        Block block = blockState.getBlock();
+        if (item instanceof ItemBlock)
+        {
+            block = Block.getBlockFromItem(item);
+        }
+
+        return new ItemStack(item, 1, getDamageValue(block, blockState));
+    }
+
+    /**
      * Get the damage value from a block and blockState, where the block is the placeable and obtainable block.
      * The blockstate might differ from the block.
-     * @param block the block.
+     *
+     * @param block      the block.
      * @param blockState the state.
      * @return the int damage value.
      */
     private static int getDamageValue(final Block block, @NotNull final IBlockState blockState)
     {
-        if(block instanceof BlockFarmland || blockState.getBlock() instanceof BlockFarmland)
+        if (block instanceof BlockFarmland || blockState.getBlock() instanceof BlockFarmland)
         {
             return 0;
         }

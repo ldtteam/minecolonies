@@ -85,14 +85,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      */
     private static final int    UNLIMITED_RESOURCES_TIMEOUT   = 5;
     /**
-     * The current structure task to be build.
-     */
-    private Structure currentStructure;
-    /**
-     * Position where the Builders constructs from.
-     */
-    private BlockPos  workFrom;
-    /**
      * The standard range the builder should reach until his target.
      */
     private static final int STANDARD_WORKING_RANGE = 5;
@@ -100,13 +92,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * The minimum range the builder has to reach in order to construct or clear.
      */
     private static final int MIN_WORKING_RANGE      = 12;
-
-    private int rotation = 0;
-
     /**
      * String which shows if something is a waypoint.
      */
     private static final CharSequence WAYPOINT_STRING = "waypoint";
+    /**
+     * The current structure task to be build.
+     */
+    private Structure currentStructure;
+    /**
+     * Position where the Builders constructs from.
+     */
+    private BlockPos  workFrom;
+    private int rotation = 0;
 
     /**
      * Creates this ai base class and set's up important things.
@@ -120,39 +118,104 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         super(job);
         this.registerTargets(
 
-                /**
-                 * Check if tasks should be executed.
-                 */
-                new AITarget(this::checkIfCanceled, IDLE),
-                /**
-                 * Select the appropriate State to do next.
-                 */
-                new AITarget(START_BUILDING, this::startBuilding),
-                /**
-                 * Check if we have to build something.
-                 */
-                new AITarget(IDLE, this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
-                /**
-                 * Clear out the building area.
-                 */
-                new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDING_STEP)),
-                /**
-                 * Build the structure and foundation of the building.
-                 */
-                new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.DECORATION_STEP)),
-                /**
-                 * Decorate the AbstractBuilding with torches etc.
-                 */
-                new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.SPAWN_STEP)),
-                /**
-                 * Spawn entities on the structure.
-                 */
-                new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.COMPLETE_BUILD)),
-                /**
-                 * Finalize the building and give back control to the ai.
-                 */
-                new AITarget(COMPLETE_BUILD, this::completeBuild)
+          /**
+           * Check if tasks should be executed.
+           */
+          new AITarget(this::checkIfCanceled, IDLE),
+          /**
+           * Select the appropriate State to do next.
+           */
+          new AITarget(START_BUILDING, this::startBuilding),
+          /**
+           * Check if we have to build something.
+           */
+          new AITarget(IDLE, this::isThereAStructureToBuild, () -> AIState.START_BUILDING),
+          /**
+           * Clear out the building area.
+           */
+          new AITarget(CLEAR_STEP, generateStructureGenerator(this::clearStep, AIState.BUILDING_STEP)),
+          /**
+           * Build the structure and foundation of the building.
+           */
+          new AITarget(BUILDING_STEP, generateStructureGenerator(this::structureStep, AIState.DECORATION_STEP)),
+          /**
+           * Decorate the AbstractBuilding with torches etc.
+           */
+          new AITarget(DECORATION_STEP, generateStructureGenerator(this::decorationStep, AIState.SPAWN_STEP)),
+          /**
+           * Spawn entities on the structure.
+           */
+          new AITarget(SPAWN_STEP, generateStructureGenerator(this::spawnEntity, AIState.COMPLETE_BUILD)),
+          /**
+           * Finalize the building and give back control to the ai.
+           */
+          new AITarget(COMPLETE_BUILD, this::completeBuild)
         );
+    }
+
+    /**
+     * Generate a function that will iterate over a structure.
+     * <p>
+     * It will pass the current block (with all infos) to the evaluation function.
+     *
+     * @param evaluationFunction the function to be called each block.
+     * @param nextState          the next state to change to once done iterating.
+     * @return the new state this AI will be in after one pass.
+     */
+    private Supplier<AIState> generateStructureGenerator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
+    {
+        //do not replace with method reference, this one stays the same on changing reference for currentStructure
+        //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
+        @NotNull final Supplier<Structure.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
+        @NotNull final Supplier<Structure.Result> advanceBlock = () -> currentStructure.advanceBlock();
+
+        return () ->
+        {
+            final Structure.StructureBlock currentBlock = getCurrentBlock.get();
+            /*
+            check if we have not found a block (when block == null
+            if we have a block, apply the eval function
+            (which changes stuff, so only execute on valid block!)
+            */
+            if (currentBlock.block == null
+                  || evaluationFunction.apply(currentBlock))
+            {
+                final Structure.Result result = advanceBlock.get();
+                if (result == Structure.Result.AT_END)
+                {
+                    switchStage(nextState);
+                    return nextState;
+                }
+                if (result == Structure.Result.CONFIG_LIMIT)
+                {
+                    return getState();
+                }
+            }
+            return getState();
+        };
+    }
+
+    /**
+     * Switches the structures stage after the current one has been completed.
+     */
+    private void switchStage(AIState state)
+    {
+        if (state.equals(AIState.BUILDING_STEP))
+        {
+            currentStructure.setStage(Structure.Stage.BUILD);
+        }
+        else if (state.equals(AIState.DECORATION_STEP))
+        {
+            currentStructure.setStage(Structure.Stage.DECORATE);
+        }
+        else if (state.equals(AIState.SPAWN_STEP))
+        {
+            currentStructure.setStage(Structure.Stage.SPAWN);
+        }
+        else if (state.equals(AIState.COMPLETE_BUILD))
+        {
+            currentStructure.setStage(Structure.Stage.COMPLETE);
+        }
     }
 
     private AIState completeBuild()
@@ -169,17 +232,17 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 final String structureName = ((AbstractJobStructure) job).getStructure().getName();
                 LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
-                        "entity.builder.messageBuildComplete",
-                        structureName);
+                  "entity.builder.messageBuildComplete",
+                  structureName);
 
 
                 final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
                 if (wo == null)
                 {
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
-                            worker.getColony().getID(),
-                            worker.getCitizenData().getId(),
-                            ((JobBuilder) job).getWorkOrderId()));
+                      worker.getColony().getID(),
+                      worker.getCitizenData().getId(),
+                      ((JobBuilder) job).getWorkOrderId()));
                 }
                 else
                 {
@@ -196,9 +259,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                         if (building == null)
                         {
                             Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing building(%s)",
-                                    worker.getColony().getID(),
-                                    worker.getCitizenData().getId(),
-                                    wo.getBuildingLocation()));
+                              worker.getColony().getID(),
+                              worker.getCitizenData().getId(),
+                              wo.getBuildingLocation()));
                         }
                         else
                         {
@@ -256,10 +319,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
 
             if (structureBlock.block == null
-                    || structureBlock.doesStructureBlockEqualWorldBlock()
-                    || structureBlock.metadata.getMaterial().isSolid()
-                    || (structureBlock.block instanceof BlockBed && structureBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
-                    || (structureBlock.block instanceof BlockDoor && structureBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
+                  || structureBlock.doesStructureBlockEqualWorldBlock()
+                  || structureBlock.metadata.getMaterial().isSolid()
+                  || (structureBlock.block instanceof BlockBed && structureBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+                  || (structureBlock.block instanceof BlockDoor && structureBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
@@ -280,7 +343,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             @Nullable final IBlockState blockState = structureBlock.metadata;
             //We need to deal with materials
             if (!Configurations.builderInfiniteResources
-                    && !handleMaterials(block, blockState))
+                  && !handleMaterials(block, blockState))
             {
                 return false;
             }
@@ -302,10 +365,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
 
             if (structureBlock.block == null
-                    || structureBlock.doesStructureBlockEqualWorldBlock()
-                    || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR)
-                    || (structureBlock.block instanceof BlockBed && structureBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
-                    || (structureBlock.block instanceof BlockDoor && structureBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
+                  || structureBlock.doesStructureBlockEqualWorldBlock()
+                  || (!structureBlock.metadata.getMaterial().isSolid() && structureBlock.block != Blocks.AIR)
+                  || (structureBlock.block instanceof BlockBed && structureBlock.metadata.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.HEAD))
+                  || (structureBlock.block instanceof BlockDoor && structureBlock.metadata.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
                 //findNextBlock count was reached and we can ignore this block
                 return true;
@@ -316,7 +379,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (structureBlock.block == ModBlocks.blockSolidSubstitution)
             {
                 if (!(job instanceof JobMiner && structureBlock.worldBlock instanceof BlockOre)
-                        && structureBlock.worldMetadata.getMaterial().isSolid())
+                      && structureBlock.worldMetadata.getMaterial().isSolid())
                 {
                     return true;
                 }
@@ -336,7 +399,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
             //We need to deal with materials
             if (!Configurations.builderInfiniteResources
-                    && !handleMaterials(block, blockState))
+                  && !handleMaterials(block, blockState))
             {
                 return false;
             }
@@ -344,71 +407,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             placeBlockAt(block, blockState, structureBlock.blockPosition);
         }
         return true;
-    }
-
-    /**
-     * Generate a function that will iterate over a structure.
-     * <p>
-     * It will pass the current block (with all infos) to the evaluation function.
-     *
-     * @param evaluationFunction the function to be called each block.
-     * @param nextState          the next state to change to once done iterating.
-     * @return the new state this AI will be in after one pass.
-     */
-    private Supplier<AIState> generateStructureGenerator(@NotNull final Function<Structure.StructureBlock, Boolean> evaluationFunction, @NotNull final AIState nextState)
-    {
-        //do not replace with method reference, this one stays the same on changing reference for currentStructure
-        //URGENT: DO NOT REPLACE FOR ANY MEANS THIS WILL CRASH THE GAME.
-        @NotNull final Supplier<Structure.StructureBlock> getCurrentBlock = () -> currentStructure.getCurrentBlock();
-        @NotNull final Supplier<Structure.Result> advanceBlock = () -> currentStructure.advanceBlock();
-
-        return () ->
-        {
-            final Structure.StructureBlock currentBlock = getCurrentBlock.get();
-            /*
-            check if we have not found a block (when block == null
-            if we have a block, apply the eval function
-            (which changes stuff, so only execute on valid block!)
-            */
-            if (currentBlock.block == null
-                    || evaluationFunction.apply(currentBlock))
-            {
-                final Structure.Result result = advanceBlock.get();
-                if (result == Structure.Result.AT_END)
-                {
-                    switchStage(nextState);
-                    return nextState;
-                }
-                if (result == Structure.Result.CONFIG_LIMIT)
-                {
-                    return getState();
-                }
-            }
-            return getState();
-        };
-    }
-
-    /**
-     * Switches the structures stage after the current one has been completed.
-     */
-    private void switchStage(AIState state)
-    {
-        if (state.equals(AIState.BUILDING_STEP))
-        {
-            currentStructure.setStage(Structure.Stage.BUILD);
-        }
-        else if (state.equals(AIState.DECORATION_STEP))
-        {
-            currentStructure.setStage(Structure.Stage.DECORATE);
-        }
-        else if (state.equals(AIState.SPAWN_STEP))
-        {
-            currentStructure.setStage(Structure.Stage.SPAWN);
-        }
-        else if (state.equals(AIState.COMPLETE_BUILD))
-        {
-            currentStructure.setStage(Structure.Stage.COMPLETE);
-        }
     }
 
     /**
@@ -460,28 +458,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
-     * Requests Materials if required.
-     * - If the entity is a builder.
-     * - If the builder doesn't have infinite resources.
-     */
-    private void requestMaterialsIfRequired()
-    {
-        if (!Configurations.builderInfiniteResources && job instanceof JobBuilder && getOwnBuilding() instanceof BuildingBuilder)
-        {
-            ((BuildingBuilder) getOwnBuilding()).resetNeededResources();
-            requestMaterials();
-        }
-    }
-
-    /**
-     * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
-     *
-     * @param location the location the block should be at.
-     * @return the Block.
-     */
-    public abstract Block getSolidSubstitution(BlockPos location);
-
-    /**
      * Loads the structure given the name, rotation and position.
      *
      * @param name        the name to retrieve  it.
@@ -510,18 +486,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
     }
 
-    private boolean checkIfCanceled()
+    /**
+     * Requests Materials if required.
+     * - If the entity is a builder.
+     * - If the builder doesn't have infinite resources.
+     */
+    private void requestMaterialsIfRequired()
     {
-        if (job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() == null)
+        if (!Configurations.builderInfiniteResources && job instanceof JobBuilder && getOwnBuilding() instanceof BuildingBuilder)
         {
-            super.resetTask();
-            workFrom = null;
-            ((JobBuilder) job).setStructure(null);
-            ((JobBuilder) job).setWorkOrder(null);
-            currentStructure = null;
-            return true;
+            ((BuildingBuilder) getOwnBuilding()).resetNeededResources();
+            requestMaterials();
         }
-        return false;
     }
 
     /**
@@ -546,8 +522,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             @Nullable final Block block = blockState.getBlock();
 
             if (builderJob.getStructure().doesStructureBlockEqualWorldBlock()
-                    || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
-                    || (blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
+                  || (blockState.getBlock() instanceof BlockBed && blockState.getValue(BlockBed.PART).equals(BlockBed.EnumPartType.FOOT))
+                  || (blockState.getBlock() instanceof BlockDoor && blockState.getValue(BlockDoor.HALF).equals(BlockDoor.EnumDoorHalf.UPPER)))
             {
                 continue;
             }
@@ -555,10 +531,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             final Block worldBlock = BlockPosUtil.getBlock(world, builderJob.getStructure().getBlockPosition());
 
             if (block != null
-                    && block != Blocks.AIR
-                    && worldBlock != Blocks.BEDROCK
-                    && !(worldBlock instanceof AbstractBlockHut)
-                    && !isBlockFree(block, 0))
+                  && block != Blocks.AIR
+                  && worldBlock != Blocks.BEDROCK
+                  && !(worldBlock instanceof AbstractBlockHut)
+                  && !isBlockFree(block, 0))
             {
                 final AbstractBuilding building = getOwnBuilding();
                 if (building instanceof BuildingBuilder)
@@ -568,28 +544,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
         builderJob.getWorkOrder().setRequested(true);
-    }
-
-    /**
-     * Add blocks to the builder building if he needs it.
-     *
-     * @param building   the building.
-     * @param blockState the block to add.
-     */
-    private void requestBlockToBuildingIfRequired(BuildingBuilder building, IBlockState blockState)
-    {
-        if (((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
-        {
-            final List<ItemStack> itemList = new ArrayList<>();
-            itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
-
-            for (final ItemStack stack : itemList)
-            {
-                building.addNeededResource(stack, 1);
-            }
-        }
-
-        building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
     }
 
     /**
@@ -637,6 +591,116 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
+     * Defines blocks that can be built for free.
+     *
+     * @param block    The block to check if it is free.
+     * @param metadata The metadata of the block.
+     * @return true or false.
+     */
+    public static boolean isBlockFree(@Nullable final Block block, final int metadata)
+    {
+        return block == null
+                 || BlockUtils.isWater(block.getDefaultState())
+                 || block.equals(Blocks.LEAVES)
+                 || block.equals(Blocks.LEAVES2)
+                 || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
+                 || block.equals(Blocks.GRASS)
+                 || block.equals(ModBlocks.blockSolidSubstitution);
+    }
+
+    /**
+     * Add blocks to the builder building if he needs it.
+     *
+     * @param building   the building.
+     * @param blockState the block to add.
+     */
+    private void requestBlockToBuildingIfRequired(BuildingBuilder building, IBlockState blockState)
+    {
+        if (((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
+        {
+            final List<ItemStack> itemList = new ArrayList<>();
+            itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
+
+            for (final ItemStack stack : itemList)
+            {
+                building.addNeededResource(stack, 1);
+            }
+        }
+
+        building.addNeededResource(BlockUtils.getItemStackFromBlockState(blockState), 1);
+    }
+
+    /**
+     * Get the entity of an entityInfo object.
+     *
+     * @param entityInfo the input.
+     * @return the output object or null.
+     */
+    @Nullable
+    private Entity getEntityFromEntityInfoOrNull(Template.EntityInfo entityInfo)
+    {
+        try
+        {
+            return EntityList.createEntityFromNBT(entityInfo.entityData, world);
+        }
+        catch (RuntimeException e)
+        {
+            Log.getLogger().info("Couldn't restore entitiy", e);
+            return null;
+        }
+    }
+
+    /**
+     * Get itemStack of tileEntityData. Retrieve the data from the tileEntity.
+     *
+     * @param compound the tileEntity stored in a compound.
+     * @return the list of itemstacks.
+     */
+    private List<ItemStack> getItemStacksOfTileEntity(NBTTagCompound compound)
+    {
+        final List<ItemStack> items = new ArrayList<>();
+        final TileEntity tileEntity = TileEntity.create(world, compound);
+        if (tileEntity instanceof TileEntityFlowerPot)
+        {
+            items.add(((TileEntityFlowerPot) tileEntity).getFlowerItemStack());
+        }
+        else if (tileEntity instanceof TileEntityLockable)
+        {
+            for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
+            {
+                final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
+                if (stack != null && stack != ItemStack.EMPTY)
+                {
+                    items.add(stack);
+                }
+            }
+        }
+        return items;
+    }
+
+    /**
+     * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
+     *
+     * @param location the location the block should be at.
+     * @return the Block.
+     */
+    public abstract Block getSolidSubstitution(BlockPos location);
+
+    private boolean checkIfCanceled()
+    {
+        if (job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() == null)
+        {
+            super.resetTask();
+            workFrom = null;
+            ((JobBuilder) job).setStructure(null);
+            ((JobBuilder) job).setWorkOrder(null);
+            currentStructure = null;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Works on clearing the area of unneeded blocks.
      *
      * @return the next step once done.
@@ -644,7 +708,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     private boolean clearStep(@NotNull final Structure.StructureBlock currentBlock)
     {
         if ((job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() != null && ((JobBuilder) job).getWorkOrder().isCleared())
-                || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
+              || !currentStructure.getStage().equals(Structure.Stage.CLEAR))
         {
             return true;
         }
@@ -861,7 +925,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(BlockUtils.getItemStackFromBlockState(blockState));
         if (job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null
-                && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
+              && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
         {
             itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
         }
@@ -895,52 +959,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         return stack;
     }
 
-    /**
-     * Get itemStack of tileEntityData. Retrieve the data from the tileEntity.
-     *
-     * @param compound the tileEntity stored in a compound.
-     * @return the list of itemstacks.
-     */
-    private List<ItemStack> getItemStacksOfTileEntity(NBTTagCompound compound)
-    {
-        final List<ItemStack> items = new ArrayList<>();
-        final TileEntity tileEntity = TileEntity.create(world, compound);
-        if (tileEntity instanceof TileEntityFlowerPot)
-        {
-            items.add(((TileEntityFlowerPot) tileEntity).getFlowerItemStack());
-        }
-        else if (tileEntity instanceof TileEntityLockable)
-        {
-            for (int i = 0; i < ((TileEntityLockable) tileEntity).getSizeInventory(); i++)
-            {
-                final ItemStack stack = ((TileEntityLockable) tileEntity).getStackInSlot(i);
-                if (stack != null && stack != ItemStack.EMPTY)
-                {
-                    items.add(stack);
-                }
-            }
-        }
-        return items;
-    }
-
-    /**
-     * Defines blocks that can be built for free.
-     *
-     * @param block    The block to check if it is free.
-     * @param metadata The metadata of the block.
-     * @return true or false.
-     */
-    public static boolean isBlockFree(@Nullable final Block block, final int metadata)
-    {
-        return block == null
-                || BlockUtils.isWater(block.getDefaultState())
-                || block.equals(Blocks.LEAVES)
-                || block.equals(Blocks.LEAVES2)
-                || (block.equals(Blocks.DOUBLE_PLANT) && Utils.testFlag(metadata, 0x08))
-                || block.equals(Blocks.GRASS)
-                || block.equals(ModBlocks.blockSolidSubstitution);
-    }
-
     private void placeBlockAt(@NotNull final Block block, @NotNull final IBlockState blockState, @NotNull final BlockPos coords)
     {
         if (block == Blocks.AIR)
@@ -970,18 +988,18 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         //Move out of the way when placing blocks
         if (MathHelper.floor(worker.posX) == pos.getX()
-                && MathHelper.abs(pos.getY() - (int) worker.posY) <= 1
-                && MathHelper.floor(worker.posZ) == pos.getZ()
-                && worker.getNavigator().noPath())
+              && MathHelper.abs(pos.getY() - (int) worker.posY) <= 1
+              && MathHelper.floor(worker.posZ) == pos.getZ()
+              && worker.getNavigator().noPath())
         {
             worker.getNavigator().moveAwayFromXYZ(pos, RUN_AWAY_SPEED, 1.0);
         }
 
         //Workaround as long as we didn't rescan all of our buildings since BlockStairs now have different metadata values.
         if (blockState.getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getBlock() instanceof BlockStairs
-                && world.getBlockState(pos).getValue(BlockStairs.FACING) == blockState.getValue(BlockStairs.FACING)
-                && blockState.getBlock() == world.getBlockState(pos).getBlock())
+              && world.getBlockState(pos).getBlock() instanceof BlockStairs
+              && world.getBlockState(pos).getValue(BlockStairs.FACING) == blockState.getValue(BlockStairs.FACING)
+              && blockState.getBlock() == world.getBlockState(pos).getBlock())
         {
             return true;
         }
@@ -1051,7 +1069,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if(block instanceof BlockChest && job instanceof JobBuilder)
+        if (block instanceof BlockChest && job instanceof JobBuilder)
         {
             final BlockPos buildingLocation = ((JobBuilder) job).getWorkOrder().getBuildingLocation();
             final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
@@ -1074,7 +1092,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final List<ItemStack> itemList = new ArrayList<>();
         itemList.add(stack);
         if (job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null
-                && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
+              && ((JobBuilder) job).getStructure().getBlockInfo() != null && ((JobBuilder) job).getStructure().getBlockInfo().tileentityData != null)
         {
             itemList.addAll(getItemStacksOfTileEntity(((JobBuilder) job).getStructure().getBlockInfo().tileentityData));
         }
@@ -1098,40 +1116,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
 
         return true;
-    }
-
-    /**
-     * Reduces the needed resources by 1.
-     *
-     * @param stack the stack which has been used now.
-     */
-    public void reduceNeededResources(final ItemStack stack)
-    {
-        final AbstractBuilding workerBuilding = this.getOwnBuilding();
-        if (workerBuilding instanceof BuildingBuilder)
-        {
-            ((BuildingBuilder) workerBuilding).reduceNeededResource(stack, 1);
-        }
-    }
-
-    /**
-     * Get the entity of an entityInfo object.
-     *
-     * @param entityInfo the input.
-     * @return the output object or null.
-     */
-    @Nullable
-    private Entity getEntityFromEntityInfoOrNull(Template.EntityInfo entityInfo)
-    {
-        try
-        {
-            return EntityList.createEntityFromNBT(entityInfo.entityData, world);
-        }
-        catch (RuntimeException e)
-        {
-            Log.getLogger().info("Couldn't restore entitiy", e);
-            return null;
-        }
     }
 
     private Boolean spawnEntity(@NotNull final Structure.StructureBlock currentBlock)
@@ -1190,11 +1174,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
 
                 entity.setUniqueId(UUID.randomUUID());
                 entity.setLocationAndAngles(
-                        entity.posX,
-                        entity.posY,
-                        entity.posZ,
-                        entity.rotationYaw,
-                        entity.rotationPitch);
+                  entity.posX,
+                  entity.posY,
+                  entity.posZ,
+                  entity.rotationYaw,
+                  entity.rotationPitch);
                 if (!world.spawnEntity(entity))
                 {
                     Log.getLogger().info("Failed to spawn entity");
@@ -1202,6 +1186,20 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
         return true;
+    }
+
+    /**
+     * Reduces the needed resources by 1.
+     *
+     * @param stack the stack which has been used now.
+     */
+    public void reduceNeededResources(final ItemStack stack)
+    {
+        final AbstractBuilding workerBuilding = this.getOwnBuilding();
+        if (workerBuilding instanceof BuildingBuilder)
+        {
+            ((BuildingBuilder) workerBuilding).reduceNeededResource(stack, 1);
+        }
     }
 
     /**

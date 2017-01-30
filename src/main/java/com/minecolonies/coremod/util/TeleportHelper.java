@@ -33,11 +33,11 @@ public final class TeleportHelper
         }
 
         citizen.setLocationAndAngles(
-                spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
-                spawnPoint.getY(),
-                spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
-                citizen.rotationYaw,
-                citizen.rotationPitch);
+          spawnPoint.getX() + MIDDLE_BLOCK_OFFSET,
+          spawnPoint.getY(),
+          spawnPoint.getZ() + MIDDLE_BLOCK_OFFSET,
+          citizen.rotationYaw,
+          citizen.rotationPitch);
         citizen.getNavigator().clearPathEntity();
 
         return true;

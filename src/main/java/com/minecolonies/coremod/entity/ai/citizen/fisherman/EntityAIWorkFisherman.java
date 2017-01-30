@@ -120,38 +120,32 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      * Chance to play a specific fisherman sound.
      */
     private static final int CHANCE_TO_PLAY_SOUND = 20;
-
+    @NotNull
+    private final Random random = new Random();
     /**
      * The number of executed adjusts of the fisherman's rotation.
      */
     private int executedRotations = 0;
-
     /**
      * The PathResult when the fisherman searches water.
      */
     @Nullable
     private PathJobFindWater.WaterPathResult pathResult;
-
     /**
      * The Previous PathResult when the fisherman already found water.
      */
     @Nullable
     private PathJobFindWater.WaterPathResult lastPathResult;
-
     /**
      * The fishingSkill which directly influences the fisherman's chance to throw his rod.
      * May in the future also influence his luck/charisma.
      */
     private int fishingSkill = worker.getLevel();
-
     /**
      * Connects the citizen with the fishingHook.
      */
     @Nullable
     private EntityFishHook entityFishHook;
-
-    @NotNull
-    private final Random random = new Random();
 
     /**
      * Constructor for the Fisherman.
@@ -224,6 +218,17 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     }
 
     /**
+     * Returns the fisherman's work building.
+     *
+     * @return building instance
+     */
+    @Override
+    protected BuildingFisherman getOwnBuilding()
+    {
+        return (BuildingFisherman) worker.getWorkBuilding();
+    }
+
+    /**
      * Calculates after how many actions the ai should dump it's inventory.
      * <p>
      * Override this to change the value.
@@ -234,17 +239,6 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     protected int getActionsDoneUntilDumping()
     {
         return MAX_FISHES_IN_INV;
-    }
-
-    /**
-     * Returns the fisherman's work building.
-     *
-     * @return building instance
-     */
-    @Override
-    protected BuildingFisherman getOwnBuilding()
-    {
-        return (BuildingFisherman) worker.getWorkBuilding();
     }
 
     /**

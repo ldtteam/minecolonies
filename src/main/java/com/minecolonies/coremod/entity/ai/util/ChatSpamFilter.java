@@ -70,43 +70,6 @@ public class ChatSpamFilter
     }
 
     /**
-     * Request an Item without spamming the chat.
-     *
-     * @param chat the Item Name
-     */
-    public void requestTextStringWithoutSpam(@NotNull final String chat)
-    {
-        talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
-    }
-
-
-    /**
-     * Get a describing string of an Object array.
-     * @param chat the object array.
-     * @return the describing string.
-     */
-    public String getStringOfChat(final Object... chat)
-    {
-        if(chat.length == 0)
-        {
-            return "";
-        }
-        final StringBuilder tempString = new StringBuilder();
-        for(final Object object: chat)
-        {
-            if(object instanceof TextComponentBase)
-            {
-                tempString.append(((TextComponentBase) object).getUnformattedText());
-            }
-            else
-            {
-                tempString.append(object);
-            }
-        }
-        return tempString.toString();
-    }
-
-    /**
      * Send a chat message as often as you like.
      * It will be shown in certain delays.
      * Helpful for requesting items.
@@ -141,5 +104,42 @@ public class ChatSpamFilter
 
         // (BASE_TIMEOUT << speechRepeat) is the same as BASE_TIMEOUT * pow(2, speachRepeat), but uses integers
         speechDelay = Math.min(BASE_TIMEOUT << speechRepeat, MAX_TIMEOUT) + worker.getOffsetTicks();
+    }
+
+    /**
+     * Get a describing string of an Object array.
+     *
+     * @param chat the object array.
+     * @return the describing string.
+     */
+    public String getStringOfChat(final Object... chat)
+    {
+        if (chat.length == 0)
+        {
+            return "";
+        }
+        final StringBuilder tempString = new StringBuilder();
+        for (final Object object : chat)
+        {
+            if (object instanceof TextComponentBase)
+            {
+                tempString.append(((TextComponentBase) object).getUnformattedText());
+            }
+            else
+            {
+                tempString.append(object);
+            }
+        }
+        return tempString.toString();
+    }
+
+    /**
+     * Request an Item without spamming the chat.
+     *
+     * @param chat the Item Name
+     */
+    public void requestTextStringWithoutSpam(@NotNull final String chat)
+    {
+        talkWithoutSpam("entity.miner.messageNeedBlockAndItem", chat);
     }
 }

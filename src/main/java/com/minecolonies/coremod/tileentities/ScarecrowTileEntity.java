@@ -129,7 +129,7 @@ public class ScarecrowTileEntity extends TileEntityChest
     {
         super.readFromNBT(compound);
         type = ScareCrowType.values()[compound.getInteger(TAG_TYPE)];
-        if(compound.hasKey(Constants.MOD_ID + TAG_INVENTORY))
+        if (compound.hasKey(Constants.MOD_ID + TAG_INVENTORY))
         {
             getInventoryField().deserializeNBT((NBTTagCompound) compound.getTag(Constants.MOD_ID + TAG_INVENTORY));
         }

@@ -45,20 +45,20 @@ public class ItemCaliper extends AbstractItemMinecolonies
         final int distance2 = Math.abs(a2) + 1;
 
         LanguageHandler.sendPlayerLocalizedMessage(
-                playerIn, ITEM_CALIPER_MESSAGE_SQUARE, Integer.toString(distance1), Integer.toString(distance2));
+          playerIn, ITEM_CALIPER_MESSAGE_SQUARE, Integer.toString(distance1), Integer.toString(distance2));
         return EnumActionResult.SUCCESS;
     }
 
     @Override
     public EnumActionResult onItemUse(
-            final EntityPlayer player,
-            final World worldIn,
-            final BlockPos pos,
-            final EnumHand hand,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ)
+                                       final EntityPlayer player,
+                                       final World worldIn,
+                                       final BlockPos pos,
+                                       final EnumHand hand,
+                                       final EnumFacing facing,
+                                       final float hitX,
+                                       final float hitY,
+                                       final float hitZ)
     {
         // if client world, do nothing
         if (worldIn.isRemote)
@@ -90,8 +90,6 @@ public class ItemCaliper extends AbstractItemMinecolonies
         return handlePlayerMessage(player, pos);
     }
 
-
-
     private EnumActionResult handlePlayerMessage(@NotNull final EntityPlayer playerIn, @NotNull final BlockPos pos)
     {
         if (startPosition.getX() == pos.getX())
@@ -112,9 +110,9 @@ public class ItemCaliper extends AbstractItemMinecolonies
         final int distance3 = Math.abs(pos.getZ() - startPosition.getZ()) + 1;
 
         LanguageHandler.sendPlayerLocalizedMessage(
-                playerIn,
-                ITEM_CALIPER_MESSAGE_CUBE,
-                Integer.toString(distance1), Integer.toString(distance2), Integer.toString(distance3));
+          playerIn,
+          ITEM_CALIPER_MESSAGE_CUBE,
+          Integer.toString(distance1), Integer.toString(distance2), Integer.toString(distance3));
         return EnumActionResult.SUCCESS;
     }
 

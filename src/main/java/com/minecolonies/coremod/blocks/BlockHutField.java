@@ -104,6 +104,7 @@ public class BlockHutField extends BlockContainer
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
     }
 
+    @NotNull
     @Override
     public EnumBlockRenderType getRenderType(final IBlockState state)
     {
@@ -131,6 +132,7 @@ public class BlockHutField extends BlockContainer
     }
 
     //todo: remove once we no longer need to support this
+    @NotNull
     @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
@@ -161,15 +163,15 @@ public class BlockHutField extends BlockContainer
 
     @Override
     public boolean onBlockActivated(
-            final World worldIn,
-            final BlockPos pos,
-            final IBlockState state,
-            final EntityPlayer playerIn,
-            final EnumHand hand,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ)
+                                     final World worldIn,
+                                     final BlockPos pos,
+                                     final IBlockState state,
+                                     final EntityPlayer playerIn,
+                                     final EnumHand hand,
+                                     final EnumFacing facing,
+                                     final float hitX,
+                                     final float hitY,
+                                     final float hitZ)
     {
         //If the world is server, open the inventory of the field.
         if (!worldIn.isRemote)
@@ -188,16 +190,18 @@ public class BlockHutField extends BlockContainer
     // ======================= Rendering & IBlockState =======================
     // =======================================================================
 
+    @SuppressWarnings("deprecation")
+    @NotNull
     @Override
     public IBlockState getStateForPlacement(
-            final World worldIn,
-            final BlockPos pos,
-            final EnumFacing facing,
-            final float hitX,
-            final float hitY,
-            final float hitZ,
-            final int meta,
-            final EntityLivingBase placer)
+                                             final World worldIn,
+                                             final BlockPos pos,
+                                             final EnumFacing facing,
+                                             final float hitX,
+                                             final float hitY,
+                                             final float hitZ,
+                                             final int meta,
+                                             final EntityLivingBase placer)
     {
         @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
@@ -219,9 +223,13 @@ public class BlockHutField extends BlockContainer
             if (colony != null)
             {
                 @NotNull final InventoryField inventoryField = new InventoryField();
-
-                ((ScarecrowTileEntity) worldIn.getTileEntity(pos)).setInventoryField(inventoryField);
-                colony.addNewField((ScarecrowTileEntity) worldIn.getTileEntity(pos), ((EntityPlayer) placer).inventory, pos, worldIn);
+                final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
+                final EntityPlayer player = (EntityPlayer) placer;
+                if (scareCrow != null)
+                {
+                    scareCrow.setInventoryField(inventoryField);
+                    colony.addNewField(scareCrow, player.inventory, pos, worldIn);
+                }
             }
         }
     }

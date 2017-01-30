@@ -22,10 +22,10 @@ import java.util.List;
 public class RespawnCitizenCommand extends AbstractSingleCommand
 {
 
-    public static final  String DESC                            = "respawn";
-    private static final String CITIZEN_DESCRIPTION             = "§2ID: §f %d §2 Name: §f %s";
-    private static final String REMOVED_MESSAGE                 = "Has been removed";
-    private static final String COORDINATES_XYZ                 = "§4x=§f%s §4y=§f%s §4z=§f%s";
+    public static final  String DESC                = "respawn";
+    private static final String CITIZEN_DESCRIPTION = "§2ID: §f %d §2 Name: §f %s";
+    private static final String REMOVED_MESSAGE     = "Has been removed";
+    private static final String COORDINATES_XYZ     = "§4x=§f%s §4y=§f%s §4z=§f%s";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -59,18 +59,19 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
             sender.sendMessage(new TextComponentString(e.getMessage()));
             return;
         }
-            final Colony colony = ColonyManager.getColony(colonyId);
-            final CitizenData citizenData = colony.getCitizen(citizenId);
-            final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-            sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
-            final BlockPos position = entityCitizen.getPosition();
-            sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        final Colony colony = ColonyManager.getColony(colonyId);
+        final CitizenData citizenData = colony.getCitizen(citizenId);
+        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+        final BlockPos position = entityCitizen.getPosition();
+        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
 
-            sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
+        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
 
-            Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
-            server.addScheduledTask(entityCitizen::setDead);
+        Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
+        server.addScheduledTask(entityCitizen::setDead);
     }
+
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(

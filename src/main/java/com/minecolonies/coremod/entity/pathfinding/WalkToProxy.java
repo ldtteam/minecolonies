@@ -111,14 +111,14 @@ public class WalkToProxy
      */
     public boolean walkToBlock(@NotNull BlockPos target, int range, boolean onMove)
     {
-        if(!target.equals(this.target))
+        if (!target.equals(this.target))
         {
             reset();
             this.target = target;
         }
 
         final double distanceToPath = worker.getColonyJob() instanceof JobBuilder
-                ? BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target) : BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
+                                        ? BlockPosUtil.getDistanceSquared2D(worker.getPosition(), target) : BlockPosUtil.getDistanceSquared(worker.getPosition(), target);
 
         if (distanceToPath <= MIN_RANGE_FOR_DIRECT_PATH)
         {
@@ -235,7 +235,7 @@ public class WalkToProxy
             //Check if miner is underground in shaft and his target is overground.
             if (workerY <= levelDepth && targetY > levelDepth)
             {
-                if(level.getRandomNode() != null && level.getRandomNode().getParent() != null)
+                if (level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {
                     com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
                     while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
@@ -262,12 +262,12 @@ public class WalkToProxy
 
                 //Then add the ladder position as the latest node.
                 proxyList.add(
-                        new BlockPos(
+                  new BlockPos(
                                 ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT
                                 , level.getDepth()
                                 , ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
 
-                if(level.getRandomNode() != null && level.getRandomNode().getParent() != null)
+                if (level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {
                     final List<BlockPos> nodesToTarget = new ArrayList<>();
                     com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
@@ -290,17 +290,17 @@ public class WalkToProxy
             {
                 double closestNode = Double.MAX_VALUE;
                 Node lastNode = null;
-                for(final Map.Entry<Point2D, Node> node : level.getNodes().entrySet())
+                for (final Map.Entry<Point2D, Node> node : level.getNodes().entrySet())
                 {
                     final double distanceToNode = node.getKey().distance(worker.getPosition().getX(), worker.getPosition().getZ());
-                    if(distanceToNode < closestNode)
+                    if (distanceToNode < closestNode)
                     {
                         lastNode = node.getValue();
                         closestNode = distanceToNode;
                     }
                 }
 
-                if(lastNode != null && lastNode.getParent() != null)
+                if (lastNode != null && lastNode.getParent() != null)
                 {
                     com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(lastNode.getParent());
                     while (new Point2D.Double(currentNode.getX(), currentNode.getZ()) != currentNode.getParent() && currentNode.getParent() != null)
@@ -310,7 +310,7 @@ public class WalkToProxy
                     }
                 }
 
-                if(level.getRandomNode().getParent() != null)
+                if (level.getRandomNode().getParent() != null)
                 {
                     final List<BlockPos> nodesToTarget = new ArrayList<>();
                     com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
@@ -326,7 +326,7 @@ public class WalkToProxy
                     }
                 }
 
-                if(!proxyList.isEmpty())
+                if (!proxyList.isEmpty())
                 {
                     return proxyList.get(0);
                 }

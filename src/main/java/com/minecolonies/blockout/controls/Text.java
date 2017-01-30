@@ -16,7 +16,7 @@ public class Text extends AbstractTextElement
     /**
      * String content of the text area.
      */
-    protected String       textContent;
+    protected String textContent;
 
     /**
      * List of string elements.
@@ -64,6 +64,7 @@ public class Text extends AbstractTextElement
 
     /**
      * Getter of the textContent.
+     *
      * @return the string content.
      */
     public String getTextContent()
@@ -79,6 +80,7 @@ public class Text extends AbstractTextElement
 
     /**
      * Getter of the lineSpace.
+     *
      * @return the lineSpace.
      */
     public int getLineSpace()
@@ -88,6 +90,7 @@ public class Text extends AbstractTextElement
 
     /**
      * Setter of the lineSpace.
+     *
      * @param l the new lineSpace.
      */
     public void setLineSpace(final int l)
@@ -97,6 +100,7 @@ public class Text extends AbstractTextElement
 
     /**
      * Getter of the lineHeight.
+     *
      * @return the line height.
      */
     public int getLineHeight()
@@ -106,6 +110,7 @@ public class Text extends AbstractTextElement
 
     /**
      * Getter of the textheight.
+     *
      * @return the text height.
      */
     public int getTextHeight()
@@ -128,6 +133,7 @@ public class Text extends AbstractTextElement
 
     /**
      * Getter for the formattedText, instantiates it if not already.
+     *
      * @return the list of strings.
      */
     public List<String> getFormattedText()
