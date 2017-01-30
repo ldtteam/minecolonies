@@ -21,7 +21,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -800,7 +799,6 @@ public class Colony implements IColony
               .filter(ColonyUtils::isCitizenMissingFromWorld)
               .forEach(CitizenData::clearCitizenEntity);
 
-            // TODO evaluate if this block is needed anymore
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
@@ -808,7 +806,7 @@ public class Colony implements IColony
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
-                citizens.values().forEach(CitizenData::getCitizenEntity);
+                citizens.values().forEach(this::spawnCitizenIfNull);
             }
 
             //  Cleanup Buildings whose Blocks have gone AWOL
@@ -916,6 +914,18 @@ public class Colony implements IColony
     private void spawnCitizen()
     {
         spawnCitizen(null);
+    }
+
+    /**
+     * Spawn citizen if his entity is null.
+     * @param data his data
+     */
+    public void spawnCitizenIfNull(final CitizenData data)
+    {
+        if(data.getCitizenEntity() == null)
+        {
+            spawnCitizen(data);
+        }
     }
 
     /**
