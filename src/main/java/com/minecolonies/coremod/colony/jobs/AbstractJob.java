@@ -288,6 +288,12 @@ public abstract class AbstractJob
     public ItemStack removeItemNeeded(@NotNull final ItemStack stack)
     {
         @NotNull final ItemStack stackCopy = stack.copy();
+
+        if (stack.isEmpty())
+        {
+            return stackCopy;
+        }
+
         for (@NotNull final ItemStack neededItem : itemsNeeded)
         {
             if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
