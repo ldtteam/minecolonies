@@ -418,7 +418,7 @@ public final class InventoryUtils
     {
         if (stack !=null && stack.getCount() > stack.getMaxStackSize())
         {
-            Log.getLogger().warn("InventoriyUtils.setStack: stack size bigger than the max stack size. Please contact a minecolonnies developer");
+            Log.getLogger().warn("InventoryUtils.setStack: stack size bigger than the max stack size. Please contact a minecolonnies developer.");
         }
 
         if (stack != null && stack != ItemStack.EMPTY)
