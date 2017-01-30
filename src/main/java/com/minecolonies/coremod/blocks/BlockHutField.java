@@ -104,6 +104,7 @@ public class BlockHutField extends BlockContainer
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
     }
 
+    @NotNull
     @Override
     public EnumBlockRenderType getRenderType(final IBlockState state)
     {
@@ -131,6 +132,7 @@ public class BlockHutField extends BlockContainer
     }
 
     //todo: remove once we no longer need to support this
+    @NotNull
     @SuppressWarnings("deprecation")
     @Override
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
@@ -188,6 +190,8 @@ public class BlockHutField extends BlockContainer
     // ======================= Rendering & IBlockState =======================
     // =======================================================================
 
+    @SuppressWarnings("deprecation")
+    @NotNull
     @Override
     public IBlockState getStateForPlacement(
             final World worldIn,
@@ -219,9 +223,13 @@ public class BlockHutField extends BlockContainer
             if (colony != null)
             {
                 @NotNull final InventoryField inventoryField = new InventoryField();
-
-                ((ScarecrowTileEntity) worldIn.getTileEntity(pos)).setInventoryField(inventoryField);
-                colony.addNewField((ScarecrowTileEntity) worldIn.getTileEntity(pos), ((EntityPlayer) placer).inventory, pos, worldIn);
+                final ScarecrowTileEntity scareCrow = (ScarecrowTileEntity) worldIn.getTileEntity(pos);
+                final EntityPlayer player = (EntityPlayer) placer;
+                if (scareCrow != null)
+                {
+                    scareCrow.setInventoryField(inventoryField);
+                    colony.addNewField(scareCrow, player.inventory, pos, worldIn);
+                }
             }
         }
     }
