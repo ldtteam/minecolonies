@@ -173,12 +173,15 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
-     * Hold the pair of number of avaliable and needed StackItem
+     * Information a bout a resource
+     * - How many are needed to finish the build
+     * - How many are available to the builder
+     * - How many are in the player's inventory (client side only)
      */
     public static class BuildingBuilderResource
     {
         /**
-         * Availibiyity status of the resource.
+         * Availability status of the resource.
          * according to the builder's chest, inventory and the player's inventory
          */
         public enum RessourceAvailability
@@ -214,7 +217,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
             return itemStack;
         }
 
-
+        /**
+         * get the amount available for this resource.
+         * i.e. amount in the chest + amount in the builder's inventory
+         */
         public int getAvailable()
         {
             return amountAvailable;
@@ -257,6 +263,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             return RessourceAvailability.NOT_NEEDED;
         }
 
+        @Override
         public String toString()
         {
             final int itemId=Item.getIdFromItem(itemStack.getItem());

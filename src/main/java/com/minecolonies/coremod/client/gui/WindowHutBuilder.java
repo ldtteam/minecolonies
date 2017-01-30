@@ -140,54 +140,58 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                    final BuildingBuilder.BuildingBuilderResource resource = resources.get(index);
-                    final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                    final Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
-                    final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
-
-                    switch (resource.getAvailabilityStatus())
-                    {
-                        case DONT_HAVE:
-                            addButton.disable();
-                            resourceLabel.setColor(RED, RED);
-                            neededLabel.setColor(RED, RED);
-                            break;
-                        case NEED_MORE:
-                            addButton.enable();
-                            resourceLabel.setColor(RED, RED);
-                            neededLabel.setColor(RED, RED);
-                            break;
-                        case HAVE_ENOUGHT:
-                            addButton.enable();
-                            resourceLabel.setColor(DARKGREEN, DARKGREEN);
-                            neededLabel.setColor(DARKGREEN, DARKGREEN);
-                            break;
-                        case NOT_NEEDED:
-                        default:
-                            addButton.disable();
-                            resourceLabel.setColor(BLACK,BLACK);
-                            neededLabel.setColor(BLACK,BLACK);
-                            break;
-
-                    }
-
-                    //position the addRessource Button to the right
-                    final int buttonX = rowPane.getWidth() - addButton.getWidth() - (rowPane.getHeight() - addButton.getHeight()) / 2;
-                    final int buttonY = (rowPane.getHeight() - addButton.getHeight())/2;
-                    addButton.setPosition(buttonX,buttonY);
-
-                    resourceLabel.setLabelText(resource.getName());
-                    final int missing = (resource.getAvailable()-resource.getNeeded());
-                    final String missingItems = (missing>0)?"+"+Integer.toString(missing):Integer.toString(missing);
-                    neededLabel.setLabelText(missingItems+"  "+Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
-                    rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
-                    rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getNeeded()-resource.getAvailable()));
-
+                updateResourcePane(index, rowPane);
             }
         });
 
         //Make sure we have a fresh view
         MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
+    }
+
+    private void updateResourcePane(final int index, @NotNull final Pane rowPane)
+    {
+        final BuildingBuilder.BuildingBuilderResource resource = resources.get(index);
+        final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
+        final Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
+        final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
+
+        switch (resource.getAvailabilityStatus())
+        {
+            case DONT_HAVE:
+                addButton.disable();
+                resourceLabel.setColor(RED, RED);
+                neededLabel.setColor(RED, RED);
+                break;
+            case NEED_MORE:
+                addButton.enable();
+                resourceLabel.setColor(RED, RED);
+                neededLabel.setColor(RED, RED);
+                break;
+            case HAVE_ENOUGHT:
+                addButton.enable();
+                resourceLabel.setColor(DARKGREEN, DARKGREEN);
+                neededLabel.setColor(DARKGREEN, DARKGREEN);
+                break;
+            case NOT_NEEDED:
+            default:
+                addButton.disable();
+                resourceLabel.setColor(BLACK,BLACK);
+                neededLabel.setColor(BLACK,BLACK);
+                break;
+
+        }
+
+        //position the addRessource Button to the right
+        final int buttonX = rowPane.getWidth() - addButton.getWidth() - (rowPane.getHeight() - addButton.getHeight()) / 2;
+        final int buttonY = (rowPane.getHeight() - addButton.getHeight())/2;
+        addButton.setPosition(buttonX,buttonY);
+
+        resourceLabel.setLabelText(resource.getName());
+        final int missing = (resource.getAvailable()-resource.getNeeded());
+        final String missingItems = (missing>0)?"+"+Integer.toString(missing):Integer.toString(missing);
+        neededLabel.setLabelText(missingItems+"  "+Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
+        rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
+        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getNeeded()-resource.getAvailable()));
     }
 
     @Override

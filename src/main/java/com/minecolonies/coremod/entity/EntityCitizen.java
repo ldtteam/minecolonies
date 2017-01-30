@@ -339,6 +339,9 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return level;
     }
 
+    /**
+     * On Inventory change, mark the building dirty.
+     */
     public void onInventoryChanged()
     {
         final AbstractBuildingWorker building = citizenData.getWorkBuilding();
