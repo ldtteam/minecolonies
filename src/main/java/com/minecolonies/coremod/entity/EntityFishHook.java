@@ -249,11 +249,7 @@ public final class EntityFishHook extends Entity
         {
             this.setDead();
         }
-        if (bounceFromGround() || this.inGround)
-        {
-            return;
-        }
-
+        bounceFromGround();
         moveSomeStuff();
     }
 
