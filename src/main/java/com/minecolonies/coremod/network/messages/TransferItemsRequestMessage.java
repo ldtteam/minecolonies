@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 
 /**
- * Transfer some items from the player inventory to the Builder's chest
+ * Transfer some items from the player inventory to the Builder's chest or additional chests.
  * Created: January 20, 2017
  *
  * @author xavierh
@@ -36,11 +36,11 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
      */
     private int      colonyId;
     /**
-     * How many item need to be transfer from the player inventory to the building chest
+     * How many item need to be transfer from the player inventory to the building chest.
      */
     private ItemStack      itemStack;
     /**
-     * How many item need to be transfer from the player inventory to the building chest
+     * How many item need to be transfer from the player inventory to the building chest.
      */
     private int      quantity;
 
@@ -113,13 +113,13 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         }
 
         final Item item = message.itemStack.getItem();
-        final int amountInPlayer = InventoryUtils.getItemCountInInventory(player.inventory, item, message.itemStack.getMetadata());
         final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(player.inventory, item, message.itemStack.getItemDamage()));
-        ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
+        final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
 
         ItemStack remainingItemStack = InventoryUtils.setOverSizedStack(building.getTileEntity(), itemStackToTake);
 
-        if (remainingItemStack.getCount()>0) //we still have some to drop, let's try the additional chests now
+        //If we still have some to drop, let's try the additional chests now
+        if (remainingItemStack.getCount()>0)
         {
             final World world = colony.getWorld();
             for(final BlockPos pos : building.getAdditionalCountainers())

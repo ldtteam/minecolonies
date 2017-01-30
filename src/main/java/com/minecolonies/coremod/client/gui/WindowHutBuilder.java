@@ -13,7 +13,6 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.util.InventoryUtils;
-import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -41,9 +40,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final String RESOURCE_QUANTITY_MISSING          = "resourceQuantity";
     private static final int RESOURCE_QUANTITY_MISSING_POSITION    = 4;
 
-    private static final int red       = Color.getByName("red",0);
-    private static final int darkgreen = Color.getByName("darkgreen",0);
-    private static final int black     = Color.getByName("black",0);
+    private static final int RED       = Color.getByName("red",0);
+    private static final int DARKGREEN = Color.getByName("darkgreen",0);
+    private static final int BLACK     = Color.getByName("black",0);
 
     private final BuildingBuilder.View builder;
 
@@ -74,7 +73,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private void pullResourcesFromHut()
     {
         final AbstractBuilding.View newView = builder.getColony().getBuilding(builder.getID());
-        if (newView != null && newView instanceof BuildingBuilder.View)
+        if (newView instanceof BuildingBuilder.View)
         {
             final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
             final InventoryPlayer inventory = this.mc.player.inventory;
@@ -102,7 +101,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                             return resource1.getName().compareTo(resource2.getName());
                         }
     
-                        return (resource2.getAvailabilityStatus().compareTo(resource1.getAvailabilityStatus()));
+                        return resource2.getAvailabilityStatus().compareTo(resource1.getAvailabilityStatus());
                     }
                 });
         }
@@ -139,32 +138,32 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
                     final BuildingBuilder.BuildingBuilderResource resource = resources.get(index);
-                    Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
-                    Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
-                    Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
+                    final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
+                    final Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
+                    final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
 
                     switch (resource.getAvailabilityStatus())
                     {
                         case DONT_HAVE:
                             addButton.disable();
-                            resourceLabel.setColor(red, red);
-                            neededLabel.setColor(red, red);
+                            resourceLabel.setColor(RED, RED);
+                            neededLabel.setColor(RED, RED);
                             break;
                         case NEED_MORE:
                             addButton.enable();
-                            resourceLabel.setColor(red, red);
-                            neededLabel.setColor(red, red);
+                            resourceLabel.setColor(RED, RED);
+                            neededLabel.setColor(RED, RED);
                             break;
                         case HAVE_ENOUGHT:
                             addButton.enable();
-                            resourceLabel.setColor(darkgreen, darkgreen);
-                            neededLabel.setColor(darkgreen, darkgreen);
+                            resourceLabel.setColor(DARKGREEN, DARKGREEN);
+                            neededLabel.setColor(DARKGREEN, DARKGREEN);
                             break;
                         case NOT_NEEDED:
                         default:
                             addButton.disable();
-                            resourceLabel.setColor(black,black);
-                            neededLabel.setColor(black,black);
+                            resourceLabel.setColor(BLACK,BLACK);
+                            neededLabel.setColor(BLACK,BLACK);
                             break;
 
                     }
@@ -212,7 +211,6 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         @NotNull final ItemStack itemStack = resources.get(index).getItemStack();
         @NotNull final Label quantityLabel = (Label) button.getParent().getChildren().get(RESOURCE_QUANTITY_MISSING_POSITION);
         final int quantity = Integer.parseInt(quantityLabel.getLabelText());
-        final String buttonLabel = button.getID();
 
         MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity));
     }
