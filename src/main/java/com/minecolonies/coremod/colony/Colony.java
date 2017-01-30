@@ -705,7 +705,6 @@ public class Colony implements IColony
               .filter(ColonyUtils::isCitizenMissingFromWorld)
               .forEach(CitizenData::clearCitizenEntity);
 
-            // TODO evaluate if this block is needed anymore
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
@@ -713,7 +712,7 @@ public class Colony implements IColony
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
-                citizens.values().forEach(CitizenData::getCitizenEntity);
+                citizens.values().forEach(this::spawnCitizenIfNull);
             }
 
             //  Cleanup Buildings whose Blocks have gone AWOL
@@ -915,6 +914,19 @@ public class Colony implements IColony
     private void markFieldsDirty()
     {
         isFieldsDirty = true;
+    }
+
+    /**
+     * Spawn citizen if his entity is null.
+     * @param data his data
+     */
+    public void spawnCitizenIfNull(@NotNull final CitizenData data)
+    {
+        if(data.getCitizenEntity() == null)
+        {
+            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", this.getID(), data.getId()));
+            spawnCitizen(data);
+        }
     }
 
     /**
