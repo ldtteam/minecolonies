@@ -149,18 +149,18 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                     {
                         case DONT_HAVE:
                             addButton.disable();
-                            resourceLabel.setColor(red);
-                            neededLabel.setColor(red);
+                            resourceLabel.setColor(red, red);
+                            neededLabel.setColor(red, red);
                             break;
                         case NEED_MORE:
                             addButton.enable();
-                            resourceLabel.setColor(red);
-                            neededLabel.setColor(red);
+                            resourceLabel.setColor(red, red);
+                            neededLabel.setColor(red, red);
                             break;
                         case HAVE_ENOUGHT:
                             addButton.enable();
-                            resourceLabel.setColor(darkgreen);
-                            neededLabel.setColor(darkgreen);
+                            resourceLabel.setColor(darkgreen, darkgreen);
+                            neededLabel.setColor(darkgreen, darkgreen);
                             break;
                         case NOT_NEEDED:
                         default:
@@ -177,7 +177,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                     addButton.setPosition(buttonX,buttonY);
 
                     resourceLabel.setLabelText(resource.getName());
-                    neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
+                    neededLabel.setLabelText(Integer.toString(resource.getAvailable()-resource.getNeeded()) + " / " + Integer.toString(resource.getNeeded()));
                     rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
                     rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getNeeded()-resource.getAvailable()));
 
