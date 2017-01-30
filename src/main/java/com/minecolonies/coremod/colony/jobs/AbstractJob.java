@@ -289,10 +289,8 @@ public abstract class AbstractJob
     public ItemStack removeItemNeeded(@NotNull final ItemStack stack)
     {
         @NotNull final ItemStack stackCopy = stack.copy();
-        //if stack is AIR, stack.isItemEqual(neededItem) will be always true
-        //and one itemNeeded would be remove
-        //There is probably a better way to check for air item
-        if (stack.getItemDamage()==0 && Item.getIdFromItem(stack.getItem()) == 0)
+
+        if (stack.isEmpty())
         {
             return stackCopy;
         }
