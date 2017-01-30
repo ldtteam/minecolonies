@@ -34,9 +34,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1138,7 +1140,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         if (entityInfo != null && job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null)
         {
             final Entity entity = getEntityFromEntityInfoOrNull(entityInfo);
-            if (entity != null)
+
+            if (entity != null && !isEntityAtPosition(entity, world))
             {
                 final List<ItemStack> request = new ArrayList<>();
 
@@ -1199,6 +1202,22 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 }
             }
         }
+        return true;
+    }
+
+    /**
+     * Checks if a certain entity is in the world at a certain position already.
+     * @param entity the entity.
+     * @param world the world.
+     * @return true if there.
+     */
+    private static boolean isEntityAtPosition(final Entity entity, final World world)
+    {
+        if(world.getEntitiesWithinAABB(entity.getClass(), new AxisAlignedBB(entity.posX, entity.posY, entity.posZ, entity.posX, entity.posY, entity.posZ)).isEmpty())
+        {
+            return false;
+        }
+
         return true;
     }
 
