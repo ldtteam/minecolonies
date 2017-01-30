@@ -370,12 +370,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private void syncNeededItemsWithInventory()
     {
-        Log.getLogger().info("syncNeededItemsWithInventory for "+this.worker.getName());
         job.clearItemsNeeded();
         itemsNeeded.forEach(job::addItemNeeded);
         
         InventoryUtils.getInventoryAsList(worker.getInventoryCitizen()).forEach(job::removeItemNeeded);
-        Log.getLogger().info("syncNeededItemsWithInventory for "+        job.getItemsNeeded());
 
         getOwnBuilding().setItemsCurrentlyNeeded(job.getItemsNeeded());
     }

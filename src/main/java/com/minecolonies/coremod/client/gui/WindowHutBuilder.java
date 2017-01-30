@@ -79,10 +79,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         if (newView != null && newView instanceof BuildingBuilder.View)
         {
             final BuildingBuilder.View updatedView = (BuildingBuilder.View) newView;
-
             final InventoryPlayer inventory = this.mc.player.inventory;
  
-
             resources.clear();
             resources.addAll(updatedView.getResources().values());
             for (int i =0; i<resources.size();i++)

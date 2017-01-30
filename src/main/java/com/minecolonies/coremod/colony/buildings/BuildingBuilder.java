@@ -275,7 +275,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
             buf.writeInt(resource.getAvailable());
             buf.writeInt(entry.getValue().getCount());
         }
-
     }
 
     /**
@@ -463,7 +462,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
                 final ItemStack itemStack = new ItemStack(Item.getByNameOrId(Integer.toString(itemId)),1,damage);
                 final int amountAvailable = buf.readInt();
                 final int amountNeeded = buf.readInt();
-
                 final BuildingBuilderResource resource = new BuildingBuilderResource(itemStack.getDisplayName(), itemStack, amountAvailable,amountNeeded);
                 resources.put(itemStack.getDisplayName(), resource);
             }
