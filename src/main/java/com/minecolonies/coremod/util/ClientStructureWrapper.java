@@ -37,7 +37,7 @@ public final class ClientStructureWrapper
     {
         final String storeLocation = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis, ".nbt");
 
-        final File file = new File(Minecraft.getMinecraft().mcDataDir, fileName);
+        final File file = new File(Minecraft.getMinecraft().mcDataDir, storeLocation);
         createScanDirectory(Minecraft.getMinecraft().world);
 
         try (OutputStream outputstream = new FileOutputStream(file))
@@ -52,7 +52,7 @@ public final class ClientStructureWrapper
         }
 
         LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().player,
-          LanguageHandler.format("item.scepterSteel.scanSuccess", fileName));
+          LanguageHandler.format("item.scepterSteel.scanSuccess", storeLocation));
     }
 
     /**
