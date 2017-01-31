@@ -46,13 +46,12 @@ public final class ClientStructureWrapper
         }
         catch (final IOException e)
         {
-            LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer, LanguageHandler.format("item.scepterSteel.scanFailure"));
+            LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().thePlayer, "item.scepterSteel.scanFailure");
             Log.getLogger().warn("Exception while trying to scan.", e);
             return;
         }
 
-        LanguageHandler.sendPlayerLocalizedMessage(Minecraft.getMinecraft().thePlayer,
-          LanguageHandler.format("item.scepterSteel.scanSuccess", fileName));
+        LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().thePlayer,"item.scepterSteel.scanSuccess", fileName);
     }
 
     /**

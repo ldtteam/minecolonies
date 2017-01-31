@@ -226,14 +226,14 @@ public class WorkOrderBuild extends AbstractWorkOrder
         if (hasBuilder && sendMessage)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageBuilderNecessary", Integer.toString(this.upgradeLevel));
         }
 
         if (!hasBuilder)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageNoBuilder");
         }
     }

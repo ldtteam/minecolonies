@@ -45,7 +45,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         final int distance1 = Math.abs(a) + 1;
         final int distance2 = Math.abs(a2) + 1;
 
-        LanguageHandler.sendPlayerLocalizedMessage(
+        LanguageHandler.sendPlayerMessage(
                 playerIn, ITEM_CALIPER_MESSAGE_SQUARE, Integer.toString(distance1), Integer.toString(distance2));
         return EnumActionResult.SUCCESS;
     }
@@ -85,7 +85,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         //Start == end, same location
         if (startPosition.getX() == pos.getX() && startPosition.getY() == pos.getY() && startPosition.getZ() == pos.getZ())
         {
-            LanguageHandler.sendPlayerLocalizedMessage(playerIn, ITEM_CALIPER_MESSAGE_SAME);
+            LanguageHandler.sendPlayerMessage(playerIn, ITEM_CALIPER_MESSAGE_SAME);
             return EnumActionResult.FAIL;
         }
 
@@ -111,7 +111,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         final int distance2 = Math.abs(pos.getY() - startPosition.getY()) + 1;
         final int distance3 = Math.abs(pos.getZ() - startPosition.getZ()) + 1;
 
-        LanguageHandler.sendPlayerLocalizedMessage(
+        LanguageHandler.sendPlayerMessage(
                 playerIn,
                 ITEM_CALIPER_MESSAGE_CUBE,
                 Integer.toString(distance1), Integer.toString(distance2), Integer.toString(distance3));
@@ -123,7 +123,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         if (startPosition.getZ() == pos.getZ())
         {
             final int distance = Math.abs(a) + 1;
-            LanguageHandler.sendPlayerLocalizedMessage(playerIn, ITEM_CALIPER_MESSAGE_LINE, Integer.toString(distance));
+            LanguageHandler.sendPlayerMessage(playerIn, ITEM_CALIPER_MESSAGE_LINE, Integer.toString(distance));
             return EnumActionResult.SUCCESS;
         }
         return handleZEqual(playerIn, a, a2);
@@ -134,7 +134,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         if (startPosition.getY() == pos.getY())
         {
             final int distance = Math.abs(pos.getZ() - startPosition.getZ()) + 1;
-            LanguageHandler.sendPlayerLocalizedMessage(playerIn, ITEM_CALIPER_MESSAGE_LINE, Integer.toString(distance));
+            LanguageHandler.sendPlayerMessage(playerIn, ITEM_CALIPER_MESSAGE_LINE, Integer.toString(distance));
             return EnumActionResult.SUCCESS;
         }
         return handleYEqual(playerIn, pos, pos.getY() - startPosition.getY(), pos.getZ() - startPosition.getZ());
