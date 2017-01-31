@@ -5,6 +5,7 @@ import com.minecolonies.coremod.client.gui.WindowHutBuilder;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.BuildingBuilderResource;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.util.math.BlockPos;
@@ -19,7 +20,7 @@ import java.util.*;
  */
 public class BuildingBuilderView extends AbstractBuildingWorker.View
 {
-    private final HashMap<String, BuildingBuilder.BuildingBuilderResource> resources = new HashMap<>();
+    private final HashMap<String, BuildingBuilderResource> resources = new HashMap<>();
 
     /**
      * Public constructor of the view, creates an instance of it.
@@ -61,8 +62,8 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
             final ItemStack itemStack = new ItemStack(Item.getByNameOrId(Integer.toString(itemId)),1,damage);
             final int amountAvailable = buf.readInt();
             final int amountNeeded = buf.readInt();
-            final BuildingBuilder.BuildingBuilderResource resource = 
-                new BuildingBuilder.BuildingBuilderResource(itemStack.getDisplayName(), itemStack, amountAvailable,amountNeeded);
+            final BuildingBuilderResource resource =
+                new BuildingBuilderResource(itemStack.getDisplayName(), itemStack, amountAvailable,amountNeeded);
             resources.put(itemStack.getDisplayName(), resource);
         }
     }
@@ -73,7 +74,7 @@ public class BuildingBuilderView extends AbstractBuildingWorker.View
      * @return a copy of the HashMap(String, Object).
      */
 
-    public Map<String, BuildingBuilder.BuildingBuilderResource> getResources()
+    public Map<String, BuildingBuilderResource> getResources()
     {
         return Collections.unmodifiableMap(resources);
     }

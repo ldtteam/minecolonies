@@ -9,6 +9,7 @@ import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
+import com.minecolonies.coremod.colony.buildings.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.buildingviews.BuildingBuilderView;
 
 import com.minecolonies.coremod.lib.Constants;
@@ -53,7 +54,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      * List of ressources needed.
      */
     @NotNull
-    private final List<BuildingBuilder.BuildingBuilderResource> resources = new ArrayList<>();
+    private final List<BuildingBuilderResource> resources = new ArrayList<>();
 
 
 
@@ -83,14 +84,13 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
             resources.clear();
             resources.addAll(updatedView.getResources().values());
-            for (int i =0; i<resources.size();i++)
+            for (final BuildingBuilderResource resource : resources)
             {
-                final BuildingBuilder.BuildingBuilderResource resource = resources.get(i);
                 final Item item = resource.getItemStack().getItem();
                 resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, item, resource.getItemStack().getItemDamage()));
             }
 
-            Collections.sort(resources, new BuildingBuilder.BuildingBuilderResource.ResourceComparator());
+            resources.sort(new BuildingBuilderResource.ResourceComparator());
         }
     }
 
@@ -140,7 +140,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     private void updateResourcePane(final int index, @NotNull final Pane rowPane)
     {
-        final BuildingBuilder.BuildingBuilderResource resource = resources.get(index);
+        final BuildingBuilderResource resource = resources.get(index);
         final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
         final Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
         final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
