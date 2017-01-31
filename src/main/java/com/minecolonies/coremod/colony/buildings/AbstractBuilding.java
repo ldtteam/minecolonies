@@ -216,7 +216,6 @@ public abstract class AbstractBuilding
     {
         location = pos;
         this.colony = colony;
-        materialStore = new MaterialStore(MaterialStore.Type.CHEST, colony.getMaterialSystem());
     }
 
     /**

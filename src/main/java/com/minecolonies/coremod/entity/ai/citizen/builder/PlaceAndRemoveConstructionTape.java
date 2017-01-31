@@ -8,7 +8,6 @@ import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -39,7 +38,7 @@ public class PlaceAndRemoveConstructionTape
         {
             tempRotation = workOrder.getRotation();
         }
-        wrapper.rotate(tempRotation);
+        wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation());
         wrapper.setPosition(pos);
         int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
         int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
@@ -114,7 +113,7 @@ public class PlaceAndRemoveConstructionTape
         {
             tempRotation = workOrder.getRotation();
         }
-        wrapper.rotate(tempRotation);
+        wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation());
         wrapper.setPosition(pos);
         int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
         int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
