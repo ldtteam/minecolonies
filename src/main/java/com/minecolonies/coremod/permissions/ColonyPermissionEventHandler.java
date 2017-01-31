@@ -10,14 +10,12 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemMonsterPlacer;
+import net.minecraft.item.ItemPotion;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -186,8 +184,8 @@ public class ColonyPermissionEventHandler
                 cancelEvent(event);
             }
 
-            if (Configurations.enableColonyProtection && (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer
-                                                            || event.getWorld().getTileEntity(event.getPos()) instanceof IInventory))
+            if(Configurations.enableColonyProtection && (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer
+                    || event.getWorld().getTileEntity(event.getPos()) != null || event.getItemStack().getItem() instanceof ItemPotion))
             {
                 final Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
 
@@ -197,8 +195,7 @@ public class ColonyPermissionEventHandler
                 }
             }
 
-            if (event.getItemStack() != null
-                  && event.getItemStack().getItem() instanceof ItemMonsterPlacer
+            if (event.getItemStack().getItem() instanceof ItemMonsterPlacer
                   && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.PLACE_HUTS))
             {
                 cancelEvent(event);
@@ -256,6 +253,56 @@ public class ColonyPermissionEventHandler
             final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 
             if (rank.ordinal() > Permissions.Rank.FRIEND.ordinal())
+            {
+                cancelEvent(event);
+            }
+        }
+    }
+
+    /**
+     * FillBucketEvent handler.
+     * <p>
+     * Check, if a player tries to fill a bucket.
+     * Deny if:
+     * - If the fill happens in the colony
+     * - player is neutral or hostile to colony
+     *
+     * @param event EntityItemPickupEvent
+     */
+    @SubscribeEvent
+    public void on(final FillBucketEvent event)
+    {
+        final EntityPlayer playerIn = event.getEntityPlayer();
+        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
+        {
+            final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
+
+            if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
+            {
+                cancelEvent(event);
+            }
+        }
+    }
+
+    /**
+     * ArrowLooseEvent handler.
+     * <p>
+     * Check, if a player tries to shoot an arrow.
+     * Deny if:
+     * - If the shooting happens in the colony
+     * - player is neutral or hostile to colony
+     *
+     * @param event EntityItemPickupEvent
+     */
+    @SubscribeEvent
+    public void on(final ArrowLooseEvent event)
+    {
+        final EntityPlayer playerIn = event.getEntityPlayer();
+        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
+        {
+            final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
+
+            if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
             {
                 cancelEvent(event);
             }
