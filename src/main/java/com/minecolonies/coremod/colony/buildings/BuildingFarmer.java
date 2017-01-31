@@ -18,7 +18,7 @@ import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.init.Blocks;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -95,9 +95,9 @@ public class BuildingFarmer extends AbstractBuildingWorker
     {
         super(c, l);
         final ItemStack stackSeed = new ItemStack(Items.WHEAT_SEEDS);
-        final ItemStack stackCarrot = new ItemStack(Items.BEETROOT_SEEDS);
-        final ItemStack stackPotatoe = new ItemStack(Items.CARROT);
-        final ItemStack stackReed = new ItemStack(Items.POTATO);
+        final ItemStack stackCarrot = new ItemStack(Items.CARROT);
+        final ItemStack stackPotatoe = new ItemStack(Items.POTATO);
+        final ItemStack stackReed = new ItemStack(Items.BEETROOT_SEEDS);
 
         keepX.put(new ItemStorage(stackSeed.getItem(), stackSeed.getItemDamage(), 0, false), SEEDS_TO_KEEP);
         keepX.put(new ItemStorage(stackCarrot.getItem(), stackCarrot.getItemDamage(), 0, false), SEEDS_TO_KEEP);

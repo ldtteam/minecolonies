@@ -63,7 +63,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     /**
      * Max amount the guard can shoot arrows before restocking.
      */
-    private static final int MAX_ATTACKS = 50;
+    private static final int MAX_ATTACKS = 25;
     /**
      * Y range in which the guard detects other entities.
      */
@@ -380,7 +380,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
     protected int getMaxAttacksUntilRestock()
     {
         final BuildingGuardTower guardTower = (BuildingGuardTower) worker.getWorkBuilding();
-        return (guardTower == null) ? 0 : (MAX_ATTACKS + guardTower.getBuildingLevel());
+        return (guardTower == null) ? 0 : (MAX_ATTACKS + guardTower.getBuildingLevel() * 5);
     }
 
     /**
