@@ -9,6 +9,7 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.materials.MaterialStore;
 import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
@@ -177,11 +178,6 @@ public abstract class AbstractBuilding
     private final Colony colony;
 
     /**
-     * The material store of the colony (WIP).
-     */
-    private final MaterialStore materialStore;
-
-    /**
      * The tileEntity of the building.
      */
     private TileEntityColonyBuilding tileEntity;
@@ -331,11 +327,6 @@ public abstract class AbstractBuilding
             style = "wooden";
         }
 
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.readFromNBT(compound);
-        }
-
         final NBTTagList containerTagList = compound.getTagList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < containerTagList.tagCount(); ++i)
         {
@@ -380,6 +371,10 @@ public abstract class AbstractBuilding
             Log.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
+        if(building != null && parent.getWorld() != null)
+        {
+            ConstructionTapeHelper.placeConstructionTape(building, parent.getWorld());
+        }
         return building;
     }
 
@@ -484,12 +479,6 @@ public abstract class AbstractBuilding
         compound.setInteger(TAG_ROTATION, rotation);
         compound.setString(TAG_STYLE, style);
 
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.writeToNBT(compound);
-        }
-
-
         @NotNull final NBTTagList containerTagList = new NBTTagList();
         for (@NotNull final BlockPos pos: containerList)
         {
@@ -549,11 +538,6 @@ public abstract class AbstractBuilding
         {
             InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
             world.updateComparatorOutputLevel(this.location, block);
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.destroy();
         }
     }
 
@@ -729,16 +713,6 @@ public abstract class AbstractBuilding
     public void setStyle(final String style)
     {
         this.style = style;
-    }
-
-    /**
-     * Gets the MaterialStore for this building.
-     *
-     * @return The MaterialStore that tracks this building's inventory.
-     */
-    public MaterialStore getMaterialStore()
-    {
-        return materialStore;
     }
 
     /**

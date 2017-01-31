@@ -2,6 +2,7 @@ package com.minecolonies.coremod.entity.ai.citizen.builder;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.BlockUtils;
@@ -16,16 +17,40 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * XXX
+ * Helper class to place and remove constructionTapes from the buildings.
  */
-public class PlaceAndRemoveConstructionTape
+public final class ConstructionTapeHelper
 {
     public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
-    public static void placeConstructionTape(@NotNull WorkOrderBuild workOrder,@NotNull World world)
+
+    /**
+     * Private Constructor to hide implicit one.
+     */
+    private ConstructionTapeHelper()
     {
-        final StructureWrapper wrapper = new StructureWrapper(world, (workOrder.getStructureName()));
+        /**
+         * Intentionally left empty.
+         */
+    }
+
+    /**
+     * Proxy to place the tape also with the building only.
+     * @param building the building.
+     * @param nextLevel the next level.
+     * @param world the world.
+     */
+    public static void placeConstructionTape(@NotNull AbstractBuilding building, @NotNull World world)
+    {
+        placeConstructionTape(new WorkOrderBuild(building, 1), world);
+    }
+
+
+    public static void placeConstructionTape(@NotNull WorkOrderBuild workOrder, @NotNull World world)
+    {
+        final StructureWrapper wrapper = new StructureWrapper(world, workOrder.getStructureName());
         final BlockPos pos = workOrder.getBuildingLocation();
         int tempRotation = 0;
+
         if (workOrder.getRotation() == 0 && !(workOrder instanceof WorkOrderBuildDecoration))
         {
             final IBlockState blockState = world.getBlockState(pos);
@@ -38,6 +63,7 @@ public class PlaceAndRemoveConstructionTape
         {
             tempRotation = workOrder.getRotation();
         }
+
         wrapper.rotate(tempRotation, world, workOrder.getBuildingLocation());
         wrapper.setPosition(pos);
         int x1 = wrapper.getPosition().getX() - wrapper.getOffset().getX() - 1;
@@ -96,6 +122,10 @@ public class PlaceAndRemoveConstructionTape
         world.setBlockState(corner3, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.WEST));
         world.setBlockState(corner4, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.NORTH));
     }
+
+
+
+
     public static void removeConstructionTape(@NotNull WorkOrderBuild workOrder,@NotNull World world)
     {
         final StructureWrapper wrapper = new StructureWrapper(world, (workOrder.getStructureName()));
