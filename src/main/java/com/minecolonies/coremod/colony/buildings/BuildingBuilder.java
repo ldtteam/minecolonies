@@ -193,9 +193,9 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         private int amountAvailable;
         private int amountPlayer;
-        final private String name;
-        final private ItemStack itemStack;
-        final private int amountNeeded;
+        private final String name;
+        private final ItemStack itemStack;
+        private final int amountNeeded;
 
         BuildingBuilderResource(final String name, final ItemStack itemStack, final int amountAvailable, final int amountNeeded)
         {
