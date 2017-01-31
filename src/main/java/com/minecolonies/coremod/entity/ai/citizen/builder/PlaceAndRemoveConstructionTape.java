@@ -6,8 +6,11 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
+import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -15,10 +18,11 @@ import org.jetbrains.annotations.NotNull;
 /**
  * XXX
  */
-public final class PlaceAndRemoveConstructionTape
+public class PlaceAndRemoveConstructionTape
 {
     public static void placeConstructionTape(@NotNull WorkOrderBuild workOrder,@NotNull World world)
     {
+        final PropertyDirection FACING     = BlockHorizontal.FACING;
         final StructureWrapper wrapper = new StructureWrapper(world, (workOrder.getStructureName()));
         final BlockPos pos = workOrder.getBuildingLocation();
         int tempRotation = 0;
@@ -49,8 +53,8 @@ public final class PlaceAndRemoveConstructionTape
                 BlockPos row1 = new BlockPos(i, y, z1);
                 BlockPos row2 = new BlockPos(i, y, z3);
 
-                world.setBlockState(row1, ModBlocks.blockConstructionTape.getDefaultState());
-                world.setBlockState(row2, ModBlocks.blockConstructionTape.getDefaultState());
+                world.setBlockState(row1, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.SOUTH));
+                world.setBlockState(row2, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.NORTH));
             }
         }
         else
@@ -59,8 +63,8 @@ public final class PlaceAndRemoveConstructionTape
             {
                 BlockPos row1 = new BlockPos(i, y, z1);
                 BlockPos row2 = new BlockPos(i, y, z3);
-                world.setBlockState(row1, ModBlocks.blockConstructionTape.getDefaultState());
-                world.setBlockState(row2, ModBlocks.blockConstructionTape.getDefaultState());
+                world.setBlockState(row1, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.SOUTH));
+                world.setBlockState(row2, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.NORTH));
             }
         }
         if (z1 < z3)
@@ -69,8 +73,8 @@ public final class PlaceAndRemoveConstructionTape
             {
                 BlockPos row3 = new BlockPos(x1, y, i);
                 BlockPos row4 = new BlockPos(x3, y, i);
-                world.setBlockState(row3, ModBlocks.blockConstructionTape.getDefaultState());
-                world.setBlockState(row4, ModBlocks.blockConstructionTape.getDefaultState());
+                world.setBlockState(row3, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.EAST));
+                world.setBlockState(row4, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.WEST));
             }
         }
         else
@@ -79,18 +83,18 @@ public final class PlaceAndRemoveConstructionTape
             {
                 BlockPos row3 = new BlockPos(x1, y, i);
                 BlockPos row4 = new BlockPos(x3, y, i);
-                world.setBlockState(row3, ModBlocks.blockConstructionTape.getDefaultState());
-                world.setBlockState(row4, ModBlocks.blockConstructionTape.getDefaultState());
+                world.setBlockState(row3, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.EAST));
+                world.setBlockState(row4, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.WEST));
             }
         }
         BlockPos corner1 = new BlockPos(x1, y, z1);
         BlockPos corner2 = new BlockPos(x1, y, z3);
         BlockPos corner3 = new BlockPos(x3, y, z1);
         BlockPos corner4 = new BlockPos(x3, y, z3);
-        world.setBlockState(corner1, ModBlocks.blockConstructionTapeC.getDefaultState());
-        world.setBlockState(corner2, ModBlocks.blockConstructionTapeC.getDefaultState());
-        world.setBlockState(corner3, ModBlocks.blockConstructionTapeC.getDefaultState());
-        world.setBlockState(corner4, ModBlocks.blockConstructionTapeC.getDefaultState());
+        world.setBlockState(corner1, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.SOUTH));
+        world.setBlockState(corner2, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.EAST));
+        world.setBlockState(corner3, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.WEST));
+        world.setBlockState(corner4, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.NORTH));
     }
     public static void removeConstructionTape(@NotNull WorkOrderBuild workOrder,@NotNull World world)
     {
