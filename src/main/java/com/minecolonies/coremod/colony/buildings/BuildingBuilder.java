@@ -197,6 +197,14 @@ public class BuildingBuilder extends AbstractBuildingWorker
         private final ItemStack itemStack;
         private final int amountNeeded;
 
+        /**
+         * Constructor for BuildingBuilderResource.
+         *
+         * @param name of the resource.
+         * @param itemStack stack for that resource.
+         * @param amountAvailable amount of resource available  in the builder's chest + inventory.
+         * @param amountNeeded amount required for the builder to finish the build.
+         */
         public BuildingBuilderResource(final String name, final ItemStack itemStack, final int amountAvailable, final int amountNeeded)
         {
             this.name = name;
@@ -276,7 +284,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
          *
          * This is use in the gui to order the list of resources needed.
          */
-        public static class ResourceComparator implements Comparator<BuildingBuilderResource>
+        public static class ResourceComparator implements Comparator<BuildingBuilderResource>, Serializable
         {
             /**
              * We want the item availalable in the player inventory first and the one not needed last
@@ -411,14 +419,14 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
             if (builderInventory!=null)
             {
-                resource.setAvailable(resource.getAvailable() 
+                resource.setAvailable(resource.getAvailable()
                     + InventoryUtils.getItemCountInInventory(builderInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
             }
 
             final IInventory chestInventory = this.getTileEntity();
             if (chestInventory!=null)
             {
-                resource.setAvailable(resource.getAvailable() 
+                resource.setAvailable(resource.getAvailable()
                     + InventoryUtils.getItemCountInInventory(chestInventory, entry.getValue().getItem(), entry.getValue().getItemDamage()));
             }
 
