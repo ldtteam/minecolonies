@@ -148,6 +148,12 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         MineColonies.getNetwork().sendToServer(new MarkBuildingDirtyMessage(this.building));
     }
 
+    /**
+     * Update one row pad with its resource informations.
+     *
+     * @param index index in the list of resources.
+     * @param rowPane The Pane to use to display the information.
+     */
     private void updateResourcePane(final int index, @NotNull final Pane rowPane)
     {
         final BuildingBuilder.BuildingBuilderResource resource = resources.get(index);

@@ -51,7 +51,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     /**
      * Contains all resources available in the chest or builder inventory needed for a certain build.
      */
-    private HashMap<String, BuildingBuilder.BuildingBuilderResource> resourcesAvailable = new HashMap<>();
+    private final HashMap<String, BuildingBuilder.BuildingBuilderResource> resourcesAvailable = new HashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -359,7 +359,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
-     * Update the available resources. 
+     * Update the available resources.
      * which are needed for the build and in the builder's chest or inventory
      */
     private void updateAvailableResources()
@@ -415,7 +415,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
     }
 
-    /*
+    /**
      * Check if the builder requires a certain ItemStack for the current construction.
      *
      * @param stack the stack to test.
