@@ -1,7 +1,8 @@
 package com.minecolonies.coremod.util;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,17 +34,84 @@ public final class LanguageHandler
      */
     public static void sendPlayerLocalizedMessage(@NotNull final EntityPlayer player, final String key, final Object... args)
     {
-        sendPlayerMessage(player, format(key, args));
+        sendPlayerMessage(player, key, args);
     }
 
     /**
      * Send a message to the player.
      * @param player the player to send to.
+     * @param key the key of the message.
      * @param message the message to send.
      */
-    public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String message)
+    public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String key, final Object... message)
     {
-        player.addChatComponentMessage(new TextComponentString(message));
+        TextComponentTranslation translation = null;
+
+        int onlyArgsUntil = 0;
+        for (final Object object : message)
+        {
+            if (object instanceof ITextComponent || object instanceof TextComponentTranslation)
+            {
+                if(onlyArgsUntil == 0)
+                {
+                    onlyArgsUntil = -1;
+                }
+                break;
+            }
+            onlyArgsUntil++;
+        }
+
+        if (onlyArgsUntil >= 0)
+        {
+            final Object[] args = new Object[onlyArgsUntil];
+            for(int i = 0; i < onlyArgsUntil; i++)
+            {
+                args[i] = message[i];
+            }
+            translation = new TextComponentTranslation(key, args);
+        }
+
+        for (final Object object : message)
+        {
+            if (translation == null)
+            {
+                if (object instanceof ITextComponent)
+                {
+                    translation = new TextComponentTranslation(key);
+                }
+                else
+                {
+                    translation = new TextComponentTranslation(key, object);
+                    continue;
+                }
+            }
+            if (object instanceof ITextComponent)
+            {
+                translation.appendSibling((ITextComponent) object);
+            }
+            else if (object instanceof String)
+            {
+                boolean isInArgs = false;
+                for(Object obj: translation.getFormatArgs())
+                {
+                    if(obj.equals(object))
+                    {
+                        isInArgs = true;
+                    }
+                }
+                if(!isInArgs)
+                {
+                    translation.appendText((String) object);
+                }
+            }
+        }
+
+        if (translation == null)
+        {
+            translation = new TextComponentTranslation(key);
+        }
+
+        player.addChatComponentMessage(translation);
     }
 
     /**
@@ -55,33 +123,16 @@ public final class LanguageHandler
      */
     public static String format(final String key, final Object... args)
     {
-        return String.format(getString(key), args);
-    }
-
-    /**
-     * Localize a non-formatted string.
-     *
-     * @param key unlocalized key.
-     * @return Localized string.
-     */
-    public static String getString(final String key)
-    {
-        return getString(key, key);
-    }
-
-    /**
-     * Localize a non-formatted string.
-     *
-     * @param key          unlocalized key.
-     * @param defaultValue the value to return if no key is found.
-     * @return Localized string.
-     */
-    @SuppressWarnings("deprecation")
-    public static String getString(final String key, final String defaultValue)
-    {
-        //todo: use TextComponentTranslation like mojang wants us to
-        //using fully qualified name to remove deprecation warning on import
-        return net.minecraft.util.text.translation.I18n.translateToLocal(key);
+        final String result;
+        if(args.length == 0)
+        {
+            result = new TextComponentTranslation(key).getUnformattedText();
+        }
+        else
+        {
+            result = new TextComponentTranslation(key, args).getUnformattedText();
+        }
+        return result.isEmpty() ? key : result;
     }
 
     /**
@@ -93,16 +144,17 @@ public final class LanguageHandler
      */
     public static void sendPlayersLocalizedMessage(final List<EntityPlayer> players, final String key, final Object... args)
     {
-        sendPlayersMessage(players, format(key, args));
+        sendPlayersMessage(players, key, args);
     }
 
     /**
      * Send message to a list of players.
      *
      * @param players the list of players.
+     * @param key key of the message.
      * @param message the message.
      */
-    public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String message)
+    public static void sendPlayersMessage(@Nullable final List<EntityPlayer> players, final String key, final Object... message)
     {
         if (players == null || players.isEmpty())
         {
@@ -110,7 +162,7 @@ public final class LanguageHandler
         }
         for (@NotNull final EntityPlayer player : players)
         {
-            sendPlayerMessage(player, message);
+            sendPlayerMessage(player, key, message);
         }
     }
 }

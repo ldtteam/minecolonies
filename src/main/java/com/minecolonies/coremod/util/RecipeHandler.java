@@ -51,12 +51,15 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ItemStack(Blocks.WEB, 1), "X X", " X ", "X X", 'X', Items.STRING);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutGuardTower, 2), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.BOW);
 
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutWareHouse, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Blocks.CHEST);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutDeliveryman, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.LEATHER_BOOTS);
+
         // Disabled for now
         // GameRegistry.addRecipe(new ItemStack(ModBlocks.blockBarrel, 1), "P P", "P P", " S ", 'P', Blocks.planks, 'S', Blocks.wooden_slab);
         if (enableInDevelopmentFeatures)
         {
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.WHEAT);
-            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutWarehouse, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Blocks.CHEST);
+
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.IRON_INGOT);
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Blocks.STONEBRICK);
         }

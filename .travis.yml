@@ -8,22 +8,22 @@ script:
 after_success: 
   - ./travis/dropbox.sh
   - ./travis/solder.sh
-before_cache:
-  - rm -rfv $HOME/.gradle/caches/*/plugin-resolution/
-  - rm -rfv $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -rfv $HOME/.gradle/caches/minecraft/McpMappings.json
-  - rm -rfv $HOME/.gradle/caches/minecraft/deobfedDeps/providedDummy.jar
-  - rm -rfv $HOME/.gradle/caches/minecraft/deobfedDeps/compileDummy.jar
-  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/gradle.log
-  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/cache.properties
-  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/cache.properties.lock
-  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/fileHashes.bin
-  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/fileSnapshots.bin
-  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/outputFileStates.bin
-  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/taskArtifacts.bin
-cache:
-  directories:
-    - $HOME/.m2
-    - .gradle
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
+#before_cache:
+#  - rm -rfv $HOME/.gradle/caches/*/plugin-resolution/
+#  - rm -rfv $HOME/.gradle/caches/modules-2/modules-2.lock
+#  - rm -rfv $HOME/.gradle/caches/minecraft/McpMappings.json
+#  - rm -rfv $HOME/.gradle/caches/minecraft/deobfedDeps/providedDummy.jar
+#  - rm -rfv $HOME/.gradle/caches/minecraft/deobfedDeps/compileDummy.jar
+#  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/gradle.log
+#  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/cache.properties
+#  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/cache.properties.lock
+#  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/fileHashes.bin
+#  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/fileSnapshots.bin
+#  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/outputFileStates.bin
+#  - rm -rfv $TRAVIS_BUILD_DIR/.gradle/2.10/taskArtifacts/taskArtifacts.bin
+#cache:
+#  directories:
+#    - $HOME/.m2
+#    - .gradle
+#    - $HOME/.gradle/caches/
+#    - $HOME/.gradle/wrapper/

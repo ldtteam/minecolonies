@@ -21,7 +21,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -80,34 +79,34 @@ public class Colony implements IColony
     @NotNull
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
-    private final WorkManager         workManager      = new WorkManager(this);
-    private final MaterialSystem      materialSystem   = new MaterialSystem();
+    private final WorkManager                     workManager      = new WorkManager(this);
+    private final MaterialSystem                  materialSystem   = new MaterialSystem();
+    @NotNull
+    private final Map<BlockPos, AbstractBuilding> buildings        = new HashMap<>();
+    //  Citizenry
+    @NotNull
+    private final Map<Integer, CitizenData>       citizens         = new HashMap<>();
     //  Runtime Data
     @Nullable
-    private       World               world            = null;
+    private       World                           world            = null;
     //  Updates and Subscriptions
     @NotNull
-    private       Set<EntityPlayerMP> subscribers      = new HashSet<>();
-    private       boolean             isDirty          = false;
-    private       boolean             isCitizensDirty  = false;
-    private       boolean             isBuildingsDirty = false;
-    private       boolean             manualHiring     = false;
-    private       boolean             isFieldsDirty    = false;
-    private       String              name             = "ERROR(Wasn't placed by player)";
+    private       Set<EntityPlayerMP>             subscribers      = new HashSet<>();
+    private       boolean                         isDirty          = false;
+    private       boolean                         isCitizensDirty  = false;
+    private       boolean                         isBuildingsDirty = false;
+    private       boolean                         manualHiring     = false;
+    private       boolean                         isFieldsDirty    = false;
+    private       String                          name             = "ERROR(Wasn't placed by player)";
     private BlockPos         center;
     //  Administration/permissions
     @NotNull
     private Permissions      permissions;
     @Nullable
     private BuildingTownHall townHall;
-    @NotNull
-    private final Map<BlockPos, AbstractBuilding> buildings    = new HashMap<>();
-    //  Citizenry
-    @NotNull
-    private final Map<Integer, CitizenData>       citizens     = new HashMap<>();
-    private       int                             topCitizenId = 0;
-    private       int                             maxCitizens  = Configurations.maxCitizens;
-    private       int                             killedMobs   = 0;
+    private int topCitizenId = 0;
+    private int maxCitizens  = Configurations.maxCitizens;
+    private int killedMobs   = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -803,19 +802,11 @@ public class Colony implements IColony
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if ((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event))
+            if ((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event) && townHall != null)
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
-                citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null)
-                  .forEach(citizen ->
-                  {
-                      if (townHall != null)
-                      {
-                          Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
-                          spawnCitizen(citizen);
-                      }
-                  });
+                citizens.values().forEach(this::spawnCitizenIfNull);
             }
 
             //  Cleanup Buildings whose Blocks have gone AWOL
@@ -926,6 +917,19 @@ public class Colony implements IColony
     }
 
     /**
+     * Spawn citizen if his entity is null.
+     * @param data his data
+     */
+    public void spawnCitizenIfNull(@NotNull final CitizenData data)
+    {
+        if(data.getCitizenEntity() == null)
+        {
+            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", this.getID(), data.getId()));
+            spawnCitizen(data);
+        }
+    }
+
+    /**
      * Spawn a citizen with specific citizen data.
      *
      * @param data Data to use to spawn citizen.
@@ -939,16 +943,26 @@ public class Colony implements IColony
             return;
         }
 
-        @Nullable final BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, townHallLocation, 1, 1, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
+        final BlockPos spawnPoint = EntityUtils.getSpawnPoint(world, townHallLocation);
 
         if (spawnPoint != null)
         {
-            @Nullable final EntityCitizen entity = new EntityCitizen(world);
+            final EntityCitizen entity = new EntityCitizen(world);
 
             CitizenData citizenData = data;
             if (citizenData == null)
             {
-                topCitizenId++;
+                //This ensures that citizen IDs are getting reused.
+                //That's needed to prevent bugs when calling IDs that are not used.
+                for (int i = 1; i <= this.getMaxCitizens(); i++)
+                {
+                    if (this.getCitizen(i) == null)
+                    {
+                        topCitizenId = i;
+                        break;
+                    }
+                }
+
                 citizenData = new CitizenData(topCitizenId, this);
                 citizenData.initializeFromEntity(entity);
 
@@ -958,8 +972,8 @@ public class Colony implements IColony
                 {
                     //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersLocalizedMessage(
-                      this.getMessageEntityPlayers(),
-                      "tile.blockHutTownHall.messageMaxSize");
+                            this.getMessageEntityPlayers(),
+                            "tile.blockHutTownHall.messageMaxSize");
                 }
             }
 

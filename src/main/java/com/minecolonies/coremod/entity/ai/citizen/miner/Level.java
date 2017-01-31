@@ -10,9 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.awt.geom.Point2D;
 import java.util.*;
 
-import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.BEND;
-import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.CROSSROAD;
-import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.TUNNEL;
+import static com.minecolonies.coremod.entity.ai.citizen.miner.Node.NodeType.*;
 
 /**
  * Miner Level Data Structure.

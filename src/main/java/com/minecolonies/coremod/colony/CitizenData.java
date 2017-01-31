@@ -145,7 +145,7 @@ public class CitizenData
     }
 
     /**
-     * return the entity instance of the citizen data.
+     * Return the entity instance of the citizen data. Respawn the citizen if needed.
      *
      * @return {@link EntityCitizen} of the citizen data.
      */
@@ -241,16 +241,23 @@ public class CitizenData
      */
     private String generateName(@NotNull final Random rand)
     {
-        final String firstName;
-        if (!female)
+        String citizenName;
+        if (female)
         {
-            firstName = getRandomElement(rand, Configurations.maleFirstNames);
+            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.femaleFirstNames), getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));
         }
         else
         {
-            firstName = getRandomElement(rand, Configurations.femaleFirstNames);
+            citizenName = String.format("%s %s. %s", getRandomElement(rand, Configurations.maleFirstNames), getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));
         }
-        return String.format("%s %s. %s", firstName, getRandomLetter(rand), getRandomElement(rand, Configurations.lastNames));
+        for (int i = 1; i <= this.getColony().getMaxCitizens(); i++)
+        {
+            if (this.getColony().getCitizen(i) != null && this.getColony().getCitizen(i).getName().equals(citizenName))
+            {
+                citizenName = generateName(rand);
+            }
+        }
+        return citizenName;
     }
 
     /**

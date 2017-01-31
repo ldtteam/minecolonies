@@ -5,7 +5,6 @@ import com.minecolonies.coremod.colony.jobs.JobFisherman;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.EntityFishHook;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAISkill;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathJobFindWater;
@@ -24,8 +23,6 @@ import net.minecraft.util.SoundEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -202,7 +199,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private AIState prepareForFishing()
     {
-        if (checkOrRequestItems(new ItemStack(Items.FISHING_ROD)))
+        if (checkOrRequestItems(false, new ItemStack(Items.FISHING_ROD)))
         {
             playNeedRodSound();
             return getState();
@@ -279,7 +276,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasitemInInventory(getInventory(), Items.FISH);
+        return InventoryUtils.hasitemInInventory(getInventory(), Items.FISH, -1);
     }
 
     /**
@@ -289,23 +286,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasRodButNotEquipped()
     {
-        return worker.hasItemInInventory(Items.FISHING_ROD) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    protected Map<ItemStorage, Integer> needXForWorker()
-    {
-        final Map<ItemStorage, Integer> keepX = new HashMap<>();
-        keepX.put(new ItemStorage(Items.FISHING_ROD, 0, 0, true), 1);
-
-        return keepX;
+        return worker.hasItemInInventory(Items.FISHING_ROD, -1) && worker.getHeldItemMainhand() != null && !(worker.getHeldItemMainhand().getItem() instanceof ItemFishingRod);
     }
 
     /**
@@ -566,7 +547,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
     private AIState isReadyToFish()
     {
         //We really do have our Rod in our inventory?
-        if (!worker.hasItemInInventory(Items.FISHING_ROD))
+        if (!worker.hasItemInInventory(Items.FISHING_ROD, -1))
         {
             return PREPARING;
         }

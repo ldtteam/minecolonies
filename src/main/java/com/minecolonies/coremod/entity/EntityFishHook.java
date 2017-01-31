@@ -97,7 +97,7 @@ public final class EntityFishHook extends Entity
     /**
      * Chance to get rare drops while fishing. Higher value leads to a lower chance.
      */
-    private static final double INCREASE_RARENESS_MODIFIER = 20.0;
+    private static final double INCREASE_RARENESS_MODIFIER = 5.0;
 
     /**
      * The citizen who threw this rod.
@@ -703,8 +703,8 @@ public final class EntityFishHook extends Entity
     {
         //Reduce random to get more fish drops
         double random = this.worldObj.rand.nextDouble() / INCREASE_RARENESS_MODIFIER;
-        double speedBonus = 0.1 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
-        double lootBonus = 0.05 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
+        double speedBonus = 0.18 - fishingSpeedEnchantment * 0.025 - fishingLootEnchantment * 0.01;
+        double lootBonus = 0.09 + fishingSpeedEnchantment * 0.01 - fishingLootEnchantment * 0.01;
         //clamp_float gives the values an upper limit
         speedBonus = MathHelper.clamp_float((float) speedBonus, 0.0F, 1.0F);
         lootBonus = MathHelper.clamp_float((float) lootBonus, 0.0F, 1.0F);
