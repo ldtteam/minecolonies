@@ -25,6 +25,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -450,7 +451,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
                 final EntityPlayer player = building.getPlayer();
                 if (player != null)
                 {
-                    LanguageHandler.sendPlayerMessage(building.getPlayer(), LanguageHandler.format("com.minecolonies.coremod.job.guard.switch"));
+                    LanguageHandler.sendPlayerMessage(building.getPlayer(), "com.minecolonies.coremod.job.guard.switch");
                 }
                 pos = building.getLocation();
                 building.setTask(BuildingGuardTower.Task.GUARD);
