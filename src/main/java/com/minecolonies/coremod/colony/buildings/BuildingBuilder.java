@@ -287,7 +287,11 @@ public class BuildingBuilder extends AbstractBuildingWorker
          */
         public static class ResourceComparator implements Comparator<BuildingBuilderResource>, Serializable
         {
+            private static final long serialVersionUID = 1;
+
             /**
+             * Compare to resource together.
+             *
              * We want the item availalable in the player inventory first and the one not needed last
              * In alphabetical order otherwise
              */
