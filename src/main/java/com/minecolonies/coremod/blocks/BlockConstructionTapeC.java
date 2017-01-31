@@ -46,7 +46,7 @@ public class BlockConstructionTapeC extends Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockConstructionTape";
+    private static final String BLOCK_NAME = "blockConstructionTapeC";
 
     /**
      * The resistance this block has.
@@ -95,7 +95,6 @@ public class BlockConstructionTapeC extends Block
     {
         super(Material.WOOD);
         initBlock();
-        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 
 
@@ -110,6 +109,7 @@ public class BlockConstructionTapeC extends Block
         setCreativeTab(ModCreativeTabs.MINECOLONIES);
         GameRegistry.register(this);
         GameRegistry.register((new ItemBlock(this)).setRegistryName(this.getRegistryName()));
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
@@ -122,6 +122,11 @@ public class BlockConstructionTapeC extends Block
         return state.getValue(FACING).getIndex();
     }
 
+    /**
+     * Convert the given metadata into a BlockState for this Block.
+     *
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @NotNull
     @Override
     @Deprecated
@@ -139,12 +144,14 @@ public class BlockConstructionTapeC extends Block
 
     @SideOnly(Side.CLIENT)
     @Override
+    @Deprecated
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
         return true;
     }
 
     @Override
+    @Deprecated
     public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
@@ -166,6 +173,7 @@ public class BlockConstructionTapeC extends Block
     }
 
     @Override
+    @Deprecated
     public boolean isFullCube(final IBlockState state)
     {
         return false;
@@ -178,6 +186,7 @@ public class BlockConstructionTapeC extends Block
     }
 
     @Override
+    @Deprecated
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
         return new AxisAlignedBB((float) START_COLLISION_X,
