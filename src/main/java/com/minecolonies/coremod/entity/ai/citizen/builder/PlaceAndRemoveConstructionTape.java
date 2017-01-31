@@ -8,6 +8,7 @@ import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
@@ -20,9 +21,46 @@ import org.jetbrains.annotations.NotNull;
  */
 public class PlaceAndRemoveConstructionTape
 {
+    public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
+
+    public IBlockState onBlockPlaced(
+                                      final World worldIn,
+                                      final BlockPos pos,
+                                      final EnumFacing facing,
+                                      final float hitX,
+                                      final float hitY,
+                                      final float hitZ,
+                                      final int meta,
+                                      @Nullable final EntityLivingBase placer)
+    {
+        @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+        return this.getDefaultState().withProperty(FACING, enumFacing);
+    }
+    public IBlockState getStateFromMeta(final int meta)
+    {
+        EnumFacing enumfacing = EnumFacing.getFront(meta);
+
+        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
+        {
+            enumfacing = EnumFacing.NORTH;
+        }
+
+        return this.getDefaultState().withProperty(FACING, enumfacing);
+    }
+    public int getMetaFromState(final IBlockState state)
+    {
+        return state.getValue(FACING).getIndex();
+    }
+    protected BlockStateContainer createBlockState()
+    {
+        return new BlockStateContainer(this, FACING);
+    }
+
+
+
+
     public static void placeConstructionTape(@NotNull WorkOrderBuild workOrder,@NotNull World world)
     {
-        final PropertyDirection FACING     = BlockHorizontal.FACING;
         final StructureWrapper wrapper = new StructureWrapper(world, (workOrder.getStructureName()));
         final BlockPos pos = workOrder.getBuildingLocation();
         int tempRotation = 0;
