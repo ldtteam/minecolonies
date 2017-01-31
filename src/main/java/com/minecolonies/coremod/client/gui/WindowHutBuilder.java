@@ -9,7 +9,7 @@ import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
-import com.minecolonies.coremod.colony.buildings.BuildingBuilderView;
+import com.minecolonies.coremod.colony.buildings.buildingviews.BuildingBuilderView;
 
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -157,7 +157,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                 resourceLabel.setColor(RED, RED);
                 neededLabel.setColor(RED, RED);
                 break;
-            case HAVE_ENOUGHT:
+            case HAVE_ENOUGH:
                 addButton.enable();
                 resourceLabel.setColor(DARKGREEN, DARKGREEN);
                 neededLabel.setColor(DARKGREEN, DARKGREEN);

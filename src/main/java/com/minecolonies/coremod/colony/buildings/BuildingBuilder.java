@@ -172,7 +172,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
-     * Information a bout a resource
+     * Information about a resource.
      * - How many are needed to finish the build
      * - How many are available to the builder
      * - How many are in the player's inventory (client side only)
@@ -188,7 +188,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             NOT_NEEDED,
             DONT_HAVE,
             NEED_MORE,
-            HAVE_ENOUGHT
+            HAVE_ENOUGH
         }
 
         private int amountAvailable;
@@ -197,7 +197,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         private final ItemStack itemStack;
         private final int amountNeeded;
 
-        BuildingBuilderResource(final String name, final ItemStack itemStack, final int amountAvailable, final int amountNeeded)
+        public BuildingBuilderResource(final String name, final ItemStack itemStack, final int amountAvailable, final int amountNeeded)
         {
             this.name = name;
             this.itemStack = itemStack;
@@ -227,7 +227,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         public void setAvailable(final int amount)
         {
-            amountAvailable=amount;
+            amountAvailable = amount;
         }
 
         public int getNeeded()
@@ -247,17 +247,17 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         public RessourceAvailability getAvailabilityStatus()
         {
-            if (amountNeeded >amountAvailable)
+            if (amountNeeded > amountAvailable)
             {
-                if (amountPlayer==0)
+                if (amountPlayer == 0)
                 {
                     return RessourceAvailability.DONT_HAVE;
                 }
-                if (amountPlayer<(amountNeeded-amountAvailable))
+                if (amountPlayer < (amountNeeded-amountAvailable))
                 {
                     return RessourceAvailability.NEED_MORE;
                 }
-                return RessourceAvailability.HAVE_ENOUGHT;
+                return RessourceAvailability.HAVE_ENOUGH;
             }
             return RessourceAvailability.NOT_NEEDED;
         }
