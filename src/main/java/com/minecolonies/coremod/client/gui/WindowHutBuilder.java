@@ -80,7 +80,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         {
             final BuildingBuilderView updatedView = (BuildingBuilderView) newView;
             final InventoryPlayer inventory = this.mc.player.inventory;
- 
+
             resources.clear();
             resources.addAll(updatedView.getResources().values());
             for (int i =0; i<resources.size();i++)
@@ -90,23 +90,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
                 resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, item, resource.getItemStack().getItemDamage()));
             }
 
-            Collections.sort(resources, new Comparator<BuildingBuilder.BuildingBuilderResource>() 
-                {
-                    /**
-                     * We want the item availalable in the player inventory first and the one not needed last
-                     * In alphabetical order otherwise
-                     */
-                    @Override
-                    public int compare(BuildingBuilder.BuildingBuilderResource resource1, BuildingBuilder.BuildingBuilderResource resource2)
-                    {
-                        if  (resource1.getAvailabilityStatus()==resource2.getAvailabilityStatus())
-                        {
-                            return resource1.getName().compareTo(resource2.getName());
-                        }
-    
-                        return resource2.getAvailabilityStatus().compareTo(resource1.getAvailabilityStatus());
-                    }
-                });
+            Collections.sort(resources, new BuildingBuilder.BuildingBuilderResource.ResourceComparator());
         }
     }
 

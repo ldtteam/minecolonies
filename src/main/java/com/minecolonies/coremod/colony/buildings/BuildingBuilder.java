@@ -269,6 +269,31 @@ public class BuildingBuilder extends AbstractBuildingWorker
             final int damage=itemStack.getItemDamage();
             return name + "(p:"+amountPlayer+" a:" +amountAvailable+" n:"+amountNeeded+" id="+itemId+" damage="+damage+") => "+getAvailabilityStatus().name();
         }
+
+
+        /**
+         * Comparator class for BuildingBuilderResource.
+         *
+         * This is use in the gui to order the list of resources needed.
+         */
+        public static class ResourceComparator implements Comparator<BuildingBuilderResource>
+        {
+            /**
+             * We want the item availalable in the player inventory first and the one not needed last
+             * In alphabetical order otherwise
+             */
+            @Override
+            public int compare(BuildingBuilder.BuildingBuilderResource resource1, BuildingBuilder.BuildingBuilderResource resource2)
+            {
+                if  (resource1.getAvailabilityStatus()==resource2.getAvailabilityStatus())
+                {
+                    return resource1.getName().compareTo(resource2.getName());
+                }
+
+                return resource2.getAvailabilityStatus().compareTo(resource1.getAvailabilityStatus());
+            }
+        }
+
     }
 
     /**
