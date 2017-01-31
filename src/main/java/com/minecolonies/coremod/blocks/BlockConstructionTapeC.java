@@ -22,8 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.util.EnumFacing.NORTH;
-import static net.minecraft.util.EnumFacing.fromAngle;
+import static net.minecraft.util.EnumFacing.*;
 
 /**
  * This block is used as a substitution block for the Builder.
@@ -59,24 +58,84 @@ public class BlockConstructionTapeC extends Block
     private static final double BOTTOM_COLLISION = 0.0;
 
     /**
-     * Start of the collision box at x.
+     * Start of the collision box at x facing North.
      */
-    private static final double START_COLLISION_X = 0.0;
+    private static final double N_START_COLLISION_X = 0.0;
 
     /**
-     * End of the collision box.
+     * End of the collision box facing North.
      */
-    private static final double END_COLLISION_X = 1.0;
+    private static final double N_END_COLLISION_X = 0.5625;
 
     /**
-     * Start of the collision box at z.
+     * Start of the collision box at z facing North.
      */
-    private static final double START_COLLISION_Z = 0.4375;
+    private static final double N_START_COLLISION_Z = 0.0;
 
     /**
-     * End of the collision box.
+     * End of the collision box facing North.
      */
-    private static final double END_COLLISION_Z = 0.5625;
+    private static final double N_END_COLLISION_Z = 0.5625;
+
+    /**
+     * Start of the collision box at x facing West.
+     */
+    private static final double W_START_COLLISION_X = 0.0;
+
+    /**
+     * End of the collision box facing West.
+     */
+    private static final double W_END_COLLISION_X = 0.5625;
+
+    /**
+     * Start of the collision box at z facing West.
+     */
+    private static final double W_START_COLLISION_Z = 0.4375;
+
+    /**
+     * End of the collision box facing West.
+     */
+    private static final double W_END_COLLISION_Z = 1.0;
+
+    /**
+     * Start of the collision box at x facing South.
+     */
+    private static final double S_START_COLLISION_X = 0.4375;
+
+    /**
+     * End of the collision box facing South.
+     */
+    private static final double S_END_COLLISION_X = 1.0;
+
+    /**
+     * Start of the collision box at z facing South.
+     */
+    private static final double S_START_COLLISION_Z = 0.4375;
+
+    /**
+     * End of the collision box facing South.
+     */
+    private static final double S_END_COLLISION_Z = 1.0;
+
+    /**
+     * Start of the collision box at x facing East.
+     */
+    private static final double E_START_COLLISION_X = 0.4375;
+
+    /**
+     * End of the collision box facing East.
+     */
+    private static final double E_END_COLLISION_X = 1.0;
+
+    /**
+     * Start of the collision box at z facing East.
+     */
+    private static final double E_START_COLLISION_Z = 0.0;
+
+    /**
+     * End of the collision box facing East.
+     */
+    private static final double E_END_COLLISION_Z = 0.5625;
 
     /**
      * Height of the collision box.
@@ -189,12 +248,42 @@ public class BlockConstructionTapeC extends Block
     @Deprecated
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
-        return new AxisAlignedBB((float) START_COLLISION_X,
-                (float) BOTTOM_COLLISION,
-                (float) START_COLLISION_Z,
-                (float) END_COLLISION_X,
-                (float) HEIGHT_COLLISION,
-                (float) END_COLLISION_Z);
+        if (state.getValue(FACING).equals(NORTH))
+        {
+            return new AxisAlignedBB((float) N_START_COLLISION_X,
+                                      (float) BOTTOM_COLLISION,
+                                      (float) N_START_COLLISION_Z,
+                                      (float) N_END_COLLISION_X,
+                                      (float) HEIGHT_COLLISION,
+                                      (float) N_END_COLLISION_Z);
+        }
+        if (state.getValue(FACING).equals(WEST))
+        {
+            return new AxisAlignedBB((float) W_START_COLLISION_X,
+                                      (float) BOTTOM_COLLISION,
+                                      (float) W_START_COLLISION_Z,
+                                      (float) W_END_COLLISION_X,
+                                      (float) HEIGHT_COLLISION,
+                                      (float) W_END_COLLISION_Z);
+        }
+        if (state.getValue(FACING).equals(SOUTH))
+        {
+            return new AxisAlignedBB((float) S_START_COLLISION_X,
+                                      (float) BOTTOM_COLLISION,
+                                      (float) S_START_COLLISION_Z,
+                                      (float) S_END_COLLISION_X,
+                                      (float) HEIGHT_COLLISION,
+                                      (float) S_END_COLLISION_Z);
+        }
+        else
+        {
+            return new AxisAlignedBB((float) E_START_COLLISION_X,
+                                      (float) BOTTOM_COLLISION,
+                                      (float) E_START_COLLISION_Z,
+                                      (float) E_END_COLLISION_X,
+                                      (float) HEIGHT_COLLISION,
+                                      (float) E_END_COLLISION_Z);
+        }
     }
 
     // =======================================================================
