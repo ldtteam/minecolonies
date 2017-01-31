@@ -46,7 +46,7 @@ public class BlockConstructionTapeC extends Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockConstructionTapeC";
+    private static final String BLOCK_NAME = "blockConstructionTape";
 
     /**
      * The resistance this block has.
@@ -95,7 +95,9 @@ public class BlockConstructionTapeC extends Block
     {
         super(Material.WOOD);
         initBlock();
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
+
 
     /**
      * initialize the block
@@ -118,6 +120,21 @@ public class BlockConstructionTapeC extends Block
     public int getMetaFromState(@NotNull final IBlockState state)
     {
         return state.getValue(FACING).getIndex();
+    }
+
+    @NotNull
+    @Override
+    @Deprecated
+    public IBlockState getStateFromMeta(final int meta)
+    {
+        EnumFacing enumfacing = EnumFacing.getFront(meta);
+
+        if (enumfacing.getAxis() == EnumFacing.Axis.Y)
+        {
+            enumfacing = EnumFacing.NORTH;
+        }
+
+        return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
     @SideOnly(Side.CLIENT)
@@ -185,7 +202,7 @@ public class BlockConstructionTapeC extends Block
             final int meta,
             @Nullable final EntityLivingBase placer)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : fromAngle(placer.rotationYaw);
+        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 }
