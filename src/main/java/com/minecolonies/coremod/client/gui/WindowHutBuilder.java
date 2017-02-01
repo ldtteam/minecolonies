@@ -38,9 +38,9 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final String RESOURCE_MISSING                   = "resourceMissing";
     private static final String RESOURCE_ADD                       = "resourceAdd";
     private static final String RESOURCE_ID                        = "resourceId";
-    private static final int RESOURCE_ID_POSITION                  = 3;
+    private static final int RESOURCE_ID_POSITION                  = 4;
     private static final String RESOURCE_QUANTITY_MISSING          = "resourceQuantity";
-    private static final int RESOURCE_QUANTITY_MISSING_POSITION    = 4;
+    private static final int RESOURCE_QUANTITY_MISSING_POSITION    = 5;
 
     private static final int RED       = Color.getByName("red",0);
     private static final int DARKGREEN = Color.getByName("darkgreen",0);
@@ -188,8 +188,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         {
             resourceMissingLabel.setLabelText("");
         }
-/*        final String missingItems = (missing > 0) ? ( "+" + Integer.toString(missing)) : Integer.toString(missing);
-        resourceMissingLabel.setLabelText(missingItems);*/
+
         neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getAmount()));
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount()-resource.getAvailable()));
