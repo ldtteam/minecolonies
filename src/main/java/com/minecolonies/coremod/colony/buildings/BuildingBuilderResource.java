@@ -138,10 +138,16 @@ public class BuildingBuilderResource extends ItemStorage
         {
             final BuildingBuilderResource that = (BuildingBuilderResource) o;
 
-            return (this.getAvailable() == that.getAvailable() && this.getPlayerAmount() == that.getPlayerAmount());
+            return this.getAvailable() == that.getAvailable() && this.getPlayerAmount() == that.getPlayerAmount();
         }
 
         return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return super.hashCode() + amountAvailable + amountPlayer;
     }
 
 

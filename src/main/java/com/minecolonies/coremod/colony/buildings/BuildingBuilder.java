@@ -213,7 +213,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-	BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName());
+        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName());
         if (resource == null)
         {
             resource = new BuildingBuilderResource(res.getItem(), res.getItemDamage(), amount);
