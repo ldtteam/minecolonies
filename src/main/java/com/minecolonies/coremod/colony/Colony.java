@@ -969,7 +969,7 @@ public class Colony implements IColony
                 if (getMaxCitizens() == getCitizens().size())
                 {
                     //TODO: add Colony Name prefix?
-                    LanguageHandler.sendPlayersLocalizedMessage(
+                    LanguageHandler.sendPlayersMessage(
                             this.getMessageEntityPlayers(),
                             "tile.blockHutTownHall.messageMaxSize");
                 }

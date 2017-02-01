@@ -70,7 +70,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
             if (lastPos.equals(pos))
             {
                 playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
-                LanguageHandler.sendPlayerMessage(playerIn, LanguageHandler.format("com.minecolonies.coremod.job.guard.toolDoubleClick"));
+                LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolDoubleClick");
                 return EnumActionResult.FAIL;
             }
         }
@@ -113,7 +113,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
 
         if (task.equals(BuildingGuardTower.Task.GUARD))
         {
-            LanguageHandler.sendPlayerMessage(playerIn, LanguageHandler.format("com.minecolonies.coremod.job.guard.toolClickGuard", pos, name));
+            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickGuard", pos, name);
             ((BuildingGuardTower) hut).setGuardTarget(pos);
             playerIn.inventory.removeStackFromSlot(playerIn.inventory.currentItem);
         }
@@ -124,7 +124,7 @@ public class ItemScepterGuard extends AbstractItemMinecolonies
                 ((BuildingGuardTower) hut).resetPatrolTargets();
             }
             ((BuildingGuardTower) hut).addPatrolTargets(pos);
-            LanguageHandler.sendPlayerMessage(playerIn, LanguageHandler.format("com.minecolonies.coremod.job.guard.toolClickPatrol", pos, name));
+            LanguageHandler.sendPlayerMessage(playerIn, "com.minecolonies.coremod.job.guard.toolClickPatrol", pos, name);
         }
         BlockPosUtil.writeToNBT(compound, TAG_LAST_POS, pos);
 

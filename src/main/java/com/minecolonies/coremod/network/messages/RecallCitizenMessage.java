@@ -77,7 +77,7 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                 EntityCitizen citizen = building.getWorkerEntity();
                 if (!TeleportHelper.teleportCitizen(citizen, colony.getWorld(), loc))
                 {
-                    LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
+                    LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");
                 }
             }
         }

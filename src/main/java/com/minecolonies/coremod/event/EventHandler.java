@@ -231,13 +231,13 @@ public class EventHandler
         if (colony == null)
         {
             //  Not in a colony
-            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoTownHall");
+            LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoTownHall");
             return false;
         }
         else if (!colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
         {
             //  No permission to place hut in colony
-            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission", colony.getName());
+            LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermission", colony.getName());
             return false;
         }
         else
@@ -251,14 +251,14 @@ public class EventHandler
         if (!colony.isCoordInColony(world, pos) || colony.hasTownHall())
         {
             //  Players are currently only allowed a single colony
-            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messagePlacedAlready");
+            LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messagePlacedAlready");
             return false;
         }
 
         final IColony currentColony = ColonyManager.getIColony(world, pos);
         if (currentColony != colony)
         {
-            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownhall.messageTooFar");
+            LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownhall.messageTooFar");
             return false;
         }
 
@@ -275,14 +275,14 @@ public class EventHandler
                 Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
                                        + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
                 //Placing in a colony which already has a town hall
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
+                LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
                 return false;
             }
 
             if (!closestColony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
             {
                 //  No permission to place hut in colony
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermissionPlace", closestColony.getName());
+                LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermissionPlace", closestColony.getName());
                 return false;
             }
 
@@ -294,7 +294,7 @@ public class EventHandler
             Log.getLogger().info("Can't place at: " + pos.getX() + "." + pos.getY() + "." + pos.getZ() + ". Because of townhall of: " + closestColony.getName() + " at "
                                    + closestColony.getCenter().getX() + "." + closestColony.getCenter().getY() + "." + closestColony.getCenter().getZ());
             //Placing too close to an existing colony
-            LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHutTownHall.messageTooClose");
+            LanguageHandler.sendPlayerMessage(player, "tile.blockHutTownHall.messageTooClose");
             return false;
         }
 
