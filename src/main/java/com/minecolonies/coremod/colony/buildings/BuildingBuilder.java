@@ -214,13 +214,13 @@ public class BuildingBuilder extends AbstractBuildingWorker
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
 	BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName());
-        if (resource != null)
+        if (resource == null)
         {
-            resource.setAmount(resource.getAmount()+amount);
+            resource = new BuildingBuilderResource(res.getItem(), res.getItemDamage(), amount);
         }
         else
         {
-            resource = new BuildingBuilderResource(res.getItem(), res.getItemDamage(), amount);
+            resource.setAmount(resource.getAmount()+amount);
         }
         this.neededResources.put(res.getUnlocalizedName(), resource);
         this.markDirty();
@@ -262,6 +262,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
     /**
      * Update the available resources.
+     *
      * which are needed for the build and in the builder's chest or inventory
      */
     private void updateAvailableResources()
@@ -277,8 +278,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
         {
-            BuildingBuilderResource resource = entry.getValue();
-            //final ItemStack itemStack = resource.getItemStack();
+            final BuildingBuilderResource resource = entry.getValue();
+
             resource.setAvailable(0);
 
             if (builderInventory!=null)

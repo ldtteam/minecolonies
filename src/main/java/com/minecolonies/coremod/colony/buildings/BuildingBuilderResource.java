@@ -131,6 +131,19 @@ public class BuildingBuilderResource extends ItemStorage
         return getName() + "(p:"+amountPlayer+" a:" +amountAvailable+" n:"+getAmount()+" id="+itemId+" damage="+getDamageValue()+") => "+getAvailabilityStatus().name();
     }
 
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (super.equals(o))
+        {
+            final BuildingBuilderResource that = (BuildingBuilderResource) o;
+
+            return (this.getAvailable() == that.getAvailable() && this.getPlayerAmount() == that.getPlayerAmount());
+        }
+
+        return false;
+    }
+
 
     /**
      * Comparator class for BuildingBuilderResource.
