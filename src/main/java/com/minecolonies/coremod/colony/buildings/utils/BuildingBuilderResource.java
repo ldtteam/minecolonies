@@ -170,7 +170,7 @@ public class BuildingBuilderResource extends ItemStorage
     @Override
     public int hashCode()
     {
-        return super.hashCode() + amountAvailable + amountPlayer;
+        return 31 *(31 * super.hashCode() + amountAvailable) + amountPlayer;
     }
 
 
