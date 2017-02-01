@@ -32,7 +32,7 @@ public final class LanguageHandler
      */
     public static void sendPlayerMessage(@NotNull final EntityPlayer player, final String key, final Object... message)
     {
-        player.addChatComponentMessage(buildChatComponent(key, message));
+        player.sendMessage(buildChatComponent(key, message));
     }
 
     /**
@@ -74,7 +74,7 @@ public final class LanguageHandler
 
         for (@NotNull final EntityPlayer player : players)
         {
-            player.addChatComponentMessage(textComponent);
+            player.sendMessage(textComponent);
         }
     }
 

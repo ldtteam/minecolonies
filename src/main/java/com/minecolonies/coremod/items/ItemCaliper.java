@@ -83,7 +83,7 @@ public class ItemCaliper extends AbstractItemMinecolonies
         //Start == end, same location
         if (startPosition.getX() == pos.getX() && startPosition.getY() == pos.getY() && startPosition.getZ() == pos.getZ())
         {
-            LanguageHandler.sendPlayerMessage(playerIn, ITEM_CALIPER_MESSAGE_SAME);
+            LanguageHandler.sendPlayerMessage(player, ITEM_CALIPER_MESSAGE_SAME);
             return EnumActionResult.FAIL;
         }
 

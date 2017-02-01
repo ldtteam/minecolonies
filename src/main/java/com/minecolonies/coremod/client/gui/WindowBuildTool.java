@@ -519,7 +519,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(this.mc.thePlayer, WindowBuildTool.NO_HUT_IN_INVENTORY);
+            LanguageHandler.sendPlayerMessage(this.mc.player, WindowBuildTool.NO_HUT_IN_INVENTORY);
         }
 
         Settings.instance.reset();

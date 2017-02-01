@@ -67,6 +67,45 @@ public abstract class AbstractBuilding
      */
     private static final String TAG_STYLE = "style";
     /**
+     * A list of ItemStacks with needed items and their quantity.
+     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
+     * the players inventory and their hut combined.
+     * So look here for what is currently still needed
+     * to fulfill the workers needs.
+     * <p>
+     * Will be cleared on restart, be aware!
+     */
+    @NotNull
+    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+    /**
+     * This flag tells if we need a shovel, will be set on tool needs.
+     */
+    private boolean needsShovel = false;
+    /**
+     * This flag tells if we need an axe, will be set on tool needs.
+     */
+    private boolean needsAxe = false;
+    /**
+     * This flag tells if we need a hoe, will be set on tool needs.
+     */
+    private boolean needsHoe = false;
+    /**
+     * This flag tells if we need a pickaxe, will be set on tool needs.
+     */
+    private boolean needsPickaxe = false;
+    /**
+     * This flag tells if we need a weapon, will be set on tool needs.
+     */
+    private boolean needsWeapon = false;
+    /**
+     * The minimum pickaxe level we need to fulfill the tool request.
+     */
+    private int needsPickaxeLevel = -1;
+    /**
+     * Checks if there is a ongoing delivery for the currentItem.
+     */
+    private boolean onGoingDelivery = false;
+    /**
      * Map to resolve names to class.
      */
     @NotNull
