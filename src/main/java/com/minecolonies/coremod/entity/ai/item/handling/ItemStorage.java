@@ -57,7 +57,7 @@ public class ItemStorage
     /**
      * Setter for the quantity.
      *
-     * @return the amount.
+     * @param amount the amount.
      */
     public void setAmount(final int amount)
     {
