@@ -1,10 +1,14 @@
 package com.minecolonies.coremod.colony.buildings;
 
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.io.Serializable;
 import java.util.Comparator;
+
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Information about a resource.
@@ -12,7 +16,7 @@ import java.util.Comparator;
  * - How many are available to the builder
  * - How many are in the player's inventory (client side only)
  */
-public class BuildingBuilderResource
+public class BuildingBuilderResource extends ItemStorage
 {
     /**
      * Availability status of the resource.
@@ -28,35 +32,40 @@ public class BuildingBuilderResource
 
     private       int       amountAvailable;
     private       int       amountPlayer;
-    private final String    name;
-    private final ItemStack itemStack;
-    private final int       amountNeeded;
+
 
     /**
-     * Constructor for BuildingBuilderResource.
+     * Constructor for a resource.
      *
-     * @param name of the resource.
-     * @param itemStack stack for that resource.
-     * @param amountAvailable amount of resource available  in the builder's chest + inventory.
-     * @param amountNeeded amount required for the builder to finish the build.
+     * @param item              the item.
+     * @param damageValue       it's damage value.
+     * @param amount            amount for this resource.
      */
-    public BuildingBuilderResource(final String name, final ItemStack itemStack, final int amountAvailable, final int amountNeeded)
-    {
-        this.name = name;
-        this.itemStack = itemStack;
-        this.amountAvailable = amountAvailable;
-        this.amountNeeded = amountNeeded;
-        this.amountPlayer = 0;
-    }
+     public BuildingBuilderResource(@NotNull final Item item, final int damageValue, final int amount)
+     {
+         super(item, damageValue, amount, false);
+         this.amountAvailable=0;
+         this.amountPlayer=0;
+     }
+
+    /**
+     * Constructor for a resource.
+     *
+     * @param item              the item.
+     * @param damageValue       it's damage value.
+     * @param amount            amount for this resource.
+     * @param available         optional amount available for this resource
+     */
+     public BuildingBuilderResource(@NotNull final Item item, final int damageValue, final int amount, final int available)
+     {
+         this(item, damageValue, amount);
+         this.amountAvailable=available;
+     }
 
     public String getName()
     {
-        return name;
-    }
-
-    public ItemStack getItemStack()
-    {
-        return itemStack;
+        //It is the bet way ?
+        return new ItemStack(getItem()).getDisplayName();
     }
 
     /**
@@ -68,14 +77,24 @@ public class BuildingBuilderResource
         return amountAvailable;
     }
 
+    /**
+     * Setter for the available resource amount.
+     *
+     * @param amount this is the new amount available
+     */
     public void setAvailable(final int amount)
     {
         amountAvailable = amount;
     }
 
-    public int getNeeded()
+    /**
+     * Add to the current amount available.
+     *
+     * @param amount to add to the current amount available
+     */
+    public void addAvailable(final int amount)
     {
-        return amountNeeded;
+        this.amountAvailable+=amount;
     }
 
     public void setPlayerAmount(final int amount)
@@ -90,13 +109,13 @@ public class BuildingBuilderResource
 
     public RessourceAvailability getAvailabilityStatus()
     {
-        if (amountNeeded > amountAvailable)
+        if (getAmount() > amountAvailable)
         {
             if (amountPlayer == 0)
             {
                 return RessourceAvailability.DONT_HAVE;
             }
-            if (amountPlayer < (amountNeeded-amountAvailable))
+            if (amountPlayer < (getAmount()-amountAvailable))
             {
                 return RessourceAvailability.NEED_MORE;
             }
@@ -108,9 +127,8 @@ public class BuildingBuilderResource
     @Override
     public String toString()
     {
-        final int itemId= Item.getIdFromItem(itemStack.getItem());
-        final int damage=itemStack.getItemDamage();
-        return name + "(p:"+amountPlayer+" a:" +amountAvailable+" n:"+amountNeeded+" id="+itemId+" damage="+damage+") => "+getAvailabilityStatus().name();
+        final int itemId= Item.getIdFromItem(getItem());
+        return getName() + "(p:"+amountPlayer+" a:" +amountAvailable+" n:"+getAmount()+" id="+itemId+" damage="+getDamageValue()+") => "+getAvailabilityStatus().name();
     }
 
 

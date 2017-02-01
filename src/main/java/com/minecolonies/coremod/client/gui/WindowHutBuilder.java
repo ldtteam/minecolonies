@@ -85,8 +85,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             resources.addAll(updatedView.getResources().values());
             for (final BuildingBuilderResource resource : resources)
             {
-                final Item item = resource.getItemStack().getItem();
-                resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, item, resource.getItemStack().getItemDamage()));
+                resource.setPlayerAmount(InventoryUtils.getItemCountInInventory(inventory, resource.getItem(), resource.getDamageValue()));
             }
 
             resources.sort(new BuildingBuilderResource.ResourceComparator());
@@ -176,11 +175,11 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         addButton.setPosition(buttonX,buttonY);
 
         resourceLabel.setLabelText(resource.getName());
-        final int missing = resource.getAvailable()-resource.getNeeded();
+        final int missing = resource.getAvailable()-resource.getAmount();
         final String missingItems = (missing > 0) ? ( "+" + Integer.toString(missing)) : Integer.toString(missing);
-        neededLabel.setLabelText(missingItems + "  " + Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getNeeded()));
+        neededLabel.setLabelText(missingItems + "  " + Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getAmount()));
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
-        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getNeeded()-resource.getAvailable()));
+        rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount()-resource.getAvailable()));
     }
 
     @Override
@@ -204,7 +203,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
         @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(RESOURCE_ID_POSITION);
         final int index = Integer.parseInt(idLabel.getLabelText());
-        @NotNull final ItemStack itemStack = resources.get(index).getItemStack();
+        final BuildingBuilderResource res = resources.get(index);
+        @NotNull final ItemStack itemStack = new ItemStack(res.getItem(),res.getAmount(),res.getDamageValue());
         @NotNull final Label quantityLabel = (Label) button.getParent().getChildren().get(RESOURCE_QUANTITY_MISSING_POSITION);
         final int quantity = Integer.parseInt(quantityLabel.getLabelText());
 
