@@ -8,9 +8,8 @@ import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 
-import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilderResource;
-import com.minecolonies.coremod.colony.buildings.buildingviews.BuildingBuilderView;
+import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
@@ -61,7 +60,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     /**
      * Constructor for window builder hut.
      *
-     * @param building {@link com.minecolonies.coremod.colony.buildings.buildingviews.BuildingBuilderView}.
+     * @param building {@link com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView}.
      */
     public WindowHutBuilder(final BuildingBuilderView building)
     {
