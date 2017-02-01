@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.buildings;
+package com.minecolonies.coremod.colony.buildings.utils;
 
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 
@@ -97,14 +97,37 @@ public class BuildingBuilderResource extends ItemStorage
         this.amountAvailable+=amount;
     }
 
+    /**
+     * set how the player have in its inventory.
+     *
+     * @param amount of items
+     */
     public void setPlayerAmount(final int amount)
     {
         amountPlayer = amount;
     }
 
+    /**
+     * get how the player have in its inventory.
+     *
+     * @return the amount
+     */
     public int getPlayerAmount()
     {
         return amountPlayer;
+    }
+
+    /**
+     * get how much more is needed from the player.
+     *
+     * This is taking the builder's inventory + chest into account and the player inventory
+     * Negative number is when the player does not have enough
+     * Negative number is when the player does not more than enough
+     * @return the amount needed
+     */
+    public int getMissingFromPlayer()
+    {
+        return amountPlayer + amountAvailable - getAmount();
     }
 
     public RessourceAvailability getAvailabilityStatus()

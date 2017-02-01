@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.buildings;
 
 import com.minecolonies.coremod.achievements.ModAchievements;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;

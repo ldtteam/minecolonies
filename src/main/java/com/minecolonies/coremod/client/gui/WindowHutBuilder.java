@@ -7,10 +7,8 @@ import com.minecolonies.blockout.Color;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-
-import com.minecolonies.coremod.colony.buildings.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
-
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
@@ -37,6 +35,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     private static final String VIEW_PAGES                         = "pages";
     private static final String RESOURCE_NAME                      = "resourceName";
     private static final String RESOURCE_AVAILABLE_NEEDED          = "resourceAvailableNeeded";
+    private static final String RESOURCE_MISSING                   = "resourceMissing";
     private static final String RESOURCE_ADD                       = "resourceAdd";
     private static final String RESOURCE_ID                        = "resourceId";
     private static final int RESOURCE_ID_POSITION                  = 3;
@@ -140,6 +139,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     {
         final BuildingBuilderResource resource = resources.get(index);
         final Label resourceLabel = rowPane.findPaneOfTypeByID(RESOURCE_NAME, Label.class);
+        final Label resourceMissingLabel = rowPane.findPaneOfTypeByID(RESOURCE_MISSING, Label.class);
         final Label neededLabel = rowPane.findPaneOfTypeByID(RESOURCE_AVAILABLE_NEEDED, Label.class);
         final Button addButton = rowPane.findPaneOfTypeByID(RESOURCE_ADD, Button.class);
 
@@ -148,22 +148,26 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
             case DONT_HAVE:
                 addButton.disable();
                 resourceLabel.setColor(RED, RED);
+                resourceMissingLabel.setColor(RED, RED);
                 neededLabel.setColor(RED, RED);
                 break;
             case NEED_MORE:
                 addButton.enable();
                 resourceLabel.setColor(RED, RED);
+                resourceMissingLabel.setColor(RED, RED);
                 neededLabel.setColor(RED, RED);
                 break;
             case HAVE_ENOUGH:
                 addButton.enable();
                 resourceLabel.setColor(DARKGREEN, DARKGREEN);
+                resourceMissingLabel.setColor(DARKGREEN, DARKGREEN);
                 neededLabel.setColor(DARKGREEN, DARKGREEN);
                 break;
             case NOT_NEEDED:
             default:
                 addButton.disable();
                 resourceLabel.setColor(BLACK,BLACK);
+                resourceMissingLabel.setColor(BLACK, BLACK);
                 neededLabel.setColor(BLACK,BLACK);
                 break;
 
@@ -171,13 +175,22 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
 
         //position the addRessource Button to the right
         final int buttonX = rowPane.getWidth() - addButton.getWidth() - (rowPane.getHeight() - addButton.getHeight()) / 2;
-        final int buttonY = (rowPane.getHeight() - addButton.getHeight())/2;
+        final int buttonY = rowPane.getHeight() - addButton.getHeight() - 2;
         addButton.setPosition(buttonX,buttonY);
 
         resourceLabel.setLabelText(resource.getName());
-        final int missing = resource.getAvailable()-resource.getAmount();
-        final String missingItems = (missing > 0) ? ( "+" + Integer.toString(missing)) : Integer.toString(missing);
-        neededLabel.setLabelText(missingItems + "  " + Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getAmount()));
+        final int missing = resource.getMissingFromPlayer();
+        if (missing < 0)
+        {
+            resourceMissingLabel.setLabelText(Integer.toString(missing));
+        }
+        else
+        {
+            resourceMissingLabel.setLabelText("");
+        }
+/*        final String missingItems = (missing > 0) ? ( "+" + Integer.toString(missing)) : Integer.toString(missing);
+        resourceMissingLabel.setLabelText(missingItems);*/
+        neededLabel.setLabelText(Integer.toString(resource.getAvailable()) + " / " + Integer.toString(resource.getAmount()));
         rowPane.findPaneOfTypeByID(RESOURCE_ID, Label.class).setLabelText(Integer.toString(index));
         rowPane.findPaneOfTypeByID(RESOURCE_QUANTITY_MISSING, Label.class).setLabelText(Integer.toString(resource.getAmount()-resource.getAvailable()));
     }

@@ -4,7 +4,7 @@ import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.client.gui.WindowHutBuilder;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
-import com.minecolonies.coremod.colony.buildings.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
