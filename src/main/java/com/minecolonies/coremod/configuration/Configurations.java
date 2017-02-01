@@ -17,7 +17,7 @@ public class Configurations
     public static boolean turnOffExplosionsInColonies = true;
 
     //TODO change to false when material handling is implemented
-    public static boolean deliverymanInfiniteResources = true;
+    public static boolean deliverymanInfiniteResources = false;
 
     //TODO remove config value and set maxCitizens based on the colony buildings/levels
     public static int     maxCitizens         = 4;
@@ -352,7 +352,6 @@ public class Configurations
                     "Violet",
                     "Vivian",
                     "Zoe",
-
                     "Agnes",
                     "Amy",
                     "Anne",
