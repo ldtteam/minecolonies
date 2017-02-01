@@ -218,7 +218,7 @@ public abstract class AbstractBuilding
             @NotNull final Class<? extends AbstractBuilding.View> viewClass,
             @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
-        int buildingHashCode = buildingClass.getName().hashCode();
+        final int buildingHashCode = buildingClass.getName().hashCode();
 
         if (nameToClassMap.containsKey(name) || classNameHashToViewClassMap.containsKey(buildingHashCode))
         {
