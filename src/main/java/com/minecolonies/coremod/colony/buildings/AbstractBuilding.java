@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.materials.MaterialStore;
 import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
@@ -72,12 +73,12 @@ public abstract class AbstractBuilding
      * Map to resolve names to class.
      */
     @NotNull
-    private static final Map<String, Class<?>> nameToClassMap = new HashMap<>();
+    private static final Map<String, Class<?>>   nameToClassMap               = new HashMap<>();
     /**
      * Map to resolve classes to name.
      */
     @NotNull
-    private static final Map<Class<?>, String> classToNameMap = new HashMap<>();
+    private static final Map<Class<?>, String>   classToNameMap               = new HashMap<>();
     /**
      * Map to resolve block to building class.
      */
@@ -87,25 +88,25 @@ public abstract class AbstractBuilding
      * Map to resolve classNameHash to class.
      */
     @NotNull
-    private static final Map<Integer, Class<?>> classNameHashToClassMap = new HashMap<>();
+    private static final Map<Integer, Class<?>>  classNameHashToViewClassMap  = new HashMap<>();
     /*
      * Add all the mappings.
      */
     static
     {
-        addMapping("Baker", BuildingBaker.class, BlockHutBaker.class);
-        addMapping("Blacksmith", BuildingBlacksmith.class, BlockHutBlacksmith.class);
-        addMapping("Builder", BuildingBuilder.class, BlockHutBuilder.class);
-        addMapping("Home", BuildingHome.class, BlockHutCitizen.class);
-        addMapping("Farmer", BuildingFarmer.class, BlockHutFarmer.class);
-        addMapping("Lumberjack", BuildingLumberjack.class, BlockHutLumberjack.class);
-        addMapping("Miner", BuildingMiner.class, BlockHutMiner.class);
-        addMapping("Stonemason", BuildingStonemason.class, BlockHutStonemason.class);
-        addMapping("TownHall", BuildingTownHall.class, BlockHutTownHall.class);
-        addMapping("Deliveryman", BuildingDeliveryman.class, BlockHutDeliveryman.class);
-        addMapping("Fisherman", BuildingFisherman.class, BlockHutFisherman.class);
-        addMapping("GuardTower", BuildingGuardTower.class, BlockHutGuardTower.class);
-        addMapping("WareHouse", BuildingWareHouse.class, BlockHutWareHouse.class);
+        addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
+        addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
+        addMapping("Builder", BuildingBuilder.class, BuildingBuilderView.class, BlockHutBuilder.class);
+        addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
+        addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);
+        addMapping("Lumberjack", BuildingLumberjack.class, BuildingLumberjack.View.class, BlockHutLumberjack.class);
+        addMapping("Miner", BuildingMiner.class, BuildingMiner.View.class, BlockHutMiner.class);
+        addMapping("Stonemason", BuildingStonemason.class, BuildingStonemason.View.class, BlockHutStonemason.class);
+        addMapping("TownHall", BuildingTownHall.class, BuildingTownHall.View.class, BlockHutTownHall.class);
+        addMapping("Deliveryman", BuildingDeliveryman.class, BuildingDeliveryman.View.class, BlockHutDeliveryman.class);
+        addMapping("Fisherman", BuildingFisherman.class, BuildingFisherman.View.class, BlockHutFisherman.class);
+        addMapping("GuardTower", BuildingGuardTower.class, BuildingGuardTower.View.class, BlockHutGuardTower.class);
+        addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
     }
     /**
      * A list which contains the position of all containers which belong to the worker building.
@@ -208,11 +209,18 @@ public abstract class AbstractBuilding
      *
      * @param name          name of building.
      * @param buildingClass subclass of AbstractBuilding, located in {@link com.minecolonies.coremod.colony.buildings}.
+     * @param viewClass     subclass of AbstractBuilding.View.
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
-    private static void addMapping(final String name, @NotNull final Class<? extends AbstractBuilding> buildingClass, @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+    private static void addMapping(
+            final String name,
+            @NotNull final Class<? extends AbstractBuilding> buildingClass,
+            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+            @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
-        if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(buildingClass.getName().hashCode()))
+        final int buildingHashCode = buildingClass.getName().hashCode();
+
+        if (nameToClassMap.containsKey(name) || classNameHashToViewClassMap.containsKey(buildingHashCode))
         {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding AbstractBuilding class mapping");
         }
@@ -227,7 +235,7 @@ public abstract class AbstractBuilding
                 {
                     nameToClassMap.put(name, buildingClass);
                     classToNameMap.put(buildingClass, name);
-                    classNameHashToClassMap.put(buildingClass.getName().hashCode(), buildingClass);
+                    classNameHashToViewClassMap.put(buildingHashCode, viewClass);
                 }
             }
             catch (final NoSuchMethodException exception)
@@ -279,7 +287,7 @@ public abstract class AbstractBuilding
         if (building == null)
         {
             Log.getLogger().warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
-            return building;
+            return null;
         }
 
         try
@@ -323,11 +331,7 @@ public abstract class AbstractBuilding
         for (int i = 0; i < containerTagList.tagCount(); ++i)
         {
             final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
-            @Nullable final BlockPos pos = NBTUtil.getPosFromTag(containerCompound);
-            if (pos != null)
-            {
-                containerList.add(pos);
-            }
+            containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
     }
 
@@ -351,7 +355,7 @@ public abstract class AbstractBuilding
             if (oclass == null)
             {
                 Log.getLogger().error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
-                return building;
+                return null;
             }
 
             final BlockPos loc = parent.getPosition();
@@ -383,19 +387,12 @@ public abstract class AbstractBuilding
         try
         {
             final int typeHash = buf.readInt();
-            oclass = classNameHashToClassMap.get(typeHash);
+            oclass = classNameHashToViewClassMap.get(typeHash);
 
             if (oclass != null)
             {
-                for (@NotNull final Class<?> c : oclass.getDeclaredClasses())
-                {
-                    if (c.getName().endsWith("$View"))
-                    {
-                        final Constructor<?> constructor = c.getDeclaredConstructor(ColonyView.class, BlockPos.class);
-                        view = (View) constructor.newInstance(colony, id);
-                        break;
-                    }
-                }
+                final Constructor<?> constructor = oclass.getDeclaredConstructor(ColonyView.class, BlockPos.class);
+                view = (View) constructor.newInstance(colony, id);
             }
         }
         catch (@NotNull NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
@@ -406,7 +403,7 @@ public abstract class AbstractBuilding
         if (view == null)
         {
             Log.getLogger().warn("Unknown AbstractBuilding type, missing View subclass, or missing constructor of proper format.");
-            return view;
+            return null;
         }
 
         try
@@ -418,7 +415,7 @@ public abstract class AbstractBuilding
             Log.getLogger().error(
               String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
                 oclass.getName()), ex);
-            view = null;
+            return null;
         }
 
         return view;
