@@ -605,14 +605,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             if (getColonyJob() instanceof JobGuard)
             {
-                LanguageHandler.sendPlayersLocalizedMessage(
+                LanguageHandler.sendPlayersMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageGuardDead",
                   citizenData.getName(), (int) posX, (int) posY, (int) posZ);
             }
             else
             {
-                LanguageHandler.sendPlayersLocalizedMessage(
+                LanguageHandler.sendPlayersMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageColonistDead",
                   citizenData.getName(), (int) posX, (int) posY, (int) posZ);

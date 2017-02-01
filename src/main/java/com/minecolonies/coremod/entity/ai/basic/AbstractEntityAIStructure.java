@@ -231,9 +231,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null)
             {
                 final String structureName = ((AbstractJobStructure) job).getStructure().getName();
-                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
-                  "entity.builder.messageBuildComplete",
-                  structureName);
+                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildComplete",
+                        structureName);
 
 
                 final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();

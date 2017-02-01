@@ -88,7 +88,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
 
             return EnumActionResult.SUCCESS;
         }
-        LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.supplyChestDeployer.invalid");
+        LanguageHandler.sendPlayerMessage(playerIn, "item.supplyChestDeployer.invalid");
         return EnumActionResult.FAIL;
     }
 
@@ -104,7 +104,7 @@ public class ItemSupplyChestDeployer extends AbstractItemMinecolonies
         {
             return true;
         }
-        LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
+        LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.error.supplyChestAlreadyPlaced");
         return false;
     }
 

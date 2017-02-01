@@ -119,9 +119,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (wo instanceof WorkOrderBuildDecoration)
             {
-                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
-                  "entity.builder.messageBuildStart",
-                  job.getStructure().getName());
+                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildStart",
+                        job.getStructure().getName());
             }
             else
             {
@@ -134,9 +134,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     return;
                 }
 
-                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
-                  "entity.builder.messageBuildStart",
-                  job.getStructure().getName());
+                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildStart",
+                        job.getStructure().getName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
