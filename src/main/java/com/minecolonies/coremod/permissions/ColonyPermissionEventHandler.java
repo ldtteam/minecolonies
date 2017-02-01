@@ -4,7 +4,6 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -204,6 +203,57 @@ public class ColonyPermissionEventHandler
     }
 
     /**
+     * PlayerInteractEvent.EntityInteract handler.
+     * <p>
+     * Check, if a player right clicked an entity.
+     * Deny if:
+     * - If the entity is in colony
+     * - player has not permission
+     *
+     * @param event PlayerInteractEvent
+     */
+    @SubscribeEvent
+    public void on(final PlayerInteractEvent.EntityInteract event)
+    {
+        final EntityPlayer playerIn = event.getEntityPlayer();
+        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
+        {
+            final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
+
+            if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
+            {
+                cancelEvent(event);
+            }
+        }
+    }
+
+    /**
+     * PlayerInteractEvent.EntityInteractSpecific handler.
+     * <p>
+     * Check, if a player right clicked a entity.
+     * Deny if:
+     * - If the entity is in colony
+     * - player has not permission
+     *
+     * @param event PlayerInteractEvent
+     */
+    @SubscribeEvent
+    public void on(final PlayerInteractEvent.EntityInteractSpecific event)
+    {
+        final EntityPlayer playerIn = event.getEntityPlayer();
+        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
+        {
+            final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
+
+            if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
+            {
+                cancelEvent(event);
+            }
+        }
+    }
+
+
+    /**
      * ItemTossEvent handler.
      * <p>
      * Check, if a player tossed a block.
@@ -316,7 +366,6 @@ public class ColonyPermissionEventHandler
      * Deny if:
      * - If the attacking happens in the colony
      * - Player is less than officer to the colony.
-     * - Entity is a citizen.
      *
      * @param event EntityItemPickupEvent
      */
@@ -324,7 +373,7 @@ public class ColonyPermissionEventHandler
     public void on(final AttackEntityEvent event)
     {
         final EntityPlayer playerIn = event.getEntityPlayer();
-        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()) && event.getTarget() instanceof EntityCitizen)
+        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 
