@@ -40,7 +40,7 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     /**
      * Sets the amount of saplings the lumberjack should keep.
      */
-    private static final int SAPLINGS_TO_KEEP = 10;
+    private static final int SAPLINGS_TO_KEEP = 32;
 
     private final Map<ItemStorage, Integer> keepX = new HashMap<>();
 

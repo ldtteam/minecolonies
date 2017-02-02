@@ -387,7 +387,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             @Nullable final TileEntityChest chest = searchRightChestForStack(stack);
             if (chest == null)
             {
-                LanguageHandler.sendPlayersLocalizedMessage(getColony().getMessageEntityPlayers(), "com.minecolonies.coremod.wareHouse.full");
+                LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), "com.minecolonies.coremod.wareHouse.full");
                 return;
             }
             InventoryUtils.addItemStackToInventory(chest, stack);

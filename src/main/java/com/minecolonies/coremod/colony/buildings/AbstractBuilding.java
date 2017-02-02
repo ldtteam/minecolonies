@@ -70,6 +70,45 @@ public abstract class AbstractBuilding
      */
     private static final String TAG_STYLE = "style";
     /**
+     * A list of ItemStacks with needed items and their quantity.
+     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
+     * the players inventory and their hut combined.
+     * So look here for what is currently still needed
+     * to fulfill the workers needs.
+     * <p>
+     * Will be cleared on restart, be aware!
+     */
+    @NotNull
+    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+    /**
+     * This flag tells if we need a shovel, will be set on tool needs.
+     */
+    private boolean needsShovel = false;
+    /**
+     * This flag tells if we need an axe, will be set on tool needs.
+     */
+    private boolean needsAxe = false;
+    /**
+     * This flag tells if we need a hoe, will be set on tool needs.
+     */
+    private boolean needsHoe = false;
+    /**
+     * This flag tells if we need a pickaxe, will be set on tool needs.
+     */
+    private boolean needsPickaxe = false;
+    /**
+     * This flag tells if we need a weapon, will be set on tool needs.
+     */
+    private boolean needsWeapon = false;
+    /**
+     * The minimum pickaxe level we need to fulfill the tool request.
+     */
+    private int needsPickaxeLevel = -1;
+    /**
+     * Checks if there is a ongoing delivery for the currentItem.
+     */
+    private boolean onGoingDelivery = false;
+    /**
      * Map to resolve names to class.
      */
     @NotNull
@@ -122,49 +161,6 @@ public abstract class AbstractBuilding
     @NotNull
     private final Colony colony;
     /**
-     * The material store of the colony (WIP).
-     */
-    private final MaterialStore materialStore;
-    /**
-     * A list of ItemStacks with needed items and their quantity.
-     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
-     * the players inventory and their hut combined.
-     * So look here for what is currently still needed
-     * to fulfill the workers needs.
-     * <p>
-     * Will be cleared on restart, be aware!
-     */
-    @NotNull
-    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
-    /**
-     * This flag tells if we need a shovel, will be set on tool needs.
-     */
-    private boolean needsShovel = false;
-    /**
-     * This flag tells if we need an axe, will be set on tool needs.
-     */
-    private boolean needsAxe = false;
-    /**
-     * This flag tells if we need a hoe, will be set on tool needs.
-     */
-    private boolean needsHoe = false;
-    /**
-     * This flag tells if we need a pickaxe, will be set on tool needs.
-     */
-    private boolean needsPickaxe = false;
-    /**
-     * This flag tells if we need a weapon, will be set on tool needs.
-     */
-    private boolean needsWeapon = false;
-    /**
-     * The minimum pickaxe level we need to fulfill the tool request.
-     */
-    private int needsPickaxeLevel = -1;
-    /**
-     * Checks if there is a ongoing delivery for the currentItem.
-     */
-    private boolean onGoingDelivery = false;
-    /**
      * The tileEntity of the building.
      */
     private TileEntityColonyBuilding tileEntity;
@@ -199,7 +195,6 @@ public abstract class AbstractBuilding
     {
         location = pos;
         this.colony = colony;
-        materialStore = new MaterialStore(MaterialStore.Type.CHEST, colony.getMaterialSystem());
     }
 
     /**
@@ -320,11 +315,6 @@ public abstract class AbstractBuilding
         {
             Log.getLogger().warn("Loaded empty style, setting to wooden");
             style = "wooden";
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.readFromNBT(compound);
         }
 
         final NBTTagList containerTagList = compound.getTagList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
@@ -464,11 +454,6 @@ public abstract class AbstractBuilding
         compound.setInteger(TAG_ROTATION, rotation);
         compound.setString(TAG_STYLE, style);
 
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.writeToNBT(compound);
-        }
-
 
         @NotNull final NBTTagList containerTagList = new NBTTagList();
         for (@NotNull final BlockPos pos : containerList)
@@ -529,11 +514,6 @@ public abstract class AbstractBuilding
         {
             InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
             world.updateComparatorOutputLevel(this.location, block);
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.destroy();
         }
     }
 
@@ -646,7 +626,7 @@ public abstract class AbstractBuilding
         }
 
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
-        LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
     }
 
     /**
@@ -709,16 +689,6 @@ public abstract class AbstractBuilding
     public void setStyle(final String style)
     {
         this.style = style;
-    }
-
-    /**
-     * Gets the MaterialStore for this building.
-     *
-     * @return The MaterialStore that tracks this building's inventory.
-     */
-    public MaterialStore getMaterialStore()
-    {
-        return materialStore;
     }
 
     /**

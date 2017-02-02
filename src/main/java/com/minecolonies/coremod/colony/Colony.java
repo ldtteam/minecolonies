@@ -6,7 +6,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
@@ -80,7 +79,6 @@ public class Colony implements IColony
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
     private final WorkManager                     workManager      = new WorkManager(this);
-    private final MaterialSystem                  materialSystem   = new MaterialSystem();
     @NotNull
     private final Map<BlockPos, AbstractBuilding> buildings        = new HashMap<>();
     //  Citizenry
@@ -971,9 +969,9 @@ public class Colony implements IColony
                 if (getMaxCitizens() == getCitizens().size())
                 {
                     //TODO: add Colony Name prefix?
-                    LanguageHandler.sendPlayersLocalizedMessage(
-                      this.getMessageEntityPlayers(),
-                      "tile.blockHutTownHall.messageMaxSize");
+                    LanguageHandler.sendPlayersMessage(
+                            this.getMessageEntityPlayers(),
+                            "tile.blockHutTownHall.messageMaxSize");
                 }
             }
             entity.setColony(this, citizenData);
@@ -1349,12 +1347,6 @@ public class Colony implements IColony
                  .filter(citizen -> !citizen.getJob().isMissingNeededItem())
                  .map(citizen -> citizen.getWorkBuilding().getLocation())
                  .collect(Collectors.toList());
-    }
-
-    @NotNull
-    public MaterialSystem getMaterialSystem()
-    {
-        return materialSystem;
     }
 
     /**
