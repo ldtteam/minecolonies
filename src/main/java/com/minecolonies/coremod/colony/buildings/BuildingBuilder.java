@@ -10,7 +10,6 @@ import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
-import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -217,7 +216,6 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         if (res.isEmpty() || (amount == 0))
         {
-            Log.getLogger().info("add resource empty "+ res+ " amount:"+amount);
             return;
         }
         BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName());
