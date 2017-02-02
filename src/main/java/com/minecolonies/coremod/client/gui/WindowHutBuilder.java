@@ -219,7 +219,7 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
         final BuildingBuilderResource res = resources.get(index);
         if (res == null)
         {
-            Log.getLogger().warn("WindowHutBuilder.transferItems: Error - Could not found the resource.");
+            Log.getLogger().warn("WindowHutBuilder.transferItems: Error - Could not find the resource.");
         }
         else
         {

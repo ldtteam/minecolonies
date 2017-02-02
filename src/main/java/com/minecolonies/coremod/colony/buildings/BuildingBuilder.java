@@ -214,7 +214,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-        if (res.isEmpty() || (amount == 0))
+        if (res.isEmpty() || amount == 0)
         {
             return;
         }
