@@ -21,6 +21,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import com.minecolonies.coremod.util.Log;
+
 /**
  * Window for the builder hut.
  */
@@ -212,15 +214,22 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
      */
     private void transferItems(@NotNull final Button button)
     {
-
         @NotNull final Label idLabel = (Label) button.getParent().getChildren().get(RESOURCE_ID_POSITION);
         final int index = Integer.parseInt(idLabel.getLabelText());
         final BuildingBuilderResource res = resources.get(index);
-        @NotNull final ItemStack itemStack = new ItemStack(res.getItem(),res.getAmount(),res.getDamageValue());
-        @NotNull final Label quantityLabel = (Label) button.getParent().getChildren().get(RESOURCE_QUANTITY_MISSING_POSITION);
-        final int quantity = Integer.parseInt(quantityLabel.getLabelText());
-
-        MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity));
+        if (res == null)
+        {
+            Log.getLogger().warn("WindowHutBuilder.transferItems: Error - Could not found the resource.");
+        }
+        else
+        {
+            // The itemStack size should not be greater than itemStack.getMaxStackSize, We send 1 instead
+            // and use quantity for the size
+            @NotNull final ItemStack itemStack = new ItemStack(res.getItem(), 1, res.getDamageValue());
+            @NotNull final Label quantityLabel = (Label) button.getParent().getChildren().get(RESOURCE_QUANTITY_MISSING_POSITION);
+            final int quantity = Integer.parseInt(quantityLabel.getLabelText());
+            MineColonies.getNetwork().sendToServer(new TransferItemsRequestMessage(this.building, itemStack, quantity));
+        }
     }
 
 
