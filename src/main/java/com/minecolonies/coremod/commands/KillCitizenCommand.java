@@ -62,6 +62,7 @@ public class KillCitizenCommand extends AbstractSingleCommand
     {
         int colonyId;
         int citizenId;
+
         try
         {
             colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
@@ -70,17 +71,18 @@ public class KillCitizenCommand extends AbstractSingleCommand
             /* check if sender is permitted to do this :: MAYOR */
             boolean chkPlayer = canCommandSenderUseCommand(KILLCITIZENS);
 
-            Colony colony = ColonyManager.getColony(colonyId);
-            World world = Minecraft.getMinecraft().theWorld;
-            EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
             /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
+
             if (!chkPlayer)
             {
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
                 return;
             }
                 /* here we see if they have colony rank to do this command */
-            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER)) {
+            Colony colony = ColonyManager.getColony(colonyId);
+            EntityPlayer player = (EntityPlayer)sender;
+            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER))
+            {
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
                 return;
             }

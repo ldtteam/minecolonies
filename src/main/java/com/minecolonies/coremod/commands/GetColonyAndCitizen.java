@@ -15,7 +15,7 @@ public final class GetColonyAndCitizen
 
     private static final String ONLY_NUMBERS                = "Please only use numbers for the %s ID!";
     private static final String TOO_MANY_ARGUMENTS          = "Too many arguments!";
-    private static final String UNKNOWN_ERROR               = "Unknown Error!";
+    private static final String UNKNOWN_ERROR               = "Missing name or ID!";
     private static final String NOT_FOUND                   = "%s not found!";
     private static final String NO_COLONY                   = "You haven't got a colony!";
     private static final int    SHORT_ARGUMENT_LENGTH       = 1;
@@ -125,6 +125,7 @@ public final class GetColonyAndCitizen
                 if (ColonyManager.getColony(colonyId).getCitizen(i).getName() != null && ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
+                    return citizenId;
                 }
             }
         }
@@ -136,6 +137,7 @@ public final class GetColonyAndCitizen
                 if (ColonyManager.getColony(colonyId).getCitizen(i).getName().equals(citizenName))
                 {
                     citizenId = i;
+                    return citizenId;
                 }
             }
         }
@@ -145,6 +147,7 @@ public final class GetColonyAndCitizen
         }
         else
         {
+
             throw new IllegalArgumentException(UNKNOWN_ERROR);
         }
         if (citizenId >= 0 && colonyId >= 0 && ColonyManager.getColony(colonyId).getCitizen(citizenId) == null)

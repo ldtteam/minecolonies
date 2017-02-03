@@ -69,19 +69,18 @@ public class ListCitizensCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        final int colonyId = getIthArgument(args, 0, getColonyId(sender));
-        final Colony colony = ColonyManager.getColony(colonyId);
 
-        World world = Minecraft.getMinecraft().theWorld;
-        EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
+
         /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
         /* here we see if they have colony rank to do this command */
+        EntityPlayer player = (EntityPlayer)sender;
         if (!canPlayerUseCommand(player, LISTCITIZENS))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
             return;
         }
-
+        final int colonyId = getIthArgument(args, 0, getColonyId(sender));
+        final Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
         {
             sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, colonyId)));

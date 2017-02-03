@@ -70,17 +70,18 @@ public abstract class AbstractSingleCommand implements ISubCommand
         }
         return sb.toString();
     }
-
-
-    @NotNull
+    /**
+     * Will check the config file to see if players are allowed to use the command that is sent here
+     * and will verify that they are of correct rank to do so
+     *@param player the players/senders name
+     * @param theCommand which command to check if the player can use it
+     * @return boolean
+     */
     public boolean canPlayerUseCommand(EntityPlayer player, Commands theCommand,@NotNull final String... args)
     {
         int colonyId;
-        int citizenId;
 
         colonyId = GetColonyAndCitizen.getColonyId(player.getCommandSenderEntity().getUniqueID(), player.getEntityWorld(), args);
-        citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
-
         Colony chkColony = ColonyManager.getColony(colonyId);
         return canCommandSenderUseCommand(theCommand) && !chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) && !chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
     }
@@ -90,7 +91,6 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param theCommand which command to check if the player can use it
      * @return boolean
      */
-    @NotNull
     public boolean canCommandSenderUseCommand(Commands theCommand)
     {
         switch (theCommand)

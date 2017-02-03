@@ -62,13 +62,10 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
         {
             colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
             citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
-
-            Colony colony = ColonyManager.getColony(colonyId);
-            World world = Minecraft.getMinecraft().theWorld;
-            EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
+            EntityPlayer player = (EntityPlayer)sender;
             /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
-            /* here we see if they have colony rank to do this command */
-            if (!canPlayerUseCommand(player, RESPAWNCITIZENS))
+            boolean chkPlayer = !canPlayerUseCommand(player, RESPAWNCITIZENS);
+            if (!chkPlayer)
             {
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
                 return;

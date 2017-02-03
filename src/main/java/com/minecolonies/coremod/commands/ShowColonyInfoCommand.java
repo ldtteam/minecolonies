@@ -60,14 +60,8 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId = -1;
-        UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
 
-        colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
-
-        Colony colony = ColonyManager.getColony(colonyId);
-        World world = Minecraft.getMinecraft().theWorld;
-        EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
+        EntityPlayer player = (EntityPlayer)sender;
         /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
         /* here we see if they have colony rank to do this command */
         if (!canPlayerUseCommand(player, SHOWCOLONYINFO))
@@ -75,6 +69,10 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
             return;
         }
+        int colonyId = -1;
+        UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
+        colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
+
         if (args.length != 0)
         {
             try
@@ -111,6 +109,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         }
 
         /* final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter()); */
+        Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
         {
             if (colonyId == -1 && args.length != 0)

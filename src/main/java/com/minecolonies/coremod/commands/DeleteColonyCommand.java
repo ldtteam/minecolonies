@@ -4,17 +4,13 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.util.ServerUtils;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -54,16 +50,8 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId = -1;
-        UUID mayorID = null;
-        colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
-
-            /* check if sender is permitted to do this :: OFFICER or MAYOR */
+        /* check if sender is permitted to do this :: OFFICER or MAYOR */
         boolean chkPlayer = canCommandSenderUseCommand(SHOWCOLONYINFO);
-
-        Colony chkColony = ColonyManager.getColony(colonyId);
-        World world = Minecraft.getMinecraft().theWorld;
-        EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
             /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
         if (!chkPlayer)
         {
@@ -71,11 +59,16 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             return;
         }
                 /* here we see if they have colony rank to do this command */
+        EntityPlayer player = (EntityPlayer)sender;
+        int colonyId = -1;
+        colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
+        Colony chkColony = ColonyManager.getColony(colonyId);
         if (!chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
             return;
         }
+        UUID mayorID = null;
         if (args.length != 0)
         {
             try
@@ -113,6 +106,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
     }
 
+    @NotNull
     private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
     {
         final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();

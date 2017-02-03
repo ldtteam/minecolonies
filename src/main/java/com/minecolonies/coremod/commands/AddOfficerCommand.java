@@ -52,23 +52,23 @@ public class AddOfficerCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        final int colonyId = getIthArgument(args, 0, -1);
         /* check if sender is permitted to do this :: MAYOR */
         boolean chkPlayer = canCommandSenderUseCommand(ADDOFFICER);
-
-        Colony colony = ColonyManager.getColony(colonyId);
-        World world = Minecraft.getMinecraft().theWorld;
-        EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
             /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
-        if (!chkPlayer) {
+        if (!chkPlayer)
+        {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
             return;
         }
                 /* here we see if they have colony rank to do this command */
-        if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER)) {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
-            return;
-        }
+        final int colonyId = getIthArgument(args, 0, -1);
+        Colony colony = ColonyManager.getColony(colonyId);
+        EntityPlayer player = (EntityPlayer)sender;
+            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER))
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                return;
+            }
 
 
         String playerName = null;
@@ -86,7 +86,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
         /*Colony colony = ColonyManager.getColony(colonyId);*/
 
         //No citizen or citizen defined.
-        if (colony == null)
+        if (colony.equals(null))
         {
             sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId, colonyId)));
             return;
