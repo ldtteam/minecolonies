@@ -1,26 +1,29 @@
 package com.minecolonies.coremod.inventory;
 
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.test.AbstractTest;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
 
 public class InventoryTest extends AbstractTest
 {
     private IInventory inventory;
 
+    @InjectMocks
+    private BuildingTownHall building;
+
     @Mock
-    private AbstractBuilding building;
+    private Colony colony;
 
     @Before
     public void setupInventories()
@@ -42,9 +45,8 @@ public class InventoryTest extends AbstractTest
     @Test
     public void addStackTest()
     {
-        final Item testItem = mock(Item.class);
-        final ItemStack stuff = new ItemStack(testItem, 3);
-        inventory.setInventorySlotContents(0, stuff);
-        assertSame(inventory.getStackInSlot(0), stuff);
+        final ItemStack itemStack = PowerMockito.mock(ItemStack.class);
+        inventory.setInventorySlotContents(0, itemStack);
+        assertSame(itemStack, inventory.getStackInSlot(0));
     }
 }

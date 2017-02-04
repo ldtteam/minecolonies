@@ -3,6 +3,7 @@ package com.minecolonies.coremod.test;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
+import net.minecraft.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -20,7 +21,7 @@ import static org.powermock.api.mockito.PowerMockito.*;
 /**
  * Abstract test class to abstract away some common uses functionality in Tests
  */
-@PrepareForTest({ColonyManager.class, LanguageHandler.class, Log.class})
+@PrepareForTest({ColonyManager.class, LanguageHandler.class, Log.class, ItemStack.class})
 @PowerMockIgnore("javax.management.*")
 @RunWith(PowerMockRunner.class)
 public abstract class AbstractTest

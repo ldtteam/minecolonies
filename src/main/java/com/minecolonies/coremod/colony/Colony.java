@@ -468,8 +468,13 @@ public class Colony implements IColony
     /**
      * Update Subscribers with Colony, Citizen, and AbstractBuilding Views.
      */
-    public void updateSubscribers()
+    private void updateSubscribers()
     {
+        // If the world or server is null, don't try to update the subscribers this tick.
+        if (world == null || world.getMinecraftServer() == null) {
+            return;
+        }
+
         //  Recompute subscribers every frame (for now)
         //  Subscribers = Owners + Players within (double working town hall range)
         @NotNull final Set<EntityPlayerMP> oldSubscribers = subscribers;
@@ -477,7 +482,7 @@ public class Colony implements IColony
 
         // Add owners
         subscribers.addAll(
-          this.getWorld().getMinecraftServer().getPlayerList().getPlayers()
+          world.getMinecraftServer().getPlayerList().getPlayers()
             .stream()
             .filter(permissions::isSubscriber)
             .collect(Collectors.toList()));
