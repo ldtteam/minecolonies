@@ -374,8 +374,7 @@ public class ColonyPermissionEventHandler
     public void on(final AttackEntityEvent event)
     {
         final EntityPlayer playerIn = event.getEntityPlayer();
-        if (Configurations.enableColonyProtection && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition())
-                && !(event.getEntity() instanceof EntityMob))
+        if (Configurations.enableColonyProtection && !(event.getEntity() instanceof EntityMob) && colony.isCoordInColony(playerIn.getEntityWorld(), playerIn.getPosition()))
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
 
