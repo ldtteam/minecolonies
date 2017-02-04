@@ -3,16 +3,12 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.util.ServerUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.ADDOFFICER;
 
@@ -27,7 +23,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
 {
 
     public static final  String       DESC                            = "addOfficer";
-    private static final String       SUCCESS_MESSAGE             = "Succesfully added Player %s to colony %d";
+    private static final String       SUCCESS_MESSAGE                 = "Succesfully added Player %s to colony %d";
     private static final String       COLONY_NULL                     = "Couldn't find colony %d.";
 
     /**
@@ -50,7 +46,8 @@ public class AddOfficerCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        /* check if sender is permitted to do this :: MAYOR */
+
+       /* check if sender is permitted to do this :: OFFICER or MAYOR */
         boolean chkPlayer = canCommandSenderUseCommand(ADDOFFICER);
             /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
         if (!chkPlayer)
@@ -59,14 +56,17 @@ public class AddOfficerCommand extends AbstractSingleCommand
             return;
         }
                 /* here we see if they have colony rank to do this command */
-        final int colonyId = getIthArgument(args, 0, -1);
-        Colony colony = ColonyManager.getColony(colonyId);
         EntityPlayer player = (EntityPlayer)sender;
-            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER))
-            {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
-                return;
-            }
+        final int colonyId = getIthArgument(args, 0, -1);
+
+        Colony chkColony = ColonyManager.getColony(colonyId);
+        if (!chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER))
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+            return;
+        }
+        Colony colony = ColonyManager.getColony(colonyId);
+
 
 
         String playerName = null;

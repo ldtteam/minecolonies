@@ -80,7 +80,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     {
         int colonyId;
 
-        colonyId = GetColonyAndCitizen.getColonyId(player.getCommandSenderEntity().getUniqueID(), player.getEntityWorld(), args);
+        colonyId = GetColonyAndCitizen.getColonyId(player.getCommandSenderEntity().getUniqueID(), player.getEntityWorld());
         Colony chkColony = ColonyManager.getColony(colonyId);
         return canCommandSenderUseCommand(theCommand) && (chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER));
     }
