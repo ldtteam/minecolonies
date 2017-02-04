@@ -152,7 +152,7 @@ public class WorkManager
     public void clearWorkForCitizen(@NotNull final CitizenData citizen)
     {
         dirty = true;
-        workOrders.values().stream().filter(o -> o.isClaimedBy(citizen)).forEach(AbstractWorkOrder::clearClaimedBy);
+        workOrders.values().stream().filter(o -> o != null && o.isClaimedBy(citizen)).forEach(AbstractWorkOrder::clearClaimedBy);
     }
 
     /**
