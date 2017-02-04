@@ -20,8 +20,6 @@ public class TownHallPlacementTest extends AbstractTest
 {
     private static final BlockPos PLACE_POS = new BlockPos(0, 0, 0);
     @Mock
-    private ColonyManager colonyManager;
-    @Mock
     private Colony colony;
     @Mock
     private World world;
@@ -131,7 +129,7 @@ public class TownHallPlacementTest extends AbstractTest
         Assert.assertFalse(EventHandler.onTownHallPlaced(world, player, PLACE_POS));
 
         verifyStatic(never());
-        colonyManager.createColony(world, PLACE_POS, player);
+        ColonyManager.createColony(world, PLACE_POS, player);
     }
 
     @Test
