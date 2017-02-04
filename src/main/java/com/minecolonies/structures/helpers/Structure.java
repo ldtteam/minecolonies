@@ -39,6 +39,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.List;
 
 /**
@@ -105,7 +106,14 @@ public class Structure
                 {
                     decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory(), "minecolonies/");
                 }
-                inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
+                if(decorationFolder.exists())
+                {
+                    inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
+                }
+                else
+                {
+                    throw new FileNotFoundException();
+                }
             }
             catch (final FileNotFoundException e)
             {
