@@ -111,7 +111,7 @@ public class Structure
                 }
                 else
                 {
-                    throw new FileNotFoundException();
+                    throw new FileNotFoundException("Unable to find structure: " + structureName);
                 }
             }
             catch (final FileNotFoundException e)
