@@ -3,24 +3,19 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.util.ServerUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CITIZENSINFO;
+
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CITIZENINFO;
 
 /**
  * Show info of one citizen.
@@ -63,35 +58,27 @@ public class CitizenInfoCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId;
-        int citizenId;
+
         try {
-
-            colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
-            citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
-
-
             /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
             /* here we see if they have colony rank to do this command */
-            if (sender instanceof EntityPlayer)
-            {
                 EntityPlayer player = (EntityPlayer) sender;
-                if (!canPlayerUseCommand(player, CITIZENSINFO))
+                if (!canPlayerUseCommand(player, CITIZENINFO, args))
                 {
                     sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
                     return;
                 }
-            }
-            else
-            {
-                return;
-            }
+
         }
         catch (IllegalArgumentException e)
         {
             sender.addChatMessage(new TextComponentString(e.getMessage()));
             return;
         }
+        int colonyId;
+        int citizenId;
+        colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
+        citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
             final Colony colony = ColonyManager.getColony(colonyId);
             final CitizenData citizenData = colony.getCitizen(citizenId);
             final EntityCitizen entityCitizen = citizenData.getCitizenEntity();

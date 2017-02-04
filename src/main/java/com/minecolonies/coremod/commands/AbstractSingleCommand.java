@@ -4,12 +4,9 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
-import com.minecolonies.coremod.util.ServerUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +19,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     private final String[] parents;
     enum Commands
     {
-        CITIZENSINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER
+        CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER
     }
     /**
      * Initialize this SubCommand with it's parents.
@@ -75,15 +72,17 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * and will verify that they are of correct rank to do so
      *@param player the players/senders name
      * @param theCommand which command to check if the player can use it
+     * @param args this is for some commands where the colony ID or the Citizen name needs to be passed
      * @return boolean
      */
+
     public boolean canPlayerUseCommand(EntityPlayer player, Commands theCommand,@NotNull final String... args)
     {
         int colonyId;
 
         colonyId = GetColonyAndCitizen.getColonyId(player.getCommandSenderEntity().getUniqueID(), player.getEntityWorld(), args);
         Colony chkColony = ColonyManager.getColony(colonyId);
-        return canCommandSenderUseCommand(theCommand) && !chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) && !chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
+        return canCommandSenderUseCommand(theCommand) && (chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER));
     }
     /**
      * Will check the config file to see if players are allowed to use the command that is sent here
@@ -95,7 +94,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     {
         switch (theCommand)
         {
-            case CITIZENSINFO: return Configurations.canPlayerUseCitizensInfoCommand;
+            case CITIZENINFO: return Configurations.canPlayerUseCitizenInfoCommand;
             case COLONYTP: return Configurations.canPlayerUseCTPCommand;
             case KILLCITIZENS: return Configurations.canPlayerUseKillCitizensCommand;
             case LISTCITIZENS: return Configurations.canPlayerUseListCitizensCommand;

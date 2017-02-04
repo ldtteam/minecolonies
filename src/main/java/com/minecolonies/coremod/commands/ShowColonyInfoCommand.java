@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CITIZENSINFO;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SHOWCOLONYINFO;
 
 /**

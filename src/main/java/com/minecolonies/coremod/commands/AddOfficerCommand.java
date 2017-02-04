@@ -20,8 +20,6 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CITIZENSINFO;
-
 /**
  * List all colonies.
  */

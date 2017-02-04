@@ -50,7 +50,7 @@ public final class ConfigurationHandler
             turnOffExplosionsInColonies = config.get(CATEGORY_GAMEPLAY, "turnOffExplosionsInColonies", turnOffExplosionsInColonies, "Turn off explosions inside the colonies radius?").getBoolean();
 
             /* Configs for commands */
-            canPlayerUseCitizensInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizensInfoCommand", canPlayerUseCitizensInfoCommand, "Players get CitizensInfoCommand").getBoolean();
+            canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand, "Players get CitizenInfoCommand").getBoolean();
             canPlayerUseCTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCTPCommand", canPlayerUseCTPCommand, "Players can use the MC TP Command or not").getBoolean();
             canPlayerUseDeleteColonyCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseDeleteColonyCommand", canPlayerUseDeleteColonyCommand, "Players get DeleteColonyCommand").getBoolean();
             canPlayerUseKillCitizensCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseKillCitizensCommand", canPlayerUseKillCitizensCommand, "Players get KillCitizensCommand").getBoolean();

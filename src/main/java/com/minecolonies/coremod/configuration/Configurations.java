@@ -15,14 +15,14 @@ public class Configurations
     public static boolean turnOffExplosionsInColonies = true;
 
     /* Command configs */
-    public static boolean canPlayerUseCTPCommand = false;
-    public static boolean canPlayerUseCitizensInfoCommand = false;
-    public static boolean canPlayerUseListCitizensCommand = false;
-    public static boolean canPlayerRespawnCitizensCommand = false;
-    public static boolean canPlayerUseShowColonyInfoCommand = false;
-    public static boolean canPlayerUseKillCitizensCommand = false;
-    public static boolean canPlayerUseAddOfficerCommand = false;
-    public static boolean canPlayerUseDeleteColonyCommand = false;
+    public static boolean canPlayerUseCTPCommand = true;
+    public static boolean canPlayerUseCitizenInfoCommand = true;
+    public static boolean canPlayerUseListCitizensCommand = true;
+    public static boolean canPlayerRespawnCitizensCommand = true;
+    public static boolean canPlayerUseShowColonyInfoCommand = true;
+    public static boolean canPlayerUseKillCitizensCommand = true;
+    public static boolean canPlayerUseAddOfficerCommand = true;
+    public static boolean canPlayerUseDeleteColonyCommand = true;
 
     public static int maxDistanceFromWorldSpawn = 50000;
 
