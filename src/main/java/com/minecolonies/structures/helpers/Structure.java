@@ -39,7 +39,6 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.nio.file.Files;
 import java.util.List;
 
 /**
