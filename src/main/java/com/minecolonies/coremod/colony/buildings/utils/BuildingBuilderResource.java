@@ -65,7 +65,7 @@ public class BuildingBuilderResource extends ItemStorage
     public String getName()
     {
         //It is the bet way ?
-        return new ItemStack(getItem()).getDisplayName();
+        return new ItemStack(getItem(),1, getDamageValue()).getDisplayName();
     }
 
     /**
