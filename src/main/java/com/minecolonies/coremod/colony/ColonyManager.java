@@ -593,9 +593,7 @@ public final class ColonyManager
      */
     public static void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
-        colonies.stream()
-                .filter(c -> c.getDimension() == event.world.provider.getDimension())
-                .forEach(c -> c.onWorldTick(event));
+        getColonies(event.world).forEach(c -> c.onWorldTick(event));
     }
 
     /**
