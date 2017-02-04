@@ -41,12 +41,12 @@ public class BuildingBuilderResource extends ItemStorage
      * @param damageValue       it's damage value.
      * @param amount            amount for this resource.
      */
-     public BuildingBuilderResource(@NotNull final Item item, final int damageValue, final int amount)
-     {
-         super(item, damageValue, amount, false);
-         this.amountAvailable=0;
-         this.amountPlayer=0;
-     }
+    public BuildingBuilderResource(@NotNull final Item item, final int damageValue, final int amount)
+    {
+        super(item, damageValue, amount, false);
+        this.amountAvailable=0;
+        this.amountPlayer=0;
+    }
 
     /**
      * Constructor for a resource.
@@ -56,11 +56,11 @@ public class BuildingBuilderResource extends ItemStorage
      * @param amount            amount for this resource.
      * @param available         optional amount available for this resource
      */
-     public BuildingBuilderResource(@NotNull final Item item, final int damageValue, final int amount, final int available)
-     {
-         this(item, damageValue, amount);
-         this.amountAvailable=available;
-     }
+    public BuildingBuilderResource(@NotNull final Item item, final int damageValue, final int amount, final int available)
+    {
+        this(item, damageValue, amount);
+        this.amountAvailable=available;
+    }
 
     public String getName()
     {
@@ -70,7 +70,9 @@ public class BuildingBuilderResource extends ItemStorage
 
     /**
      * get the amount available for this resource.
+     *
      * i.e. amount in the chest + amount in the builder's inventory
+     * @return the amount available
      */
     public int getAvailable()
     {
