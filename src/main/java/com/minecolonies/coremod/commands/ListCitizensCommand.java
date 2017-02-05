@@ -77,12 +77,9 @@ public class ListCitizensCommand extends AbstractSingleCommand
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
             return;
         }
-
         final Colony colony = ColonyManager.getColony(colonyId);
-
         final List<CitizenData> citizens = new ArrayList<>(colony.getCitizens().values());
         final int citizenCount = citizens.size();
-
         // check to see if we have to add one page to show the half page
         int page = getIthArgument(args, 0, 1);
         final int halfPage = (citizenCount % CITIZENS_ON_PAGE == 0) ? 0 : 1;

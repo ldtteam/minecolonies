@@ -80,7 +80,6 @@ public class DeleteColonyCommand extends AbstractSingleCommand
                 mayorID = getUUIDFromName(sender, args);
             }
         }
-
         final IColony colony;
         if (colonyId == -1)
         {

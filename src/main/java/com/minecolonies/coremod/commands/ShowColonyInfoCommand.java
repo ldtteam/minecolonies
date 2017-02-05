@@ -59,7 +59,6 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-
         EntityPlayer player = (EntityPlayer)sender;
         /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
         /* here we see if they have colony rank to do this command */

@@ -50,7 +50,6 @@ public class KillCitizenCommand extends AbstractSingleCommand
     {
         return super.getCommandUsage(sender) + "<ColonyId> <CitizenId>";
     }
-
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {

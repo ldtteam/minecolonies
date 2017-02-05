@@ -67,6 +67,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;
         }
+
         /* Check if this is an OP */
         boolean chkPerms = isPlayerOpped(sender, "ctp");
         /* If this is an OP we will let them TP a player */

@@ -77,6 +77,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      */
 
     public boolean canPlayerUseCommand(EntityPlayer player, Commands theCommand,@NotNull final String... args)
+
     {
         int colonyId;
 
