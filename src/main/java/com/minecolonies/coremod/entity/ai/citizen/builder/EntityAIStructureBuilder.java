@@ -9,7 +9,6 @@ import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -65,14 +64,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     @Override
-    public Block getSolidSubstitution(BlockPos location)
+    public IBlockState getSolidSubstitution(BlockPos location)
     {
         final IBlockState filler = world.getBiome(location).fillerBlock;
         if (filler.getBlock() instanceof BlockFalling)
         {
-            return Blocks.DIRT;
+            return Blocks.DIRT.getDefaultState();
         }
-        return filler.getBlock();
+        return filler;
     }
 
     private boolean checkIfExecute()
@@ -118,7 +117,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
             if (wo instanceof WorkOrderBuildDecoration)
             {
-                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
+                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
                         "entity.builder.messageBuildStart",
                         job.getStructure().getName());
             }
@@ -133,7 +132,7 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     return;
                 }
 
-                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
+                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
                         "entity.builder.messageBuildStart",
                         job.getStructure().getName());
 

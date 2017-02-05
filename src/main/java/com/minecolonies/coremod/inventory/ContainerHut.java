@@ -60,7 +60,7 @@ public class ContainerHut extends Container
 
             if (colony != null && !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
             {
-                LanguageHandler.sendPlayerLocalizedMessage(player, "tile.blockHut.messageNoPermission", colony.getName());
+                LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermission", colony.getName());
             }
         }
         return false;

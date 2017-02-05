@@ -477,6 +477,7 @@ public abstract class AbstractBuilding
         compound.setInteger(TAG_ROTATION, rotation);
         compound.setString(TAG_STYLE, style);
 
+
         @NotNull final NBTTagList containerTagList = new NBTTagList();
         for (@NotNull final BlockPos pos: containerList)
         {
@@ -649,7 +650,7 @@ public abstract class AbstractBuilding
         }
 
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
-        LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
     }
 
     /**

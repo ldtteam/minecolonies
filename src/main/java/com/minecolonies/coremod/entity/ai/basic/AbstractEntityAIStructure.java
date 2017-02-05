@@ -169,7 +169,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null)
             {
                 final String structureName = ((AbstractJobStructure) job).getStructure().getName();
-                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
+                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
                         "entity.builder.messageBuildComplete",
                         structureName);
 
@@ -321,8 +321,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 {
                     return true;
                 }
-                block = getSolidSubstitution(structureBlock.blockPosition);
-                blockState = block.getDefaultState();
+                blockState = getSolidSubstitution(structureBlock.blockPosition);
+                block = blockState.getBlock();
             }
 
             worker.faceBlock(structureBlock.blockPosition);
@@ -480,7 +480,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @param location the location the block should be at.
      * @return the Block.
      */
-    public abstract Block getSolidSubstitution(BlockPos location);
+    public abstract IBlockState getSolidSubstitution(BlockPos location);
 
     /**
      * Loads the structure given the name, rotation and position.

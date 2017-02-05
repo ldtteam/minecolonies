@@ -193,7 +193,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         }
         else
         {
-            LanguageHandler.sendPlayerLocalizedMessage(player, BuildToolPlaceMessage.NO_HUT_IN_INVENTORY);
+            LanguageHandler.sendPlayerMessage(player, BuildToolPlaceMessage.NO_HUT_IN_INVENTORY);
         }
     }
 
