@@ -232,5 +232,34 @@ public enum AIState
     /**
      * Gather dropped items after kill.
      */
-    GUARD_GATHERING
+    GUARD_GATHERING,
+
+    /*
+###Deliveryman###
+    */
+
+    /**
+     * Get stuff from the warehouse.
+     */
+    PREPARE_DELIVERY,
+
+    /**
+     * Delivery required items or tools.
+     */
+    DELIVERY,
+
+    /**
+     * Gather not needed items and tools from others.
+     */
+    GATHERING,
+
+    /**
+     * Gather all required items from the warehouse.
+     */
+    GATHER_IN_WAREHOUSE,
+
+    /**
+     * Dump inventory over chests in warehouse.
+     */
+    DUMPING;
 }

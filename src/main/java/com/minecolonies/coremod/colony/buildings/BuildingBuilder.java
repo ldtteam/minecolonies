@@ -8,16 +8,16 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,13 +39,12 @@ public class BuildingBuilder extends AbstractBuildingWorker
     /**
      * Tags to store the needed resourced to nbt.
      */
-    private static final String TAG_RESOURCE_LIST = "resources";
-    private static final String TAG_AMOUNT        = "amount";
+    private static final String TAG_RESOURCE_LIST = "resourcesItem";
 
     /**
      * Contains all resources needed for a certain build.
      */
-    private HashMap<Block, Integer> neededResources = new HashMap<>();
+    private HashMap<String, ItemStack> neededResources = new HashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -132,9 +131,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
         for (int i = 0; i < neededResTagList.tagCount(); ++i)
         {
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
-            final IBlockState state = NBTUtil.readBlockState(neededRes);
-            final int amount = neededRes.getInteger(TAG_AMOUNT);
-            neededResources.put(state.getBlock(), amount);
+            final ItemStack stack = ItemStack.loadItemStackFromNBT(neededRes);
+            neededResources.put(stack.getUnlocalizedName(), stack);
         }
     }
 
@@ -143,11 +141,10 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         super.writeToNBT(compound);
         @NotNull final NBTTagList neededResTagList = new NBTTagList();
-        for (@NotNull final Map.Entry<Block, Integer> entry : neededResources.entrySet())
+        for (@NotNull final ItemStack stack : neededResources.values())
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
-            NBTUtil.writeBlockState(neededRes, entry.getKey().getDefaultState());
-            neededRes.setInteger(TAG_AMOUNT, entry.getValue());
+            stack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
         }
@@ -166,10 +163,11 @@ public class BuildingBuilder extends AbstractBuildingWorker
 
         buf.writeInt(neededResources.size());
 
-        for (@NotNull final Map.Entry<Block, Integer> entry : neededResources.entrySet())
+        for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
         {
-            ByteBufUtils.writeUTF8String(buf, entry.getKey().getLocalizedName());
-            buf.writeInt(entry.getValue());
+            ByteBufUtils.writeUTF8String(buf, entry.getValue().getDisplayName());
+            buf.writeInt(entry.getValue().stackSize);
+
         }
     }
 
@@ -178,26 +176,39 @@ public class BuildingBuilder extends AbstractBuildingWorker
      *
      * @return a new Hashmap.
      */
-    public Map<Block, Integer> getNeededResources()
+    public Map<String, ItemStack> getNeededResources()
     {
         return new HashMap<>(neededResources);
     }
 
     /**
      * Add a new resource to the needed list.
-     *
-     * @param res    the resource.
+     *  @param res    the resource.
      * @param amount the amount.
      */
-    public void addNeededResource(Block res, int amount)
+    public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
         int preAmount = 0;
-        if (this.neededResources.containsKey(res))
+        if (this.neededResources.containsKey(res.getUnlocalizedName()))
         {
-            preAmount = this.neededResources.get(res);
+            preAmount = this.neededResources.get(res.getUnlocalizedName()).stackSize;
         }
-        this.neededResources.put(res, preAmount + amount);
+        res.stackSize = preAmount + amount;
+        this.neededResources.put(res.getUnlocalizedName(), res);
         this.markDirty();
+    }
+
+    /**
+     * Can be overriden by implementations to specify which tools are useful for the worker.
+     * When dumping he will keep these.
+     *
+     * @param stack the stack to decide on
+     * @return if should be kept or not.
+     */
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return Utils.isMiningTool(stack);
     }
 
     /**
@@ -206,21 +217,21 @@ public class BuildingBuilder extends AbstractBuildingWorker
      * @param res    the resource.
      * @param amount the amount.
      */
-    public void reduceNeededResource(Block res, int amount)
+    public void reduceNeededResource(final ItemStack res, final int amount)
     {
         int preAmount = 0;
-        if (this.neededResources.containsKey(res))
+        if (this.neededResources.containsKey(res.getUnlocalizedName()))
         {
-            preAmount = this.neededResources.get(res);
+            preAmount = this.neededResources.get(res.getUnlocalizedName()).stackSize;
         }
 
         if (preAmount - amount <= 0)
         {
-            this.neededResources.remove(res);
+            this.neededResources.remove(res.getUnlocalizedName());
         }
         else
         {
-            this.neededResources.put(res, preAmount - amount);
+            this.neededResources.get(res.getUnlocalizedName()).stackSize = preAmount - amount;
         }
         this.markDirty();
     }
@@ -232,6 +243,16 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         neededResources = new HashMap<>();
         this.markDirty();
+    }
+
+    /**
+     * Check if the builder requires a certain ItemStack for the current construction.
+     * @param stack the stack to test.
+     * @return true if so.
+     */
+    public boolean requiresResourceForBuilding(ItemStack stack)
+    {
+        return neededResources.containsKey(stack.getUnlocalizedName());
     }
 
     /**

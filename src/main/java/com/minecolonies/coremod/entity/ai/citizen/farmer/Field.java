@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -501,11 +500,11 @@ public class Field extends Container
      * @return the ItemSeed
      */
     @Nullable
-    public Item getSeed()
+    public ItemStack getSeed()
     {
         if (inventory.getStackInSlot(0) != null && inventory.getStackInSlot(0).getItem() instanceof IPlantable)
         {
-            return inventory.getStackInSlot(0).getItem();
+            return inventory.getStackInSlot(0);
         }
         return null;
     }

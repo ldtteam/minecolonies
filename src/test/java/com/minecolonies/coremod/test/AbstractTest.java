@@ -35,7 +35,8 @@ public abstract class AbstractTest
         mockStatic(LanguageHandler.class);
         mockStatic(Log.class);
 
-        doNothing().when(LanguageHandler.class, "sendPlayerLocalizedMessage", anyObject(), anyString());
+        doNothing().when(LanguageHandler.class, "sendPlayerMessage", anyObject(), anyString());
+        doNothing().when(LanguageHandler.class, "sendPlayersMessage", anyObject(), anyString());
 
         final Logger logger = LogManager.getLogger(getTestName());
         random = new Random(getTestName().hashCode());

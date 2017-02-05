@@ -145,7 +145,7 @@ public class CitizenData
     }
 
     /**
-     * return the entity instance of the citizen data.
+     * Return the entity instance of the citizen data. Respawn the citizen if needed.
      *
      * @return {@link EntityCitizen} of the citizen data.
      */

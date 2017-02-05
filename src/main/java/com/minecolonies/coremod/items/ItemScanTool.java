@@ -64,7 +64,7 @@ public class ItemScanTool extends AbstractItemMinecolonies
             BlockPosUtil.writeToNBT(compound, "pos1", pos);
             if (worldIn.isRemote)
             {
-                LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.scepterSteel.point");
+                LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.point");
             }
             return EnumActionResult.SUCCESS;
         }
@@ -77,13 +77,13 @@ public class ItemScanTool extends AbstractItemMinecolonies
                 BlockPosUtil.writeToNBT(compound, "pos2", pos2);
                 if (worldIn.isRemote)
                 {
-                    LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.scepterSteel.point2");
+                    LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.point2");
                 }
                 return EnumActionResult.SUCCESS;
             }
             if (worldIn.isRemote)
             {
-                LanguageHandler.sendPlayerLocalizedMessage(playerIn, "item.scepterSteel.samePoint");
+                LanguageHandler.sendPlayerMessage(playerIn, "item.scepterSteel.samePoint");
             }
             return EnumActionResult.FAIL;
         }
@@ -133,6 +133,6 @@ public class ItemScanTool extends AbstractItemMinecolonies
         template.takeBlocksFromWorld(world, blockpos, size, true, Blocks.STRUCTURE_VOID);
         template.setAuthor(Constants.MOD_ID);
 
-        MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), fileName), (EntityPlayerMP) player);
+        MineColonies.getNetwork().sendTo(new SaveScanMessage(template.writeToNBT(new NBTTagCompound()), currentMillis), (EntityPlayerMP) player);
     }
 }

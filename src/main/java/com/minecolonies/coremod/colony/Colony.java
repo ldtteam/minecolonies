@@ -6,7 +6,6 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
@@ -21,7 +20,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -81,7 +79,6 @@ public class Colony implements IColony
     private final List<Achievement> colonyAchievements;
     //  Workload and Jobs
     private final WorkManager                     workManager      = new WorkManager(this);
-    private final MaterialSystem                  materialSystem   = new MaterialSystem();
     @NotNull
     private final Map<BlockPos, AbstractBuilding> buildings        = new HashMap<>();
     //  Citizenry
@@ -803,19 +800,11 @@ public class Colony implements IColony
             //  Cleanup disappeared citizens
             //  It would be really nice if we didn't have to do this... but Citizens can disappear without dying!
             //  Every CITIZEN_CLEANUP_TICK_INCREMENT, cleanup any 'lost' citizens
-            if ((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event))
+            if ((event.world.getWorldTime() % CITIZEN_CLEANUP_TICK_INCREMENT) == 0 && areAllColonyChunksLoaded(event) && townHall != null)
             {
                 //  All chunks within a good range of the colony should be loaded, so all citizens should be loaded
                 //  If we don't have any references to them, destroy the citizen
-                citizens.values().stream().filter(citizen -> citizen.getCitizenEntity() == null)
-                  .forEach(citizen ->
-                  {
-                      if (townHall != null)
-                      {
-                          Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", getID(), citizen.getId()));
-                          spawnCitizen(citizen);
-                      }
-                  });
+                citizens.values().forEach(this::spawnCitizenIfNull);
             }
 
             //  Cleanup Buildings whose Blocks have gone AWOL
@@ -926,6 +915,19 @@ public class Colony implements IColony
     }
 
     /**
+     * Spawn citizen if his entity is null.
+     * @param data his data
+     */
+    public void spawnCitizenIfNull(@NotNull final CitizenData data)
+    {
+        if(data.getCitizenEntity() == null)
+        {
+            Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", this.getID(), data.getId()));
+            spawnCitizen(data);
+        }
+    }
+
+    /**
      * Spawn a citizen with specific citizen data.
      *
      * @param data Data to use to spawn citizen.
@@ -939,11 +941,11 @@ public class Colony implements IColony
             return;
         }
 
-        @Nullable final BlockPos spawnPoint = Utils.scanForBlockNearPoint(world, townHallLocation, 1, 1, 1, 2, Blocks.AIR, Blocks.SNOW_LAYER);
+        final BlockPos spawnPoint = EntityUtils.getSpawnPoint(world, townHallLocation);
 
         if (spawnPoint != null)
         {
-            @Nullable final EntityCitizen entity = new EntityCitizen(world);
+            final EntityCitizen entity = new EntityCitizen(world);
 
             CitizenData citizenData = data;
             if (citizenData == null)
@@ -967,7 +969,7 @@ public class Colony implements IColony
                 if (getMaxCitizens() == getCitizens().size())
                 {
                     //TODO: add Colony Name prefix?
-                    LanguageHandler.sendPlayersLocalizedMessage(
+                    LanguageHandler.sendPlayersMessage(
                             this.getMessageEntityPlayers(),
                             "tile.blockHutTownHall.messageMaxSize");
                 }
@@ -1340,12 +1342,6 @@ public class Colony implements IColony
                  .filter(citizen -> !citizen.getJob().isMissingNeededItem())
                  .map(citizen -> citizen.getWorkBuilding().getLocation())
                  .collect(Collectors.toList());
-    }
-
-    @NotNull
-    public MaterialSystem getMaterialSystem()
-    {
-        return materialSystem;
     }
 
     /**

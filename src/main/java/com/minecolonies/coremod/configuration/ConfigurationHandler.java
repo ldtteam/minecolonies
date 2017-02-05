@@ -46,6 +46,8 @@ public final class ConfigurationHandler
             citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY,
               "citizenRespawnInterval", citizenRespawnInterval, CITIZEN_RESPAWN_INTERVAL_MIN, CITIZEN_RESPAWN_INTERVAL_MAX, "Citizen respawn interval in seconds");
             builderInfiniteResources = config.get(CATEGORY_GAMEPLAY, "builderInfiniteResources", builderInfiniteResources, "Does Builder have infinite resources?").getBoolean();
+            builderBuildBlockDelay = config.get(CATEGORY_GAMEPLAY, "builderBuildBlockDelay", builderBuildBlockDelay, "How many tick between placing blocks for the builder?").getInt();
+            blockMiningDelayModifier = config.get(CATEGORY_GAMEPLAY, "blockMiningDelayModifier", blockMiningDelayModifier, "Block mining Delay modifier, taken into account to determine how long a block need to be successfully mined").getInt();
             enableColonyProtection = config.get(CATEGORY_GAMEPLAY, "enableColonyProtection", enableColonyProtection, "Enable the automatic colony protection?").getBoolean();
             turnOffExplosionsInColonies = config.get(CATEGORY_GAMEPLAY, "turnOffExplosionsInColonies", turnOffExplosionsInColonies, "Turn off explosions inside the colonies radius?").getBoolean();
 

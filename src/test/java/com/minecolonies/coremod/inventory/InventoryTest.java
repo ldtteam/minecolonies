@@ -1,8 +1,6 @@
 package com.minecolonies.coremod.inventory;
 
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.materials.MaterialStore;
-import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.test.AbstractTest;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
@@ -15,23 +13,16 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class InventoryTest extends AbstractTest
 {
-
-    private IInventory     inventory;
-    private MaterialSystem materialSystem;
-    private MaterialStore  materialStore;
+    private IInventory inventory;
 
     @Before
     public void setupInventories()
     {
-        this.materialSystem = new MaterialSystem();
         final TileEntityColonyBuilding colonyBuilding = new TileEntityColonyBuilding();
-        this.materialStore = new MaterialStore(MaterialStore.Type.CHEST, materialSystem);
         final AbstractBuilding mockBuilding = mock(AbstractBuilding.class);
-        when(mockBuilding.getMaterialStore()).thenReturn(this.materialStore);
         colonyBuilding.setBuilding(mockBuilding);
         this.inventory = colonyBuilding;
     }

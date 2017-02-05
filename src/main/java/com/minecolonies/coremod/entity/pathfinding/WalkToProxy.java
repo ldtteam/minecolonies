@@ -33,6 +33,11 @@ public class WalkToProxy
     private static final int MIN_DISTANCE = 25;
 
     /**
+     * Lead the miner to the other side of the shaft.
+     */
+    private static final int OTHER_SIDE_OF_SHAFT = 6;
+
+    /**
      * The worker entity associated with the proxy.
      */
     private final EntityCitizen worker;
@@ -178,9 +183,10 @@ public class WalkToProxy
     {
         BlockPos proxyPoint;
 
-        if (worker.getColonyJob() != null && worker.getColonyJob() instanceof JobMiner)
+        final AbstractBuildingWorker building = worker.getWorkBuilding();
+        if (worker.getColonyJob() != null && worker.getColonyJob() instanceof JobMiner && building instanceof BuildingMiner)
         {
-            proxyPoint = getMinerProxy(target, distanceToPath);
+            proxyPoint = getMinerProxy(target, distanceToPath, (BuildingMiner) building);
         }
         else
         {
@@ -195,7 +201,6 @@ public class WalkToProxy
         return proxyPoint;
     }
 
-    //todo reset on target change. Store target.
     /**
      * Reset the proxy.
      */
@@ -213,18 +218,12 @@ public class WalkToProxy
      * @return a proxy or, if not applicable null.
      */
     @NotNull
-    private BlockPos getMinerProxy(final BlockPos target, final double distanceToPath)
+    private BlockPos getMinerProxy(final BlockPos target, final double distanceToPath, @NotNull final BuildingMiner building)
     {
-        final AbstractBuildingWorker building = worker.getWorkBuilding();
-        if (building == null || !(building instanceof BuildingMiner))
-        {
-            return getProxy(target, worker.getPosition(), distanceToPath);
-        }
+        building.getLadderLocation();
 
-        ((BuildingMiner) building).getLadderLocation();
-
-        final Level level = ((BuildingMiner) building).getCurrentLevel();
-        final BlockPos ladderPos = ((BuildingMiner) building).getLadderLocation();
+        final Level level = building.getCurrentLevel();
+        final BlockPos ladderPos = building.getLadderLocation();
 
         //If his current working level is null, we have nothing to worry about.
         if (level != null)
@@ -260,10 +259,15 @@ public class WalkToProxy
                 //First calculate way to miner building.
                 newProxy = getProxy(buildingPos, worker.getPosition(), BlockPosUtil.getDistanceSquared(worker.getPosition(), buildingPos));
 
-                //Then add the ladder position as the latest node.
-                proxyList.add(new BlockPos(ladderPos.getX(), level.getDepth(), ladderPos.getZ()));
 
-                if(level.getRandomNode().getParent() != null)
+                //Then add the ladder position as the latest node.
+                proxyList.add(
+                        new BlockPos(
+                                ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT
+                                , level.getDepth()
+                                , ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
+
+                if(level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {
                     final List<BlockPos> nodesToTarget = new ArrayList<>();
                     com.minecolonies.coremod.entity.ai.citizen.miner.Node currentNode = level.getNode(level.getRandomNode().getParent());
@@ -281,7 +285,7 @@ public class WalkToProxy
 
                 return newProxy;
             }
-            //If he is on the same Y level as his target and both underground, don't use a proxy. Just don't.
+            //If he is on the same Y level as his target and both underground.
             else if (targetY <= levelDepth)
             {
                 double closestNode = Double.MAX_VALUE;

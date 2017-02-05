@@ -5,6 +5,7 @@ import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.AchievementUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
@@ -146,9 +147,13 @@ public final class ColonyManager
             for (final CitizenData citizenData : new ArrayList<>(colony.getCitizens().values()))
             {
                 Log.getLogger().info("Kill Citizen " + citizenData.getName());
-                final World world = citizenData.getCitizenEntity().getEntityWorld();
-                citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
-                colonyWorlds.add(world);
+                final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
+                if (entityCitizen != null)
+                {
+                    final World world = entityCitizen.getEntityWorld();
+                    citizenData.getCitizenEntity().onDeath(CONSOLE_DAMAGE_SOURCE);
+                    colonyWorlds.add(world);
+                }
             }
             Log.getLogger().info("Removing buildings for " + id);
             for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
