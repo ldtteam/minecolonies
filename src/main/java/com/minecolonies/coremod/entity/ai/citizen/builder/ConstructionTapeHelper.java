@@ -65,7 +65,6 @@ public final class ConstructionTapeHelper
     }
 
     /**
-     *
      * @param world the world.
      * @param block the block.
      * @param tapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
@@ -192,7 +191,7 @@ public final class ConstructionTapeHelper
         }
 
     /**
-     ** Proxy to remove the tape also with the building only.
+     * Proxy to remove the tape also with the building only.
      * @param building the building.
      * @param world the world.
      */
