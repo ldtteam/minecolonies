@@ -172,7 +172,7 @@ public final class ConstructionTapeHelper
 
     public static void removeConstructionTape(@NotNull WorkOrderBuild workOrder,@NotNull World world)
     {
-        final StructureWrapper wrapper = new StructureWrapper(world, (workOrder.getStructureName()));
+        final StructureWrapper wrapper = new StructureWrapper(world, workOrder.getStructureName());
         final BlockPos pos = workOrder.getBuildingLocation();
         int tempRotation = 0;
         if (workOrder.getRotation() == 0 && !(workOrder instanceof WorkOrderBuildDecoration))
