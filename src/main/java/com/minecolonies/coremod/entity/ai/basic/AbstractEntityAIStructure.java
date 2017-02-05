@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -953,8 +954,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         if (buildingWorker instanceof BuildingBuilder)
         {
-            final ItemStack tempStack = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
-            return tempStack == null ? stack : tempStack.copy();
+            final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
+            return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
         }
         return stack;
     }
