@@ -73,10 +73,10 @@ public final class ConstructionTapeHelper
     {
         for (int y = MINHEIGHT; y <= MAXHEIGHT; y++)
         {
-            final BlockPos NewBlock = new BlockPos(block.getX(), y, block.getZ());
-            if (world.getBlockState(NewBlock).getBlock() == tapeOrTapeCorner)
+            final BlockPos newBlock = new BlockPos(block.getX(), y, block.getZ());
+            if (world.getBlockState(newBlock).getBlock() == tapeOrTapeCorner)
             {
-                world.setBlockState(NewBlock, Blocks.AIR.getDefaultState());
+                world.setBlockState(newBlock, Blocks.AIR.getDefaultState());
                 break;
             }
         }
