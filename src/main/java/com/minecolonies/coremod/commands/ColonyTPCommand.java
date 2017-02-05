@@ -181,14 +181,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
      */
     private static boolean isPositionSave(@NotNull ICommandSender sender, BlockPos blockPos)
     {
-        Boolean isSafe;
-        /* take the coords and check to see if that block is any Liquid*/
-        /* we check for all liquids this way, including ones added in by other mods */
-        boolean liquidCheck = sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid();
-        Block blocks = sender.getEntityWorld().getBlockState(blockPos).getBlock();
-        isSafe = blocks != Blocks.AIR && !liquidCheck;
-
-        return isSafe;
+        return sender.getEntityWorld().getBlockState(blockPos).getBlock() != Blocks.AIR && !sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid();
     }
     /**
      * this checks that you are not too close to another colony
