@@ -59,14 +59,16 @@ public class Colony implements IColony
     private static final String TAG_BLOCK                      = "blockState";
 
     //private int autoHostile = 0;//Off
-    private static final String TAG_FIELDS                  = "fields";
-    private static final String TAG_MOB_KILLS               = "mobKills";
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST  = 1;
-    private static final int    NUM_MOBS_ACHIEVEMENT_SECOND = 25;
-    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD  = 100;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH = 500;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH  = 1000;
-    private static final int    CHECK_WAYPOINT_EVERY        = 100;
+    private static final String TAG_FIELDS                        = "fields";
+    private static final String TAG_MOB_KILLS                     = "mobKills";
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST        = 1;
+    private static final int    NUM_MOBS_ACHIEVEMENT_SECOND       = 25;
+    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD        = 100;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH       = 500;
+    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH        = 1000;
+    private static final int    CHECK_WAYPOINT_EVERY              = 100;
+    private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.workingRangeTownHall + 16D);
+    private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
     private final int id;
     //  General Attributes
     private final int dimensionId;
@@ -565,7 +567,8 @@ public class Colony implements IColony
     private void updateSubscribers()
     {
         // If the world or server is null, don't try to update the subscribers this tick.
-        if (world == null || world.getMinecraftServer() == null) {
+        if (world == null || world.getMinecraftServer() == null)
+        {
             return;
         }
 
@@ -575,35 +578,31 @@ public class Colony implements IColony
         subscribers = new HashSet<>();
 
         // Add owners
-        subscribers.addAll(
-          world.getMinecraftServer().getPlayerList().getPlayerList()
-            .stream()
-            .filter(permissions::isSubscriber)
-            .collect(Collectors.toList()));
+        world.getMinecraftServer().getPlayerList().getPlayerList()
+                .stream()
+                .filter(permissions::isSubscriber)
+                .forEachOrdered(subscribers::add);
 
         //  Add nearby players
-        if (world != null)
+        for (final EntityPlayer o : world.playerEntities)
         {
-            for (final EntityPlayer o : world.playerEntities)
+            if (o instanceof EntityPlayerMP)
             {
-                if (o instanceof EntityPlayerMP)
+                @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
+
+                if (subscribers.contains(player))
                 {
-                    @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
+                    //  Already a subscriber
+                    continue;
+                }
 
-                    if (subscribers.contains(player))
-                    {
-                        //  Already a subscriber
-                        continue;
-                    }
-
-                    final double distance = player.getDistanceSq(center);
-                    if (distance < MathUtils.square(Configurations.workingRangeTownHall + 16D)
-                          || (oldSubscribers.contains(player) && distance < MathUtils.square(Configurations.workingRangeTownHall * 2D)))
-                    {
-                        // Players become subscribers if they come within 16 blocks of the edge of the colony
-                        // Players remain subscribers while they remain within double the colony's radius
-                        subscribers.add(player);
-                    }
+                final double distance = player.getDistanceSq(center);
+                if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
+                        || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
+                {
+                    // Players become subscribers if they come within 16 blocks of the edge of the colony
+                    // Players remain subscribers while they remain within double the colony's radius
+                    subscribers.add(player);
                 }
             }
         }
@@ -645,6 +644,7 @@ public class Colony implements IColony
         isBuildingsDirty = false;
         permissions.clearDirty();
 
+        // TODO: look into potentially keeping lists as well
         buildings.values().forEach(AbstractBuilding::clearDirty);
         citizens.values().forEach(CitizenData::clearDirty);
     }

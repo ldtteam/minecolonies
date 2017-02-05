@@ -44,6 +44,6 @@ public class InventoryTest extends AbstractTest
         final Item testItem = mock(Item.class);
         final ItemStack stuff = new ItemStack(testItem, 3);
         inventory.setInventorySlotContents(0, stuff);
-        assertSame(inventory.getStackInSlot(0), stuff);
+        assertSame("Unexpected ItemStack in inventory", inventory.getStackInSlot(0), stuff);
     }
 }
