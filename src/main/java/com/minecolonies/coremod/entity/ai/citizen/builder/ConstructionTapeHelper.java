@@ -1,20 +1,15 @@
 package com.minecolonies.coremod.entity.ai.citizen.builder;
 
-import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.materials.MaterialStore;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.BlockHorizontal;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -163,6 +158,10 @@ public final class ConstructionTapeHelper
 
 
 
+    public static void removeConstructionTape(@NotNull AbstractBuilding building, @NotNull World world)
+    {
+        removeConstructionTape(new WorkOrderBuild(building, 1), world);
+    }
 
     public static void removeConstructionTape(@NotNull WorkOrderBuild workOrder,@NotNull World world)
     {
@@ -187,45 +186,103 @@ public final class ConstructionTapeHelper
         int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
         int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
         int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
-        int y  = wrapper.getPosition().getY();
         if (x1 < x3)
         {
             for (int i = x1; i <= x3; i++)
             {
-                BlockPos row1 = new BlockPos(i, y, z1);
-                BlockPos row2 = new BlockPos(i, y, z3);
-                world.setBlockState(row1, Blocks.AIR.getDefaultState());
-                world.setBlockState(row2, Blocks.AIR.getDefaultState());
+                for (int y = 1; y <= 255; y++)
+                {
+                    BlockPos row1 = new BlockPos(i, y, z1);
+                    BlockPos row2 = new BlockPos(i, y, z3);
+                     if (world.getBlockState(row1).getBlock() == ModBlocks.blockConstructionTape)
+                     {
+                         world.setBlockState(row1, Blocks.AIR.getDefaultState());
+                     }
+                    if (world.getBlockState(row2).getBlock() == ModBlocks.blockConstructionTape)
+                    {
+                        world.setBlockState(row2, Blocks.AIR.getDefaultState());
+                    }
+                }
             }
         }
         else
         {
             for (int i = x3; i <= x1; i++)
             {
-                BlockPos row1 = new BlockPos(i, y, z1);
-                BlockPos row2 = new BlockPos(i, y, z3);
-                world.setBlockState(row1, Blocks.AIR.getDefaultState());
-                world.setBlockState(row2, Blocks.AIR.getDefaultState());
+                for (int y = 1; y <= 255; y++)
+                {
+                    BlockPos row1 = new BlockPos(i, y, z1);
+                    BlockPos row2 = new BlockPos(i, y, z3);
+                    if (world.getBlockState(row1).getBlock() == ModBlocks.blockConstructionTape)
+                    {
+                        world.setBlockState(row1, Blocks.AIR.getDefaultState());
+                    }
+                    if (world.getBlockState(row2).getBlock() == ModBlocks.blockConstructionTape)
+                    {
+                        world.setBlockState(row2, Blocks.AIR.getDefaultState());
+                    }
+                }
             }
         }
         if (z1 < z3)
         {
             for (int i = z1; i <= z3; i++)
             {
-                BlockPos row3 = new BlockPos(x1, y, i);
-                BlockPos row4 = new BlockPos(x3, y, i);
-                world.setBlockState(row3, Blocks.AIR.getDefaultState());
-                world.setBlockState(row4, Blocks.AIR.getDefaultState());
+                for (int y = 1; y <= 255; y++)
+                {
+                    BlockPos row3 = new BlockPos(x1, y, i);
+                    BlockPos row4 = new BlockPos(x3, y, i);
+                    if (world.getBlockState(row3).getBlock() == ModBlocks.blockConstructionTape)
+                    {
+                        world.setBlockState(row3, Blocks.AIR.getDefaultState());
+                    }
+                    if (world.getBlockState(row4).getBlock() == ModBlocks.blockConstructionTape)
+                    {
+                        world.setBlockState(row4, Blocks.AIR.getDefaultState());
+                    }
+                }
             }
         }
         else
         {
             for (int i = z3; i <= z1; i++)
             {
-                BlockPos row3 = new BlockPos(x1, y, i);
-                BlockPos row4 = new BlockPos(x3, y, i);
-                world.setBlockState(row3, Blocks.AIR.getDefaultState());
-                world.setBlockState(row4, Blocks.AIR.getDefaultState());
+                for (int y = 1; y <= 255; y++)
+                {
+                    BlockPos row3 = new BlockPos(x1, y, i);
+                    BlockPos row4 = new BlockPos(x3, y, i);
+                    if (world.getBlockState(row3).getBlock() == ModBlocks.blockConstructionTape)
+                    {
+                        world.setBlockState(row3, Blocks.AIR.getDefaultState());
+                    }
+                    if (world.getBlockState(row4).getBlock() == ModBlocks.blockConstructionTape)
+                    {
+                        world.setBlockState(row4, Blocks.AIR.getDefaultState());
+                    }
+                }
+            }
+        }
+        for (int y = 1; y <= 255; y++)
+        {
+            BlockPos corner1 = new BlockPos(x1, y, z1);
+            BlockPos corner2 = new BlockPos(x1, y, z3);
+            BlockPos corner3 = new BlockPos(x3, y, z1);
+            BlockPos corner4 = new BlockPos(x3, y, z3);
+            if (world.getBlockState(corner1).getBlock() == ModBlocks.blockConstructionTapeC)
+        {
+            world.setBlockState(corner1, Blocks.AIR.getDefaultState());
+        }
+            if (world.getBlockState(corner2).getBlock() == ModBlocks.blockConstructionTapeC)
+            {
+                world.setBlockState(corner2, Blocks.AIR.getDefaultState());
+            }
+            if (world.getBlockState(corner3).getBlock() == ModBlocks.blockConstructionTapeC)
+            {
+                world.setBlockState(corner3, Blocks.AIR.getDefaultState());
+            }
+            if (world.getBlockState(corner4).getBlock() == ModBlocks.blockConstructionTapeC)
+            {
+                world.setBlockState(corner4, Blocks.AIR.getDefaultState());
             }
         }
     }

@@ -6,8 +6,6 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.materials.MaterialStore;
-import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
@@ -538,6 +536,7 @@ public abstract class AbstractBuilding
         {
             InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
             world.updateComparatorOutputLevel(this.location, block);
+            ConstructionTapeHelper.removeConstructionTape(this, world);
         }
     }
 
