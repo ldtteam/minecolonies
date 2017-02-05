@@ -48,13 +48,13 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        final long NBTSizeTrackerMax = 2_000_971_52L;
+        final long nbtSizeTrackerMax = 2_000_971_52L;
         final PacketBuffer pb = new PacketBuffer(buf);
         final ByteBufInputStream stream = new ByteBufInputStream(pb);
 
         try
         {
-            nbttagcompound = CompressedStreamTools.read(stream, new NBTSizeTracker(NBTSizeTrackerMax));
+            nbttagcompound = CompressedStreamTools.read(stream, new NBTSizeTracker(nbtSizeTrackerMax));
         }
         catch (RuntimeException e)
         {
