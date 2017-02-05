@@ -7,6 +7,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -29,12 +30,11 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     private static final String       CITIZEN_HEALTH                  = "§2Health: §f%s §2Max Health: §f%s";
     private static final String       CITIZEN_DESIRED_ACTIVITY        = "§2Desired activity: §f%s §2Current Activity: §f%s";
     private static final String       CITIZEN_HOME_POSITION           = "§2Home position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_WORK_POSITION           = "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_POSITION                = "§2Citizen position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_WORK_POSITION_NULL      = "§2Work position: §4No work position found!";
-    private static final String       CITIZEN_NO_ACTIVITY             = "§4No activity is being desired or executed!";
-
-
+    private static final String       CITIZEN_WORK_POSITION      = "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String       CITIZEN_POSITION           = "§2Citizen position: §4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String       CITIZEN_WORK_POSITION_NULL = "§2Work position: §4No work position found!";
+    private static final String       CITIZEN_NO_ACTIVITY        = "§4No activity is being desired or executed!";
+    private static final String       CITIZEN_NOT_LOADED         = "Citizen entity not loaded!";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -61,6 +61,12 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
         sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION,
                 citizenData.getId(),
                 citizenData.getName())));
+        if (entityCitizen == null)
+        {
+            sender.addChatMessage(new TextComponentTranslation(CITIZEN_NOT_LOADED));
+            return;
+        }
+
         final BlockPos citizenPosition = entityCitizen.getPosition();
         sender.addChatMessage(new TextComponentString(String.format(CITIZEN_POSITION,
                 citizenPosition.getX(),
@@ -83,6 +89,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
                     workingPosition.getY(),
                     workingPosition.getZ())));
         }
+
         sender.addChatMessage(new TextComponentString(String.format(CITIZEN_HEALTH,
                 entityCitizen.getHealth(),
                 entityCitizen.getMaxHealth())));
@@ -101,7 +108,7 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_JOB_NULL)));
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_NO_ACTIVITY)));
         }
-        else
+        else if(entityCitizen.getWorkBuilding() != null)
         {
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_JOB, entityCitizen.getWorkBuilding().getJobName())));
             sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESIRED_ACTIVITY,

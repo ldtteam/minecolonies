@@ -119,7 +119,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
                 continue;
             }
 
-            boolean foundPosition = !findLavaWater(sender, groundPosition) && !findColony(groundPosition, sender.getEntityWorld());
+            boolean foundPosition = isPositionSave(sender, groundPosition) && !findColony(groundPosition, sender.getEntityWorld());
 
             /* Take the return and determine if good or bad */
              /* send info to look to see if another colony is near */
@@ -179,7 +179,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
      * @param sender uses the player to get the world
      * @return isSafe true=safe false=water or lava
      */
-    private static boolean findLavaWater(@NotNull ICommandSender sender, BlockPos blockPos)
+    private static boolean isPositionSave(@NotNull ICommandSender sender, BlockPos blockPos)
     {
         Boolean isSafe;
         /* take the coords and check to see if that block is any Liquid*/
