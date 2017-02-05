@@ -466,7 +466,9 @@ public class Permissions implements IPermissions
             permissionMap.put(rank, Utils.unsetFlag(flags, action.flag));
             markDirty();
         }
-    }    /**
+    }
+
+    /**
      * Returns the rank belonging to the UUID.
      *
      * @param id UUID that you want to check rank of.
@@ -531,6 +533,11 @@ public class Permissions implements IPermissions
     private boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
     {
         @NotNull final Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
+
+        if(players.containsKey(p.id))
+        {
+            players.remove(p.id);
+        }
         players.put(p.id, p);
 
         markDirty();

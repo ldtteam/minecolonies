@@ -29,9 +29,6 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
  */
 public class ColonyTPCommand extends AbstractSingleCommand
 {
-
-    int getBounds = Configurations.maxDistanceFromWorldSpawn;
-
     public static final  String DESC = "ctp";
     private static final int ATTEMPTS = 4;
     private static final int UPPER_BOUNDS = Configurations.maxDistanceFromWorldSpawn * 2;
@@ -39,11 +36,11 @@ public class ColonyTPCommand extends AbstractSingleCommand
     private static final int STARTING_Y = 250;
     private static final double ADDS_TWENTY_PERCENT = 1.20;
     private static final double SAFETY_DROP = 4;
+    private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
 
-    private Random rnd = new Random();
+    private final Random rnd = new Random();
 
-
-    ColonyTPCommand( @NotNull final String...parents)
+    public ColonyTPCommand( @NotNull final String...parents)
     {
         super(parents);
     }
@@ -56,33 +53,41 @@ public class ColonyTPCommand extends AbstractSingleCommand
     }
 
     @Override
-    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException {
-
-        boolean chkPlayer = canCommandSenderUseCommand(COLONYTP);
-
-        /* this checks config to see if player is allowed to use the command */
-        if (!chkPlayer)
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
+    {
+        if (!canCommandSenderUseCommand(COLONYTP))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;
         }
-        /* Check if this is an OP */
-        boolean chkPerms = isPlayerOpped(sender, "ctp");
-        /* If this is an OP we will let them TP a player */
-        if (args.length != 0 && !Configurations.canPlayerUseCTPCommand && chkPerms)
-        {
-            /* lets be sure the player wants a TP and that the OP is not just Trolling */
 
-            World world = sender.getEntityWorld();
-            EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
-            sender = player;
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("TPin Player: "+sender));
+        EntityPlayer playerToTeleport = null;
+
+        if(sender instanceof EntityPlayer)
+        {
+            playerToTeleport = (EntityPlayer) sender;
         }
 
-        sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this aint no joy ride!!!"));
-        /* This is where all the magic happens */
-        /*we will try up to 4 times to locate a safe area. then we have the player try again*/
+        //If the arguments aren't empty, the sender probably wants to teleport another player.
+        if (args.length != 0 && isPlayerOpped(sender, "ctp"))
+        {
+            final World world = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld();
+            playerToTeleport =
+                    ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
+                            .getGameProfileForUsername(args[0]).getId(), world);
 
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("TPin Player: "+ playerToTeleport.getName()));
+        }
+
+        if(playerToTeleport == null)
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(CANT_FIND_PLAYER));
+            return;
+        }
+
+        playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+
+        //Now the position will be calculated, we will try up to 4 times to find a save position.
         int attCounter = 0;
         while (attCounter <= ATTEMPTS)
         {
@@ -109,14 +114,14 @@ public class ColonyTPCommand extends AbstractSingleCommand
             if (!closetoCol)
             {
                 /* everything checks out good make the TP and jump out*/
-                sender.getCommandSenderEntity().setPositionAndUpdate(blockPos.getX(), blockPos.getY() + SAFETY_DROP, blockPos.getZ());
+                playerToTeleport.setPositionAndUpdate(blockPos.getX(), blockPos.getY() + SAFETY_DROP, blockPos.getZ());
                 break;
             }
             else
             {
                 if (attCounter > ATTEMPTS)
                 {
-                    sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
+                    playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
                 }
             }
         }

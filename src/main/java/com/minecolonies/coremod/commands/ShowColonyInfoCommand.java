@@ -11,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
+
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -55,36 +56,29 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         int colonyId;
-        final IColony tempColony;
+        colonyId = getIthArgument(args, 0, -1);
+        IColony tempColony = ColonyManager.getColony(colonyId);
 
         if(sender instanceof EntityPlayer)
         {
-            EntityPlayer player = (EntityPlayer) sender;
-
-            /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
-            /* here we see if they have colony rank to do this command */
             final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
-            colonyId = GetColonyAndCitizen.getColonyId(mayorID, sender.getEntityWorld(), args);
-
-            if (!canPlayerUseCommand(player, SHOWCOLONYINFO, colonyId))
-            {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
-                return;
-            }
-
-            if (colonyId == -1)
+            if (tempColony == null)
             {
                 tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
             }
-            else
+
+            if(tempColony == null)
             {
-                tempColony = ColonyManager.getColony(colonyId);
+                return;
             }
-        }
-        else
-        {
-            colonyId = GetColonyAndCitizen.getColonyId(null, sender.getEntityWorld(), args);
-            tempColony = ColonyManager.getColony(colonyId);
+
+            final EntityPlayer player = (EntityPlayer) sender;
+
+            if (!canPlayerUseCommand(player, SHOWCOLONYINFO, colonyId))
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                return;
+            }
         }
 
         if (tempColony == null)

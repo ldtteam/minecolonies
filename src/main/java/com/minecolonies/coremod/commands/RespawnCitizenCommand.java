@@ -2,25 +2,24 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.Log;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import org.jetbrains.annotations.NotNull;
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RESPAWNCITIZENS;
+
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RESPAWNCITIZENS;
+
 /**
  * List all colonies.
  */
-public class RespawnCitizenCommand extends AbstractSingleCommand
+public class RespawnCitizenCommand extends AbstractCitizensCommands
 {
 
     public static final  String DESC                            = "respawn";
@@ -46,40 +45,20 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
-        int colonyId;
-        int citizenId;
-        try
-        {
-            colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
-            citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
-            EntityPlayer player = (EntityPlayer)sender;
-            /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
-            boolean chkPlayer = !canPlayerUseCommand(player, RESPAWNCITIZENS, colonyId);
-            if (!chkPlayer)
-            {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
-                return;
-            }
-        }
-        catch (IllegalArgumentException e)
-        {
-            sender.addChatMessage(new TextComponentString(e.getMessage()));
-            return;
-        }
-            final Colony colony = ColonyManager.getColony(colonyId);
-            final CitizenData citizenData = colony.getCitizen(citizenId);
-            final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-            sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
-            final BlockPos position = entityCitizen.getPosition();
-            sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        final CitizenData citizenData = colony.getCitizen(citizenId);
+        final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
+        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+        final BlockPos position = entityCitizen.getPosition();
+        sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
 
-            sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
+        sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
 
-            Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
-            server.addScheduledTask(entityCitizen::setDead);
+        Log.getLogger().info("client? " + sender.getEntityWorld().isRemote);
+        server.addScheduledTask(entityCitizen::setDead);
     }
+
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
@@ -95,5 +74,11 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
         return false;
+    }
+
+    @Override
+    public Commands getCommand()
+    {
+        return RESPAWNCITIZENS;
     }
 }

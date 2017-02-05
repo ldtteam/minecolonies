@@ -5,7 +5,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
@@ -17,6 +16,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
 {
 
     private final String[] parents;
+    public static final String NOT_PERMITTED = "You are not allowed to do that!";
     enum Commands
     {
         CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER

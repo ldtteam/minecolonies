@@ -5,7 +5,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingMiner;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
 import com.minecolonies.coremod.colony.jobs.JobMiner;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.entity.ai.citizen.miner.*;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.EntityUtils;
