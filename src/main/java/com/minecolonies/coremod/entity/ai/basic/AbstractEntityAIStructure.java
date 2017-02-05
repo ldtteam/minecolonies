@@ -384,8 +384,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 {
                     return true;
                 }
-                block = getSolidSubstitution(structureBlock.blockPosition);
-                blockState = block.getDefaultState();
+                blockState = getSolidSubstitution(structureBlock.blockPosition);
+                block = blockState.getBlock();
             }
 
             worker.faceBlock(structureBlock.blockPosition);
@@ -457,6 +457,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         //We need to deal with materials
         requestMaterialsIfRequired();
     }
+
+    /**
+     * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
+     *
+     * @param location the location the block should be at.
+     * @return the Block.
+     */
+    public abstract IBlockState getSolidSubstitution(BlockPos location);
 
     /**
      * Loads the structure given the name, rotation and position.
@@ -678,14 +686,6 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         }
         return items;
     }
-
-    /**
-     * Searches a handy block to substitute a non-solid space which should be guaranteed solid.
-     *
-     * @param location the location the block should be at.
-     * @return the Block.
-     */
-    public abstract Block getSolidSubstitution(BlockPos location);
 
     private boolean checkIfCanceled()
     {
