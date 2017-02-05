@@ -25,9 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import static net.minecraft.util.EnumFacing.*;
 
 /**
- * This block is used as a substitution block for the Builder.
- * Every solid block can be substituted by this block in schematics.
- * This helps make schematics independent from location and ground.
+ * This block is used as a border to show the size of the building.
+ * It also shows that the building is in the progress of being built.
  */
 public class BlockConstructionTape extends Block
 {

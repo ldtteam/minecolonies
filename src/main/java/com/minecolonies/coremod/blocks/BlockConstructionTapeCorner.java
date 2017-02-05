@@ -25,11 +25,10 @@ import org.jetbrains.annotations.Nullable;
 import static net.minecraft.util.EnumFacing.*;
 
 /**
- * This block is used as a substitution block for the Builder.
- * Every solid block can be substituted by this block in schematics.
- * This helps make schematics independent from location and ground.
+ * This Block has the same purpose as the BlockConstructionTape.
+ * The only difference is: it's a corner piece.
  */
-public class BlockConstructionTapeC extends Block
+public class BlockConstructionTapeCorner extends Block
 {
 
     /**
@@ -45,7 +44,7 @@ public class BlockConstructionTapeC extends Block
     /**
      * This blocks name.
      */
-    private static final String BLOCK_NAME = "blockConstructionTapeC";
+    private static final String BLOCK_NAME = "blockConstructionTapeCorner";
 
     /**
      * The resistance this block has.
@@ -150,7 +149,7 @@ public class BlockConstructionTapeC extends Block
      * Constructor for the Substitution block.
      * sets the creative tab, as well as the resistance and the hardness.
      */
-    public BlockConstructionTapeC()
+    public BlockConstructionTapeCorner()
     {
         super(Material.WOOD);
         initBlock();

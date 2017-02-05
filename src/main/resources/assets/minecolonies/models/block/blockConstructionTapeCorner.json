@@ -6,8 +6,8 @@
         "1": "minecolonies:blocks/constructionTape/constructionTape_east-west",
         "2": "minecolonies:blocks/constructionTape/constructionTape_south",
         "3": "minecolonies:blocks/constructionTape/constructionTape_up-down",
-        "4": "minecolonies:blocks/constructionTape/constructionTape_c",
-        "5": "minecolonies:blocks/constructionTape/constructionTape_c2",
+        "4": "minecolonies:blocks/constructionTape/constructionTape_corner",
+        "5": "minecolonies:blocks/constructionTape/constructionTape_corner2",
         "6": "minecolonies:blocks/constructionTape/constructionTapeStudMiddle",
         "7": "minecolonies:blocks/constructionTape/constructionTapeStudMiddle2"
     },

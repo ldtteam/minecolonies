@@ -24,6 +24,16 @@ public final class ConstructionTapeHelper
     public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
 
     /**
+     * Private Constructor to hide implicit one.
+     */
+    private ConstructionTapeHelper()
+    {
+        /**
+         * Intentionally left empty.
+         */
+    }
+
+    /**
      * Check if a block is placeable and return new Y position
      * @param x Block X position
      * @param y Block Y position
@@ -48,17 +58,6 @@ public final class ConstructionTapeHelper
         return newY;
     }
 
-
-    /**
-     * Private Constructor to hide implicit one.
-     */
-    private ConstructionTapeHelper()
-    {
-        /**
-         * Intentionally left empty.
-         */
-    }
-
     /**
      * Proxy to place the tape also with the building only.
      * @param building the building.
@@ -68,7 +67,6 @@ public final class ConstructionTapeHelper
     {
         placeConstructionTape(new WorkOrderBuild(building, 1), world);
     }
-
 
     public static void placeConstructionTape(@NotNull WorkOrderBuild workOrder, @NotNull World world)
     {
@@ -154,10 +152,10 @@ public final class ConstructionTapeHelper
             final BlockPos corner3 = new BlockPos(x3, newY, z1);
             newY = checkIfPlaceable(x3,y,z3,world);
             final BlockPos corner4 = new BlockPos(x3, newY, z3);
-            world.setBlockState(corner1, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.SOUTH));
-            world.setBlockState(corner2, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.EAST));
-            world.setBlockState(corner3, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.WEST));
-            world.setBlockState(corner4, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.NORTH));
+            world.setBlockState(corner1, ModBlocks.blockConstructionTapeCorner.getDefaultState().withProperty(FACING, EnumFacing.SOUTH));
+            world.setBlockState(corner2, ModBlocks.blockConstructionTapeCorner.getDefaultState().withProperty(FACING, EnumFacing.EAST));
+            world.setBlockState(corner3, ModBlocks.blockConstructionTapeCorner.getDefaultState().withProperty(FACING, EnumFacing.WEST));
+            world.setBlockState(corner4, ModBlocks.blockConstructionTapeCorner.getDefaultState().withProperty(FACING, EnumFacing.NORTH));
         }
 
     /**
@@ -271,25 +269,25 @@ public final class ConstructionTapeHelper
                 }
             }
         }
-        for (int y = MinHeight; y <= MinHeight; y++)
+        for (int y = MinHeight; y <= MaxHeight; y++)
         {
             final BlockPos corner1 = new BlockPos(x1, y, z1);
             final BlockPos corner2 = new BlockPos(x1, y, z3);
             final BlockPos corner3 = new BlockPos(x3, y, z1);
             final BlockPos corner4 = new BlockPos(x3, y, z3);
-            if (world.getBlockState(corner1).getBlock() == ModBlocks.blockConstructionTapeC)
+            if (world.getBlockState(corner1).getBlock() == ModBlocks.blockConstructionTapeCorner)
         {
             world.setBlockState(corner1, Blocks.AIR.getDefaultState());
         }
-            if (world.getBlockState(corner2).getBlock() == ModBlocks.blockConstructionTapeC)
+            if (world.getBlockState(corner2).getBlock() == ModBlocks.blockConstructionTapeCorner)
             {
                 world.setBlockState(corner2, Blocks.AIR.getDefaultState());
             }
-            if (world.getBlockState(corner3).getBlock() == ModBlocks.blockConstructionTapeC)
+            if (world.getBlockState(corner3).getBlock() == ModBlocks.blockConstructionTapeCorner)
             {
                 world.setBlockState(corner3, Blocks.AIR.getDefaultState());
             }
-            if (world.getBlockState(corner4).getBlock() == ModBlocks.blockConstructionTapeC)
+            if (world.getBlockState(corner4).getBlock() == ModBlocks.blockConstructionTapeCorner)
             {
                 world.setBlockState(corner4, Blocks.AIR.getDefaultState());
             }
