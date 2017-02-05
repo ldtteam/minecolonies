@@ -11,7 +11,6 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -160,6 +159,9 @@ public class BlockConstructionTape extends Block
         return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @SideOnly(Side.CLIENT)
     @Override
     @Deprecated
@@ -168,6 +170,9 @@ public class BlockConstructionTape extends Block
         return true;
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @Override
     @Deprecated
     public boolean isOpaqueCube(final IBlockState state)
@@ -190,6 +195,9 @@ public class BlockConstructionTape extends Block
         return BlockRenderLayer.SOLID;
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @Override
     @Deprecated
     public boolean isFullCube(final IBlockState state)
@@ -203,6 +211,9 @@ public class BlockConstructionTape extends Block
         return true;
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @Override
     @Deprecated
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
