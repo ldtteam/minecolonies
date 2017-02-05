@@ -244,10 +244,10 @@ public final class ConstructionTapeHelper
         {
             for (int i = x3; i <= x1; i++)
             {
-                final BlockPos Block1 = new BlockPos(i, 0, z1);
-                final BlockPos Block2 = new BlockPos(i, 0, z3);
-                removeTapeIfNecessary(world,Block1,ModBlocks.blockConstructionTape);
-                removeTapeIfNecessary(world,Block2,ModBlocks.blockConstructionTape);
+                final BlockPos block1 = new BlockPos(i, 0, z1);
+                final BlockPos block2 = new BlockPos(i, 0, z3);
+                removeTapeIfNecessary(world,block1,ModBlocks.blockConstructionTape);
+                removeTapeIfNecessary(world,block2,ModBlocks.blockConstructionTape);
             }
         }
         if (z1 < z3)
