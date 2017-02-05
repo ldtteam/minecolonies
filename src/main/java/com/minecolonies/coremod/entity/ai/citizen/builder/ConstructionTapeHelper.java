@@ -234,10 +234,10 @@ public final class ConstructionTapeHelper
         {
             for (int i = x1; i <= x3; i++)
             {
-                final BlockPos Block1 = new BlockPos(i, 0, z1);
-                final BlockPos Block2 = new BlockPos(i, 0, z3);
-                removeTapeIfNecessary(world,Block1,ModBlocks.blockConstructionTape);
-                removeTapeIfNecessary(world,Block2,ModBlocks.blockConstructionTape);
+                final BlockPos block1 = new BlockPos(i, 0, z1);
+                final BlockPos block2 = new BlockPos(i, 0, z3);
+                removeTapeIfNecessary(world,block1,ModBlocks.blockConstructionTape);
+                removeTapeIfNecessary(world,block2,ModBlocks.blockConstructionTape);
             }
         }
         else
@@ -254,20 +254,20 @@ public final class ConstructionTapeHelper
         {
             for (int i = z1; i <= z3; i++)
             {
-                final BlockPos Block1 = new BlockPos(x1, 0, i);
-                final BlockPos Block2 = new BlockPos(x3, 0, i);
-                removeTapeIfNecessary(world,Block1,ModBlocks.blockConstructionTape);
-                removeTapeIfNecessary(world,Block2,ModBlocks.blockConstructionTape);
+                final BlockPos block1 = new BlockPos(x1, 0, i);
+                final BlockPos block2 = new BlockPos(x3, 0, i);
+                removeTapeIfNecessary(world,block1,ModBlocks.blockConstructionTape);
+                removeTapeIfNecessary(world,block2,ModBlocks.blockConstructionTape);
             }
         }
         else
         {
             for (int i = z3; i <= z1; i++)
             {
-                final BlockPos Block1 = new BlockPos(x1, 0, i);
-                final BlockPos Block2 = new BlockPos(x3, 0, i);
-                removeTapeIfNecessary(world,Block1,ModBlocks.blockConstructionTape);
-                removeTapeIfNecessary(world,Block2,ModBlocks.blockConstructionTape);
+                final BlockPos block1 = new BlockPos(x1, 0, i);
+                final BlockPos block2 = new BlockPos(x3, 0, i);
+                removeTapeIfNecessary(world,block1,ModBlocks.blockConstructionTape);
+                removeTapeIfNecessary(world,block2,ModBlocks.blockConstructionTape);
             }
         }
             final BlockPos corner1 = new BlockPos(x1, 0, z1);
