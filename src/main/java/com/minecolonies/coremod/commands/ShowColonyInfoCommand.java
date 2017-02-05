@@ -3,18 +3,13 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.util.ServerUtils;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -59,38 +54,36 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-
-        EntityPlayer player = (EntityPlayer)sender;
-        /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
-        /* here we see if they have colony rank to do this command */
-        if (!canPlayerUseCommand(player, SHOWCOLONYINFO))
-        {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
-            return;
-        }
-        int colonyId = -1;
-        UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
-        colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
-
-        if (args.length != 0)
-        {
-            try
-            {
-                colonyId = Integer.parseInt(args[0]);
-            }
-            catch (final NumberFormatException e)
-            {
-                mayorID = getUUIDFromName(sender, args);
-            }
-        }
-
+        int colonyId;
         final IColony tempColony;
-        if (colonyId == -1)
+
+        if(sender instanceof EntityPlayer)
         {
-            tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
+            EntityPlayer player = (EntityPlayer) sender;
+
+            /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
+            /* here we see if they have colony rank to do this command */
+            final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
+            colonyId = GetColonyAndCitizen.getColonyId(mayorID, sender.getEntityWorld(), args);
+
+            if (!canPlayerUseCommand(player, SHOWCOLONYINFO, colonyId))
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                return;
+            }
+
+            if (colonyId == -1)
+            {
+                tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
+            }
+            else
+            {
+                tempColony = ColonyManager.getColony(colonyId);
+            }
         }
         else
         {
+            colonyId = GetColonyAndCitizen.getColonyId(null, sender.getEntityWorld(), args);
             tempColony = ColonyManager.getColony(colonyId);
         }
 
@@ -107,8 +100,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
             return;
         }
 
-        /* final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter()); */
-        Colony colony = ColonyManager.getColony(colonyId);
+        final Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
         {
             if (colonyId == -1 && args.length != 0)

@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.ColonyManager;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
@@ -44,6 +45,7 @@ public final class GetColonyAndCitizen
     public static int getColonyId(@NotNull final UUID mayorID, @NotNull final World world, @NotNull final String... args)
     {
         int colonyId;
+        Log.getLogger().info(args.length);
         if (args.length == NORMAL_ARGUMENT_LENGTH || args.length == ID_AND_NAME_ARGUMENT_LENGTH)
         {
             try
@@ -72,7 +74,7 @@ public final class GetColonyAndCitizen
         }
         else
         {
-            throw new IllegalArgumentException(UNKNOWN_ERROR);
+            colonyId = -1;
         }
         if (colonyId >= 0 && ColonyManager.getColony(colonyId) == null)
         {

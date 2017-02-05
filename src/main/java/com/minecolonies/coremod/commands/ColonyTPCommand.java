@@ -5,7 +5,6 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -74,7 +73,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
         {
             /* lets be sure the player wants a TP and that the OP is not just Trolling */
 
-            World world = Minecraft.getMinecraft().theWorld;
+            World world = sender.getEntityWorld();
             EntityPlayer player = ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache().getGameProfileForUsername(args[0]).getId(),world);
             sender = player;
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("TPin Player: "+sender));

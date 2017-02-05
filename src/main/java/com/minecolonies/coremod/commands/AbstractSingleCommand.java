@@ -28,7 +28,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      */
     public AbstractSingleCommand(@NotNull final String... parents)
     {
-        this.parents = parents;
+        this.parents = parents.clone();
     }
 
     /**
@@ -70,19 +70,21 @@ public abstract class AbstractSingleCommand implements ISubCommand
     /**
      * Will check the config file to see if players are allowed to use the command that is sent here
      * and will verify that they are of correct rank to do so
-     *@param player the players/senders name
+      *@param player the players/senders name
      * @param theCommand which command to check if the player can use it
-     * @param args this is for some commands where the colony ID or the Citizen name needs to be passed
+     * @param colonyId the id of the colony.
      * @return boolean
      */
 
-    public boolean canPlayerUseCommand(EntityPlayer player, Commands theCommand,@NotNull final String... args)
+    public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
     {
-        int colonyId;
-
-        colonyId = GetColonyAndCitizen.getColonyId(player.getCommandSenderEntity().getUniqueID(), player.getEntityWorld());
-        Colony chkColony = ColonyManager.getColony(colonyId);
-        return canCommandSenderUseCommand(theCommand) && (chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER));
+        final Colony chkColony = ColonyManager.getColony(colonyId);
+        if(chkColony == null)
+        {
+            return false;
+        }
+        return canCommandSenderUseCommand(theCommand)
+                && (chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER));
     }
     /**
      * Will check the config file to see if players are allowed to use the command that is sent here

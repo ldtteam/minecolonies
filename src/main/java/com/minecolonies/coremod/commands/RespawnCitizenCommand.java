@@ -56,7 +56,7 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
             citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
             EntityPlayer player = (EntityPlayer)sender;
             /* this checks config to see if player is allowed to use the command and if they are mayor or office of the Colony */
-            boolean chkPlayer = !canPlayerUseCommand(player, RESPAWNCITIZENS);
+            boolean chkPlayer = !canPlayerUseCommand(player, RESPAWNCITIZENS, colonyId);
             if (!chkPlayer)
             {
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
