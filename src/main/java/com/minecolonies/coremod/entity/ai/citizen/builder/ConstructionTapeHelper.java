@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
@@ -56,6 +57,27 @@ public final class ConstructionTapeHelper
             else {newY = newY-1;}
         }
         return newY;
+    }
+
+    /**
+     *
+     * @param world the world.
+     * @param Block the block.
+     * @param TapeOrTapeCorner Is the checked block supposed to be ConstructionTape or ConstructionTapeCorner.
+     */
+    public static void removeTapeIfNecessary(@NotNull World world,@NotNull BlockPos Block,@NotNull Block TapeOrTapeCorner)
+    {
+        int MinHeight = 1;
+        int MaxHeight = 255;
+        for (int y = MinHeight; y <= MaxHeight; y++)
+        {
+            final BlockPos NewBlock = new BlockPos(Block.getX(), y, Block.getZ());
+            if (world.getBlockState(NewBlock).getBlock() == TapeOrTapeCorner)
+            {
+                world.setBlockState(NewBlock, Blocks.AIR.getDefaultState());
+                break;
+            }
+        }
     }
 
     /**
@@ -175,6 +197,7 @@ public final class ConstructionTapeHelper
         final StructureWrapper wrapper = new StructureWrapper(world, workOrder.getStructureName());
         final BlockPos pos = workOrder.getBuildingLocation();
         int tempRotation = 0;
+        final IBlockState Air = Blocks.AIR.getDefaultState();
         if (workOrder.getRotation() == 0 && !(workOrder instanceof WorkOrderBuildDecoration))
         {
             final IBlockState blockState = world.getBlockState(pos);
@@ -193,106 +216,53 @@ public final class ConstructionTapeHelper
         int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
         int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
         int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
-        int MinHeight = 1;
-        int MaxHeight = 255;
         if (x1 < x3)
         {
             for (int i = x1; i <= x3; i++)
             {
-                for (int y = MinHeight; y <= MaxHeight; y++)
-                {
-                    final BlockPos row1 = new BlockPos(i, y, z1);
-                    final BlockPos row2 = new BlockPos(i, y, z3);
-                     if (world.getBlockState(row1).getBlock() == ModBlocks.blockConstructionTape)
-                     {
-                         world.setBlockState(row1, Blocks.AIR.getDefaultState());
-                     }
-                    if (world.getBlockState(row2).getBlock() == ModBlocks.blockConstructionTape)
-                    {
-                        world.setBlockState(row2, Blocks.AIR.getDefaultState());
-                    }
-                }
+                final BlockPos Block1 = new BlockPos(i, 0, z1);
+                final BlockPos Block2 = new BlockPos(i, 0, z3);
+                removeTapeIfNecessary(world,Block1,ModBlocks.blockConstructionTape);
+                removeTapeIfNecessary(world,Block2,ModBlocks.blockConstructionTape);
             }
         }
         else
         {
             for (int i = x3; i <= x1; i++)
             {
-                for (int y = MinHeight; y <= MaxHeight; y++)
-                {
-                    final BlockPos row1 = new BlockPos(i, y, z1);
-                    final BlockPos row2 = new BlockPos(i, y, z3);
-                    if (world.getBlockState(row1).getBlock() == ModBlocks.blockConstructionTape)
-                    {
-                        world.setBlockState(row1, Blocks.AIR.getDefaultState());
-                    }
-                    if (world.getBlockState(row2).getBlock() == ModBlocks.blockConstructionTape)
-                    {
-                        world.setBlockState(row2, Blocks.AIR.getDefaultState());
-                    }
-                }
+                final BlockPos Block1 = new BlockPos(i, 0, z1);
+                final BlockPos Block2 = new BlockPos(i, 0, z3);
+                removeTapeIfNecessary(world,Block1,ModBlocks.blockConstructionTape);
+                removeTapeIfNecessary(world,Block2,ModBlocks.blockConstructionTape);
             }
         }
         if (z1 < z3)
         {
             for (int i = z1; i <= z3; i++)
             {
-                for (int y = MinHeight; y <= MaxHeight; y++)
-                {
-                    final BlockPos row3 = new BlockPos(x1, y, i);
-                    final BlockPos row4 = new BlockPos(x3, y, i);
-                    if (world.getBlockState(row3).getBlock() == ModBlocks.blockConstructionTape)
-                    {
-                        world.setBlockState(row3, Blocks.AIR.getDefaultState());
-                    }
-                    if (world.getBlockState(row4).getBlock() == ModBlocks.blockConstructionTape)
-                    {
-                        world.setBlockState(row4, Blocks.AIR.getDefaultState());
-                    }
-                }
+                final BlockPos Block1 = new BlockPos(x1, 0, i);
+                final BlockPos Block2 = new BlockPos(x3, 0, i);
+                removeTapeIfNecessary(world,Block1,ModBlocks.blockConstructionTape);
+                removeTapeIfNecessary(world,Block2,ModBlocks.blockConstructionTape);
             }
         }
         else
         {
             for (int i = z3; i <= z1; i++)
             {
-                for (int y = MinHeight; y <= MaxHeight; y++)
-                {
-                    final BlockPos row3 = new BlockPos(x1, y, i);
-                    final BlockPos row4 = new BlockPos(x3, y, i);
-                    if (world.getBlockState(row3).getBlock() == ModBlocks.blockConstructionTape)
-                    {
-                        world.setBlockState(row3, Blocks.AIR.getDefaultState());
-                    }
-                    if (world.getBlockState(row4).getBlock() == ModBlocks.blockConstructionTape)
-                    {
-                        world.setBlockState(row4, Blocks.AIR.getDefaultState());
-                    }
-                }
+                final BlockPos Block1 = new BlockPos(x1, 0, i);
+                final BlockPos Block2 = new BlockPos(x3, 0, i);
+                removeTapeIfNecessary(world,Block1,ModBlocks.blockConstructionTape);
+                removeTapeIfNecessary(world,Block2,ModBlocks.blockConstructionTape);
             }
         }
-        for (int y = MinHeight; y <= MaxHeight; y++)
-        {
-            final BlockPos corner1 = new BlockPos(x1, y, z1);
-            final BlockPos corner2 = new BlockPos(x1, y, z3);
-            final BlockPos corner3 = new BlockPos(x3, y, z1);
-            final BlockPos corner4 = new BlockPos(x3, y, z3);
-            if (world.getBlockState(corner1).getBlock() == ModBlocks.blockConstructionTapeCorner)
-        {
-            world.setBlockState(corner1, Blocks.AIR.getDefaultState());
-        }
-            if (world.getBlockState(corner2).getBlock() == ModBlocks.blockConstructionTapeCorner)
-            {
-                world.setBlockState(corner2, Blocks.AIR.getDefaultState());
-            }
-            if (world.getBlockState(corner3).getBlock() == ModBlocks.blockConstructionTapeCorner)
-            {
-                world.setBlockState(corner3, Blocks.AIR.getDefaultState());
-            }
-            if (world.getBlockState(corner4).getBlock() == ModBlocks.blockConstructionTapeCorner)
-            {
-                world.setBlockState(corner4, Blocks.AIR.getDefaultState());
-            }
-        }
+            final BlockPos corner1 = new BlockPos(x1, 0, z1);
+            final BlockPos corner2 = new BlockPos(x1, 0, z3);
+            final BlockPos corner3 = new BlockPos(x3, 0, z1);
+            final BlockPos corner4 = new BlockPos(x3, 0, z3);
+            removeTapeIfNecessary(world,corner1,ModBlocks.blockConstructionTapeCorner);
+            removeTapeIfNecessary(world,corner2,ModBlocks.blockConstructionTapeCorner);
+            removeTapeIfNecessary(world,corner3,ModBlocks.blockConstructionTapeCorner);
+            removeTapeIfNecessary(world,corner4,ModBlocks.blockConstructionTapeCorner);
     }
 }
