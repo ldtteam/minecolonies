@@ -40,6 +40,11 @@ public class ColonyTPCommand extends AbstractSingleCommand
 
     private final Random rnd = new Random();
 
+    /**
+     * Initialize this SubCommand with it's parents.
+     *
+     * @param parents an array of all the parents.
+     */
     public ColonyTPCommand( @NotNull final String...parents)
     {
         super(parents);
@@ -86,7 +91,16 @@ public class ColonyTPCommand extends AbstractSingleCommand
         }
 
         playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+        teleportPlayer(sender, playerToTeleport);
+    }
 
+    /**
+     * Method used to teleport the player.
+     * @param sender the sender to have access to the world.
+     * @param playerToTeleport the player which shall be teleported.
+     */
+    private void teleportPlayer(final ICommandSender sender, final EntityPlayer playerToTeleport)
+    {
         //Now the position will be calculated, we will try up to 4 times to find a save position.
         int attCounter = 0;
         while (attCounter <= ATTEMPTS)
@@ -94,38 +108,30 @@ public class ColonyTPCommand extends AbstractSingleCommand
             attCounter++;
             int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
             int z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-            boolean areaSafe;
-            boolean closetoCol= true;
 
-            BlockPos blockPos = new BlockPos(x,STARTING_Y,z);
-            /* send info to look for land */
-            blockPos = findLand(blockPos, sender.getEntityWorld());
-            /* only continue if the findLand has a good return*/
-            if (blockPos != null)
+            //Search for a ground position
+            final BlockPos groundPosition = findLand(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld());
+
+            //If no position found
+            if (groundPosition == null)
             {
-                /* ok now we take the new coords and do our other checks */
-                /* send info to look for lava or water */
-                areaSafe = findLavaWater(sender, blockPos);
-                closetoCol = !areaSafe || findColony(blockPos, sender.getEntityWorld());
+                attCounter++;
+                continue;
             }
+
+            boolean foundPosition = !findLavaWater(sender, groundPosition) && !findColony(groundPosition, sender.getEntityWorld());
+
             /* Take the return and determine if good or bad */
              /* send info to look to see if another colony is near */
 
-            if (!closetoCol)
+            if (foundPosition)
             {
                 /* everything checks out good make the TP and jump out*/
-                playerToTeleport.setPositionAndUpdate(blockPos.getX(), blockPos.getY() + SAFETY_DROP, blockPos.getZ());
-                break;
-            }
-            else
-            {
-                if (attCounter > ATTEMPTS)
-                {
-                    playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
-                }
+                playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
+                return;
             }
         }
-
+        playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
     }
 
     /**
@@ -136,27 +142,28 @@ public class ColonyTPCommand extends AbstractSingleCommand
      * @param blockPos for the current block LOC
      * @return blockPos to be used for the TP
      */
-    private static BlockPos findLand(BlockPos blockPos, World world)
+    private static BlockPos findLand(final BlockPos blockPos, final World world)
     {
         int top = STARTING_Y;
         int bot = 0;
         int mid = STARTING_Y;
 
         BlockPos foundland = null;
-        /* we are doing a binary check to limit the amount of checks (usually 9 this wa) */
+        BlockPos tempPos = blockPos;
+        //We are doing a binary search to limit the amount of checks (usually at most 9 this way)
         while (top >= bot)
         {
-            blockPos = new BlockPos( blockPos.getX(),mid, blockPos.getZ());
-            Block blocks = world.getBlockState(blockPos).getBlock();
-            if (blocks == Blocks.AIR && world.canSeeSky(blockPos))
+            tempPos = new BlockPos( tempPos.getX(),mid, tempPos.getZ());
+            Block blocks = world.getBlockState(tempPos).getBlock();
+            if (blocks == Blocks.AIR && world.canSeeSky(tempPos))
             {
                 top = mid - 1;
-                foundland = blockPos;
+                foundland = tempPos;
             }
             else
             {
                 bot = mid + 1;
-                foundland = blockPos;
+                foundland = tempPos;
             }
             mid = (bot + top)/2;
         }
