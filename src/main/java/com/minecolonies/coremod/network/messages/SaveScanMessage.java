@@ -4,7 +4,6 @@ import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.util.ClientStructureWrapper;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
-import io.netty.handler.codec.EncoderException;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
@@ -49,12 +48,13 @@ public class SaveScanMessage implements IMessage, IMessageHandler<SaveScanMessag
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        PacketBuffer pb = new PacketBuffer(buf);
-        ByteBufInputStream stream = new ByteBufInputStream(pb);
+        final long NBTSizeTrackerMax = 2_000_971_52L;
+        final PacketBuffer pb = new PacketBuffer(buf);
+        final ByteBufInputStream stream = new ByteBufInputStream(pb);
 
         try
         {
-            nbttagcompound = CompressedStreamTools.read(stream, new NBTSizeTracker(200097152L));
+            nbttagcompound = CompressedStreamTools.read(stream, new NBTSizeTracker(NBTSizeTrackerMax));
         }
         catch (RuntimeException e)
         {
