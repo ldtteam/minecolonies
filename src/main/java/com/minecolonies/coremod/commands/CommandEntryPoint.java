@@ -60,9 +60,7 @@ public class CommandEntryPoint extends CommandBase
      * Only allow OP's execute the commands.
      *
      * @return the int permission level (3 for OP).
-
-    * @Override
-    * public int getRequiredPermissionLevel(){return OP_PERMISSION_LEVEL;}
+     * public int getRequiredPermissionLevel(){return OP_PERMISSION_LEVEL;}
      */
     @NotNull
     @Override

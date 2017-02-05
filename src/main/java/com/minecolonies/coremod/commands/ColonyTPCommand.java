@@ -183,6 +183,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
     {
         return sender.getEntityWorld().getBlockState(blockPos).getBlock() != Blocks.AIR && !sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid();
     }
+
     /**
      * this checks that you are not too close to another colony
      * before TP
@@ -190,7 +191,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
      * @param blockPos for the current block LOC
      * @return colNear false=no true=yes
      */
-    private boolean findColony(BlockPos blockPos, World world)
+    private static boolean findColony(BlockPos blockPos, World world)
     {
         Colony nearestCol = ColonyManager.getClosestColony(world, blockPos);
         Boolean colNear;
@@ -213,6 +214,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
         colNear = dist < wd;
         return colNear;
     }
+    
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
