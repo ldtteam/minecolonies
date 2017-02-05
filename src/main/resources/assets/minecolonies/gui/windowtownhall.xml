@@ -59,7 +59,7 @@
 
             <group spacing="4" size="100% 92" pos="0 29">
                 <button id="build" align="TOP_MIDDLE" size="116 20"
-                        label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)"
+                        label="$(com.minecolonies.coremod.gui.townHall.build)"
                 />
                 <button id="repair" align="TOP_MIDDLE" size="116 20"
                         label="$(com.minecolonies.coremod.gui.townHall.repair)"/>
