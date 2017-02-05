@@ -23,6 +23,14 @@ public final class ConstructionTapeHelper
 {
     public static final  PropertyDirection FACING     = BlockHorizontal.FACING;
 
+    /**
+     * Check if a block is placeable and return new Y position
+     * @param x Block X position
+     * @param y Block Y position
+     * @param z Block Z position
+     * @param world the world
+     * @return The new Y position
+     */
 
     public static int checkIfPlaceable(@NotNull int x, @NotNull int y, @NotNull int z, @NotNull World world)
     {
@@ -31,15 +39,11 @@ public final class ConstructionTapeHelper
         while (working)
 
         {
-            BlockPos block = new BlockPos(x, newY, z);
-            BlockPos blockMin1 = new BlockPos(x, newY-1, z);
-            if (world.getBlockState(block).isFullBlock() || world.getBlockState(block).getMaterial().isLiquid())
-                newY = newY+1;
-            else
-            if (world.getBlockState(blockMin1).isFullBlock() || world.getBlockState(blockMin1).getMaterial().isLiquid())
-                working = false;
-            else
-                newY = newY-1;
+            final BlockPos block = new BlockPos(x, newY, z);
+            final BlockPos blockMin1 = new BlockPos(x, newY-1, z);
+            if (world.getBlockState(block).isFullBlock() || world.getBlockState(block).getMaterial().isLiquid()) {newY = newY+1;}
+            else if (world.getBlockState(blockMin1).isFullBlock() || world.getBlockState(blockMin1).getMaterial().isLiquid()) {working = false;}
+            else {newY = newY-1;}
         }
         return newY;
     }
@@ -99,10 +103,10 @@ public final class ConstructionTapeHelper
                 for (int i = x1+1; i < x3; i++)
                 {
                     newY = checkIfPlaceable(i,y,z1,world);
-                    BlockPos row1 = new BlockPos(i, newY, z1);
+                    final BlockPos row1 = new BlockPos(i, newY, z1);
                     world.setBlockState(row1, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.SOUTH));
                     newY = checkIfPlaceable(i,y,z3,world);
-                    BlockPos row2 = new BlockPos(i, newY, z3);
+                    final BlockPos row2 = new BlockPos(i, newY, z3);
                     world.setBlockState(row2, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.NORTH));
                 }
             }
@@ -111,10 +115,10 @@ public final class ConstructionTapeHelper
                 for (int i = x3+1; i < x1; i++)
                 {
                     newY = checkIfPlaceable(i,y,z1,world);
-                    BlockPos row1 = new BlockPos(i, newY, z1);
+                    final BlockPos row1 = new BlockPos(i, newY, z1);
                     world.setBlockState(row1, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.SOUTH));
                     newY = checkIfPlaceable(i,y,z3,world);
-                    BlockPos row2 = new BlockPos(i, newY, z3);
+                    final BlockPos row2 = new BlockPos(i, newY, z3);
                     world.setBlockState(row2, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.NORTH));
                 }
             }
@@ -123,10 +127,10 @@ public final class ConstructionTapeHelper
                 for (int i = z1+1; i < z3; i++)
                 {
                     newY = checkIfPlaceable(x1,y,i,world);
-                    BlockPos row3 = new BlockPos(x1, newY, i);
+                    final BlockPos row3 = new BlockPos(x1, newY, i);
                     world.setBlockState(row3, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.EAST));
                     newY = checkIfPlaceable(x3,y,i,world);
-                    BlockPos row4 = new BlockPos(x3, newY, i);
+                    final BlockPos row4 = new BlockPos(x3, newY, i);
                     world.setBlockState(row4, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.WEST));
                 }
             }
@@ -135,29 +139,32 @@ public final class ConstructionTapeHelper
                 for (int i = z3+1; i < z1; i++)
                 {
                     newY = checkIfPlaceable(x1,y,i,world);
-                    BlockPos row3 = new BlockPos(x1, newY, i);
+                    final BlockPos row3 = new BlockPos(x1, newY, i);
                     world.setBlockState(row3, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.EAST));
                     newY = checkIfPlaceable(x3,y,i,world);
-                    BlockPos row4 = new BlockPos(x3, newY, i);
+                    final BlockPos row4 = new BlockPos(x3, newY, i);
                     world.setBlockState(row4, ModBlocks.blockConstructionTape.getDefaultState().withProperty(FACING, EnumFacing.WEST));
                 }
             }
             newY = checkIfPlaceable(x1,y,z1,world);
-            BlockPos corner1 = new BlockPos(x1, newY, z1);
+            final BlockPos corner1 = new BlockPos(x1, newY, z1);
             newY = checkIfPlaceable(x1,y,z3,world);
-            BlockPos corner2 = new BlockPos(x1, newY, z3);
+            final BlockPos corner2 = new BlockPos(x1, newY, z3);
             newY = checkIfPlaceable(x3,y,z1,world);
-            BlockPos corner3 = new BlockPos(x3, newY, z1);
+            final BlockPos corner3 = new BlockPos(x3, newY, z1);
             newY = checkIfPlaceable(x3,y,z3,world);
-            BlockPos corner4 = new BlockPos(x3, newY, z3);
+            final BlockPos corner4 = new BlockPos(x3, newY, z3);
             world.setBlockState(corner1, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.SOUTH));
             world.setBlockState(corner2, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.EAST));
             world.setBlockState(corner3, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.WEST));
             world.setBlockState(corner4, ModBlocks.blockConstructionTapeC.getDefaultState().withProperty(FACING, EnumFacing.NORTH));
         }
 
-
-
+    /**
+     ** Proxy to remove the tape also with the building only.
+     * @param building the building.
+     * @param world the world.
+     */
     public static void removeConstructionTape(@NotNull AbstractBuilding building, @NotNull World world)
     {
         removeConstructionTape(new WorkOrderBuild(building, 1), world);
@@ -186,14 +193,16 @@ public final class ConstructionTapeHelper
         int z1 = wrapper.getPosition().getZ() - wrapper.getOffset().getZ() - 1;
         int x3 = wrapper.getPosition().getX() + (wrapper.getWidth() - wrapper.getOffset().getX());
         int z3 = wrapper.getPosition().getZ() + (wrapper.getLength() - wrapper.getOffset().getZ());
+        int MinHeight = 1;
+        int MaxHeight = 255;
         if (x1 < x3)
         {
             for (int i = x1; i <= x3; i++)
             {
-                for (int y = 1; y <= 255; y++)
+                for (int y = MinHeight; y <= MaxHeight; y++)
                 {
-                    BlockPos row1 = new BlockPos(i, y, z1);
-                    BlockPos row2 = new BlockPos(i, y, z3);
+                    final BlockPos row1 = new BlockPos(i, y, z1);
+                    final BlockPos row2 = new BlockPos(i, y, z3);
                      if (world.getBlockState(row1).getBlock() == ModBlocks.blockConstructionTape)
                      {
                          world.setBlockState(row1, Blocks.AIR.getDefaultState());
@@ -209,10 +218,10 @@ public final class ConstructionTapeHelper
         {
             for (int i = x3; i <= x1; i++)
             {
-                for (int y = 1; y <= 255; y++)
+                for (int y = MinHeight; y <= MaxHeight; y++)
                 {
-                    BlockPos row1 = new BlockPos(i, y, z1);
-                    BlockPos row2 = new BlockPos(i, y, z3);
+                    final BlockPos row1 = new BlockPos(i, y, z1);
+                    final BlockPos row2 = new BlockPos(i, y, z3);
                     if (world.getBlockState(row1).getBlock() == ModBlocks.blockConstructionTape)
                     {
                         world.setBlockState(row1, Blocks.AIR.getDefaultState());
@@ -228,10 +237,10 @@ public final class ConstructionTapeHelper
         {
             for (int i = z1; i <= z3; i++)
             {
-                for (int y = 1; y <= 255; y++)
+                for (int y = MinHeight; y <= MaxHeight; y++)
                 {
-                    BlockPos row3 = new BlockPos(x1, y, i);
-                    BlockPos row4 = new BlockPos(x3, y, i);
+                    final BlockPos row3 = new BlockPos(x1, y, i);
+                    final BlockPos row4 = new BlockPos(x3, y, i);
                     if (world.getBlockState(row3).getBlock() == ModBlocks.blockConstructionTape)
                     {
                         world.setBlockState(row3, Blocks.AIR.getDefaultState());
@@ -247,10 +256,10 @@ public final class ConstructionTapeHelper
         {
             for (int i = z3; i <= z1; i++)
             {
-                for (int y = 1; y <= 255; y++)
+                for (int y = MinHeight; y <= MaxHeight; y++)
                 {
-                    BlockPos row3 = new BlockPos(x1, y, i);
-                    BlockPos row4 = new BlockPos(x3, y, i);
+                    final BlockPos row3 = new BlockPos(x1, y, i);
+                    final BlockPos row4 = new BlockPos(x3, y, i);
                     if (world.getBlockState(row3).getBlock() == ModBlocks.blockConstructionTape)
                     {
                         world.setBlockState(row3, Blocks.AIR.getDefaultState());
@@ -262,12 +271,12 @@ public final class ConstructionTapeHelper
                 }
             }
         }
-        for (int y = 1; y <= 255; y++)
+        for (int y = MinHeight; y <= MinHeight; y++)
         {
-            BlockPos corner1 = new BlockPos(x1, y, z1);
-            BlockPos corner2 = new BlockPos(x1, y, z3);
-            BlockPos corner3 = new BlockPos(x3, y, z1);
-            BlockPos corner4 = new BlockPos(x3, y, z3);
+            final BlockPos corner1 = new BlockPos(x1, y, z1);
+            final BlockPos corner2 = new BlockPos(x1, y, z3);
+            final BlockPos corner3 = new BlockPos(x3, y, z1);
+            final BlockPos corner4 = new BlockPos(x3, y, z3);
             if (world.getBlockState(corner1).getBlock() == ModBlocks.blockConstructionTapeC)
         {
             world.setBlockState(corner1, Blocks.AIR.getDefaultState());
