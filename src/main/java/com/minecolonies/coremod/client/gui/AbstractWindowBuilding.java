@@ -99,6 +99,12 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
             button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable"));
             button.disable();
         }
+        else
+        {
+            final Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgrade"));
+            button.enable();
+        }
     }
 
     @Override
