@@ -288,6 +288,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         onJobChanged(getColonyJob());
     }
 
+    @Nullable
     public AbstractJob getColonyJob()
     {
         return citizenData == null ? null : citizenData.getJob();
