@@ -4,6 +4,7 @@ import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.SwitchView;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.network.messages.BuildRequestMessage;
@@ -25,12 +26,18 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
     private static final String BUTTON_PREVPAGE     = "prevPage";
     private static final String BUTTON_NEXTPAGE     = "nextPage";
     private static final String VIEW_PAGES          = "pages";
+    private static final String PAGE_ACTIONS        = "pageActions";
+
     /**
      * Type B is a class that extends {@link AbstractBuildingWorker.View}.
      */
     protected final B building;
+    private final SwitchView switchView;
+    private final Label title;
     private final Button buttonPrevPage;
     private final Button buttonNextPage;
+    private final Button buttonBuild;
+    private final Button buttonRepair;
 
     /**
      * Constructor for the windows that are associated with buildings.
@@ -46,8 +53,13 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         registerButton(BUTTON_BUILD, this::buildClicked);
         registerButton(BUTTON_REPAIR, this::repairClicked);
         registerButton(BUTTON_INVENTORY, this::inventoryClicked);
+        switchView     = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class);
+        title          = findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class);
         buttonNextPage = findPaneOfTypeByID(BUTTON_NEXTPAGE, Button.class);
         buttonPrevPage = findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class);
+        buttonBuild    = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
+        buttonRepair   = findPaneOfTypeByID(BUTTON_REPAIR, Button.class);
+
     }
 
     /**
@@ -74,43 +86,99 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
     }
 
-    /**
-     * Called when the Window is displayed.
-     */
-    @Override
-    public void onOpened()
+    private void updateButtonBuild(final AbstractBuilding.View buildingView)
     {
-        if (buttonPrevPage != null)
+        if (buttonBuild == null)
         {
-            findPaneOfTypeByID(BUTTON_PREVPAGE, Button.class).setEnabled(false);
+            return;
         }
-        findPaneOfTypeByID(LABEL_BUILDING_NAME, Label.class).setLabelText(LanguageHandler.format(getBuildingName()) + " " + building.getBuildingLevel());
 
-        if (building.getBuildingLevel() == 0)
+        if (buildingView.isBuildingMaxLevel())
         {
-            findPaneOfTypeByID(BUTTON_BUILD, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
-            findPaneByID(BUTTON_REPAIR).disable();
+            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable"));
+            buttonBuild.disable();
         }
-        else if (building.isBuildingMaxLevel())
+        else if (buildingView.isRepairing())
         {
-            final Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable"));
-            button.disable();
+            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
+            buttonBuild.disable();
+        }
+        else if (buildingView.isBuilding())
+        {
+            if (buildingView.getBuildingLevel() == 0)
+            {
+                buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelBuild"));
+            }
+            else
+            {
+                buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelUpgrade"));
+            }
+            buttonBuild.enable();
         }
         else
         {
-            final Button button = findPaneOfTypeByID(BUTTON_BUILD, Button.class);
-            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgrade"));
-            button.enable();
+            if (buildingView.getBuildingLevel() == 0)
+            {
+                buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
+            }
+            else
+            {
+                buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgrade"));
+            }
+            buttonBuild.enable();
         }
     }
 
-    /**
-     * Returns the name of a building.
-     *
-     * @return Name of a building.
-     */
-    public abstract String getBuildingName();
+
+    private void updateButtonRepair(final AbstractBuilding.View buildingView)
+    {
+        if (buttonRepair == null)
+        {
+            return;
+        }
+
+        if (buildingView.isRepairing())
+        {
+            buttonRepair.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelRepair"));
+            buttonRepair.enable();
+        }
+        else if (buildingView.isBuilding() || buildingView.getBuildingLevel() == 0)
+        {
+            buttonRepair.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.repair"));
+            buttonRepair.disable();
+        }
+        else
+        {
+            buttonRepair.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.repair"));
+            buttonRepair.enable();
+        }
+    }
+
+    @Override
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        // Check if there is no page switcher
+        // Or that we are on the correct page
+        if (switchView == null || switchView.getCurrentView().getID().equals(PAGE_ACTIONS))
+        {
+            final AbstractBuilding.View buildingView = building.getColony().getBuilding(building.getID());
+
+            if (buttonPrevPage != null)
+            {
+                buttonPrevPage.disable();
+            }
+
+            if (title != null)
+            {
+                title.setLabelText(LanguageHandler.format(getBuildingName()) + " " + buildingView.getBuildingLevel());
+            }
+
+            updateButtonBuild(buildingView);
+            updateButtonRepair(buildingView);
+        }
+    }
 
     @Override
     public void onButtonClicked(@NotNull final Button button)
@@ -132,4 +200,11 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
                 break;
         }
     }
+
+    /**
+     * Returns the name of a building.
+     *
+     * @return Name of a building.
+     */
+    public abstract String getBuildingName();
 }
