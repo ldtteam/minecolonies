@@ -183,7 +183,6 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
      */
     protected void onException(final RuntimeException e)
     {
-
     }
 
     /**
