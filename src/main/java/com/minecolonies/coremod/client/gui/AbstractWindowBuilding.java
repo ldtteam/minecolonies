@@ -86,6 +86,9 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         MineColonies.getNetwork().sendToServer(new OpenInventoryMessage(building));
     }
 
+    /**
+     * Update the state and label for the Build button.
+     */
     private void updateButtonBuild(final AbstractBuilding.View buildingView)
     {
         if (buttonBuild == null)
@@ -129,7 +132,9 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
         }
     }
 
-
+    /**
+     * Update the state and label for the Repair button.
+     */
     private void updateButtonRepair(final AbstractBuilding.View buildingView)
     {
         if (buttonRepair == null)
