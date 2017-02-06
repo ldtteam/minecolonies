@@ -182,9 +182,12 @@ public class BlockConstructionTapeCorner extends Block
 
     /**
      * Convert the given metadata into a BlockState for this Block.
+     *
+     * @deprecated (Remove this as soon as minecraft offers anything better).
      */
     @NotNull
     @Override
+    @Deprecated
     public IBlockState getStateFromMeta(final int meta)
     {
         EnumFacing enumfacing = EnumFacing.getFront(meta);
@@ -197,14 +200,22 @@ public class BlockConstructionTapeCorner extends Block
         return this.getDefaultState().withProperty(FACING, enumfacing);
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @SideOnly(Side.CLIENT)
     @Override
+    @Deprecated
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
         return true;
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @Override
+    @Deprecated
     public boolean isOpaqueCube(final IBlockState state)
     {
         return false;
@@ -225,7 +236,11 @@ public class BlockConstructionTapeCorner extends Block
         return BlockRenderLayer.SOLID;
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @Override
+    @Deprecated
     public boolean isFullCube(final IBlockState state)
     {
         return false;
@@ -237,7 +252,11 @@ public class BlockConstructionTapeCorner extends Block
         return true;
     }
 
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
     @Override
+    @Deprecated
     public AxisAlignedBB getBoundingBox(final IBlockState state, final IBlockAccess source, final BlockPos pos)
     {
         if (state.getValue(FACING).equals(NORTH))
