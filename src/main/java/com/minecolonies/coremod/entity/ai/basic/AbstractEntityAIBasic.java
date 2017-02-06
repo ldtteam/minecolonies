@@ -155,16 +155,33 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @Override
     protected void onException(final RuntimeException e)
     {
-        final int timeout = EXCEPTION_TIMEOUT * exceptionTimer;
-        // wait for longer now
-        exceptionTimer *= 2;
-        final String name = this.worker.getName();
-        final BlockPos workerPosition = worker.getPosition();
-        final String jobName = worker.getColonyJob().getName();
-        Log.getLogger().info("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
-        this.setDelay(timeout);
-        // fix for printing the actual exception
-        e.printStackTrace();
+        try
+        {
+            final int timeout = EXCEPTION_TIMEOUT * exceptionTimer;
+            this.setDelay(timeout);
+            // wait for longer now
+            exceptionTimer *= 2;
+            if (worker != null)
+            {
+                final String name = this.worker.getName();
+                final BlockPos workerPosition = worker.getPosition();
+                final AbstractJob colonyJob = worker.getColonyJob();
+                final String jobName = colonyJob == null ? "null" : colonyJob.getName();
+                Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
+            }
+            else
+            {
+                Log.getLogger().error("Pausing Entity that is null for " + timeout + " Seconds because of error:");
+            }
+
+            // fix for printing the actual exception
+            e.printStackTrace();
+        }catch (RuntimeException exp){
+            Log.getLogger().error("Welp reporting crashed:");
+            exp.printStackTrace();
+            Log.getLogger().error("Caused by ai exception:");
+            e.printStackTrace();
+        }
     }
 
     /**
