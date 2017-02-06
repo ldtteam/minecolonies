@@ -17,6 +17,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
 
     private final String[] parents;
     public static final String NOT_PERMITTED = "You are not allowed to do that!";
+    public static final Integer PERMNUM = 3;
     enum Commands
     {
         CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER
@@ -96,14 +97,22 @@ public abstract class AbstractSingleCommand implements ISubCommand
     {
         switch (theCommand)
         {
-            case CITIZENINFO: return Configurations.canPlayerUseCitizenInfoCommand;
-            case COLONYTP: return Configurations.canPlayerUseCTPCommand;
-            case KILLCITIZENS: return Configurations.canPlayerUseKillCitizensCommand;
-            case LISTCITIZENS: return Configurations.canPlayerUseListCitizensCommand;
-            case RESPAWNCITIZENS: return Configurations.canPlayerRespawnCitizensCommand;
-            case SHOWCOLONYINFO: return Configurations.canPlayerUseShowColonyInfoCommand;
-            case ADDOFFICER: return Configurations.canPlayerUseAddOfficerCommand;
-            case DELETECOLONY: return Configurations.canPlayerUseDeleteColonyCommand;
+            case CITIZENINFO:
+                return Configurations.canPlayerUseCitizenInfoCommand;
+            case COLONYTP:
+                return Configurations.canPlayerUseCTPCommand;
+            case KILLCITIZENS:
+                return Configurations.canPlayerUseKillCitizensCommand;
+            case LISTCITIZENS:
+                return Configurations.canPlayerUseListCitizensCommand;
+            case RESPAWNCITIZENS:
+                return Configurations.canPlayerRespawnCitizensCommand;
+            case SHOWCOLONYINFO:
+                return Configurations.canPlayerUseShowColonyInfoCommand;
+            case ADDOFFICER:
+                return Configurations.canPlayerUseAddOfficerCommand;
+            case DELETECOLONY:
+                return Configurations.canPlayerUseDeleteColonyCommand;
         }
         return false;
     }
@@ -119,7 +128,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
     {
         boolean checkedDone;
-        checkedDone= FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(3,cmdName);
+        checkedDone= FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(PERMNUM,cmdName);
         return checkedDone;
     }
 }
