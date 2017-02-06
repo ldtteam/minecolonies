@@ -96,15 +96,10 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
             return;
         }
 
+        buttonBuild.setEnabled(!buildingView.isBuildingMaxLevel() && !buildingView.isRepairing());
         if (buildingView.isBuildingMaxLevel())
         {
             buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgradeUnavailable"));
-            buttonBuild.disable();
-        }
-        else if (buildingView.isRepairing())
-        {
-            buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.build"));
-            buttonBuild.disable();
         }
         else if (buildingView.isBuilding())
         {
@@ -116,7 +111,6 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
             {
                 buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelUpgrade"));
             }
-            buttonBuild.enable();
         }
         else
         {
@@ -128,7 +122,6 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
             {
                 buttonBuild.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.upgrade"));
             }
-            buttonBuild.enable();
         }
     }
 
@@ -142,20 +135,14 @@ public abstract class AbstractWindowBuilding<B extends AbstractBuildingHut.View>
             return;
         }
 
+        buttonRepair.setEnabled(buildingView.getBuildingLevel() != 0 && !buildingView.isBuilding());
         if (buildingView.isRepairing())
         {
             buttonRepair.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.cancelRepair"));
-            buttonRepair.enable();
-        }
-        else if (buildingView.isBuilding() || buildingView.getBuildingLevel() == 0)
-        {
-            buttonRepair.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.repair"));
-            buttonRepair.disable();
         }
         else
         {
             buttonRepair.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.repair"));
-            buttonRepair.enable();
         }
     }
 
