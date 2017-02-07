@@ -599,7 +599,6 @@ public abstract class AbstractBuilding
         if (buildingLevel < getMaxBuildingLevel())
         {
             requestWorkOrder(buildingLevel + 1);
-            markDirty();
         }
     }
 
@@ -655,6 +654,7 @@ public abstract class AbstractBuilding
 
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        markDirty();
     }
 
     /**
@@ -676,7 +676,6 @@ public abstract class AbstractBuilding
         if (buildingLevel > 0)
         {
             requestWorkOrder(buildingLevel);
-            markDirty();
         }
     }
 
