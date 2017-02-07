@@ -94,6 +94,11 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private WalkToProxy proxy;
 
     /**
+     * This will count up and progressively disable the entity
+     */
+    private int exceptionTimer = 1;
+
+    /**
      * Sets up some important skeleton stuff for every ai.
      *
      * @param job the job class
@@ -171,8 +176,35 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @Override
     protected void onException(final RuntimeException e)
     {
-        Log.getLogger().info("Pausing Entity for 5 Seconds");
-        this.setDelay(EXCEPTION_TIMEOUT);
+        try
+        {
+            final int timeout = EXCEPTION_TIMEOUT * exceptionTimer;
+            this.setDelay(timeout);
+            // wait for longer now
+            exceptionTimer *= 2;
+            if (worker != null)
+            {
+                final String name = this.worker.getName();
+                final BlockPos workerPosition = worker.getPosition();
+                final AbstractJob colonyJob = worker.getColonyJob();
+                final String jobName = colonyJob == null ? "null" : colonyJob.getName();
+                Log.getLogger().error("Pausing Entity " + name + " (" + jobName + ") at " + workerPosition + " for " + timeout + " Seconds because of error:");
+            }
+            else
+            {
+                Log.getLogger().error("Pausing Entity that is null for " + timeout + " Seconds because of error:");
+            }
+
+            // fix for printing the actual exception
+            e.printStackTrace();
+        }
+        catch (RuntimeException exp)
+        {
+            Log.getLogger().error("Welp reporting crashed:");
+            exp.printStackTrace();
+            Log.getLogger().error("Caused by ai exception:");
+            e.printStackTrace();
+        }
     }
 
     /**
