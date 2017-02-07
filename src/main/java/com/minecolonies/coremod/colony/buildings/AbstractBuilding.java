@@ -615,7 +615,6 @@ public abstract class AbstractBuilding
             if (o.getBuildingLocation().equals(getID()))
             {
                 return o.getUpgradeLevel();
-
             }
         }
 
