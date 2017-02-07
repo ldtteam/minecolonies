@@ -67,7 +67,6 @@ public abstract class AbstractBuilding
      * The tag to store the style of the building.
      */
     private static final String TAG_STYLE = "style";
-
     private static final int NO_WORK_ORDER = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
@@ -599,15 +598,7 @@ public abstract class AbstractBuilding
     {
         if (buildingLevel < getMaxBuildingLevel())
         {
-            if (getCurrentWorkOrderLevel()==NO_WORK_ORDER)
-            {
-                requestWorkOrder(buildingLevel + 1);
-            }
-            else
-            {
-                removeWorkOrder();
-            }
-
+            requestWorkOrder(buildingLevel + 1);
             markDirty();
         }
     }
@@ -629,6 +620,16 @@ public abstract class AbstractBuilding
         }
 
         return NO_WORK_ORDER;
+    }
+
+    /**
+     * Checks if this building have a work order.
+     *
+     * @return true if the building is building, upgrading or repairing.
+     */
+    public boolean hasWorkOrder()
+    {
+        return getCurrentWorkOrderLevel() == NO_WORK_ORDER;
     }
 
     /**
@@ -675,15 +676,7 @@ public abstract class AbstractBuilding
     {
         if (buildingLevel > 0)
         {
-            if (getCurrentWorkOrderLevel()==NO_WORK_ORDER)
-            {
-                requestWorkOrder(buildingLevel);
-            }
-            else
-            {
-                removeWorkOrder();
-            }
-
+            requestWorkOrder(buildingLevel);
             markDirty();
         }
     }
@@ -700,6 +693,7 @@ public abstract class AbstractBuilding
             if (o.getBuildingLocation().equals(getID()))
             {
                 colony.getWorkManager().removeWorkOrder(o.getID());
+                markDirty();
                 return;
             }
         }
