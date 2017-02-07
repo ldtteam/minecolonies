@@ -297,11 +297,10 @@ public class BlockConstructionTapeCorner extends Block
         }
     }
 
-    // =======================================================================
-    // ======================= Rendering & IBlockState =======================
-    // =======================================================================
+    @SuppressWarnings("deprecation")
+    @NotNull
     @Override
-    public IBlockState onBlockPlaced(
+    public IBlockState getStateForPlacement(
             final World worldIn,
             final BlockPos pos,
             final EnumFacing facing,
@@ -309,9 +308,9 @@ public class BlockConstructionTapeCorner extends Block
             final float hitY,
             final float hitZ,
             final int meta,
-            @Nullable final EntityLivingBase placer)
+            final EntityLivingBase placer)
     {
-        @NotNull final EnumFacing enumFacing = (placer == null) ? NORTH : EnumFacing.fromAngle(placer.rotationYaw);
+        @NotNull final EnumFacing enumFacing = (placer == null) ? EnumFacing.NORTH : EnumFacing.fromAngle(placer.rotationYaw);
         return this.getDefaultState().withProperty(FACING, enumFacing);
     }
 }
