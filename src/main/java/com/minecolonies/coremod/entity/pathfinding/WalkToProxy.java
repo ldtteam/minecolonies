@@ -245,9 +245,9 @@ public class WalkToProxy
 
                 proxyList.add(
                         new BlockPos(
-                                ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT
-                                , level.getDepth()
-                                , ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
+                                ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                                level.getDepth(),
+                                ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
                 return getProxy(target, worker.getPosition(), distanceToPath);
 
                 //If he already is at ladder location, the closest node automatically will be his hut block.
@@ -265,9 +265,9 @@ public class WalkToProxy
                 //Then add the ladder position as the latest node.
                 proxyList.add(
                   new BlockPos(
-                                ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT
-                                , level.getDepth()
-                                , ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
+                                ladderPos.getX() + building.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                          level.getDepth(),
+                          ladderPos.getZ() + building.getVectorZ() * OTHER_SIDE_OF_SHAFT));
 
                 if (level.getRandomNode() != null && level.getRandomNode().getParent() != null)
                 {

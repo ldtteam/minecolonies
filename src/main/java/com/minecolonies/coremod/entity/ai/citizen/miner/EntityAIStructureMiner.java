@@ -24,7 +24,6 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
 {
-
     private static final String RENDER_META_TORCH   = "Torch";
     private static final int    NODE_DISTANCE       = 7;
     /**
@@ -485,6 +484,33 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         initStructure(null, 0, new BlockPos(ladderPos.getX() + xOffset, lastLadder, ladderPos.getZ() + zOffset));
 
         return CLEAR_STEP;
+    }
+
+    @Override
+    protected boolean checkIfCanceled()
+    {
+       if(!isThereAStructureToBuild())
+        {
+            switch (getState())
+            {
+                case CLEAR_STEP:
+                case BUILDING_STEP:
+                case DECORATION_STEP:
+                case SPAWN_STEP:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void onStartWithoutStructure()
+    {
+        /**
+         * Nothing to do here.
+         */
     }
 
     @NotNull

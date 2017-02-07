@@ -145,6 +145,30 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         }
     }
 
+    @Override
+    protected boolean checkIfCanceled()
+    {
+        if (job.getWorkOrder() == null)
+        {
+            super.resetTask();
+            workFrom = null;
+            ((JobBuilder) job).setStructure(null);
+            ((JobBuilder) job).setWorkOrder(null);
+            resetCurrentStructure();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onStartWithoutStructure()
+    {
+        if(job.getWorkOrder() != null)
+        {
+            loadStructure();
+        }
+    }
+
     private AIState startWorkingAtOwnBuilding()
     {
         if (walkToBuilding())

@@ -501,6 +501,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
+     * Set the currentStructure to null.
+     */
+    public void resetCurrentStructure()
+    {
+        currentStructure = null;
+    }
+
+    /**
      * Requests Materials if required.
      * - If the entity is a builder.
      * - If the builder doesn't have infinite resources.
@@ -692,32 +700,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         return items;
     }
 
-    private boolean checkIfCanceled()
-    {
-        if (job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() == null)
-        {
-            super.resetTask();
-            workFrom = null;
-            ((JobBuilder) job).setStructure(null);
-            ((JobBuilder) job).setWorkOrder(null);
-            currentStructure = null;
-            return true;
-        }
-        else if(job instanceof JobMiner && currentStructure == null)
-        {
-            switch (getState())
-            {
-                case CLEAR_STEP:
-                case BUILDING_STEP:
-                case DECORATION_STEP:
-                case SPAWN_STEP:
-                    return true;
-                default:
-                    return false;
-            }
-        }
-        return false;
-    }
+    /**
+     * Check if the structure tusk has been canceled.
+     * @return true if reset to idle.
+     */
+    protected abstract boolean checkIfCanceled();
 
     /**
      * Works on clearing the area of unneeded blocks.
@@ -827,7 +814,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @return true if we should start building.
      */
-    private boolean isThereAStructureToBuild()
+    public boolean isThereAStructureToBuild()
     {
         return currentStructure != null;
     }
@@ -916,10 +903,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if (currentStructure == null)
         {
-            if(job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() != null)
-            {
-                loadStructure();
-            }
+            onStartWithoutStructure();
             return AIState.IDLE;
         }
         switch (currentStructure.getStage())
@@ -936,6 +920,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 return AIState.COMPLETE_BUILD;
         }
     }
+
+    protected abstract void onStartWithoutStructure();
 
     private boolean handleMaterials(@NotNull final Block block, @NotNull final IBlockState blockState)
     {
