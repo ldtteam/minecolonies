@@ -269,7 +269,7 @@ public class Node
     /**
      * Sets the node style used.
      */
-    enum NodeType
+    public enum NodeType
     {
         //Main shaft
         SHAFT,
