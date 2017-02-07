@@ -628,7 +628,7 @@ public abstract class AbstractBuilding
      */
     public boolean hasWorkOrder()
     {
-        return getCurrentWorkOrderLevel() == NO_WORK_ORDER;
+        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
     }
 
     /**
