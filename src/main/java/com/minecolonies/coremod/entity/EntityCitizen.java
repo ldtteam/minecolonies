@@ -110,7 +110,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Quantity to be moved to rotate without actually moving.
      */
-    private static final double MOVE_MINIMAL = 0.01D;
+    private static final double MOVE_MINIMAL = 0.001D;
     /**
      * Base max health of the citizen.
      */
