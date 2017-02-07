@@ -1250,9 +1250,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             {
                 final BlockPos ladderPos = buildingMiner.getLadderLocation();
                 return new BlockPos(
-                        ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT
-                        , buildingMiner.getCurrentLevel().getDepth()
-                        , ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
+                        ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                        buildingMiner.getCurrentLevel().getDepth(),
+                        ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
             }
             final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
             return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
