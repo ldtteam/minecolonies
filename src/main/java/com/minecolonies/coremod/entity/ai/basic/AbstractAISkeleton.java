@@ -108,7 +108,6 @@ public abstract class AbstractAISkeleton<J extends AbstractJob> extends EntityAI
     public final void startExecuting()
     {
         worker.setStatus(EntityCitizen.Status.WORKING);
-        Log.getLogger().info("Starting AI job " + job.getName());
     }
 
     /**
