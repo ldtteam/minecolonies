@@ -14,6 +14,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
@@ -65,6 +66,10 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends AbstractEntityAIInteract<J>
 {
+    /**
+     * Lead the miner to the other side of the shaft.
+     */
+    private static final int OTHER_SIDE_OF_SHAFT = 6;
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
      */
@@ -522,6 +527,19 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             currentStructure = null;
             return true;
         }
+        else if(job instanceof JobMiner && currentStructure == null)
+        {
+            switch (getState())
+            {
+                case CLEAR_STEP:
+                case BUILDING_STEP:
+                case DECORATION_STEP:
+                case SPAWN_STEP:
+                    return true;
+                default:
+                    return false;
+            }
+        }
         return false;
     }
 
@@ -834,6 +852,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if (currentStructure == null)
         {
+            if(job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() != null)
+            {
+                loadStructure();
+            }
             return AIState.IDLE;
         }
         switch (currentStructure.getStage())
@@ -1235,6 +1257,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
             {
                 return blockToMine;
+            }
+            final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+            if(parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
+                    && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
+            {
+                final BlockPos ladderPos = buildingMiner.getLadderLocation();
+                return new BlockPos(
+                        ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT
+                        , buildingMiner.getCurrentLevel().getDepth()
+                        , ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
             }
             final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
             return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
