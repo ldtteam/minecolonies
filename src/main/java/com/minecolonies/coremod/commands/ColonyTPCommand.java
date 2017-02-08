@@ -4,11 +4,9 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.ServerUtils;
-import net.minecraft.block.Block;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -20,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import static com.minecolonies.coremod.MineColonies.findLand;
+import static com.minecolonies.coremod.MineColonies.isPositionSafe;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
 
 /**
@@ -66,7 +66,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
         }
-        if (!canCommandSenderUseCommand(COLONYTP))
+        if (!canCommandSenderUseCommand(COLONYTP, sender))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;
@@ -157,59 +157,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
         }
         playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
     }
-
-    /**
-     * this checks that you are not in the air or underground
-     * and if so it will look up and down for a good landing spot
-     * before TP
-     *
-     * @param blockPos for the current block LOC
-     * @return blockPos to be used for the TP
-     */
-    private static BlockPos findLand(final BlockPos blockPos, final World world)
-    {
-        int top = STARTING_Y;
-        int bot = 0;
-        int mid = STARTING_Y;
-
-        BlockPos foundland = null;
-        BlockPos tempPos = blockPos;
-        //We are doing a binary search to limit the amount of checks (usually at most 9 this way)
-        while (top >= bot)
-        {
-            tempPos = new BlockPos( tempPos.getX(),mid, tempPos.getZ());
-            Block blocks = world.getBlockState(tempPos).getBlock();
-            if (blocks == Blocks.AIR && world.canSeeSky(tempPos))
-            {
-                top = mid - 1;
-                foundland = tempPos;
-            }
-            else
-            {
-                bot = mid + 1;
-                foundland = tempPos;
-            }
-            mid = (bot + top)/2;
-        }
-
-        return foundland;
-    }
-
-    /**
-     * this checks that you are not in liquid.  Will check for all liquids, even those from other mods
-     * before TP
-     *
-     * @param blockPos for the current block LOC
-     * @param sender uses the player to get the world
-     * @return isSafe true=safe false=water or lava
-     */
-    private static boolean isPositionSafe(@NotNull ICommandSender sender, BlockPos blockPos)
-    {
-        return sender.getEntityWorld().getBlockState(blockPos).getBlock() != Blocks.AIR
-                && !sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid()
-                && !sender.getEntityWorld().getBlockState(blockPos.up()).getMaterial().isLiquid();
-    }
-
+    
     /**
      * this checks that you are not too close to another colony
      * before TP

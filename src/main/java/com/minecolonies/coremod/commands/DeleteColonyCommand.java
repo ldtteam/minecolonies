@@ -56,7 +56,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             return;
         }
 
-        if (!canCommandSenderUseCommand(DELETECOLONY))
+        if (!canCommandSenderUseCommand(DELETECOLONY, server))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
             return;
