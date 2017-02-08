@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony.permissions;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.network.PacketUtils;
 import com.minecolonies.coremod.util.AchievementUtils;
+import com.minecolonies.coremod.util.ServerUtils;
 import com.minecolonies.coremod.util.Utils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
@@ -271,9 +272,33 @@ public class Permissions implements IPermissions
     }
 
     /**
+     * Change the owner of a colony.
+     * @param playerName the player to set.
+     * @param world the world it comes from.
+     * @return true if succesful.
+     */
+    public boolean setOwner(final String playerName, final World world)
+    {
+        final EntityPlayer player = world.getPlayerEntityByName(playerName);
+        if(player == null)
+        {
+            return false;
+        }
+
+        players.remove(getOwner());
+
+        ownerName = playerName;
+        ownerUUID = player.getUniqueID();
+
+        players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
+
+        return true;
+    }
+
+    /**
      * Restores the owner from other variables if he is null on loading.
      */
-    private void restoreOwnerIfNull()
+    public void restoreOwnerIfNull()
     {
         final Map.Entry<UUID, Player> owner = getOwnerEntry();
         if (owner == null && ownerUUID != null)

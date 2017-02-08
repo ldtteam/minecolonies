@@ -20,8 +20,9 @@ public abstract class AbstractSingleCommand implements ISubCommand
     public static final Integer PERMNUM = 3;
     enum Commands
     {
-        CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER
+        CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY
     }
+
     /**
      * Initialize this SubCommand with it's parents.
      *
@@ -68,10 +69,11 @@ public abstract class AbstractSingleCommand implements ISubCommand
         }
         return sb.toString();
     }
+
     /**
      * Will check the config file to see if players are allowed to use the command that is sent here
      * and will verify that they are of correct rank to do so
-      *@param player the players/senders name
+     * @param player the players/senders name
      * @param theCommand which command to check if the player can use it
      * @param colonyId the id of the colony.
      * @return boolean
@@ -87,6 +89,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         return canCommandSenderUseCommand(theCommand)
                 && (chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER));
     }
+
     /**
      * Will check the config file to see if players are allowed to use the command that is sent here
      *
@@ -113,6 +116,8 @@ public abstract class AbstractSingleCommand implements ISubCommand
                 return Configurations.canPlayerUseAddOfficerCommand;
             case DELETECOLONY:
                 return Configurations.canPlayerUseDeleteColonyCommand;
+            case REFRESH_COLONY:
+                return Configurations.canPlayerUseRefreshColonyCommand;
         }
         return false;
     }
@@ -127,8 +132,6 @@ public abstract class AbstractSingleCommand implements ISubCommand
     @NotNull
     public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
     {
-        boolean checkedDone;
-        checkedDone= FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(PERMNUM,cmdName);
-        return checkedDone;
+        return FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(PERMNUM, cmdName);
     }
 }

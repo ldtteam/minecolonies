@@ -25,6 +25,8 @@ public class Configurations
     public static boolean canPlayerUseKillCitizensCommand = true;
     public static boolean canPlayerUseAddOfficerCommand = true;
     public static boolean canPlayerUseDeleteColonyCommand = true;
+    public static boolean canPlayerUseRefreshColonyCommand;
+
 
     public static int maxDistanceFromWorldSpawn = 50000;
 

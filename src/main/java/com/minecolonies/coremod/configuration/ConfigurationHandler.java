@@ -77,6 +77,8 @@ public final class ConfigurationHandler
                     "Players get ShowColonyInfoCommand").getBoolean();
             canPlayerUseAddOfficerCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseAddOfficerCommand", canPlayerUseAddOfficerCommand,
                     "Players get AddOfficerCommand").getBoolean();
+            canPlayerUseRefreshColonyCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseRefreshColonyCommand", canPlayerUseRefreshColonyCommand,
+                    "Players get RefreshColonyCommand").getBoolean();
 
             maxDistanceFromWorldSpawn = config.get(CATEGORY_GAMEPLAY, "maxDistanceFromWorldSpawn", maxDistanceFromWorldSpawn,
                     "Distance from spawn in all directions").getInt();

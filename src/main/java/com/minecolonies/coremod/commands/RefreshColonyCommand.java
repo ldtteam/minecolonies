@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
@@ -17,25 +18,25 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.REFRESH_COLONY;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SHOWCOLONYINFO;
 
 /**
  * List all colonies.
  */
-public class DeleteColonyCommand extends AbstractSingleCommand
+public class RefreshColonyCommand extends AbstractSingleCommand
 {
 
-    public static final  String DESC                       = "delete";
+    public static final  String DESC                       = "refresh";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
-    private static final String NO_ARGUMENTS               = "Please define a colony to delete";
+    private static final String NO_ARGUMENTS               = "Please define a colony to refresh";
 
     /**
      * Initialize this SubCommand with it's parents.
      *
      * @param parents an array of all the parents.
      */
-    public DeleteColonyCommand(@NotNull final String... parents)
+    public RefreshColonyCommand(@NotNull final String... parents)
     {
         super(parents);
     }
@@ -50,19 +51,33 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
+        final int colonyId;
         if(args.length == 0)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
-            return;
+            IColony colony = null;
+            if(sender instanceof EntityPlayer)
+            {
+                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).worldObj, (EntityPlayer) sender);
+            }
+
+            if(colony == null)
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+                return;
+            }
+            colonyId = colony.getID();
+        }
+        else
+        {
+            colonyId = getIthArgument(args, 0, -1);
         }
 
-        if (!canCommandSenderUseCommand(DELETECOLONY))
+        if (!canCommandSenderUseCommand(REFRESH_COLONY))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
             return;
         }
 
-        int colonyId = getIthArgument(args, 0, -1);
         final Colony colony = ColonyManager.getColony(colonyId);
 
         if(colony == null)
@@ -81,7 +96,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             }
         }
 
-        server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
+        colony.getPermissions().restoreOwnerIfNull();
     }
 
     @NotNull
