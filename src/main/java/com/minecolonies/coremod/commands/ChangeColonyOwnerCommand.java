@@ -57,7 +57,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
-        if (!canCommandSenderUseCommand(CHANGE_COLONY_OWNER) && isPlayerOpped())
+        if (!canCommandSenderUseCommand(CHANGE_COLONY_OWNER))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
             return;
