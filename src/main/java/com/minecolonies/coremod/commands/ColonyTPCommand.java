@@ -30,9 +30,10 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
 public class ColonyTPCommand extends AbstractSingleCommand
 {
     public static final  String DESC = "ctp";
-    private static final int ATTEMPTS = 4;
+    private static final int ATTEMPTS = Configurations.numberOfAttemptsForSafeTP;
     private static final int UPPER_BOUNDS = Configurations.maxDistanceFromWorldSpawn * 2;
     private static final int LOWER_BOUNDS = Configurations.maxDistanceFromWorldSpawn;
+    private static final int SPAWN_NO_TP = Configurations.minDistanceFromWorldSpawn;
     private static final int STARTING_Y = 250;
     private static final double ADDS_TWENTY_PERCENT = 1.20;
     private static final double SAFETY_DROP = 4;
@@ -60,6 +61,11 @@ public class ColonyTPCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
+        if (SPAWN_NO_TP > LOWER_BOUNDS)
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
+            return;
+        }
         if (!canCommandSenderUseCommand(COLONYTP))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
@@ -106,20 +112,38 @@ public class ColonyTPCommand extends AbstractSingleCommand
         while (attCounter <= ATTEMPTS)
         {
             attCounter++;
+            /* this math is to get negative numbers */
             int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-            int z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+                /* keeping X out of the spawn radius */
+                while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
+                {
+                    x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+                }
 
-            //Search for a ground position
+            /* keeping Z out of the spawn radius */
+            int z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+                while (z > -SPAWN_NO_TP && z < SPAWN_NO_TP)
+                {
+                    z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+                }
+
+                /* Check for a close by colony*/
+            if (!findColony(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld()))
+            {
+                return;
+            }
+
+            /*Search for a ground position*/
             final BlockPos groundPosition = findLand(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld());
 
-            //If no position found
+            /*If no position found*/
             if (groundPosition == null)
             {
                 attCounter++;
                 continue;
             }
 
-            boolean foundPosition = isPositionSafe(sender, groundPosition) && !findColony(groundPosition, sender.getEntityWorld());
+            boolean foundPosition = isPositionSafe(sender, groundPosition);
 
             /* Take the return and determine if good or bad */
              /* send info to look to see if another colony is near */

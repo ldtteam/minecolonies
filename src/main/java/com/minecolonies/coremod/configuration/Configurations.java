@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.configuration;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 public class Configurations
 {
     public static final int     CITIZEN_RESPAWN_INTERVAL_MIN = 10;
@@ -17,6 +19,7 @@ public class Configurations
     public static boolean turnOffExplosionsInColonies = true;
 
     /* Command configs */
+    public static int opLevelForServer = 3;
     public static boolean canPlayerUseCTPCommand = true;
     public static boolean canPlayerUseCitizenInfoCommand = true;
     public static boolean canPlayerUseListCitizensCommand = true;
@@ -28,7 +31,10 @@ public class Configurations
     public static boolean canPlayerUseRefreshColonyCommand;
 
 
-    public static int maxDistanceFromWorldSpawn = 50000;
+    /* Colony TP configs */
+    public static int numberOfAttemptsForSafeTP = 4;
+    public static int maxDistanceFromWorldSpawn = 8000;
+    public static int minDistanceFromWorldSpawn = 512;
 
     //TODO change to false when material handling is implemented
     public static boolean deliverymanInfiniteResources = true;
