@@ -86,7 +86,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         {
             return false;
         }
-        return canCommandSenderUseCommand(theCommand)
+        return canCommandSenderUseCommand(theCommand, player)
                 && (chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER));
     }
 
@@ -96,7 +96,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param theCommand which command to check if the player can use it
      * @return boolean
      */
-    public boolean canCommandSenderUseCommand(Commands theCommand)
+    public boolean canCommandSenderUseCommand(Commands theCommand, ICommandSender sender)
     {
         switch (theCommand)
         {
@@ -118,6 +118,10 @@ public abstract class AbstractSingleCommand implements ISubCommand
                 return Configurations.canPlayerUseDeleteColonyCommand;
             case REFRESH_COLONY:
                 return Configurations.canPlayerUseRefreshColonyCommand;
+        }
+        if (isPlayerOpped(sender, String.valueOf(theCommand)))
+        {
+            return true;
         }
         return false;
     }

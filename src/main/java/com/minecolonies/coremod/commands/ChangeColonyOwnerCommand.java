@@ -16,7 +16,6 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.ADDOFFICER;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CHANGE_COLONY_OWNER;
 
 /**
@@ -57,7 +56,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
-        if (!canCommandSenderUseCommand(CHANGE_COLONY_OWNER))
+        if (!canCommandSenderUseCommand(CHANGE_COLONY_OWNER,sender))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
             return;
@@ -129,7 +128,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         {
             return false;
         }
-        return canCommandSenderUseCommand(theCommand)
+        return canCommandSenderUseCommand(theCommand, player)
                 && (chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER));
     }
 
