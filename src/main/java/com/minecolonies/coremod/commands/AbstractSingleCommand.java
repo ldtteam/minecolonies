@@ -17,7 +17,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
 
     private final String[] parents;
     public static final String NOT_PERMITTED = "You are not allowed to do that!";
-    public static Integer PERMNUM = Configurations.opLevelForServer;
+    public static final Integer PERMNUM = Configurations.opLevelForServer;
     enum Commands
     {
         CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY
@@ -98,6 +98,11 @@ public abstract class AbstractSingleCommand implements ISubCommand
      */
     public boolean canCommandSenderUseCommand(Commands theCommand, ICommandSender sender)
     {
+        if (isPlayerOpped(sender, String.valueOf(theCommand)))
+        {
+            return true;
+        }
+
         switch (theCommand)
         {
             case CITIZENINFO:
@@ -119,10 +124,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
             case REFRESH_COLONY:
                 return Configurations.canPlayerUseRefreshColonyCommand;
         }
-        if (isPlayerOpped(sender, String.valueOf(theCommand)))
-        {
-            return true;
-        }
+
         return false;
     }
 
@@ -136,18 +138,16 @@ public abstract class AbstractSingleCommand implements ISubCommand
     @NotNull
     public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
     {
+        int requiredOpLevel = PERMNUM;
         if (PERMNUM < 1)
         {
-            PERMNUM = 1;
+            requiredOpLevel = 1;
         }
         if (PERMNUM > 3)
         {
-            PERMNUM = 3;
+            requiredOpLevel = 3;
         }
 
-        boolean checkedDone;
-        checkedDone= FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(PERMNUM,cmdName);
-
-        return checkedDone;
+        return FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(requiredOpLevel,cmdName);
     }
 }
