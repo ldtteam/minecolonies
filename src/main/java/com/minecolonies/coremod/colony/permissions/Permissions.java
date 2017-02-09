@@ -277,17 +277,11 @@ public class Permissions implements IPermissions
      * @param world the world it comes from.
      * @return true if succesful.
      */
-    public boolean setOwner(final String playerName, final World world)
+    public boolean setOwner(final EntityPlayer player, final World world)
     {
-        final EntityPlayer player = world.getPlayerEntityByName(playerName);
-        if(player == null)
-        {
-            return false;
-        }
-
         players.remove(getOwner());
 
-        ownerName = playerName;
+        ownerName = player.getName();
         ownerUUID = player.getUniqueID();
 
         players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));

@@ -29,6 +29,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     private static final String       COLONY_NULL     = "Couldn't find colony %d.";
     private static final String       NO_ARGUMENTS    = "Please define a colony or player";
     private static final String       NO_PLAYER       = "Can't find player to add";
+    private static final String HAS_A_COLONY          = "Player %s has a colony already.";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -56,12 +57,12 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
-        if (!canCommandSenderUseCommand(CHANGE_COLONY_OWNER,sender))
+        if (!isPlayerOpped(sender, String.valueOf(CHANGE_COLONY_OWNER)))
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
             return;
         }
 
+        //todo check if arg0 is playerName or colonyId
         int colonyId = getIthArgument(args, 0, -1);
         if(colonyId == -1 && sender instanceof EntityPlayer)
         {
@@ -103,11 +104,20 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             playerName = sender.getName();
         }
 
-        if(playerName == null)
+        final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+        if(player == null)
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
             return;
         }
+
+        if(ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player) != null)
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(String.format(HAS_A_COLONY, playerName)));
+            return;
+        }
+
+        colony.getPermissions().setOwner(player, sender.getEntityWorld());
 
         sender.addChatMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
     }
@@ -146,6 +156,6 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     @Override
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
-        return false;
+        return true;
     }
 }

@@ -127,7 +127,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
                 }
 
                 /* Check for a close by colony*/
-            if (findColony(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld()))
+            if (ColonyManager.getColony(sender.getEntityWorld(), new BlockPos(x, STARTING_Y, z)) == null)
             {
                 continue;
             }
@@ -152,37 +152,6 @@ public class ColonyTPCommand extends AbstractSingleCommand
         }
         playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
     }
-
-    /**
-     * this checks that you are not too close to another colony
-     * before TP
-     *
-     * @param blockPos for the current block LOC
-     * @return colNear false=no true=yes
-     */
-    private static boolean findColony(BlockPos blockPos, World world)
-    {
-        Colony nearestCol = ColonyManager.getClosestColony(world, blockPos);
-        Boolean colNear;
-        /* get individual coords to do the math */
-        int cx = nearestCol != null ? nearestCol.getCenter().getX() : 0;
-        int cz = nearestCol != null ? nearestCol.getCenter().getZ() : 0;
-        /* from the random X for the TP */
-        double px = blockPos.getX();
-        /* from the random Z for the TP */
-        double pz = blockPos.getZ();
-
-        double dist = Math.sqrt(Math.pow(cx - px, 2.0) + (Math.pow(cz - pz, 2.0)));
-                        /* grab the working distance and do our check now that we have distance from nearest colony*/
-                        /* just to understand this better::::
-                            I am taking the working distance from the town hall and doubling it this will give me
-                            the distance needed from both town halls -if you placed it here.  Then im adding on 20%
-                            just to get a padding between the two.*/
-        double wd = (Configurations.workingRangeTownHall * 2) * ADDS_TWENTY_PERCENT;
-        /* bad tp, bad -- abort TP  Too close to a colony */
-        colNear = dist < wd;
-        return colNear;
-    }
     
     @NotNull
     @Override
@@ -198,7 +167,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
     @Override
     public boolean isUsernameIndex(@NotNull String[] args, int index)
     {
-        return false;
+        return true;
     }
 
 }
