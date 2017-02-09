@@ -27,7 +27,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     public static final  String       DESC            = "ownerchange";
     private static final String       SUCCESS_MESSAGE = "Succesfully switched Owner %s to colony %d";
     private static final String       COLONY_NULL     = "Couldn't find colony %d.";
-    private static final String       NO_ARGUMENTS    = "Please define a colony or player";
+    private static final String       NO_ARGUMENTS    = "Please define a colony and player";
     private static final String       NO_PLAYER       = "Can't find player to add";
     private static final String HAS_A_COLONY          = "Player %s has a colony already.";
 
@@ -51,7 +51,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if(args.length == 0)
+        if(args.length < 2)
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
             return;
@@ -62,11 +62,25 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
-        //todo check if arg0 is playerName or colonyId
         int colonyId = getIthArgument(args, 0, -1);
-        if(colonyId == -1 && sender instanceof EntityPlayer)
+
+        if(colonyId == -1)
         {
-            final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
+            final String playerName = args[0];
+            if(playerName == null || playerName.isEmpty())
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
+                return;
+            }
+            final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+
+            if(player == null)
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
+                return;
+            }
+
+            final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
             if(colony == null)
             {
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString(COLONY_NULL));
@@ -101,7 +115,8 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
 
         if(playerName == null || playerName.isEmpty())
         {
-            playerName = sender.getName();
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
+            return;
         }
 
         final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
