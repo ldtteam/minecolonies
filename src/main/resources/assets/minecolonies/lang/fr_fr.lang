@@ -218,3 +218,7 @@ tile.minecolonies.blockHutWareHouse.name=Entrepôt
 com.minecolonies.coremod.gui.workerHuts.buildingWareHouse=Entrepôt
 tile.minecolonies.blockHutDeliveryman.name=Facteur
 com.minecolonies.coremod.gui.workerHuts.Deliveryman=Facteur
+com.minecolonies.coremod.gui.workerHuts.cancelBuild=Annuler la Construction
+com.minecolonies.coremod.gui.workerHuts.cancelUpgrade=Annuler l'Amélioration
+com.minecolonies.coremod.gui.workerHuts.cancelRepair=Annuler la Réparation
+
