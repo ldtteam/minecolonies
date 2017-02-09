@@ -95,7 +95,6 @@ public class ColonyTPCommand extends AbstractSingleCommand
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(CANT_FIND_PLAYER));
             return;
         }
-
         playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
         teleportPlayer(sender, playerToTeleport);
     }
@@ -128,9 +127,9 @@ public class ColonyTPCommand extends AbstractSingleCommand
                 }
 
                 /* Check for a close by colony*/
-            if (!findColony(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld()))
+            if (findColony(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld()))
             {
-                return;
+                continue;
             }
 
             /*Search for a ground position*/
@@ -139,14 +138,10 @@ public class ColonyTPCommand extends AbstractSingleCommand
             /*If no position found*/
             if (groundPosition == null)
             {
-                attCounter++;
                 continue;
             }
 
             boolean foundPosition = isPositionSafe(sender, groundPosition);
-
-            /* Take the return and determine if good or bad */
-             /* send info to look to see if another colony is near */
 
             if (foundPosition)
             {
@@ -157,7 +152,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
         }
         playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
     }
-    
+
     /**
      * this checks that you are not too close to another colony
      * before TP
