@@ -84,6 +84,12 @@ public final class ColonyManager
      * Whether the colonyManager should persist data.
      */
     private static boolean saveNeeded;
+
+    /**
+     * Indicate if a schematic have just been downloaded.
+     * Client only
+     */
+    private static boolean schematicDownloaded = false;
     /**
      * Pseudo unique id for the server
      */
@@ -962,5 +968,23 @@ public final class ColonyManager
         }
 
         return null;
+    }
+
+    /**
+     * Whether or not a new schematic have been downloaded.
+     */
+    public static boolean isSchematicDownloaded()
+    {
+        return schematicDownloaded;
+    }
+
+    /**
+     * Set the schematic downloaded
+     *
+     * @param downloaded
+     */
+    public static void setSchematicDownloaded(boolean downloaded)
+    {
+        schematicDownloaded = downloaded;
     }
 }

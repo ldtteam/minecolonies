@@ -3,9 +3,11 @@ package com.minecolonies.coremod.client.gui;
 import com.minecolonies.blockout.Log;
 import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
+import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.structures.helpers.Settings;
@@ -430,18 +432,26 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         final String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
         final String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
         final Structure structure;
+        final String structureName;
 
         if (Settings.instance.isInHutMode())
         {
+            structureName=labelHutStyle + '/' + labelHutDec + (level + 1);
             structure = new Structure(null,
                                        labelHutStyle + '/' + labelHutDec + (level + 1),
                                        new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
         }
         else
         {
+            structureName = labelHutDec + '/' + labelHutStyle;
             structure = new Structure(null,
                                        labelHutDec + '/' + labelHutStyle,
                                        new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+        }
+
+        if (structure.isTemplateMissing())
+        {
+            MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
         }
 
         Settings.instance.setActiveSchematic(structure);
@@ -613,5 +623,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);
+    }
+
+    public void onUpdate()
+    {
+        super.onUpdate();
+
+        if (ColonyManager.isSchematicDownloaded())
+        {
+            ColonyManager.setSchematicDownloaded(false);
+            changeSchematic();
+        }
     }
 }

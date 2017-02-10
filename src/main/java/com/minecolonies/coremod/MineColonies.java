@@ -151,6 +151,10 @@ public class MineColonies
         getNetwork().registerMessage(TransferItemsRequestMessage.class, TransferItemsRequestMessage.class, 35, Side.SERVER);
         getNetwork().registerMessage(MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage.class, 36, Side.SERVER);
 
+        // Schematic transfer messages
+        getNetwork().registerMessage(SchematicRequestMessage.class, SchematicRequestMessage.class, 38, Side.SERVER);
+        getNetwork().registerMessage(SaveSchematicMessage.class, SaveSchematicMessage.class, 39, Side.CLIENT);
+
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, 50, Side.CLIENT);
         getNetwork().registerMessage(SaveScanMessage.class, SaveScanMessage.class, 51, Side.CLIENT);

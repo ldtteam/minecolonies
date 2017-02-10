@@ -1,5 +1,6 @@
 package com.minecolonies.structures.helpers;
 
+import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.fake.FakeEntity;
@@ -39,6 +40,8 @@ import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -82,12 +85,18 @@ public class Structure
      */
     public Structure(@Nullable final World world, final String structureName, final PlacementSettings settings)
     {
-        InputStream inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
+        InputStream inputstream = null;
 
         if (world == null || world.isRemote)
         {
             this.settings = settings;
             this.mc = Minecraft.getMinecraft();
+        }
+        else
+        {
+            //Only use the jar file if we are on the server side, on the client it should have been send by the server instead
+            //TODO load from file first and then from the jar this way custom huts can be created and dumped in an appropriate folder
+            inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
         }
 
         //Might be at a different location!
@@ -99,7 +108,7 @@ public class Structure
 
                 if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
                 {
-                    decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/");
+                    decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/"+ColonyManager.getServerUUID()+"/");
                 }
                 else
                 {
@@ -107,7 +116,17 @@ public class Structure
                 }
                 if(decorationFolder.exists())
                 {
-                    inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
+                    //We need to check that we stay within the correct folder
+                    String folderName   = new URI(decorationFolder.getPath()).normalize().getPath();
+                    String fullFileName = new URI(decorationFolder.getPath() + "/" + structureName + ".nbt").normalize().getPath();
+                    if (fullFileName.startsWith(folderName))
+                    {
+                        inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
+                    }
+                    else
+                    {
+                        Log.getLogger().error("Structure: Illegal structure name \""+structureName+"\"");
+                    }
                 }
                 else
                 {
@@ -117,6 +136,10 @@ public class Structure
             catch (final FileNotFoundException e)
             {
                 Log.getLogger().warn("Couldn't find any structure with this name anywhere", e);
+            }
+            catch (final URISyntaxException e)
+            {
+                Log.getLogger().warn("Incorrect file path", e);
             }
         }
 
@@ -137,6 +160,16 @@ public class Structure
         {
             IOUtils.closeQuietly(inputstream);
         }
+    }
+
+    /**
+     * get the Template from the structure.
+     *
+     * @return The templae for the structure
+     */
+    public Template getTemplate()
+    {
+        return this.template;
     }
 
     /**
