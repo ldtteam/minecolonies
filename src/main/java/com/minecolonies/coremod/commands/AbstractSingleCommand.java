@@ -6,8 +6,11 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
+
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.ADDOFFICER;
 
 /**
  * A command that has children. Is a single one-word command.
@@ -81,6 +84,11 @@ public abstract class AbstractSingleCommand implements ISubCommand
 
     public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
     {
+        if (isPlayerOpped(player, theCommand.toString()))
+        {
+            return true;
+        }
+
         final Colony chkColony = ColonyManager.getColony(colonyId);
         if(chkColony == null)
         {
@@ -98,11 +106,6 @@ public abstract class AbstractSingleCommand implements ISubCommand
      */
     public boolean canCommandSenderUseCommand(Commands theCommand, ICommandSender sender)
     {
-        if (isPlayerOpped(sender, String.valueOf(theCommand)))
-        {
-            return true;
-        }
-
         switch (theCommand)
         {
             case CITIZENINFO:

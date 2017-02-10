@@ -286,6 +286,7 @@ public class Permissions implements IPermissions
 
         players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
 
+        markDirty();
         return true;
     }
 
@@ -304,6 +305,7 @@ public class Permissions implements IPermissions
                 players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
             }
         }
+        markDirty();
     }
 
     /**
