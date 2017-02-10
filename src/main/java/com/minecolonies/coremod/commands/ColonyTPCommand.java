@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.ServerUtils;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -17,8 +18,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import static com.minecolonies.coremod.MineColonies.findLand;
-import static com.minecolonies.coremod.MineColonies.isPositionSafe;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
 
 /**
@@ -28,23 +27,21 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
  */
 public class ColonyTPCommand extends AbstractSingleCommand
 {
-    public static final  String DESC = "ctp";
-    private static final int ATTEMPTS = Configurations.numberOfAttemptsForSafeTP;
-    private static final int UPPER_BOUNDS = Configurations.maxDistanceFromWorldSpawn * 2;
-    private static final int LOWER_BOUNDS = Configurations.maxDistanceFromWorldSpawn;
-    private static final int SPAWN_NO_TP = Configurations.minDistanceFromWorldSpawn;
-    private static final int STARTING_Y = 250;
-    private static final double SAFETY_DROP = 4;
+    public static final  String DESC             = "ctp";
+    private static final int    ATTEMPTS         = Configurations.numberOfAttemptsForSafeTP;
+    private static final int    UPPER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn * 2;
+    private static final int    LOWER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn;
+    private static final int    SPAWN_NO_TP      = Configurations.minDistanceFromWorldSpawn;
+    private static final int    STARTING_Y       = 250;
+    private static final double SAFETY_DROP      = 4;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
-
-    private final Random rnd = new Random();
 
     /**
      * Initialize this SubCommand with it's parents.
      *
      * @param parents an array of all the parents.
      */
-    public ColonyTPCommand( @NotNull final String...parents)
+    public ColonyTPCommand(@NotNull final String... parents)
     {
         super(parents);
     }
@@ -72,7 +69,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
 
         EntityPlayer playerToTeleport = null;
 
-        if(sender instanceof EntityPlayer)
+        if (sender instanceof EntityPlayer)
         {
             playerToTeleport = (EntityPlayer) sender;
         }
@@ -85,10 +82,10 @@ public class ColonyTPCommand extends AbstractSingleCommand
                     ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
                             .getGameProfileForUsername(args[0]).getId(), world);
 
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("TPin Player: "+ playerToTeleport.getName()));
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("TPin Player: " + playerToTeleport.getName()));
         }
 
-        if(playerToTeleport == null)
+        if (playerToTeleport == null)
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(CANT_FIND_PLAYER));
             return;
@@ -97,12 +94,34 @@ public class ColonyTPCommand extends AbstractSingleCommand
         teleportPlayer(sender, playerToTeleport);
     }
 
+    private static int getRandCoordinate()
+    {
+        //Avoid endless loop
+        if(UPPER_BOUNDS == SPAWN_NO_TP)
+        {
+            return 0;
+        }
+
+        final Random rnd = new Random();
+
+        int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+
+        /* keeping X out of the spawn radius */
+        while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
+        {
+            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+        }
+
+        return x;
+    }
+
     /**
      * Method used to teleport the player.
-     * @param sender the sender to have access to the world.
+     *
+     * @param sender           the sender to have access to the world.
      * @param playerToTeleport the player which shall be teleported.
      */
-    private void teleportPlayer(final ICommandSender sender, final EntityPlayer playerToTeleport)
+    private static void teleportPlayer(final ICommandSender sender, final EntityPlayer playerToTeleport)
     {
         //Now the position will be calculated, we will try up to 4 times to find a save position.
         int attCounter = 0;
@@ -110,28 +129,17 @@ public class ColonyTPCommand extends AbstractSingleCommand
         {
             attCounter++;
             /* this math is to get negative numbers */
-            int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-                /* keeping X out of the spawn radius */
-                while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
-                {
-                    x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-                }
+            final int x = getRandCoordinate();
+            final int z = getRandCoordinate();
 
-            /* keeping Z out of the spawn radius */
-            int z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-                while (z > -SPAWN_NO_TP && z < SPAWN_NO_TP)
-                {
-                    z = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
-                }
-
-                /* Check for a close by colony*/
+            /* Check for a close by colony*/
             if (ColonyManager.getColony(sender.getEntityWorld(), new BlockPos(x, STARTING_Y, z)) == null)
             {
                 continue;
             }
 
             /*Search for a ground position*/
-            final BlockPos groundPosition = findLand(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld());
+            final BlockPos groundPosition = BlockPosUtil.findLand(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld());
 
             /*If no position found*/
             if (groundPosition == null)
@@ -139,7 +147,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
                 continue;
             }
 
-            final boolean foundPosition = isPositionSafe(sender, groundPosition);
+            final boolean foundPosition = BlockPosUtil.isPositionSafe(sender, groundPosition);
 
             if (foundPosition)
             {
@@ -150,7 +158,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
         }
         playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
     }
-    
+
     @NotNull
     @Override
     public List<String> getTabCompletionOptions(
@@ -167,7 +175,6 @@ public class ColonyTPCommand extends AbstractSingleCommand
     {
         return index == 0;
     }
-
 }
 
 

@@ -98,7 +98,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     }
 
     /**
-     * Will check the config file to see if players are allowed to use the command that is sent here
+     * Will check the config file to see if players are allowed to use the command that is sent here.
      *
      * @param theCommand which command to check if the player can use it
      * @return boolean
