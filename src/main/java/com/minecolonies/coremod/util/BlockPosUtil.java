@@ -144,12 +144,11 @@ public final class BlockPosUtil
     }
 
     /**
-     * this checks that you are not in the air or underground
-     * and if so it will look up and down for a good landing spot
-     * before TP
+     * this checks that you are not in the air or underground.
+     * If so it will look up and down for a good landing spot before TP.
      *
-     * @param blockPos for the current block LOC
-     * @return blockPos to be used for the TP
+     * @param blockPos for the current block LOC.
+     * @return blockPos to be used for the TP.
      */
     public static BlockPos findLand(final BlockPos blockPos, final World world)
     {
@@ -163,7 +162,7 @@ public final class BlockPosUtil
         while (top >= bot)
         {
             tempPos = new BlockPos( tempPos.getX(),mid, tempPos.getZ());
-            Block blocks = world.getBlockState(tempPos).getBlock();
+            final Block blocks = world.getBlockState(tempPos).getBlock();
             if (blocks == Blocks.AIR && world.canSeeSky(tempPos))
             {
                 top = mid - 1;
