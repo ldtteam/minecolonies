@@ -3,6 +3,7 @@ package com.minecolonies.coremod.event;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.network.messages.ColonyStylesMessage;
+import com.minecolonies.coremod.network.messages.ServerUUIDMessage;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -61,6 +62,7 @@ public class FMLEventHandler
     {
         if (event.player instanceof EntityPlayerMP)
         {
+            MineColonies.getNetwork().sendTo(new ServerUUIDMessage(), (EntityPlayerMP) event.player);
             MineColonies.getNetwork().sendTo(new ColonyStylesMessage(), (EntityPlayerMP) event.player);
             ColonyManager.syncAllColoniesAchievements();
         }

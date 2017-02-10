@@ -114,6 +114,8 @@ public class MineColonies
     {
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Constants.MOD_NAME);
 
+        getNetwork().registerMessage(ServerUUIDMessage.class, ServerUUIDMessage.class, 37, Side.CLIENT);
+
         //  ColonyView messages
         getNetwork().registerMessage(ColonyViewMessage.class, ColonyViewMessage.class, 1, Side.CLIENT);
         getNetwork().registerMessage(ColonyViewCitizenViewMessage.class, ColonyViewCitizenViewMessage.class, 2, Side.CLIENT);
