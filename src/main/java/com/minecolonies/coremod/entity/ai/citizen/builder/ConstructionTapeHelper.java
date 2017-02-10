@@ -9,6 +9,7 @@ import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.StructureWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -49,17 +50,30 @@ public final class ConstructionTapeHelper
         int newY = y;
         boolean working = true;
         while (working)
-
         {
             final BlockPos block = new BlockPos(x, newY, z);
             final BlockPos blockMin1 = new BlockPos(x, newY-1, z);
-            if (world.getBlockState(block).isFullBlock() || world.getBlockState(block).getMaterial().isLiquid())
+            if (world.getBlockState(block).getBlock() == Blocks.TALLGRASS ||
+                  world.getBlockState(block).getBlock() == Blocks.CHORUS_FLOWER ||
+                  world.getBlockState(block).getBlock() == Blocks.RED_FLOWER ||
+                  world.getBlockState(block).getBlock() == Blocks.YELLOW_FLOWER ||
+                  world.getBlockState(block).getBlock() == Blocks.AIR ||
+                  world.getBlockState(block).getBlock() == ModBlocks.blockConstructionTape ||
+                  world.getBlockState(block).getBlock() == ModBlocks.blockConstructionTapeCorner)
+                {
+                    if (world.getBlockState(blockMin1).getBlock() == Blocks.TALLGRASS ||
+                          world.getBlockState(blockMin1).getBlock() == Blocks.CHORUS_FLOWER ||
+                          world.getBlockState(blockMin1).getBlock() == Blocks.RED_FLOWER ||
+                          world.getBlockState(blockMin1).getBlock() == Blocks.YELLOW_FLOWER ||
+                          world.getBlockState(blockMin1).getBlock() == Blocks.AIR ||
+                          world.getBlockState(blockMin1).getBlock() == ModBlocks.blockConstructionTape ||
+                          world.getBlockState(blockMin1).getBlock() == ModBlocks.blockConstructionTapeCorner)
+                        {newY = newY-1;}
+                    else
+                        {working = false;}
+                }
+            else
                 {newY = newY+1;}
-            else
-                if (world.getBlockState(blockMin1).isFullBlock() || world.getBlockState(blockMin1).getMaterial().isLiquid())
-                    {working = false;}
-            else
-                {newY = newY-1;}
         }
         return newY;
     }
