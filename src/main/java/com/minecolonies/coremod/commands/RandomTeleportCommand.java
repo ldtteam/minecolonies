@@ -25,9 +25,9 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
  * Need to add a configs permissions check.
  * Need to allow OPs to send players ./mc ctp (Player) if player is not allowed.
  */
-public class ColonyTPCommand extends AbstractSingleCommand
+public class RandomTeleportCommand extends AbstractSingleCommand
 {
-    public static final  String DESC             = "ctp";
+    public static final  String DESC             = "rtp";
     private static final int    ATTEMPTS         = Configurations.numberOfAttemptsForSafeTP;
     private static final int    UPPER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn * 2;
     private static final int    LOWER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn;
@@ -41,7 +41,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
      *
      * @param parents an array of all the parents.
      */
-    public ColonyTPCommand(@NotNull final String... parents)
+    public RandomTeleportCommand(@NotNull final String... parents)
     {
         super(parents);
     }
