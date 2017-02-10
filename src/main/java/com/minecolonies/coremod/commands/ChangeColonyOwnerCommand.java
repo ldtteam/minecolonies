@@ -72,8 +72,8 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
                 return;
             }
-            final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
 
+            final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
             if(player == null)
             {
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
@@ -95,16 +95,6 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         {
             sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId, colonyId)));
             return;
-        }
-
-        if(sender instanceof EntityPlayer)
-        {
-            EntityPlayer player = (EntityPlayer) sender;
-            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER))
-            {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
-                return;
-            }
         }
 
         String playerName = null;
@@ -135,26 +125,6 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         colony.getPermissions().setOwner(player, sender.getEntityWorld());
 
         sender.addChatMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
-    }
-
-    /**
-     * Will check the config file to see if players are allowed to use the command that is sent here
-     * and will verify that they are of correct rank to do so
-     * @param player the players/senders name
-     * @param theCommand which command to check if the player can use it
-     * @param colonyId the id of the colony.
-     * @return boolean
-     */
-    @Override
-    public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)
-    {
-        final Colony chkColony = ColonyManager.getColony(colonyId);
-        if(chkColony == null)
-        {
-            return false;
-        }
-        return canCommandSenderUseCommand(theCommand, player)
-                && (chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER));
     }
 
     @NotNull
