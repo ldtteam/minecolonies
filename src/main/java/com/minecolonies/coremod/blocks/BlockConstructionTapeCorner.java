@@ -39,7 +39,7 @@ public class BlockConstructionTapeCorner extends Block
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 50.0F;
+    private static final float BLOCK_HARDNESS = 0.0F;
 
     /**
      * This blocks name.
@@ -49,7 +49,7 @@ public class BlockConstructionTapeCorner extends Block
     /**
      * The resistance this block has.
      */
-    private static final float RESISTANCE = 2000.0F;
+    private static final float RESISTANCE = 0.0F;
 
     /**
      * Start of the collision box at y.
@@ -171,7 +171,6 @@ public class BlockConstructionTapeCorner extends Block
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
-        setBlockUnbreakable();
     }
 
     @Override
