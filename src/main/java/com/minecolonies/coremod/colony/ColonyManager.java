@@ -49,6 +49,11 @@ public final class ColonyManager
      */
     private static final String                     TAG_COLONIES          = "colonies";
     /**
+     * The tag of the pseudo unique identifier
+     */
+    private static final String                     TAG_UUID              = "uuid";
+
+    /**
      * The damage source used to kill citizens.
      */
     private static final DamageSource               CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
@@ -79,6 +84,10 @@ public final class ColonyManager
      * Whether the colonyManager should persist data.
      */
     private static boolean saveNeeded;
+    /**
+     * Pseudo unique id for the server
+     */
+    private static UUID serverUUID;
 
     private ColonyManager()
     {
@@ -556,6 +565,7 @@ public final class ColonyManager
             colonyTagList.appendTag(colonyTagCompound);
         }
         compound.setTag(TAG_COLONIES, colonyTagList);
+        compound.setUniqueId(TAG_UUID, serverUUID);
     }
 
     /**
@@ -701,8 +711,39 @@ public final class ColonyManager
             topColonyId = Math.max(topColonyId, colony.getID());
         }
 
+        if (compound.hasUniqueId(TAG_UUID))
+        {
+            serverUUID = compound.getUniqueId(TAG_UUID);
+        }
+        else
+        {
+            serverUUID = UUID.randomUUID();
+            markDirty();
+        }
+
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
     }
+
+    /**
+     * Set the server UUID.
+     *
+     * @param uuid the universal unique id
+     */
+    public static void setServerUUID(final UUID uuid)
+    {
+        serverUUID = uuid;
+    }
+
+    /**
+     * Get the Universal Unique ID for the server.
+     *
+     * @return the server Universal Unique ID for ther
+     */
+    public static UUID getServerUUID()
+    {
+        return serverUUID;
+    }
+
 
     /**
      * Saves data when world is saved.
