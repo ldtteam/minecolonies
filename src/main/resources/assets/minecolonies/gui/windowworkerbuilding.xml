@@ -1,0 +1,32 @@
+<window inherit="minecolonies:gui/windowBase.xml">
+    <view id="pageActions" size="100% 100%" pos="0 7">
+        <label id="name" size="100% 11" pos="0 0"
+               textalign="MIDDLE_LEFT" textcolor="red"/>
+        <label id="workerName" size="100% 11" pos="0 18"
+               textalign="MIDDLE_LEFT" textcolor="black"/>
+        <label size="100% 11" pos="0 28"
+               label="$(com.minecolonies.coremod.gui.workerHuts.workerAssigned)"
+               textalign="MIDDLE_LEFT" textcolor="black"/>
+        <label id="workerLevel" size="100% 11" pos="0 44"
+               textalign="MIDDLE_LEFT" textcolor="black"/>
+
+        <button id="hire" align="TOP_MIDDLE" size="116 20" pos="0 64"
+                label="$(com.minecolonies.coremod.gui.workerHuts.hire)"/>
+        <button id="recall" align="TOP_MIDDLE" size="116 20" pos="0 88"
+                label="$(com.minecolonies.coremod.gui.workerHuts.recall)"/>
+        <button id="build" align="TOP_MIDDLE" size="116 20" pos="0 120"
+                label="$(com.minecolonies.coremod.gui.workerHuts.upgrade)"/>
+        <button id="repair" align="TOP_MIDDLE" size="116 20" pos="0 144"
+                label="$(com.minecolonies.coremod.gui.workerHuts.repair)"/>
+
+        <label size="100% 11" pos="0 172"
+               label="$(com.minecolonies.coremod.gui.workerHuts.buildType)"
+               textalign="MIDDLE_LEFT" textcolor="black"/>
+        <label id="type" size="100% 11" pos="0 182"
+               textalign="MIDDLE_LEFT" textcolor="black"/>
+    </view>
+
+    <button id="inventory"
+            align="BOTTOM_MIDDLE" size="116 20" pos="0 13"
+            label="$(container.inventory)"/>
+</window>
