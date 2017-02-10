@@ -105,7 +105,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             workFrom = null;
             loadStructure();
-
             final WorkOrderBuild wo = job.getWorkOrder();
             if (wo == null)
             {
@@ -143,6 +142,30 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     wo.setCleared(true);
                 }
             }
+        }
+    }
+
+    @Override
+    protected boolean checkIfCanceled()
+    {
+        if (job.getWorkOrder() == null)
+        {
+            super.resetTask();
+            workFrom = null;
+            ((JobBuilder) job).setStructure(null);
+            ((JobBuilder) job).setWorkOrder(null);
+            resetCurrentStructure();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onStartWithoutStructure()
+    {
+        if(job.getWorkOrder() != null)
+        {
+            loadStructure();
         }
     }
 
