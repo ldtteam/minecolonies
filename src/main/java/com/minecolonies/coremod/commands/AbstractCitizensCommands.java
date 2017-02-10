@@ -63,7 +63,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
         final Colony colony;
         if(sender instanceof EntityPlayer && colonyId == -1)
         {
-            IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
+            final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
             if (tempColony != null)
             {
                     colonyId = tempColony.getID();
@@ -88,7 +88,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
             }
         }
 
-        int citizenId = getValidCitizenId(colony, firstArgumentColonyId, args);
+        final int citizenId = getValidCitizenId(colony, firstArgumentColonyId, args);
 
         if(citizenId == -1)
         {
@@ -108,7 +108,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
      */
     private static int getValidCitizenId(final Colony colony, final boolean firstArgumentColonyId, final String...args)
     {
-        int citizenId = getIthArgument(args, 1, -1);
+        final int citizenId = getIthArgument(args, 1, -1);
         if(citizenId == -1)
         {
             int offset = 0;
@@ -119,7 +119,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
             if(args.length >= offset + 2)
             {
-                String citizenName = args[offset] + " " + args[offset + 1] + " " + args[offset + 2];
+                final String citizenName = args[offset] + " " + args[offset + 1] + " " + args[offset + 2];
                 for (int i = 1; i <= colony.getCitizens().size(); i++)
                 {
                     if (colony.getCitizen(i).getName().equals(citizenName))

@@ -72,7 +72,7 @@ public class RefreshColonyCommand extends AbstractSingleCommand
             colonyId = getIthArgument(args, 0, -1);
         }
 
-        if (!canCommandSenderUseCommand(REFRESH_COLONY, sender))
+        if (!canCommandSenderUseCommand(REFRESH_COLONY))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
             return;

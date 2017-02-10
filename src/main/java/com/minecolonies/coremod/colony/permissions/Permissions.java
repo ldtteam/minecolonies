@@ -3,7 +3,6 @@ package com.minecolonies.coremod.colony.permissions;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.network.PacketUtils;
 import com.minecolonies.coremod.util.AchievementUtils;
-import com.minecolonies.coremod.util.ServerUtils;
 import com.minecolonies.coremod.util.Utils;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.ByteBuf;
@@ -274,10 +273,9 @@ public class Permissions implements IPermissions
     /**
      * Change the owner of a colony.
      * @param playerName the player to set.
-     * @param world the world it comes from.
      * @return true if succesful.
      */
-    public boolean setOwner(final EntityPlayer player, final World world)
+    public boolean setOwner(final EntityPlayer player)
     {
         players.remove(getOwner());
 

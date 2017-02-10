@@ -3,7 +3,6 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -122,7 +121,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
             return;
         }
 
-        colony.getPermissions().setOwner(player, sender.getEntityWorld());
+        colony.getPermissions().setOwner(player);
 
         sender.addChatMessage(new TextComponentString(String.format(SUCCESS_MESSAGE, playerName, colonyId)));
     }
@@ -141,6 +140,6 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
     @Override
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
-        return true;
+        return index == 0 || index == 1;
     }
 }

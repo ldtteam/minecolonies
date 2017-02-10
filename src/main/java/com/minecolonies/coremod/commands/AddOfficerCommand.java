@@ -56,7 +56,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             return;
         }
 
-        if (!canCommandSenderUseCommand(ADDOFFICER, sender))
+        if (!canCommandSenderUseCommand(ADDOFFICER))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
             return;

@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.commands;
 
-import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.ServerUtils;
@@ -23,9 +22,9 @@ import static com.minecolonies.coremod.MineColonies.isPositionSafe;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
 
 /**
- * this command is made to TP a player to a safe random spot that is not to close to another colony
- * Need to add a configs permissions check
- * Need to allow OPs to send players ./mc ctp (Player) if player is not allowed
+ * this command is made to TP a player to a safe random spot that is not to close to another colony.
+ * Need to add a configs permissions check.
+ * Need to allow OPs to send players ./mc ctp (Player) if player is not allowed.
  */
 public class ColonyTPCommand extends AbstractSingleCommand
 {
@@ -35,7 +34,6 @@ public class ColonyTPCommand extends AbstractSingleCommand
     private static final int LOWER_BOUNDS = Configurations.maxDistanceFromWorldSpawn;
     private static final int SPAWN_NO_TP = Configurations.minDistanceFromWorldSpawn;
     private static final int STARTING_Y = 250;
-    private static final double ADDS_TWENTY_PERCENT = 1.20;
     private static final double SAFETY_DROP = 4;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
 
@@ -66,7 +64,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
         }
-        if (!canCommandSenderUseCommand(COLONYTP, sender))
+        if (!canCommandSenderUseCommand(COLONYTP))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;
@@ -141,7 +139,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
                 continue;
             }
 
-            boolean foundPosition = isPositionSafe(sender, groundPosition);
+            final boolean foundPosition = isPositionSafe(sender, groundPosition);
 
             if (foundPosition)
             {
@@ -167,7 +165,7 @@ public class ColonyTPCommand extends AbstractSingleCommand
     @Override
     public boolean isUsernameIndex(@NotNull String[] args, int index)
     {
-        return true;
+        return index == 0;
     }
 
 }

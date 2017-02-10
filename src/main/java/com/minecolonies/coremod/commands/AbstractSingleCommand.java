@@ -6,7 +6,6 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,10 +73,10 @@ public abstract class AbstractSingleCommand implements ISubCommand
     }
 
     /**
-     * Will check the config file to see if players are allowed to use the command that is sent here
-     * and will verify that they are of correct rank to do so
-     * @param player the players/senders name
-     * @param theCommand which command to check if the player can use it
+     * Will check the config file to see if players are allowed to use the command that is sent here.
+     * and will verify that they are of correct rank to do so.
+     * @param player the players/senders name.
+     * @param theCommand which command to check if the player can use it.
      * @param colonyId the id of the colony.
      * @return boolean
      */
@@ -94,7 +93,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
         {
             return false;
         }
-        return canCommandSenderUseCommand(theCommand, player)
+        return canCommandSenderUseCommand(theCommand)
                 && (chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER));
     }
 
@@ -104,7 +103,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param theCommand which command to check if the player can use it
      * @return boolean
      */
-    public boolean canCommandSenderUseCommand(Commands theCommand, ICommandSender sender)
+    public boolean canCommandSenderUseCommand(Commands theCommand)
     {
         switch (theCommand)
         {
@@ -132,10 +131,10 @@ public abstract class AbstractSingleCommand implements ISubCommand
     }
 
     /**
-     * Will check to see if play is Opped for the given command name
+     * Will check to see if play is Opped for the given command name.
      *
-     * @param sender to check the player using the command
-     * @param cmdName the name of the command to be checked
+     * @param sender to check the player using the command.
+     * @param cmdName the name of the command to be checked.
      * @return boolean
      */
     @NotNull
@@ -146,9 +145,9 @@ public abstract class AbstractSingleCommand implements ISubCommand
         {
             requiredOpLevel = 1;
         }
-        if (PERMNUM > 3)
+        if (PERMNUM > 4)
         {
-            requiredOpLevel = 3;
+            requiredOpLevel = 4;
         }
 
         return FMLCommonHandler.instance().getMinecraftServerInstance().canCommandSenderUseCommand(requiredOpLevel,cmdName);

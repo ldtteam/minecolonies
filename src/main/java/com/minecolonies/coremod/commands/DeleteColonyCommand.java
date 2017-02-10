@@ -56,13 +56,13 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             return;
         }
 
-        if (!canCommandSenderUseCommand(DELETECOLONY, server))
+        if (!canCommandSenderUseCommand(DELETECOLONY))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
             return;
         }
 
-        int colonyId = getIthArgument(args, 0, -1);
+        final int colonyId = getIthArgument(args, 0, -1);
         final Colony colony = ColonyManager.getColony(colonyId);
 
         if(colony == null)
