@@ -255,7 +255,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         if(building != null)
         {
             if((minLevel != -1
-                    && InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), minLevel, building.getBuildingLevel()))
+                    && InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), minLevel, requestingBuilding.getBuildingLevel()))
                     || InventoryUtils.isToolInTileEntity(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel()))
             {
                 return building.getLocation();
@@ -264,7 +264,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             for(@NotNull final BlockPos pos : building.getAdditionalCountainers())
             {
                 final TileEntity entity = worldObj.getTileEntity(pos);
-                if (entity instanceof TileEntityChest && ((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, minLevel, building.getBuildingLevel()))
+                if (entity instanceof TileEntityChest
+                        && ((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, minLevel, requestingBuilding.getBuildingLevel()))
                         || InventoryUtils.isToolInTileEntity((TileEntityChest) entity, tool, requestingBuilding.getBuildingLevel())))
                 {
                     return pos;

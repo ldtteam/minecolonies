@@ -763,7 +763,7 @@ public class InventoryUtils
      * @param hutLevel  the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(final String tool, final ItemStack stack, final int hutLevel)
+    public static boolean hasToolLevel(final String tool, @Nullable final ItemStack stack, final int hutLevel)
     {
         if (stack == null)
         {
