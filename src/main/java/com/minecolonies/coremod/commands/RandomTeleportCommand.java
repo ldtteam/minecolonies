@@ -56,7 +56,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
-        if (SPAWN_NO_TP > LOWER_BOUNDS)
+        if (SPAWN_NO_TP >= LOWER_BOUNDS)
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
@@ -100,12 +100,6 @@ public class RandomTeleportCommand extends AbstractSingleCommand
      */
     private static int getRandCoordinate()
     {
-        //Avoid endless loop
-        if(UPPER_BOUNDS == SPAWN_NO_TP)
-        {
-            return 0;
-        }
-
         final Random rnd = new Random();
 
         int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
