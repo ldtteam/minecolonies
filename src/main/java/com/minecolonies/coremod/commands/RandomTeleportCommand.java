@@ -94,6 +94,10 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         teleportPlayer(sender, playerToTeleport);
     }
 
+    /**
+     * Get a random coordinate to teleport to.
+     * @return
+     */
     private static int getRandCoordinate()
     {
         //Avoid endless loop
@@ -133,7 +137,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             final int z = getRandCoordinate();
 
             /* Check for a close by colony*/
-            if (ColonyManager.getColony(sender.getEntityWorld(), new BlockPos(x, STARTING_Y, z)) == null)
+            if (ColonyManager.getColony(sender.getEntityWorld(), new BlockPos(x, STARTING_Y, z)) != null)
             {
                 continue;
             }
