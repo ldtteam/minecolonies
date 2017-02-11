@@ -1,21 +1,26 @@
 package com.minecolonies.coremod.colony.buildings;
 
-import com.minecolonies.blockout.views.Window;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.client.gui.WindowHutBuilder;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.inventory.InventoryCitizen;
+import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -44,7 +49,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
     /**
      * Contains all resources needed for a certain build.
      */
-    private HashMap<String, ItemStack> neededResources = new HashMap<>();
+    private HashMap<String, BuildingBuilderResource> neededResources = new HashMap<>();
 
     /**
      * Public constructor of the building, creates an object of the building.
@@ -132,7 +137,8 @@ public class BuildingBuilder extends AbstractBuildingWorker
         {
             final NBTTagCompound neededRes = neededResTagList.getCompoundTagAt(i);
             final ItemStack stack = ItemStack.loadItemStackFromNBT(neededRes);
-            neededResources.put(stack.getUnlocalizedName(), stack);
+            final BuildingBuilderResource resource = new BuildingBuilderResource(stack.getItem(),stack.getItemDamage(), stack.stackSize);
+            neededResources.put(stack.getUnlocalizedName(), resource);
         }
     }
 
@@ -141,10 +147,11 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         super.writeToNBT(compound);
         @NotNull final NBTTagList neededResTagList = new NBTTagList();
-        for (@NotNull final ItemStack stack : neededResources.values())
+        for (@NotNull final BuildingBuilderResource resource : neededResources.values())
         {
             @NotNull final NBTTagCompound neededRes = new NBTTagCompound();
-            stack.writeToNBT(neededRes);
+            final ItemStack itemStack = new ItemStack(resource.getItem(),resource.getAmount(),resource.getDamageValue());
+            itemStack.writeToNBT(neededRes);
 
             neededResTagList.appendTag(neededRes);
         }
@@ -161,13 +168,18 @@ public class BuildingBuilder extends AbstractBuildingWorker
     {
         super.serializeToView(buf);
 
+        updateAvailableResources();
         buf.writeInt(neededResources.size());
-
-        for (@NotNull final Map.Entry<String, ItemStack> entry : neededResources.entrySet())
+        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
         {
-            ByteBufUtils.writeUTF8String(buf, entry.getValue().getDisplayName());
-            buf.writeInt(entry.getValue().stackSize);
-
+            final BuildingBuilderResource resource = neededResources.get(entry.getKey());
+            //ByteBufUtils.writeItemStack() is Buggy, serialize itemId and damage separately;
+            final int itemId = Item.getIdFromItem(resource.getItem());
+            final int damage = resource.getDamageValue();
+            buf.writeInt(itemId);
+            buf.writeInt(damage);
+            buf.writeInt(resource.getAvailable());
+            buf.writeInt(resource.getAmount());
         }
     }
 
@@ -176,7 +188,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
      *
      * @return a new Hashmap.
      */
-    public Map<String, ItemStack> getNeededResources()
+    public Map<String, BuildingBuilderResource> getNeededResources()
     {
         return new HashMap<>(neededResources);
     }
@@ -188,13 +200,20 @@ public class BuildingBuilder extends AbstractBuildingWorker
      */
     public void addNeededResource(@Nullable final ItemStack res, final int amount)
     {
-        int preAmount = 0;
-        if (this.neededResources.containsKey(res.getUnlocalizedName()))
+        if (res == null || res.getItem() == null || res.stackSize == 0 || amount == 0)
         {
-            preAmount = this.neededResources.get(res.getUnlocalizedName()).stackSize;
+            return;
         }
-        res.stackSize = preAmount + amount;
-        this.neededResources.put(res.getUnlocalizedName(), res);
+        BuildingBuilderResource resource = this.neededResources.get(res.getUnlocalizedName());
+        if (resource == null)
+        {
+            resource = new BuildingBuilderResource(res.getItem(), res.getItemDamage(), amount);
+        }
+        else
+        {
+            resource.setAmount(resource.getAmount()+amount);
+        }
+        this.neededResources.put(res.getUnlocalizedName(), resource);
         this.markDirty();
     }
 
@@ -222,7 +241,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         int preAmount = 0;
         if (this.neededResources.containsKey(res.getUnlocalizedName()))
         {
-            preAmount = this.neededResources.get(res.getUnlocalizedName()).stackSize;
+            preAmount = this.neededResources.get(res.getUnlocalizedName()).getAmount();
         }
 
         if (preAmount - amount <= 0)
@@ -231,7 +250,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
         }
         else
         {
-            this.neededResources.get(res.getUnlocalizedName()).stackSize = preAmount - amount;
+            this.neededResources.get(res.getUnlocalizedName()).setAmount(preAmount - amount);
         }
         this.markDirty();
     }
@@ -246,7 +265,57 @@ public class BuildingBuilder extends AbstractBuildingWorker
     }
 
     /**
+     * Update the available resources.
+     *
+     * which are needed for the build and in the builder's chest or inventory
+     */
+    private void updateAvailableResources()
+    {
+        final EntityCitizen builder = getWorkerEntity();
+
+        InventoryCitizen builderInventory = null;
+        if (builder!=null)
+        {
+            builderInventory = builder.getInventoryCitizen();
+        }
+
+
+        for (@NotNull final Map.Entry<String, BuildingBuilderResource> entry : neededResources.entrySet())
+        {
+            final BuildingBuilderResource resource = entry.getValue();
+
+            resource.setAvailable(0);
+
+            if (builderInventory!=null)
+            {
+                resource.addAvailable(InventoryUtils.getItemCountInInventory(builderInventory, resource.getItem(), resource.getDamageValue()));
+            }
+
+            final IInventory chestInventory = this.getTileEntity();
+            if (chestInventory!=null)
+            {
+                resource.addAvailable(InventoryUtils.getItemCountInInventory(chestInventory, resource.getItem(), resource.getDamageValue()));
+            }
+
+            //Count in the additional chests as well
+            if (builder!=null)
+            {
+                for(final BlockPos pos : getAdditionalCountainers())
+                {
+                    final TileEntity entity = builder.worldObj.getTileEntity(pos);
+                    if(entity instanceof TileEntityChest)
+                    {
+                        resource.addAvailable(InventoryUtils.getItemCountInInventory((TileEntityChest)entity, resource.getItem(), resource.getDamageValue()));
+                    }
+                }
+            }
+
+        }
+    }
+
+    /**
      * Check if the builder requires a certain ItemStack for the current construction.
+     *
      * @param stack the stack to test.
      * @return true if so.
      */
@@ -255,74 +324,27 @@ public class BuildingBuilder extends AbstractBuildingWorker
         return neededResources.containsKey(stack.getUnlocalizedName());
     }
 
-    /**
-     * Provides a view of the builder building class.
-     */
-    public static class View extends AbstractBuildingWorker.View
+    @Override
+    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
-        private HashMap<String, Integer> neededResources;
-
-        /**
-         * Public constructor of the view, creates an instance of it.
-         *
-         * @param c the colony.
-         * @param l the position.
-         */
-        public View(final ColonyView c, final BlockPos l)
+        if (super.transferStack(stack, world))
         {
-            super(c, l);
+            this.markDirty();
+            return true;
         }
 
-        /**
-         * Gets the blockOut Window.
-         *
-         * @return the window of the builder building.
-         */
-        @NotNull
-        @Override
-        public Window getWindow()
+        return false;
+    }
+
+    @Override
+    public ItemStack forceTransferStack(final ItemStack stack, final World world)
+    {
+        final ItemStack itemStack = super.forceTransferStack(stack, world);
+        if (itemStack != null)
         {
-            return new WindowHutBuilder(this);
+            this.markDirty();
+            return itemStack;
         }
-
-        @Override
-        public void deserialize(@NotNull ByteBuf buf)
-        {
-            super.deserialize(buf);
-
-            final int size = buf.readInt();
-            neededResources = new HashMap<>();
-
-            for (int i = 0; i < size; i++)
-            {
-                final String block = ByteBufUtils.readUTF8String(buf);
-                final int amount = buf.readInt();
-                neededResources.put(block, amount);
-            }
-        }
-
-        /**
-         * Getter for the needed resources.
-         *
-         * @return a copy of the HashMap(String, Object).
-         */
-        public Map<String, Integer> getNeededResources()
-        {
-            return new HashMap<>(neededResources);
-        }
-
-        @NotNull
-        @Override
-        public Skill getPrimarySkill()
-        {
-            return Skill.INTELLIGENCE;
-        }
-
-        @NotNull
-        @Override
-        public Skill getSecondarySkill()
-        {
-            return Skill.STRENGTH;
-        }
+        return itemStack;
     }
 }

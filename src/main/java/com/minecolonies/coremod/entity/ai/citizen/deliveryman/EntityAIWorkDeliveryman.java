@@ -188,6 +188,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
         }
 
         worker.getInventoryCitizen().addItemStackToInventory(building.getTileEntity().removeStackFromSlot(currentSlot));
+        building.markDirty();
         setDelay(DUMP_AND_GATHER_DELAY);
         return false;
     }
