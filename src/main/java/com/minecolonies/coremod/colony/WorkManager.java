@@ -1,6 +1,8 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -62,8 +64,15 @@ public class WorkManager
      */
     public void removeWorkOrder(final int orderId)
     {
+        final AbstractWorkOrder workOrder = workOrders.get(orderId);
         workOrders.remove(orderId);
         colony.removeWorkOrder(orderId);
+        if (workOrder instanceof WorkOrderBuild)
+        {
+            final WorkOrderBuild wob = (WorkOrderBuild)workOrder;
+            final AbstractBuilding building = colony.getBuilding(wob.getBuildingLocation());
+            building.markDirty();
+        }
     }
 
     /**

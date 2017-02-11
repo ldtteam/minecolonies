@@ -199,6 +199,8 @@ public class WindowHutBuilder extends AbstractWindowWorkerBuilding<BuildingBuild
     @Override
     public void onUpdate()
     {
+        super.onUpdate();
+
         final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_RESOURCES))
         {

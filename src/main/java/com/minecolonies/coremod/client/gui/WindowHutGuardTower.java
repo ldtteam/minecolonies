@@ -397,6 +397,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     @Override
     public void onUpdate()
     {
+        super.onUpdate();
+
         pullInfoFromHut();
         handleButtons();
 
