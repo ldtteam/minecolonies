@@ -63,7 +63,7 @@ public final class ConfigurationHandler
             /* Configs for commands */
             canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand,
                     "Players get CitizenInfoCommand").getBoolean();
-            canPlayerUseCTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCTPCommand", canPlayerUseCTPCommand,
+            canPlayerUseRTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCTPCommand", canPlayerUseRTPCommand,
                     "Players can use the MC TP Command or not").getBoolean();
             canPlayerUseDeleteColonyCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseDeleteColonyCommand", canPlayerUseDeleteColonyCommand,
                     "Players get DeleteColonyCommand").getBoolean();

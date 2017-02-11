@@ -20,7 +20,7 @@ public class Configurations
 
     /* Command configs */
     public static int opLevelForServer = 3;
-    public static boolean canPlayerUseCTPCommand = true;
+    public static boolean canPlayerUseRTPCommand = true;
     public static boolean canPlayerUseCitizenInfoCommand = true;
     public static boolean canPlayerUseListCitizensCommand = true;
     public static boolean canPlayerRespawnCitizensCommand = true;

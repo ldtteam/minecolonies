@@ -72,7 +72,8 @@ public class RefreshColonyCommand extends AbstractSingleCommand
             colonyId = getIthArgument(args, 0, -1);
         }
 
-        if (!canCommandSenderUseCommand(REFRESH_COLONY))
+        final EntityPlayer player = (EntityPlayer) sender;
+        if (!canPlayerUseCommand (player, Commands.valueOf("REFRESH_COLONY"), colonyId))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
             return;
@@ -88,8 +89,8 @@ public class RefreshColonyCommand extends AbstractSingleCommand
 
         if(sender instanceof EntityPlayer)
         {
-            final EntityPlayer player = (EntityPlayer) sender;
-            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER))
+
+            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER) ||isPlayerOpped(player, "REFRESH_COLONY"))
             {
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
                 return;

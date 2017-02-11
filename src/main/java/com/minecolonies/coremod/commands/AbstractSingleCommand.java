@@ -94,7 +94,19 @@ public abstract class AbstractSingleCommand implements ISubCommand
             return false;
         }
         return canCommandSenderUseCommand(theCommand)
-                && (chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || chkColony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER));
+                && canRankUseCommand(chkColony, player);
+    }
+
+    /**
+     * Checks if the player has the permission to use the command.
+     * By default officer and owner, overwrite this if other required.
+     * @param colony the colony.
+     * @param player the player.
+     * @return true if so.
+     */
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    {
+        return colony.getPermissions().getRank(player).equals(Permissions.Rank.OFFICER) || colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
     }
 
     /**
@@ -110,7 +122,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
             case CITIZENINFO:
                 return Configurations.canPlayerUseCitizenInfoCommand;
             case COLONYTP:
-                return Configurations.canPlayerUseCTPCommand;
+                return Configurations.canPlayerUseRTPCommand;
             case KILLCITIZENS:
                 return Configurations.canPlayerUseKillCitizensCommand;
             case LISTCITIZENS:
