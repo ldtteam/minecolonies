@@ -132,11 +132,15 @@ public class BlockConstructionTape extends Block
     }
 
     @Override
+    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
+    {
+        return true;
+    }
+    @Override
     public int getMetaFromState(@NotNull final IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
-
     /**
      * Convert the given metadata into a BlockState for this Block.
      *

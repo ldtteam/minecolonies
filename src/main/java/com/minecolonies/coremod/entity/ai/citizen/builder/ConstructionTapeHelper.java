@@ -52,21 +52,9 @@ public final class ConstructionTapeHelper
         {
             final BlockPos block = new BlockPos(x, newY, z);
             final BlockPos blockMin1 = new BlockPos(x, newY-1, z);
-            if (world.getBlockState(block).getBlock() == Blocks.TALLGRASS ||
-                  world.getBlockState(block).getBlock() == Blocks.CHORUS_FLOWER ||
-                  world.getBlockState(block).getBlock() == Blocks.RED_FLOWER ||
-                  world.getBlockState(block).getBlock() == Blocks.YELLOW_FLOWER ||
-                  world.getBlockState(block).getBlock() == Blocks.AIR ||
-                  world.getBlockState(block).getBlock() == ModBlocks.blockConstructionTape ||
-                  world.getBlockState(block).getBlock() == ModBlocks.blockConstructionTapeCorner)
+            if (world.getBlockState(block).getMaterial().isReplaceable())
                 {
-                    if (world.getBlockState(blockMin1).getBlock() == Blocks.TALLGRASS ||
-                          world.getBlockState(blockMin1).getBlock() == Blocks.CHORUS_FLOWER ||
-                          world.getBlockState(blockMin1).getBlock() == Blocks.RED_FLOWER ||
-                          world.getBlockState(blockMin1).getBlock() == Blocks.YELLOW_FLOWER ||
-                          world.getBlockState(blockMin1).getBlock() == Blocks.AIR ||
-                          world.getBlockState(blockMin1).getBlock() == ModBlocks.blockConstructionTape ||
-                          world.getBlockState(blockMin1).getBlock() == ModBlocks.blockConstructionTapeCorner)
+                    if (world.getBlockState(blockMin1).getMaterial().isReplaceable())
                         {newY = newY-1;}
                     else
                         {working = false;}
