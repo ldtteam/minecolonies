@@ -2,6 +2,7 @@ package com.minecolonies.structures.helpers;
 
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.fake.FakeEntity;
 import com.minecolonies.structures.fake.FakeWorld;
@@ -92,55 +93,58 @@ public class Structure
             this.settings = settings;
             this.mc = Minecraft.getMinecraft();
         }
-        else
+
+        File nbtFile = null;
+        try
+        {
+            final File decorationFolder;
+
+            if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+            {
+                decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/"+ColonyManager.getServerUUID()+"/");
+            }
+            else if (MineColonies.isClient())
+            {
+                // Is this the best way to get the save directory ?
+                decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory() + "/saves/" +
+                        FMLCommonHandler.instance().getMinecraftServerInstance().getFolderName(), "/minecolonies/");
+            }
+            else
+            {
+                decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory(), "minecolonies/");
+            }
+
+            if(decorationFolder.exists())
+            {
+                //We need to check that we stay within the correct folder
+                nbtFile = new File(decorationFolder.getPath() + "/" + structureName + ".nbt");
+                if (nbtFile.toURI().normalize().getPath().startsWith(decorationFolder.toURI().normalize().getPath()))
+                {
+                    inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
+                }
+                else
+                {
+                    Log.getLogger().error("Structure: Illegal structure name \""+structureName+"\"");
+                }
+            }
+            else
+            {
+                throw new FileNotFoundException("Unable to find structure: " + structureName);
+            }
+        }
+        catch (final FileNotFoundException e)
+        {
+            if (nbtFile == null)
+                Log.getLogger().warn("Couldn't find any structure with this name anywhere", e);
+            else
+                Log.getLogger().info("Couldn't find any structure at "+nbtFile.getPath());
+        }
+
+        if (inputstream == null && FMLCommonHandler.instance().getMinecraftServerInstance() != null)
         {
             //Only use the jar file if we are on the server side, on the client it should have been send by the server instead
             //TODO load from file first and then from the jar this way custom huts can be created and dumped in an appropriate folder
             inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
-        }
-
-        //Might be at a different location!
-        if (inputstream == null)
-        {
-            try
-            {
-                final File decorationFolder;
-
-                if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-                {
-                    decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/"+ColonyManager.getServerUUID()+"/");
-                }
-                else
-                {
-                    decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory(), "minecolonies/");
-                }
-                if(decorationFolder.exists())
-                {
-                    //We need to check that we stay within the correct folder
-                    String folderName   = new URI(decorationFolder.getPath()).normalize().getPath();
-                    String fullFileName = new URI(decorationFolder.getPath() + "/" + structureName + ".nbt").normalize().getPath();
-                    if (fullFileName.startsWith(folderName))
-                    {
-                        inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
-                    }
-                    else
-                    {
-                        Log.getLogger().error("Structure: Illegal structure name \""+structureName+"\"");
-                    }
-                }
-                else
-                {
-                    throw new FileNotFoundException("Unable to find structure: " + structureName);
-                }
-            }
-            catch (final FileNotFoundException e)
-            {
-                Log.getLogger().warn("Couldn't find any structure with this name anywhere", e);
-            }
-            catch (final URISyntaxException e)
-            {
-                Log.getLogger().warn("Incorrect file path", e);
-            }
         }
 
         if (inputstream == null)

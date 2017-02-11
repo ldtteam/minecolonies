@@ -66,7 +66,7 @@ public class SchematicRequestMessage extends AbstractMessage<SchematicRequestMes
         final StructureProxy structureProxy = new StructureProxy( player.getServerWorld(), message.filename);
         if (structureProxy.getStructure().isTemplateMissing())
         {
-            Log.getLogger().error("SchematicRequestMessage: file \""+filename+"\" not found");
+            Log.getLogger().error("SchematicRequestMessage: file \""+message.filename+"\" not found");
         }
         else
         {
