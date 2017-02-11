@@ -173,10 +173,14 @@ public class BlockConstructionTapeCorner extends Block
         setLightOpacity(LIGHT_OPACITY);
     }
 
-    @Override
     public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
     {
         return true;
+    }
+    @Deprecated
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    {
+        return null;
     }
     @Override
     public int getMetaFromState(@NotNull final IBlockState state)
