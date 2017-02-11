@@ -17,7 +17,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
-import sun.font.TrueTypeFont;
 
 /**
  * Helper class to place and remove constructionTapes from the buildings.
