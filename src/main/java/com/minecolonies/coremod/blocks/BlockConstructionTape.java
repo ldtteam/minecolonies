@@ -131,10 +131,15 @@ public class BlockConstructionTape extends Block
         setLightOpacity(LIGHT_OPACITY);
     }
 
+    @Override
     public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
     {
         return true;
     }
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @Override
     @Deprecated
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
     {

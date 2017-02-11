@@ -28,7 +28,8 @@ public final class RecipeHandler
      */
     public static void init(final boolean enableInDevelopmentFeatures, final boolean supplyChests)
     {
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockConstructionTape, 16), "SWS", "S S", "S S", 'S', Items.STICK, 'W', new ItemStack(Blocks.WOOL, 1,4));
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockConstructionTape, 16), "SWS", "S S", "S S",
+          'S', Items.STICK, 'W', new ItemStack(Blocks.WOOL, 1,4));
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTapeCorner, 1),ModBlocks.blockConstructionTape);
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTape, 1),ModBlocks.blockConstructionTapeCorner);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.WOODEN_PICKAXE);
