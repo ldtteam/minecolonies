@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SHOWCOLONYINFO;
 
 /**
  * List all colonies.
@@ -95,8 +94,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
 
         if(sender instanceof EntityPlayer)
         {
-
-            if (canRankUseCommand(colony, player) || isPlayerOpped(player, "DELETECOLONY"))
+            if (canPlayerUseCommand(player, DELETECOLONY, colonyId))
             {
                 server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
                 return;
@@ -109,6 +107,12 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         }
 
         server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
+    }
+
+    @Override
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    {
+        return colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
     }
 
     @NotNull

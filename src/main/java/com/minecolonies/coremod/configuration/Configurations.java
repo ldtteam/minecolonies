@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.configuration;
 
-import org.omg.CORBA.PUBLIC_MEMBER;
-
 public class Configurations
 {
     public static final int     CITIZEN_RESPAWN_INTERVAL_MIN = 10;

@@ -3,7 +3,6 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -17,9 +16,6 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
-
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.REFRESH_COLONY;
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SHOWCOLONYINFO;
 
 /**
  * List all colonies.
@@ -85,16 +81,6 @@ public class RefreshColonyCommand extends AbstractSingleCommand
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
             return;
-        }
-
-        if(sender instanceof EntityPlayer)
-        {
-
-            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER) ||isPlayerOpped(player, "REFRESH_COLONY"))
-            {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
-                return;
-            }
         }
 
         colony.getPermissions().restoreOwnerIfNull();
