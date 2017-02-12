@@ -56,18 +56,18 @@ public final class ConstructionTapeHelper
             if (world.getBlockState(block).getMaterial().isReplaceable())
             {
                 if (world.getBlockState(blockMin1).getMaterial().isReplaceable())
-                    {
-                        newY = newY-1;
-                    }
+                {
+                    newY = newY-1;
+                }
                 else
-                    {
-                        working = false;
-                    }
+                {
+                    working = false;
+                }
             }
             else
-                {
-                    newY = newY+1;
-                }
+            {
+                newY = newY+1;
+            }
         }
         return newY;
     }
