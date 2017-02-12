@@ -1,14 +1,12 @@
 package com.minecolonies.coremod.colony.buildings.utils;
 
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Comparator;
-
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Information about a resource.

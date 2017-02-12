@@ -4,12 +4,12 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import org.jetbrains.annotations.NotNull;
-import com.minecolonies.coremod.util.Log;
 
 /**
  * Send a message to the server to mark the building as dirty.

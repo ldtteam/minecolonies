@@ -20,9 +20,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import static net.minecraft.util.EnumFacing.*;
+import static net.minecraft.util.EnumFacing.EAST;
+import static net.minecraft.util.EnumFacing.WEST;
 
 /**
  * This block is used as a border to show the size of the building.
