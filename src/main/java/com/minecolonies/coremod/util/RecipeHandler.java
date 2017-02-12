@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 public final class RecipeHandler
 {
 
+    private static int     YELLOW_WOOL = 4;
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -29,7 +30,7 @@ public final class RecipeHandler
     public static void init(final boolean enableInDevelopmentFeatures, final boolean supplyChests)
     {
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockConstructionTape, 16), "SWS", "S S", "S S",
-          'S', Items.STICK, 'W', new ItemStack(Blocks.WOOL, 1,4));
+          'S', Items.STICK, 'W', new ItemStack(Blocks.WOOL, 1,YELLOW_WOOL));
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTapeCorner, 1),ModBlocks.blockConstructionTape);
         GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTape, 1),ModBlocks.blockConstructionTapeCorner);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.WOODEN_PICKAXE);
