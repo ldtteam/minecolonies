@@ -52,13 +52,13 @@ public class AddOfficerCommand extends AbstractSingleCommand
     {
         if(args.length == 0)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
         if (!canCommandSenderUseCommand(ADDOFFICER))
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
             return;
         }
 
@@ -68,7 +68,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), ((EntityPlayer) sender).getUniqueID());
             if(colony == null)
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(COLONY_NULL));
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString(COLONY_NULL));
                 return;
             }
             colonyId = colony.getID();
@@ -78,7 +78,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId, colonyId)));
+            sender.sendMessage(new TextComponentString(String.format(COLONY_NULL, colonyId, colonyId)));
             return;
         }
 
@@ -87,7 +87,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
             EntityPlayer player = (EntityPlayer) sender;
             if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER))
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
@@ -105,7 +105,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
 
         if(playerName == null)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_PLAYER));
             return;
         }
 

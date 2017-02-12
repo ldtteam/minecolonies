@@ -52,7 +52,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     {
         if(args.length == 0)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
@@ -62,12 +62,12 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             IColony colony = null;
             if(sender instanceof EntityPlayer)
             {
-                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).worldObj, (EntityPlayer) sender);
+                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).world, (EntityPlayer) sender);
             }
 
             if(colony == null)
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
                 return;
             }
             colonyId = colony.getID();
@@ -80,7 +80,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         final EntityPlayer player = (EntityPlayer) sender;
         if (!canPlayerUseCommand (player, Commands.valueOf("DELETECOLONY"), colonyId))
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
             return;
         }
 
@@ -88,7 +88,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
 
         if(colony == null)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
             return;
         }
 
@@ -101,7 +101,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             }
             else
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }

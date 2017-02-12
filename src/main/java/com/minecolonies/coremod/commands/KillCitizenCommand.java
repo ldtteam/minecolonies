@@ -57,10 +57,10 @@ public class KillCitizenCommand extends AbstractCitizensCommands
     {
         final CitizenData citizenData = colony.getCitizen(citizenId);
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
-        sender.addChatMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
+        sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
         final BlockPos position = entityCitizen.getPosition();
-        sender.addChatMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-        sender.addChatMessage(new TextComponentString(REMOVED_MESSAGE));
+        sender.sendMessage(new TextComponentString(String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
+        sender.sendMessage(new TextComponentString(REMOVED_MESSAGE));
         server.addScheduledTask(() -> entityCitizen.onDeath(CONSOLE_DAMAGE_SOURCE));
     }
 

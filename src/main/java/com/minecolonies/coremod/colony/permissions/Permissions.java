@@ -189,6 +189,18 @@ public class Permissions implements IPermissions
     }
 
     /**
+     * Toggle permission for a specific rank.
+     *
+     * @param rank   Rank to toggle permission.
+     * @param action Action to toggle permission.
+     */
+    public void togglePermission(final Rank rank, @NotNull final Action action)
+    {
+        permissionMap.put(rank, Utils.toggleFlag(permissionMap.get(rank), action.flag));
+        markDirty();
+    }
+
+    /**
      * Returns the demotion rank of a specific rank.
      * E.G.: Neutral will return Hostile.
      *

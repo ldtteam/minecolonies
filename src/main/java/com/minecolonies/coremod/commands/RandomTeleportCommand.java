@@ -58,12 +58,12 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     {
         if (SPAWN_NO_TP >= LOWER_BOUNDS)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
         }
         if (!canCommandSenderUseCommand(COLONYTP))
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString("Not happenin bro!!, ask an OP to TP you."));
             return;
         }
 
@@ -82,15 +82,15 @@ public class RandomTeleportCommand extends AbstractSingleCommand
                     ServerUtils.getPlayerFromUUID(FMLCommonHandler.instance().getMinecraftServerInstance().getPlayerProfileCache()
                             .getGameProfileForUsername(args[0]).getId(), world);
 
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("TPin Player: " + playerToTeleport.getName()));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString("TPin Player: " + playerToTeleport.getName()));
         }
 
         if (playerToTeleport == null)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(CANT_FIND_PLAYER));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(CANT_FIND_PLAYER));
             return;
         }
-        playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+        playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
         teleportPlayer(sender, playerToTeleport);
     }
 
@@ -154,7 +154,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
                 return;
             }
         }
-        playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
+        playerToTeleport.getCommandSenderEntity().sendMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));
     }
 
     @NotNull

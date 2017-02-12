@@ -70,7 +70,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
 
             if (!canPlayerUseCommand(player, SHOWCOLONYINFO, colonyId))
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }

@@ -68,7 +68,7 @@ public class ListCitizensCommand extends AbstractSingleCommand
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, LISTCITIZENS, colonyId))
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
                 return;
             }
         }

@@ -45,7 +45,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
     {
         if(args.length == 0)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
@@ -74,7 +74,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
         if(colony == null)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
@@ -83,7 +83,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
             final EntityPlayer player = (EntityPlayer) sender;
             if (!canPlayerUseCommand(player, getCommand(), colonyId))
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;
             }
         }
@@ -92,7 +92,7 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
 
         if(citizenId == -1)
         {
-            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
             return;
         }
 
