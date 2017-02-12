@@ -9,8 +9,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.ADDOFFICER;
-
 /**
  * A command that has children. Is a single one-word command.
  */

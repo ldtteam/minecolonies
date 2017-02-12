@@ -1,27 +1,26 @@
 package com.minecolonies.coremod.client.gui;
 
-import com.minecolonies.blockout.Pane;
-import com.minecolonies.blockout.controls.Label;
-import com.minecolonies.blockout.controls.Button;
 import com.minecolonies.blockout.Color;
+import com.minecolonies.blockout.Pane;
+import com.minecolonies.blockout.controls.Button;
+import com.minecolonies.blockout.controls.Label;
 import com.minecolonies.blockout.views.ScrollingList;
 import com.minecolonies.blockout.views.SwitchView;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
-import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
-import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
+import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
+import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.MarkBuildingDirtyMessage;
 import com.minecolonies.coremod.network.messages.TransferItemsRequestMessage;
 import com.minecolonies.coremod.util.InventoryUtils;
+import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
-
-import com.minecolonies.coremod.util.Log;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Window for the builder hut.
