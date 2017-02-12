@@ -50,7 +50,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
     {
-        return super.getCommandUsage(sender) + "ctp" + "<playerName>";
+        return super.getCommandUsage(sender) + "rtp" + "<playerName>";
     }
 
     @Override

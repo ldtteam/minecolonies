@@ -2,6 +2,7 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
@@ -18,7 +19,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SHOWCOLONYINFO;
 
 /**
  * List all colonies.
@@ -56,13 +56,34 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             return;
         }
 
-        if (!canCommandSenderUseCommand(DELETECOLONY))
+        final int colonyId;
+        if(args.length == 0)
+        {
+            IColony colony = null;
+            if(sender instanceof EntityPlayer)
+            {
+                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).worldObj, (EntityPlayer) sender);
+            }
+
+            if(colony == null)
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+                return;
+            }
+            colonyId = colony.getID();
+        }
+        else
+        {
+            colonyId = getIthArgument(args, 0, -1);
+        }
+
+        final EntityPlayer player = (EntityPlayer) sender;
+        if (!canPlayerUseCommand (player, Commands.valueOf("DELETECOLONY"), colonyId))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
             return;
         }
 
-        final int colonyId = getIthArgument(args, 0, -1);
         final Colony colony = ColonyManager.getColony(colonyId);
 
         if(colony == null)
@@ -73,8 +94,12 @@ public class DeleteColonyCommand extends AbstractSingleCommand
 
         if(sender instanceof EntityPlayer)
         {
-            final EntityPlayer player = (EntityPlayer) sender;
-            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER))
+            if (canPlayerUseCommand(player, DELETECOLONY, colonyId))
+            {
+                server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
+                return;
+            }
+            else
             {
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
                 return;
@@ -82,6 +107,12 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         }
 
         server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
+    }
+
+    @Override
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    {
+        return colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
     }
 
     @NotNull

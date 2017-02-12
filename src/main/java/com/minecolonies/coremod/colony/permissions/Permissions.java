@@ -272,7 +272,7 @@ public class Permissions implements IPermissions
 
     /**
      * Change the owner of a colony.
-     * @param playerName the player to set.
+     * @param player the player to set.
      * @return true if succesful.
      */
     public boolean setOwner(final EntityPlayer player)
