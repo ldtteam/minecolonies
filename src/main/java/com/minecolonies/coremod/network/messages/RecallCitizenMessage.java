@@ -5,7 +5,9 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
-import com.minecolonies.coremod.util.*;
+import com.minecolonies.coremod.util.BlockPosUtil;
+import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -73,8 +75,12 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
             @Nullable final AbstractBuildingWorker building = colony.getBuilding(message.buildingId, AbstractBuildingWorker.class);
             if (building != null)
             {
-                final BlockPos loc = building.getLocation();
                 EntityCitizen citizen = building.getWorkerEntity();
+                if(citizen == null)
+                {
+                    return;
+                }
+                final BlockPos loc = building.getLocation();
                 if (!TeleportHelper.teleportCitizen(citizen, colony.getWorld(), loc))
                 {
                     LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.workerHuts.recallFail");

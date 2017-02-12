@@ -18,8 +18,9 @@ public class CommandEntryPoint extends CommandBase
 {
     /**
      * The level required to execute /mc commands.
+     * private static final int OP_PERMISSION_LEVEL = 3;
      */
-    private static final int OP_PERMISSION_LEVEL = 3;
+
 
     @NotNull
     private final MinecoloniesCommand root;
@@ -55,16 +56,12 @@ public class CommandEntryPoint extends CommandBase
     }
 
     /**
+     * Removed so we can control this at the config
      * Only allow OP's execute the commands.
      *
      * @return the int permission level (3 for OP).
+     * public int getRequiredPermissionLevel(){return OP_PERMISSION_LEVEL;}
      */
-    @Override
-    public int getRequiredPermissionLevel()
-    {
-        return OP_PERMISSION_LEVEL;
-    }
-
     @NotNull
     @Override
     public List<String> getCommandAliases()

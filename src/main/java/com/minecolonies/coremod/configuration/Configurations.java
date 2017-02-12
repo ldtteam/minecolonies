@@ -17,6 +17,24 @@ public class Configurations
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;
 
+    /* Command configs */
+    public static int opLevelForServer = 3;
+    public static boolean canPlayerUseRTPCommand = true;
+    public static boolean canPlayerUseCitizenInfoCommand = true;
+    public static boolean canPlayerUseListCitizensCommand = true;
+    public static boolean canPlayerRespawnCitizensCommand = true;
+    public static boolean canPlayerUseShowColonyInfoCommand = true;
+    public static boolean canPlayerUseKillCitizensCommand = true;
+    public static boolean canPlayerUseAddOfficerCommand = true;
+    public static boolean canPlayerUseDeleteColonyCommand = true;
+    public static boolean canPlayerUseRefreshColonyCommand;
+
+
+    /* Colony TP configs */
+    public static int numberOfAttemptsForSafeTP = 4;
+    public static int maxDistanceFromWorldSpawn = 8000;
+    public static int minDistanceFromWorldSpawn = 512;
+
     //TODO change to false when material handling is implemented
     public static boolean deliverymanInfiniteResources = false;
 

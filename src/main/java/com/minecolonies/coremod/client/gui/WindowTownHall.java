@@ -12,7 +12,10 @@ import com.minecolonies.coremod.colony.WorkOrderView;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.network.messages.*;
+import com.minecolonies.coremod.network.messages.PermissionsMessage;
+import com.minecolonies.coremod.network.messages.RecallTownhallMessage;
+import com.minecolonies.coremod.network.messages.ToggleJobMessage;
+import com.minecolonies.coremod.network.messages.WorkOrderChangeMessage;
 import com.minecolonies.coremod.util.LanguageHandler;
 import org.jetbrains.annotations.NotNull;
 
@@ -603,6 +606,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     @Override
     public void onUpdate()
     {
+        super.onUpdate();
+
         final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_PERMISSIONS))
         {

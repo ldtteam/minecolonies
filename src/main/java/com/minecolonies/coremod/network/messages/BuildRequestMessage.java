@@ -99,16 +99,23 @@ public class BuildRequestMessage extends AbstractMessage<BuildRequestMessage, IM
             return;
         }
 
-        switch (message.mode)
+        if (building.hasWorkOrder())
         {
-            case BUILD:
-                building.requestUpgrade();
-                break;
-            case REPAIR:
-                building.requestRepair();
-                break;
-            default:
-                break;
+            building.removeWorkOrder();
+        }
+        else
+        {
+            switch (message.mode)
+            {
+                case BUILD:
+                    building.requestUpgrade();
+                    break;
+                case REPAIR:
+                    building.requestRepair();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

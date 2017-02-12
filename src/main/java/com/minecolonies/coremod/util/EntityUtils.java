@@ -293,7 +293,7 @@ public final class EntityUtils
 
     /**
      * Get a safe spawnpoint near a location.
-     *
+     * @param world the world he should spawn in.
      * @param nearPoint the point to search near.
      * @return The spawn position.
      */
