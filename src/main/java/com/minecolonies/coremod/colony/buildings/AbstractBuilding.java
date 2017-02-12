@@ -291,7 +291,7 @@ public abstract class AbstractBuilding
         catch (final RuntimeException ex)
         {
             Log.getLogger().error(String.format("A Building %s(%s) has thrown an exception during loading, its state cannot be restored. Report this to the mod author",
-              compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
+                    compound.getString(TAG_BUILDING_TYPE), oclass.getName()), ex);
             building = null;
         }
 
@@ -402,8 +402,8 @@ public abstract class AbstractBuilding
         catch (final IndexOutOfBoundsException ex)
         {
             Log.getLogger().error(
-              String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
-                oclass.getName()), ex);
+                    String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
+                            oclass.getName()), ex);
             return null;
         }
 

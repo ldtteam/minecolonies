@@ -3,7 +3,6 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -18,24 +17,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
-
 /**
  * List all colonies.
  */
-public class DeleteColonyCommand extends AbstractSingleCommand
+public class RefreshColonyCommand extends AbstractSingleCommand
 {
 
-    public static final  String DESC                       = "delete";
+    public static final  String DESC                       = "refresh";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
-    private static final String NO_ARGUMENTS               = "Please define a colony to delete";
+    private static final String NO_ARGUMENTS               = "Please define a colony to refresh";
 
     /**
      * Initialize this SubCommand with it's parents.
      *
      * @param parents an array of all the parents.
      */
-    public DeleteColonyCommand(@NotNull final String... parents)
+    public RefreshColonyCommand(@NotNull final String... parents)
     {
         super(parents);
     }
@@ -50,12 +47,6 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if(args.length == 0)
-        {
-            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NO_ARGUMENTS));
-            return;
-        }
-
         final int colonyId;
         if(args.length == 0)
         {
@@ -78,7 +69,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
         }
 
         final EntityPlayer player = (EntityPlayer) sender;
-        if (!canPlayerUseCommand (player, Commands.valueOf("DELETECOLONY"), colonyId))
+        if (!canPlayerUseCommand (player, Commands.valueOf("REFRESH_COLONY"), colonyId))
         {
             sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
             return;
@@ -92,27 +83,7 @@ public class DeleteColonyCommand extends AbstractSingleCommand
             return;
         }
 
-        if(sender instanceof EntityPlayer)
-        {
-            if (canPlayerUseCommand(player, DELETECOLONY, colonyId))
-            {
-                server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
-                return;
-            }
-            else
-            {
-                sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
-                return;
-            }
-        }
-
-        server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
-    }
-
-    @Override
-    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
-    {
-        return colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
+        colony.getPermissions().restoreOwnerIfNull();
     }
 
     @NotNull

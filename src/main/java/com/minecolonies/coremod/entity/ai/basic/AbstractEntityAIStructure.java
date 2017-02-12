@@ -15,6 +15,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.citizen.miner.Level;
+import com.minecolonies.coremod.entity.ai.citizen.miner.Node;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.ai.util.Structure;
@@ -65,6 +66,10 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends AbstractEntityAIInteract<J>
 {
+    /**
+     * Lead the miner to the other side of the shaft.
+     */
+    private static final int OTHER_SIDE_OF_SHAFT = 6;
     /**
      * Amount of xp the builder gains each building (Will increase by attribute modifiers additionally).
      */
@@ -496,6 +501,14 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     }
 
     /**
+     * Set the currentStructure to null.
+     */
+    public void resetCurrentStructure()
+    {
+        currentStructure = null;
+    }
+
+    /**
      * Requests Materials if required.
      * - If the entity is a builder.
      * - If the builder doesn't have infinite resources.
@@ -687,19 +700,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         return items;
     }
 
-    private boolean checkIfCanceled()
-    {
-        if (job instanceof JobBuilder && ((JobBuilder) job).getWorkOrder() == null)
-        {
-            super.resetTask();
-            workFrom = null;
-            ((JobBuilder) job).setStructure(null);
-            ((JobBuilder) job).setWorkOrder(null);
-            currentStructure = null;
-            return true;
-        }
-        return false;
-    }
+    /**
+     * Check if the structure tusk has been canceled.
+     * @return true if reset to idle.
+     */
+    protected abstract boolean checkIfCanceled();
 
     /**
      * Works on clearing the area of unneeded blocks.
@@ -809,7 +814,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      *
      * @return true if we should start building.
      */
-    private boolean isThereAStructureToBuild()
+    public boolean isThereAStructureToBuild()
     {
         return currentStructure != null;
     }
@@ -898,6 +903,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
     {
         if (currentStructure == null)
         {
+            onStartWithoutStructure();
             return AIState.IDLE;
         }
         switch (currentStructure.getStage())
@@ -914,6 +920,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 return AIState.COMPLETE_BUILD;
         }
     }
+
+    protected abstract void onStartWithoutStructure();
 
     private boolean handleMaterials(@NotNull final Block block, @NotNull final IBlockState blockState)
     {
@@ -1217,6 +1225,16 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
             {
                 return blockToMine;
+            }
+            final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+            if(parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
+                    && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
+            {
+                final BlockPos ladderPos = buildingMiner.getLadderLocation();
+                return new BlockPos(
+                        ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                        buildingMiner.getCurrentLevel().getDepth(),
+                        ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
             }
             final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
             return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
