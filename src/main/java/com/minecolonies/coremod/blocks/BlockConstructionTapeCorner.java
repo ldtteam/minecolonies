@@ -178,15 +178,18 @@ public class BlockConstructionTapeCorner extends Block
     {
         return true;
     }
+
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
-    @Override
+    @javax.annotation.Nullable
     @Deprecated
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(final IBlockState blockState, final IBlockAccess worldIn, final BlockPos pos)
     {
         return null;
     }
+
     @Override
     public int getMetaFromState(@NotNull final IBlockState state)
     {
