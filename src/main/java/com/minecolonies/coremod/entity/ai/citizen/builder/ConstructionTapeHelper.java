@@ -54,12 +54,12 @@ public final class ConstructionTapeHelper
             final BlockPos block = new BlockPos(x, newY, z);
             final BlockPos blockMin1 = new BlockPos(x, newY-1, z);
             if (world.getBlockState(block).getMaterial().isReplaceable())
-                {
-                    if (world.getBlockState(blockMin1).getMaterial().isReplaceable())
-                        {newY = newY-1;}
-                    else
-                        {working = false;}
-                }
+            {
+                if (world.getBlockState(blockMin1).getMaterial().isReplaceable())
+                    {newY = newY-1;}
+                else
+                    {working = false;}
+            }
             else
                 {newY = newY+1;}
         }
