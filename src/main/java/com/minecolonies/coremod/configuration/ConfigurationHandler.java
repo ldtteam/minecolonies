@@ -38,6 +38,8 @@ public final class ConfigurationHandler
         try
         {
             config.load();
+            builderPlaceConstructionTape = config.get(CATEGORY_GAMEPLAY, "placeConstructionTape", builderPlaceConstructionTape,
+                    "Should builder place construction tape").getBoolean();
             workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall,
                     "Colony size (radius)").getInt();
             townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", townHallPadding,
@@ -63,7 +65,7 @@ public final class ConfigurationHandler
             /* Configs for commands */
             canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand,
                     "Players get CitizenInfoCommand").getBoolean();
-            canPlayerUseCTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCTPCommand", canPlayerUseCTPCommand,
+            canPlayerUseRTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseRTPCommand", canPlayerUseRTPCommand,
                     "Players can use the MC TP Command or not").getBoolean();
             canPlayerUseDeleteColonyCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseDeleteColonyCommand", canPlayerUseDeleteColonyCommand,
                     "Players get DeleteColonyCommand").getBoolean();
