@@ -38,12 +38,11 @@ public final class ConfigurationHandler
         try
         {
             config.load();
-            workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall,
-                    "Colony size (radius)").getInt();
-            townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", townHallPadding,
-                    "Empty space between town hall boundaries").getInt();
-            supplyChests = config.get(CATEGORY_GAMEPLAY, "supplyChests", supplyChests,
-                    "Allow crafting of a Supply Chest").getBoolean();
+            builderPlaceConstructionTape = config.get(CATEGORY_GAMEPLAY,
+              "placeConstructionTape", builderPlaceConstructionTape, "Should builder place construction tape").getBoolean();
+            workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall, "Colony size (radius)").getInt();
+            townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", townHallPadding, "Empty space between town hall boundaries").getInt();
+            supplyChests = config.get(CATEGORY_GAMEPLAY, "supplyChests", supplyChests, "Allow crafting of a Supply Chest").getBoolean();
             allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY,
               "allowInfiniteSupplyChests", allowInfiniteSupplyChests, "Allow infinite placing of Supply Chests?").getBoolean();
             citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY,
