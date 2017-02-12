@@ -66,8 +66,8 @@ public abstract class AbstractBuilding
     /**
      * The tag to store the style of the building.
      */
-    private static final String TAG_STYLE = "style";
-    private static final int NO_WORK_ORDER = 0;
+    private static final String                  TAG_STYLE                    = "style";
+    private static final int                     NO_WORK_ORDER                = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
@@ -78,35 +78,35 @@ public abstract class AbstractBuilding
      * Will be cleared on restart, be aware!
      */
     @NotNull
-    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+    private              List<ItemStack>         itemsCurrentlyNeeded         = new ArrayList<>();
     /**
      * This flag tells if we need a shovel, will be set on tool needs.
      */
-    private boolean needsShovel = false;
+    private              boolean                 needsShovel                  = false;
     /**
      * This flag tells if we need an axe, will be set on tool needs.
      */
-    private boolean needsAxe = false;
+    private              boolean                 needsAxe                     = false;
     /**
      * This flag tells if we need a hoe, will be set on tool needs.
      */
-    private boolean needsHoe = false;
+    private              boolean                 needsHoe                     = false;
     /**
      * This flag tells if we need a pickaxe, will be set on tool needs.
      */
-    private boolean needsPickaxe = false;
+    private              boolean                 needsPickaxe                 = false;
     /**
      * This flag tells if we need a weapon, will be set on tool needs.
      */
-    private boolean needsWeapon = false;
+    private              boolean                 needsWeapon                  = false;
     /**
      * The minimum pickaxe level we need to fulfill the tool request.
      */
-    private int needsPickaxeLevel = -1;
+    private              int                     needsPickaxeLevel            = -1;
     /**
      * Checks if there is a ongoing delivery for the currentItem.
      */
-    private boolean onGoingDelivery = false;
+    private              boolean                 onGoingDelivery              = false;
     /**
      * Map to resolve names to class.
      */
@@ -153,16 +153,16 @@ public abstract class AbstractBuilding
     /**
      * The location of the building.
      */
-    private final BlockPos location;
+    private final BlockPos                 location;
     /**
      * The colony the building belongs to.
      */
     @NotNull
-    private final Colony colony;
+    private final Colony                   colony;
     /**
      * The tileEntity of the building.
      */
-    private TileEntityColonyBuilding tileEntity;
+    private       TileEntityColonyBuilding tileEntity;
 
     /**
      * The level of the building.
@@ -681,7 +681,7 @@ public abstract class AbstractBuilding
 
     /**
      * Remove the work order for the building.
-     *
+     * <p>
      * Remove either the upgrade or repair work order
      */
     public void removeWorkOrder()
