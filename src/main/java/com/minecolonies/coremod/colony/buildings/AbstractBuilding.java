@@ -818,7 +818,10 @@ public abstract class AbstractBuilding
     public final void markDirty()
     {
         dirty = true;
-        colony.markBuildingsDirty();
+        if(colony != null)
+        {
+            colony.markBuildingsDirty();
+        }
     }
 
     /**
