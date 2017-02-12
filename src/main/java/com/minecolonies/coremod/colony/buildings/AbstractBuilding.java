@@ -535,6 +535,7 @@ public abstract class AbstractBuilding
             world.updateComparatorOutputLevel(this.location, block);
             ConstructionTapeHelper.removeConstructionTape(this, world);
         }
+        ConstructionTapeHelper.removeConstructionTape(this, world);
     }
 
     /**
