@@ -39,7 +39,7 @@ public class BlockConstructionTape extends Block
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 50.0F;
+    private static final float BLOCK_HARDNESS = 0.0F;
 
     /**
      * This blocks name.
@@ -49,7 +49,7 @@ public class BlockConstructionTape extends Block
     /**
      * The resistance this block has.
      */
-    private static final float RESISTANCE = 2000.0F;
+    private static final float RESISTANCE = 0.0F;
 
     /**
      * Start of the collision box at y.
@@ -129,15 +129,27 @@ public class BlockConstructionTape extends Block
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
-        setBlockUnbreakable();
     }
 
+    @Override
+    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
+    {
+        return true;
+    }
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @Override
+    @Deprecated
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    {
+        return null;
+    }
     @Override
     public int getMetaFromState(@NotNull final IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
-
     /**
      * Convert the given metadata into a BlockState for this Block.
      *
