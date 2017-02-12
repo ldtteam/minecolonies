@@ -9,6 +9,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -21,6 +22,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Random;
 
 import static net.minecraft.util.EnumFacing.*;
 
@@ -173,6 +176,13 @@ public class BlockConstructionTapeCorner extends Block
         setLightOpacity(LIGHT_OPACITY);
     }
 
+    @Nullable
+    @Override
+    public Item getItemDropped(final IBlockState state, final Random rand, final int fortune)
+    {
+        return null;
+    }
+
     @Override
     public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
     {
@@ -181,12 +191,14 @@ public class BlockConstructionTapeCorner extends Block
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
+
     @Override
     @Deprecated
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
     {
         return null;
     }
+    
     @Override
     public int getMetaFromState(@NotNull final IBlockState state)
     {
