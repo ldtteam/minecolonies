@@ -68,6 +68,7 @@ public abstract class AbstractBuilding
      * The tag to store the style of the building.
      */
     private static final String TAG_STYLE = "style";
+    private static final int NO_WORK_ORDER = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
@@ -608,6 +609,34 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Get the current level of the work order.
+     *
+     * @return NO_WORK_ORDER if not current work otherwise the level requested.
+     */
+    private int getCurrentWorkOrderLevel()
+    {
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                return o.getUpgradeLevel();
+            }
+        }
+
+        return NO_WORK_ORDER;
+    }
+
+    /**
+     * Checks if this building have a work order.
+     *
+     * @return true if the building is building, upgrading or repairing.
+     */
+    public boolean hasWorkOrder()
+    {
+        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
+    }
+
+    /**
      * Children must return their max building level.
      *
      * @return Max building level.
@@ -631,6 +660,7 @@ public abstract class AbstractBuilding
 
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        markDirty();
     }
 
     /**
@@ -652,6 +682,24 @@ public abstract class AbstractBuilding
         if (buildingLevel > 0)
         {
             requestWorkOrder(buildingLevel);
+        }
+    }
+
+    /**
+     * Remove the work order for the building.
+     *
+     * Remove either the upgrade or repair work order
+     */
+    public void removeWorkOrder()
+    {
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                colony.getWorkManager().removeWorkOrder(o.getID());
+                markDirty();
+                return;
+            }
         }
     }
 
@@ -719,6 +767,7 @@ public abstract class AbstractBuilding
         buf.writeInt(this.getClass().getName().hashCode());
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
+        buf.writeInt(getCurrentWorkOrderLevel());
     }
 
     /**
@@ -1122,6 +1171,7 @@ public abstract class AbstractBuilding
 
         private int buildingLevel    = 0;
         private int buildingMaxLevel = 0;
+        private int workOrderLevel   = NO_WORK_ORDER;
 
         /**
          * Creates a building view.
@@ -1199,6 +1249,36 @@ public abstract class AbstractBuilding
         }
 
         /**
+         * Get the current work order level.
+         *
+         * @return 0 if none, othewise the current level worked on
+         */
+        public int getCurrentWorkOrderLevel()
+        {
+            return workOrderLevel;
+        }
+
+        /**
+         * Get the current work order level.
+         *
+         * @return 0 if none, othewise the current level worked on
+         */
+        public boolean hasWorkOrder()
+        {
+            return workOrderLevel != NO_WORK_ORDER;
+        }
+
+        public boolean isBuilding()
+        {
+            return workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
+        }
+
+        public boolean isRepairing()
+        {
+            return workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
+        }
+
+        /**
          * Open the associated BlockOut window for this building.
          */
         public void openGui()
@@ -1230,6 +1310,7 @@ public abstract class AbstractBuilding
         {
             buildingLevel = buf.readInt();
             buildingMaxLevel = buf.readInt();
+            workOrderLevel = buf.readInt();
         }
     }
 }

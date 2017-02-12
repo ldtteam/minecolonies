@@ -152,8 +152,8 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             super.resetTask();
             workFrom = null;
-            ((JobBuilder) job).setStructure(null);
-            ((JobBuilder) job).setWorkOrder(null);
+            job.setStructure(null);
+            job.setWorkOrder(null);
             resetCurrentStructure();
             return true;
         }

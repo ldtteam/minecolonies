@@ -112,6 +112,8 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     @Override
     public void onUpdate()
     {
+        super.onUpdate();
+
         final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_LEVELS))
         {

@@ -3,9 +3,9 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
-import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -15,6 +15,8 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.SHOWCOLONYINFO;
 
 /**
  * List all colonies.
@@ -52,34 +54,25 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId = -1;
-        UUID mayorID = null;
+        int colonyId;
+        colonyId = getIthArgument(args, 0, -1);
+        IColony tempColony = ColonyManager.getColony(colonyId);
 
-        if (args.length != 0)
+        if(sender instanceof EntityPlayer)
         {
-            try
+            final UUID mayorID = sender.getCommandSenderEntity().getUniqueID();
+            if (tempColony == null)
             {
-                colonyId = Integer.parseInt(args[0]);
-            }
-            catch (final NumberFormatException e)
-            {
-                mayorID = getUUIDFromName(sender, args);
-            }
-        }
-
-        final IColony tempColony;
-        if (colonyId == -1)
-        {
-            if (mayorID == null)
-            {
-                mayorID = sender.getCommandSenderEntity().getUniqueID();
+                tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
             }
 
-            tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
-        }
-        else
-        {
-            tempColony = ColonyManager.getColony(colonyId);
+            final EntityPlayer player = (EntityPlayer) sender;
+
+            if (!canPlayerUseCommand(player, SHOWCOLONYINFO, colonyId))
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                return;
+            }
         }
 
         if (tempColony == null)
@@ -95,7 +88,7 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
             return;
         }
 
-        final Colony colony = ColonyManager.getColony(sender.getEntityWorld(), tempColony.getCenter());
+        final Colony colony = ColonyManager.getColony(colonyId);
         if (colony == null)
         {
             if (colonyId == -1 && args.length != 0)
@@ -115,20 +108,6 @@ public class ShowColonyInfoCommand extends AbstractSingleCommand
         sender.sendMessage(new TextComponentString(MAYOR_TEXT + mayor));
         sender.sendMessage(new TextComponentString(CITIZENS + colony.getCitizens().size() + "/" + colony.getMaxCitizens()));
         sender.sendMessage(new TextComponentString(COORDINATES_TEXT + String.format(COORDINATES_XYZ, position.getX(), position.getY(), position.getZ())));
-    }
-
-    private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
-    {
-        final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();
-        if (tempServer != null)
-        {
-            final GameProfile profile = tempServer.getPlayerProfileCache().getGameProfileForUsername(args[0]);
-            if (profile != null)
-            {
-                return profile.getId();
-            }
-        }
-        return null;
     }
 
     @NotNull
