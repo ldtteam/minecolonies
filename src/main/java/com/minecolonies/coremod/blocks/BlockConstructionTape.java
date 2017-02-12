@@ -133,6 +133,7 @@ public class BlockConstructionTape extends Block
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
+        blockMaterial.setReplaceable();
     }
 
     @Override
