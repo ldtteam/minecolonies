@@ -38,11 +38,14 @@ public final class ConfigurationHandler
         try
         {
             config.load();
-            builderPlaceConstructionTape = config.get(CATEGORY_GAMEPLAY,
-              "placeConstructionTape", builderPlaceConstructionTape, "Should builder place construction tape").getBoolean();
-            workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall, "Colony size (radius)").getInt();
-            townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", townHallPadding, "Empty space between town hall boundaries").getInt();
-            supplyChests = config.get(CATEGORY_GAMEPLAY, "supplyChests", supplyChests, "Allow crafting of a Supply Chest").getBoolean();
+            builderPlaceConstructionTape = config.get(CATEGORY_GAMEPLAY, "placeConstructionTape", builderPlaceConstructionTape,
+                    "Should builder place construction tape").getBoolean();
+            workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall,
+                    "Colony size (radius)").getInt();
+            townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", townHallPadding,
+                    "Empty space between town hall boundaries").getInt();
+            supplyChests = config.get(CATEGORY_GAMEPLAY, "supplyChests", supplyChests,
+                    "Allow crafting of a Supply Chest").getBoolean();
             allowInfiniteSupplyChests = config.get(CATEGORY_GAMEPLAY,
               "allowInfiniteSupplyChests", allowInfiniteSupplyChests, "Allow infinite placing of Supply Chests?").getBoolean();
             citizenRespawnInterval = getClampedInt(config, CATEGORY_GAMEPLAY,
@@ -62,7 +65,7 @@ public final class ConfigurationHandler
             /* Configs for commands */
             canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand,
                     "Players get CitizenInfoCommand").getBoolean();
-            canPlayerUseRTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCTPCommand", canPlayerUseRTPCommand,
+            canPlayerUseRTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseRTPCommand", canPlayerUseRTPCommand,
                     "Players can use the MC TP Command or not").getBoolean();
             canPlayerUseDeleteColonyCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseDeleteColonyCommand", canPlayerUseDeleteColonyCommand,
                     "Players get DeleteColonyCommand").getBoolean();

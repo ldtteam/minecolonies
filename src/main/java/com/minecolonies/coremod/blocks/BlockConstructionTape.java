@@ -9,6 +9,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -21,6 +22,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Random;
 
 import static net.minecraft.util.EnumFacing.*;
 
@@ -129,6 +132,7 @@ public class BlockConstructionTape extends Block
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
+        blockMaterial.setReplaceable();
     }
 
     @Override
@@ -248,6 +252,13 @@ public class BlockConstructionTape extends Block
                                       (float) HEIGHT_COLLISION,
                                       (float) SN_END_COLLISION_Z);
         }
+    }
+
+    @Nullable
+    @Override
+    public Item getItemDropped(final IBlockState state, final Random rand, final int fortune)
+    {
+        return null;
     }
 
     // =======================================================================

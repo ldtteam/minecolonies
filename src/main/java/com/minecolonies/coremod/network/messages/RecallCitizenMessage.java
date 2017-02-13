@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
@@ -7,6 +8,7 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.TeleportHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -78,7 +80,13 @@ public class RecallCitizenMessage extends AbstractMessage<RecallCitizenMessage, 
                 EntityCitizen citizen = building.getWorkerEntity();
                 if(citizen == null)
                 {
-                    return;
+                    final CitizenData citizenData = building.getWorker();
+                    if(citizenData != null)
+                    {
+                        Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", colony.getID(), citizenData.getId()));
+                        colony.spawnCitizen(citizenData);
+                        citizen = citizenData.getCitizenEntity();
+                    }
                 }
                 final BlockPos loc = building.getLocation();
                 if (!TeleportHelper.teleportCitizen(citizen, colony.getWorld(), loc))

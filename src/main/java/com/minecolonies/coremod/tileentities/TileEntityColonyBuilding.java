@@ -208,6 +208,17 @@ public class TileEntityColonyBuilding extends TileEntityChest
         building = b;
     }
 
+    @Override
+    public void markDirty()
+    {
+        super.markDirty();
+        if (building!=null)
+        {
+            building.markDirty();
+        }
+    }
+
+
     /**
      * Returns the view of the building associated with the tile entity.
      *
