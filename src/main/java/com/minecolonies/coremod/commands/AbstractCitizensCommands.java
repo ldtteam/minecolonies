@@ -66,7 +66,8 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
             final IColony tempColony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), (EntityPlayer) sender);
             if (tempColony != null)
             {
-                    colonyId = tempColony.getID();
+                colonyId = tempColony.getID();
+                firstArgumentColonyId = false;
             }
         }
 
@@ -108,15 +109,15 @@ public abstract class AbstractCitizensCommands extends AbstractSingleCommand
      */
     private static int getValidCitizenId(final Colony colony, final boolean firstArgumentColonyId, final String...args)
     {
-        final int citizenId = getIthArgument(args, 1, -1);
+        int offset = 0;
+        if(firstArgumentColonyId)
+        {
+            offset = 1;
+        }
+
+        final int citizenId = getIthArgument(args, offset, -1);
         if(citizenId == -1)
         {
-            int offset = 0;
-            if(firstArgumentColonyId)
-            {
-                offset = 1;
-            }
-
             if(args.length >= offset + 2)
             {
                 final String citizenName = args[offset] + " " + args[offset + 1] + " " + args[offset + 2];
