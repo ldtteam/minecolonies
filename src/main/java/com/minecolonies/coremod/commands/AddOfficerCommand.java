@@ -56,12 +56,6 @@ public class AddOfficerCommand extends AbstractSingleCommand
             return;
         }
 
-        if (!canCommandSenderUseCommand(ADDOFFICER))
-        {
-            sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
-            return;
-        }
-
         int colonyId = getIthArgument(args, 0, -1);
         if(colonyId == -1 && sender instanceof EntityPlayer)
         {
@@ -85,7 +79,7 @@ public class AddOfficerCommand extends AbstractSingleCommand
         if(sender instanceof EntityPlayer)
         {
             EntityPlayer player = (EntityPlayer) sender;
-            if (!colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER))
+            if (!canPlayerUseCommand(player, ADDOFFICER, colonyId))
             {
                 sender.getCommandSenderEntity().sendMessage(new TextComponentString(NOT_PERMITTED));
                 return;

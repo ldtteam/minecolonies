@@ -21,7 +21,7 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
  */
 public class CitizenInfoCommand extends AbstractCitizensCommands
 {
-    public static final  String       DESC                            = "citizenInfo";
+    public static final  String       DESC                            = "info";
     private static final String       CITIZEN_DESCRIPTION             = "§2ID: §f %d §2 Name: §f %s";
     private static final String       CITIZEN_LEVEL_AND_AGE           = "§2Level: §f%s §2Age: §f%s §2Experience: §f%s";
     private static final String       CITIZEN_SKILLS                  = "§2Charisma: §f%s §2Dexterity: §f%s §2Endurance: §f%s\n§2Intelligence: §f%s §2Strength: §f%s";
