@@ -475,10 +475,13 @@ public class InventoryUtils
             final ItemStack items = new ItemStack(stack.getItem(), itemCount, stack.getItemDamage());
             stackSize-=itemCount;
             final ItemStack remainingItems = setStack(inventory,items);
-            stackSize+=remainingItems.stackSize;
-            if (items.stackSize == remainingItems.stackSize)
+            if(remainingItems != null)
             {
-                break; 
+                stackSize += remainingItems.stackSize;
+                if (items.stackSize == remainingItems.stackSize)
+                {
+                    break;
+                }
             }
         }
         return new ItemStack(stack.getItem(), stackSize, stack.getItemDamage());

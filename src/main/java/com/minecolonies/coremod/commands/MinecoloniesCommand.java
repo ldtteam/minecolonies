@@ -11,7 +11,6 @@ import java.util.Map;
  */
 public class MinecoloniesCommand extends AbstractSplitCommand
 {
-
     public static final String DESC = "minecolonies";
 
     private final ImmutableMap<String, ISubCommand> subCommands =

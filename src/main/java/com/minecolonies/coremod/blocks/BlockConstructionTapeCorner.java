@@ -154,7 +154,7 @@ public class BlockConstructionTapeCorner extends Block
      */
     public BlockConstructionTapeCorner()
     {
-        super(Material.WOOD);
+        super(Material.VINE);
         initBlock();
     }
 
@@ -183,12 +183,7 @@ public class BlockConstructionTapeCorner extends Block
     {
         return null;
     }
-
-    @Override
-    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
-    {
-        return true;
-    }
+    
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
