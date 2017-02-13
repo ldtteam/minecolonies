@@ -174,6 +174,14 @@ public class BlockConstructionTapeCorner extends Block
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
+        blockMaterial.setReplaceable();
+    }
+
+    @Nullable
+    @Override
+    public Item getItemDropped(final IBlockState state, final Random rand, final int fortune)
+    {
+        return null;
     }
 
     @Nullable
