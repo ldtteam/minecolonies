@@ -114,7 +114,7 @@ public class BlockConstructionTape extends Block
      */
     public BlockConstructionTape()
     {
-        super(Material.WOOD);
+        super(Material.VINE);
         initBlock();
     }
 
@@ -133,13 +133,6 @@ public class BlockConstructionTape extends Block
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
-        blockMaterial.setReplaceable();
-    }
-
-    @Override
-    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
-    {
-        return true;
     }
 
     @Nullable
