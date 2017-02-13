@@ -113,7 +113,7 @@ public class BlockConstructionTape extends Block
      */
     public BlockConstructionTape()
     {
-        super(Material.WOOD);
+        super(Material.VINE);
         initBlock();
     }
 
@@ -132,14 +132,8 @@ public class BlockConstructionTape extends Block
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
-        blockMaterial.setReplaceable();
     }
 
-    @Override
-    public boolean isReplaceable(IBlockAccess worldIn, BlockPos pos)
-    {
-        return true;
-    }
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
@@ -149,11 +143,13 @@ public class BlockConstructionTape extends Block
     {
         return null;
     }
+
     @Override
     public int getMetaFromState(@NotNull final IBlockState state)
     {
         return state.getValue(FACING).getIndex();
     }
+    
     /**
      * Convert the given metadata into a BlockState for this Block.
      *
