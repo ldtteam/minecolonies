@@ -183,14 +183,7 @@ public class BlockConstructionTapeCorner extends Block
     {
         return null;
     }
-
-    @Nullable
-    @Override
-    public Item getItemDropped(final IBlockState state, final Random rand, final int fortune)
-    {
-        return null;
-    }
-
+    
     /**
      * @deprecated (Remove this as soon as minecraft offers anything better).
      */
