@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "minecolonies:blockConstructionTape"
+    },
+    "facing=east": {
+      "model": "minecolonies:blockConstructionTape",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "minecolonies:blockConstructionTape",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "minecolonies:blockConstructionTape",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "minecolonies:blockConstructionTape",
+      "y": 0
+    }
+  }
+}

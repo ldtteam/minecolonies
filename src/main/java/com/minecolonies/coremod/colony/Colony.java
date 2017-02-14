@@ -10,6 +10,7 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.permissions.ColonyPermissionEventHandler;
@@ -1192,6 +1193,7 @@ public class Colony implements IColony
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
+            ConstructionTapeHelper.placeConstructionTape(building, world);
         }
         else
         {

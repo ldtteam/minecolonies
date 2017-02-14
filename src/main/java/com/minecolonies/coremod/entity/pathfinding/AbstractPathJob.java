@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.entity.pathfinding;
 
+import com.minecolonies.coremod.blocks.BlockConstructionTape;
+import com.minecolonies.coremod.blocks.BlockConstructionTapeCorner;
 import com.minecolonies.coremod.blocks.BlockHutField;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.BlockUtils;
@@ -952,7 +954,10 @@ public abstract class AbstractPathJob implements Callable<Path>
         {
             if (block.getMaterial().blocksMovement())
             {
-                return block.getBlock() instanceof BlockDoor || block.getBlock() instanceof BlockFenceGate;
+                return block.getBlock() instanceof BlockDoor
+                         || block.getBlock() instanceof BlockFenceGate
+                         || block.getBlock() instanceof BlockConstructionTape
+                         || block.getBlock() instanceof BlockConstructionTapeCorner;
             }
             else if (block.getMaterial().isLiquid())
             {
@@ -984,6 +989,11 @@ public abstract class AbstractPathJob implements Callable<Path>
               || block instanceof BlockHutField)
         {
             return SurfaceType.NOT_PASSABLE;
+        }
+
+        if(block instanceof BlockConstructionTape || block instanceof BlockConstructionTapeCorner)
+        {
+            return SurfaceType.DROPABLE;
         }
 
         if (blockState.getMaterial().isSolid())
