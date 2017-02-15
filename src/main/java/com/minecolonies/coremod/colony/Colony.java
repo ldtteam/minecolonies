@@ -57,7 +57,26 @@ public class Colony implements IColony
     private static final String TAG_WORK                       = "work";
     private static final String TAG_MANUAL_HIRING              = "manualHiring";
     private static final String TAG_WAYPOINT                   = "waypoints";
-    private static final String TAG_BLOCK                      = "blockState";
+
+    //statistics tags
+    private static final String TAG_STATISTICS                 = "statistics";
+    private static final String TAG_MINER_STATISTICS           = "minerStatistics";
+    private static final String TAG_MINER_TOTAL_ORE            = "totalOres";
+    private static final String TAG_MINER_GOLD_ORE             = "goldOres";
+    private static final String TAG_MINER_DIAMOND              = "diamonds";
+    private static final String TAG_FARMER_STATISTICS          = "farmerStatistics";
+    private static final String TAG_FARMER_WHEAT               = "wheat";
+    private static final String TAG_FARMER_POTATO              = "potatoes";
+    private static final String TAG_FARMER_CARROT              = "carrots";
+    private static final String TAG_GUARD_STATISTICS           = "guardStatistics";
+    private static final String TAG_GUARD_ZOMBIE               = "zombies";
+    private static final String TAG_GUARD_SKELETON             = "skeletons";
+    private static final String TAG_GUARD_CREEPER              = "creepers";
+    private static final String TAG_GUARD_ENDERMAN             = "endermen";
+    private static final String TAG_BUILDER_STATISTICS         = "builderStatistics";
+    private static final String TAG_BUILDER_HUT                = "huts";
+    private static final String TAG_FISHERMAN_STATISTICS       = "fishermanStatistics";
+    private static final String TAG_FISHERMAN_FISH             = "fish";
 
     //private int autoHostile = 0;//Off
     private static final String TAG_FIELDS                        = "fields";
@@ -342,6 +361,32 @@ public class Colony implements IColony
             wayPointTagList.appendTag(wayPointCompound);
         }
         compound.setTag(TAG_WAYPOINT, wayPointTagList);
+
+        // Statistics
+        @NotNull final NBTTagCompound statisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound minerStatisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound farmerStatisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound guardStatisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound builderStatisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound fishermanStatisticsCompound = new NBTTagCompound();
+        statisticsCompound.setTag(TAG_MINER_STATISTICS, minerStatisticsCompound);
+        minerStatisticsCompound.setInteger(TAG_MINER_TOTAL_ORE, 0);
+        minerStatisticsCompound.setInteger(TAG_MINER_GOLD_ORE, 0);
+        minerStatisticsCompound.setInteger(TAG_MINER_DIAMOND, 0);
+        statisticsCompound.setTag(TAG_FARMER_STATISTICS, farmerStatisticsCompound);
+        farmerStatisticsCompound.setInteger(TAG_FARMER_CARROT, 0);
+        farmerStatisticsCompound.setInteger(TAG_FARMER_POTATO, 0);
+        farmerStatisticsCompound.setInteger(TAG_FARMER_WHEAT, 0);
+        statisticsCompound.setTag(TAG_GUARD_STATISTICS, guardStatisticsCompound);
+        guardStatisticsCompound.setInteger(TAG_GUARD_CREEPER, 0);
+        guardStatisticsCompound.setInteger(TAG_GUARD_ENDERMAN, 0);
+        guardStatisticsCompound.setInteger(TAG_GUARD_SKELETON, 0);
+        guardStatisticsCompound.setInteger(TAG_GUARD_ZOMBIE, 0);
+        statisticsCompound.setTag(TAG_BUILDER_STATISTICS, builderStatisticsCompound);
+        builderStatisticsCompound.setInteger(TAG_BUILDER_HUT, 0);
+        statisticsCompound.setTag(TAG_FISHERMAN_STATISTICS, fishermanStatisticsCompound);
+        fishermanStatisticsCompound.setInteger(TAG_FISHERMAN_FISH, 0);
+        compound.setTag(TAG_STATISTICS, statisticsCompound);
     }
 
     /**
