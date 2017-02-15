@@ -70,7 +70,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
     private static void cleanUpList()
     {
         final Map<UUID, Instant> mapCopy = new HashMap<>(commandExecutions);
-        for(Map.Entry<UUID, Instant> entry : mapCopy.entrySet())
+        for(final Map.Entry<UUID, Instant> entry : mapCopy.entrySet())
         {
             if(Instant.now().isAfter(entry.getValue()) && (Instant.now().getEpochSecond() - entry.getValue().getEpochSecond()) > Configurations.teleportBuffer)
             {
