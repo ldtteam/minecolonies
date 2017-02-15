@@ -60,6 +60,8 @@ public final class ConfigurationHandler
                     "Turn off explosions inside the colonies radius?").getBoolean();
 
             /* Configs for commands */
+            teleportBuffer = config.get(CATEGORY_GAMEPLAY, "timeBetweenTeleport", teleportBuffer,
+                    "Time until the next teleport in seconds").getInt();
             canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand,
                     "Players get CitizenInfoCommand").getBoolean();
             canPlayerUseRTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCTPCommand", canPlayerUseRTPCommand,
