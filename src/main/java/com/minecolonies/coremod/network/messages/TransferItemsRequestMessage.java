@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -115,7 +116,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         }
 
         final Item item = message.itemStack.getItem();
-        final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
+        final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(new PlayerMainInvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
         final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
 
         ItemStack remainingItemStack = InventoryUtils.setOverSizedStack(building.getTileItemHandler(), itemStackToTake);
@@ -147,7 +148,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
 
         while (amountToRemoveFromPlayer > 0)
         {
-            final int slot = InventoryUtils.findFirstSlotInInventoryWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());
+            final int slot = InventoryUtils.findFirstSlotInInventoryWith(new PlayerMainInvWrapper(player.inventory), item, message.itemStack.getItemDamage());
             final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
             amountToRemoveFromPlayer-=itemsTaken.stackSize;
         }

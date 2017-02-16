@@ -29,6 +29,7 @@ import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -42,6 +43,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.template.Template;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -993,7 +995,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, pos, 0);
             for (final ItemStack item : items)
             {
-                InventoryUtils.setStack(worker.getInventoryCitizen(), item);
+                ItemStack itemRemaining = ItemHandlerHelper.insertItemStacked(worker.getInventoryCitizen(), item, false);
+                if (itemRemaining != null)
+                {
+                    InventoryHelper.spawnItemStack(world, worker.posX, worker.posY, worker.posZ, itemRemaining);
+                }
             }
         }
 

@@ -684,7 +684,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         setBlockFromInventory(location, block, block.getDefaultState());
     }
 
-    private void setBlockFromInventory(@NotNull final BlockPos location, final Block block, final IBlockState metadata)
+    private boolean setBlockFromInventory(@NotNull final BlockPos location, final Block block, final IBlockState metadata)
     {
         final int slot;
         if(block instanceof BlockLadder)
@@ -695,12 +695,18 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         {
             slot = worker.findFirstSlotInInventoryWith(block, block.getMetaFromState(metadata));
         }
+
         if (slot != -1)
         {
-            getInventory().extractItem(slot, 1, false);
-            //Flag 1+2 is needed for updates
-            world.setBlockState(location, metadata, 3);
+            if (getInventory().extractItem(slot, 1, false) != null)
+            {
+                //Flag 1+2 is needed for updates
+                world.setBlockState(location, metadata, 3);
+                return true;
+            }
         }
+
+        return false;
     }
 
     private Block getBlock(@NotNull final BlockPos loc)

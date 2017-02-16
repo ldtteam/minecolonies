@@ -470,7 +470,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             if(entity instanceof TileEntityChest)
             {
                 IItemHandler handler = entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-                if (handler != null && InventoryUtils.getOpenSlot((IInventory) handler) != -1)
+                if (handler != null && InventoryUtils.getOpenSlot(handler) != -1)
                 {
                     final int tempFreeSlots = handler.getSlots() - InventoryUtils.getAmountOfStacks(handler);
                     if(freeSlots < tempFreeSlots)

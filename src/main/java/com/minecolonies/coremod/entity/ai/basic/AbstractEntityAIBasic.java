@@ -22,6 +22,7 @@ import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1015,7 +1016,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         int amountToKeep = 0;
         if (keptEnough(alreadyKept, shouldKeep, stack))
         {
-            returnStack = InventoryUtils.setStack(buildingWorker.getTileItemHandler(), stack);
+            returnStack = ItemHandlerHelper.insertItemStacked(buildingWorker.getTileItemHandler(), stack, false);
         }
         else
         {
@@ -1026,7 +1027,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 return false;
             }
             amountToKeep = stack.stackSize - tempStorage.getAmount();
-            returnStack = InventoryUtils.setStack(buildingWorker.getTileItemHandler(), tempStack);
+            returnStack = ItemHandlerHelper.insertItemStacked(buildingWorker.getTileItemHandler(), tempStack, false);
         }
         // TODO: Perform checks on extractItem
         if (returnStack == null)
@@ -1034,9 +1035,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             worker.getInventoryCitizen().extractItem(i, stack.stackSize - amountToKeep, false);
             return amountToKeep == 0;
         }
-        worker.getInventoryCitizen().extractItem(i, stack.stackSize - returnStack.stackSize - amountToKeep, false);
-        //Check that we are not inserting into a full inventory.
-        return stack.stackSize != returnStack.stackSize;
+        else if (stack.stackSize - returnStack.stackSize - amountToKeep > 0)
+        {
+            worker.getInventoryCitizen().extractItem(i, stack.stackSize - returnStack.stackSize - amountToKeep, false);
+            //Check that we are not inserting into a full inventory.
+            return stack.stackSize != returnStack.stackSize;
+        }
+        else
+        {
+            // TODO: Is this correct?
+            return false;
+        }
     }
 
     /**

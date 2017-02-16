@@ -247,24 +247,6 @@ public class InventoryUtils
      * @param inventory the inventory to check.
      * @return slot number or -1 if none found.
      */
-    public static int getOpenSlot(@NotNull final IInventory inventory)
-    {
-        for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
-        {
-            if (inventory.getStackInSlot(slot) == null)
-            {
-                return slot;
-            }
-        }
-        return -1;
-    }
-
-    /**
-     * returns first open slot in the inventory.
-     *
-     * @param inventory the inventory to check.
-     * @return slot number or -1 if none found.
-     */
     public static int getOpenSlot(@NotNull final IItemHandler inventory)
     {
         for (int slot = 0; slot < inventory.getSlots(); slot++)
@@ -402,59 +384,23 @@ public class InventoryUtils
         if (receivingInv != null && sendingInv != null && slotID >= 0 && amount >= 0)
         {
             // gets itemstack in slot, and decreases stacksize
-            @Nullable ItemStack stack = sendingInv.extractItem(slotID, amount, true);
-            // stack is null if no itemstack was in slot
-            if (stack != null)
+            @Nullable ItemStack stack = sendingInv.extractItem(slotID, takeAll ? 64 : amount, true);
+            @Nullable ItemStack leftover = ItemHandlerHelper.insertItemStacked(receivingInv, stack, true);
+            int sizeToSend = stack.stackSize - (leftover != null ? leftover.stackSize : 0);
+            if (sizeToSend < amount)
             {
-                // puts stack in receiving inventory
-                stack = setStack(receivingInv, stack);
-                // checks for leftovers
-                if (stack == null)
-                {
-                    if (takeAll)
-                    {
-                        // gets itemstack in slot
-                        stack = sendingInv.getStackInSlot(slotID);
-                        // checks if itemstack is still in slot
-                        if (stack != null)
-                        {
-                            stack = sendingInv.extractItem(slotID, stack.stackSize, true);
-
-                            stack = setStack(receivingInv, stack);
-                            setStack(sendingInv, stack);
-                        }
-                    }
-
-                    // puts leftovers back in sending inventory
-                    return true;
-                }
-                setStack(sendingInv, stack);
                 return false;
             }
+
+            stack = sendingInv.extractItem(slotID, sizeToSend, false);
+            ItemHandlerHelper.insertItemStacked(receivingInv, stack, false);
+            return true;
         }
         return false;
     }
 
     /**
-     * Tries to put an item into Inventory. Please use ItemHandlerHelper.insertItem instead.
-     *
-     * @param inventory the inventory to set the stack in.
-     * @param stack     Item stack with items to be transferred
-     * @return returns null if successful, or stack of remaining items
-     */
-    @Nullable
-    @Deprecated
-    public static ItemStack setStack(@NotNull final IItemHandler inventory, @Nullable final ItemStack stack)
-    {
-        if (stack != null && stack.stackSize > stack.getMaxStackSize())
-        {
-            Log.getLogger().warn("InventoryUtils.setStack: stack size bigger than the max stack size. Please contact a minecolonnies developer.");
-        }
-        return ItemHandlerHelper.insertItem(inventory, stack, false);
-    }
-
-    /**
-     * {@link #setStack(IItemHandler, ItemStack)}.
+     * {@link #setOverSizedStack(IItemHandler, ItemStack)}.
      * Tries to put an itemStack into Inventory, unlike setStack, allow to use a ItemStack bigger than the maximum stack size allowed for the item
      *
      * @param inventory the inventory to set the stack in.
@@ -462,7 +408,6 @@ public class InventoryUtils
      * @return returns null if successful, or stack of remaining items, BE AWARE that the remaining stack can be bigger than the maximum stack size
      */
     @Nullable
-    @Deprecated
     public static ItemStack setOverSizedStack(@NotNull final IItemHandler inventory, @Nullable final ItemStack stack)
     {
         int stackSize = stack.stackSize;
@@ -471,7 +416,7 @@ public class InventoryUtils
             final int itemCount = Math.min(stackSize, stack.getMaxStackSize());
             final ItemStack items = new ItemStack(stack.getItem(), itemCount, stack.getItemDamage());
             stackSize-=itemCount;
-            final ItemStack remainingItems = setStack(inventory,items);
+            final ItemStack remainingItems = ItemHandlerHelper.insertItemStacked(inventory, items, false);
             if(remainingItems != null)
             {
                 stackSize += remainingItems.stackSize;
@@ -562,21 +507,6 @@ public class InventoryUtils
     }
 
     /**
-     * Clears an entire inventory. This may not always work with IItemHandler
-     * and, as such, it is deprecated.
-     *
-     * @param inventory Inventory to clear.
-     */
-    @Deprecated
-    public static void clear(@NotNull final IItemHandler inventory)
-    {
-        for (int slot = 0; slot < inventory.getSlots(); slot++)
-        {
-            inventory.extractItem(slot, 64, false);
-        }
-    }
-
-    /**
      * Returns a slot number if an inventory contains given tool type.
      *
      * @param inventory the inventory to get the slot from.
@@ -598,56 +528,6 @@ public class InventoryUtils
         return -1;
     }
 
-    /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
-     *
-     * @param inventory Inventory to add itemstack to.
-     * @param itemStack ItemStack to add.
-     * @return True if successful, otherwise false.
-     */
-    public static boolean addItemStackToInventory(@NotNull final IInventory inventory, @Nullable final ItemStack itemStack)
-    {
-        if (itemStack != null && itemStack.stackSize != 0 && itemStack.getItem() != null)
-        {
-            int stackSize;
-
-            if (itemStack.isItemDamaged())
-            {
-                stackSize = getOpenSlot(inventory);
-
-                if (stackSize >= 0)
-                {
-                    final ItemStack copy = ItemStack.copyItemStack(itemStack);
-                    copy.animationsToGo = 5;
-                    inventory.setInventorySlotContents(stackSize, copy);
-
-                    itemStack.stackSize = 0;
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            else
-            {
-                do
-                {
-                    stackSize = itemStack.stackSize;
-                    itemStack.stackSize = storePartialItemStack(inventory, itemStack);
-                }
-                while (itemStack.stackSize > 0 && itemStack.stackSize < stackSize);
-
-
-                return itemStack.stackSize < stackSize;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
     public static boolean addItemStackToInventory(@NotNull final IItemHandler inventory, @Nullable final ItemStack itemStack)
     {
         if (ItemHandlerHelper.insertItemStacked(inventory, itemStack, true) != null)
@@ -655,123 +535,6 @@ public class InventoryUtils
             return false;
         }
         return ItemHandlerHelper.insertItemStacked(inventory, itemStack, false) == null;
-    }
-
-    /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storePartialItemStack(ItemStack)}.
-     * <p>
-     * This function stores as many items of an ItemStack as possible in a matching slot and returns the quantity of
-     * left over items.
-     *
-     * @param inventory Inventory to add stack to.
-     * @param itemStack Item stack to store in inventory.
-     * @return Leftover items in itemstack.
-     */
-    private static int storePartialItemStack(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack)
-    {
-        final Item item = itemStack.getItem();
-        int stackSize = itemStack.stackSize;
-        int slot;
-
-        if (itemStack.getMaxStackSize() == 1)
-        {
-            slot = getOpenSlot(inventory);
-
-            if (slot < 0)
-            {
-                return stackSize;
-            }
-            else
-            {
-                if (inventory.getStackInSlot(slot) == null)
-                {
-                    inventory.setInventorySlotContents(slot, ItemStack.copyItemStack(itemStack));
-                }
-
-                return 0;
-            }
-        }
-        else
-        {
-            slot = findSlotForItemStack(inventory, itemStack);
-
-            if (slot < 0)
-            {
-                slot = getOpenSlot(inventory);
-            }
-
-            if (slot < 0)
-            {
-                return stackSize;
-            }
-            else
-            {
-                ItemStack stack = inventory.getStackInSlot(slot);
-                if (stack == null)
-                {
-                    stack = new ItemStack(item, 0, itemStack.getItemDamage());
-
-                    if (itemStack.hasTagCompound())
-                    {
-                        stack.setTagCompound(itemStack.getTagCompound().copy());
-                    }
-                }
-
-                int inventoryStackSpace = stackSize;
-
-                if (stackSize > stack.getMaxStackSize() - stack.stackSize)
-                {
-                    inventoryStackSpace = stack.getMaxStackSize() - stack.stackSize;
-                }
-
-                if (inventoryStackSpace > inventory.getInventoryStackLimit() - stack.stackSize)
-                {
-                    inventoryStackSpace = inventory.getInventoryStackLimit() - stack.stackSize;
-                }
-
-                if (inventoryStackSpace == 0)
-                {
-                    return stackSize;
-                }
-                else
-                {
-                    stackSize -= inventoryStackSpace;
-                    stack.stackSize += inventoryStackSpace;
-                    stack.animationsToGo = 5;
-                    inventory.setInventorySlotContents(slot, stack);
-                    return stackSize;
-                }
-            }
-        }
-    }
-
-    /**
-     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storeItemStack(ItemStack)}.
-     * <p>
-     * find a slot to store an ItemStack in.
-     *
-     * @param inventory Inventory to look in.
-     * @param itemStack Item Stack to look for.
-     * @return Index of the item stack. If not found, returns -1.
-     */
-    private static int findSlotForItemStack(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack)
-    {
-        for (int i = 0; i < inventory.getSizeInventory(); i++)
-        {
-            final ItemStack inventoryItem = inventory.getStackInSlot(i);
-            if (inventoryItem != null
-                  && inventoryItem.getItem() == itemStack.getItem()
-                  && inventoryItem.isStackable()
-                  && inventoryItem.stackSize < inventoryItem.getMaxStackSize()
-                  && inventoryItem.stackSize < inventory.getInventoryStackLimit()
-                  && (!inventoryItem.getHasSubtypes() || inventoryItem.getItemDamage() == itemStack.getItemDamage())
-                  && ItemStack.areItemStackTagsEqual(inventoryItem, itemStack))
-            {
-                return i;
-            }
-        }
-
-        return -1;
     }
 
     /**

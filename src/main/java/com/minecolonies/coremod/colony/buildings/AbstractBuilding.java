@@ -28,6 +28,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -1116,22 +1117,38 @@ public abstract class AbstractBuilding
      */
     public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
-        if(tileEntity == null || InventoryUtils.isInventoryFull(getTileItemHandler()))
+        if (transferStackInternal(stack, world, true) != null)
+        {
+            return false;
+        }
+
+        transferStackInternal(stack, world, false);
+        return true;
+    }
+
+    private ItemStack transferStackInternal(@NotNull final ItemStack stack, @NotNull final World world, boolean simulate)
+    {
+        ItemStack stackInserted = ItemHandlerHelper.insertItemStacked(tileEntity.getItemHandler(), stack, simulate);
+        if (stackInserted != null)
         {
             for(final BlockPos pos: containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull(tempTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)))
+                if (tempTileEntity instanceof TileEntityChest && tempTileEntity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
                 {
-                    return InventoryUtils.addItemStackToInventory((IInventory) tempTileEntity, stack);
+                    final IItemHandler handler = tempTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                    if (handler != null)
+                    {
+                        stackInserted = ItemHandlerHelper.insertItemStacked(handler, stack, simulate);
+                        if (stackInserted == null)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
         }
-        else
-        {
-            return InventoryUtils.addItemStackToInventory(tileEntity.getItemHandler(), stack);
-        }
-        return false;
+        return stackInserted;
     }
 
     /**

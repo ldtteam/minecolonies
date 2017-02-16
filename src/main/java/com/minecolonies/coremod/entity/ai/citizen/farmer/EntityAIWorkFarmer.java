@@ -585,12 +585,19 @@ public class EntityAIWorkFarmer extends AbstractEntityAIInteract<JobFarmer>
         }
         else
         {
-            @NotNull final IPlantable seed = (IPlantable) item.getItem();
-            world.setBlockState(position.up(), seed.getPlant(world, position));
-            getInventory().extractItem(slot, 1, false);
-            requestSeeds = false;
-            //Flag 1+2 is needed for updates
-            return true;
+            final ItemStack stackExtracted = getInventory().extractItem(slot, 1, false);
+            if (stackExtracted != null)
+            {
+                @NotNull final IPlantable seed = (IPlantable) stackExtracted.getItem();
+                world.setBlockState(position.up(), seed.getPlant(world, position));
+                requestSeeds = false;
+                //Flag 1+2 is needed for updates
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 
