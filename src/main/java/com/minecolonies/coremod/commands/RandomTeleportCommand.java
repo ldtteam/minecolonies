@@ -155,7 +155,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
                 }
                 else
                 {
-                    sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
+                    sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
                 }
                 return;
             }
