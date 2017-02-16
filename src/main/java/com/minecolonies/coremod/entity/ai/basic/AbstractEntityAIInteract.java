@@ -115,6 +115,17 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //get all item drops
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
 
+        //if ore then add to statistics
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.COAL_ORE)
+              || world.getBlockState(blockToMine).getBlock().equals(Blocks.IRON_ORE)
+              || world.getBlockState(blockToMine).getBlock().equals(Blocks.LAPIS_ORE)
+              || world.getBlockState(blockToMine).getBlock().equals(Blocks.GOLD_ORE)
+              || world.getBlockState(blockToMine).getBlock().equals(Blocks.REDSTONE_ORE)
+              || world.getBlockState(blockToMine).getBlock().equals(Blocks.EMERALD_ORE)
+              || world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
+        {
+            this.getOwnBuilding().getColony().incrementOresMined();
+        }
         //Break the block
         worker.breakBlockWithToolInHand(blockToMine);
 

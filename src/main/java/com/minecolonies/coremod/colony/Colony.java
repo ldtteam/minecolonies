@@ -255,14 +255,20 @@ public class Colony implements IColony
             wayPoints.put(pos, state);
         }
         //Statistics
-        minedOres = compound.getInteger(TAG_MINER_ORES);
-        minedDiamonds = compound.getInteger(TAG_MINER_DIAMONDS);
-        harvestedCarrots = compound.getInteger(TAG_FARMER_CARROTS);
-        harvestedPotatoes = compound.getInteger(TAG_FARMER_POTATOES);
-        harvestedWheat = compound.getInteger(TAG_FARMER_WHEAT);
-        killedMobs = compound.getInteger(TAG_GUARD_KILLS);
-        builtHuts = compound.getInteger(TAG_BUILDER_HUTS);
-        caughtFish = compound.getInteger(TAG_FISHERMAN_FISH);
+        final NBTTagCompound statisticsCompound = compound.getCompoundTag(TAG_STATISTICS);
+        final NBTTagCompound minerStatisticsCompound = statisticsCompound.getCompoundTag(TAG_MINER_STATISTICS);
+        final NBTTagCompound farmerStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FARMER_STATISTICS);
+        final NBTTagCompound guardStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FARMER_STATISTICS);
+        final NBTTagCompound builderStatisticsCompound = statisticsCompound.getCompoundTag(TAG_BUILDER_STATISTICS);
+        final NBTTagCompound fishermanStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FISHERMAN_FISH);
+        minedOres = minerStatisticsCompound.getInteger(TAG_MINER_ORES);
+        minedDiamonds = minerStatisticsCompound.getInteger(TAG_MINER_DIAMONDS);
+        harvestedCarrots = farmerStatisticsCompound.getInteger(TAG_FARMER_CARROTS);
+        harvestedPotatoes = farmerStatisticsCompound.getInteger(TAG_FARMER_POTATOES);
+        harvestedWheat = farmerStatisticsCompound.getInteger(TAG_FARMER_WHEAT);
+        killedMobs = guardStatisticsCompound.getInteger(TAG_GUARD_KILLS);
+        builtHuts = builderStatisticsCompound.getInteger(TAG_BUILDER_HUTS);
+        caughtFish = fishermanStatisticsCompound.getInteger(TAG_FISHERMAN_FISH);
     }
 
     /**
@@ -520,6 +526,11 @@ public class Colony implements IColony
             this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
         }
     }
+    /**
+     * Increment the ores mined by this colony.
+     * <p>
+     * Will award achievements for ores mined.
+     */
     public void incrementOresMined()
     {
         minedOres++;
