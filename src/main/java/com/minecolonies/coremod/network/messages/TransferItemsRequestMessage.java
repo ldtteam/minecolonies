@@ -16,6 +16,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -113,10 +115,10 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         }
 
         final Item item = message.itemStack.getItem();
-        final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(player.inventory, item, message.itemStack.getItemDamage()));
+        final int amountToTake = Math.min(message.quantity, InventoryUtils.getItemCountInInventory(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage()));
         final ItemStack itemStackToTake = new ItemStack(item, amountToTake, message.itemStack.getItemDamage());
 
-        ItemStack remainingItemStack = InventoryUtils.setOverSizedStack(building.getTileEntity(), itemStackToTake);
+        ItemStack remainingItemStack = InventoryUtils.setOverSizedStack(building.getTileItemHandler(), itemStackToTake);
 
         //If we still have some to drop, let's try the additional chests now
         if (remainingItemStack.stackSize > 0)
@@ -127,8 +129,8 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
                 final TileEntity entity = world.getTileEntity(pos);
                 if(entity instanceof TileEntityChest)
                 {
-                    remainingItemStack = InventoryUtils.setOverSizedStack((TileEntityChest)entity, remainingItemStack);
-                    if (remainingItemStack.stackSize==0)
+                    remainingItemStack = InventoryUtils.setOverSizedStack(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), remainingItemStack);
+                    if (remainingItemStack.stackSize == 0)
                     {
                         break;
                     }
@@ -145,7 +147,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
 
         while (amountToRemoveFromPlayer > 0)
         {
-            final int slot = InventoryUtils.findFirstSlotInInventoryWith(player.inventory, item, message.itemStack.getItemDamage());
+            final int slot = InventoryUtils.findFirstSlotInInventoryWith(new InvWrapper(player.inventory), item, message.itemStack.getItemDamage());
             final ItemStack itemsTaken = player.inventory.decrStackSize(slot, amountToRemoveFromPlayer);
             amountToRemoveFromPlayer-=itemsTaken.stackSize;
         }

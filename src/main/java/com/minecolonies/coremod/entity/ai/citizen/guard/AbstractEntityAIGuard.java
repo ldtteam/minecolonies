@@ -25,6 +25,7 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -213,13 +214,7 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
 
                 if (stack.getItem() instanceof ItemArmor && worker.getItemStackFromSlot(((ItemArmor) stack.getItem()).armorType) == null)
                 {
-                    final int emptySlot = worker.getInventoryCitizen().getFirstEmptySlot();
-
-                    if (emptySlot != -1)
-                    {
-                        worker.getInventoryCitizen().setInventorySlotContents(emptySlot, stack);
-                        chest.setInventorySlotContents(i, null);
-                    }
+                    chest.setInventorySlotContents(i, ItemHandlerHelper.insertItem(worker.getInventoryCitizen(), stack, false));
                 }
                 dumpAfterActions = DUMP_BASE * workBuilding.getBuildingLevel();
             }
@@ -255,13 +250,14 @@ public abstract class AbstractEntityAIGuard extends AbstractEntityAISkill<JobGua
         worker.setItemStackToSlot(EntityEquipmentSlot.HEAD, null);
         worker.setItemStackToSlot(EntityEquipmentSlot.LEGS, null);
 
-        for (int i = 0; i < worker.getInventoryCitizen().getSizeInventory(); i++)
+        for (int i = 0; i < worker.getInventoryCitizen().getSlots(); i++)
         {
             final ItemStack stack = worker.getInventoryCitizen().getStackInSlot(i);
 
             if (stack == null || stack.stackSize == 0)
             {
-                worker.getInventoryCitizen().setInventorySlotContents(i, null);
+                // TODO: Add checks to extractItem
+                worker.getInventoryCitizen().extractItem(i, 64, false);
                 continue;
             }
 

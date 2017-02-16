@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -176,20 +177,29 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
      */
     private boolean gatherFromBuilding(@NotNull final AbstractBuilding building)
     {
-        if (currentSlot >= building.getTileEntity().getSizeInventory())
+        if (currentSlot >= building.getTileItemHandler().getSlots())
         {
             return true;
         }
 
-        final ItemStack stack = building.getTileEntity().getStackInSlot(currentSlot);
+        final ItemStack stack = building.getTileItemHandler().extractItem(currentSlot, 1, true);
         if (stack == null || workerRequiresItem(building, stack, alreadyKept))
         {
             return false;
         }
 
-        worker.getInventoryCitizen().addItemStackToInventory(building.getTileEntity().removeStackFromSlot(currentSlot));
-        building.markDirty();
-        setDelay(DUMP_AND_GATHER_DELAY);
+        final ItemStack stackTestInserted = ItemHandlerHelper.insertItemStacked(worker.getInventoryCitizen(), stack, true);
+        if (stackTestInserted != null)
+        {
+            final ItemStack stackExtracted = building.getTileItemHandler().extractItem(currentSlot, stackTestInserted.stackSize, false);
+            if (stackExtracted != null)
+            {
+                ItemHandlerHelper.insertItemStacked(worker.getInventoryCitizen(), stackExtracted, false);
+                building.markDirty();
+                setDelay(DUMP_AND_GATHER_DELAY);
+            }
+        }
+
         return false;
     }
 
@@ -297,7 +307,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                 }
 
                 final InventoryCitizen workerInventory = worker.getInventoryCitizen();
-                for (int i = 0; i < workerInventory.getSizeInventory(); i++)
+                for (int i = 0; i < workerInventory.getSlots(); i++)
                 {
                     final ItemStack stack = workerInventory.getStackInSlot(i);
                     if (stack == null)
@@ -307,7 +317,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
 
                     if (buildingToDeliver.transferStack(stack, world))
                     {
-                        workerInventory.removeStackFromSlot(i);
+                        workerInventory.extractItem(i, 64, false);
                     }
                     else
                     {
@@ -319,7 +329,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
                         }
                         else
                         {
-                            workerInventory.addItemStackToInventory(tempStack);
+                            ItemHandlerHelper.insertItemStacked(workerInventory, tempStack, false);
                         }
                     }
                 }

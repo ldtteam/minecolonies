@@ -21,6 +21,8 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -291,7 +293,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
                 resource.addAvailable(InventoryUtils.getItemCountInInventory(builderInventory, resource.getItem(), resource.getDamageValue()));
             }
 
-            final IInventory chestInventory = this.getTileEntity();
+            final IItemHandler chestInventory = this.getTileItemHandler();
             if (chestInventory!=null)
             {
                 resource.addAvailable(InventoryUtils.getItemCountInInventory(chestInventory, resource.getItem(), resource.getDamageValue()));
@@ -305,7 +307,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
                     final TileEntity entity = builder.worldObj.getTileEntity(pos);
                     if(entity instanceof TileEntityChest)
                     {
-                        resource.addAvailable(InventoryUtils.getItemCountInInventory((TileEntityChest)entity, resource.getItem(), resource.getDamageValue()));
+                        resource.addAvailable(InventoryUtils.getItemCountInInventory(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), resource.getItem(), resource.getDamageValue()));
                     }
                 }
             }

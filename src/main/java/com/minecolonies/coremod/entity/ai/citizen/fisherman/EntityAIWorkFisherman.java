@@ -276,7 +276,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
      */
     private boolean hasFish()
     {
-        return InventoryUtils.hasitemInInventory(getInventory(), Items.FISH, -1);
+        return InventoryUtils.hasItemInInventory(getInventory(), Items.FISH, -1);
     }
 
     /**

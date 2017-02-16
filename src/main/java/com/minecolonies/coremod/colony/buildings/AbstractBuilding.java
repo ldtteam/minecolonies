@@ -26,6 +26,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -536,6 +538,15 @@ public abstract class AbstractBuilding
             ConstructionTapeHelper.removeConstructionTape(this, world);
         }
         ConstructionTapeHelper.removeConstructionTape(this, world);
+    }
+
+    /**
+     * Returns the item handler that belongs to the colony building.
+     *
+     * @return {@link IItemHandler} item handler of the building.
+     */
+    public IItemHandler getTileItemHandler() {
+        return getTileEntity().getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
     }
 
     /**
@@ -1104,12 +1115,12 @@ public abstract class AbstractBuilding
      */
     public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
     {
-        if(tileEntity == null || InventoryUtils.isInventoryFull(tileEntity))
+        if(tileEntity == null || InventoryUtils.isInventoryFull(getTileItemHandler()))
         {
             for(final BlockPos pos: containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull(tempTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)))
                 {
                     return InventoryUtils.addItemStackToInventory((IInventory) tempTileEntity, stack);
                 }
@@ -1136,7 +1147,7 @@ public abstract class AbstractBuilding
             for(final BlockPos pos: containerList)
             {
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
-                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull(tempTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)))
                 {
                     return InventoryUtils.forceItemStackToInventory((IInventory) tempTileEntity, stack, this);
                 }

@@ -697,7 +697,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
         }
         if (slot != -1)
         {
-            getInventory().decrStackSize(slot, 1);
+            getInventory().extractItem(slot, 1, false);
             //Flag 1+2 is needed for updates
             world.setBlockState(location, metadata, 3);
         }

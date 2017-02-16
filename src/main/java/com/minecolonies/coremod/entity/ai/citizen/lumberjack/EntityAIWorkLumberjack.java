@@ -479,7 +479,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
     private int findSaplingSlot()
     {
-        for (int slot = 0; slot < getInventory().getSizeInventory(); slot++)
+        for (int slot = 0; slot < getInventory().getSlots(); slot++)
         {
             final ItemStack stack = getInventory().getStackInSlot(slot);
             if (isCorrectSapling(stack))
@@ -498,16 +498,18 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             final BlockPos pos = job.tree.getStumpLocations().get(0);
 
-            if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
-                  || Objects.equals(world.getBlockState(pos), block.getStateFromMeta(stack.getMetadata())))
+            if (getInventory().extractItem(saplingSlot, 1, true) != null)
             {
-
-                getInventory().decrStackSize(saplingSlot, 1);
-                job.tree.removeStump(pos);
-            }
-            else
-            {
-                return;
+                if ((BlockPosUtil.setBlock(world, pos, block.getStateFromMeta(stack.getMetadata()), 0x02) && getInventory().getStackInSlot(saplingSlot) != null)
+                        || Objects.equals(world.getBlockState(pos), block.getStateFromMeta(stack.getMetadata())))
+                {
+                    getInventory().extractItem(saplingSlot, 1, false);
+                    job.tree.removeStump(pos);
+                }
+                else
+                {
+                    return;
+                }
             }
         }
     }
@@ -662,7 +664,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      */
     private boolean hasLogs()
     {
-        for (int i = 0; i < getInventory().getSizeInventory(); i++)
+        for (int i = 0; i < getInventory().getSlots(); i++)
         {
             if (isStackLog(getInventory().getStackInSlot(i)))
             {

@@ -4,6 +4,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.creativetab.ModCreativeTabs;
+import com.minecolonies.coremod.inventory.GuiHandler;
 import com.minecolonies.coremod.inventory.InventoryField;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
@@ -179,7 +180,7 @@ public class BlockHutField extends BlockContainer
             @Nullable final Colony colony = ColonyManager.getColony(worldIn, pos);
             if (colony != null)
             {
-                playerIn.openGui(MineColonies.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
+                playerIn.openGui(MineColonies.instance, GuiHandler.SCARECROW, worldIn, pos.getX(), pos.getY(), pos.getZ());
                 return true;
             }
         }

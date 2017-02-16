@@ -1085,10 +1085,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (tempStack != null)
             {
                 final int slot = worker.findFirstSlotInInventoryWith(tempStack.getItem(), tempStack.getItemDamage());
-                if (slot != -1)
+                final ItemStack stackExtracted = getInventory().extractItem(slot, 1, false);
+                if (slot != -1 && stackExtracted != null)
                 {
-                    getInventory().decrStackSize(slot, 1);
-                    reduceNeededResources(tempStack);
+                    reduceNeededResources(stackExtracted);
                 }
             }
         }
@@ -1190,10 +1190,10 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                             continue;
                         }
                         final int slot = worker.findFirstSlotInInventoryWith(stack.getItem(), stack.getItemDamage());
-                        if (slot != -1)
+                        final ItemStack stackExtracted = getInventory().extractItem(slot, 1, false);
+                        if (slot != -1 && stackExtracted != null)
                         {
-                            getInventory().decrStackSize(slot, 1);
-                            reduceNeededResources(stack);
+                            reduceNeededResources(stackExtracted);
                         }
                     }
                 }

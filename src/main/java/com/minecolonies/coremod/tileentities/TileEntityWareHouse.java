@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -255,8 +256,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         if(building != null)
         {
             if((minLevel != -1
-                    && InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), minLevel, requestingBuilding.getBuildingLevel()))
-                    || InventoryUtils.isToolInTileEntity(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel()))
+                    && InventoryUtils.isPickaxeInTileEntity(building.getTileItemHandler(), minLevel, requestingBuilding.getBuildingLevel()))
+                    || InventoryUtils.isToolInTileEntity(building.getTileItemHandler(), tool, requestingBuilding.getBuildingLevel()))
             {
                 return building.getLocation();
             }
@@ -265,8 +266,8 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             {
                 final TileEntity entity = worldObj.getTileEntity(pos);
                 if (entity instanceof TileEntityChest
-                        && ((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, minLevel, requestingBuilding.getBuildingLevel()))
-                        || InventoryUtils.isToolInTileEntity((TileEntityChest) entity, tool, requestingBuilding.getBuildingLevel())))
+                        && ((minLevel != -1 && InventoryUtils.isPickaxeInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), minLevel, requestingBuilding.getBuildingLevel()))
+                        || InventoryUtils.isToolInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), tool, requestingBuilding.getBuildingLevel())))
                 {
                     return pos;
                 }
@@ -290,11 +291,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             if(tool.equals(Utils.PICKAXE))
             {
-                hasItem = InventoryUtils.isPickaxeInTileEntity(building.getTileEntity(), requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
+                hasItem = InventoryUtils.isPickaxeInTileEntity(building.getTileItemHandler(), requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
             }
             else
             {
-                hasItem = InventoryUtils.isToolInTileEntity(building.getTileEntity(), tool, requestingBuilding.getBuildingLevel());
+                hasItem = InventoryUtils.isToolInTileEntity(building.getTileItemHandler(), tool, requestingBuilding.getBuildingLevel());
             }
 
             if(hasItem)
@@ -309,11 +310,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 {
                     if(tool.equals(Utils.PICKAXE))
                     {
-                        hasItem = InventoryUtils.isPickaxeInTileEntity((TileEntityChest) entity, requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
+                        hasItem = InventoryUtils.isPickaxeInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), requestingBuilding.getNeededPickaxeLevel(), requestingBuilding.getBuildingLevel());
                     }
                     else
                     {
-                        hasItem = InventoryUtils.isToolInTileEntity((TileEntityChest) entity, tool, requestingBuilding.getBuildingLevel());
+                        hasItem = InventoryUtils.isToolInTileEntity(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), tool, requestingBuilding.getBuildingLevel());
                     }
 
                     if(hasItem)
@@ -343,7 +344,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         return is != null
                 && InventoryFunctions
                 .matchFirstInInventoryWithInventory(
-                        entity,
+                        entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
                         stack -> stack != null && is.isItemEqual(stack),
                         InventoryFunctions::doNothing
                 );
@@ -370,7 +371,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
      */
     public void dumpInventoryIntoWareHouse(@NotNull final InventoryCitizen inventoryCitizen)
     {
-        for(int i = 0; i < inventoryCitizen.getSizeInventory(); i++)
+        for(int i = 0; i < inventoryCitizen.getSlots(); i++)
         {
             final ItemStack stack = inventoryCitizen.getStackInSlot(i);
 
@@ -384,8 +385,11 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
                 LanguageHandler.sendPlayersMessage(getColony().getMessageEntityPlayers(), "com.minecolonies.coremod.wareHouse.full");
                 return;
             }
-            InventoryUtils.addItemStackToInventory(chest, stack);
-            inventoryCitizen.removeStackFromSlot(i);
+            final ItemStack extractedStack = inventoryCitizen.extractItem(i, stack.stackSize, true);
+            if (extractedStack != null) {
+                InventoryUtils.addItemStackToInventory(chest, extractedStack);
+                inventoryCitizen.extractItem(i, extractedStack.stackSize, false);
+            }
         }
 
     }
@@ -398,7 +402,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     @Nullable
     private TileEntityChest searchRightChestForStack(@NotNull final ItemStack stack)
     {
-        if(InventoryUtils.findFirstSlotInInventoryWith(this, stack.getItem(), stack.getItemDamage()) != -1 && InventoryUtils.getOpenSlot(this) != -1)
+        if(InventoryUtils.findFirstSlotInInventoryWith(this.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), stack.getItem(), stack.getItemDamage()) != -1 && InventoryUtils.getOpenSlot(this) != -1)
         {
             return this;
         }
@@ -407,7 +411,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             final TileEntity entity = worldObj.getTileEntity(pos);
             if(entity instanceof TileEntityChest
-                    && InventoryUtils.findFirstSlotInInventoryWith((TileEntityChest) entity, stack.getItem(), stack.getItemDamage()) != -1
+                    && InventoryUtils.findFirstSlotInInventoryWith(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), stack.getItem(), stack.getItemDamage()) != -1
                     && InventoryUtils.getOpenSlot(this) != -1)
             {
                 return (TileEntityChest) entity;
@@ -430,7 +434,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
         {
             final TileEntity entity = worldObj.getTileEntity(pos);
             if(entity instanceof TileEntityChest
-                    && InventoryUtils.findFirstSlotInInventoryWith((TileEntityChest) entity, stack.getItem(), -1) != -1
+                    && InventoryUtils.findFirstSlotInInventoryWith(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), stack.getItem(), -1) != -1
                     && InventoryUtils.getOpenSlot(this) != -1)
             {
                 return (TileEntityChest) entity;
@@ -458,7 +462,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             }
             if(entity instanceof TileEntityChest && InventoryUtils.getOpenSlot((IInventory) entity) != -1)
             {
-                final int tempFreeSlots = ((TileEntityChest) entity).getSizeInventory() - InventoryUtils.getAmountOfStacks((IInventory) entity);
+                final int tempFreeSlots = ((TileEntityChest) entity).getSizeInventory() - InventoryUtils.getAmountOfStacks(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null));
                 if(freeSlots < tempFreeSlots)
                 {
                     freeSlots = tempFreeSlots;
