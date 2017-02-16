@@ -121,10 +121,16 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
               || world.getBlockState(blockToMine).getBlock().equals(Blocks.LAPIS_ORE)
               || world.getBlockState(blockToMine).getBlock().equals(Blocks.GOLD_ORE)
               || world.getBlockState(blockToMine).getBlock().equals(Blocks.REDSTONE_ORE)
-              || world.getBlockState(blockToMine).getBlock().equals(Blocks.EMERALD_ORE)
-              || world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
+              || world.getBlockState(blockToMine).getBlock().equals(Blocks.EMERALD_ORE))
         {
             this.getOwnBuilding().getColony().incrementOresMined();
+        }
+        else
+        {
+            if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
+            {
+                this.getOwnBuilding().getColony().incrementDiamondsMined();
+            }
         }
         //Break the block
         worker.breakBlockWithToolInHand(blockToMine);

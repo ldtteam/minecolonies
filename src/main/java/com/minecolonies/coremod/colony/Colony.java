@@ -556,6 +556,31 @@ public class Colony implements IColony
             this.triggerAchievement(ModAchievements.achievementMine1000Ores);
         }
     }
+    public void incrementDiamondsMined()
+    {
+        minedDiamonds++;
+        final int Diamonds = this.getMinedDiamonds();
+        if (Diamonds >= NUM_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementMineOneDiamond);
+        }
+        if (Diamonds >= NUM_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementMine25Diamonds);
+        }
+        if (Diamonds >= NUM_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementMine100Diamonds);
+        }
+        if (Diamonds >= NUM_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementMine500Diamonds);
+        }
+        if (Diamonds >= NUM_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementMine1000Diamonds);
+        }
+    }
 
     /**
      * get the amount of killed mobs.
@@ -569,6 +594,10 @@ public class Colony implements IColony
     public int getMinedOres()
     {
         return minedOres;
+    }
+    public int getMinedDiamonds()
+    {
+        return minedDiamonds;
     }
 
     /**
