@@ -8,7 +8,6 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -116,7 +115,7 @@ public class InventoryUtils
      */
     public static Item getItemFromBlock(final Block block)
     {
-        return new ItemStack(block).getItem();
+        return Item.getItemFromBlock(block);
     }
 
     /**
