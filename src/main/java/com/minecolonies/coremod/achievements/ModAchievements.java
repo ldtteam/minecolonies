@@ -3,6 +3,7 @@ package com.minecolonies.coremod.achievements;
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.items.ModItems;
 import com.minecolonies.coremod.lib.Constants;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.common.AchievementPage;
@@ -149,29 +150,34 @@ public final class ModAchievements
                                                                                               achievementBuildingGuard).registerStat();
 
     /**
-     * Kill one mob.
+     * Do something for the first time.
      */
     public static final Achievement achievementKillOneMob = new MineColoniesAchievement("guard.mobkill.one", 2, 8, Items.BONE, achievementBuildingGuard).registerStat();
+    public static final Achievement achievementMineOneOre = new MineColoniesAchievement("miner.OreMined.one", 2, 9, Blocks.COAL_ORE, achievementBuildingMiner).registerStat();
 
     /**
-     * Kill 25 mobs.
+     * Do something for the 25th time.
      */
     public static final Achievement achievementKill25Mobs = new MineColoniesAchievement("guard.mobkill.25", 4, 8, Items.ROTTEN_FLESH, achievementKillOneMob).registerStat();
+    public static final Achievement achievementMine25Ores = new MineColoniesAchievement("miner.OreMined.25", 4, 9, Blocks.IRON_ORE, achievementBuildingMiner).registerStat();
 
     /**
-     * Kill 100 mobs.
+     * Do something for the 100th time.
      */
     public static final Achievement achievementKill100Mobs = new MineColoniesAchievement("guard.mobkill.100", 6, 8, Items.GUNPOWDER, achievementKill25Mobs).registerStat();
+    public static final Achievement achievementMine100Ores = new MineColoniesAchievement("miner.OreMined.100", 6, 9, Blocks.REDSTONE_ORE, achievementBuildingMiner).registerStat();
 
     /**
-     * Kill 500 mobs.
+     * Do something for the 500th time.
      */
     public static final Achievement achievementKill500Mobs = new MineColoniesAchievement("guard.mobkill.500", 8, 8, Items.ENDER_PEARL, achievementKill100Mobs).registerStat();
+    public static final Achievement achievementMine500Ores = new MineColoniesAchievement("miner.OreMined.500", 8, 9, Blocks.GOLD_ORE, achievementBuildingMiner).registerStat();
 
     /**
-     * Kill 1000 mobs.
+     * Do something for the 1000th time.
      */
     public static final Achievement achievementKill1000Mobs = new MineColoniesAchievement("guard.mobkill.1000", 10, 8, Items.ENDER_EYE, achievementKill500Mobs).registerStat();
+    public static final Achievement achievementMine1000Ores = new MineColoniesAchievement("miner.OreMined.1000", 10, 9, Blocks.LAPIS_BLOCK, achievementBuildingMiner).registerStat();
 
 
     // Sizes

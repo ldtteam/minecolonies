@@ -61,31 +61,34 @@ public class Colony implements IColony
     //statistics tags
     private static final String TAG_STATISTICS                 = "statistics";
     private static final String TAG_MINER_STATISTICS           = "minerStatistics";
-    private static final String TAG_MINER_TOTAL_ORE            = "totalOres";
-    private static final String TAG_MINER_GOLD_ORE             = "goldOres";
-    private static final String TAG_MINER_DIAMOND              = "diamonds";
+    private static final String TAG_MINER_ORES                 = "ores";
+    private              int    minedOres                      = 0;
+    private static final String TAG_MINER_DIAMONDS             = "diamonds";
+    private              int    minedDiamonds                  = 0;
     private static final String TAG_FARMER_STATISTICS          = "farmerStatistics";
     private static final String TAG_FARMER_WHEAT               = "wheat";
-    private static final String TAG_FARMER_POTATO              = "potatoes";
-    private static final String TAG_FARMER_CARROT              = "carrots";
+    private              int    harvestedWheat                 = 0;
+    private static final String TAG_FARMER_POTATOES            = "potatoes";
+    private              int    harvestedPotatoes              = 0;
+    private static final String TAG_FARMER_CARROTS             = "carrots";
+    private              int    harvestedCarrots               = 0;
     private static final String TAG_GUARD_STATISTICS           = "guardStatistics";
-    private static final String TAG_GUARD_ZOMBIE               = "zombies";
-    private static final String TAG_GUARD_SKELETON             = "skeletons";
-    private static final String TAG_GUARD_CREEPER              = "creepers";
-    private static final String TAG_GUARD_ENDERMAN             = "endermen";
+    private static final String TAG_GUARD_KILLS                = "kills";
+    private              int    killedMobs                     = 0;
     private static final String TAG_BUILDER_STATISTICS         = "builderStatistics";
-    private static final String TAG_BUILDER_HUT                = "huts";
+    private static final String TAG_BUILDER_HUTS               = "huts";
+    private              int    builtHuts                      = 0;
     private static final String TAG_FISHERMAN_STATISTICS       = "fishermanStatistics";
     private static final String TAG_FISHERMAN_FISH             = "fish";
+    private              int    caughtFish                     = 0;
+    private static final int    NUM_ACHIEVEMENT_FIRST     = 1;
+    private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
+    private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
+    private static final int    NUM_ACHIEVEMENT_FOURTH    = 500;
+    private static final int    NUM_ACHIEVEMENT_FIFTH     = 1000;
 
     //private int autoHostile = 0;//Off
     private static final String TAG_FIELDS                        = "fields";
-    private static final String TAG_MOB_KILLS                     = "mobKills";
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST        = 1;
-    private static final int    NUM_MOBS_ACHIEVEMENT_SECOND       = 25;
-    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD        = 100;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH       = 500;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH        = 1000;
     private static final int    CHECK_WAYPOINT_EVERY              = 100;
     private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.workingRangeTownHall + 16D);
     private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
@@ -126,7 +129,6 @@ public class Colony implements IColony
     private BuildingTownHall townHall;
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
-    private int killedMobs   = 0;
 
     /**
      * Constructor for a newly created Colony.
@@ -188,7 +190,6 @@ public class Colony implements IColony
 
         manualHiring = compound.getBoolean(TAG_MANUAL_HIRING);
         maxCitizens = compound.getInteger(TAG_MAX_CITIZENS);
-        killedMobs = compound.getInteger(TAG_MOB_KILLS);
 
         // Permissions
         permissions.loadPermissions(compound);
@@ -253,6 +254,15 @@ public class Colony implements IColony
             final IBlockState state = NBTUtil.readBlockState(blockAtPos);
             wayPoints.put(pos, state);
         }
+        //Statistics
+        minedOres = compound.getInteger(TAG_MINER_ORES);
+        minedDiamonds = compound.getInteger(TAG_MINER_DIAMONDS);
+        harvestedCarrots = compound.getInteger(TAG_FARMER_CARROTS);
+        harvestedPotatoes = compound.getInteger(TAG_FARMER_POTATOES);
+        harvestedWheat = compound.getInteger(TAG_FARMER_WHEAT);
+        killedMobs = compound.getInteger(TAG_GUARD_KILLS);
+        builtHuts = compound.getInteger(TAG_BUILDER_HUTS);
+        caughtFish = compound.getInteger(TAG_FISHERMAN_FISH);
     }
 
     /**
@@ -300,7 +310,6 @@ public class Colony implements IColony
         compound.setBoolean(TAG_MANUAL_HIRING, manualHiring);
         compound.setInteger(TAG_MAX_CITIZENS, maxCitizens);
 
-        compound.setInteger(TAG_MOB_KILLS, killedMobs);
 
         // Permissions
         permissions.savePermissions(compound);
@@ -369,24 +378,20 @@ public class Colony implements IColony
         @NotNull final NBTTagCompound guardStatisticsCompound = new NBTTagCompound();
         @NotNull final NBTTagCompound builderStatisticsCompound = new NBTTagCompound();
         @NotNull final NBTTagCompound fishermanStatisticsCompound = new NBTTagCompound();
-        statisticsCompound.setTag(TAG_MINER_STATISTICS, minerStatisticsCompound);
-        minerStatisticsCompound.setInteger(TAG_MINER_TOTAL_ORE, 0);
-        minerStatisticsCompound.setInteger(TAG_MINER_GOLD_ORE, 0);
-        minerStatisticsCompound.setInteger(TAG_MINER_DIAMOND, 0);
-        statisticsCompound.setTag(TAG_FARMER_STATISTICS, farmerStatisticsCompound);
-        farmerStatisticsCompound.setInteger(TAG_FARMER_CARROT, 0);
-        farmerStatisticsCompound.setInteger(TAG_FARMER_POTATO, 0);
-        farmerStatisticsCompound.setInteger(TAG_FARMER_WHEAT, 0);
-        statisticsCompound.setTag(TAG_GUARD_STATISTICS, guardStatisticsCompound);
-        guardStatisticsCompound.setInteger(TAG_GUARD_CREEPER, 0);
-        guardStatisticsCompound.setInteger(TAG_GUARD_ENDERMAN, 0);
-        guardStatisticsCompound.setInteger(TAG_GUARD_SKELETON, 0);
-        guardStatisticsCompound.setInteger(TAG_GUARD_ZOMBIE, 0);
-        statisticsCompound.setTag(TAG_BUILDER_STATISTICS, builderStatisticsCompound);
-        builderStatisticsCompound.setInteger(TAG_BUILDER_HUT, 0);
-        statisticsCompound.setTag(TAG_FISHERMAN_STATISTICS, fishermanStatisticsCompound);
-        fishermanStatisticsCompound.setInteger(TAG_FISHERMAN_FISH, 0);
         compound.setTag(TAG_STATISTICS, statisticsCompound);
+        statisticsCompound.setTag(TAG_MINER_STATISTICS, minerStatisticsCompound);
+        minerStatisticsCompound.setInteger(TAG_MINER_ORES, minedOres);
+        minerStatisticsCompound.setInteger(TAG_MINER_DIAMONDS, minedDiamonds);
+        statisticsCompound.setTag(TAG_FARMER_STATISTICS, farmerStatisticsCompound);
+        farmerStatisticsCompound.setInteger(TAG_FARMER_CARROTS, harvestedCarrots);
+        farmerStatisticsCompound.setInteger(TAG_FARMER_POTATOES, harvestedPotatoes);
+        farmerStatisticsCompound.setInteger(TAG_FARMER_WHEAT, harvestedWheat);
+        statisticsCompound.setTag(TAG_GUARD_STATISTICS, guardStatisticsCompound);
+        guardStatisticsCompound.setInteger(TAG_GUARD_KILLS, killedMobs);
+        statisticsCompound.setTag(TAG_BUILDER_STATISTICS, builderStatisticsCompound);
+        builderStatisticsCompound.setInteger(TAG_BUILDER_HUTS, builtHuts);
+        statisticsCompound.setTag(TAG_FISHERMAN_STATISTICS, fishermanStatisticsCompound);
+        fishermanStatisticsCompound.setInteger(TAG_FISHERMAN_FISH, caughtFish);
     }
 
     /**
@@ -494,25 +499,50 @@ public class Colony implements IColony
     {
         killedMobs++;
         final int mobKills = this.getKilledMobs();
-        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FIRST)
+        if (mobKills >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementKillOneMob);
         }
-        if (mobKills >= NUM_MOBS_ACHIEVEMENT_SECOND)
+        if (mobKills >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementKill25Mobs);
         }
-        if (mobKills >= NUM_MOBS_ACHIEVEMENT_THIRD)
+        if (mobKills >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementKill100Mobs);
         }
-        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FOURTH)
+        if (mobKills >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementKill500Mobs);
         }
-        if (mobKills >= NUM_MOBS_ACHIEVEMENT_FIFTH)
+        if (mobKills >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
+        }
+    }
+    public void incrementOresMined()
+    {
+        minedOres++;
+        final int Ores = this.getMinedOres();
+        if (Ores >= NUM_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementMineOneOre);
+        }
+        if (Ores >= NUM_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementMine25Ores);
+        }
+        if (Ores >= NUM_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementMine100Ores);
+        }
+        if (Ores >= NUM_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementMine500Ores);
+        }
+        if (Ores >= NUM_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementMine1000Ores);
         }
     }
 
@@ -524,6 +554,10 @@ public class Colony implements IColony
     public int getKilledMobs()
     {
         return killedMobs;
+    }
+    public int getMinedOres()
+    {
+        return minedOres;
     }
 
     /**
