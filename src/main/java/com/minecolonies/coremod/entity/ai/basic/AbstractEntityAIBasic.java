@@ -13,7 +13,6 @@ import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.coremod.util.Utils;
 import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -424,19 +423,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean hasItem;
         if (building != null)
         {
-            hasItem = isInTileEntity(building.getTileEntity(), is);
+            hasItem = isInItemHandler(building.getTileItemHandler(), is);
 
             if (hasItem)
             {
                 return true;
             }
 
-            for (final BlockPos pos : building.getAdditionalCountainers())
+            for (final BlockPos pos : building.getAdditionalContainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest)
                 {
-                    hasItem = isInTileEntity((TileEntityChest) entity, is);
+                    hasItem = isInItemHandler(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), is);
 
                     if (hasItem)
                     {
@@ -462,19 +461,19 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         boolean hasItem;
         if (building != null)
         {
-            hasItem = isToolInTileEntity(building.getTileEntity(), tool);
+            hasItem = isToolInHandler(building.getTileItemHandler(), tool);
 
             if (hasItem)
             {
                 return true;
             }
 
-            for (final BlockPos pos : building.getAdditionalCountainers())
+            for (final BlockPos pos : building.getAdditionalContainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if (entity instanceof TileEntityChest)
                 {
-                    hasItem = isToolInTileEntity((TileEntityChest) entity, tool);
+                    hasItem = isToolInHandler(entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), tool);
 
                     if (hasItem)
                     {
@@ -493,14 +492,14 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity the tileEntity chest or building.
+     * @param handler the IItemHandler.
      * @param tool   the tool.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool)
+    public boolean isToolInHandler(IItemHandler handler, final String tool)
     {
         return InventoryFunctions.matchFirstInInventoryWithInventory(
-          entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+          handler,
           stack -> Utils.isTool(stack, tool),
           this::takeItemStackFromChest
         );
@@ -512,15 +511,15 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity    the tileEntity chest or building.
+     * @param handler the IItemHandler.
      * @param tool      the tool.
      * @param toolLevel the min tool level.
      * @return true if found the tool.
      */
-    public boolean isToolInTileEntity(TileEntityChest entity, final String tool, int toolLevel)
+    public boolean isToolInHandler(IItemHandler handler, final String tool, int toolLevel)
     {
         return InventoryFunctions.matchFirstInInventoryWithInventory(
-          entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+          handler,
           stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(tool, stack, toolLevel),
           this::takeItemStackFromChest
         );
@@ -532,16 +531,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Make sure that the worker stands next the chest to not break immersion.
      * Also make sure to have inventory space for the stack.
      *
-     * @param entity the tileEntity chest or building.
+     * @param handler the IItemHandler.
      * @param is     the itemStack.
      * @return true if found the stack.
      */
-    public boolean isInTileEntity(TileEntityChest entity, ItemStack is)
+    public boolean isInItemHandler(IItemHandler handler, ItemStack is)
     {
         return is != null
                  && InventoryFunctions
                       .matchFirstInInventoryWithInventory(
-                        entity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null),
+                        handler,
                         stack -> stack != null && is.isItemEqual(stack),
                         this::takeItemStackFromChest
                       );

@@ -28,6 +28,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.wrapper.InvWrapper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -533,7 +534,7 @@ public abstract class AbstractBuilding
 
         if(tileEntityNew != null)
         {
-            InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
+            InventoryUtils.dropItemHandlerItems(world, this.location.getX(), this.location.getY(), this.location.getZ(), tileEntityNew.getItemHandler());
             world.updateComparatorOutputLevel(this.location, block);
             ConstructionTapeHelper.removeConstructionTape(this, world);
         }
@@ -858,7 +859,7 @@ public abstract class AbstractBuilding
      * Get all additional containers which belong to the building.
      * @return a copy of the list to avoid currentModification exception.
      */
-    public List<BlockPos> getAdditionalCountainers()
+    public List<BlockPos> getAdditionalContainers()
     {
         return new ArrayList<>(containerList);
     }
@@ -1128,7 +1129,7 @@ public abstract class AbstractBuilding
         }
         else
         {
-            return InventoryUtils.addItemStackToInventory(tileEntity, stack);
+            return InventoryUtils.addItemStackToInventory(tileEntity.getItemHandler(), stack);
         }
         return false;
     }
@@ -1149,13 +1150,13 @@ public abstract class AbstractBuilding
                 final TileEntity tempTileEntity = world.getTileEntity(pos);
                 if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull(tempTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)))
                 {
-                    return InventoryUtils.forceItemStackToInventory((IInventory) tempTileEntity, stack, this);
+                    return InventoryUtils.forceItemStackToInventory(tempTileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null), stack, this);
                 }
             }
         }
         else
         {
-            return InventoryUtils.forceItemStackToInventory(tileEntity, stack, this);
+            return InventoryUtils.forceItemStackToInventory(tileEntity.getItemHandler(), stack, this);
         }
         return null;
     }

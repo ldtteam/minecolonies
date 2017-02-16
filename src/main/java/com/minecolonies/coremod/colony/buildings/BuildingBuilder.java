@@ -11,7 +11,6 @@ import com.minecolonies.coremod.inventory.InventoryCitizen;
 import com.minecolonies.coremod.util.InventoryUtils;
 import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -302,7 +301,7 @@ public class BuildingBuilder extends AbstractBuildingWorker
             //Count in the additional chests as well
             if (builder!=null)
             {
-                for(final BlockPos pos : getAdditionalCountainers())
+                for(final BlockPos pos : getAdditionalContainers())
                 {
                     final TileEntity entity = builder.worldObj.getTileEntity(pos);
                     if(entity instanceof TileEntityChest)

@@ -124,7 +124,7 @@ public class TransferItemsRequestMessage  extends AbstractMessage<TransferItemsR
         if (remainingItemStack.stackSize > 0)
         {
             final World world = colony.getWorld();
-            for(final BlockPos pos : building.getAdditionalCountainers())
+            for(final BlockPos pos : building.getAdditionalContainers())
             {
                 final TileEntity entity = world.getTileEntity(pos);
                 if(entity instanceof TileEntityChest)

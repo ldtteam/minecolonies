@@ -17,6 +17,8 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -169,15 +171,9 @@ public class OpenInventoryMessage extends AbstractMessage<OpenInventoryMessage, 
 
     private static void doHutInventory(final OpenInventoryMessage message, final EntityPlayerMP player)
     {
-
         if (checkPermissions(ColonyManager.getClosestColony(player.getEntityWorld(), message.tePos), player))
         {
-            @NotNull final TileEntityChest chest = (TileEntityChest) BlockPosUtil.getTileEntity(player.worldObj, message.tePos);
-            if (!StringUtils.isNullOrEmpty(message.name))
-            {
-                chest.setCustomName(message.name);
-            }
-            player.displayGUIChest(chest);
+            InventoryUtils.openGui(player, BlockPosUtil.getTileEntity(player.worldObj, message.tePos));
         }
     }
 

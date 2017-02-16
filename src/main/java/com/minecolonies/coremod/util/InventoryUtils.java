@@ -9,10 +9,12 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -646,6 +648,15 @@ public class InventoryUtils
         }
     }
 
+    public static boolean addItemStackToInventory(@NotNull final IItemHandler inventory, @Nullable final ItemStack itemStack)
+    {
+        if (ItemHandlerHelper.insertItemStacked(inventory, itemStack, true) != null)
+        {
+            return false;
+        }
+        return ItemHandlerHelper.insertItemStacked(inventory, itemStack, false) == null;
+    }
+
     /**
      * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#storePartialItemStack(ItemStack)}.
      * <p>
@@ -870,18 +881,21 @@ public class InventoryUtils
      * @return itemStack which has been replaced.
      */
     @Nullable
-    public static ItemStack forceItemStackToInventory(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack, @NotNull final AbstractBuilding building)
+    public static ItemStack forceItemStackToInventory(@NotNull final IItemHandler handler, @NotNull final ItemStack itemStack, @NotNull final AbstractBuilding building)
     {
-        if(!addItemStackToInventory(inventory, itemStack))
+        if(!addItemStackToInventory(handler, itemStack))
         {
             final List<ItemStorage> localAlreadyKept = new ArrayList<>();
-            for(int i = 0; i < inventory.getSizeInventory(); i++)
+            for(int i = 0; i < handler.getSlots(); i++)
             {
-                final ItemStack localStack = inventory.getStackInSlot(i);
+                final ItemStack localStack = handler.getStackInSlot(i);
                 if(!EntityAIWorkDeliveryman.workerRequiresItem(building, localStack, localAlreadyKept))
                 {
-                    final ItemStack removedStack = inventory.removeStackFromSlot(i);
-                    inventory.setInventorySlotContents(i, itemStack.copy());
+                    final ItemStack removedStack = handler.extractItem(i, localStack.stackSize, false);
+                    if (handler.insertItem(i, itemStack.copy(), false) != null)
+                    {
+                        MineColonies.getLogger().error("forceItemStackToInventory failed forcing! This is a bug - please report to MineColonies developers!");
+                    }
                     return removedStack.copy();
                 }
             }
@@ -903,6 +917,19 @@ public class InventoryUtils
                     ((Entity) provider).getEntityId(),
                     0,
                     0);
+        }
+    }
+
+    public static void dropItemHandlerItems(World worldIn, double x, double y, double z, IItemHandler inventory)
+    {
+        for (int i = 0; i < inventory.getSlots(); i++)
+        {
+            ItemStack itemstack = inventory.getStackInSlot(i);
+
+            if (itemstack != null)
+            {
+                InventoryHelper.spawnItemStack(worldIn, x, y, z, itemstack);
+            }
         }
     }
 }
