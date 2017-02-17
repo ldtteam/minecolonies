@@ -152,38 +152,58 @@ public final class ModAchievements
     /**
      * Do something for the first time.
      */
-    public static final Achievement achievementKillOneMob = new MineColoniesAchievement("guard.mobkill.one", 4, 7, Items.BONE, achievementBuildingGuard).registerStat();
-    public static final Achievement achievementMineOneOre = new MineColoniesAchievement("miner.OreMined.one", 4, 9, Blocks.COAL_ORE, achievementBuildingMiner).registerStat();
-    public static final Achievement achievementMineOneDiamond = new MineColoniesAchievement("miner.DiamondMined.one", 4, 10, Items.DIAMOND, achievementBuildingMiner).registerStat();
-
+    public static final Achievement achievementBuildOneHut = new MineColoniesAchievement("builder.hutsBuilt.one", 4, 3, ModBlocks.blockHutCitizen, achievementBuildingBuilder).registerStat();
+    public static final Achievement achievementCatchOneFish = new MineColoniesAchievement("fisher.fishCaught.one", 4, 5, Items.FISH, achievementBuildingFisher).registerStat();
+    public static final Achievement achievementKillOneMob = new MineColoniesAchievement("guard.mobsKilled.one", 4, 7, Items.BONE, achievementBuildingGuard).registerStat();
+    public static final Achievement achievementMineOneOre = new MineColoniesAchievement("miner.oresMined.one", 4, 9, Blocks.COAL_ORE, achievementBuildingMiner).registerStat();
+    public static final Achievement achievementMineOneDiamond = new MineColoniesAchievement("miner.diamondsMined.one", 4, 10, Items.DIAMOND, achievementBuildingMiner).registerStat();
+    public static final Achievement achievementHarvestOneCarrot = new MineColoniesAchievement("farmer.carrotsHarvested.one", 4, 15, Items.CARROT, achievementBuildingFarmer).registerStat();
+    public static final Achievement achievementHarvestOnePotato = new MineColoniesAchievement("farmer.potatoesHarvested.one", 4, 16, Items.POTATO, achievementBuildingFarmer).registerStat();
+    public static final Achievement achievementHarvestOneWheat = new MineColoniesAchievement("farmer.WheatHarvested.one", 4, 17, Items.WHEAT_SEEDS, achievementBuildingFarmer).registerStat();
     /**
      * Do something for the 25th time.
      */
-    public static final Achievement achievementKill25Mobs = new MineColoniesAchievement("guard.mobkill.25", 6, 7, Items.ROTTEN_FLESH, achievementKillOneMob).registerStat();
-    public static final Achievement achievementMine25Ores = new MineColoniesAchievement("miner.OreMined.25", 6, 9, Blocks.IRON_ORE, achievementMineOneOre).registerStat();
-    public static final Achievement achievementMine25Diamonds = new MineColoniesAchievement("miner.DiamondMined.25", 6, 10, Items.DIAMOND, achievementMineOneDiamond).registerStat();
-
+    public static final Achievement achievementBuild25Huts = new MineColoniesAchievement("builder.hutsBuilt.25", 6, 3, ModBlocks.blockHutCitizen, achievementBuildOneHut).registerStat();
+    public static final Achievement achievementCatch25Fish = new MineColoniesAchievement("fisher.fishCaught.25", 6, 5, Items.FISH, achievementCatchOneFish).registerStat();
+    public static final Achievement achievementKill25Mobs = new MineColoniesAchievement("guard.mobsKilled.25", 6, 7, Items.ROTTEN_FLESH, achievementKillOneMob).registerStat();
+    public static final Achievement achievementMine25Ores = new MineColoniesAchievement("miner.oresMined.25", 6, 9, Blocks.IRON_ORE, achievementMineOneOre).registerStat();
+    public static final Achievement achievementMine25Diamonds = new MineColoniesAchievement("miner.diamondsMined.25", 6, 10, Items.DIAMOND, achievementMineOneDiamond).registerStat();
+    public static final Achievement achievementHarvest25Carrots = new MineColoniesAchievement("farmer.carrotsHarvested.25", 6, 15, Items.CARROT, achievementHarvestOneCarrot).registerStat();
+    public static final Achievement achievementHarvest25Potatoes = new MineColoniesAchievement("farmer.potatoesHarvested.25", 6, 16, Items.POTATO, achievementHarvestOnePotato).registerStat();
+    public static final Achievement achievementHarvest25Wheat = new MineColoniesAchievement("farmer.wheatHarvested.25", 6, 17, Items.WHEAT, achievementHarvestOneWheat).registerStat();
     /**
      * Do something for the 100th time.
      */
-    public static final Achievement achievementKill100Mobs = new MineColoniesAchievement("guard.mobkill.100", 8, 7, Items.GUNPOWDER, achievementKill25Mobs).registerStat();
-    public static final Achievement achievementMine100Ores = new MineColoniesAchievement("miner.OreMined.100", 8, 9, Blocks.REDSTONE_ORE, achievementMine25Ores).registerStat();
-    public static final Achievement achievementMine100Diamonds = new MineColoniesAchievement("miner.DiamondMined.100", 8, 10, Items.DIAMOND, achievementMine25Diamonds).registerStat();
-
+    public static final Achievement achievementBuild100Huts = new MineColoniesAchievement("builder.hutsBuilt.100", 8, 3, ModBlocks.blockHutCitizen, achievementBuild25Huts).registerStat();
+    public static final Achievement achievementCatch100Fish = new MineColoniesAchievement("fisher.fishCaught.100", 8, 5, Items.FISH, achievementCatch25Fish).registerStat();
+    public static final Achievement achievementKill100Mobs = new MineColoniesAchievement("guard.mobsKilled.100", 8, 7, Items.GUNPOWDER, achievementKill25Mobs).registerStat();
+    public static final Achievement achievementMine100Ores = new MineColoniesAchievement("miner.oresMined.100", 8, 9, Blocks.REDSTONE_ORE, achievementMine25Ores).registerStat();
+    public static final Achievement achievementMine100Diamonds = new MineColoniesAchievement("miner.diamondsMined.100", 8, 10, Items.DIAMOND, achievementMine25Diamonds).registerStat();
+    public static final Achievement achievementHarvest100Carrots = new MineColoniesAchievement("farmer.carrotsHarvested.100", 8, 15, Items.CARROT, achievementHarvest25Carrots).registerStat();
+    public static final Achievement achievementHarvest100Potatoes = new MineColoniesAchievement("farmer.potatoesHarvested.100", 8, 16, Items.POTATO, achievementHarvest25Potatoes).registerStat();
+    public static final Achievement achievementHarvest100Wheat = new MineColoniesAchievement("farmer.wheatHarvested.100", 8, 17, Items.WHEAT, achievementHarvest25Wheat).registerStat();
     /**
      * Do something for the 500th time.
      */
-    public static final Achievement achievementKill500Mobs = new MineColoniesAchievement("guard.mobkill.500", 10, 7, Items.ENDER_PEARL, achievementKill100Mobs).registerStat();
-    public static final Achievement achievementMine500Ores = new MineColoniesAchievement("miner.OreMined.500", 10, 9, Blocks.GOLD_ORE, achievementMine100Ores).registerStat();
-    public static final Achievement achievementMine500Diamonds = new MineColoniesAchievement("miner.DiamondMined.500", 10, 10, Items.DIAMOND, achievementMine100Diamonds).registerStat();
-
+    public static final Achievement achievementBuild500Huts = new MineColoniesAchievement("builder.hutsBuilt.500", 10, 3, ModBlocks.blockHutCitizen, achievementBuild100Huts).registerStat();
+    public static final Achievement achievementCatch500Fish = new MineColoniesAchievement("fisher.fishCaught.500", 10, 5, Items.FISH, achievementCatch100Fish).registerStat();
+    public static final Achievement achievementKill500Mobs = new MineColoniesAchievement("guard.mobsKilled.500", 10, 7, Items.ENDER_PEARL, achievementKill100Mobs).registerStat();
+    public static final Achievement achievementMine500Ores = new MineColoniesAchievement("miner.oresMined.500", 10, 9, Blocks.GOLD_ORE, achievementMine100Ores).registerStat();
+    public static final Achievement achievementMine500Diamonds = new MineColoniesAchievement("miner.diamondsMined.500", 10, 10, Items.DIAMOND, achievementMine100Diamonds).registerStat();
+    public static final Achievement achievementHarvest500Carrots = new MineColoniesAchievement("farmer.carrotsHarvested.500", 10, 15, Items.CARROT, achievementHarvest100Carrots).registerStat();
+    public static final Achievement achievementHarvest500Potatoes = new MineColoniesAchievement("farmer.potatoesHarvested.500", 10, 16, Items.POTATO, achievementHarvest100Potatoes).registerStat();
+    public static final Achievement achievementHarvest500Wheat = new MineColoniesAchievement("farmer.wheatHarvested.500", 10, 17, Items.WHEAT, achievementHarvest100Wheat).registerStat();
     /**
      * Do something for the 1000th time.
      */
-    public static final Achievement achievementKill1000Mobs = new MineColoniesAchievement("guard.mobkill.1000", 12, 7, Items.ENDER_EYE, achievementKill500Mobs).registerStat();
-    public static final Achievement achievementMine1000Ores = new MineColoniesAchievement("miner.OreMined.1000", 12, 9, Blocks.LAPIS_ORE, achievementMine500Ores).registerStat();
-    public static final Achievement achievementMine1000Diamonds = new MineColoniesAchievement("miner.DiamondMined.1000", 12, 10, Items.DIAMOND, achievementMine500Diamonds).registerStat();
-
+    public static final Achievement achievementBuild1000Huts = new MineColoniesAchievement("builder.hutsBuilt.1000", 12, 3, ModBlocks.blockHutCitizen, achievementBuild500Huts).registerStat();
+    public static final Achievement achievementCatch1000Fish = new MineColoniesAchievement("fisher.fishCaught.1000", 12, 5, Items.FISH, achievementCatch500Fish).registerStat();
+    public static final Achievement achievementKill1000Mobs = new MineColoniesAchievement("guard.mobsKilled.1000", 12, 7, Items.ENDER_EYE, achievementKill500Mobs).registerStat();
+    public static final Achievement achievementMine1000Ores = new MineColoniesAchievement("miner.oresMined.1000", 12, 9, Blocks.LAPIS_ORE, achievementMine500Ores).registerStat();
+    public static final Achievement achievementMine1000Diamonds = new MineColoniesAchievement("miner.diamondsMined.1000", 12, 10, Items.DIAMOND, achievementMine500Diamonds).registerStat();
+    public static final Achievement achievementHarvest1000Carrots = new MineColoniesAchievement("farmer.carrotsHarvested.1000", 12, 15, Items.GOLDEN_CARROT, achievementHarvest500Carrots).registerStat();
+    public static final Achievement achievementHarvest1000Potatoes = new MineColoniesAchievement("farmer.potatoesHarvested.1000", 12, 16, Items.POTATO, achievementHarvest500Potatoes).registerStat();
+    public static final Achievement achievementHarvest1000Wheat = new MineColoniesAchievement("farmer.wheatHarvested.1000", 12, 17, Blocks.HAY_BLOCK, achievementHarvest500Wheat).registerStat();
 
     // Sizes
     /**
@@ -251,9 +271,32 @@ public final class ModAchievements
                                                                                                         achievementMine25Diamonds,
                                                                                                         achievementMine100Diamonds,
                                                                                                         achievementMine500Diamonds,
-                                                                                                        achievementMine1000Diamonds
-
-
+                                                                                                        achievementMine1000Diamonds,
+                                                                                                        achievementBuildOneHut,
+                                                                                                        achievementBuild25Huts,
+                                                                                                        achievementBuild100Huts,
+                                                                                                        achievementBuild500Huts,
+                                                                                                        achievementBuild1000Huts,
+                                                                                                        achievementCatchOneFish,
+                                                                                                        achievementCatch25Fish,
+                                                                                                        achievementCatch100Fish,
+                                                                                                        achievementCatch500Fish,
+                                                                                                        achievementCatch1000Fish,
+                                                                                                        achievementHarvestOneCarrot,
+                                                                                                        achievementHarvest25Carrots,
+                                                                                                        achievementHarvest100Carrots,
+                                                                                                        achievementHarvest500Carrots,
+                                                                                                        achievementHarvest1000Carrots,
+                                                                                                        achievementHarvestOnePotato,
+                                                                                                        achievementHarvest25Potatoes,
+                                                                                                        achievementHarvest100Potatoes,
+                                                                                                        achievementHarvest500Potatoes,
+                                                                                                        achievementHarvest1000Potatoes,
+                                                                                                        achievementHarvestOneWheat,
+                                                                                                        achievementHarvest25Wheat,
+                                                                                                        achievementHarvest100Wheat,
+                                                                                                        achievementHarvest500Wheat,
+                                                                                                        achievementHarvest1000Wheat
     );
 
     /**

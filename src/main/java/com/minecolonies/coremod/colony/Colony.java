@@ -498,7 +498,6 @@ public class Colony implements IColony
 
     /**
      * Increment the mobs killed by this colony.
-     * <p>
      * Will award achievements for mobs killed.
      */
     public void incrementMobsKilled()
@@ -528,7 +527,6 @@ public class Colony implements IColony
     }
     /**
      * Increment the ores mined by this colony.
-     * <p>
      * Will award achievements for ores mined.
      */
     public void incrementOresMined()
@@ -556,6 +554,10 @@ public class Colony implements IColony
             this.triggerAchievement(ModAchievements.achievementMine1000Ores);
         }
     }
+    /**
+     * Increment the diamonds mined by this colony.
+     * Will award achievements for diamonds mined.
+     */
     public void incrementDiamondsMined()
     {
         minedDiamonds++;
@@ -581,6 +583,151 @@ public class Colony implements IColony
             this.triggerAchievement(ModAchievements.achievementMine1000Diamonds);
         }
     }
+    /**
+     * Increment the huts built by this colony.
+     * Will award achievements for huts built.
+     */
+    public void incrementHutsBuilt()
+    {
+        builtHuts++;
+        final int Huts = this.getBuiltHuts();
+        if (Huts >= NUM_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementBuildOneHut);
+        }
+        if (Huts >= NUM_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementBuild25Huts);
+        }
+        if (Huts >= NUM_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementBuild100Huts);
+        }
+        if (Huts >= NUM_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementBuild500Huts);
+        }
+        if (Huts >= NUM_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementBuild1000Huts);
+        }
+    }
+    /**
+     * Increment the fish caught by this colony.
+     * Will award achievements for fish caught.
+     */
+    public void incrementFishCaught()
+    {
+        caughtFish++;
+        final int Fish = this.getCaughtFish();
+        if (Fish >= NUM_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementCatchOneFish);
+        }
+        if (Fish >= NUM_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementCatch25Fish);
+        }
+        if (Fish >= NUM_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementCatch100Fish);
+        }
+        if (Fish >= NUM_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementCatch500Fish);
+        }
+        if (Fish >= NUM_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementCatch1000Fish);
+        }
+    }
+    /**
+     * Increment the carrots harvested by this colony.
+     * Will award achievements for carrots harvested.
+     */
+    public void incrementCarrotsHarvested()
+    {
+        harvestedCarrots++;
+        final int Carrots = this.getHarvestedCarrots();
+        if (Carrots >= NUM_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvestOneCarrot);
+        }
+        if (Carrots >= NUM_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest25Carrots);
+        }
+        if (Carrots >= NUM_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest100Carrots);
+        }
+        if (Carrots >= NUM_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest500Carrots);
+        }
+        if (Carrots >= NUM_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest1000Carrots);
+        }
+    }
+    /**
+     * Increment the potatoes harvested by this colony.
+     * Will award achievements for potatoes harvested.
+     */
+    public void incrementPotatoesHarvested()
+    {
+        harvestedPotatoes++;
+        final int Potatoes = this.getHarvestedPotatoes();
+        if (Potatoes >= NUM_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvestOnePotato);
+        }
+        if (Potatoes >= NUM_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest25Potatoes);
+        }
+        if (Potatoes >= NUM_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest100Potatoes);
+        }
+        if (Potatoes >= NUM_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest500Potatoes);
+        }
+        if (Potatoes >= NUM_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest1000Potatoes);
+        }
+    }
+    /**
+     * Increment the wheat harvested by this colony.
+     * Will award achievements for wheat harvested.
+     */
+    public void incrementWheatHarvested()
+    {
+        harvestedWheat++;
+        final int Wheat = this.getHarvestedWheat();
+        if (Wheat >= NUM_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvestOneWheat);
+        }
+        if (Wheat >= NUM_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest25Wheat);
+        }
+        if (Wheat >= NUM_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest100Wheat);
+        }
+        if (Wheat >= NUM_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest500Wheat);
+        }
+        if (Wheat >= NUM_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementHarvest1000Wheat);
+        }
+    }
 
     /**
      * get the amount of killed mobs.
@@ -598,6 +745,26 @@ public class Colony implements IColony
     public int getMinedDiamonds()
     {
         return minedDiamonds;
+    }
+    public int getBuiltHuts()
+    {
+        return builtHuts;
+    }
+    public int getCaughtFish()
+    {
+        return caughtFish;
+    }
+    public int getHarvestedWheat()
+    {
+        return harvestedWheat;
+    }
+    public int getHarvestedPotatoes()
+    {
+        return harvestedPotatoes;
+    }
+    public int getHarvestedCarrots()
+    {
+        return harvestedCarrots;
     }
 
     /**
