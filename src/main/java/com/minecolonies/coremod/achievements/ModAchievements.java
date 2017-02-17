@@ -148,6 +148,21 @@ public final class ModAchievements
      */
     public static final Achievement achievementUpgradeGuardMax = new MineColoniesAchievement("upgrade.guard.max", 4, 6, ModBlocks.blockHutGuardTower,
                                                                                               achievementBuildingGuard).registerStat();
+    /**
+     * Death achievements.
+     */
+    public static final Achievement achievementMinerDeathLava = new MineColoniesAchievement("miner.death.lava", -2, 8, Blocks.LAVA,
+                                                                                             achievementBuildingMiner).registerStat();
+    public static final Achievement achievementMinerDeathFall = new MineColoniesAchievement("miner.death.fall", -4, 8, Items.FEATHER,
+                                                                                             achievementBuildingMiner).registerStat();
+    public static final Achievement achievementLumberjackDeathTree = new MineColoniesAchievement("lumberjack.death.tree", -2, 11, Blocks.SAPLING,
+                                                                                             achievementBuildingLumberjack).registerStat();
+    public static final Achievement achievementFisherDeathGuardian = new MineColoniesAchievement("fisherman.death.guardian", -2, 4, Blocks.SEA_LANTERN,
+                                                                                             achievementBuildingFisher).registerStat();
+    public static final Achievement achievementGuardDeathEnderman = new MineColoniesAchievement("guard.death.enderman", -2, 6, Items.ENDER_PEARL,
+                                                                                             achievementBuildingGuard).registerStat();
+    public static final Achievement achievementPlayerDeathGuard = new MineColoniesAchievement("player.death.guard", -4, 6, Items.DIAMOND_SWORD,
+                                                                                             achievementBuildingGuard).registerStat();
 
     /**
      * Do something for the first time.
@@ -370,7 +385,13 @@ public final class ModAchievements
                                                                                                         achievementPlant25Saplings,
                                                                                                         achievementPlant100Saplings,
                                                                                                         achievementPlant500Saplings,
-                                                                                                        achievementPlant1000Saplings
+                                                                                                        achievementPlant1000Saplings,
+                                                                                                        achievementMinerDeathLava,
+                                                                                                        achievementMinerDeathFall,
+                                                                                                        achievementLumberjackDeathTree,
+                                                                                                        achievementFisherDeathGuardian,
+                                                                                                        achievementGuardDeathEnderman,
+                                                                                                        achievementPlayerDeathGuard
     );
 
     /**
