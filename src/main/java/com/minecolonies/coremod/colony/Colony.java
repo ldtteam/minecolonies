@@ -81,6 +81,11 @@ public class Colony implements IColony
     private static final String TAG_FISHERMAN_STATISTICS       = "fishermanStatistics";
     private static final String TAG_FISHERMAN_FISH             = "fish";
     private              int    caughtFish                     = 0;
+    private static final String TAG_LUMBERJACK_STATISTICS      = "lumberjackStatistics";
+    private static final String TAG_LUMBERJACK_TREES           = "trees";
+    private              int    felledTrees                    = 0;
+    private static final String TAG_LUMBERJACK_SAPLINGS        = "saplings";
+    private              int    plantedSaplings                = 0;
     private static final int    NUM_ACHIEVEMENT_FIRST     = 1;
     private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
@@ -260,7 +265,8 @@ public class Colony implements IColony
         final NBTTagCompound farmerStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FARMER_STATISTICS);
         final NBTTagCompound guardStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FARMER_STATISTICS);
         final NBTTagCompound builderStatisticsCompound = statisticsCompound.getCompoundTag(TAG_BUILDER_STATISTICS);
-        final NBTTagCompound fishermanStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FISHERMAN_FISH);
+        final NBTTagCompound fishermanStatisticsCompound = statisticsCompound.getCompoundTag(TAG_FISHERMAN_STATISTICS);
+        final NBTTagCompound lumberjackStatisticsCompound = statisticsCompound.getCompoundTag(TAG_LUMBERJACK_STATISTICS);
         minedOres = minerStatisticsCompound.getInteger(TAG_MINER_ORES);
         minedDiamonds = minerStatisticsCompound.getInteger(TAG_MINER_DIAMONDS);
         harvestedCarrots = farmerStatisticsCompound.getInteger(TAG_FARMER_CARROTS);
@@ -269,6 +275,8 @@ public class Colony implements IColony
         killedMobs = guardStatisticsCompound.getInteger(TAG_GUARD_KILLS);
         builtHuts = builderStatisticsCompound.getInteger(TAG_BUILDER_HUTS);
         caughtFish = fishermanStatisticsCompound.getInteger(TAG_FISHERMAN_FISH);
+        felledTrees = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_TREES);
+        plantedSaplings = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_SAPLINGS);
     }
 
     /**
@@ -384,6 +392,7 @@ public class Colony implements IColony
         @NotNull final NBTTagCompound guardStatisticsCompound = new NBTTagCompound();
         @NotNull final NBTTagCompound builderStatisticsCompound = new NBTTagCompound();
         @NotNull final NBTTagCompound fishermanStatisticsCompound = new NBTTagCompound();
+        @NotNull final NBTTagCompound lumberjackStatisticsCompound = new NBTTagCompound();
         compound.setTag(TAG_STATISTICS, statisticsCompound);
         statisticsCompound.setTag(TAG_MINER_STATISTICS, minerStatisticsCompound);
         minerStatisticsCompound.setInteger(TAG_MINER_ORES, minedOres);
@@ -398,6 +407,9 @@ public class Colony implements IColony
         builderStatisticsCompound.setInteger(TAG_BUILDER_HUTS, builtHuts);
         statisticsCompound.setTag(TAG_FISHERMAN_STATISTICS, fishermanStatisticsCompound);
         fishermanStatisticsCompound.setInteger(TAG_FISHERMAN_FISH, caughtFish);
+        statisticsCompound.setTag(TAG_LUMBERJACK_STATISTICS, lumberjackStatisticsCompound);
+        lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_TREES, felledTrees);
+        lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_SAPLINGS, plantedSaplings);
     }
 
     /**
@@ -728,6 +740,56 @@ public class Colony implements IColony
             this.triggerAchievement(ModAchievements.achievementHarvest1000Wheat);
         }
     }
+    public void incrementTreesFelled()
+    {
+        felledTrees++;
+        final int Trees = this.getFelledTrees();
+        if (Trees >= NUM_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementFellOneTree);
+        }
+        if (Trees >= NUM_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementFell25Trees);
+        }
+        if (Trees >= NUM_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementFell100Trees);
+        }
+        if (Trees >= NUM_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementFell500Trees);
+        }
+        if (Trees >= NUM_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementFell1000Trees);
+        }
+    }
+    public void incrementSaplingsPlanted()
+    {
+        plantedSaplings++;
+        final int Saplings = this.getPlantedSaplings();
+        if (Saplings >= NUM_ACHIEVEMENT_FIRST)
+        {
+            this.triggerAchievement(ModAchievements.achievementPlantOneSapling);
+        }
+        if (Saplings >= NUM_ACHIEVEMENT_SECOND)
+        {
+            this.triggerAchievement(ModAchievements.achievementPlant25Saplings);
+        }
+        if (Saplings >= NUM_ACHIEVEMENT_THIRD)
+        {
+            this.triggerAchievement(ModAchievements.achievementPlant100Saplings);
+        }
+        if (Saplings >= NUM_ACHIEVEMENT_FOURTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementPlant500Saplings);
+        }
+        if (Saplings >= NUM_ACHIEVEMENT_FIFTH)
+        {
+            this.triggerAchievement(ModAchievements.achievementPlant1000Saplings);
+        }
+    }
 
     /**
      * get the amount of killed mobs.
@@ -765,6 +827,14 @@ public class Colony implements IColony
     public int getHarvestedCarrots()
     {
         return harvestedCarrots;
+    }
+    public int getPlantedSaplings()
+    {
+        return plantedSaplings;
+    }
+    public int getFelledTrees()
+    {
+        return felledTrees;
     }
 
     /**
