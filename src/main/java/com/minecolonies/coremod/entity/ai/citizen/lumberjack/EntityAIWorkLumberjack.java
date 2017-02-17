@@ -302,7 +302,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             return LUMBERJACK_SEARCHING_TREE;
         }
-
         return chopTree();
     }
 
@@ -331,6 +330,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 return getState();
             }
             plantSapling();
+            this.getOwnBuilding().getColony().incrementTreesFelled();
             return LUMBERJACK_GATHERING;
         }
 
@@ -435,6 +435,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
               soundType.getVolume(),
               soundType.getPitch());
             worker.swingArm(worker.getActiveHand());
+            this.getOwnBuilding().getColony().incrementSaplingsPlanted();
         }
 
         if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
