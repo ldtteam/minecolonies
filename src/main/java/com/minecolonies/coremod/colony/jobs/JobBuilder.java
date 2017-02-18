@@ -126,7 +126,7 @@ public class JobBuilder extends AbstractJobStructure
         getCitizen().getColony().getWorkManager().removeWorkOrder(workOrderId);
         setWorkOrder(null);
         setStructure(null);
-        this.getColony().incrementHutsBuilt();
+        this.getColony().incrementStatistic("huts");
     }
 
     /**

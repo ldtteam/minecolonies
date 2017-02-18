@@ -71,7 +71,7 @@ public class GuardArrow extends EntityTippedArrow
                     this.colony.triggerAchievement(ModAchievements.achievementPlayerDeathGuard);
                 }
             }
-            colony.incrementMobsKilled();
+            colony.incrementStatistic("mobs");
         }
     }
 }

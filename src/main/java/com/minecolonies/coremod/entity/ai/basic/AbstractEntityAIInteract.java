@@ -123,23 +123,23 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
               || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
               || world.getBlockState(blockToMine).getBlock() ==(Blocks.EMERALD_ORE))
         {
-            this.getOwnBuilding().getColony().incrementOresMined();
+            this.getOwnBuilding().getColony().incrementStatistic("ores");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
         {
-            this.getOwnBuilding().getColony().incrementDiamondsMined();
+            this.getOwnBuilding().getColony().incrementStatistic("diamonds");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
         {
-            this.getOwnBuilding().getColony().incrementCarrotsHarvested();
+            this.getOwnBuilding().getColony().incrementStatistic("carrots");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
         {
-            this.getOwnBuilding().getColony().incrementPotatoesHarvested();
+            this.getOwnBuilding().getColony().incrementStatistic("potatoes");
         }
         if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
         {
-            this.getOwnBuilding().getColony().incrementWheatHarvested();
+            this.getOwnBuilding().getColony().incrementStatistic("wheat");
         }
         //Break the block
         worker.breakBlockWithToolInHand(blockToMine);
