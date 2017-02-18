@@ -506,13 +506,257 @@ public class Colony implements IColony
     }
 
     /**
-     * Increment the statistic amount and trigger achievement.
+     * Get the amount of statistic.
      *
      * @param statistic the statistic.
+     * @return amount of statistic.
      */
-    public void incrementStatistic(@NotNull String statistic)
+    private int getStatisticAmount(@NotNull String statistic)
     {
-        final int statisticAmount = this.getStatisticAmount(statistic);
+        switch (statistic)
+        {
+            case TAG_GUARD_MOBS:
+                return killedMobs;
+            case TAG_MINER_ORES:
+                return minedOres;
+            case TAG_MINER_DIAMONDS:
+                return minedDiamonds;
+            case TAG_BUILDER_HUTS:
+                return builtHuts;
+            case TAG_FISHERMAN_FISH:
+                return caughtFish;
+            case TAG_FARMER_WHEAT:
+                return harvestedWheat;
+            case TAG_FARMER_POTATOES:
+                return harvestedPotatoes;
+            case TAG_FARMER_CARROTS:
+                return harvestedCarrots;
+            case TAG_LUMBERJACK_SAPLINGS:
+                return plantedSaplings;
+            case TAG_LUMBERJACK_TREES:
+                return felledTrees;
+            default:
+                return 0;
+        }
+    }
+
+    /**
+     * Trigger first achievement.
+     * @param statistic the statistic.
+     */
+    private void triggerFirstAchievement(@NotNull String statistic)
+    {
+        switch (statistic)
+        {
+            case TAG_GUARD_MOBS:
+                this.triggerAchievement(ModAchievements.achievementKillOneMob);
+                break;
+            case TAG_MINER_ORES:
+                this.triggerAchievement(ModAchievements.achievementMineOneOre);
+                break;
+            case TAG_MINER_DIAMONDS:
+                this.triggerAchievement(ModAchievements.achievementMineOneDiamond);
+                break;
+            case TAG_BUILDER_HUTS:
+                this.triggerAchievement(ModAchievements.achievementBuildOneHut);
+                break;
+            case TAG_FISHERMAN_FISH:
+                this.triggerAchievement(ModAchievements.achievementCatchOneFish);
+                break;
+            case TAG_FARMER_WHEAT:
+                this.triggerAchievement(ModAchievements.achievementHarvestOneWheat);
+                break;
+            case TAG_FARMER_POTATOES:
+                this.triggerAchievement(ModAchievements.achievementHarvestOnePotato);
+                break;
+            case TAG_FARMER_CARROTS:
+                this.triggerAchievement(ModAchievements.achievementHarvestOneCarrot);
+                break;
+            case TAG_LUMBERJACK_SAPLINGS:
+                this.triggerAchievement(ModAchievements.achievementPlantOneSapling);
+                break;
+            case TAG_LUMBERJACK_TREES:
+                this.triggerAchievement(ModAchievements.achievementFellOneTree);
+                break;
+            default:
+                break;
+        }
+    }
+    /**
+     * Trigger second achievement.
+     * @param statistic the statistic.
+     */
+    private void triggerSecondAchievement(@NotNull String statistic)
+    {
+        switch (statistic)
+        {
+            case TAG_GUARD_MOBS:
+                this.triggerAchievement(ModAchievements.achievementKill25Mobs);
+                break;
+            case TAG_MINER_ORES:
+                this.triggerAchievement(ModAchievements.achievementMine25Ores);
+                break;
+            case TAG_MINER_DIAMONDS:
+                this.triggerAchievement(ModAchievements.achievementMine25Diamonds);
+                break;
+            case TAG_BUILDER_HUTS:
+                this.triggerAchievement(ModAchievements.achievementBuild25Huts);
+                break;
+            case TAG_FISHERMAN_FISH:
+                this.triggerAchievement(ModAchievements.achievementCatch25Fish);
+                break;
+            case TAG_FARMER_WHEAT:
+                this.triggerAchievement(ModAchievements.achievementHarvest25Wheat);
+                break;
+            case TAG_FARMER_POTATOES:
+                this.triggerAchievement(ModAchievements.achievementHarvest25Potatoes);
+                break;
+            case TAG_FARMER_CARROTS:
+                this.triggerAchievement(ModAchievements.achievementHarvest25Carrots);
+                break;
+            case TAG_LUMBERJACK_SAPLINGS:
+                this.triggerAchievement(ModAchievements.achievementPlant25Saplings);
+                break;
+            case TAG_LUMBERJACK_TREES:
+                this.triggerAchievement(ModAchievements.achievementFell25Trees);
+                break;
+            default:
+                break;
+        }
+    }
+    /**
+     * Trigger third achievement.
+     * @param statistic the statistic.
+     */
+    private void triggerThirdAchievement(@NotNull String statistic)
+    {
+        switch (statistic)
+        {
+            case TAG_GUARD_MOBS:
+                this.triggerAchievement(ModAchievements.achievementKill100Mobs);
+                break;
+            case TAG_MINER_ORES:
+                this.triggerAchievement(ModAchievements.achievementMine100Ores);
+                break;
+            case TAG_MINER_DIAMONDS:
+                this.triggerAchievement(ModAchievements.achievementMine100Diamonds);
+                break;
+            case TAG_BUILDER_HUTS:
+                this.triggerAchievement(ModAchievements.achievementBuild100Huts);
+                break;
+            case TAG_FISHERMAN_FISH:
+                this.triggerAchievement(ModAchievements.achievementCatch100Fish);
+                break;
+            case TAG_FARMER_WHEAT:
+                this.triggerAchievement(ModAchievements.achievementHarvest100Wheat);
+                break;
+            case TAG_FARMER_POTATOES:
+                this.triggerAchievement(ModAchievements.achievementHarvest100Potatoes);
+                break;
+            case TAG_FARMER_CARROTS:
+                this.triggerAchievement(ModAchievements.achievementHarvest100Carrots);
+                break;
+            case TAG_LUMBERJACK_SAPLINGS:
+                this.triggerAchievement(ModAchievements.achievementPlant100Saplings);
+                break;
+            case TAG_LUMBERJACK_TREES:
+                this.triggerAchievement(ModAchievements.achievementFell100Trees);
+                break;
+            default:
+                break;
+        }
+    }
+    /**
+     * Trigger fourth achievement.
+     * @param statistic the statistic.
+     */
+    private void triggerFourthAchievement(@NotNull String statistic)
+    {
+        switch (statistic)
+        {
+            case TAG_GUARD_MOBS:
+                this.triggerAchievement(ModAchievements.achievementKill500Mobs);
+                break;
+            case TAG_MINER_ORES:
+                this.triggerAchievement(ModAchievements.achievementMine500Ores);
+                break;
+            case TAG_MINER_DIAMONDS:
+                this.triggerAchievement(ModAchievements.achievementMine500Diamonds);
+                break;
+            case TAG_BUILDER_HUTS:
+                this.triggerAchievement(ModAchievements.achievementBuild500Huts);
+                break;
+            case TAG_FISHERMAN_FISH:
+                this.triggerAchievement(ModAchievements.achievementCatch500Fish);
+                break;
+            case TAG_FARMER_WHEAT:
+                this.triggerAchievement(ModAchievements.achievementHarvest500Wheat);
+                break;
+            case TAG_FARMER_POTATOES:
+                this.triggerAchievement(ModAchievements.achievementHarvest500Potatoes);
+                break;
+            case TAG_FARMER_CARROTS:
+                this.triggerAchievement(ModAchievements.achievementHarvest500Carrots);
+                break;
+            case TAG_LUMBERJACK_SAPLINGS:
+                this.triggerAchievement(ModAchievements.achievementPlant500Saplings);
+                break;
+            case TAG_LUMBERJACK_TREES:
+                this.triggerAchievement(ModAchievements.achievementFell500Trees);
+                break;
+            default:
+                break;
+        }
+    }
+    /**
+     * Trigger fifth achievement.
+     * @param statistic the statistic.
+     */
+    private void triggerFifthAchievement(@NotNull String statistic)
+    {
+        switch (statistic)
+        {
+            case TAG_GUARD_MOBS:
+                this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
+                break;
+            case TAG_MINER_ORES:
+                this.triggerAchievement(ModAchievements.achievementMine1000Ores);
+                break;
+            case TAG_MINER_DIAMONDS:
+                this.triggerAchievement(ModAchievements.achievementMine1000Diamonds);
+                break;
+            case TAG_BUILDER_HUTS:
+                this.triggerAchievement(ModAchievements.achievementBuild1000Huts);
+                break;
+            case TAG_FISHERMAN_FISH:
+                this.triggerAchievement(ModAchievements.achievementCatch1000Fish);
+                break;
+            case TAG_FARMER_WHEAT:
+                this.triggerAchievement(ModAchievements.achievementHarvest1000Wheat);
+                break;
+            case TAG_FARMER_POTATOES:
+                this.triggerAchievement(ModAchievements.achievementHarvest1000Potatoes);
+                break;
+            case TAG_FARMER_CARROTS:
+                this.triggerAchievement(ModAchievements.achievementHarvest1000Carrots);
+                break;
+            case TAG_LUMBERJACK_SAPLINGS:
+                this.triggerAchievement(ModAchievements.achievementPlant1000Saplings);
+                break;
+            case TAG_LUMBERJACK_TREES:
+                this.triggerAchievement(ModAchievements.achievementFell1000Trees);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * increment statistic amount.
+     * @param statistic the statistic.
+     */
+    private void incrementStatisticAmount(@NotNull String statistic)
+    {
         switch (statistic)
         {
             case TAG_GUARD_MOBS:
@@ -548,230 +792,36 @@ public class Colony implements IColony
             default:
                 break;
         }
+    }
+
+
+    /**
+     * Increment the statistic amount and trigger achievement.
+     * @param statistic the statistic.
+     */
+    public void incrementStatistic(@NotNull String statistic)
+    {
+        final int statisticAmount = this.getStatisticAmount(statistic);
+        incrementStatisticAmount(statistic);
         if (statisticAmount >= NUM_ACHIEVEMENT_FIRST)
         {
-            switch (statistic)
-            {
-                case TAG_GUARD_MOBS:
-                    this.triggerAchievement(ModAchievements.achievementKillOneMob);
-                    break;
-                case TAG_MINER_ORES:
-                    this.triggerAchievement(ModAchievements.achievementMineOneOre);
-                    break;
-                case TAG_MINER_DIAMONDS:
-                    this.triggerAchievement(ModAchievements.achievementMineOneDiamond);
-                    break;
-                case TAG_BUILDER_HUTS:
-                    this.triggerAchievement(ModAchievements.achievementBuildOneHut);
-                    break;
-                case TAG_FISHERMAN_FISH:
-                    this.triggerAchievement(ModAchievements.achievementCatchOneFish);
-                    break;
-                case TAG_FARMER_WHEAT:
-                    this.triggerAchievement(ModAchievements.achievementHarvestOneWheat);
-                    break;
-                case TAG_FARMER_POTATOES:
-                    this.triggerAchievement(ModAchievements.achievementHarvestOnePotato);
-                    break;
-                case TAG_FARMER_CARROTS:
-                    this.triggerAchievement(ModAchievements.achievementHarvestOneCarrot);
-                    break;
-                case TAG_LUMBERJACK_SAPLINGS:
-                    this.triggerAchievement(ModAchievements.achievementPlantOneSapling);
-                    break;
-                case TAG_LUMBERJACK_TREES:
-                    this.triggerAchievement(ModAchievements.achievementFellOneTree);
-                    break;
-                default:
-                    break;
-            }
+            triggerFirstAchievement(statistic);
         }
         if (statisticAmount >= NUM_ACHIEVEMENT_SECOND)
         {
-            switch (statistic)
-            {
-                case TAG_GUARD_MOBS:
-                    this.triggerAchievement(ModAchievements.achievementKill25Mobs);
-                    break;
-                case TAG_MINER_ORES:
-                    this.triggerAchievement(ModAchievements.achievementMine25Ores);
-                    break;
-                case TAG_MINER_DIAMONDS:
-                    this.triggerAchievement(ModAchievements.achievementMine25Diamonds);
-                    break;
-                case TAG_BUILDER_HUTS:
-                    this.triggerAchievement(ModAchievements.achievementBuild25Huts);
-                    break;
-                case TAG_FISHERMAN_FISH:
-                    this.triggerAchievement(ModAchievements.achievementCatch25Fish);
-                    break;
-                case TAG_FARMER_WHEAT:
-                    this.triggerAchievement(ModAchievements.achievementHarvest25Wheat);
-                    break;
-                case TAG_FARMER_POTATOES:
-                    this.triggerAchievement(ModAchievements.achievementHarvest25Potatoes);
-                    break;
-                case TAG_FARMER_CARROTS:
-                    this.triggerAchievement(ModAchievements.achievementHarvest25Carrots);
-                    break;
-                case TAG_LUMBERJACK_SAPLINGS:
-                    this.triggerAchievement(ModAchievements.achievementPlant25Saplings);
-                    break;
-                case TAG_LUMBERJACK_TREES:
-                    this.triggerAchievement(ModAchievements.achievementFell25Trees);
-                    break;
-                default:
-                    break;
-            }
+            triggerSecondAchievement(statistic);
         }
         if (statisticAmount >= NUM_ACHIEVEMENT_THIRD)
         {
-            switch (statistic)
-            {
-                case TAG_GUARD_MOBS:
-                    this.triggerAchievement(ModAchievements.achievementKill100Mobs);
-                    break;
-                case TAG_MINER_ORES:
-                    this.triggerAchievement(ModAchievements.achievementMine100Ores);
-                    break;
-                case TAG_MINER_DIAMONDS:
-                    this.triggerAchievement(ModAchievements.achievementMine100Diamonds);
-                    break;
-                case TAG_BUILDER_HUTS:
-                    this.triggerAchievement(ModAchievements.achievementBuild100Huts);
-                    break;
-                case TAG_FISHERMAN_FISH:
-                    this.triggerAchievement(ModAchievements.achievementCatch100Fish);
-                    break;
-                case TAG_FARMER_WHEAT:
-                    this.triggerAchievement(ModAchievements.achievementHarvest100Wheat);
-                    break;
-                case TAG_FARMER_POTATOES:
-                    this.triggerAchievement(ModAchievements.achievementHarvest100Potatoes);
-                    break;
-                case TAG_FARMER_CARROTS:
-                    this.triggerAchievement(ModAchievements.achievementHarvest100Carrots);
-                    break;
-                case TAG_LUMBERJACK_SAPLINGS:
-                    this.triggerAchievement(ModAchievements.achievementPlant100Saplings);
-                    break;
-                case TAG_LUMBERJACK_TREES:
-                    this.triggerAchievement(ModAchievements.achievementFell100Trees);
-                    break;
-                default:
-                    break;
-            }
+            triggerThirdAchievement(statistic);
         }
         if (statisticAmount >= NUM_ACHIEVEMENT_FOURTH)
         {
-            switch (statistic)
-            {
-                case TAG_GUARD_MOBS:
-                    this.triggerAchievement(ModAchievements.achievementKill500Mobs);
-                    break;
-                case TAG_MINER_ORES:
-                    this.triggerAchievement(ModAchievements.achievementMine500Ores);
-                    break;
-                case TAG_MINER_DIAMONDS:
-                    this.triggerAchievement(ModAchievements.achievementMine500Diamonds);
-                    break;
-                case TAG_BUILDER_HUTS:
-                    this.triggerAchievement(ModAchievements.achievementBuild500Huts);
-                    break;
-                case TAG_FISHERMAN_FISH:
-                    this.triggerAchievement(ModAchievements.achievementCatch500Fish);
-                    break;
-                case TAG_FARMER_WHEAT:
-                    this.triggerAchievement(ModAchievements.achievementHarvest500Wheat);
-                    break;
-                case TAG_FARMER_POTATOES:
-                    this.triggerAchievement(ModAchievements.achievementHarvest500Potatoes);
-                    break;
-                case TAG_FARMER_CARROTS:
-                    this.triggerAchievement(ModAchievements.achievementHarvest500Carrots);
-                    break;
-                case TAG_LUMBERJACK_SAPLINGS:
-                    this.triggerAchievement(ModAchievements.achievementPlant500Saplings);
-                    break;
-                case TAG_LUMBERJACK_TREES:
-                    this.triggerAchievement(ModAchievements.achievementFell500Trees);
-                    break;
-                default:
-                    break;
-            }
+            triggerFourthAchievement(statistic);
         }
         if (statisticAmount >= NUM_ACHIEVEMENT_FIFTH)
         {
-            switch (statistic)
-            {
-                case TAG_GUARD_MOBS:
-                    this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
-                    break;
-                case TAG_MINER_ORES:
-                    this.triggerAchievement(ModAchievements.achievementMine1000Ores);
-                    break;
-                case TAG_MINER_DIAMONDS:
-                    this.triggerAchievement(ModAchievements.achievementMine1000Diamonds);
-                    break;
-                case TAG_BUILDER_HUTS:
-                    this.triggerAchievement(ModAchievements.achievementBuild1000Huts);
-                    break;
-                case TAG_FISHERMAN_FISH:
-                    this.triggerAchievement(ModAchievements.achievementCatch1000Fish);
-                    break;
-                case TAG_FARMER_WHEAT:
-                    this.triggerAchievement(ModAchievements.achievementHarvest1000Wheat);
-                    break;
-                case TAG_FARMER_POTATOES:
-                    this.triggerAchievement(ModAchievements.achievementHarvest1000Potatoes);
-                    break;
-                case TAG_FARMER_CARROTS:
-                    this.triggerAchievement(ModAchievements.achievementHarvest1000Carrots);
-                    break;
-                case TAG_LUMBERJACK_SAPLINGS:
-                    this.triggerAchievement(ModAchievements.achievementPlant1000Saplings);
-                    break;
-                case TAG_LUMBERJACK_TREES:
-                    this.triggerAchievement(ModAchievements.achievementFell1000Trees);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    /**
-     * Get the amount of statistic.
-     *
-     * @param statistic the statistic.
-     * @return amount of statistic.
-     */
-    private int getStatisticAmount(@NotNull String statistic)
-    {
-        switch (statistic)
-        {
-            case TAG_GUARD_MOBS:
-                return killedMobs;
-            case TAG_MINER_ORES:
-                return minedOres;
-            case TAG_MINER_DIAMONDS:
-                return minedDiamonds;
-            case TAG_BUILDER_HUTS:
-                return builtHuts;
-            case TAG_FISHERMAN_FISH:
-                return caughtFish;
-            case TAG_FARMER_WHEAT:
-                return harvestedWheat;
-            case TAG_FARMER_POTATOES:
-                return harvestedPotatoes;
-            case TAG_FARMER_CARROTS:
-                return harvestedCarrots;
-            case TAG_LUMBERJACK_SAPLINGS:
-                return plantedSaplings;
-            case TAG_LUMBERJACK_TREES:
-                return felledTrees;
-            default:
-                return 0;
+            triggerFifthAchievement(statistic);
         }
     }
 
