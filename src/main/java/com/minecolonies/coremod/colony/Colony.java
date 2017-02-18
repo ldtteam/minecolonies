@@ -59,33 +59,33 @@ public class Colony implements IColony
     private static final String TAG_WAYPOINT                   = "waypoints";
 
     //statistics tags
-    private static final String TAG_STATISTICS                 = "statistics";
-    private static final String TAG_MINER_STATISTICS           = "minerStatistics";
-    private static final String TAG_MINER_ORES                 = "ores";
-    private              int    minedOres                      = 0;
-    private static final String TAG_MINER_DIAMONDS             = "diamonds";
-    private              int    minedDiamonds                  = 0;
-    private static final String TAG_FARMER_STATISTICS          = "farmerStatistics";
-    private static final String TAG_FARMER_WHEAT               = "wheat";
-    private              int    harvestedWheat                 = 0;
-    private static final String TAG_FARMER_POTATOES            = "potatoes";
-    private              int    harvestedPotatoes              = 0;
-    private static final String TAG_FARMER_CARROTS             = "carrots";
-    private              int    harvestedCarrots               = 0;
-    private static final String TAG_GUARD_STATISTICS           = "guardStatistics";
-    private static final String TAG_GUARD_KILLS                = "kills";
-    private              int    killedMobs                     = 0;
-    private static final String TAG_BUILDER_STATISTICS         = "builderStatistics";
-    private static final String TAG_BUILDER_HUTS               = "huts";
-    private              int    builtHuts                      = 0;
-    private static final String TAG_FISHERMAN_STATISTICS       = "fishermanStatistics";
-    private static final String TAG_FISHERMAN_FISH             = "fish";
-    private              int    caughtFish                     = 0;
-    private static final String TAG_LUMBERJACK_STATISTICS      = "lumberjackStatistics";
-    private static final String TAG_LUMBERJACK_TREES           = "trees";
-    private              int    felledTrees                    = 0;
-    private static final String TAG_LUMBERJACK_SAPLINGS        = "saplings";
-    private              int    plantedSaplings                = 0;
+    private static final String TAG_STATISTICS            = "statistics";
+    private static final String TAG_MINER_STATISTICS      = "minerStatistics";
+    private static final String TAG_MINER_ORES            = "ores";
+    private              int    minedOres                 = 0;
+    private static final String TAG_MINER_DIAMONDS        = "diamonds";
+    private              int    minedDiamonds             = 0;
+    private static final String TAG_FARMER_STATISTICS     = "farmerStatistics";
+    private static final String TAG_FARMER_WHEAT          = "wheat";
+    private              int    harvestedWheat            = 0;
+    private static final String TAG_FARMER_POTATOES       = "potatoes";
+    private              int    harvestedPotatoes         = 0;
+    private static final String TAG_FARMER_CARROTS        = "carrots";
+    private              int    harvestedCarrots          = 0;
+    private static final String TAG_GUARD_STATISTICS      = "guardStatistics";
+    private static final String TAG_GUARD_MOBS            = "mobs";
+    private              int    killedMobs                = 0;
+    private static final String TAG_BUILDER_STATISTICS    = "builderStatistics";
+    private static final String TAG_BUILDER_HUTS          = "huts";
+    private              int    builtHuts                 = 0;
+    private static final String TAG_FISHERMAN_STATISTICS  = "fishermanStatistics";
+    private static final String TAG_FISHERMAN_FISH        = "fish";
+    private              int    caughtFish                = 0;
+    private static final String TAG_LUMBERJACK_STATISTICS = "lumberjackStatistics";
+    private static final String TAG_LUMBERJACK_TREES      = "trees";
+    private              int    felledTrees               = 0;
+    private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
+    private              int    plantedSaplings           = 0;
     private static final int    NUM_ACHIEVEMENT_FIRST     = 1;
     private static final int    NUM_ACHIEVEMENT_SECOND    = 25;
     private static final int    NUM_ACHIEVEMENT_THIRD     = 100;
@@ -272,7 +272,7 @@ public class Colony implements IColony
         harvestedCarrots = farmerStatisticsCompound.getInteger(TAG_FARMER_CARROTS);
         harvestedPotatoes = farmerStatisticsCompound.getInteger(TAG_FARMER_POTATOES);
         harvestedWheat = farmerStatisticsCompound.getInteger(TAG_FARMER_WHEAT);
-        killedMobs = guardStatisticsCompound.getInteger(TAG_GUARD_KILLS);
+        killedMobs = guardStatisticsCompound.getInteger(TAG_GUARD_MOBS);
         builtHuts = builderStatisticsCompound.getInteger(TAG_BUILDER_HUTS);
         caughtFish = fishermanStatisticsCompound.getInteger(TAG_FISHERMAN_FISH);
         felledTrees = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_TREES);
@@ -402,7 +402,7 @@ public class Colony implements IColony
         farmerStatisticsCompound.setInteger(TAG_FARMER_POTATOES, harvestedPotatoes);
         farmerStatisticsCompound.setInteger(TAG_FARMER_WHEAT, harvestedWheat);
         statisticsCompound.setTag(TAG_GUARD_STATISTICS, guardStatisticsCompound);
-        guardStatisticsCompound.setInteger(TAG_GUARD_KILLS, killedMobs);
+        guardStatisticsCompound.setInteger(TAG_GUARD_MOBS, killedMobs);
         statisticsCompound.setTag(TAG_BUILDER_STATISTICS, builderStatisticsCompound);
         builderStatisticsCompound.setInteger(TAG_BUILDER_HUTS, builtHuts);
         statisticsCompound.setTag(TAG_FISHERMAN_STATISTICS, fishermanStatisticsCompound);
@@ -510,6 +510,7 @@ public class Colony implements IColony
 
     /**
      * Increment the statistic amount and trigger achievement.
+     *
      * @param statistic the statistic.
      */
     public void incrementStatistic(@NotNull String statistic)
@@ -517,50 +518,74 @@ public class Colony implements IColony
         final int statisticAmount = this.getStatisticAmount(statistic);
         switch (statistic)
         {
-            case "mobs"     : killedMobs++;
+            case TAG_GUARD_MOBS:
+                killedMobs++;
                 break;
-            case "ores"     : minedOres++;
+            case TAG_MINER_ORES:
+                minedOres++;
                 break;
-            case "diamonds" : minedDiamonds++;
+            case TAG_MINER_DIAMONDS:
+                minedDiamonds++;
                 break;
-            case "huts"     : builtHuts++;
+            case TAG_BUILDER_HUTS:
+                builtHuts++;
                 break;
-            case "fish"     : caughtFish++;
+            case TAG_FISHERMAN_FISH:
+                caughtFish++;
                 break;
-            case "wheat"    : harvestedWheat++;
+            case TAG_FARMER_WHEAT:
+                harvestedWheat++;
                 break;
-            case "potatoes" : harvestedPotatoes++;
+            case TAG_FARMER_POTATOES:
+                harvestedPotatoes++;
                 break;
-            case "carrots"  : harvestedCarrots++;
+            case TAG_FARMER_CARROTS:
+                harvestedCarrots++;
                 break;
-            case "saplings" : plantedSaplings++;
+            case TAG_LUMBERJACK_SAPLINGS:
+                plantedSaplings++;
                 break;
-            case "trees"    : felledTrees++;
+            case TAG_LUMBERJACK_TREES:
+                felledTrees++;
+                break;
+            default:
                 break;
         }
         if (statisticAmount >= NUM_ACHIEVEMENT_FIRST)
         {
             switch (statistic)
             {
-                case "mobs"     : this.triggerAchievement(ModAchievements.achievementKillOneMob);
+                case TAG_GUARD_MOBS:
+                    this.triggerAchievement(ModAchievements.achievementKillOneMob);
                     break;
-                case "ores"     : this.triggerAchievement(ModAchievements.achievementMineOneOre);
+                case TAG_MINER_ORES:
+                    this.triggerAchievement(ModAchievements.achievementMineOneOre);
                     break;
-                case "diamonds" : this.triggerAchievement(ModAchievements.achievementMineOneDiamond);
+                case TAG_MINER_DIAMONDS:
+                    this.triggerAchievement(ModAchievements.achievementMineOneDiamond);
                     break;
-                case "huts"     : this.triggerAchievement(ModAchievements.achievementBuildOneHut);
+                case TAG_BUILDER_HUTS:
+                    this.triggerAchievement(ModAchievements.achievementBuildOneHut);
                     break;
-                case "fish"     : this.triggerAchievement(ModAchievements.achievementCatchOneFish);
+                case TAG_FISHERMAN_FISH:
+                    this.triggerAchievement(ModAchievements.achievementCatchOneFish);
                     break;
-                case "wheat"    : this.triggerAchievement(ModAchievements.achievementHarvestOneWheat);
+                case TAG_FARMER_WHEAT:
+                    this.triggerAchievement(ModAchievements.achievementHarvestOneWheat);
                     break;
-                case "potatoes" : this.triggerAchievement(ModAchievements.achievementHarvestOnePotato);
+                case TAG_FARMER_POTATOES:
+                    this.triggerAchievement(ModAchievements.achievementHarvestOnePotato);
                     break;
-                case "carrots"  : this.triggerAchievement(ModAchievements.achievementHarvestOneCarrot);
+                case TAG_FARMER_CARROTS:
+                    this.triggerAchievement(ModAchievements.achievementHarvestOneCarrot);
                     break;
-                case "saplings" : this.triggerAchievement(ModAchievements.achievementPlantOneSapling);
+                case TAG_LUMBERJACK_SAPLINGS:
+                    this.triggerAchievement(ModAchievements.achievementPlantOneSapling);
                     break;
-                case "trees"    : this.triggerAchievement(ModAchievements.achievementFellOneTree);
+                case TAG_LUMBERJACK_TREES:
+                    this.triggerAchievement(ModAchievements.achievementFellOneTree);
+                    break;
+                default:
                     break;
             }
         }
@@ -568,25 +593,37 @@ public class Colony implements IColony
         {
             switch (statistic)
             {
-                case "mobs"     : this.triggerAchievement(ModAchievements.achievementKill25Mobs);
+                case TAG_GUARD_MOBS:
+                    this.triggerAchievement(ModAchievements.achievementKill25Mobs);
                     break;
-                case "ores"     : this.triggerAchievement(ModAchievements.achievementMine25Ores);
+                case TAG_MINER_ORES:
+                    this.triggerAchievement(ModAchievements.achievementMine25Ores);
                     break;
-                case "diamonds" : this.triggerAchievement(ModAchievements.achievementMine25Diamonds);
+                case TAG_MINER_DIAMONDS:
+                    this.triggerAchievement(ModAchievements.achievementMine25Diamonds);
                     break;
-                case "huts"     : this.triggerAchievement(ModAchievements.achievementBuild25Huts);
+                case TAG_BUILDER_HUTS:
+                    this.triggerAchievement(ModAchievements.achievementBuild25Huts);
                     break;
-                case "fish"     : this.triggerAchievement(ModAchievements.achievementCatch25Fish);
+                case TAG_FISHERMAN_FISH:
+                    this.triggerAchievement(ModAchievements.achievementCatch25Fish);
                     break;
-                case "wheat"    : this.triggerAchievement(ModAchievements.achievementHarvest25Wheat);
+                case TAG_FARMER_WHEAT:
+                    this.triggerAchievement(ModAchievements.achievementHarvest25Wheat);
                     break;
-                case "potatoes" : this.triggerAchievement(ModAchievements.achievementHarvest25Potatoes);
+                case TAG_FARMER_POTATOES:
+                    this.triggerAchievement(ModAchievements.achievementHarvest25Potatoes);
                     break;
-                case "carrots"  : this.triggerAchievement(ModAchievements.achievementHarvest25Carrots);
+                case TAG_FARMER_CARROTS:
+                    this.triggerAchievement(ModAchievements.achievementHarvest25Carrots);
                     break;
-                case "saplings" : this.triggerAchievement(ModAchievements.achievementPlant25Saplings);
+                case TAG_LUMBERJACK_SAPLINGS:
+                    this.triggerAchievement(ModAchievements.achievementPlant25Saplings);
                     break;
-                case "trees"    : this.triggerAchievement(ModAchievements.achievementFell25Trees);
+                case TAG_LUMBERJACK_TREES:
+                    this.triggerAchievement(ModAchievements.achievementFell25Trees);
+                    break;
+                default:
                     break;
             }
         }
@@ -594,25 +631,37 @@ public class Colony implements IColony
         {
             switch (statistic)
             {
-                case "mobs"     : this.triggerAchievement(ModAchievements.achievementKill100Mobs);
+                case TAG_GUARD_MOBS:
+                    this.triggerAchievement(ModAchievements.achievementKill100Mobs);
                     break;
-                case "ores"     : this.triggerAchievement(ModAchievements.achievementMine100Ores);
+                case TAG_MINER_ORES:
+                    this.triggerAchievement(ModAchievements.achievementMine100Ores);
                     break;
-                case "diamonds" : this.triggerAchievement(ModAchievements.achievementMine100Diamonds);
+                case TAG_MINER_DIAMONDS:
+                    this.triggerAchievement(ModAchievements.achievementMine100Diamonds);
                     break;
-                case "huts"     : this.triggerAchievement(ModAchievements.achievementBuild100Huts);
+                case TAG_BUILDER_HUTS:
+                    this.triggerAchievement(ModAchievements.achievementBuild100Huts);
                     break;
-                case "fish"     : this.triggerAchievement(ModAchievements.achievementCatch100Fish);
+                case TAG_FISHERMAN_FISH:
+                    this.triggerAchievement(ModAchievements.achievementCatch100Fish);
                     break;
-                case "wheat"    : this.triggerAchievement(ModAchievements.achievementHarvest100Wheat);
+                case TAG_FARMER_WHEAT:
+                    this.triggerAchievement(ModAchievements.achievementHarvest100Wheat);
                     break;
-                case "potatoes" : this.triggerAchievement(ModAchievements.achievementHarvest100Potatoes);
+                case TAG_FARMER_POTATOES:
+                    this.triggerAchievement(ModAchievements.achievementHarvest100Potatoes);
                     break;
-                case "carrots"  : this.triggerAchievement(ModAchievements.achievementHarvest100Carrots);
+                case TAG_FARMER_CARROTS:
+                    this.triggerAchievement(ModAchievements.achievementHarvest100Carrots);
                     break;
-                case "saplings" : this.triggerAchievement(ModAchievements.achievementPlant100Saplings);
+                case TAG_LUMBERJACK_SAPLINGS:
+                    this.triggerAchievement(ModAchievements.achievementPlant100Saplings);
                     break;
-                case "trees"    : this.triggerAchievement(ModAchievements.achievementFell100Trees);
+                case TAG_LUMBERJACK_TREES:
+                    this.triggerAchievement(ModAchievements.achievementFell100Trees);
+                    break;
+                default:
                     break;
             }
         }
@@ -620,25 +669,37 @@ public class Colony implements IColony
         {
             switch (statistic)
             {
-                case "mobs"     : this.triggerAchievement(ModAchievements.achievementKill500Mobs);
+                case TAG_GUARD_MOBS:
+                    this.triggerAchievement(ModAchievements.achievementKill500Mobs);
                     break;
-                case "ores"     : this.triggerAchievement(ModAchievements.achievementMine500Ores);
+                case TAG_MINER_ORES:
+                    this.triggerAchievement(ModAchievements.achievementMine500Ores);
                     break;
-                case "diamonds" : this.triggerAchievement(ModAchievements.achievementMine500Diamonds);
+                case TAG_MINER_DIAMONDS:
+                    this.triggerAchievement(ModAchievements.achievementMine500Diamonds);
                     break;
-                case "huts"     : this.triggerAchievement(ModAchievements.achievementBuild500Huts);
+                case TAG_BUILDER_HUTS:
+                    this.triggerAchievement(ModAchievements.achievementBuild500Huts);
                     break;
-                case "fish"     : this.triggerAchievement(ModAchievements.achievementCatch500Fish);
+                case TAG_FISHERMAN_FISH:
+                    this.triggerAchievement(ModAchievements.achievementCatch500Fish);
                     break;
-                case "wheat"    : this.triggerAchievement(ModAchievements.achievementHarvest500Wheat);
+                case TAG_FARMER_WHEAT:
+                    this.triggerAchievement(ModAchievements.achievementHarvest500Wheat);
                     break;
-                case "potatoes" : this.triggerAchievement(ModAchievements.achievementHarvest500Potatoes);
+                case TAG_FARMER_POTATOES:
+                    this.triggerAchievement(ModAchievements.achievementHarvest500Potatoes);
                     break;
-                case "carrots"  : this.triggerAchievement(ModAchievements.achievementHarvest500Carrots);
+                case TAG_FARMER_CARROTS:
+                    this.triggerAchievement(ModAchievements.achievementHarvest500Carrots);
                     break;
-                case "saplings" : this.triggerAchievement(ModAchievements.achievementPlant500Saplings);
+                case TAG_LUMBERJACK_SAPLINGS:
+                    this.triggerAchievement(ModAchievements.achievementPlant500Saplings);
                     break;
-                case "trees"    : this.triggerAchievement(ModAchievements.achievementFell500Trees);
+                case TAG_LUMBERJACK_TREES:
+                    this.triggerAchievement(ModAchievements.achievementFell500Trees);
+                    break;
+                default:
                     break;
             }
         }
@@ -646,33 +707,45 @@ public class Colony implements IColony
         {
             switch (statistic)
             {
-                case "mobs"     : this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
+                case TAG_GUARD_MOBS:
+                    this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
                     break;
-                case "ores"     : this.triggerAchievement(ModAchievements.achievementMine1000Ores);
+                case TAG_MINER_ORES:
+                    this.triggerAchievement(ModAchievements.achievementMine1000Ores);
                     break;
-                case "diamonds" : this.triggerAchievement(ModAchievements.achievementMine1000Diamonds);
+                case TAG_MINER_DIAMONDS:
+                    this.triggerAchievement(ModAchievements.achievementMine1000Diamonds);
                     break;
-                case "huts"     : this.triggerAchievement(ModAchievements.achievementBuild1000Huts);
+                case TAG_BUILDER_HUTS:
+                    this.triggerAchievement(ModAchievements.achievementBuild1000Huts);
                     break;
-                case "fish"     : this.triggerAchievement(ModAchievements.achievementCatch1000Fish);
+                case TAG_FISHERMAN_FISH:
+                    this.triggerAchievement(ModAchievements.achievementCatch1000Fish);
                     break;
-                case "wheat"    : this.triggerAchievement(ModAchievements.achievementHarvest1000Wheat);
+                case TAG_FARMER_WHEAT:
+                    this.triggerAchievement(ModAchievements.achievementHarvest1000Wheat);
                     break;
-                case "potatoes" : this.triggerAchievement(ModAchievements.achievementHarvest1000Potatoes);
+                case TAG_FARMER_POTATOES:
+                    this.triggerAchievement(ModAchievements.achievementHarvest1000Potatoes);
                     break;
-                case "carrots"  : this.triggerAchievement(ModAchievements.achievementHarvest1000Carrots);
+                case TAG_FARMER_CARROTS:
+                    this.triggerAchievement(ModAchievements.achievementHarvest1000Carrots);
                     break;
-                case "saplings" : this.triggerAchievement(ModAchievements.achievementPlant1000Saplings);
+                case TAG_LUMBERJACK_SAPLINGS:
+                    this.triggerAchievement(ModAchievements.achievementPlant1000Saplings);
                     break;
-                case "trees"    : this.triggerAchievement(ModAchievements.achievementFell1000Trees);
+                case TAG_LUMBERJACK_TREES:
+                    this.triggerAchievement(ModAchievements.achievementFell1000Trees);
+                    break;
+                default:
                     break;
             }
         }
     }
 
-
     /**
      * Get the amount of statistic.
+     *
      * @param statistic the statistic.
      * @return amount of statistic.
      */
@@ -680,19 +753,31 @@ public class Colony implements IColony
     {
         switch (statistic)
         {
-            case "mobs"     : return killedMobs;
-            case "ores"     : return minedOres;
-            case "diamonds" : return minedDiamonds;
-            case "huts"     : return builtHuts;
-            case "fish"     : return caughtFish;
-            case "wheat"    : return harvestedWheat;
-            case "potatoes" : return harvestedPotatoes;
-            case "carrots"  : return harvestedCarrots;
-            case "saplings" : return plantedSaplings;
-            case "trees"    : return felledTrees;
-            default         : return 0;
+            case TAG_GUARD_MOBS:
+                return killedMobs;
+            case TAG_MINER_ORES:
+                return minedOres;
+            case TAG_MINER_DIAMONDS:
+                return minedDiamonds;
+            case TAG_BUILDER_HUTS:
+                return builtHuts;
+            case TAG_FISHERMAN_FISH:
+                return caughtFish;
+            case TAG_FARMER_WHEAT:
+                return harvestedWheat;
+            case TAG_FARMER_POTATOES:
+                return harvestedPotatoes;
+            case TAG_FARMER_CARROTS:
+                return harvestedCarrots;
+            case TAG_LUMBERJACK_SAPLINGS:
+                return plantedSaplings;
+            case TAG_LUMBERJACK_TREES:
+                return felledTrees;
+            default:
+                return 0;
         }
     }
+
     /**
      * Triggers an achievement on this colony.
      * <p>
@@ -792,9 +877,9 @@ public class Colony implements IColony
 
         // Add owners
         world.getMinecraftServer().getPlayerList().getPlayerList()
-                .stream()
-                .filter(permissions::isSubscriber)
-                .forEachOrdered(subscribers::add);
+          .stream()
+          .filter(permissions::isSubscriber)
+          .forEachOrdered(subscribers::add);
 
         //  Add nearby players
         for (final EntityPlayer o : world.playerEntities)
@@ -811,7 +896,7 @@ public class Colony implements IColony
 
                 final double distance = player.getDistanceSq(center);
                 if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
-                        || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
+                      || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
                 {
                     // Players become subscribers if they come within 16 blocks of the edge of the colony
                     // Players remain subscribers while they remain within double the colony's radius
@@ -1134,11 +1219,12 @@ public class Colony implements IColony
 
     /**
      * Spawn citizen if his entity is null.
+     *
      * @param data his data
      */
     public void spawnCitizenIfNull(@NotNull final CitizenData data)
     {
-        if(data.getCitizenEntity() == null)
+        if (data.getCitizenEntity() == null)
         {
             Log.getLogger().warn(String.format("Citizen #%d:%d has gone AWOL, respawning them!", this.getID(), data.getId()));
             spawnCitizen(data);
@@ -1188,8 +1274,8 @@ public class Colony implements IColony
                 {
                     //TODO: add Colony Name prefix?
                     LanguageHandler.sendPlayersMessage(
-                            this.getMessageEntityPlayers(),
-                            "tile.blockHutTownHall.messageMaxSize");
+                      this.getMessageEntityPlayers(),
+                      "tile.blockHutTownHall.messageMaxSize");
                 }
             }
 
