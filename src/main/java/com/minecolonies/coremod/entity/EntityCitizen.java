@@ -24,6 +24,8 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -633,6 +635,14 @@ public class EntityCitizen extends EntityAgeable implements INpc
         if (job instanceof JobLumberjack && source == DamageSource.inWall)
         {
             this.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
+        }
+        if (job instanceof JobGuard && source.getEntity() instanceof EntityGuardian)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
+        }
+        if(job instanceof JobGuard && source.getEntity() instanceof EntityEnderman)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
         }
     }
 
