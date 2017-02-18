@@ -156,7 +156,7 @@ public class Colony implements IColony
      * @param id  The current id for the colony.
      * @param dim The world the colony exists in.
      */
-    protected Colony(final int id, final int dim)
+    protected Colony( final int id, final int dim)
     {
         this.id = id;
         this.dimensionId = dim;
@@ -174,7 +174,7 @@ public class Colony implements IColony
      * @return loaded colony.
      */
     @NotNull
-    public static Colony loadColony(@NotNull final NBTTagCompound compound)
+    static Colony loadColony(@NotNull final NBTTagCompound compound)
     {
         final int id = compound.getInteger(TAG_ID);
         final int dimensionId = compound.getInteger(TAG_DIMENSION);
@@ -227,10 +227,7 @@ public class Colony implements IColony
         {
             final NBTTagCompound fieldCompound = fieldTagList.getCompoundTagAt(i);
             final Field f = Field.createFromNBT(this, fieldCompound);
-            if (f != null)
-            {
-                addField(f);
-            }
+            addField(f);
         }
 
         // Restore colony achievements
@@ -417,7 +414,7 @@ public class Colony implements IColony
      *
      * @return Dimension ID.
      */
-    public int getDimension()
+    int getDimension()
     {
         return dimensionId;
     }
@@ -749,7 +746,7 @@ public class Colony implements IColony
      * @param statistic the statistic.
      * @return amount of statistic.
      */
-    public int getStatisticAmount(@NotNull String statistic)
+    private int getStatisticAmount(@NotNull String statistic)
     {
         switch (statistic)
         {
@@ -800,7 +797,7 @@ public class Colony implements IColony
     /**
      * Marks citizen data dirty.
      */
-    public void markCitizensDirty()
+    void markCitizensDirty()
     {
         isCitizensDirty = true;
     }
@@ -818,7 +815,7 @@ public class Colony implements IColony
      *
      * @param w World object.
      */
-    public void onWorldLoad(@NotNull final World w)
+    void onWorldLoad(@NotNull final World w)
     {
         if (w.provider.getDimension() == dimensionId)
         {
@@ -831,7 +828,7 @@ public class Colony implements IColony
      *
      * @param w World object.
      */
-    public void onWorldUnload(@NotNull final World w)
+    void onWorldUnload(@NotNull final World w)
     {
         if (!w.equals(world))
         {
@@ -846,7 +843,7 @@ public class Colony implements IColony
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
-    public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
+    void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
     {
         for (@NotNull final AbstractBuilding b : buildings.values())
         {
@@ -932,7 +929,7 @@ public class Colony implements IColony
             //Fields
             if (!isBuildingsDirty)
             {
-                sendFieldPackets(oldSubscribers, hasNewSubscribers);
+                sendFieldPackets(hasNewSubscribers);
             }
         }
 
@@ -1048,11 +1045,9 @@ public class Colony implements IColony
 
     /**
      * Sends packages to update the fields.
-     *
-     * @param oldSubscribers    the existing subscribers.
      * @param hasNewSubscribers the new subscribers.
      */
-    private void sendFieldPackets(final Set<EntityPlayerMP> oldSubscribers, final boolean hasNewSubscribers)
+    private void sendFieldPackets(final boolean hasNewSubscribers)
     {
         if ((isFieldsDirty && !isBuildingsDirty) || hasNewSubscribers)
         {
@@ -1084,7 +1079,7 @@ public class Colony implements IColony
      *
      * @param event {@link TickEvent.WorldTickEvent}
      */
-    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         if (event.world != getWorld())
         {
@@ -1222,7 +1217,7 @@ public class Colony implements IColony
      *
      * @param data his data
      */
-    public void spawnCitizenIfNull(@NotNull final CitizenData data)
+    private void spawnCitizenIfNull(@NotNull final CitizenData data)
     {
         if (data.getCitizenEntity() == null)
         {
@@ -1600,7 +1595,7 @@ public class Colony implements IColony
      *
      * @param orderId the workOrder to remove.
      */
-    public void removeWorkOrder(final int orderId)
+    void removeWorkOrder(final int orderId)
     {
         //  Inform Subscribers of removed workOrder
         for (final EntityPlayerMP player : subscribers)
