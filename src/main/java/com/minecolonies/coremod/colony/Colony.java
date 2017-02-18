@@ -515,24 +515,24 @@ public class Colony implements IColony
     public void incrementMobsKilled()
     {
         killedMobs++;
-        final int mobKills = this.getKilledMobs();
-        if (mobKills >= NUM_ACHIEVEMENT_FIRST)
+        final int mobs = this.getKilledMobs();
+        if (mobs >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementKillOneMob);
         }
-        if (mobKills >= NUM_ACHIEVEMENT_SECOND)
+        if (mobs >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementKill25Mobs);
         }
-        if (mobKills >= NUM_ACHIEVEMENT_THIRD)
+        if (mobs >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementKill100Mobs);
         }
-        if (mobKills >= NUM_ACHIEVEMENT_FOURTH)
+        if (mobs >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementKill500Mobs);
         }
-        if (mobKills >= NUM_ACHIEVEMENT_FIFTH)
+        if (mobs >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
         }
@@ -544,24 +544,24 @@ public class Colony implements IColony
     public void incrementOresMined()
     {
         minedOres++;
-        final int Ores = this.getMinedOres();
-        if (Ores >= NUM_ACHIEVEMENT_FIRST)
+        final int ores = this.getMinedOres();
+        if (ores >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementMineOneOre);
         }
-        if (Ores >= NUM_ACHIEVEMENT_SECOND)
+        if (ores >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementMine25Ores);
         }
-        if (Ores >= NUM_ACHIEVEMENT_THIRD)
+        if (ores >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementMine100Ores);
         }
-        if (Ores >= NUM_ACHIEVEMENT_FOURTH)
+        if (ores >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementMine500Ores);
         }
-        if (Ores >= NUM_ACHIEVEMENT_FIFTH)
+        if (ores >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementMine1000Ores);
         }
@@ -573,24 +573,24 @@ public class Colony implements IColony
     public void incrementDiamondsMined()
     {
         minedDiamonds++;
-        final int Diamonds = this.getMinedDiamonds();
-        if (Diamonds >= NUM_ACHIEVEMENT_FIRST)
+        final int diamonds = this.getMinedDiamonds();
+        if (diamonds >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementMineOneDiamond);
         }
-        if (Diamonds >= NUM_ACHIEVEMENT_SECOND)
+        if (diamonds >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementMine25Diamonds);
         }
-        if (Diamonds >= NUM_ACHIEVEMENT_THIRD)
+        if (diamonds >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementMine100Diamonds);
         }
-        if (Diamonds >= NUM_ACHIEVEMENT_FOURTH)
+        if (diamonds >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementMine500Diamonds);
         }
-        if (Diamonds >= NUM_ACHIEVEMENT_FIFTH)
+        if (diamonds >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementMine1000Diamonds);
         }
@@ -602,24 +602,24 @@ public class Colony implements IColony
     public void incrementHutsBuilt()
     {
         builtHuts++;
-        final int Huts = this.getBuiltHuts();
-        if (Huts >= NUM_ACHIEVEMENT_FIRST)
+        final int huts = this.getBuiltHuts();
+        if (huts >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementBuildOneHut);
         }
-        if (Huts >= NUM_ACHIEVEMENT_SECOND)
+        if (huts >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementBuild25Huts);
         }
-        if (Huts >= NUM_ACHIEVEMENT_THIRD)
+        if (huts >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementBuild100Huts);
         }
-        if (Huts >= NUM_ACHIEVEMENT_FOURTH)
+        if (huts >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementBuild500Huts);
         }
-        if (Huts >= NUM_ACHIEVEMENT_FIFTH)
+        if (huts >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementBuild1000Huts);
         }
@@ -631,24 +631,24 @@ public class Colony implements IColony
     public void incrementFishCaught()
     {
         caughtFish++;
-        final int Fish = this.getCaughtFish();
-        if (Fish >= NUM_ACHIEVEMENT_FIRST)
+        final int fish = this.getCaughtFish();
+        if (fish >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementCatchOneFish);
         }
-        if (Fish >= NUM_ACHIEVEMENT_SECOND)
+        if (fish >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementCatch25Fish);
         }
-        if (Fish >= NUM_ACHIEVEMENT_THIRD)
+        if (fish >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementCatch100Fish);
         }
-        if (Fish >= NUM_ACHIEVEMENT_FOURTH)
+        if (fish >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementCatch500Fish);
         }
-        if (Fish >= NUM_ACHIEVEMENT_FIFTH)
+        if (fish >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementCatch1000Fish);
         }
@@ -660,24 +660,24 @@ public class Colony implements IColony
     public void incrementCarrotsHarvested()
     {
         harvestedCarrots++;
-        final int Carrots = this.getHarvestedCarrots();
-        if (Carrots >= NUM_ACHIEVEMENT_FIRST)
+        final int carrots = this.getHarvestedCarrots();
+        if (carrots >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementHarvestOneCarrot);
         }
-        if (Carrots >= NUM_ACHIEVEMENT_SECOND)
+        if (carrots >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest25Carrots);
         }
-        if (Carrots >= NUM_ACHIEVEMENT_THIRD)
+        if (carrots >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest100Carrots);
         }
-        if (Carrots >= NUM_ACHIEVEMENT_FOURTH)
+        if (carrots >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest500Carrots);
         }
-        if (Carrots >= NUM_ACHIEVEMENT_FIFTH)
+        if (carrots >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest1000Carrots);
         }
@@ -689,24 +689,24 @@ public class Colony implements IColony
     public void incrementPotatoesHarvested()
     {
         harvestedPotatoes++;
-        final int Potatoes = this.getHarvestedPotatoes();
-        if (Potatoes >= NUM_ACHIEVEMENT_FIRST)
+        final int potatoes = this.getHarvestedPotatoes();
+        if (potatoes >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementHarvestOnePotato);
         }
-        if (Potatoes >= NUM_ACHIEVEMENT_SECOND)
+        if (potatoes >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest25Potatoes);
         }
-        if (Potatoes >= NUM_ACHIEVEMENT_THIRD)
+        if (potatoes >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest100Potatoes);
         }
-        if (Potatoes >= NUM_ACHIEVEMENT_FOURTH)
+        if (potatoes >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest500Potatoes);
         }
-        if (Potatoes >= NUM_ACHIEVEMENT_FIFTH)
+        if (potatoes >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest1000Potatoes);
         }
@@ -718,83 +718,91 @@ public class Colony implements IColony
     public void incrementWheatHarvested()
     {
         harvestedWheat++;
-        final int Wheat = this.getHarvestedWheat();
-        if (Wheat >= NUM_ACHIEVEMENT_FIRST)
+        final int wheat = this.getHarvestedWheat();
+        if (wheat >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementHarvestOneWheat);
         }
-        if (Wheat >= NUM_ACHIEVEMENT_SECOND)
+        if (wheat >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest25Wheat);
         }
-        if (Wheat >= NUM_ACHIEVEMENT_THIRD)
+        if (wheat >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest100Wheat);
         }
-        if (Wheat >= NUM_ACHIEVEMENT_FOURTH)
+        if (wheat >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest500Wheat);
         }
-        if (Wheat >= NUM_ACHIEVEMENT_FIFTH)
+        if (wheat >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementHarvest1000Wheat);
         }
     }
+    /**
+     * Increment the trees felled by this colony.
+     * Will award achievements for trees felled.
+     */
     public void incrementTreesFelled()
     {
         felledTrees++;
-        final int Trees = this.getFelledTrees();
-        if (Trees >= NUM_ACHIEVEMENT_FIRST)
+        final int trees = this.getFelledTrees();
+        if (trees >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementFellOneTree);
         }
-        if (Trees >= NUM_ACHIEVEMENT_SECOND)
+        if (trees >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementFell25Trees);
         }
-        if (Trees >= NUM_ACHIEVEMENT_THIRD)
+        if (trees >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementFell100Trees);
         }
-        if (Trees >= NUM_ACHIEVEMENT_FOURTH)
+        if (trees >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementFell500Trees);
         }
-        if (Trees >= NUM_ACHIEVEMENT_FIFTH)
+        if (trees >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementFell1000Trees);
         }
     }
+    /**
+     * Increment the saplings planted by this colony.
+     * Will award achievements for saplings planted.
+     */
     public void incrementSaplingsPlanted()
     {
         plantedSaplings++;
-        final int Saplings = this.getPlantedSaplings();
-        if (Saplings >= NUM_ACHIEVEMENT_FIRST)
+        final int saplings = this.getPlantedSaplings();
+        if (saplings >= NUM_ACHIEVEMENT_FIRST)
         {
             this.triggerAchievement(ModAchievements.achievementPlantOneSapling);
         }
-        if (Saplings >= NUM_ACHIEVEMENT_SECOND)
+        if (saplings >= NUM_ACHIEVEMENT_SECOND)
         {
             this.triggerAchievement(ModAchievements.achievementPlant25Saplings);
         }
-        if (Saplings >= NUM_ACHIEVEMENT_THIRD)
+        if (saplings >= NUM_ACHIEVEMENT_THIRD)
         {
             this.triggerAchievement(ModAchievements.achievementPlant100Saplings);
         }
-        if (Saplings >= NUM_ACHIEVEMENT_FOURTH)
+        if (saplings >= NUM_ACHIEVEMENT_FOURTH)
         {
             this.triggerAchievement(ModAchievements.achievementPlant500Saplings);
         }
-        if (Saplings >= NUM_ACHIEVEMENT_FIFTH)
+        if (saplings >= NUM_ACHIEVEMENT_FIFTH)
         {
             this.triggerAchievement(ModAchievements.achievementPlant1000Saplings);
         }
     }
 
     /**
-     * get the amount of killed mobs.
+     * get the amount of statistics.
      *
-     * @return amount of mobs killed
+     * @return amount of statistics.
      */
     public int getKilledMobs()
     {

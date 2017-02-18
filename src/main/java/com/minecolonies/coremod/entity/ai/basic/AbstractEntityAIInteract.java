@@ -116,12 +116,12 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
 
         //if ore then add to statistics
-        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.COAL_ORE)
-              || world.getBlockState(blockToMine).getBlock().equals(Blocks.IRON_ORE)
-              || world.getBlockState(blockToMine).getBlock().equals(Blocks.LAPIS_ORE)
-              || world.getBlockState(blockToMine).getBlock().equals(Blocks.GOLD_ORE)
-              || world.getBlockState(blockToMine).getBlock().equals(Blocks.REDSTONE_ORE)
-              || world.getBlockState(blockToMine).getBlock().equals(Blocks.EMERALD_ORE))
+        if (world.getBlockState(blockToMine).getBlock() == (Blocks.COAL_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
+              || world.getBlockState(blockToMine).getBlock() ==(Blocks.EMERALD_ORE))
         {
             this.getOwnBuilding().getColony().incrementOresMined();
         }

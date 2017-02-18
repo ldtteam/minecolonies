@@ -619,6 +619,11 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return result;
     }
 
+    /**
+     * Trigger the corresponding death achievement.
+     * @param source    The damage source.
+     * @param job       The job of the citizen.
+     */
     public void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
     {
         if (job instanceof JobMiner)
