@@ -157,7 +157,7 @@ public final class ModAchievements
                                                                                              achievementBuildingMiner).registerStat();
     public static final Achievement achievementLumberjackDeathTree = new MineColoniesAchievement("lumberjack.death.tree", -2, 11, Blocks.SAPLING,
                                                                                              achievementBuildingLumberjack).registerStat();
-    public static final Achievement achievementFisherDeathGuardian = new MineColoniesAchievement("fisherman.death.guardian", -2, 4, Blocks.SEA_LANTERN,
+    public static final Achievement achievementFisherDeathGuardian = new MineColoniesAchievement("fisher.death.guardian", -2, 4, Blocks.SEA_LANTERN,
                                                                                              achievementBuildingFisher).registerStat();
     public static final Achievement achievementGuardDeathEnderman = new MineColoniesAchievement("guard.death.enderman", -2, 6, Items.ENDER_PEARL,
                                                                                              achievementBuildingGuard).registerStat();
@@ -177,15 +177,15 @@ public final class ModAchievements
                                                                                          achievementBuildingMiner).registerStat();
     public static final Achievement achievementMineOneDiamond = new MineColoniesAchievement("miner.diamondsMined.one", 4, 10, Items.DIAMOND,
                                                                                              achievementBuildingMiner).registerStat();
-    public static final Achievement achievementFellOneTree = new MineColoniesAchievement("lumberjack.TreesFelled.one", 4, 12, Blocks.LOG,
+    public static final Achievement achievementFellOneTree = new MineColoniesAchievement("lumberjack.treesFelled.one", 4, 12, Blocks.LOG,
                                                                                           achievementBuildingLumberjack).registerStat();
-    public static final Achievement achievementPlantOneSapling = new MineColoniesAchievement("lumberjack.SaplingsPlanted.one", 4, 13, Blocks.SAPLING,
+    public static final Achievement achievementPlantOneSapling = new MineColoniesAchievement("lumberjack.saplingsPlanted.one", 4, 13, Blocks.SAPLING,
                                                                                               achievementBuildingLumberjack).registerStat();
     public static final Achievement achievementHarvestOneCarrot = new MineColoniesAchievement("farmer.carrotsHarvested.one", 4, 15, Items.CARROT,
                                                                                                achievementBuildingFarmer).registerStat();
     public static final Achievement achievementHarvestOnePotato = new MineColoniesAchievement("farmer.potatoesHarvested.one", 4, 16, Items.POTATO,
                                                                                                achievementBuildingFarmer).registerStat();
-    public static final Achievement achievementHarvestOneWheat = new MineColoniesAchievement("farmer.WheatHarvested.one", 4, 17, Items.WHEAT_SEEDS,
+    public static final Achievement achievementHarvestOneWheat = new MineColoniesAchievement("farmer.wheatHarvested.one", 4, 17, Items.WHEAT_SEEDS,
                                                                                               achievementBuildingFarmer).registerStat();
 
     /**
@@ -201,9 +201,9 @@ public final class ModAchievements
                                                                                          achievementMineOneOre).registerStat();
     public static final Achievement achievementMine25Diamonds = new MineColoniesAchievement("miner.diamondsMined.25", 6, 10, Items.DIAMOND,
                                                                                              achievementMineOneDiamond).registerStat();
-    public static final Achievement achievementFell25Trees = new MineColoniesAchievement("lumberjack.TreesFelled.25", 6, 12, Blocks.LOG,
+    public static final Achievement achievementFell25Trees = new MineColoniesAchievement("lumberjack.treesFelled.25", 6, 12, Blocks.LOG,
                                                                                           achievementFellOneTree).registerStat();
-    public static final Achievement achievementPlant25Saplings = new MineColoniesAchievement("lumberjack.SaplingsPlanted.25", 6, 13, Blocks.SAPLING,
+    public static final Achievement achievementPlant25Saplings = new MineColoniesAchievement("lumberjack.saplingsPlanted.25", 6, 13, Blocks.SAPLING,
                                                                                               achievementPlantOneSapling).registerStat();
     public static final Achievement achievementHarvest25Carrots = new MineColoniesAchievement("farmer.carrotsHarvested.25", 6, 15, Items.CARROT,
                                                                                                achievementHarvestOneCarrot).registerStat();
@@ -225,9 +225,9 @@ public final class ModAchievements
                                                                                           achievementMine25Ores).registerStat();
     public static final Achievement achievementMine100Diamonds = new MineColoniesAchievement("miner.diamondsMined.100", 8, 10, Items.DIAMOND,
                                                                                               achievementMine25Diamonds).registerStat();
-    public static final Achievement achievementFell100Trees = new MineColoniesAchievement("lumberjack.TreesFelled.100", 8, 12, Blocks.LOG,
+    public static final Achievement achievementFell100Trees = new MineColoniesAchievement("lumberjack.treesFelled.100", 8, 12, Blocks.LOG,
                                                                                            achievementFell25Trees).registerStat();
-    public static final Achievement achievementPlant100Saplings = new MineColoniesAchievement("lumberjack.SaplingsPlanted.100", 8, 13, Blocks.SAPLING,
+    public static final Achievement achievementPlant100Saplings = new MineColoniesAchievement("lumberjack.saplingsPlanted.100", 8, 13, Blocks.SAPLING,
                                                                                                achievementPlant25Saplings).registerStat();
     public static final Achievement achievementHarvest100Carrots = new MineColoniesAchievement("farmer.carrotsHarvested.100", 8, 15, Items.CARROT,
                                                                                                 achievementHarvest25Carrots).registerStat();
@@ -249,9 +249,9 @@ public final class ModAchievements
                                                                                           achievementMine100Ores).registerStat();
     public static final Achievement achievementMine500Diamonds = new MineColoniesAchievement("miner.diamondsMined.500", 10, 10, Items.DIAMOND,
                                                                                               achievementMine100Diamonds).registerStat();
-    public static final Achievement achievementFell500Trees = new MineColoniesAchievement("lumberjack.TreesFelled.500", 10, 12, Blocks.LOG,
+    public static final Achievement achievementFell500Trees = new MineColoniesAchievement("lumberjack.treesFelled.500", 10, 12, Blocks.LOG,
                                                                                            achievementFell100Trees).registerStat();
-    public static final Achievement achievementPlant500Saplings = new MineColoniesAchievement("lumberjack.SaplingsPlanted.500", 10, 13, Blocks.SAPLING,
+    public static final Achievement achievementPlant500Saplings = new MineColoniesAchievement("lumberjack.saplingsPlanted.500", 10, 13, Blocks.SAPLING,
                                                                                                achievementPlant100Saplings).registerStat();
     public static final Achievement achievementHarvest500Carrots = new MineColoniesAchievement("farmer.carrotsHarvested.500", 10, 15, Items.CARROT,
                                                                                                 achievementHarvest100Carrots).registerStat();
@@ -273,9 +273,9 @@ public final class ModAchievements
                                                                                            achievementMine500Ores).registerStat();
     public static final Achievement achievementMine1000Diamonds = new MineColoniesAchievement("miner.diamondsMined.1000", 12, 10, Items.DIAMOND,
                                                                                                achievementMine500Diamonds).registerStat();
-    public static final Achievement achievementFell1000Trees = new MineColoniesAchievement("lumberjack.TreesFelled.1000", 12, 12, Blocks.LOG,
+    public static final Achievement achievementFell1000Trees = new MineColoniesAchievement("lumberjack.treesFelled.1000", 12, 12, Blocks.LOG,
                                                                                             achievementFell500Trees).registerStat();
-    public static final Achievement achievementPlant1000Saplings = new MineColoniesAchievement("lumberjack.SaplingsPlanted.1000", 12, 13, Blocks.SAPLING,
+    public static final Achievement achievementPlant1000Saplings = new MineColoniesAchievement("lumberjack.saplingsPlanted.1000", 12, 13, Blocks.SAPLING,
                                                                                                 achievementPlant500Saplings).registerStat();
     public static final Achievement achievementHarvest1000Carrots = new MineColoniesAchievement("farmer.carrotsHarvested.1000", 12, 15, Items.GOLDEN_CARROT,
                                                                                                  achievementHarvest500Carrots).registerStat();
