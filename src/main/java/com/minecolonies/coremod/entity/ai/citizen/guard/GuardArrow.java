@@ -1,10 +1,12 @@
 package com.minecolonies.coremod.entity.ai.citizen.guard;
 
+import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityTippedArrow;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -61,6 +63,14 @@ public class GuardArrow extends EntityTippedArrow
         Log.getLogger().info("Arrow hit " + targetEntity + " with " + targetEntity.getHealth());
         if (targetEntity.getHealth() <= 0.0F)
         {
+            if (targetEntity instanceof EntityPlayer)
+            {
+                EntityPlayer player = (EntityPlayer) targetEntity;
+                if (colony.getPermissions().isColonyMember(player))
+                {
+                    this.colony.triggerAchievement(ModAchievements.achievementPlayerDeathGuard);
+                }
+            }
             colony.incrementMobsKilled();
         }
     }
