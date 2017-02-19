@@ -20,8 +20,9 @@ public class TriggerColonyAchievements
     private static final String TAG_MINER_ORES            = "ores";
 
     /**
-     * Trigger first achievement.
+     *Trigger fifth achievement.
      * @param statistic the statistic.
+     * @param colony the colony.
      */
     public static void triggerFirstAchievement(@NotNull String statistic, @NotNull Colony colony)
     {
@@ -61,9 +62,11 @@ public class TriggerColonyAchievements
                 break;
         }
     }
+
     /**
-     * Trigger second achievement.
+     *Trigger fifth achievement.
      * @param statistic the statistic.
+     * @param colony the colony.
      */
     public static void triggerSecondAchievement(@NotNull String statistic, @NotNull Colony colony)
     {
@@ -103,9 +106,11 @@ public class TriggerColonyAchievements
                 break;
         }
     }
+
     /**
-     * Trigger third achievement.
+     *Trigger fifth achievement.
      * @param statistic the statistic.
+     * @param colony the colony.
      */
     public static void triggerThirdAchievement(@NotNull String statistic, @NotNull Colony colony)
     {
@@ -145,9 +150,11 @@ public class TriggerColonyAchievements
                 break;
         }
     }
+
     /**
-     * Trigger fourth achievement.
+     *Trigger fifth achievement.
      * @param statistic the statistic.
+     * @param colony the colony.
      */
     public static void triggerFourthAchievement(@NotNull String statistic, @NotNull Colony colony)
     {
@@ -187,9 +194,11 @@ public class TriggerColonyAchievements
                 break;
         }
     }
+
     /**
-     * Trigger fifth achievement.
+     *Trigger fifth achievement.
      * @param statistic the statistic.
+     * @param colony the colony.
      */
     public static void triggerFifthAchievement(@NotNull String statistic, @NotNull Colony colony)
     {
