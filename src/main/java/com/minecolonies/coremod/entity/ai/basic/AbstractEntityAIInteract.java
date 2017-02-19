@@ -115,7 +115,25 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //get all item drops
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
 
-        //if ore then add to statistics
+        //if block in statistic then increment that statistic.
+        triggerMinedBlock(blockToMine);
+
+        //Break the block
+        worker.breakBlockWithToolInHand(blockToMine);
+
+        //add the drops to the citizen
+        for (final ItemStack item : items)
+        {
+            InventoryUtils.setStack(worker.getInventoryCitizen(), item);
+        }
+
+        worker.addExperience(XP_PER_BLOCK);
+        this.incrementActionsDone();
+        return true;
+    }
+
+    private void triggerMinedBlock(@NotNull final BlockPos blockToMine)
+    {
         if (world.getBlockState(blockToMine).getBlock() == (Blocks.COAL_ORE)
               || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
               || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
@@ -141,19 +159,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         {
             this.getOwnBuilding().getColony().incrementStatistic("wheat");
         }
-        //Break the block
-        worker.breakBlockWithToolInHand(blockToMine);
-
-        //add the drops to the citizen
-        for (final ItemStack item : items)
-        {
-            InventoryUtils.setStack(worker.getInventoryCitizen(), item);
-        }
-
-        worker.addExperience(XP_PER_BLOCK);
-        this.incrementActionsDone();
-        return true;
     }
+
 
     /**
      * Checks for the right tools and waits for an appropriate delay.

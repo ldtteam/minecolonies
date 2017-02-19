@@ -156,7 +156,7 @@ public class Colony implements IColony
      * @param id  The current id for the colony.
      * @param dim The world the colony exists in.
      */
-    protected Colony( final int id, final int dim)
+    protected Colony(final int id, final int dim)
     {
         this.id = id;
         this.dimensionId = dim;
@@ -174,7 +174,7 @@ public class Colony implements IColony
      * @return loaded colony.
      */
     @NotNull
-    static Colony loadColony(@NotNull final NBTTagCompound compound)
+    public static Colony loadColony(@NotNull final NBTTagCompound compound)
     {
         final int id = compound.getInteger(TAG_ID);
         final int dimensionId = compound.getInteger(TAG_DIMENSION);
@@ -414,7 +414,7 @@ public class Colony implements IColony
      *
      * @return Dimension ID.
      */
-    int getDimension()
+    public int getDimension()
     {
         return dimensionId;
     }
@@ -541,217 +541,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Trigger first achievement.
-     * @param statistic the statistic.
-     */
-    private void triggerFirstAchievement(@NotNull String statistic)
-    {
-        switch (statistic)
-        {
-            case TAG_GUARD_MOBS:
-                this.triggerAchievement(ModAchievements.achievementKillOneMob);
-                break;
-            case TAG_MINER_ORES:
-                this.triggerAchievement(ModAchievements.achievementMineOneOre);
-                break;
-            case TAG_MINER_DIAMONDS:
-                this.triggerAchievement(ModAchievements.achievementMineOneDiamond);
-                break;
-            case TAG_BUILDER_HUTS:
-                this.triggerAchievement(ModAchievements.achievementBuildOneHut);
-                break;
-            case TAG_FISHERMAN_FISH:
-                this.triggerAchievement(ModAchievements.achievementCatchOneFish);
-                break;
-            case TAG_FARMER_WHEAT:
-                this.triggerAchievement(ModAchievements.achievementHarvestOneWheat);
-                break;
-            case TAG_FARMER_POTATOES:
-                this.triggerAchievement(ModAchievements.achievementHarvestOnePotato);
-                break;
-            case TAG_FARMER_CARROTS:
-                this.triggerAchievement(ModAchievements.achievementHarvestOneCarrot);
-                break;
-            case TAG_LUMBERJACK_SAPLINGS:
-                this.triggerAchievement(ModAchievements.achievementPlantOneSapling);
-                break;
-            case TAG_LUMBERJACK_TREES:
-                this.triggerAchievement(ModAchievements.achievementFellOneTree);
-                break;
-            default:
-                break;
-        }
-    }
-    /**
-     * Trigger second achievement.
-     * @param statistic the statistic.
-     */
-    private void triggerSecondAchievement(@NotNull String statistic)
-    {
-        switch (statistic)
-        {
-            case TAG_GUARD_MOBS:
-                this.triggerAchievement(ModAchievements.achievementKill25Mobs);
-                break;
-            case TAG_MINER_ORES:
-                this.triggerAchievement(ModAchievements.achievementMine25Ores);
-                break;
-            case TAG_MINER_DIAMONDS:
-                this.triggerAchievement(ModAchievements.achievementMine25Diamonds);
-                break;
-            case TAG_BUILDER_HUTS:
-                this.triggerAchievement(ModAchievements.achievementBuild25Huts);
-                break;
-            case TAG_FISHERMAN_FISH:
-                this.triggerAchievement(ModAchievements.achievementCatch25Fish);
-                break;
-            case TAG_FARMER_WHEAT:
-                this.triggerAchievement(ModAchievements.achievementHarvest25Wheat);
-                break;
-            case TAG_FARMER_POTATOES:
-                this.triggerAchievement(ModAchievements.achievementHarvest25Potatoes);
-                break;
-            case TAG_FARMER_CARROTS:
-                this.triggerAchievement(ModAchievements.achievementHarvest25Carrots);
-                break;
-            case TAG_LUMBERJACK_SAPLINGS:
-                this.triggerAchievement(ModAchievements.achievementPlant25Saplings);
-                break;
-            case TAG_LUMBERJACK_TREES:
-                this.triggerAchievement(ModAchievements.achievementFell25Trees);
-                break;
-            default:
-                break;
-        }
-    }
-    /**
-     * Trigger third achievement.
-     * @param statistic the statistic.
-     */
-    private void triggerThirdAchievement(@NotNull String statistic)
-    {
-        switch (statistic)
-        {
-            case TAG_GUARD_MOBS:
-                this.triggerAchievement(ModAchievements.achievementKill100Mobs);
-                break;
-            case TAG_MINER_ORES:
-                this.triggerAchievement(ModAchievements.achievementMine100Ores);
-                break;
-            case TAG_MINER_DIAMONDS:
-                this.triggerAchievement(ModAchievements.achievementMine100Diamonds);
-                break;
-            case TAG_BUILDER_HUTS:
-                this.triggerAchievement(ModAchievements.achievementBuild100Huts);
-                break;
-            case TAG_FISHERMAN_FISH:
-                this.triggerAchievement(ModAchievements.achievementCatch100Fish);
-                break;
-            case TAG_FARMER_WHEAT:
-                this.triggerAchievement(ModAchievements.achievementHarvest100Wheat);
-                break;
-            case TAG_FARMER_POTATOES:
-                this.triggerAchievement(ModAchievements.achievementHarvest100Potatoes);
-                break;
-            case TAG_FARMER_CARROTS:
-                this.triggerAchievement(ModAchievements.achievementHarvest100Carrots);
-                break;
-            case TAG_LUMBERJACK_SAPLINGS:
-                this.triggerAchievement(ModAchievements.achievementPlant100Saplings);
-                break;
-            case TAG_LUMBERJACK_TREES:
-                this.triggerAchievement(ModAchievements.achievementFell100Trees);
-                break;
-            default:
-                break;
-        }
-    }
-    /**
-     * Trigger fourth achievement.
-     * @param statistic the statistic.
-     */
-    private void triggerFourthAchievement(@NotNull String statistic)
-    {
-        switch (statistic)
-        {
-            case TAG_GUARD_MOBS:
-                this.triggerAchievement(ModAchievements.achievementKill500Mobs);
-                break;
-            case TAG_MINER_ORES:
-                this.triggerAchievement(ModAchievements.achievementMine500Ores);
-                break;
-            case TAG_MINER_DIAMONDS:
-                this.triggerAchievement(ModAchievements.achievementMine500Diamonds);
-                break;
-            case TAG_BUILDER_HUTS:
-                this.triggerAchievement(ModAchievements.achievementBuild500Huts);
-                break;
-            case TAG_FISHERMAN_FISH:
-                this.triggerAchievement(ModAchievements.achievementCatch500Fish);
-                break;
-            case TAG_FARMER_WHEAT:
-                this.triggerAchievement(ModAchievements.achievementHarvest500Wheat);
-                break;
-            case TAG_FARMER_POTATOES:
-                this.triggerAchievement(ModAchievements.achievementHarvest500Potatoes);
-                break;
-            case TAG_FARMER_CARROTS:
-                this.triggerAchievement(ModAchievements.achievementHarvest500Carrots);
-                break;
-            case TAG_LUMBERJACK_SAPLINGS:
-                this.triggerAchievement(ModAchievements.achievementPlant500Saplings);
-                break;
-            case TAG_LUMBERJACK_TREES:
-                this.triggerAchievement(ModAchievements.achievementFell500Trees);
-                break;
-            default:
-                break;
-        }
-    }
-    /**
-     * Trigger fifth achievement.
-     * @param statistic the statistic.
-     */
-    private void triggerFifthAchievement(@NotNull String statistic)
-    {
-        switch (statistic)
-        {
-            case TAG_GUARD_MOBS:
-                this.triggerAchievement(ModAchievements.achievementKill1000Mobs);
-                break;
-            case TAG_MINER_ORES:
-                this.triggerAchievement(ModAchievements.achievementMine1000Ores);
-                break;
-            case TAG_MINER_DIAMONDS:
-                this.triggerAchievement(ModAchievements.achievementMine1000Diamonds);
-                break;
-            case TAG_BUILDER_HUTS:
-                this.triggerAchievement(ModAchievements.achievementBuild1000Huts);
-                break;
-            case TAG_FISHERMAN_FISH:
-                this.triggerAchievement(ModAchievements.achievementCatch1000Fish);
-                break;
-            case TAG_FARMER_WHEAT:
-                this.triggerAchievement(ModAchievements.achievementHarvest1000Wheat);
-                break;
-            case TAG_FARMER_POTATOES:
-                this.triggerAchievement(ModAchievements.achievementHarvest1000Potatoes);
-                break;
-            case TAG_FARMER_CARROTS:
-                this.triggerAchievement(ModAchievements.achievementHarvest1000Carrots);
-                break;
-            case TAG_LUMBERJACK_SAPLINGS:
-                this.triggerAchievement(ModAchievements.achievementPlant1000Saplings);
-                break;
-            case TAG_LUMBERJACK_TREES:
-                this.triggerAchievement(ModAchievements.achievementFell1000Trees);
-                break;
-            default:
-                break;
-        }
-    }
-
-    /**
      * increment statistic amount.
      * @param statistic the statistic.
      */
@@ -805,23 +594,23 @@ public class Colony implements IColony
         incrementStatisticAmount(statistic);
         if (statisticAmount >= NUM_ACHIEVEMENT_FIRST)
         {
-            triggerFirstAchievement(statistic);
+            TriggerColonyAchievements.triggerFirstAchievement(statistic, this);
         }
         if (statisticAmount >= NUM_ACHIEVEMENT_SECOND)
         {
-            triggerSecondAchievement(statistic);
+            TriggerColonyAchievements.triggerSecondAchievement(statistic, this);
         }
         if (statisticAmount >= NUM_ACHIEVEMENT_THIRD)
         {
-            triggerThirdAchievement(statistic);
+            TriggerColonyAchievements.triggerThirdAchievement(statistic, this);
         }
         if (statisticAmount >= NUM_ACHIEVEMENT_FOURTH)
         {
-            triggerFourthAchievement(statistic);
+            TriggerColonyAchievements.triggerFourthAchievement(statistic, this);
         }
         if (statisticAmount >= NUM_ACHIEVEMENT_FIFTH)
         {
-            triggerFifthAchievement(statistic);
+            TriggerColonyAchievements.triggerFifthAchievement(statistic, this);
         }
     }
 
@@ -847,7 +636,7 @@ public class Colony implements IColony
     /**
      * Marks citizen data dirty.
      */
-    void markCitizensDirty()
+    public void markCitizensDirty()
     {
         isCitizensDirty = true;
     }
@@ -865,7 +654,7 @@ public class Colony implements IColony
      *
      * @param w World object.
      */
-    void onWorldLoad(@NotNull final World w)
+    public void onWorldLoad(@NotNull final World w)
     {
         if (w.provider.getDimension() == dimensionId)
         {
@@ -878,7 +667,7 @@ public class Colony implements IColony
      *
      * @param w World object.
      */
-    void onWorldUnload(@NotNull final World w)
+    public void onWorldUnload(@NotNull final World w)
     {
         if (!w.equals(world))
         {
@@ -893,7 +682,7 @@ public class Colony implements IColony
      *
      * @param event {@link net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent}
      */
-    void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
+    public void onServerTick(@NotNull final TickEvent.ServerTickEvent event)
     {
         for (@NotNull final AbstractBuilding b : buildings.values())
         {
@@ -1129,7 +918,7 @@ public class Colony implements IColony
      *
      * @param event {@link TickEvent.WorldTickEvent}
      */
-    void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
+    public void onWorldTick(@NotNull final TickEvent.WorldTickEvent event)
     {
         if (event.world != getWorld())
         {
@@ -1645,7 +1434,7 @@ public class Colony implements IColony
      *
      * @param orderId the workOrder to remove.
      */
-    void removeWorkOrder(final int orderId)
+    public void removeWorkOrder(final int orderId)
     {
         //  Inform Subscribers of removed workOrder
         for (final EntityPlayerMP player : subscribers)

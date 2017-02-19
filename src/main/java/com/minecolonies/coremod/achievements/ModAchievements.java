@@ -151,7 +151,7 @@ public final class ModAchievements
     /**
      * Death achievements.
      */
-    public static final Achievement achievementMinerDeathLava = new MineColoniesAchievement("miner.death.lava", -2, 8, Blocks.LAVA,
+    public static final Achievement achievementMinerDeathLava = new MineColoniesAchievement("miner.death.lava", -2, 8, Items.LAVA_BUCKET,
                                                                                              achievementBuildingMiner).registerStat();
     public static final Achievement achievementMinerDeathFall = new MineColoniesAchievement("miner.death.fall", -4, 8, Items.FEATHER,
                                                                                              achievementBuildingMiner).registerStat();
@@ -161,7 +161,7 @@ public final class ModAchievements
                                                                                              achievementBuildingFisher).registerStat();
     public static final Achievement achievementGuardDeathEnderman = new MineColoniesAchievement("guard.death.enderman", -2, 6, Items.ENDER_PEARL,
                                                                                              achievementBuildingGuard).registerStat();
-    public static final Achievement achievementPlayerDeathGuard = new MineColoniesAchievement("player.death.guard", -4, 6, Items.DIAMOND_SWORD,
+    public static final Achievement achievementPlayerDeathGuard = new MineColoniesAchievement("player.death.guard", -4, 6, Items.ARROW,
                                                                                              achievementBuildingGuard).registerStat();
 
     /**

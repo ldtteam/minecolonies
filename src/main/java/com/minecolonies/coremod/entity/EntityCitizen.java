@@ -641,7 +641,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         {
             this.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
         }
-        if (job instanceof JobGuard && source.getEntity() instanceof EntityGuardian)
+        if (job instanceof JobFisherman && source.getEntity() instanceof EntityGuardian)
         {
             this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
         }
