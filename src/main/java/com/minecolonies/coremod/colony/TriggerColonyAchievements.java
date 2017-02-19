@@ -8,11 +8,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TriggerColonyAchievements
 {
-    private TriggerColonyAchievements()
-    {
-        throw new IllegalAccessError("Utility class");
-    }
-
     private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
     private static final String TAG_LUMBERJACK_TREES      = "trees";
     private static final String TAG_FISHERMAN_FISH        = "fish";
@@ -23,6 +18,11 @@ public class TriggerColonyAchievements
     private static final String TAG_FARMER_WHEAT          = "wheat";
     private static final String TAG_MINER_DIAMONDS        = "diamonds";
     private static final String TAG_MINER_ORES            = "ores";
+
+    private TriggerColonyAchievements()
+    {
+        throw new IllegalAccessError("Utility class");
+    }
 
     /**
      *Trigger fifth achievement.
