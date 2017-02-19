@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -36,7 +37,7 @@ public class BackupCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if (!sender.canCommandSenderUseCommand(4, "minecolonies backup"))
+        if (!sender.canCommandSenderUseCommand(PERMNUM, "minecolonies backup"))
         {
             sender.addChatMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
         }
