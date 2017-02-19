@@ -8,6 +8,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public class TriggerColonyAchievements
 {
+    private TriggerColonyAchievements()
+    {
+        throw new IllegalAccessError("Utility class");
+    }
+
     private static final String TAG_LUMBERJACK_SAPLINGS   = "saplings";
     private static final String TAG_LUMBERJACK_TREES      = "trees";
     private static final String TAG_FISHERMAN_FISH        = "fish";
