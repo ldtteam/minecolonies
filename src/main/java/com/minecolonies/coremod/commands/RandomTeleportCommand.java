@@ -33,7 +33,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     private static final int    LOWER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn;
     private static final int    SPAWN_NO_TP      = Configurations.minDistanceFromWorldSpawn;
     private static final int    STARTING_Y       = 250;
-    private static final double SAFETY_DROP      = 4;
+    private static final double SAFETY_DROP      = 5;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
 
     /**
@@ -149,8 +149,14 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
             if (foundPosition)
             {
-                /* everything checks out good make the TP and jump out*/
-                playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
+                if(MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+                {
+                    playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
+                }
+                else
+                {
+                    sender.getCommandSenderEntity().sendMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
+                }
                 return;
             }
         }

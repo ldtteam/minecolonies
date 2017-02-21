@@ -18,6 +18,7 @@ public class Configurations
     public static boolean turnOffExplosionsInColonies = true;
 
     /* Command configs */
+    public static int teleportBuffer = 120;
     public static int opLevelForServer = 3;
     public static boolean canPlayerUseRTPCommand = true;
     public static boolean canPlayerUseCitizenInfoCommand = true;
