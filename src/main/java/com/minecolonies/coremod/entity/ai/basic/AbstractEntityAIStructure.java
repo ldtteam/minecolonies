@@ -41,6 +41,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.gen.structure.template.Template;
+import net.minecraftforge.items.CapabilityItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -1078,12 +1079,53 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             }
         }
 
-        if (block instanceof BlockChest && job instanceof JobBuilder)
-        {
-            final BlockPos buildingLocation = ((JobBuilder) job).getWorkOrder().getBuildingLocation();
-            final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
-            building.addContainerPosition(pos);
+
+        try{
+            if (job instanceof JobBuilder) {
+                TileEntity entity = world.getTileEntity(pos);
+
+                boolean IItemHandlerFound = false;
+                if (entity != null) {
+                    //Check for all faces if it holds IItemHandlers.
+                    for(EnumFacing facing : EnumFacing.VALUES) {
+                        if (entity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing)) {
+                            IItemHandlerFound = true;
+                            break;
+                        }
+                    }
+
+                    //Still none found check the possibility for a global Handler:
+                    if (!IItemHandlerFound) {
+                        if (entity.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                            IItemHandlerFound = true;
+                        }
+                    }
+
+                    //Now check do we need to add it?
+                    if (IItemHandlerFound) {
+                        final BlockPos buildingLocation = ((JobBuilder) job).getWorkOrder().getBuildingLocation();
+                        final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
+                        building.addContainerPosition(pos);
+                    }
+                }
+
+
+            }
+
+
+
+
+        } catch (Exception ex) {
+            Log.getLogger().error("Failed to grab TE from block. Fallback to Chestcheck is used.");
+
+            if (block instanceof BlockChest && job instanceof JobBuilder)
+            {
+                final BlockPos buildingLocation = ((JobBuilder) job).getWorkOrder().getBuildingLocation();
+                final AbstractBuilding building = this.getOwnBuilding().getColony().getBuilding(buildingLocation);
+                building.addContainerPosition(pos);
+            }
         }
+
 
         //It will crash at blocks like water which is actually free, we don't have to decrease the stacks we have.
         if (isBlockFree(block, block.getMetaFromState(blockState)))

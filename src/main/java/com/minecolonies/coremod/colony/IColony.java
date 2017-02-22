@@ -1,8 +1,14 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.collect.ImmutableMap;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.permissions.IPermissions;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import javax.annotation.Nonnull;
 
 /**
  * Interface of the Colony and ColonyView which will have to implement the following methods.
@@ -61,4 +67,20 @@ public interface IColony
      * @return an int representing the id.
      */
     int getID();
+
+    /**
+     * returns the World the colony is in.
+     *
+     * @return the World the colony is in.
+     */
+    @Nullable
+    IBlockAccess getWorld();
+
+    /**
+     * Returns the buildings in the colony
+     *
+     * @return The buildings in the colony
+     */
+    @Nonnull
+    ImmutableMap<BlockPos, AbstractBuilding> getBuildings();
 }

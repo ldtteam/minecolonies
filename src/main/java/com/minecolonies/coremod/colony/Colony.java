@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.collect.ImmutableMap;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -28,6 +29,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -884,7 +886,7 @@ public class Colony implements IColony
      * @return World the colony is in.
      */
     @Nullable
-    public World getWorld()
+    public IBlockAccess getWorld()
     {
         return world;
     }
@@ -1436,8 +1438,8 @@ public class Colony implements IColony
      * @return Map with ID (coordinates) as key, and buildings as value.
      */
     @NotNull
-    public Map<BlockPos, AbstractBuilding> getBuildings()
+    public ImmutableMap<BlockPos, AbstractBuilding> getBuildings()
     {
-        return Collections.unmodifiableMap(buildings);
+        return ImmutableMap.copyOf(buildings);
     }
 }
