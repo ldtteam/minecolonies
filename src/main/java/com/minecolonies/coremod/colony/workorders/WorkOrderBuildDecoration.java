@@ -10,6 +10,10 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
 {
     /**
      * unused constructor for reflection.
+     * @param style
+     * @param decoration
+     * @param rotation
+     * @param buildPos
      */
     public WorkOrderBuildDecoration()
     {
@@ -23,14 +27,16 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
      * @param style      The style of the decoration.
      * @param rotation   The number of times the decoration was rotated.
      * @param location   The location where the decoration should be built.
+     * @param mirror     Is the decoration mirrored?
      */
-    public WorkOrderBuildDecoration(final String decoration, final String style, final int rotation, final BlockPos location)
+    public WorkOrderBuildDecoration(final String decoration, final String style, final int rotation, final BlockPos location, final boolean mirror)
     {
         super();
         this.structureName = style + '/' + decoration;
         this.buildingRotation = rotation;
         this.buildingLocation = location;
         this.cleared = false;
+        this.isMirroed = mirror;
     }
 
     @Override

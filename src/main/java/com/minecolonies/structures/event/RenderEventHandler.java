@@ -4,6 +4,7 @@ import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -29,19 +30,25 @@ public class RenderEventHandler
             BlockPos size = structure.getSize(BlockUtils.getRotation(Settings.instance.getRotation()));
             BlockPos position = Settings.instance.pos;
 
+            final int x = size.getX();
+            final int z = size.getZ();
+            final int y = size.getY();
+
             if (Settings.instance.getRotation() == 1)
             {
-                size = new BlockPos(-size.getX(), size.getY(), size.getZ());
+                size = new BlockPos(-x, y, z);
             }
             if (Settings.instance.getRotation() == 2)
             {
-                size = new BlockPos(-size.getX(), size.getY(), -size.getZ());
+                size = new BlockPos(-x, y, -z);
             }
             if (Settings.instance.getRotation() == 3)
             {
-                size = new BlockPos(size.getX(), size.getY(), -size.getZ());
+                size = new BlockPos(x, y, -z);
             }
-            final BlockPos offset = Settings.instance.getOffset(new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+
+            final BlockPos offset = Settings.instance.getOffset(
+                    new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
 
             if (offset.equals(new BlockPos(0, 0, 0)))
             {
