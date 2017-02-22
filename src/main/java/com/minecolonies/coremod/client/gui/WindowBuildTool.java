@@ -436,16 +436,16 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         if (Settings.instance.isInHutMode())
         {
-            structureName=labelHutStyle + '/' + labelHutDec + (level + 1);
+            structureName = "huts/" + labelHutStyle + '/' + labelHutDec + (level + 1);
             structure = new Structure(null,
-                                       labelHutStyle + '/' + labelHutDec + (level + 1),
+                                       structureName,
                                        new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
         }
         else
         {
-            structureName = labelHutDec + '/' + labelHutStyle;
+            structureName = "decorations/" + labelHutDec + '/' + labelHutStyle;
             structure = new Structure(null,
-                                       labelHutDec + '/' + labelHutStyle,
+                                       structureName,
                                        new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
         }
 
