@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.management.requestsystem.api;
 
 import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 /**
