@@ -20,11 +20,11 @@ public abstract class AbstractSingleCommand implements ISubCommand
     public static final Integer PERMNUM = Configurations.opLevelForServer;
     enum Commands
     {
-        CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY
+        CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY, HOMETP
     }
 
     /**
-     * Initialize this SubCommand with it's parents.
+     * Initialize this SubCommand with it's parents.**
      *
      * @param parents an array of all the parents.
      */
@@ -117,6 +117,8 @@ public abstract class AbstractSingleCommand implements ISubCommand
     {
         switch (theCommand)
         {
+            case HOMETP:
+                return Configurations.canPlayerUseHomeTPCommand;
             case CITIZENINFO:
                 return Configurations.canPlayerUseCitizenInfoCommand;
             case COLONYTP:
