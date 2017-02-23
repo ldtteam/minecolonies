@@ -28,10 +28,6 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
 public class RandomTeleportCommand extends AbstractSingleCommand
 {
     public static final  String DESC             = "rtp";
-    private static final int    ATTEMPTS         = Configurations.numberOfAttemptsForSafeTP;
-    private static final int    UPPER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn * 2;
-    private static final int    LOWER_BOUNDS     = Configurations.maxDistanceFromWorldSpawn;
-    private static final int    SPAWN_NO_TP      = Configurations.minDistanceFromWorldSpawn;
     private static final int    STARTING_Y       = 250;
     private static final double SAFETY_DROP      = 4;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
@@ -56,7 +52,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
-        if (SPAWN_NO_TP >= LOWER_BOUNDS)
+        if (Configurations.minDistanceFromWorldSpawn >= Configurations.maxDistanceFromWorldSpawn)
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please have an admin raise the maxDistanceFromWorldSpawn number in config."));
             return;
@@ -102,12 +98,12 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     {
         final Random rnd = new Random();
 
-        int x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+        int x = rnd.nextInt(Configurations.maxDistanceFromWorldSpawn * 2) - Configurations.maxDistanceFromWorldSpawn;
 
         /* keeping X out of the spawn radius */
-        while (x > -SPAWN_NO_TP && x < SPAWN_NO_TP)
+        while (x > - Configurations.minDistanceFromWorldSpawn && x < Configurations.minDistanceFromWorldSpawn)
         {
-            x = rnd.nextInt(UPPER_BOUNDS) - LOWER_BOUNDS;
+            x = rnd.nextInt(Configurations.maxDistanceFromWorldSpawn * 2) - Configurations.maxDistanceFromWorldSpawn;
         }
 
         return x;
@@ -123,7 +119,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
     {
         //Now the position will be calculated, we will try up to 4 times to find a save position.
         int attCounter = 0;
-        while (attCounter <= ATTEMPTS)
+        while (attCounter <= Configurations.numberOfAttemptsForSafeTP)
         {
             attCounter++;
             /* this math is to get negative numbers */

@@ -30,11 +30,11 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     private static final String       CITIZEN_HEALTH                  = "§2Health: §f%s §2Max Health: §f%s";
     private static final String       CITIZEN_DESIRED_ACTIVITY        = "§2Desired activity: §f%s §2Current Activity: §f%s";
     private static final String       CITIZEN_HOME_POSITION           = "§2Home position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_WORK_POSITION      = "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_POSITION           = "§2Citizen position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_WORK_POSITION_NULL = "§2Work position: §4No work position found!";
-    private static final String       CITIZEN_NO_ACTIVITY        = "§4No activity is being desired or executed!";
-    private static final String       CITIZEN_NOT_LOADED         = "Citizen entity not loaded!";
+    private static final String       CITIZEN_WORK_POSITION           = "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String       CITIZEN_POSITION                = "§2Citizen position: §4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String       CITIZEN_WORK_POSITION_NULL      = "§2Work position: §4No work position found!";
+    private static final String       CITIZEN_NO_ACTIVITY             = "§4No activity is being desired or executed!";
+    private static final String       CITIZEN_NOT_LOADED              = "Citizen entity not loaded!";
 
     /**
      * Initialize this SubCommand with it's parents.

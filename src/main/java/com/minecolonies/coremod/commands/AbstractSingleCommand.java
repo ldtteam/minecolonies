@@ -17,7 +17,6 @@ public abstract class AbstractSingleCommand implements ISubCommand
 
     private final String[] parents;
     public static final String NOT_PERMITTED = "You are not allowed to do that!";
-    public static final Integer PERMNUM = Configurations.opLevelForServer;
     enum Commands
     {
         CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY, HOMETP
@@ -152,12 +151,12 @@ public abstract class AbstractSingleCommand implements ISubCommand
     @NotNull
     public boolean isPlayerOpped(@NotNull final ICommandSender sender, String cmdName)
     {
-        int requiredOpLevel = PERMNUM;
-        if (PERMNUM < 1)
+        int requiredOpLevel = Configurations.opLevelForServer;
+        if (Configurations.opLevelForServer < 1)
         {
             requiredOpLevel = 1;
         }
-        if (PERMNUM > 4)
+        if (Configurations.opLevelForServer > 4)
         {
             requiredOpLevel = 4;
         }
