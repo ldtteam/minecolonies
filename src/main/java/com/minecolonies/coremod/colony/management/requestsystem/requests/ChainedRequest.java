@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestResu
 import com.minecolonies.coremod.colony.management.requestsystem.api.RequestState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,11 +16,25 @@ import java.util.ArrayList;
  */
 public abstract class ChainedRequest<T> implements IRequest<T> {
 
-    @NotNull
-    private IRequest<T> coreRequest;
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_CORE = "CoreRequests";
+    private static final String NBT_OPEN = "OpenRequests";
+    private static final String NBT_CLOSED = "ClosedRequests";
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+
 
     @NotNull
-    private final ArrayList<IRequest> openRequriedRequests = new ArrayList<>();
+    private final IRequest<T> coreRequest;
+
+    @NotNull
+    private final ArrayList<IRequest> openRequiriedRequests = new ArrayList<>();
+
+    @NotNull
+    private final ArrayList<IRequest> closedRequiriedRequests = new ArrayList<>();
+
+    protected ChainedRequest(@NotNull IRequest<T> coreRequest) {
+        this.coreRequest = coreRequest;
+    }
 
     /**
      * Used to determine which type of request this is.
@@ -41,7 +56,7 @@ public abstract class ChainedRequest<T> implements IRequest<T> {
     @NotNull
     @Override
     public RequestState getState() {
-        return null;
+        return coreRequest.getState();
     }
 
     /**
@@ -51,7 +66,7 @@ public abstract class ChainedRequest<T> implements IRequest<T> {
      */
     @Override
     public void setState(@NotNull RequestState state) {
-
+        this.coreRequest.setState(state);
     }
 
     /**
@@ -66,7 +81,7 @@ public abstract class ChainedRequest<T> implements IRequest<T> {
     @NotNull
     @Override
     public T getRequest() {
-        return null;
+        return coreRequest.getRequest();
     }
 
     /**
@@ -77,7 +92,7 @@ public abstract class ChainedRequest<T> implements IRequest<T> {
     @Nullable
     @Override
     public IRequestResult<T> getResult() {
-        return null;
+        return coreRequest.getResult();
     }
 
     /**
@@ -87,16 +102,41 @@ public abstract class ChainedRequest<T> implements IRequest<T> {
      */
     @Override
     public void setResult(@NotNull IRequestResult<ItemStack> result) {
-
+        this.coreRequest.setResult(result);
     }
 
     @Override
     public NBTTagCompound serializeNBT() {
-        return null;
+        NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setTag(NBT_CORE, coreRequest.serializeNBT());
+
+        NBTTagList openList = new NBTTagList();
+        openRequiriedRequests.forEach(iRequest -> {
+            openList.appendTag(iRequest.serializeNBT());
+        });
+        compound.setTag(NBT_OPEN, openList);
+
+        NBTTagList closedList = new NBTTagList();
+        closedRequiriedRequests.forEach(iRequest -> {
+            closedList.appendTag(iRequest.serializeNBT());
+        });
+        compound.setTag(NBT_CLOSED, closedList);
+
+        return compound;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt) {
 
+    }
+
+    public void registerNewRequirement(@NotNull IRequest requirement) {
+        openRequiriedRequests.add(requirement);
+    }
+
+    public void closeRequirement(@NotNull IRequestResult result) {
+        openRequiriedRequests.remove(result.getRequest());
+        closedRequiriedRequests.add(result.getRequest());
     }
 }
