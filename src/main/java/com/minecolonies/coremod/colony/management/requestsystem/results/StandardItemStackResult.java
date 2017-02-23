@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.management.requestsystem.results;
 
-import com.minecolonies.coremod.colony.management.requestsystem.api.IRequest;
+import com.minecolonies.coremod.colony.management.requestsystem.api.requests.IRequest;
 import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestResult;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;

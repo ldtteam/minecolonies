@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony.management.requestsystem.api;
 
+import com.minecolonies.coremod.colony.management.requestsystem.api.requests.IRequest;
 import org.jetbrains.annotations.NotNull;
 
 /**

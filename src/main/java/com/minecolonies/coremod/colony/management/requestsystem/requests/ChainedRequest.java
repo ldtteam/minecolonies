@@ -1,20 +1,15 @@
 package com.minecolonies.coremod.colony.management.requestsystem.requests;
 
-import com.minecolonies.coremod.colony.management.requestsystem.api.IRequest;
-import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestResult;
-import com.minecolonies.coremod.colony.management.requestsystem.api.RequestState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestToken;
+import com.minecolonies.coremod.colony.management.requestsystem.api.requests.IRequest;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
 /**
  * Created by marcf on 2/22/2017.
  */
-public abstract class ChainedRequest<T> implements IRequest<T> {
+public abstract class ChainedRequest<T> extends AbstractRequest<T> {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_CORE = "CoreRequests";
@@ -27,12 +22,15 @@ public abstract class ChainedRequest<T> implements IRequest<T> {
     private final IRequest<T> coreRequest;
 
     @NotNull
-    private final ArrayList<IRequest> openRequiriedRequests = new ArrayList<>();
+    private final ArrayList<IRequestToken> openRequiredRequests = new ArrayList<>();
 
     @NotNull
-    private final ArrayList<IRequest> closedRequiriedRequests = new ArrayList<>();
+    private final ArrayList<IRequestToken> closedRequiredRequests = new ArrayList<>();
 
-    protected ChainedRequest(@NotNull IRequest<T> coreRequest) {
+
+    public ChainedRequest(@NotNull IRequestToken token, @NotNull IRequest<T> coreRequest) {
+        super(coreRequest.getColony(), token);
+
         this.coreRequest = coreRequest;
     }
 
@@ -46,27 +44,6 @@ public abstract class ChainedRequest<T> implements IRequest<T> {
     @Override
     public Class<? extends T> getRequestType() {
         return coreRequest.getRequestType();
-    }
-
-    /**
-     * Returns the current state of the request.
-     *
-     * @return The current state.
-     */
-    @NotNull
-    @Override
-    public RequestState getState() {
-        return coreRequest.getState();
-    }
-
-    /**
-     * Setter for the current state of this request.
-     *
-     * @param state The new state of this request.
-     */
-    @Override
-    public void setState(@NotNull RequestState state) {
-        this.coreRequest.setState(state);
     }
 
     /**
@@ -84,27 +61,7 @@ public abstract class ChainedRequest<T> implements IRequest<T> {
         return coreRequest.getRequest();
     }
 
-    /**
-     * Returns the result of this request.
-     *
-     * @return The result of this request, or null if it is not available.
-     */
-    @Nullable
-    @Override
-    public IRequestResult<T> getResult() {
-        return coreRequest.getResult();
-    }
-
-    /**
-     * Setter for the result of the request.
-     *
-     * @param result The new result of this request.
-     */
-    @Override
-    public void setResult(@NotNull IRequestResult<ItemStack> result) {
-        this.coreRequest.setResult(result);
-    }
-
+    /*
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
@@ -112,13 +69,13 @@ public abstract class ChainedRequest<T> implements IRequest<T> {
         compound.setTag(NBT_CORE, coreRequest.serializeNBT());
 
         NBTTagList openList = new NBTTagList();
-        openRequiriedRequests.forEach(iRequest -> {
+        openRequiredRequests.forEach(iRequest -> {
             openList.appendTag(iRequest.serializeNBT());
         });
         compound.setTag(NBT_OPEN, openList);
 
         NBTTagList closedList = new NBTTagList();
-        closedRequiriedRequests.forEach(iRequest -> {
+        closedRequiredRequests.forEach(iRequest -> {
             closedList.appendTag(iRequest.serializeNBT());
         });
         compound.setTag(NBT_CLOSED, closedList);
@@ -132,11 +89,12 @@ public abstract class ChainedRequest<T> implements IRequest<T> {
     }
 
     public void registerNewRequirement(@NotNull IRequest requirement) {
-        openRequiriedRequests.add(requirement);
+        openRequiredRequests.add(requirement);
     }
 
     public void closeRequirement(@NotNull IRequestResult result) {
-        openRequiriedRequests.remove(result.getRequest());
-        closedRequiriedRequests.add(result.getRequest());
+        openRequiredRequests.remove(result.getRequest());
+        closedRequiredRequests.add(result.getRequest());
     }
+    */
 }

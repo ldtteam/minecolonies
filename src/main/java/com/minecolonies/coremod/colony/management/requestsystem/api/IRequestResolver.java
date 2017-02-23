@@ -1,6 +1,10 @@
 package com.minecolonies.coremod.colony.management.requestsystem.api;
 
+import com.minecolonies.coremod.colony.management.requestsystem.api.requests.IRequest;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 /**
  * Used to resolve a request.
@@ -27,15 +31,40 @@ public interface IRequestResolver<T> {
     boolean canResolve(IRequest<T> requestToCheck);
 
     /**
-     * Method used to attempt a resolving operation for a given request.
-     * A successful resolve returns a NonNull Object.
-     * A non successful resolve returns Null
+     * Method used to attempt a resolving operation.
      *
-     * @param request The request to resolve.
-     * @return The result of the resolving operation. Null if not successful.
+     * <p>
+     *     When this attempt was successful a List with requirement requests is returned.
+     *     This list maybe empty.
+     *     The list should indicate all sub requests that should be fullfilled before the @code{resolve(IRequest request)} method is called.
+     * </p>
+     *
+     * <p>
+     *     When this attempt was not successful, eg. this resolver could not schedule a crafting operation, a Null object should be returned.
+     *     In that case the next resolver will be tried by the manager.
+     * </p>
+     * @param request
+     * @return
      */
     @Nullable
-    IRequestResult<T> resolve(IRequest<T> request);
+    List<IRequest> attemptResolve(IRequest<T> request);
+
+    /**
+     * Method used to resolve given request.
+     * <p>
+     * When this method is called all requirements should be fullfilled for this resolver.
+     * If this is not the case it will throw a RunTimeException
+     * </p>
+     *
+     * A successful resolve returns a NonNull Object.
+     *
+     * @param request The request to resolve.
+     * @return The result of the resolving operation.
+     * @throws RuntimeException is thrown when the resolver could not resolve the request. Should never happen as getRequirements should be called first,
+     *                          and all requirements should be available to this resolver at this point in time.
+     */
+    @NotNull
+    IRequestResult<T> resolve(IRequest<T> request) throws RuntimeException;
 
     /**
      * The priority of this resolver.
