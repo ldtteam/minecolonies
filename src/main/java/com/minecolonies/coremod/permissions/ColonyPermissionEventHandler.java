@@ -14,6 +14,7 @@ import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
@@ -68,13 +69,19 @@ public class ColonyPermissionEventHandler
      */
     private boolean checkBlockEventDenied(final World worldIn, final BlockPos posIn, final EntityPlayer playerIn, final IBlockState blockState)
     {
+        EntityPlayer player = playerIn;
+        if(player instanceof FakePlayer)
+        {
+            player = worldIn.getPlayerEntityByUUID(playerIn.getUniqueID());
+        }
+
         if (colony.isCoordInColony(worldIn, posIn))
         {
-            if (!colony.getPermissions().isColonyMember(playerIn))
+            if (!colony.getPermissions().isColonyMember(player))
             {
                 return true;
             }
-            final Permissions.Rank rank = colony.getPermissions().getRank(playerIn);
+            final Permissions.Rank rank = colony.getPermissions().getRank(player);
             if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
             {
                 return true;
@@ -85,6 +92,7 @@ public class ColonyPermissionEventHandler
                 return true;
             }
         }
+
         /*
          * - We are not inside the colony
          * - We are in but not denied
