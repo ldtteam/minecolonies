@@ -106,7 +106,7 @@ public class Tree
     public Tree(@NotNull final World world, @NotNull final BlockPos log)
     {
         final Block block = BlockPosUtil.getBlock(world, log);
-        if (block.isWood(world, log))
+        if (block.isWood(world, log) || world.getBlockState(log).getMaterial() == Material.CLAY)
         {
             if (block instanceof BlockOldLog)
             {
@@ -143,7 +143,7 @@ public class Tree
     public static boolean checkTree(@NotNull final IBlockAccess world, final BlockPos pos)
     {
         //Is the first block a log?
-        if (!world.getBlockState(pos).getBlock().isWood(world, pos))
+        if (!world.getBlockState(pos).getBlock().isWood(world, pos) && !world.getBlockState(pos).getMaterial().equals(Material.CLAY))
         {
             return false;
         }
@@ -200,7 +200,7 @@ public class Tree
                 for (int z = -1; z <= 1; z++)
                 {
                     final BlockPos temp = log.add(x, y, z);
-                    if (world.getBlockState(temp).getBlock().isWood(null, temp) && !woodenBlocks.contains(temp))
+                    if ((world.getBlockState(temp).getBlock().isWood(null, temp) || world.getBlockState(temp).getMaterial() == Material.CLAY ) && !woodenBlocks.contains(temp))
                     {
                         return getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
                     }
@@ -361,7 +361,7 @@ public class Tree
                 for (int z = -1; z <= 1; z++)
                 {
                     final BlockPos temp = log.add(x, y, z);
-                    if (BlockPosUtil.getBlock(world, temp).isWood(null, temp) && !woodBlocks.contains(temp))
+                    if ((BlockPosUtil.getBlock(world, temp).isWood(null, temp) || world.getBlockState(temp).getMaterial() == Material.CLAY )&& !woodBlocks.contains(temp))
                     {
                         addAndSearch(world, temp);
                     }
