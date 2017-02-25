@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
+import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockNewLog;
@@ -106,7 +107,7 @@ public class Tree
     public Tree(@NotNull final World world, @NotNull final BlockPos log)
     {
         final Block block = BlockPosUtil.getBlock(world, log);
-        if (block.isWood(world, log) || world.getBlockState(log).getMaterial() == Material.CLAY && world.getBlockState(log).getBlock() != Blocks.CLAY)
+        if (block.isWood(world, log) || Compatibility.getTreeCompatibility(world,log))
         {
             if (block instanceof BlockOldLog)
             {
@@ -143,7 +144,7 @@ public class Tree
     public static boolean checkTree(@NotNull final IBlockAccess world, final BlockPos pos)
     {
         //Is the first block a log?
-        if (!world.getBlockState(pos).getBlock().isWood(world, pos) && !world.getBlockState(pos).getMaterial().equals(Material.CLAY) || world.getBlockState(pos).getBlock() == Blocks.CLAY)
+        if (!world.getBlockState(pos).getBlock().isWood(world, pos) && !Compatibility.getTreeCompatibility(world,pos))
         {
             return false;
         }
@@ -200,7 +201,7 @@ public class Tree
                 for (int z = -1; z <= 1; z++)
                 {
                     final BlockPos temp = log.add(x, y, z);
-                    if ((world.getBlockState(temp).getBlock().isWood(null, temp) || world.getBlockState(temp).getMaterial() == Material.CLAY ) && !woodenBlocks.contains(temp) && world.getBlockState(temp).getBlock() != Blocks.CLAY)
+                    if ((world.getBlockState(temp).getBlock().isWood(null, temp) || Compatibility.getTreeCompatibility(world,temp) ) && !woodenBlocks.contains(temp))
                     {
                         return getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
                     }
@@ -361,7 +362,7 @@ public class Tree
                 for (int z = -1; z <= 1; z++)
                 {
                     final BlockPos temp = log.add(x, y, z);
-                    if ((BlockPosUtil.getBlock(world, temp).isWood(null, temp) || world.getBlockState(temp).getMaterial() == Material.CLAY ) && !woodBlocks.contains(temp) && world.getBlockState(temp).getBlock() != Blocks.CLAY)
+                    if ((BlockPosUtil.getBlock(world, temp).isWood(null, temp) || Compatibility.getTreeCompatibility(world, log)) && !woodBlocks.contains(temp))
                     {
                         addAndSearch(world, temp);
                     }

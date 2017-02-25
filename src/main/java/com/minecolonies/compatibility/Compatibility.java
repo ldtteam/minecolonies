@@ -1,7 +1,12 @@
 package com.minecolonies.compatibility;
 
+import com.minecolonies.compatibility.tinkers.SlimeTreeCheck;
 import com.minecolonies.compatibility.tinkers.ToolBrokenCheck;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -25,10 +30,14 @@ public final class Compatibility
      */
     public static boolean getMiningLevelCompatibility(@Nullable final ItemStack stack, @Nullable final String tool)
     {
-        if (ToolBrokenCheck.checkTinkersBroken(stack))
-        {
-            return false;
-        }
-        return true;
+        return !ToolBrokenCheck.checkTinkersBroken(stack);
+    }
+    public static boolean getTreeCompatibility(@NotNull final World world, @NotNull final BlockPos pos)
+    {
+         return SlimeTreeCheck.checkTinkersTree(world,pos);
+    }
+    public static boolean getTreeCompatibility(@NotNull final IBlockAccess world, @NotNull final BlockPos pos)
+    {
+        return SlimeTreeCheck.checkTinkersTree(world,pos);
     }
 }
