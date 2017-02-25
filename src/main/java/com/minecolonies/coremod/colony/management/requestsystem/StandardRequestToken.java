@@ -8,6 +8,7 @@ import java.util.UUID;
 
 /**
  * Internal implementation of the IRequestToken interface.
+ * Uses UUID to store the ID of the request.
  */
 public class StandardRequestToken implements IRequestToken<UUID, NBTTagCompound> {
 
@@ -72,5 +73,12 @@ public class StandardRequestToken implements IRequestToken<UUID, NBTTagCompound>
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "StandardRequestToken{" +
+                "id=" + id +
+                '}';
     }
 }

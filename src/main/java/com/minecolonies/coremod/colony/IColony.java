@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.permissions.IPermissions;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,7 +73,7 @@ public interface IColony
      * @return the World the colony is in.
      */
     @Nullable
-    IBlockAccess getWorld();
+    World getWorld();
 
     /**
      * Returns the buildings in the colony

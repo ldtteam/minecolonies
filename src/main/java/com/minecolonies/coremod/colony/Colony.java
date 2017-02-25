@@ -29,7 +29,6 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -886,7 +885,7 @@ public class Colony implements IColony
      * @return World the colony is in.
      */
     @Nullable
-    public IBlockAccess getWorld()
+    public World getWorld()
     {
         return world;
     }

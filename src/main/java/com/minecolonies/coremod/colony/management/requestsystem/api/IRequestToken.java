@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraftforge.common.util.INBTSerializable;
 
 /**
- * Class used to represent a request outside of the request management system.
+ * Interface used to represent a request outside of the request management system.
  *
  * Allows for simple storage of all open requests of a building, a worker etc, without having to
  * store the whole request twice.
