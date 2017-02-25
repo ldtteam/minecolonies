@@ -362,7 +362,7 @@ public class Tree
                 for (int z = -1; z <= 1; z++)
                 {
                     final BlockPos temp = log.add(x, y, z);
-                    if ((BlockPosUtil.getBlock(world, temp).isWood(null, temp) || Compatibility.getTreeCompatibility(world, log)) && !woodBlocks.contains(temp))
+                    if ((BlockPosUtil.getBlock(world, temp).isWood(null, temp) || Compatibility.getTreeCompatibility(world, temp)) && !woodBlocks.contains(temp))
                     {
                         addAndSearch(world, temp);
                     }
