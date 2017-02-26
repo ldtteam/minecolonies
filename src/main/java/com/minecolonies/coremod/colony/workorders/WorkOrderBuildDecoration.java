@@ -9,11 +9,7 @@ import net.minecraft.util.math.BlockPos;
 public class WorkOrderBuildDecoration extends WorkOrderBuild
 {
     /**
-     * unused constructor for reflection.
-     * @param style
-     * @param decoration
-     * @param rotation
-     * @param buildPos
+     * Unusued constructor for reflection.
      */
     public WorkOrderBuildDecoration()
     {

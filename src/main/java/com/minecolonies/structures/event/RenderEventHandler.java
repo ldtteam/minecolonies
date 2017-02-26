@@ -4,7 +4,6 @@ import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.structures.helpers.Settings;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraftforge.client.event.RenderWorldLastEvent;

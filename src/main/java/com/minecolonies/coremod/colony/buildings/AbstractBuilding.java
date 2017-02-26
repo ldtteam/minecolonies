@@ -1166,7 +1166,7 @@ public abstract class AbstractBuilding
      *
      * @return boolean value of the mirror.
      */
-    public boolean getMirror()
+    public boolean isMirrored()
     {
         return isMirroed;
     }
