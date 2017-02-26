@@ -168,9 +168,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         {
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
             {
-                final Mirror tempMirror = mirror ? Mirror.FRONT_BACK : Mirror.NONE;
                 world.destroyBlock(buildPos, true);
-                world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)).withMirror(tempMirror));
+                world.setBlockState(buildPos, block.getDefaultState().withRotation(BlockUtils.getRotation(rotation)));
                 ((AbstractBlockHut) block).onBlockPlacedByBuildTool(world, buildPos, world.getBlockState(buildPos), player, null, mirror);
 
                 player.inventory.clearMatchingItems(Item.getItemFromBlock(block), -1, 1, null);

@@ -286,26 +286,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
             ((TileEntityColonyBuilding) tileEntity).setMirror(mirror);
         }
 
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-
-        /*
-        Only work on server side
-        */
-        if (worldIn.isRemote)
-        {
-            return;
-        }
-
-        if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
-        {
-            @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
-            @Nullable final Colony colony = ColonyManager.getColony(worldIn, hut.getPosition());
-
-            if (colony != null)
-            {
-                colony.addNewBuilding(hut);
-            }
-        }
+        onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 
     @NotNull
