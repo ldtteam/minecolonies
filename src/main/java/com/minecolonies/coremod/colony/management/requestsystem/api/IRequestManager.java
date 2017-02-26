@@ -1,12 +1,10 @@
 package com.minecolonies.coremod.colony.management.requestsystem.api;
 
 import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.coremod.colony.management.requestsystem.api.factory.IFactoryController;
 import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocatable;
-import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocation;
-import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocationFactory;
 import com.minecolonies.coremod.colony.management.requestsystem.api.requests.IRequest;
-import com.minecolonies.coremod.colony.management.requestsystem.api.requests.IRequestFactory;
-import net.minecraft.nbt.NBTBase;
+import com.minecolonies.coremod.colony.management.requestsystem.api.token.IRequestToken;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -25,47 +23,11 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound> {
     IColony getColony();
 
     /**
-     * Method to retrieve an IRequestFactory for a given request implementation type.
-     *
-     * This method is internally used to retrieve data while deserializing.
-     * @param type The type name of request you are requesting a factory for.
-     * @param <T> The type that the request provides.
-     * @param <R> The type of request implementation that a factory is requested for.
-     * @return The factory that can produce a given request of type T.
-     * @throws IllegalArgumentException is thrown when there is no factory known to this requestmanager that can produce a request of the given type.
+     * Method used to get the FactoryController of the RequestManager.
+     * @return The FactoryController of this RequestManager.
      */
     @NotNull
-    <T, R extends IRequest<T>> IRequestFactory<T,R,?> getFactoryForRequestType(String type) throws IllegalArgumentException;
-
-    /**
-     * Method to retrieve an IRequestFactory for a given requested Object.
-     * @param object The object you are requesting and want a requestfactory for.
-     * @param <T> The type of object you want to request.
-     * @return The factory that can create a Request for a given object.
-     * @throws IllegalArgumentException is thrown when this Requestmanager has no factory for the given object.
-     */
-    @NotNull
-    <T> IRequestFactory<T, ? extends IRequest<T>, ?> getFactoryForRequest(T object) throws IllegalArgumentException;
-
-    /**
-     * Method to retrieve an ILocationFactory for a given location implementation type.
-     * @param type The type name of the location you are requestinga factory for.
-     * @param <T> The actual location type.
-     * @return The factory for the type you requested.
-     * @throws IllegalArgumentException is thrown when the type is unknown to this manager.
-     */
-    @NotNull
-    <T extends ILocation> ILocationFactory<T, ? extends NBTBase> getFactoryForLocation(String type) throws IllegalArgumentException;
-
-    /**
-     * Method to retrieve an ILocationFactory for a given location implementation.
-     * @param location The location to get the factory for.
-     * @param <T> The type of location you want the factory for.
-     * @return The factory for a given location.
-     * @throws IllegalArgumentException is thrown when the type is unknown to this manager.
-     */
-    @NotNull
-    <T extends ILocation> ILocationFactory<T, ? extends NBTBase> getFactoryForLocation(T location) throws IllegalArgumentException;
+    IFactoryController getFactoryController();
 
     /**
      * Method to create a request for a given object
@@ -96,6 +58,4 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound> {
      */
     @NotNull
     void updateRequestState(@NotNull IRequestToken token, @NotNull RequestState state) throws IllegalArgumentException;
-
-
 }

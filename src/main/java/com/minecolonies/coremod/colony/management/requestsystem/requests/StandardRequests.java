@@ -1,18 +1,45 @@
 package com.minecolonies.coremod.colony.management.requestsystem.requests;
 
-import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestToken;
+import com.minecolonies.coremod.colony.management.requestsystem.api.RequestState;
+import com.minecolonies.coremod.colony.management.requestsystem.api.token.IRequestToken;
+import com.minecolonies.coremod.colony.management.requestsystem.requestable.Delivery;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by marcf on 2/25/2017.
+ * Final class holding all the requests for requestables inside minecolonie
  */
-public abstract class StandardRequests {
+public final class StandardRequests {
 
-    public static class ItemStack extends AbstractRequest<ItemStack> {
+    public static class ItemStackRequest extends AbstractRequest<ItemStack> {
 
-        public ItemStack(@NotNull IColony colony, @NotNull IRequestToken token, @NotNull ItemStack requested) {
-            super(colony, token, requested);
+        public ItemStackRequest(@NotNull IRequestToken token, @NotNull ItemStack requested) {
+            super(token, requested);
+        }
+
+        public ItemStackRequest(@NotNull IRequestToken token, @NotNull RequestState state, @NotNull ItemStack requested) {
+            super(token, state, requested);
+        }
+
+        /**
+         * Method used to check if the result has been set.
+         *
+         * @return True when the result has been set, false when not.
+         */
+        @Override
+        public boolean hasResult() {
+            return getResult() != null && !getResult().isEmpty();
+        }
+    }
+
+    public static class DeliveryRequest extends AbstractRequest<Delivery> {
+
+        public DeliveryRequest(@NotNull IRequestToken token, @NotNull Delivery requested) {
+            super(token, requested);
+        }
+
+        public DeliveryRequest(@NotNull IRequestToken token, @NotNull RequestState state, @NotNull Delivery requested) {
+            super(token, state, requested);
         }
     }
 }

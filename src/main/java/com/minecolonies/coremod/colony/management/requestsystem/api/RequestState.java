@@ -8,10 +8,44 @@ import java.util.ArrayList;
  * Enum used to describe the state of a Request.
  */
 public enum RequestState {
+    /**
+     * Default state for a not registered request.
+     */
     CREATED,
+
+    /**
+     * State for a request that has been registered, yet not resolved.
+     */
     REPORTED,
+
+    /**
+     * State for a request that is being resolved.
+     */
+    RESOLVING,
+
+    /**
+     * State for a request that has been resolved, yet it has not been started.
+     */
     RESOLVED,
+
+    /**
+     * State for a request on which is being worked.
+     */
+    IN_PROGRESS,
+
+    /**
+     * State for a request that has been completed.
+     */
     COMPLETED,
+
+    /**
+     * State for a request when it has been forcefully fullfilled by a player
+     */
+    OVERRULED,
+
+    /**
+     * State for a request that has failed.
+     */
     FAILED;
 
     /**
@@ -24,11 +58,8 @@ public enum RequestState {
          * This should never be changed! It is used to read and write from NBT so it has to
          * persist between mod versions.
          */
-        indexList.add(CREATED);
-        indexList.add(REPORTED);
-        indexList.add(RESOLVED);
-        indexList.add(COMPLETED);
-        indexList.add(FAILED);
+        for(RequestState state : RequestState.values())
+            indexList.add(state);
     }
 
     RequestState() {

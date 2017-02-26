@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.management.requestsystem.locations;
 
-import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestManager;
+import com.minecolonies.coremod.colony.management.requestsystem.api.factory.IFactoryController;
 import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocation;
 import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocationFactory;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,7 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Created by marcf on 2/25/2017.
+ * Location described by an immutable blockpos and a dimension.
  */
 public class StaticLocation implements ILocation {
 
@@ -55,7 +55,10 @@ public class StaticLocation implements ILocation {
         return location.getDimension() == getDimension();
     }
 
-    public static class Factory implements ILocationFactory<StaticLocation, NBTTagCompound> {
+    /**
+     * Internal factory class.
+     */
+    public static class Factory implements ILocationFactory<StaticLocation, StaticLocation> {
 
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
         private static final String NBT_POS = "Pos";
@@ -63,45 +66,68 @@ public class StaticLocation implements ILocation {
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
         /**
-         * Method to get the location type this factory can produce.
+         * Method to get the request type this factory can produce.
          *
-         * @return The type of location this factory can produce.
+         * @return The type of request this factory can produce.
          */
         @NotNull
         @Override
-        public Class<? extends StaticLocation> getFactoryProductionType() {
+        public Class<? extends StaticLocation> getFactoryOutputType() {
             return StaticLocation.class;
         }
 
         /**
-         * Method to serialize a given Request.
+         * Used to determine which type of request this can produce.
          *
-         * @param manager  The manager that requested the serialization.
-         * @param location The location to serialize.
-         * @return The serialized data of the given location.
+         * @return The class that represents the Type of Request this can produce.
          */
         @NotNull
         @Override
-        public NBTTagCompound serializeLocation(@NotNull IRequestManager manager, @NotNull StaticLocation location) {
+        public Class<? extends StaticLocation> getFactoryInputType() {
+            return StaticLocation.class;
+        }
+
+        /**
+         * Method to serialize a given constructable.
+         *
+         * @param controller The controller that can be used to serialize complicated types.
+         * @param request    The request to serialize.
+         * @return The serialized data of the given requets.
+         */
+        @NotNull
+        @Override
+        public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StaticLocation request) {
             NBTTagCompound compound = new NBTTagCompound();
-            compound.setLong(NBT_POS, location.getLocation().toLong());
-            compound.setInteger(NBT_DIM, location.getDimension());
+            compound.setLong(NBT_POS, request.getLocation().toLong());
+            compound.setInteger(NBT_DIM, request.getDimension());
             return compound;
         }
 
         /**
-         * Method to deserialize a given Request.
+         * Method to deserialize a given constructable.
          *
-         * @param manager The manager requesting
-         * @param nbt     The data of the location that should be deserialized.
-         * @return The location that corresponds with the given data in the nbt
+         * @param controller The controller that can be used to deserialize complicated types.
+         * @param nbt        The data of the request that should be deserialized.
+         * @return The request that corresponds with the given data in the nbt
          */
         @NotNull
         @Override
-        public StaticLocation deserializeLocation(@NotNull IRequestManager manager, @NotNull NBTTagCompound nbt) {
+        public StaticLocation deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) {
             BlockPos pos = BlockPos.fromLong(nbt.getLong(NBT_POS));
             Integer dim = nbt.getInteger(NBT_DIM);
             return new StaticLocation(pos, dim);
+        }
+
+        /**
+         * Method to get a new instance of a location given the input.
+         *
+         * @param input The input to build a new location for.
+         * @return The new output instance for a given input.
+         */
+        @NotNull
+        @Override
+        public StaticLocation getNewInstance(@NotNull StaticLocation input) {
+            return new StaticLocation(input.getLocation(), input.getDimension());
         }
     }
 }

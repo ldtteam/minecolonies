@@ -3,9 +3,8 @@ package com.minecolonies.coremod.colony.management.requestsystem.requests;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.minecolonies.blockout.Log;
-import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestManager;
-import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestToken;
+import com.minecolonies.coremod.colony.management.requestsystem.api.token.IRequestToken;
 import com.minecolonies.coremod.colony.management.requestsystem.api.RequestState;
 import com.minecolonies.coremod.colony.management.requestsystem.api.requests.IRequest;
 import org.jetbrains.annotations.NotNull;
@@ -24,8 +23,6 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
     @NotNull
     protected final IRequestToken token;
     @NotNull
-    protected final IColony colony;
-    @NotNull
     private RequestState state = RequestState.CREATED;
     @Nullable
     private R result;
@@ -36,14 +33,20 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
     @NotNull
     private final ArrayList<IRequestToken> children;
 
-    public AbstractRequest(@NotNull IColony colony, @NotNull IRequestToken token, @NotNull R requested) {
-        this.colony = colony;
+    public AbstractRequest(@NotNull IRequestToken token, @NotNull R requested) {
         this.token = token;
         this.requested = requested;
 
         children = new ArrayList<>();
     }
 
+    public AbstractRequest(@NotNull IRequestToken token, @NotNull RequestState state, @NotNull R requested) {
+        this.token = token;
+        this.state = state;
+        this.requested = requested;
+
+        children = new ArrayList<>();
+    }
 
     /**
      * Used to determine which type of request this is.
@@ -65,8 +68,9 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      * @return the token representing the request outside of the management system.
      */
     @Override
-    public IRequestToken getToken() {
-        return token;
+    @SuppressWarnings("unchecked")
+    public <T extends IRequestToken> T getToken() {
+        return (T) token;
     }
 
     /**
@@ -101,17 +105,6 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
                 Log.getLogger().error(new IllegalStateException("Failed to update parent state.", ex));
             }
         }
-    }
-
-    /**
-     * Returns the colony this request was made in.
-     *
-     * @return the colony this request was made in.
-     */
-    @NotNull
-    @Override
-    public IColony getColony() {
-        return colony;
     }
 
     /**
@@ -151,6 +144,16 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
     }
 
     /**
+     * Method used to check if the result has been set.
+     *
+     * @return True when the result has been set, false when not.
+     */
+    @Override
+    public boolean hasResult() {
+        return getResult() != null;
+    }
+
+    /**
      * Returns the parent of this request.
      * If this is set it means that this request is part of request chain.
      *
@@ -158,8 +161,9 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      */
     @Nullable
     @Override
-    public IRequestToken getParent() {
-        return parent;
+    @SuppressWarnings("unchecked")
+    public <T extends IRequestToken> T getParent() {
+        return (T) parent;
     }
 
     /**
@@ -168,7 +172,7 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      * @param parent The new parent, or null to clear the existing one.
      */
     @Override
-    public void setParent(@Nullable IRequestToken parent) {
+    public <T extends IRequestToken> void setParent(@Nullable T parent) {
         this.parent = parent;
     }
 
@@ -188,7 +192,7 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      * @param child The new child request to add.
      */
     @Override
-    public void addChild(@NotNull IRequestToken child) {
+    public <T extends IRequestToken>  void addChild(@NotNull T child) {
         this.children.add(child);
         Log.getLogger().debug("Added child:" + child + " to: " + getToken());
     }
@@ -199,7 +203,7 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      * @param children An array of children to add.
      */
     @Override
-    public void addChildren(@NotNull IRequestToken[] children) {
+    public <T extends IRequestToken>  void addChildren(@NotNull T... children) {
         for(IRequestToken token : children)
             addChild(token);
     }
@@ -210,7 +214,7 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      * @param children A collection of children to add.
      */
     @Override
-    public void addChildren(@NotNull Collection<IRequestToken> children) {
+    public <T extends IRequestToken> void addChildren(@NotNull Collection<T> children) {
         for(IRequestToken token : children)
             addChild(token);
     }
@@ -221,7 +225,7 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      * @param child The new child request to remove.
      */
     @Override
-    public void removeChild(@NotNull IRequestToken child) {
+    public <T extends IRequestToken>  void removeChild(@NotNull T child) {
         this.children.remove(child);
         Log.getLogger().debug("Removed child: " + child + " from: " + getToken());
     }
@@ -232,7 +236,7 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      * @param children An array of children to remove.
      */
     @Override
-    public void removeChildren(@NotNull IRequestToken[] children) {
+    public <T extends IRequestToken>  void removeChildren(@NotNull T... children) {
         for(IRequestToken token : children)  {
             if (this.children.contains(token)) {
                 this.removeChild(token);
@@ -246,7 +250,7 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
      * @param children A collection of children to remove.
      */
     @Override
-    public void removeChildren(@NotNull Collection<IRequestToken> children) {
+    public <T extends IRequestToken>  void removeChildren(@NotNull Collection<T> children) {
         for(IRequestToken token : children)  {
             if (this.children.contains(token)) {
                 this.removeChild(token);
@@ -290,14 +294,18 @@ public abstract class AbstractRequest<R> implements IRequest<R> {
     public void childStateUpdated(@NotNull IRequestManager manager, @NotNull IRequestToken child) {
         if (!this.children.contains(child)){
             //WHAT? Log and return.
-            Log.getLogger().warn("The given child:" + child + " could not update the parent as it was not registered.");
+            Log.getLogger().warn("The given child:" + child + " could not update the parent:" + getToken() + " as it was not registered.");
         }
 
         try {
             IRequest<?> childRequest = manager.getRequestForToken(child);
+            if (childRequest.getState() == RequestState.IN_PROGRESS && getState().ordinal() < RequestState.IN_PROGRESS.ordinal()) {
+                setState(manager, RequestState.IN_PROGRESS);
+                Log.getLogger().debug("First child entering progression: " + child + " setting progression state for: " + getToken());
+            }
             if (childRequest.getState() == RequestState.COMPLETED) {
                 this.removeChild(child);
-                Log.getLogger().debug("Removed child:" + child + " as it was completed!");
+                Log.getLogger().debug("Removed child:" + child + " from: " + getToken() + " as it was completed!");
             }
         } catch (IllegalArgumentException ex) {
             Log.getLogger().error(new IllegalStateException("Failed to update request data when child changed.", ex));

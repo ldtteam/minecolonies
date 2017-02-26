@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.colony.management.requestsystem.requestable;
 
+import com.minecolonies.coremod.colony.management.requestsystem.api.factory.IFactoryController;
 import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocation;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -9,6 +11,12 @@ import org.jetbrains.annotations.NotNull;
  * This class can be used to request a delivery of a given ItemStack from a source to a target.
  */
 public class Delivery {
+
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
+    private static final String NBT_START = "Start";
+    private static final String NBT_TARGET = "Target";
+    private static final String NBT_STACK = "Stack";
+    ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
     @NotNull
     private final ILocation start;
@@ -36,5 +44,25 @@ public class Delivery {
     @NotNull
     public ItemStack getStack() {
         return stack;
+    }
+
+    @NotNull
+    public NBTTagCompound serialize(@NotNull IFactoryController controller) {
+        NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setTag(NBT_START, controller.serialize(getStack()));
+        compound.setTag(NBT_TARGET, controller.serialize(getTarget()));
+        compound.setTag(NBT_STACK, getStack().serializeNBT());
+
+        return compound;
+    }
+
+    @NotNull
+    public static Delivery deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound compound) {
+        ILocation start = controller.deserialize(compound.getCompoundTag(NBT_START));
+        ILocation target = controller.deserialize(compound.getCompoundTag(NBT_TARGET));
+        ItemStack stack = new ItemStack(compound.getCompoundTag(NBT_STACK));
+
+        return new Delivery(start, target, stack);
     }
 }

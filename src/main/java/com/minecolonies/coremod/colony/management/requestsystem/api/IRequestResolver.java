@@ -67,7 +67,17 @@ public interface IRequestResolver<R> {
      *                          and all requirements should be available to this resolver at this point in time.
      */
     @NotNull
-    R resolve(@NotNull IRequestManager manager, IRequest<R> request) throws RuntimeException;
+    R resolve(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws RuntimeException;
+
+    /**
+     * Method used to indicate to this resolver that a request that has been made is already fullfilled by a player (Overruled).
+     *
+     * @param manager The manager that indicates the overrulling.
+     * @param request The request that has been overruled.
+     * @return A request that is made automatically. For a crafting resolver, you could send a pickup request for the completed yet obsolete item.
+     * @throws IllegalArgumentException
+     */
+    IRequest onResolvingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws IllegalArgumentException;
 
     /**
      * The priority of this resolver.

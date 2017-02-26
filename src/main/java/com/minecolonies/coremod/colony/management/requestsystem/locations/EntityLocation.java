@@ -1,6 +1,6 @@
 package com.minecolonies.coremod.colony.management.requestsystem.locations;
 
-import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestManager;
+import com.minecolonies.coremod.colony.management.requestsystem.api.factory.IFactoryController;
 import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocation;
 import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocationFactory;
 import net.minecraft.entity.Entity;
@@ -10,10 +10,11 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.util.UUID;
 
 /**
- * Created by marcf on 2/25/2017.
+ * Location described by an Entity.
  */
 public class EntityLocation implements ILocation {
 
@@ -21,7 +22,7 @@ public class EntityLocation implements ILocation {
     private final UUID uuid;
 
     @Nullable
-    private Entity entity;
+    private WeakReference<Entity> entity;
 
     public EntityLocation(@NotNull UUID uuid) {
         this.uuid = uuid;
@@ -38,10 +39,10 @@ public class EntityLocation implements ILocation {
     @Override
     public BlockPos getLocation() {
         checkEntity();
-        if (entity == null)
+        if (entity == null || entity.get() == null)
             return BlockPos.ORIGIN;
 
-        return entity.getPosition();
+        return entity.get().getPosition();
     }
 
     /**
@@ -53,10 +54,10 @@ public class EntityLocation implements ILocation {
     @Override
     public int getDimension() {
         checkEntity();
-        if (entity == null)
+        if (entity == null || entity.get() == null)
             return 0;
 
-        return entity.dimension;
+        return entity.get().dimension;
     }
 
     /**
@@ -68,7 +69,7 @@ public class EntityLocation implements ILocation {
     @Override
     public boolean isReachableFromLocation(@NotNull ILocation location) {
         checkEntity();
-        if (entity == null)
+        if (entity == null || entity.get() == null)
             return false;
 
         return location.getDimension() == getDimension();
@@ -78,10 +79,10 @@ public class EntityLocation implements ILocation {
         if (entity != null)
             return;
 
-        entity = FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid);
+        entity = new WeakReference<Entity>(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityFromUuid(uuid));
     }
 
-    public static class Factory implements ILocationFactory<EntityLocation, NBTTagCompound> {
+    public static class Factory implements ILocationFactory<Entity, EntityLocation> {
 
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
         private static final String NBT_MSB = "Id_MSB";
@@ -89,49 +90,70 @@ public class EntityLocation implements ILocation {
         ////// --------------------------- NBTConstants --------------------------- \\\\\\
 
         /**
-         * Method to get the location type this factory can produce.
+         * Method to get the request type this factory can produce.
          *
-         * @return The type of location this factory can produce.
+         * @return The type of request this factory can produce.
          */
         @NotNull
         @Override
-        public Class<? extends EntityLocation> getFactoryProductionType() {
+        public Class<? extends EntityLocation> getFactoryOutputType() {
             return EntityLocation.class;
         }
 
         /**
-         * Method to serialize a given Request.
+         * Used to determine which type of request this can produce.
          *
-         * @param manager  The manager that requested the serialization.
-         * @param location The location to serialize.
-         * @return The serialized data of the given location.
+         * @return The class that represents the Type of Request this can produce.
          */
         @NotNull
         @Override
-        public NBTTagCompound serializeLocation(@NotNull IRequestManager manager, @NotNull EntityLocation location) {
+        public Class<? extends Entity> getFactoryInputType() {
+            return Entity.class;
+        }
+
+        /**
+         * Method to serialize a given constructable.
+         *
+         * @param controller The controller that can be used to serialize complicated types.
+         * @param request    The request to serialize.
+         * @return The serialized data of the given requets.
+         */
+        @NotNull
+        @Override
+        public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull EntityLocation request) {
             NBTTagCompound compound = new NBTTagCompound();
 
-            compound.setLong(NBT_LSB, location.uuid.getLeastSignificantBits());
-            compound.setLong(NBT_MSB, location.uuid.getMostSignificantBits());
+            compound.setLong(NBT_LSB, request.uuid.getLeastSignificantBits());
+            compound.setLong(NBT_MSB, request.uuid.getMostSignificantBits());
 
             return compound;
         }
 
         /**
-         * Method to deserialize a given Request.
+         * Method to deserialize a given constructable.
          *
-         * @param manager The manager requesting
-         * @param nbt     The data of the location that should be deserialized.
-         * @return The location that corresponds with the given data in the nbt
+         * @param controller The controller that can be used to deserialize complicated types.
+         * @param nbt        The data of the request that should be deserialized.
+         * @return The request that corresponds with the given data in the nbt
          */
         @NotNull
         @Override
-        public EntityLocation deserializeLocation(@NotNull IRequestManager manager, @NotNull NBTTagCompound nbt) {
+        public EntityLocation deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) {
             UUID uuid = new UUID(nbt.getLong(NBT_MSB), nbt.getLong(NBT_LSB));
 
             return new EntityLocation(uuid);
         }
 
-
+        /**
+         * Method to get a new instance of a location given the input.
+         *
+         * @param input The input to build a new location for.
+         * @return The new output instance for a given input.
+         */
+        @NotNull
+        @Override
+        public EntityLocation getNewInstance(@NotNull Entity input) {
+            return new EntityLocation(input.getPersistentID());
+        }
     }
 }

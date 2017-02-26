@@ -1,4 +1,4 @@
-package com.minecolonies.coremod.colony.management.requestsystem.api;
+package com.minecolonies.coremod.colony.management.requestsystem.api.token;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraftforge.common.util.INBTSerializable;
