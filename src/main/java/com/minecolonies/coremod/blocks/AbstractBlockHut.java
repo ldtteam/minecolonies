@@ -280,6 +280,12 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
     public void onBlockPlacedByBuildTool(@NotNull final World worldIn, @NotNull final BlockPos pos,
                                                   final IBlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror)
     {
+        final TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if (tileEntity instanceof TileEntityColonyBuilding)
+        {
+            ((TileEntityColonyBuilding) tileEntity).setMirror(mirror);
+        }
+
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
         /*
@@ -290,7 +296,6 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
             return;
         }
 
-        final TileEntity tileEntity = worldIn.getTileEntity(pos);
         if (placer instanceof EntityPlayer && tileEntity instanceof TileEntityColonyBuilding)
         {
             @NotNull final TileEntityColonyBuilding hut = (TileEntityColonyBuilding) tileEntity;
@@ -298,7 +303,6 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
 
             if (colony != null)
             {
-                ((TileEntityColonyBuilding) tileEntity).setMirror(mirror);
                 colony.addNewBuilding(hut);
             }
         }
