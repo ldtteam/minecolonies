@@ -5,6 +5,7 @@ import com.minecolonies.compatibility.tinkers.ToolBrokenCheck;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -31,8 +32,27 @@ public final class Compatibility
     {
         return !ToolBrokenCheck.checkTinkersBroken(stack);
     }
+
+    /**
+     * This method checks if tree is Slime Tree.
+     * It goes through all compatibility checks.
+     * @param world the world.
+     * @param pos the position.
+     * @return if the Tree is Slime Tree
+     */
+    public static boolean getTreeCompatibility(@NotNull final World world, @NotNull final BlockPos pos)
+    {
+         return SlimeTreeCheck.checkTinkersTree(world,pos);
+    }
+    /**
+     * This method checks if tree is Slime Tree.
+     * It goes through all compatibility checks.
+     * @param world the world.
+     * @param pos the position.
+     * @return if the Tree is Slime Tree
+     */
     public static boolean getTreeCompatibility(@NotNull final IBlockAccess world, @NotNull final BlockPos pos)
     {
-        return SlimeTreeCheck.checkForTinkersSlimeBlock(world,pos);
+        return SlimeTreeCheck.checkTinkersTree(world,pos);
     }
 }
