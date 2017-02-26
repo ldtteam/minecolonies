@@ -4,10 +4,7 @@ import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.StructureWrapper;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoor;
-import net.minecraft.block.BlockOre;
-import net.minecraft.block.BlockStairs;
+import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -149,6 +146,10 @@ public class Structure
                 return structureBlock == worldBlockState.getBlock();
             }
             else if (structureBlock instanceof BlockStairs && structureBlockState.equals(worldBlockState))
+            {
+                return true;
+            }
+            else if((structureBlock == Blocks.DIRT || structureBlock == Blocks.GRASS) && (worldBlock == Blocks.DIRT || worldBlock == Blocks.GRASS))
             {
                 return true;
             }
