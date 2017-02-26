@@ -115,6 +115,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //get all item drops
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
 
+        //if block in statistic then increment that statistic.
+        triggerMinedBlock(blockToMine);
+
         //Break the block
         worker.breakBlockWithToolInHand(blockToMine);
 
@@ -132,6 +135,36 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         this.incrementActionsDone();
         return true;
     }
+
+    private void triggerMinedBlock(@NotNull final BlockPos blockToMine)
+    {
+        if (world.getBlockState(blockToMine).getBlock() == (Blocks.COAL_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
+              || world.getBlockState(blockToMine).getBlock() ==(Blocks.EMERALD_ORE))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("ores");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("diamonds");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("carrots");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("potatoes");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("wheat");
+        }
+    }
+
 
     /**
      * Checks for the right tools and waits for an appropriate delay.
