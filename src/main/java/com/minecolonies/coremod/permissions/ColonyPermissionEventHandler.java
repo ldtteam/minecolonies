@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.permissions;
 
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -75,7 +76,7 @@ public class ColonyPermissionEventHandler
             player = worldIn.getPlayerEntityByUUID(player.getUniqueID());
         }
 
-        if (colony.isCoordInColony(worldIn, posIn))
+        if (player != null && colony.isCoordInColony(worldIn, posIn))
         {
             if (!colony.getPermissions().isColonyMember(player))
             {
@@ -238,7 +239,7 @@ public class ColonyPermissionEventHandler
             player = event.getWorld().getPlayerEntityByUUID(player.getUniqueID());
         }
 
-        if (Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
+        if (player != null && Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(player);
 
@@ -268,7 +269,7 @@ public class ColonyPermissionEventHandler
             player = event.getWorld().getPlayerEntityByUUID(player.getUniqueID());
         }
 
-        if (Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
+        if (player != null && Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(player);
 
@@ -299,7 +300,7 @@ public class ColonyPermissionEventHandler
             player = event.getPlayer().getEntityWorld().getPlayerEntityByUUID(player.getUniqueID());
         }
 
-        if (Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
+        if (player != null && Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(player);
 
@@ -335,7 +336,7 @@ public class ColonyPermissionEventHandler
             player = event.getEntityPlayer().getEntityWorld().getPlayerEntityByUUID(player.getUniqueID());
         }
 
-        if (Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
+        if (player != null && Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(player);
 
@@ -365,7 +366,7 @@ public class ColonyPermissionEventHandler
             player = event.getEntityPlayer().getEntityWorld().getPlayerEntityByUUID(player.getUniqueID());
         }
 
-        if (Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
+        if (player != null && Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(player);
 
@@ -395,7 +396,7 @@ public class ColonyPermissionEventHandler
             player = event.getEntityPlayer().getEntityWorld().getPlayerEntityByUUID(player.getUniqueID());
         }
 
-        if (Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
+        if (player != null && Configurations.enableColonyProtection && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(player);
 
@@ -423,9 +424,15 @@ public class ColonyPermissionEventHandler
         if(player instanceof FakePlayer)
         {
             player = event.getEntityPlayer().getEntityWorld().getPlayerEntityByUUID(player.getUniqueID());
+            if(player == null)
+            {
+                Log.getLogger().info("Couldn't get player of FakePlayer: " + event.getEntityPlayer().getName() + " with UUID: " + event.getEntityPlayer().getUniqueID()
+                + " Owner Id is: " + colony.getPermissions().getOwner());
+            }
         }
 
-        if (Configurations.enableColonyProtection && !(event.getEntity() instanceof EntityMob) && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
+        if (player != null && Configurations.enableColonyProtection
+                && !(event.getEntity() instanceof EntityMob) && colony.isCoordInColony(player.getEntityWorld(), player.getPosition()))
         {
             final Permissions.Rank rank = colony.getPermissions().getRank(player);
 
