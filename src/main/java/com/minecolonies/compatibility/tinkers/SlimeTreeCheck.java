@@ -32,6 +32,6 @@ public final class SlimeTreeCheck extends SlimeTreeProxy
     @Optional.Method(modid = "tconstruct")
     public boolean checkForTinkersSlimeBlock(@NotNull final IBlockAccess world, @NotNull final BlockPos pos)
     {
-        return world.getBlockState(pos).getBlock() == TinkerCommons.blockSlime;
+        return world.getBlockState(pos).getBlock() == TinkerCommons.blockSlimeCongealed;
     }
 }
