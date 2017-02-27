@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.Log;
+import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -16,6 +17,7 @@ import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
+
 
 /**
  * StructureProxy class.
@@ -32,15 +34,24 @@ public final class Structures
      */
     private static final String MINER_STYLE = "miner";
 
-    private static final String                    SCHEMATIC_EXTENSION   = ".nbt";
-    private static final String                    SCHEMATICS_ASSET_PATH = "/assets/minecolonies/schematics/";
+    private static final String                    SCHEMATIC_EXTENSION        = ".nbt";
+    private static final String                    SCHEMATICS_ASSET_PATH      = "/assets/minecolonies/schematics/";
+    private static final String                    SCHEMATICS_HUT_PATH        = "huts/";
+    private static final String                    SCHEMATICS_DECORATION_PATH = "decorations/";
     //Hut, Levels
     @NotNull
-    private static final Map<String, Integer>      hutLevelsMap          = new HashMap<>();
+    private static       Map<String, Integer>      hutLevelsMap          = new HashMap<>();
     //Hut, Styles
     private static       Map<String, List<String>> hutStyleMap           = new HashMap<>();
     //Decoration, Style
     private static       Map<String, List<String>> decorationStyleMap    = new HashMap<>();
+
+    /* md5 hash for the schematics
+     * format is:
+     * huts/stone/builder1.nbt -> hash
+     * decorations/decoration/Well.nbt -> hash
+     */
+    private static       Map<String, String>       md5Map                = new HashMap<>();
 
     /**
      * Private constructor so Structures objects can't be made.
@@ -58,6 +69,8 @@ public final class Structures
         loadStyleMaps();
     }
 
+
+
     /**
      * Loads all styles saved in ["/assets/minecolonies/schematics/"].
      * Puts these in {@link #hutStyleMap}, with key being the name of the hutDec (E.G. Lumberjack).
@@ -65,41 +78,36 @@ public final class Structures
      */
     private static void loadStyleMaps()
     {
+        Log.getLogger().info("loadStyleMaps()");
         try
         {
             @NotNull final URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
             final Path basePath;
-
             if ("jar".equals(uri.getScheme()))
             {
                 try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap()))
                 {
+                    Log.getLogger().info("get folder schematic from jar");
                     basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
                     loadStyleMaps(basePath);
                 }
             }
             else
             {
+                Log.getLogger().info("URI="+uri);
+                Log.getLogger().info("get folder schematic from uri");
                 basePath = Paths.get(uri);
                 loadStyleMaps(basePath);
             }
 
-            final File decorationFolder;
+            Log.getLogger().info("get folder schematic");
+            File schematicsFolder = Structure.getSchematicsFolder();
 
-            if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+            if (schematicsFolder != null)
             {
-                decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/decorations");
-            }
-            else
-            {
-                decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory(), "minecolonies/decorations");
+                loadStyleMaps(schematicsFolder.toPath());
             }
 
-            if (!decorationFolder.exists() && !decorationFolder.mkdirs())
-            {
-                Log.getLogger().warn("Failed to create directories for dynamic decorations.");
-            }
-            loadStyleMaps(decorationFolder.toPath());
         }
         catch (@NotNull IOException | URISyntaxException e)
         {
@@ -115,6 +123,8 @@ public final class Structures
      */
     public static void loadStyleMaps(final Path basePath) throws IOException
     {
+        Log.getLogger().info("Structures.loadStyleMaps(" + basePath + ")");
+
         try (Stream<Path> walk = Files.walk(basePath))
         {
             final Iterator<Path> it = walk.iterator();
@@ -123,16 +133,31 @@ public final class Structures
             {
                 final Path path = it.next();
 
-                final String style = path.getParent().getFileName().toString();
-
-                //Don't treat generic schematics as decorations or huts - ex: supply ship
-                if (NULL_STYLE.equals(style) || MINER_STYLE.equals(style))
-                {
-                    continue;
-                }
-
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
+                    String style = "";
+                    if (path.getParent().toString().startsWith(basePath.toString()))
+                    {
+                        style = path.getParent().toString().substring(basePath.toString().length());
+                        if (style.startsWith("/"))
+                        {
+                            style = style.substring(1);
+                        }
+                        final int indexSeparator = style.indexOf('/');
+                        if (indexSeparator!=-1)
+                        {
+                            style = style.substring(indexSeparator+1);
+                        }
+                    }
+
+                    Log.getLogger().info("Style = " + style);
+
+                    //Don't treat generic schematics as decorations or huts - ex: supply ship
+                    if (NULL_STYLE.equals(style) || MINER_STYLE.equals(style))
+                    {
+                        continue;
+                    }
+
                     final String filename = path.getFileName().toString().split("\\.nbt")[0];
                     final String hut = filename.split("\\d+")[0];
 
@@ -145,6 +170,15 @@ public final class Structures
                     {
                         addDecorationStyle(style, filename);
                     }
+                    String relativePath = path.toString().substring(basePath.toString().length()).split("\\.nbt")[0];
+                    if (relativePath.startsWith("/"))
+                    {
+                        relativePath = relativePath.substring(1);
+                    }
+
+                    final String md5 = Structure.calculateMD5(Structure.getStream(relativePath));
+                    Log.getLogger().info("Add schematic "+ relativePath + " (md5:" + md5+")");
+                    md5Map.put(relativePath, md5);
                 }
             }
         }
@@ -251,9 +285,53 @@ public final class Structures
      * @param decorationStyleMap new decorationStyleMap.
      */
     @SideOnly(Side.CLIENT)
-    public static void setStyles(final Map<String, List<String>> hutStyleMap, final Map<String, List<String>> decorationStyleMap)
+    public static void setStyles(final Map<String, Integer> hutLevelsMap, final Map<String, List<String>> hutStyleMap, final Map<String, List<String>> decorationStyleMap)
     {
+        Structures.hutLevelsMap = hutLevelsMap;
         Structures.hutStyleMap = hutStyleMap;
         Structures.decorationStyleMap = decorationStyleMap;
+    }
+
+    /**
+     * Returns a map of styles for one specific decoration.
+     *
+     * @param decoration Decoration to get styles for.
+     * @return List of styles.
+     */
+    public static Map<String, Integer> getHutLevels()
+    {
+        return Structures.hutLevelsMap;
+    }
+
+    /**
+     * Returns a map of styles for one specific decoration.
+     *
+     * @param decoration Decoration to get styles for.
+     * @return List of styles.
+     */
+    public static Map<String, String> getMD5s()
+    {
+        return Structures.md5Map;
+    }
+
+    public static String getMD5(final String structureName)
+    {
+        if (Structures.md5Map.containsKey(structureName))
+        {
+            return Structures.md5Map.get(structureName);
+        }
+        return "";
+    }
+
+
+    /**
+     * For use on client side by the ColonyStylesMessage.
+     *
+     * @param md5s        new md5Map.
+     */
+    @SideOnly(Side.CLIENT)
+    public static void setMD5s(final Map<String, String> md5Map)
+    {
+        Structures.md5Map = md5Map;
     }
 }

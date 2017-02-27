@@ -43,7 +43,10 @@ import javax.annotation.Nullable;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * Structure class, used to store, create, get structures.
@@ -76,6 +79,7 @@ public class Structure
     private Template          template;
     private Minecraft         mc;
     private PlacementSettings settings;
+    private String            md5;
 
     /**
      * Constuctor of Structure, tries to create a new structure.
@@ -86,41 +90,75 @@ public class Structure
      */
     public Structure(@Nullable final World world, final String structureName, final PlacementSettings settings)
     {
-        InputStream inputstream = null;
-
         if (world == null || world.isRemote)
         {
             this.settings = settings;
             this.mc = Minecraft.getMinecraft();
         }
 
-        File nbtFile = null;
+        final InputStream inputstream = Structure.getStream(structureName);
+
+        if (inputstream == null)
+        {
+            Log.getLogger().warn(String.format("Failed to load template %s", structureName));
+            return;
+        }
+
         try
         {
-            final File decorationFolder;
+            this.md5      = Structure.calculateMD5(Structure.getStream(structureName));
+            this.template = readTemplateFromStream(inputstream);
+        }
+        catch (final IOException e)
+        {
+            Log.getLogger().warn(String.format("Failed to load template %s", structureName), e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(inputstream);
+        }
+    }
 
-            if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+    public static File getSchematicsFolder()
+    {
+        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            if (ColonyManager.getServerUUID()!=null)
             {
-                decorationFolder = new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/"+ColonyManager.getServerUUID()+"/");
-            }
-            else if (MineColonies.isClient())
-            {
-                // Is this the best way to get the save directory ?
-                decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory() + "/saves/" +
-                        FMLCommonHandler.instance().getMinecraftServerInstance().getFolderName(), "/minecolonies/");
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID()+"/schematics/");
             }
             else
             {
-                decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory(), "minecolonies/");
+                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
+                return null;
             }
+        }
 
-            if(decorationFolder.exists())
+        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                        + "/" + Constants.MOD_ID + "/schematics/");
+    }
+
+    /**
+     * First from the cache (client only)
+     * Then if Modifed one
+     * Then from the jar
+     */
+    public static InputStream getStream(final String structureName)
+    {
+        InputStream inputstream = null;
+        File nbtFile = null;
+        final File schematicsFolder = Structure.getSchematicsFolder();
+
+        try
+        {
+
+            if(schematicsFolder.exists())
             {
                 //We need to check that we stay within the correct folder
-                nbtFile = new File(decorationFolder.getPath() + "/" + structureName + ".nbt");
-                if (nbtFile.toURI().normalize().getPath().startsWith(decorationFolder.toURI().normalize().getPath()))
+                nbtFile = new File(schematicsFolder.getPath() + "/" + structureName + ".nbt");
+                if (nbtFile.toURI().normalize().getPath().startsWith(schematicsFolder.toURI().normalize().getPath()))
                 {
-                    inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
+                    inputstream = new FileInputStream(schematicsFolder.getPath() + "/" + structureName + ".nbt");
                 }
                 else
                 {
@@ -134,36 +172,20 @@ public class Structure
         }
         catch (final FileNotFoundException e)
         {
-            if (nbtFile == null)
-                Log.getLogger().warn("Couldn't find any structure with this name anywhere", e);
-            else
-                Log.getLogger().info("Couldn't find any structure at "+nbtFile.getPath());
+            //Ignore the error
         }
 
-        if (inputstream == null && FMLCommonHandler.instance().getMinecraftServerInstance() != null)
+        if (inputstream == null)
         {
-            //Only use the jar file if we are on the server side, on the client it should have been send by the server instead
-            //TODO load from file first and then from the jar this way custom huts can be created and dumped in an appropriate folder
             inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
         }
 
         if (inputstream == null)
         {
-            return;
+            Log.getLogger().warn("Couldn't find any structure with this name " + structureName);
         }
 
-        try
-        {
-            this.template = readTemplateFromStream(inputstream);
-        }
-        catch (final IOException e)
-        {
-            Log.getLogger().warn(String.format("Failed to load template %s", structureName), e);
-        }
-        finally
-        {
-            IOUtils.closeQuietly(inputstream);
-        }
+        return inputstream;
     }
 
     /**
@@ -174,6 +196,70 @@ public class Structure
     public Template getTemplate()
     {
         return this.template;
+    }
+
+
+    /**
+     * Convert an InputStream into and array of bytes.
+     *
+     * @param stream to be converted to bytes array
+     * @return the array of bytes, array is size 0 when the stream is null
+     */
+    public static byte[] getStreamAsByteArray(final InputStream stream)
+    {
+        if (stream == null)
+        {
+            Log.getLogger().info("Structure.getStreamAsByteArray: stream is null this should not happen");
+            return new byte[0];
+        }
+        try
+        {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+            int totalRead=0;
+            int nRead;
+            byte[] data = new byte[16384];
+
+            while ((nRead = stream.read(data, 0, data.length)) != -1)
+            {
+                buffer.write(data, 0, nRead);
+                totalRead+=nRead;
+            }
+            return buffer.toByteArray();
+        }
+        catch (@NotNull IOException e)
+        {
+            Log.getLogger().trace(e);
+        }
+        return new byte[0];
+    }
+
+    /**
+     * Calculate the MD5 hash for a template from an inputstream.
+     */
+    public static String calculateMD5(final InputStream stream) throws IOException
+    {
+        if (stream == null)
+        {
+            Log.getLogger().error("Structure.calculateMD5: stream is null, this should not happen");
+            return new String();
+        }
+        try
+        {
+            final MessageDigest md = MessageDigest.getInstance("MD5");
+            return DatatypeConverter.printHexBinary(md.digest(getStreamAsByteArray(stream)));
+        }
+        catch (@NotNull NoSuchAlgorithmException e)
+        {
+            Log.getLogger().trace(e);
+        }
+
+        return new String();
+    }
+
+    public boolean isCorrectMD5(final String otherMD5)
+    {
+        return md5.compareTo(otherMD5)==0;
     }
 
     /**
