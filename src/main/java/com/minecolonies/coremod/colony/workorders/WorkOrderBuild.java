@@ -64,13 +64,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.cleared = level > 1;
         this.requested = false;
 
-        if (MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".nbt") == null)
-        {
-            Log.getLogger().warn(String.format("StructureProxy in Style (%s) does not exist - switching to default", building.getStyle()));
-            this.structureName = DEFAULT_STYLE + '/' + this.getUpgradeName();
-            return;
-        }
-        this.structureName = building.getStyle() + '/' + this.getUpgradeName();
+        this.structureName = "huts/"+building.getStyle() + '/' + this.getUpgradeName();
     }
 
     /**
