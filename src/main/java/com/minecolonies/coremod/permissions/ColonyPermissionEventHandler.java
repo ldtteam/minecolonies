@@ -1,6 +1,5 @@
 package com.minecolonies.coremod.permissions;
 
-import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.permissions.Permissions;
@@ -16,7 +15,6 @@ import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.*;
 import net.minecraftforge.event.world.BlockEvent;
@@ -345,6 +343,10 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final AttackEntityEvent event)
     {
+        if(event.getEntity() instanceof EntityMob)
+        {
+            return;
+        }
         checkEventCancelation(Permissions.Rank.FRIEND, event.getEntityPlayer(), event.getEntityPlayer().getEntityWorld(), event);
     }
 }

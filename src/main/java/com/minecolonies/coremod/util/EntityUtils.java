@@ -56,7 +56,7 @@ public final class EntityUtils
     {
         if(player instanceof FakePlayer)
         {
-            EntityPlayer tempPlayer = world.getPlayerEntityByUUID(player.getUniqueID());
+            final EntityPlayer tempPlayer = world.getPlayerEntityByUUID(player.getUniqueID());
             if(tempPlayer != null)
             {
                 return tempPlayer;

@@ -63,7 +63,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
         this.buildingRotation = building.getRotation();
-        this.isMirroed = building.getTileEntity().isMirrored();
+        this.isMirroed = building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored();
         this.cleared = level > 1;
         this.requested = false;
 
