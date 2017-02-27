@@ -93,7 +93,7 @@ public final class ColonyManager
     /**
      * Pseudo unique id for the server
      */
-    private static UUID serverUUID;
+    private static UUID serverUUID = null;
 
     private ColonyManager()
     {
@@ -571,7 +571,10 @@ public final class ColonyManager
             colonyTagList.appendTag(colonyTagCompound);
         }
         compound.setTag(TAG_COLONIES, colonyTagList);
-        compound.setUniqueId(TAG_UUID, serverUUID);
+        if (serverUUID != null)
+        {
+            compound.setUniqueId(TAG_UUID, serverUUID);
+        }
     }
 
     /**
@@ -656,6 +659,16 @@ public final class ColonyManager
                 {
                     readFromNBT(data);
                 }
+                if (serverUUID == null)
+                {
+                    Log.getLogger().info(String.format("New Server UUID %s", serverUUID));
+                    serverUUID = UUID.randomUUID();
+                    markDirty();
+                }
+                else
+                {
+                    Log.getLogger().info(String.format("Server UUID %s", serverUUID));
+                }
             }
             ++numWorldsLoaded;
 
@@ -720,11 +733,6 @@ public final class ColonyManager
         if (compound.hasUniqueId(TAG_UUID))
         {
             serverUUID = compound.getUniqueId(TAG_UUID);
-        }
-        else
-        {
-            serverUUID = UUID.randomUUID();
-            markDirty();
         }
 
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
