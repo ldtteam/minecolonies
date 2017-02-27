@@ -105,7 +105,7 @@ public class MineColonies
 
         proxy.registerRenderer();
 
-        Structures.init();
+        //Structures.init();
 
         ModAchievements.init();
     }

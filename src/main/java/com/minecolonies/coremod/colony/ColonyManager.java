@@ -681,6 +681,8 @@ public final class ColonyManager
                 }
             }
 
+            Structures.init();
+
             world.addEventListener(new ColonyManagerWorldAccess());
         }
     }
