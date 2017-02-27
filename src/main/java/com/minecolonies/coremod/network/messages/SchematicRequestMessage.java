@@ -17,6 +17,10 @@ import org.jetbrains.annotations.NotNull;
 
 import com.minecolonies.structures.helpers.StructureProxy;
 
+import java.io.InputStream;
+
+import com.minecolonies.structures.helpers.Structure;
+
 /**
  * Request a schematic from the server.
  * Created: Feb 07, 2017
@@ -63,15 +67,17 @@ public class SchematicRequestMessage extends AbstractMessage<SchematicRequestMes
     @Override
     public void messageOnServerThread(final SchematicRequestMessage message, final EntityPlayerMP player)
     {
-        final StructureProxy structureProxy = new StructureProxy( player.getServerWorld(), message.filename);
-        if (structureProxy.getStructure().isTemplateMissing())
+        final InputStream stream = Structure.getStream(message.filename);
+
+        if (stream == null)
         {
-            Log.getLogger().error("SchematicRequestMessage: file \""+message.filename+"\" not found");
+            Log.getLogger().error("SchematicRequestMessage: file \"" + message.filename + "\" not found");
         }
         else
         {
-            MineColonies.getNetwork().sendTo(new SaveSchematicMessage(structureProxy.getStructure().getTemplate().writeToNBT(new NBTTagCompound()), message.filename), player);
+            Log.getLogger().info("Request Schematic file for " + message.filename);
+            byte [] schematic = Structure.getStreamAsByteArray(stream);
+            MineColonies.getNetwork().sendTo(new SaveSchematicMessage(schematic, message.filename), player);
         }
-
     }
 }

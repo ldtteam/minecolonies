@@ -22,7 +22,7 @@ import java.io.IOException;
  */
 public class SaveSchematicMessage implements IMessage, IMessageHandler<SaveSchematicMessage, IMessage>
 {
-    private NBTTagCompound nbttagcompound;
+    private byte [] bytes;
     private String         filename;
 
     /**
@@ -36,54 +36,40 @@ public class SaveSchematicMessage implements IMessage, IMessageHandler<SaveSchem
     /**
      * Send a schematic compound to the client.
      *
-     * @param nbttagcompound the stream.
-     * @param name name of the shcematic ex: stone/builder1.
+     * @param bytes byte array of the schematic.
+     * @param name name of the schematic ex: stone/builder1.
      */
-    public SaveSchematicMessage(final NBTTagCompound nbttagcompound, final String filename)
+    public SaveSchematicMessage(final byte[] bytes, final String filename)
     {
         this.filename = filename;
-        this.nbttagcompound = nbttagcompound;
+        this.bytes = bytes;
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        PacketBuffer buffer = new PacketBuffer(buf);
-        int i = buffer.readerIndex();
-        byte b0 = buffer.readByte();
-        if (b0 != 0)
-        {
-            buffer.readerIndex(i);
-            try (ByteBufInputStream stream = new ByteBufInputStream(buffer);)
-            {
-                nbttagcompound = CompressedStreamTools.read(stream, NBTSizeTracker.INFINITE);
-            }
-            catch (RuntimeException e)
-            {
-                Log.getLogger().info("Structure too big to be processed", e);
-            }
-            catch (IOException e)
-            {
-                Log.getLogger().info("Problem at retrieving structure on server.", e);
-            }
-        }
         filename = ByteBufUtils.readUTF8String(buf);
+        final int length = buf.readInt();
+        bytes = new byte [length];
+        buf.readBytes(bytes);
     }
 
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        ByteBufUtils.writeTag(buf, nbttagcompound);
         ByteBufUtils.writeUTF8String(buf, filename);
+        buf.writeInt(bytes.length);
+        buf.writeBytes(bytes);
     }
 
     @Nullable
     @Override
     public IMessage onMessage(@NotNull final SaveSchematicMessage message, final MessageContext ctx)
     {
-        if (message.nbttagcompound != null)
+        if (message.bytes != null)
         {
-            ClientStructureWrapper.handleSaveSchematicMessage(message.nbttagcompound, message.filename);
+            Log.getLogger().error("Received Schematic file for " + message.filename);
+            ClientStructureWrapper.handleSaveSchematicMessage(message.bytes, message.filename);
         }
         return null;
     }
