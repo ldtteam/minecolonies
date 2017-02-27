@@ -437,22 +437,32 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if (Settings.instance.isInHutMode())
         {
             structureName = "huts/" + labelHutStyle + '/' + labelHutDec + (level + 1);
-            structure = new Structure(null,
-                                       structureName,
-                                       new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
         }
         else
         {
             structureName = "decorations/" + labelHutDec + '/' + labelHutStyle;
-            structure = new Structure(null,
-                                       structureName,
-                                       new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
         }
 
-        if (structure.isTemplateMissing())
+        structure = new Structure(null,
+                                   structureName,
+                                   new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+
+        final String md5 = Structures.getMD5(structureName);
+
+        if (structure.isTemplateMissing() || !structure.isCorrectMD5(md5))
         {
+            if (structure.isTemplateMissing())
+            {
+                Log.getLogger().info("Template structure " + structureName + " missing");
+            }
+            else
+            {
+                Log.getLogger().info("structure " + structureName + " md5 error");
+            }
+            Log.getLogger().info("Request To Server for structure " + structureName);
             MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
         }
+
 
         Settings.instance.setActiveSchematic(structure);
 
