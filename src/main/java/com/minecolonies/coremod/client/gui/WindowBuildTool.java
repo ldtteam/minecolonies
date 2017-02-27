@@ -399,15 +399,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private List<String> getStyles()
     {
-        try
-        {
-            Structures.loadStyleMaps(new File(Minecraft.getMinecraft().mcDataDir, "minecolonies/decorations").toPath());
-        }
-        catch (final IOException e)
-        {
-            Log.getLogger().warn("No additional files found", e);
-        }
-
         if (hutDec.isEmpty())
         {
             return Collections.emptyList();
@@ -459,6 +450,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             {
                 Log.getLogger().info("structure " + structureName + " md5 error");
             }
+
             Log.getLogger().info("Request To Server for structure " + structureName);
             MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
         }
