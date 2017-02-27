@@ -57,7 +57,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     /**
      * Diamond pickaxe level.
      */
-    private static final int DIAMOND_LEVEL                       = 4;
+    private static final int DIAMOND_LEVEL                       = 3;
     /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
