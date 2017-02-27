@@ -271,9 +271,27 @@ public class Permissions implements IPermissions
     }
 
     /**
+     * Change the owner of a colony.
+     * @param player the player to set.
+     * @return true if succesful.
+     */
+    public boolean setOwner(final EntityPlayer player)
+    {
+        players.remove(getOwner());
+
+        ownerName = player.getName();
+        ownerUUID = player.getUniqueID();
+
+        players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
+
+        markDirty();
+        return true;
+    }
+
+    /**
      * Restores the owner from other variables if he is null on loading.
      */
-    private void restoreOwnerIfNull()
+    public void restoreOwnerIfNull()
     {
         final Map.Entry<UUID, Player> owner = getOwnerEntry();
         if (owner == null && ownerUUID != null)
@@ -285,6 +303,7 @@ public class Permissions implements IPermissions
                 players.put(ownerUUID, new Player(ownerUUID, player.getName(), Rank.OWNER));
             }
         }
+        markDirty();
     }
 
     /**
@@ -466,7 +485,9 @@ public class Permissions implements IPermissions
             permissionMap.put(rank, Utils.unsetFlag(flags, action.flag));
             markDirty();
         }
-    }    /**
+    }
+
+    /**
      * Returns the rank belonging to the UUID.
      *
      * @param id UUID that you want to check rank of.
@@ -531,6 +552,11 @@ public class Permissions implements IPermissions
     private boolean addPlayer(@NotNull final GameProfile gameprofile, final Rank rank)
     {
         @NotNull final Player p = new Player(gameprofile.getId(), gameprofile.getName(), rank);
+
+        if(players.containsKey(p.id))
+        {
+            players.remove(p.id);
+        }
         players.put(p.id, p);
 
         markDirty();

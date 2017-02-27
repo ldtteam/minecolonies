@@ -8,23 +8,25 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.mock;
 
 public class InventoryTest extends AbstractTest
 {
     private IInventory inventory;
 
+    @Mock
+    private AbstractBuilding building;
+
     @Before
     public void setupInventories()
     {
-        final TileEntityColonyBuilding colonyBuilding = new TileEntityColonyBuilding();
-        final AbstractBuilding mockBuilding = mock(AbstractBuilding.class);
-        colonyBuilding.setBuilding(mockBuilding);
-        this.inventory = colonyBuilding;
+        final TileEntityColonyBuilding buildingTileEntity = new TileEntityColonyBuilding();
+        buildingTileEntity.setBuilding(building);
+        this.inventory = buildingTileEntity;
     }
 
     @Test
@@ -32,7 +34,7 @@ public class InventoryTest extends AbstractTest
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            assertThat(inventory.getStackInSlot(i), is(nullValue()));
+            assertNull(inventory.getStackInSlot(i));
         }
     }
 
@@ -42,6 +44,6 @@ public class InventoryTest extends AbstractTest
         final Item testItem = mock(Item.class);
         final ItemStack stuff = new ItemStack(testItem, 3);
         inventory.setInventorySlotContents(0, stuff);
-        //assertThat(inventory.getStackInSlot(0), is(stuff));
+        assertSame("Unexpected ItemStack in inventory", inventory.getStackInSlot(0), stuff);
     }
 }

@@ -1,10 +1,13 @@
 package com.minecolonies.coremod.commands;
 
+import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -15,6 +18,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.DELETECOLONY;
+
 /**
  * List all colonies.
  */
@@ -22,8 +27,8 @@ public class DeleteColonyCommand extends AbstractSingleCommand
 {
 
     public static final  String DESC                       = "delete";
-    private static final String NO_COLONY_FOUND_MESSAGE    = "Colony with mayor %s not found.";
     private static final String NO_COLONY_FOUND_MESSAGE_ID = "Colony with ID %d not found.";
+    private static final String NO_ARGUMENTS               = "Please define a colony to delete";
 
     /**
      * Initialize this SubCommand with it's parents.
@@ -45,46 +50,72 @@ public class DeleteColonyCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        int colonyId = -1;
-        UUID mayorID = null;
-
-        if (args.length != 0)
+        if(args.length == 0)
         {
-            try
-            {
-                colonyId = Integer.parseInt(args[0]);
-            }
-            catch (final NumberFormatException e)
-            {
-                mayorID = getUUIDFromName(sender, args);
-            }
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+            return;
         }
 
-        final IColony colony;
-        if (colonyId == -1)
+        final int colonyId;
+        if(args.length == 0)
         {
-            colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), mayorID);
+            IColony colony = null;
+            if(sender instanceof EntityPlayer)
+            {
+                colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).worldObj, (EntityPlayer) sender);
+            }
+
+            if(colony == null)
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_ARGUMENTS));
+                return;
+            }
+            colonyId = colony.getID();
         }
         else
         {
-            colony = ColonyManager.getColony(colonyId);
+            colonyId = getIthArgument(args, 0, -1);
         }
 
-        if (colony == null)
+        final EntityPlayer player = (EntityPlayer) sender;
+        if (!canPlayerUseCommand (player, Commands.valueOf("DELETECOLONY"), colonyId))
         {
-            if (colonyId == -1)
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+            return;
+        }
+
+        final Colony colony = ColonyManager.getColony(colonyId);
+
+        if(colony == null)
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_COLONY_FOUND_MESSAGE_ID));
+            return;
+        }
+
+        if(sender instanceof EntityPlayer)
+        {
+            if (canPlayerUseCommand(player, DELETECOLONY, colonyId))
             {
-                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, args[0])));
+                server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
+                return;
             }
             else
             {
-                sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE_ID, colonyId)));
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NOT_PERMITTED));
+                return;
             }
-            return;
         }
+
         server.addScheduledTask(() -> ColonyManager.deleteColony(colony.getID()));
     }
 
+    @Override
+    public boolean canRankUseCommand(@NotNull final Colony colony, @NotNull final EntityPlayer player)
+    {
+        return colony.getPermissions().getRank(player).equals(Permissions.Rank.OWNER);
+    }
+
+    @NotNull
     private static UUID getUUIDFromName(@NotNull final ICommandSender sender, @NotNull final String... args)
     {
         final MinecraftServer tempServer = sender.getEntityWorld().getMinecraftServer();

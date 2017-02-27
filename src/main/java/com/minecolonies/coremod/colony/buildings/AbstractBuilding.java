@@ -6,7 +6,9 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
+import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import com.minecolonies.coremod.util.*;
@@ -66,7 +68,7 @@ public abstract class AbstractBuilding
      * The tag to store the style of the building.
      */
     private static final String TAG_STYLE = "style";
-
+    private static final int NO_WORK_ORDER = 0;
     /**
      * A list of ItemStacks with needed items and their quantity.
      * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
@@ -141,26 +143,25 @@ public abstract class AbstractBuilding
      * Map to resolve classNameHash to class.
      */
     @NotNull
-    private static final Map<Integer, Class<?>> classNameHashToClassMap = new HashMap<>();
+    private static final Map<Integer, Class<?>>  classNameHashToViewClassMap  = new HashMap<>();
     /*
      * Add all the mappings.
      */
     static
     {
-        addMapping("Baker", BuildingBaker.class, BlockHutBaker.class);
-        addMapping("Blacksmith", BuildingBlacksmith.class, BlockHutBlacksmith.class);
-        addMapping("Builder", BuildingBuilder.class, BlockHutBuilder.class);
-        addMapping("Home", BuildingHome.class, BlockHutCitizen.class);
-        addMapping("Farmer", BuildingFarmer.class, BlockHutFarmer.class);
-        addMapping("Lumberjack", BuildingLumberjack.class, BlockHutLumberjack.class);
-        addMapping("Miner", BuildingMiner.class, BlockHutMiner.class);
-        addMapping("Stonemason", BuildingStonemason.class, BlockHutStonemason.class);
-        addMapping("TownHall", BuildingTownHall.class, BlockHutTownHall.class);
-        addMapping("Deliveryman", BuildingDeliveryman.class, BlockHutDeliveryman.class);
-        addMapping("Fisherman", BuildingFisherman.class, BlockHutFisherman.class);
-        addMapping("GuardTower", BuildingGuardTower.class, BlockHutGuardTower.class);
-        addMapping("WareHouse", BuildingWareHouse.class, BlockHutWareHouse.class);
-
+        addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
+        addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
+        addMapping("Builder", BuildingBuilder.class, BuildingBuilderView.class, BlockHutBuilder.class);
+        addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
+        addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);
+        addMapping("Lumberjack", BuildingLumberjack.class, BuildingLumberjack.View.class, BlockHutLumberjack.class);
+        addMapping("Miner", BuildingMiner.class, BuildingMiner.View.class, BlockHutMiner.class);
+        addMapping("Stonemason", BuildingStonemason.class, BuildingStonemason.View.class, BlockHutStonemason.class);
+        addMapping("TownHall", BuildingTownHall.class, BuildingTownHall.View.class, BlockHutTownHall.class);
+        addMapping("Deliveryman", BuildingDeliveryman.class, BuildingDeliveryman.View.class, BlockHutDeliveryman.class);
+        addMapping("Fisherman", BuildingFisherman.class, BuildingFisherman.View.class, BlockHutFisherman.class);
+        addMapping("GuardTower", BuildingGuardTower.class, BuildingGuardTower.View.class, BlockHutGuardTower.class);
+        addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
     }
 
     /**
@@ -218,11 +219,18 @@ public abstract class AbstractBuilding
      *
      * @param name          name of building.
      * @param buildingClass subclass of AbstractBuilding, located in {@link com.minecolonies.coremod.colony.buildings}.
+     * @param viewClass     subclass of AbstractBuilding.View.
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
-    private static void addMapping(final String name, @NotNull final Class<? extends AbstractBuilding> buildingClass, @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+    private static void addMapping(
+            final String name,
+            @NotNull final Class<? extends AbstractBuilding> buildingClass,
+            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+            @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
-        if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(buildingClass.getName().hashCode()))
+        final int buildingHashCode = buildingClass.getName().hashCode();
+
+        if (nameToClassMap.containsKey(name) || classNameHashToViewClassMap.containsKey(buildingHashCode))
         {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding AbstractBuilding class mapping");
         }
@@ -237,7 +245,7 @@ public abstract class AbstractBuilding
                 {
                     nameToClassMap.put(name, buildingClass);
                     classToNameMap.put(buildingClass, name);
-                    classNameHashToClassMap.put(buildingClass.getName().hashCode(), buildingClass);
+                    classNameHashToViewClassMap.put(buildingHashCode, viewClass);
                 }
             }
             catch (final NoSuchMethodException exception)
@@ -289,7 +297,7 @@ public abstract class AbstractBuilding
         if (building == null)
         {
             Log.getLogger().warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
-            return building;
+            return null;
         }
 
         try
@@ -328,11 +336,7 @@ public abstract class AbstractBuilding
         for (int i = 0; i < containerTagList.tagCount(); ++i)
         {
             final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
-            @Nullable final BlockPos pos = NBTUtil.getPosFromTag(containerCompound);
-            if (pos != null)
-            {
-                containerList.add(pos);
-            }
+            containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
     }
 
@@ -356,7 +360,7 @@ public abstract class AbstractBuilding
             if (oclass == null)
             {
                 Log.getLogger().error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
-                return building;
+                return null;
             }
 
             final BlockPos loc = parent.getPosition();
@@ -368,6 +372,10 @@ public abstract class AbstractBuilding
             Log.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
+        if(building != null && parent.getWorld() != null)
+        {
+            ConstructionTapeHelper.placeConstructionTape(building, parent.getWorld());
+        }
         return building;
     }
 
@@ -388,19 +396,12 @@ public abstract class AbstractBuilding
         try
         {
             final int typeHash = buf.readInt();
-            oclass = classNameHashToClassMap.get(typeHash);
+            oclass = classNameHashToViewClassMap.get(typeHash);
 
             if (oclass != null)
             {
-                for (@NotNull final Class<?> c : oclass.getDeclaredClasses())
-                {
-                    if (c.getName().endsWith("$View"))
-                    {
-                        final Constructor<?> constructor = c.getDeclaredConstructor(ColonyView.class, BlockPos.class);
-                        view = (View) constructor.newInstance(colony, id);
-                        break;
-                    }
-                }
+                final Constructor<?> constructor = oclass.getDeclaredConstructor(ColonyView.class, BlockPos.class);
+                view = (View) constructor.newInstance(colony, id);
             }
         }
         catch (@NotNull NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
@@ -411,7 +412,7 @@ public abstract class AbstractBuilding
         if (view == null)
         {
             Log.getLogger().warn("Unknown AbstractBuilding type, missing View subclass, or missing constructor of proper format.");
-            return view;
+            return null;
         }
 
         try
@@ -423,7 +424,7 @@ public abstract class AbstractBuilding
             Log.getLogger().error(
               String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
                 oclass.getName()), ex);
-            view = null;
+            return null;
         }
 
         return view;
@@ -532,7 +533,9 @@ public abstract class AbstractBuilding
         {
             InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
             world.updateComparatorOutputLevel(this.location, block);
+            ConstructionTapeHelper.removeConstructionTape(this, world);
         }
+        ConstructionTapeHelper.removeConstructionTape(this, world);
     }
 
     /**
@@ -622,6 +625,34 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Get the current level of the work order.
+     *
+     * @return NO_WORK_ORDER if not current work otherwise the level requested.
+     */
+    private int getCurrentWorkOrderLevel()
+    {
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                return o.getUpgradeLevel();
+            }
+        }
+
+        return NO_WORK_ORDER;
+    }
+
+    /**
+     * Checks if this building have a work order.
+     *
+     * @return true if the building is building, upgrading or repairing.
+     */
+    public boolean hasWorkOrder()
+    {
+        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
+    }
+
+    /**
      * Children must return their max building level.
      *
      * @return Max building level.
@@ -645,6 +676,7 @@ public abstract class AbstractBuilding
 
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
         LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        markDirty();
     }
 
     /**
@@ -666,6 +698,24 @@ public abstract class AbstractBuilding
         if (buildingLevel > 0)
         {
             requestWorkOrder(buildingLevel);
+        }
+    }
+
+    /**
+     * Remove the work order for the building.
+     *
+     * Remove either the upgrade or repair work order
+     */
+    public void removeWorkOrder()
+    {
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                colony.getWorkManager().removeWorkOrder(o.getID());
+                markDirty();
+                return;
+            }
         }
     }
 
@@ -733,6 +783,7 @@ public abstract class AbstractBuilding
         buf.writeInt(this.getClass().getName().hashCode());
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
+        buf.writeInt(getCurrentWorkOrderLevel());
     }
 
     /**
@@ -768,7 +819,10 @@ public abstract class AbstractBuilding
     public final void markDirty()
     {
         dirty = true;
-        colony.markBuildingsDirty();
+        if(colony != null)
+        {
+            colony.markBuildingsDirty();
+        }
     }
 
     /**
@@ -1110,6 +1164,7 @@ public abstract class AbstractBuilding
 
         private int buildingLevel    = 0;
         private int buildingMaxLevel = 0;
+        private int workOrderLevel   = NO_WORK_ORDER;
 
         /**
          * Creates a building view.
@@ -1187,6 +1242,36 @@ public abstract class AbstractBuilding
         }
 
         /**
+         * Get the current work order level.
+         *
+         * @return 0 if none, othewise the current level worked on
+         */
+        public int getCurrentWorkOrderLevel()
+        {
+            return workOrderLevel;
+        }
+
+        /**
+         * Get the current work order level.
+         *
+         * @return 0 if none, othewise the current level worked on
+         */
+        public boolean hasWorkOrder()
+        {
+            return workOrderLevel != NO_WORK_ORDER;
+        }
+
+        public boolean isBuilding()
+        {
+            return workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
+        }
+
+        public boolean isRepairing()
+        {
+            return workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
+        }
+
+        /**
          * Open the associated BlockOut window for this building.
          */
         public void openGui()
@@ -1218,6 +1303,7 @@ public abstract class AbstractBuilding
         {
             buildingLevel = buf.readInt();
             buildingMaxLevel = buf.readInt();
+            workOrderLevel = buf.readInt();
         }
     }
 }

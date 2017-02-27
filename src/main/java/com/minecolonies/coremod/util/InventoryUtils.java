@@ -415,7 +415,12 @@ public class InventoryUtils
     @Nullable
     public static ItemStack setStack(@NotNull final IInventory inventory, @Nullable final ItemStack stack)
     {
-        if (stack != null)
+        if (stack !=null && stack.stackSize > stack.getMaxStackSize())
+        {
+            Log.getLogger().warn("InventoryUtils.setStack: stack size bigger than the max stack size. Please contact a minecolonnies developer.");
+        }
+
+        if (stack != null && stack.stackSize != 0 && stack.getItem() != null)
         {
             @Nullable ItemStack returnStack = stack.copy();
             int slot;
@@ -450,6 +455,37 @@ public class InventoryUtils
             return returnStack;
         }
         return null;
+    }
+
+    /**
+     * {@link #setStack(IInventory, ItemStack)}.
+     * Tries to put an itemStack into Inventory, unlike setStack, allow to use a ItemStack bigger than the maximum stack size allowed for the item
+     *
+     * @param inventory the inventory to set the stack in.
+     * @param stack     Item stack with items to be transferred, the stack can be bigger than allowed
+     * @return returns null if successful, or stack of remaining items, BE AWARE that the remaining stack can be bigger than the maximum stack size
+     */
+    @Nullable
+    public static ItemStack setOverSizedStack(@NotNull final IInventory inventory, @Nullable final ItemStack stack)
+    {
+        int stackSize = stack.stackSize;
+        while (stackSize > 0)
+        {
+            final int itemCount = Math.min(stackSize, stack.getMaxStackSize());
+            final ItemStack items = new ItemStack(stack.getItem(), itemCount, stack.getItemDamage());
+            stackSize-=itemCount;
+            final ItemStack remainingItems = setStack(inventory,items);
+            if(remainingItems != null)
+            {
+                stackSize += remainingItems.stackSize;
+                if (items.stackSize == remainingItems.stackSize)
+                {
+                    break;
+                }
+            }
+        }
+        return new ItemStack(stack.getItem(), stackSize, stack.getItemDamage());
+
     }
 
     /**
@@ -763,7 +799,7 @@ public class InventoryUtils
      * @param hutLevel  the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(final String tool, final ItemStack stack, final int hutLevel)
+    public static boolean hasToolLevel(final String tool, @Nullable final ItemStack stack, final int hutLevel)
     {
         if (stack == null)
         {

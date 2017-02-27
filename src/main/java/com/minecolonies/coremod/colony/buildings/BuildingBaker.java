@@ -15,7 +15,6 @@ import org.jetbrains.annotations.NotNull;
  */
 public class BuildingBaker extends AbstractBuildingWorker
 {
-
     private static final String BAKER          = "Baker";
     private static final String BAKER_HUT_NAME = "bakerHut";
 

@@ -105,7 +105,14 @@ public class Structure
                 {
                     decorationFolder = new File(FMLCommonHandler.instance().getMinecraftServerInstance().getDataDirectory(), "minecolonies/");
                 }
-                inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
+                if(decorationFolder.exists())
+                {
+                    inputstream = new FileInputStream(decorationFolder.getPath() + "/" + structureName + ".nbt");
+                }
+                else
+                {
+                    throw new FileNotFoundException("Unable to find structure: " + structureName);
+                }
             }
             catch (final FileNotFoundException e)
             {

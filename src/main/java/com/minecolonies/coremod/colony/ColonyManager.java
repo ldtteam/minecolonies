@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
@@ -27,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -43,6 +46,11 @@ public final class ColonyManager
      * The file name of the minecolonies.
      */
     private static final String FILENAME_MINECOLONIES = "colonies.dat";
+
+    /**
+     * The file name pattern of the minecolonies backup.
+     */
+    private static final String FILENAME_MINECOLONIES_BACKUP = "colonies-%s.dat";
 
     /**
      * The tag of the colonies.
@@ -520,6 +528,37 @@ public final class ColonyManager
         saveNeeded = false;
     }
 
+    public static boolean backupColonyData()
+    {
+        if (numWorldsLoaded > 0 && saveNeeded)
+        {
+            saveColonies();
+        }
+
+        @NotNull final File file = getSaveLocation();
+        @NotNull final File targetFile = getBackupSaveLocation(new Date());
+        if (!file.exists())
+        {
+            return true;
+        }
+        else if (targetFile.exists())
+        {
+            return false;
+        }
+
+        try
+        {
+            Files.copy(file.toPath(), targetFile.toPath());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+
+        return targetFile.exists();
+    }
+
     /**
      * Write colonies to NBT data for saving.
      *
@@ -547,6 +586,18 @@ public final class ColonyManager
     {
         @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
         return new File(saveDir, FILENAME_MINECOLONIES);
+    }
+
+    /**
+     * Get save location for Minecolonies backup data, from the world/save directory.
+     *
+     * @return Save file for minecolonies.
+     */
+    @NotNull
+    private static File getBackupSaveLocation(Date date)
+    {
+        @NotNull final File saveDir = new File(DimensionManager.getWorld(0).getSaveHandler().getWorldDirectory(), FILENAME_MINECOLONIES_PATH);
+        return new File(saveDir, String.format(FILENAME_MINECOLONIES_BACKUP, new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(date)));
     }
 
     /**
@@ -608,6 +659,11 @@ public final class ColonyManager
         {
             if (numWorldsLoaded == 0)
             {
+                if (!backupColonyData())
+                {
+                    MineColonies.getLogger().error("Failed to save " + FILENAME_MINECOLONIES + " backup!");
+                }
+
                 @NotNull final File file = getSaveLocation();
                 @Nullable final NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)

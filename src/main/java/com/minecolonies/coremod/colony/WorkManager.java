@@ -1,6 +1,9 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
+import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -62,8 +65,16 @@ public class WorkManager
      */
     public void removeWorkOrder(final int orderId)
     {
+        final AbstractWorkOrder workOrder = workOrders.get(orderId);
         workOrders.remove(orderId);
         colony.removeWorkOrder(orderId);
+        if (workOrder instanceof WorkOrderBuild)
+        {
+            final WorkOrderBuild wob = (WorkOrderBuild)workOrder;
+            final AbstractBuilding building = colony.getBuilding(wob.getBuildingLocation());
+            ConstructionTapeHelper.removeConstructionTape(wob, colony.getWorld());
+            building.markDirty();
+        }
     }
 
     /**
@@ -152,7 +163,7 @@ public class WorkManager
     public void clearWorkForCitizen(@NotNull final CitizenData citizen)
     {
         dirty = true;
-        workOrders.values().stream().filter(o -> o.isClaimedBy(citizen)).forEach(AbstractWorkOrder::clearClaimedBy);
+        workOrders.values().stream().filter(o -> o != null && o.isClaimedBy(citizen)).forEach(AbstractWorkOrder::clearClaimedBy);
     }
 
     /**
@@ -217,7 +228,10 @@ public class WorkManager
             topWorkOrderId++;
             order.setID(topWorkOrderId);
         }
-
+        if (order instanceof WorkOrderBuild && colony != null && colony.getWorld() != null)
+        {
+            ConstructionTapeHelper.placeConstructionTape((WorkOrderBuild) order, colony.getWorld());
+        }
         workOrders.put(order.getID(), order);
     }
 
