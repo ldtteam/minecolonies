@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -24,7 +25,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
 
     private Object[] list = new Object[INITIAL_SIZE];
 
-    private List<Integer> nullIndices = new ArrayList<>();
+    private final List<Integer> nullIndices = new ArrayList<>();
 
     private int topID = 0;
 
@@ -32,7 +33,8 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
 
     @Nullable
     @SuppressWarnings("unchecked")
-    public T get(int index) {
+    public T get(int index)
+    {
         if (index < 1 || index > list.length) {
             return null;
         }
@@ -41,14 +43,17 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     }
 
     @NotNull
-    public Colony create(World world, BlockPos position) {
+    public Colony create(World world, BlockPos position)
+    {
         Colony colony = new Colony(getNextColonyID(), world, position);
         list[colony.getID()] = colony;
         size++;
         return colony;
     }
 
-    public void add(T colony) {
+
+    public void add(T colony)
+    {
         T existingColony = get(colony.getID());
         if (existingColony != null && existingColony != colony) {
             throw new IllegalArgumentException(
@@ -61,11 +66,13 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         list[colony.getID()] = colony;
     }
 
-    public void remove(Colony colony) {
+    public void remove(Colony colony)
+    {
         remove(colony.getID());
     }
 
-    public void remove(int id) {
+    public void remove(int id)
+    {
         if (list[id] == null) {
             Log.getLogger().warn("Tried to remove colony with id=%d, but it didn't exist.", id);
         }
@@ -78,7 +85,8 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         }
     }
 
-    private int getNextColonyID() {
+    private int getNextColonyID()
+    {
         if (nullIndices.isEmpty()) {
             topID++;
             if (topID >= list.length) {
@@ -94,7 +102,8 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         return nullIndices.remove(0);
     }
 
-    public void clear() {
+    public void clear()
+    {
         for (int i = 0; i < list.length; i++)
         {
             list[i] = null;
@@ -106,18 +115,21 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         size = 0;
     }
 
-    public int size() {
+    public int size()
+    {
         return size;
     }
 
-    public boolean isEmpty() {
+    public boolean isEmpty()
+    {
         return size == 0;
     }
 
     @NotNull
-    public List<T> getCopyAsList() {
-        List<T> copyList = new ArrayList<>();
-        for (T colony : this) {
+    public List<T> getCopyAsList()
+    {
+        final List<T> copyList = new ArrayList<>();
+        for (final T colony : this) {
             copyList.add(colony);
         }
 
@@ -127,7 +139,8 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     @Override
     public Iterator<T> iterator()
     {
-        return new Iterator<T>() {
+        return new Iterator<T>()
+        {
 
             private int nextIndex = getNextIndex(0);
 
@@ -140,13 +153,16 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
             @Override
             public T next()
             {
-                int index = nextIndex;
+                final int index = nextIndex;
                 nextIndex = getNextIndex(nextIndex);
+                if (index >= list.length) {
+                    throw new NoSuchElementException();
+                }
                 return get(index);
             }
 
-            private int getNextIndex(int index) {
-                index++;
+            private int getNextIndex(int startingIndex) {
+                int index = startingIndex + 1;
                 while (index < list.length) {
                     if (list[index] != null) {
                         return index;
@@ -160,7 +176,8 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         };
     }
 
-    public Stream<T> stream() {
+    public Stream<T> stream()
+    {
         return StreamSupport.stream(spliterator(), false);
     }
 }

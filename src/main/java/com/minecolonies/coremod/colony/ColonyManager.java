@@ -723,7 +723,8 @@ public final class ColonyManager
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
     }
 
-    private static void addColonyByWorld(Colony colony) {
+    private static void addColonyByWorld(Colony colony)
+    {
         coloniesByWorld.computeIfAbsent(colony.getDimension(), ArrayList::new).add(colony);
     }
 
