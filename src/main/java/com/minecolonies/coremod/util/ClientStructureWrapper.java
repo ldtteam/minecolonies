@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -60,46 +61,28 @@ public final class ClientStructureWrapper
     /**
      * Handles the save message of schematic.
      *
-     * @param nbttagcompound compound to store.
+     * @param bytes data from the schematic.
      * @param name name of the schematic.
      */
-    public static void handleSaveSchematicMessage(final NBTTagCompound nbttagcompound, final String name)
+    public static void handleSaveSchematicMessage(final byte[] bytes, final String name)
     {
-        try
+        final File schematicFolder = Structure.getSchematicsFolder();
+
+        final File schematicFile = new File(schematicFolder.toPath() + "/" + name + ".nbt");
+        checkDirectory(schematicFile.getParentFile());
+        try (OutputStream outputstream = new FileOutputStream(schematicFile))
         {
-            String folderName = new URI(Minecraft.getMinecraft().mcDataDir + "/minecolonies/")
-                                    .normalize().getPath();
-            String fullFileName = new URI(folderName + ColonyManager.getServerUUID() + "/" + name + ".nbt").normalize().getPath();
-            //We need to check that we stay within the correct folder
-            if (!fullFileName.startsWith(folderName))                    
-            {
-                Log.getLogger().error("ClientStructureWrapper.handleSaveSchematicMessage: Illegal file name \"" + fullFileName + "\"");
-                Log.getLogger().error("ClientStructureWrapper.handleSaveSchematicMessage: Illegal file name \"" + folderName + "\"");
-                return;
-            }
-
-            final File file = new File(fullFileName);
-            checkDirectory(file.getParentFile());
-            createScanDirectory(Minecraft.getMinecraft().world);
-            try (OutputStream outputstream = new FileOutputStream(file))
-            {
-                CompressedStreamTools.writeCompressed(nbttagcompound, outputstream);
-            }
-            catch (final IOException e)
-            {
-                Log.getLogger().warn("Exception while trying to save a schematic.", e);
-                return;
-            }
-
-            ColonyManager.setSchematicDownloaded(true);
+            outputstream.write(bytes);
         }
-        catch (final URISyntaxException e)
+        catch (final IOException e)
         {
-            Log.getLogger().warn("Incorrect filename for a schematic", e);
+            Log.getLogger().warn("Exception while trying to save a schematic.", e);
             return;
         }
-    }
 
+        //Let the gui know we just save a schematic
+        ColonyManager.setSchematicDownloaded(true);
+    }
 
     /**
      * Creates the scan directories for the scanTool.
