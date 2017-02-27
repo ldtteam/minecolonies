@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -71,6 +72,7 @@ public class WorkManager
         {
             final WorkOrderBuild wob = (WorkOrderBuild)workOrder;
             final AbstractBuilding building = colony.getBuilding(wob.getBuildingLocation());
+            ConstructionTapeHelper.removeConstructionTape(wob, colony.getWorld());
             building.markDirty();
         }
     }
@@ -226,7 +228,10 @@ public class WorkManager
             topWorkOrderId++;
             order.setID(topWorkOrderId);
         }
-
+        if (order instanceof WorkOrderBuild && colony != null && colony.getWorld() != null)
+        {
+            ConstructionTapeHelper.placeConstructionTape((WorkOrderBuild) order, colony.getWorld());
+        }
         workOrders.put(order.getID(), order);
     }
 

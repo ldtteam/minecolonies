@@ -2,10 +2,8 @@ package com.minecolonies.coremod.commands;
 
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.util.Log;
-import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -16,10 +14,12 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.RESPAWNCITIZENS;
+
 /**
  * List all colonies.
  */
-public class RespawnCitizenCommand extends AbstractSingleCommand
+public class RespawnCitizenCommand extends AbstractCitizensCommands
 {
 
     public static final  String DESC                = "respawn";
@@ -45,21 +45,8 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
     }
 
     @Override
-    public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
+    void executeSpecializedCode(@NotNull final MinecraftServer server, final ICommandSender sender, final Colony colony, final int citizenId)
     {
-        int colonyId;
-        int citizenId;
-        try
-        {
-            colonyId = GetColonyAndCitizen.getColonyId(sender.getCommandSenderEntity().getUniqueID(), sender.getEntityWorld(), args);
-            citizenId = GetColonyAndCitizen.getCitizenId(colonyId, args);
-        }
-        catch (IllegalArgumentException e)
-        {
-            sender.sendMessage(new TextComponentString(e.getMessage()));
-            return;
-        }
-        final Colony colony = ColonyManager.getColony(colonyId);
         final CitizenData citizenData = colony.getCitizen(citizenId);
         final EntityCitizen entityCitizen = citizenData.getCitizenEntity();
         sender.sendMessage(new TextComponentString(String.format(CITIZEN_DESCRIPTION, citizenData.getId(), citizenData.getName())));
@@ -87,5 +74,11 @@ public class RespawnCitizenCommand extends AbstractSingleCommand
     public boolean isUsernameIndex(@NotNull final String[] args, final int index)
     {
         return false;
+    }
+
+    @Override
+    public Commands getCommand()
+    {
+        return RESPAWNCITIZENS;
     }
 }

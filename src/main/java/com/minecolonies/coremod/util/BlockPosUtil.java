@@ -5,8 +5,10 @@ import com.minecolonies.coremod.entity.pathfinding.PathResult;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -124,6 +126,58 @@ public final class BlockPosUtil
         final int y = buf.readInt();
         final int z = buf.readInt();
         return new BlockPos(x, y, z);
+    }
+
+    /**
+     * this checks that you are not in liquid.  Will check for all liquids, even those from other mods
+     * before TP
+     *
+     * @param blockPos for the current block LOC
+     * @param sender uses the player to get the world
+     * @return isSafe true=safe false=water or lava
+     */
+    public static boolean isPositionSafe(@NotNull ICommandSender sender, BlockPos blockPos)
+    {
+        return sender.getEntityWorld().getBlockState(blockPos).getBlock() != Blocks.AIR
+                && !sender.getEntityWorld().getBlockState(blockPos).getMaterial().isLiquid()
+                && !sender.getEntityWorld().getBlockState(blockPos.up()).getMaterial().isLiquid();
+    }
+
+    /**
+     * this checks that you are not in the air or underground.
+     * If so it will look up and down for a good landing spot before TP.
+     *
+     * @param blockPos for the current block LOC.
+     * @param world the world to search in.
+     * @return blockPos to be used for the TP.
+     */
+    public static BlockPos findLand(final BlockPos blockPos, final World world)
+    {
+        int top = blockPos.getY();
+        int bot = 0;
+        int mid = blockPos.getY();
+
+        BlockPos foundland = null;
+        BlockPos tempPos = blockPos;
+        //We are doing a binary search to limit the amount of checks (usually at most 9 this way)
+        while (top >= bot)
+        {
+            tempPos = new BlockPos( tempPos.getX(),mid, tempPos.getZ());
+            final Block blocks = world.getBlockState(tempPos).getBlock();
+            if (blocks == Blocks.AIR && world.canSeeSky(tempPos))
+            {
+                top = mid - 1;
+                foundland = tempPos;
+            }
+            else
+            {
+                bot = mid + 1;
+                foundland = tempPos;
+            }
+            mid = (bot + top)/2;
+        }
+
+        return foundland;
     }
 
     /**
