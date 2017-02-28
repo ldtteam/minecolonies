@@ -36,8 +36,8 @@ public final class Structures
 
     private static final String                    SCHEMATIC_EXTENSION        = ".nbt";
     private static final String                    SCHEMATICS_ASSET_PATH      = "/assets/minecolonies/schematics/";
-    private static final String                    SCHEMATICS_HUT_PATH        = "huts/";
-    private static final String                    SCHEMATICS_DECORATION_PATH = "decorations/";
+    public  static final String                    SCHEMATICS_HUTS            = "huts";
+    public  static final String                    SCHEMATICS_DECORATIONS     = "decorations";
     //Hut, Levels
     @NotNull
     private static       Map<String, Integer>      hutLevelsMap          = new HashMap<>();
@@ -141,6 +141,7 @@ public final class Structures
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
                     String style = "";
+                    String schematicCategory = "";
                     if (path.getParent().toString().startsWith(basePath.toString()))
                     {
                         style = path.getParent().toString().substring(basePath.toString().length());
@@ -151,11 +152,10 @@ public final class Structures
                         final int indexSeparator = style.indexOf('/');
                         if (indexSeparator!=-1)
                         {
+                            schematicCategory = style.substring(0,indexSeparator);
                             style = style.substring(indexSeparator+1);
                         }
                     }
-
-                    Log.getLogger().info("Style = " + style);
 
                     //Don't treat generic schematics as decorations or huts - ex: supply ship
                     if (NULL_STYLE.equals(style) || MINER_STYLE.equals(style))
@@ -166,15 +166,24 @@ public final class Structures
                     final String filename = path.getFileName().toString().split("\\.nbt")[0];
                     final String hut = filename.split("\\d+")[0];
 
-                    if (isSchematicHut(hut))
+                    if (SCHEMATICS_HUTS.equals(schematicCategory) && isSchematicHut(hut))
                     {
                         addHutStyle(hut, style);
                         incrementHutMaxLevel(hut);
                     }
-                    else
+                    else if (SCHEMATICS_HUTS.equals(schematicCategory) || SCHEMATICS_DECORATIONS.equals(schematicCategory))
                     {
+                        if (isSchematicHut(hut))
+                        {
+                            Log.getLogger().warn(path + " look like a hut but will not be considered as a hut!");
+                        }
                         addDecorationStyle(style, filename);
                     }
+                    else
+                    {
+                        Log.getLogger().error(path + " schematic is not a huts or decorations, ignoring it");
+                    }
+        
                     String relativePath = path.toString().substring(basePath.toString().length()).split("\\.nbt")[0];
                     if (relativePath.startsWith("/"))
                     {

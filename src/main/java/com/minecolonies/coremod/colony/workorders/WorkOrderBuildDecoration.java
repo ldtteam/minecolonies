@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.workorders;
 
 import com.minecolonies.coremod.colony.Colony;
+import com.minecolonies.coremod.colony.Structures;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -27,7 +28,7 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
     public WorkOrderBuildDecoration(final String decoration, final String style, final int rotation, final BlockPos location)
     {
         super();
-        this.structureName = "decorations/" + style + '/' + decoration;
+        this.structureName = Structures.SCHEMATICS_DECORATIONS + "/" + style + '/' + decoration;
         this.buildingRotation = rotation;
         this.buildingLocation = location;
         this.cleared = false;

@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
@@ -64,7 +65,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.cleared = level > 1;
         this.requested = false;
 
-        this.structureName = "huts/"+building.getStyle() + '/' + this.getUpgradeName();
+        this.structureName = Structures.SCHEMATICS_HUTS + "/"+building.getStyle() + '/' + this.getUpgradeName();
     }
 
     /**

@@ -427,11 +427,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         if (Settings.instance.isInHutMode())
         {
-            structureName = "huts/" + labelHutStyle + '/' + labelHutDec + (level + 1);
+            structureName = Structures.SCHEMATICS_HUTS + "/" + labelHutStyle + '/' + labelHutDec + (level + 1);
         }
         else
         {
-            structureName = "decorations/" + labelHutDec + '/' + labelHutStyle;
+            structureName = Structures.SCHEMATICS_DECORATIONS + "/" + labelHutDec + '/' + labelHutStyle;
         }
 
         structure = new Structure(null,
