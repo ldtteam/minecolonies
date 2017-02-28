@@ -17,6 +17,8 @@ import java.util.stream.StreamSupport;
 /**
  * Data structure for storing colonies, optimized for performance.
  *
+ * @param <T> Type of IColony (Colony or ColonyView)
+ *
  * @author Colton
  */
 public final class ColonyList<T extends IColony> implements Iterable<T>
@@ -37,6 +39,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
      * @return The Colony associated with the provided id.
      */
     @Nullable
+    // no way to remove this, java does it too
     @SuppressWarnings("unchecked")
     public T get(int index)
     {
@@ -119,7 +122,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
             if (topID >= list.length)
             {
                 // Expand list
-                Object[] newList = new Object[list.length * 2];
+                final Object[] newList = new Object[list.length * 2];
                 System.arraycopy(list, 0, newList, 0, list.length);
                 list = newList;
             }
@@ -190,7 +193,6 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     {
         return new Iterator<T>()
         {
-
             private int nextIndex = getNextIndex(0);
 
             @Override
@@ -210,23 +212,23 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
                 }
                 return get(index);
             }
+        };
+    }
 
-            private int getNextIndex(int startingIndex)
+    private int getNextIndex(int startingIndex)
+    {
+        int index = startingIndex + 1;
+        while (index < list.length)
+        {
+            if (list[index] != null)
             {
-                int index = startingIndex + 1;
-                while (index < list.length)
-                {
-                    if (list[index] != null)
-                    {
-                        return index;
-                    }
-
-                    index++;
-                }
-
                 return index;
             }
-        };
+
+            index++;
+        }
+
+        return index;
     }
 
     /**
