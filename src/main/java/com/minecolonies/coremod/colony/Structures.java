@@ -27,7 +27,7 @@ public final class Structures
     /**
      * Ignore the styles from the generic folder.
      */
-    private static final String NULL_STYLE = "schematics";
+    private static final String NULL_STYLE = "";
 
     /**
      * Ignore the styles from the miner folder.
@@ -111,7 +111,12 @@ public final class Structures
         }
         catch (@NotNull IOException | URISyntaxException e)
         {
-            Log.getLogger().error("Error loading StructureProxy directory. Things will break!", e);
+            //Silently ignore
+        }
+
+        if (hutStyleMap.size()==0)
+        {
+            Log.getLogger().error("Error loading StructureProxy directory. Things will break!");
         }
     }
 
