@@ -183,7 +183,7 @@ public final class Structures
                     {
                         Log.getLogger().error(path + " schematic is not a huts or decorations, ignoring it");
                     }
-        
+
                     String relativePath = path.toString().substring(basePath.toString().length()).split("\\.nbt")[0];
                     if (relativePath.startsWith("/"))
                     {
@@ -328,11 +328,39 @@ public final class Structures
         return Structures.md5Map;
     }
 
-    public static String getMD5(final String structureName)
+    /**
+     * get the md5 hash for a structure name.
+     *
+     * @param structureName name of the structure as 'hut/wooden/Builder1'
+     * @return the md5 hash or and empty String if not found
+     */
+    public static @NotNull String getMD5(final String structureName)
     {
         if (Structures.md5Map.containsKey(structureName))
         {
             return Structures.md5Map.get(structureName);
+        }
+        return "";
+    }
+
+    /**
+     * get a structure name for a give md5 hash.
+     *
+     * @param md5 hash identifying the schematic
+     * @return the structure name as 'hut/wooden/Builder1' or an empty String if not found
+     */
+    public static String getStructureNameByMD5(final String md5)
+    {
+        if (md5==null)
+        {
+            return "";
+        }
+        for (Map.Entry<String, String> entry : md5Map.entrySet())
+        {
+            if (entry.getValue().compareTo(md5) == 0)
+            {
+               return entry.getKey();
+            }
         }
         return "";
     }

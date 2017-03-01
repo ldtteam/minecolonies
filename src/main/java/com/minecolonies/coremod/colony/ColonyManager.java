@@ -653,6 +653,8 @@ public final class ColonyManager
         {
             if (numWorldsLoaded == 0)
             {
+                Structures.init();
+
                 @NotNull final File file = getSaveLocation();
                 @Nullable final NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)
@@ -680,8 +682,6 @@ public final class ColonyManager
                     c.onWorldLoad(world);
                 }
             }
-
-            Structures.init();
 
             world.addEventListener(new ColonyManagerWorldAccess());
         }

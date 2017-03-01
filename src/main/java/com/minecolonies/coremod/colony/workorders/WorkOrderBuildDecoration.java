@@ -28,11 +28,18 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
     public WorkOrderBuildDecoration(final String decoration, final String style, final int rotation, final BlockPos location)
     {
         super();
-        this.structureName = Structures.SCHEMATICS_DECORATIONS + "/" + style + '/' + decoration;
+        this.structureName = Structures.SCHEMATICS_DECORATIONS + '/' + style + '/' + decoration;
         this.buildingRotation = rotation;
         this.buildingLocation = location;
         this.cleared = false;
     }
+
+    @Override
+    protected String getStructurePrefix()
+    {
+        return Structures.SCHEMATICS_DECORATIONS;
+    }
+
 
     @Override
     public boolean isValid(final Colony colony)

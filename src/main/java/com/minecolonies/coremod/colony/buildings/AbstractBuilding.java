@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -63,6 +64,11 @@ public abstract class AbstractBuilding
      * The tag to store the rotation of the building.
      */
     private static final String TAG_ROTATION = "rotation";
+
+    /**
+     * The tag to store the md5 hash of the schematic.
+     */
+    private static final String TAG_SCHEMATIC_MD5 = "schematicMD5";
 
     /**
      * The tag to store the style of the building.
@@ -311,6 +317,26 @@ public abstract class AbstractBuilding
 
         rotation = compound.getInteger(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
+
+        final String buildingName = compound.getString(TAG_BUILDING_TYPE);
+        final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
+        final String structureName = Structures.SCHEMATICS_HUTS + '/' + style + '/' + this.getSchematicName() + buildingLevel;
+
+        if (Structures.getMD5(structureName).isEmpty())
+        {
+            final String prefix  = Structures.SCHEMATICS_HUTS+'/';
+            final String postfix = '/' + buildingName + buildingLevel;
+            final String newStructureName = Structures.getStructureNameByMD5(md5);
+            if (newStructureName!= null
+                && newStructureName.startsWith(Structures.SCHEMATICS_HUTS+'/')
+                && newStructureName.endsWith(postfix))
+            {
+                //We found the new location for the schematic, update the style accordingly
+                style = newStructureName.substring(prefix.length(),newStructureName.length()-postfix.length());
+                Log.getLogger().warn("AbstractBuilding.readFromNBT: " + structureName + " have been mode to " + newStructureName);
+            }
+        }
+
         if (style.isEmpty())
         {
             Log.getLogger().warn("Loaded empty style, setting to wooden");
@@ -448,6 +474,9 @@ public abstract class AbstractBuilding
         {
             compound.setString(TAG_BUILDING_TYPE, s);
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+            final String structureName=Structures.SCHEMATICS_HUTS + '/' + style + '/' + this.getSchematicName() +buildingLevel;
+            final String md5 = Structures.getMD5(structureName);
+            compound.setString(TAG_SCHEMATIC_MD5, md5);
         }
 
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
