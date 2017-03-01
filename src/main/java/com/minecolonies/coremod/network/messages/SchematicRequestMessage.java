@@ -4,7 +4,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.network.messages.SaveSchematicMessage;
+import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
@@ -43,8 +43,8 @@ public class SchematicRequestMessage extends AbstractMessage<SchematicRequestMes
     /**
      * Creates a Schematic request message.
      *
-     * @param building AbstractBuilding of the request.
-     * @param mode     Mode of the request, 1 is repair, 0 is build.
+     * @param filename of the structure based on schematics folder
+     *        Ex: huts/stone/Builder1.nbt         
      */
     public SchematicRequestMessage(final String filename)
     {
@@ -77,7 +77,7 @@ public class SchematicRequestMessage extends AbstractMessage<SchematicRequestMes
         {
             Log.getLogger().info("Request Schematic file for " + message.filename);
             byte [] schematic = Structure.getStreamAsByteArray(stream);
-            MineColonies.getNetwork().sendTo(new SaveSchematicMessage(schematic, message.filename), player);
+            MineColonies.getNetwork().sendTo(new SchematicSaveMessage(schematic, message.filename), player);
         }
     }
 }

@@ -119,6 +119,10 @@ public class Structure
         }
     }
 
+    /**
+     * Get the file representation of the schematics' folder.
+     * @return the folder for the schematic
+     */
     public static File getSchematicsFolder()
     {
         if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
@@ -139,9 +143,10 @@ public class Structure
     }
 
     /**
-     * First from the cache (client only)
-     * Then if Modifed one
-     * Then from the jar
+     * get a InputStream for a give structureName
+     * 
+     * @param structureName name of the structure to load
+     * @return the input stream or null
      */
     public static InputStream getStream(final String structureName)
     {
@@ -151,7 +156,6 @@ public class Structure
 
         try
         {
-
             if(schematicsFolder.exists())
             {
                 //We need to check that we stay within the correct folder

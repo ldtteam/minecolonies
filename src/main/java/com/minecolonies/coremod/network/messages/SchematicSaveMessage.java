@@ -20,7 +20,7 @@ import java.io.IOException;
 /**
  * Save Schematic Message.
  */
-public class SaveSchematicMessage implements IMessage, IMessageHandler<SaveSchematicMessage, IMessage>
+public class SchematicSaveMessage implements IMessage, IMessageHandler<SchematicSaveMessage, IMessage>
 {
     private byte [] bytes;
     private String         filename;
@@ -28,7 +28,7 @@ public class SaveSchematicMessage implements IMessage, IMessageHandler<SaveSchem
     /**
      * Public standard constructor.
      */
-    public SaveSchematicMessage()
+    public SchematicSaveMessage()
     {
         super();
     }
@@ -37,9 +37,9 @@ public class SaveSchematicMessage implements IMessage, IMessageHandler<SaveSchem
      * Send a schematic compound to the client.
      *
      * @param bytes byte array of the schematic.
-     * @param name name of the schematic ex: stone/builder1.
+     * @param name name of the schematic ex: huts/stone/builder1.
      */
-    public SaveSchematicMessage(final byte[] bytes, final String filename)
+    public SchematicSaveMessage(final byte[] bytes, final String filename)
     {
         this.filename = filename;
         this.bytes = bytes;
@@ -64,7 +64,7 @@ public class SaveSchematicMessage implements IMessage, IMessageHandler<SaveSchem
 
     @Nullable
     @Override
-    public IMessage onMessage(@NotNull final SaveSchematicMessage message, final MessageContext ctx)
+    public IMessage onMessage(@NotNull final SchematicSaveMessage message, final MessageContext ctx)
     {
         if (message.bytes != null)
         {

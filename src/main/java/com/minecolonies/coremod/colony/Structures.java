@@ -78,7 +78,6 @@ public final class Structures
      */
     private static void loadStyleMaps()
     {
-        Log.getLogger().info("loadStyleMaps()");
         try
         {
             @NotNull final URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
@@ -87,20 +86,16 @@ public final class Structures
             {
                 try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap()))
                 {
-                    Log.getLogger().info("get folder schematic from jar");
                     basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
                     loadStyleMaps(basePath);
                 }
             }
             else
             {
-                Log.getLogger().info("URI="+uri);
-                Log.getLogger().info("get folder schematic from uri");
                 basePath = Paths.get(uri);
                 loadStyleMaps(basePath);
             }
 
-            Log.getLogger().info("get folder schematic");
             File schematicsFolder = Structure.getSchematicsFolder();
 
             if (schematicsFolder != null)
@@ -128,8 +123,6 @@ public final class Structures
      */
     public static void loadStyleMaps(final Path basePath) throws IOException
     {
-        Log.getLogger().info("Structures.loadStyleMaps(" + basePath + ")");
-
         try (Stream<Path> walk = Files.walk(basePath))
         {
             final Iterator<Path> it = walk.iterator();

@@ -105,8 +105,6 @@ public class MineColonies
 
         proxy.registerRenderer();
 
-        //Structures.init();
-
         ModAchievements.init();
     }
 
@@ -153,7 +151,7 @@ public class MineColonies
 
         // Schematic transfer messages
         getNetwork().registerMessage(SchematicRequestMessage.class, SchematicRequestMessage.class, 38, Side.SERVER);
-        getNetwork().registerMessage(SaveSchematicMessage.class, SaveSchematicMessage.class, 39, Side.CLIENT);
+        getNetwork().registerMessage(SchematicSaveMessage.class, SchematicSaveMessage.class, 39, Side.CLIENT);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, 50, Side.CLIENT);
