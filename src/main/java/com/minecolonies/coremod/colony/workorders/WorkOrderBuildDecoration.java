@@ -9,7 +9,7 @@ import net.minecraft.util.math.BlockPos;
 public class WorkOrderBuildDecoration extends WorkOrderBuild
 {
     /**
-     * Unusued constructor for reflection.
+     * Unused constructor for reflection.
      */
     public WorkOrderBuildDecoration()
     {
@@ -32,7 +32,7 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
         this.buildingRotation = rotation;
         this.buildingLocation = location;
         this.cleared = false;
-        this.isMirroed = mirror;
+        this.isMirrored = mirror;
     }
 
     @Override

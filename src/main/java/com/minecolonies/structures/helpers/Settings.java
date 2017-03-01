@@ -22,7 +22,7 @@ public final class Settings
      * The position of the structure.
      */
     public              BlockPos                 pos            = null;
-    private             boolean                  isMirroed      = false;
+    private             boolean                  isMirrored     = false;
     private             boolean                  inHutMode      = true;
     @Nullable
     private             Structure                structure      = null;
@@ -90,7 +90,7 @@ public final class Settings
         isPendingReset = false;
         offset.setPos(0, 0, 0);
         rotation = 0;
-        isMirroed = false;
+        isMirrored = false;
     }
 
     /**
@@ -215,7 +215,7 @@ public final class Settings
         {
             return;
         }
-        isMirroed = !isMirroed;
+        isMirrored = !isMirrored;
 
         structure.setPlacementSettings(structure.getSettings().setMirror(getMirror()));
     }
@@ -226,7 +226,7 @@ public final class Settings
      */
     public Mirror getMirror()
     {
-        if (isMirroed)
+        if (isMirrored)
         {
             return Mirror.FRONT_BACK;
         }

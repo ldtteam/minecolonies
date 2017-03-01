@@ -216,7 +216,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
-        registerButton(BUTTON_MIRROR, this::mirror);
+        registerButton(BUTTON_MIRROR, WindowBuildTool::mirror);
 
     }
 
@@ -626,7 +626,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     /**
      * Rotate the structure counter clockwise.
      */
-    private void mirror()
+    private static void mirror()
     {
         Settings.instance.mirror();
     }

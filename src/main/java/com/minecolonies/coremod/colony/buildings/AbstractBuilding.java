@@ -198,7 +198,7 @@ public abstract class AbstractBuilding
     /**
      * The mirror of the building.
      */
-    private boolean isMirroed = false;
+    private boolean isMirrored = false;
 
     /**
      * The building style.
@@ -348,7 +348,7 @@ public abstract class AbstractBuilding
             final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
             containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
-        isMirroed = compound.getBoolean(TAG_MIRROR);
+        isMirrored = compound.getBoolean(TAG_MIRROR);
     }
 
     /**
@@ -491,7 +491,7 @@ public abstract class AbstractBuilding
             containerTagList.appendTag(NBTUtil.createPosTag(pos));
         }
         compound.setTag(TAG_CONTAINERS, containerTagList);
-        compound.setBoolean(TAG_MIRROR, isMirroed);
+        compound.setBoolean(TAG_MIRROR, isMirrored);
     }
 
     /**
@@ -1168,7 +1168,7 @@ public abstract class AbstractBuilding
      */
     public boolean isMirrored()
     {
-        return isMirroed;
+        return isMirrored;
     }
 
     /**
@@ -1176,7 +1176,7 @@ public abstract class AbstractBuilding
      */
     public void setMirror()
     {
-        this.isMirroed = !isMirroed;
+        this.isMirrored = !isMirrored;
     }
 
     //------------------------- Ending Required Tools/Item handling -------------------------//

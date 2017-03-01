@@ -32,7 +32,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
 
     private static final String DEFAULT_STYLE = "wooden";
 
-    protected boolean  isMirroed;
+    protected boolean  isMirrored;
     protected BlockPos buildingLocation;
     protected int      buildingRotation;
     protected String   structureName;
@@ -63,7 +63,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
         this.buildingRotation = building.getRotation();
-        this.isMirroed = building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored();
+        this.isMirrored = building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored();
         this.cleared = level > 1;
         this.requested = false;
 
@@ -105,7 +105,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         structureName = compound.getString(TAG_SCHEMATIC_NAME);
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
-        isMirroed = compound.getBoolean(TAG_IS_MIRROED);
+        isMirrored = compound.getBoolean(TAG_IS_MIRROED);
     }
 
     /**
@@ -127,7 +127,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         compound.setString(TAG_SCHEMATIC_NAME, structureName);
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
-        compound.setBoolean(TAG_IS_MIRROED, isMirroed);
+        compound.setBoolean(TAG_IS_MIRROED, isMirrored);
     }
 
     /**
@@ -334,6 +334,6 @@ public class WorkOrderBuild extends AbstractWorkOrder
      */
     public boolean isMirrored()
     {
-        return isMirroed;
+        return isMirrored;
     }
 }
