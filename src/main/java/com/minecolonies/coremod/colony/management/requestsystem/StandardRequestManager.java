@@ -4,17 +4,21 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.minecolonies.blockout.Log;
 import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestManager;
 import com.minecolonies.coremod.colony.management.requestsystem.api.RequestState;
+import com.minecolonies.coremod.colony.management.requestsystem.api.factory.IFactory;
 import com.minecolonies.coremod.colony.management.requestsystem.api.factory.IFactoryController;
 import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocatable;
 import com.minecolonies.coremod.colony.management.requestsystem.api.request.IRequest;
 import com.minecolonies.coremod.colony.management.requestsystem.api.resolver.IRequestResolver;
 import com.minecolonies.coremod.colony.management.requestsystem.api.resolver.IRequestResolverProvider;
 import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
+import com.minecolonies.coremod.colony.management.requestsystem.token.StandardToken;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,6 +55,17 @@ public class StandardRequestManager implements IRequestManager {
     @NotNull
     private final HashMap<IToken, Collection<IToken>> resolverRequestMap = new HashMap<>();
 
+    /**
+     * Map that holds the resolver that is linked to a given request.
+     */
+    @NotNull
+    private final HashMap<IToken, IToken> requestResolverMap = new HashMap<>();
+
+    /**
+     * Map that holds the class that resolver can resolve. Used during lookup.
+     */
+    @NotNull
+    private final HashMap<Class, Collection<IRequestResolver>> requestClassResolverMap = new HashMap<>();
 
     @NotNull
     private IColony colony;
@@ -63,7 +78,7 @@ public class StandardRequestManager implements IRequestManager {
     @NotNull
     @Override
     public IColony getColony() {
-        return null;
+        return colony;
     }
 
     /**
@@ -74,7 +89,7 @@ public class StandardRequestManager implements IRequestManager {
     @NotNull
     @Override
     public IFactoryController getFactoryController() {
-        return null;
+        return StandardFactoryController.getInstance();
     }
 
     /**
@@ -229,9 +244,18 @@ public class StandardRequestManager implements IRequestManager {
         private static void removeProvider(StandardRequestManager manager, IToken token) throws IllegalArgumentException {
             IRequestResolverProvider provider = getProvider(manager, token);
 
+            Log.getLogger().debug("Removing provider: " + provider);
+
             ImmutableCollection<IToken> assignedResolvers = getRegisteredResolvers(manager, token);
             for(IToken resolverToken : assignedResolvers) {
+                if (!manager.resolverRequestMap.containsKey(resolverToken))
+                    continue;
 
+                Log.getLogger().debug("Starting reassignment of already registered request registered to resolver with token: " + resolverToken);
+
+                for(IToken requestToken : manager.resolverRequestMap.get(resolverToken)) {
+
+                }
             }
 
         }
@@ -268,6 +292,8 @@ public class StandardRequestManager implements IRequestManager {
             if (!manager.resolverBiMap.containsKey(token))
                 throw new IllegalArgumentException("The given token for a resolver is not known to this manager!");
 
+            Log.getLogger().debug("Retrieving resolver for: " + token);
+
             return manager.resolverBiMap.get(token);
         }
 
@@ -291,7 +317,14 @@ public class StandardRequestManager implements IRequestManager {
             if (manager.resolverBiMap.containsValue(resolver))
                 throw new IllegalArgumentException("The given resolver is already registered with a different token. Cannot register twice!");
 
+            Log.getLogger().debug("Registering resolver: " + resolver + " with request type: " + resolver.getRequestType().getName());
+
             manager.resolverBiMap.put(resolver.getToken(), resolver);
+
+            if (!manager.requestClassResolverMap.containsKey(resolver.getRequestType()))
+                manager.requestClassResolverMap.put(resolver.getRequestType(), new ArrayList<>());
+
+            manager.requestClassResolverMap.get(resolver.getRequestType()).add(resolver);
 
             return resolver.getToken();
         }
@@ -348,7 +381,13 @@ public class StandardRequestManager implements IRequestManager {
             if (!registeredResolver.equals(resolver))
                 throw new IllegalArgumentException("The given resolver and the resolver that is registered with its token are not the same.");
 
-            manager.resolverBiMap.remove(registeredResolver.getToken());
+            if (manager.resolverRequestMap.containsKey(registeredResolver.getToken()) && manager.resolverRequestMap.get(registeredResolver.getToken()).size() > 0)
+                throw new IllegalArgumentException("Cannot remove a resolver that is still in use. Reassing all registered requests before removing");
+
+            Log.getLogger().debug("Removing resolver: " + resolver + " with request type: " + resolver.getRequestType().getName());
+
+            manager.resolverBiMap.remove(resolver.getToken());
+            manager.requestClassResolverMap.get(resolver.getRequestType()).remove(resolver);
         }
 
         /**
@@ -367,7 +406,7 @@ public class StandardRequestManager implements IRequestManager {
             if (!manager.resolverBiMap.containsKey(token))
                 throw new IllegalArgumentException("The token is unknown to this manager.");
 
-            manager.resolverBiMap.remove(token);
+            removeResolver(manager, getResolver(manager, token));
         }
 
         /**
@@ -420,7 +459,10 @@ public class StandardRequestManager implements IRequestManager {
             if (!manager.resolverRequestMap.containsKey(resolver.getToken()))
                 manager.resolverRequestMap.put(resolver.getToken(), new ArrayList<>());
 
+            Log.getLogger().debug("Adding request: " + request + " to resolver: " + resolver);
+
             manager.resolverRequestMap.get(resolver.getToken()).add(request.getToken());
+            manager.requestResolverMap.put(request.getToken(), resolver.getToken());
         }
 
         /**
@@ -443,9 +485,128 @@ public class StandardRequestManager implements IRequestManager {
             if (!manager.resolverRequestMap.get(resolver.getToken()).contains(request.getToken()))
                 throw new IllegalArgumentException("The given request is not registered to the given resolver.");
 
+            Log.getLogger().debug("Removing request: " + request + " from resolver: " + resolver);
+
             manager.resolverRequestMap.get(resolver.getToken()).remove(request.getToken());
+            manager.requestResolverMap.remove(request.getToken());
         }
     }
 
+    /**
+     * Class used to handle the inner workings of the request system with regards to requests.
+     */
+    private final static class RequestHandler {
+
+        /**
+         * Method used to get a registered request from a given token.
+         * @param token The token to query
+         * @throws IllegalArgumentException when the token is unknown to the given manager.
+         */
+        private static IRequest getRequest(StandardRequestManager manager, IToken token) throws IllegalArgumentException {
+            if (!manager.requestBiMap.containsKey(token))
+                throw new IllegalArgumentException("The given token is not registered as a request to this manager");
+
+            Log.getLogger().debug("Retrieving the request for: " + token);
+
+            return manager.requestBiMap.get(token);
+        }
+
+        @SuppressWarnings("unchecked")
+        private static <Request> IRequest<Request> createRequest(StandardRequestManager manager, Request request) {
+            Class requestClass = request.getClass();
+
+            IToken token = TokenHandler.generateNewToken(manager);
+
+            IFactory<Request, ?> factory = manager.getFactoryController().getFactoryForInput(requestClass);
+            IRequest<Request> constructedRequest = (IRequest<Request>) factory.getNewInstance(request, token);
+
+            Log.getLogger().debug("Creating request for: " + request + " with factory: " + factory + ", token: " + token + " and output: " + constructedRequest);
+
+            registerRequest(manager, constructedRequest);
+
+            return constructedRequest;
+        }
+
+        private static void registerRequest(StandardRequestManager manager, IRequest request) throws IllegalArgumentException {
+            if (manager.requestBiMap.containsKey(request.getToken()) ||
+                    manager.requestBiMap.containsValue(request))
+                throw new IllegalArgumentException("The given request is already known to this manager");
+
+            Log.getLogger().debug("Registering request: " + request);
+
+            manager.requestBiMap.put(request.getToken(), request);
+        }
+
+        /**
+         * Method used to assign a given request to a resolver. Does not take any blacklist into account.
+         * @param manager The manager to modify.
+         * @param request The request to assign
+         * @throws IllegalArgumentException when the request is already assigned
+         */
+        private static void assignRequest(StandardRequestManager manager, IRequest request) throws IllegalArgumentException {
+            assignRequest(manager, request, Collections.EMPTY_LIST);
+        }
+
+        /**
+         * Method used to assign a given request to a resolver. Does take a given blacklist of resolvers into account.
+         * @param manager The manager to modify.
+         * @param request The request to assign.
+         * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
+         * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
+         */
+        private static void assignRequest(StandardRequestManager manager, IRequest request, IToken... resolverTokenBlackList) throws IllegalArgumentException {
+            assignRequest(manager, request, Arrays.asList(resolverTokenBlackList));
+        }
+
+        /**
+         * Method used to assign a given request to a resolver. Does take a given blacklist of resolvers into account.
+         * @param manager The manager to modify.
+         * @param request The request to assign.
+         * @param resolverTokenBlackList Each resolver that has its token in this blacklist will be skipped when checking for a possible resolver.
+         * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
+         */
+        private static void assignRequest(StandardRequestManager manager, IRequest request, Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException {
+            getRequest(manager, request.getToken());
+
+            Log.getLogger().debug("Starting resolver assignment search for request: " + request);
+
+            for(IRequestResolver resolver : manager.requestClassResolverMap.get(request.getRequestType())) {
+                //Skip when the resolver is in the blacklist.
+                if (resolverTokenBlackList.contains(resolver.getToken()))
+                    continue;
+
+                //Skip if preliminary check fails
+                if (!resolver.canResolve(manager, request))
+                    continue;
+
+                @Nullable List<IRequest> attemptResult = resolver.attemptResolve(manager, request);
+
+                //Skip if attempt failed (aka attemptResult == null)
+                if (attemptResult == null)
+                    continue;
+
+                //Succesfully found a resolver. Registering
+                Log.getLogger().debug("Finished resolver assignment search for request: " + request + " successfully");
+                ResolverHandler.addRequestToResolver(manager, resolver, request);
+
+                //We have found a resolver abort further processing.
+                return;
+            }
+
+            //TODO: Implement player fallback!
+        }
+    }
+
+    /**
+     * Class used to handle the inner workings of the request system with regards to tokens.
+     */
+    private final static class TokenHandler {
+
+        private static IToken generateNewToken(StandardRequestManager manager) {
+            //Force generic type to be correct.
+            StandardToken standardToken = manager.getFactoryController().getNewInstance(UUID.randomUUID());
+            return standardToken;
+        }
+    }
 
 }
