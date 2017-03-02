@@ -1,6 +1,8 @@
-package com.minecolonies.coremod.colony.management.requestsystem.api;
+package com.minecolonies.coremod.colony.management.requestsystem.api.resolver;
 
-import com.minecolonies.coremod.colony.management.requestsystem.api.requests.IRequest;
+import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestManager;
+import com.minecolonies.coremod.colony.management.requestsystem.api.request.IRequest;
+import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,9 +12,19 @@ import java.util.List;
  * Used to resolve a request.
  * In a colony multiple resolvers can exist for a given type R.
  * The resolver with the highest priority is checked first, then second and so forth.
+ *
+ * The resolver himself is responsible for storing the tokens of requests that he returns
  * @param <R> The request type that this resolver can provide.
  */
 public interface IRequestResolver<R> {
+
+    /**
+     * Method to get the unique token, used to identify this resolver inside the request
+     * management system.
+      * @param <T> The type of token.
+     * @return The unique token identifying this resolver.
+     */
+    <T extends IToken> T getToken();
 
     /**
      * Used to determine which type of requests can be resolved by this Resolver.

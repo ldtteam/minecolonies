@@ -1,8 +1,8 @@
-package com.minecolonies.coremod.colony.management.requestsystem.api.requests;
+package com.minecolonies.coremod.colony.management.requestsystem.api.request;
 
 import com.google.common.collect.ImmutableCollection;
 import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestManager;
-import com.minecolonies.coremod.colony.management.requestsystem.api.token.IRequestToken;
+import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import com.minecolonies.coremod.colony.management.requestsystem.api.RequestState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,7 +21,7 @@ public interface IRequest<R> {
      * The unique token representing the request outside of the management system.
      * @return the token representing the request outside of the management system.
      */
-    <T extends IRequestToken> T getToken();
+    <T extends IToken> T getToken();
 
     /**
      * Used to determine which type of request this is.
@@ -85,13 +85,13 @@ public interface IRequest<R> {
      * @return The parent of this request, or null if it has no parent.
      */
     @Nullable
-    <T extends IRequestToken> T getParent();
+    <T extends IToken> T getParent();
 
     /**
      * Method used to set the parent of a request.
      * @param parent The new parent, or null to clear the existing one.
      */
-    <T extends IRequestToken> void setParent(@Nullable T parent);
+    <T extends IToken> void setParent(@Nullable T parent);
 
     /**
      * Returns true if this request has a parent, false if not.
@@ -103,37 +103,37 @@ public interface IRequest<R> {
      * Method used to add a single Child.
      * @param child The new child request to add.
      */
-    <T extends IRequestToken> void addChild(@NotNull T child);
+    <T extends IToken> void addChild(@NotNull T child);
 
     /**
      * Method to add multiple children in a single call.
      * @param children An array of children to add.
      */
-    <T extends IRequestToken> void addChildren(@NotNull T... children);
+    <T extends IToken> void addChildren(@NotNull T... children);
 
     /**
      * Method to add multiple children in a single call.
      * @param children A collection of children to add.
      */
-    <T extends IRequestToken>void addChildren(@NotNull Collection<T> children);
+    <T extends IToken>void addChildren(@NotNull Collection<T> children);
 
     /**
      * Method used to remove a single Child.
      * @param child The new child request to remove.
      */
-    <T extends IRequestToken> void removeChild(@NotNull T child);
+    <T extends IToken> void removeChild(@NotNull T child);
 
     /**
      * Method to remove multiple children in a single call.
      * @param children An array of children to remove.
      */
-    <T extends IRequestToken> void removeChildren(@NotNull T... children);
+    <T extends IToken> void removeChildren(@NotNull T... children);
 
     /**
      * Method to remove multiple children in a single call.
      * @param children A collection of children to remove.
      */
-    <T extends IRequestToken> void removeChildren(@NotNull Collection<T> children);
+    <T extends IToken> void removeChildren(@NotNull Collection<T> children);
 
     /**
      * Method to check if this request has children.
@@ -147,7 +147,7 @@ public interface IRequest<R> {
      * @return An immutable collection of the children of this request.
      */
     @NotNull
-    ImmutableCollection<IRequestToken> getChildren();
+    ImmutableCollection<IToken> getChildren();
 
     /**
      * Method called by a child state to indicate that its state has been updated.
@@ -155,5 +155,5 @@ public interface IRequest<R> {
      * @param manager The manager that caused the update on the child.
      * @param child The child that was updated.
      */
-    void childStateUpdated(@NotNull IRequestManager manager, @NotNull IRequestToken child);
+    void childStateUpdated(@NotNull IRequestManager manager, @NotNull IToken child);
 }

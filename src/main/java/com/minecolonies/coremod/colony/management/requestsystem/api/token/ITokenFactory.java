@@ -6,11 +6,11 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Marker interface used to specify a factory for requesttokens.
- * Restricts the output type of the general factory interface to IRequestToken
+ * Restricts the output type of the general factory interface to IToken
  * @param <T> The type of requesttoken.
  * @param <RT> The requesttoken type.
  */
-public interface IRequestTokenFactory<T, RT extends IRequestToken<T,NBTTagCompound>> extends IFactory<T, RT> {
+public interface ITokenFactory<T, RT extends IToken<T,NBTTagCompound>> extends IFactory<T, RT> {
 
     /**
      * Method to get a new instance of the output given the input and additional context data.

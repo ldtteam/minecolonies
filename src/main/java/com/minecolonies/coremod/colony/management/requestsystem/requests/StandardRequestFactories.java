@@ -2,8 +2,8 @@ package com.minecolonies.coremod.colony.management.requestsystem.requests;
 
 import com.minecolonies.coremod.colony.management.requestsystem.api.RequestState;
 import com.minecolonies.coremod.colony.management.requestsystem.api.factory.IFactoryController;
-import com.minecolonies.coremod.colony.management.requestsystem.api.requests.IRequestFactory;
-import com.minecolonies.coremod.colony.management.requestsystem.api.token.IRequestToken;
+import com.minecolonies.coremod.colony.management.requestsystem.api.request.IRequestFactory;
+import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import com.minecolonies.coremod.colony.management.requestsystem.requestable.Delivery;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -69,7 +69,7 @@ public final class StandardRequestFactories {
             NBTTagCompound requestedCompound = request.getRequest().serializeNBT();
 
             NBTTagList childrenCompound = new NBTTagList();
-            for (IRequestToken token : request.getChildren()) {
+            for (IToken token : request.getChildren()) {
                 childrenCompound.appendTag(controller.serialize(token));
             }
 
@@ -98,11 +98,11 @@ public final class StandardRequestFactories {
         @NotNull
         @Override
         public StandardRequests.ItemStackRequest deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) {
-            IRequestToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
+            IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
             RequestState state = RequestState.deserializeNBT((NBTTagInt) nbt.getTag(NBT_STATE));
             ItemStack requested = new ItemStack(nbt.getCompoundTag(NBT_REQUESTED));
 
-            List<IRequestToken> childTokens = new ArrayList<>();
+            List<IToken> childTokens = new ArrayList<>();
             NBTTagList childCompound = nbt.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < childCompound.tagCount(); i++) {
                 childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
@@ -128,7 +128,7 @@ public final class StandardRequestFactories {
          * @return The new output instance for a given input.
          */
         @Override
-        public StandardRequests.ItemStackRequest getNewInstance(@NotNull ItemStack input, @NotNull IRequestToken token, @NotNull RequestState initialState) {
+        public StandardRequests.ItemStackRequest getNewInstance(@NotNull ItemStack input, @NotNull IToken token, @NotNull RequestState initialState) {
             return new StandardRequests.ItemStackRequest(token, initialState, input);
         }
     }
@@ -174,7 +174,7 @@ public final class StandardRequestFactories {
             NBTTagCompound requestedCompound = request.getRequest().serialize(controller);
 
             NBTTagList childrenCompound = new NBTTagList();
-            for (IRequestToken token : request.getChildren()) {
+            for (IToken token : request.getChildren()) {
                 childrenCompound.appendTag(controller.serialize(token));
             }
 
@@ -203,11 +203,11 @@ public final class StandardRequestFactories {
         @NotNull
         @Override
         public StandardRequests.DeliveryRequest deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) {
-            IRequestToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
+            IToken token = controller.deserialize(nbt.getCompoundTag(NBT_TOKEN));
             RequestState state = RequestState.deserializeNBT((NBTTagInt) nbt.getTag(NBT_STATE));
             Delivery requested = Delivery.deserialize(controller, nbt.getCompoundTag(NBT_REQUESTED));
 
-            List<IRequestToken> childTokens = new ArrayList<>();
+            List<IToken> childTokens = new ArrayList<>();
             NBTTagList childCompound = nbt.getTagList(NBT_CHILDREN, Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < childCompound.tagCount(); i++) {
                 childTokens.add(controller.deserialize(childCompound.getCompoundTagAt(i)));
@@ -233,7 +233,7 @@ public final class StandardRequestFactories {
          * @return The new output instance for a given input.
          */
         @Override
-        public StandardRequests.DeliveryRequest getNewInstance(@NotNull Delivery input, @NotNull IRequestToken token, @NotNull RequestState initialState) {
+        public StandardRequests.DeliveryRequest getNewInstance(@NotNull Delivery input, @NotNull IToken token, @NotNull RequestState initialState) {
             return new StandardRequests.DeliveryRequest(token, initialState, input);
         }
     }

@@ -1,16 +1,16 @@
 package com.minecolonies.coremod.colony.management.requestsystem.token;
 
-import com.minecolonies.coremod.colony.management.requestsystem.api.token.IRequestToken;
+import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 /**
- * Internal implementation of the IRequestToken interface.
+ * Internal implementation of the IToken interface.
  * Uses UUID to store the ID of the request.
  */
-public class StandardRequestToken implements IRequestToken<UUID, NBTTagCompound> {
+public class StandardToken implements IToken<UUID, NBTTagCompound> {
 
     ////// --------------------------- NBTConstants --------------------------- \\\\\\
     private static final String NBT_MSB = "Id_MSB";
@@ -23,7 +23,7 @@ public class StandardRequestToken implements IRequestToken<UUID, NBTTagCompound>
     /**
      * Creates a new token with a random id.
      */
-    public StandardRequestToken() {
+    public StandardToken() {
         this(UUID.randomUUID());
     }
 
@@ -31,7 +31,7 @@ public class StandardRequestToken implements IRequestToken<UUID, NBTTagCompound>
      * Creates a new token with the given id.
      * @param id
      */
-    public StandardRequestToken(@NotNull UUID id) {
+    public StandardToken(@NotNull UUID id) {
         this.id = id;
     }
 
@@ -63,9 +63,9 @@ public class StandardRequestToken implements IRequestToken<UUID, NBTTagCompound>
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof IRequestToken)) return false;
+        if (!(o instanceof IToken)) return false;
 
-        IRequestToken that = (IRequestToken) o;
+        IToken that = (IToken) o;
 
         return id.equals(that.getIdentifier());
     }
@@ -77,7 +77,7 @@ public class StandardRequestToken implements IRequestToken<UUID, NBTTagCompound>
 
     @Override
     public String toString() {
-        return "StandardRequestToken{" +
+        return "StandardToken{" +
                 "id=" + id +
                 '}';
     }

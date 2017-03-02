@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.management.requestsystem.token;
 
 import com.minecolonies.coremod.colony.management.requestsystem.api.factory.IFactoryController;
-import com.minecolonies.coremod.colony.management.requestsystem.api.token.IRequestTokenFactory;
+import com.minecolonies.coremod.colony.management.requestsystem.api.token.ITokenFactory;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,7 +10,7 @@ import java.util.UUID;
 /**
  * Factory for the standard request token.
  */
-public class StandardRequestTokenFactory implements IRequestTokenFactory<UUID, StandardRequestToken> {
+public class StandardTokenFactory implements ITokenFactory<UUID, StandardToken> {
     /**
      * Method to get the request type this factory can produce.
      *
@@ -18,8 +18,8 @@ public class StandardRequestTokenFactory implements IRequestTokenFactory<UUID, S
      */
     @NotNull
     @Override
-    public Class<? extends StandardRequestToken> getFactoryOutputType() {
-        return StandardRequestToken.class;
+    public Class<? extends StandardToken> getFactoryOutputType() {
+        return StandardToken.class;
     }
 
     /**
@@ -42,7 +42,7 @@ public class StandardRequestTokenFactory implements IRequestTokenFactory<UUID, S
      */
     @NotNull
     @Override
-    public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StandardRequestToken request) {
+    public NBTTagCompound serialize(@NotNull IFactoryController controller, @NotNull StandardToken request) {
         return request.serializeNBT();
     }
 
@@ -55,8 +55,8 @@ public class StandardRequestTokenFactory implements IRequestTokenFactory<UUID, S
      */
     @NotNull
     @Override
-    public StandardRequestToken deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) {
-        StandardRequestToken token = new StandardRequestToken();
+    public StandardToken deserialize(@NotNull IFactoryController controller, @NotNull NBTTagCompound nbt) {
+        StandardToken token = new StandardToken();
         token.deserializeNBT(nbt);
         return token;
     }
@@ -69,7 +69,7 @@ public class StandardRequestTokenFactory implements IRequestTokenFactory<UUID, S
      */
     @NotNull
     @Override
-    public StandardRequestToken getNewInstance(@NotNull UUID input) {
-        return new StandardRequestToken(input);
+    public StandardToken getNewInstance(@NotNull UUID input) {
+        return new StandardToken(input);
     }
 }

@@ -3,8 +3,9 @@ package com.minecolonies.coremod.colony.management.requestsystem.api;
 import com.minecolonies.coremod.colony.IColony;
 import com.minecolonies.coremod.colony.management.requestsystem.api.factory.IFactoryController;
 import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocatable;
-import com.minecolonies.coremod.colony.management.requestsystem.api.requests.IRequest;
-import com.minecolonies.coremod.colony.management.requestsystem.api.token.IRequestToken;
+import com.minecolonies.coremod.colony.management.requestsystem.api.request.IRequest;
+import com.minecolonies.coremod.colony.management.requestsystem.api.resolver.IRequestResolverProvider;
+import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound> {
      * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
      */
     @NotNull
-    <T> IRequestToken createRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException;
+    <T> IToken createRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException;
 
     /**
      * Method to get a request for a given token.
@@ -48,7 +49,7 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound> {
      * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
      */
     @NotNull
-    <T> IRequest<T> getRequestForToken(@NotNull IRequestToken token) throws IllegalArgumentException;
+    <T> IRequest<T> getRequestForToken(@NotNull IToken token) throws IllegalArgumentException;
 
     /**
      * Method to update the state of a given request.
@@ -57,5 +58,19 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound> {
      * @throws IllegalArgumentException when the token is unknown to this manager.
      */
     @NotNull
-    void updateRequestState(@NotNull IRequestToken token, @NotNull RequestState state) throws IllegalArgumentException;
+    void updateRequestState(@NotNull IToken token, @NotNull RequestState state) throws IllegalArgumentException;
+
+    /**
+     * Method used to indicate to this manager that a new Provider has been added to the colony.
+     * @param provider The new provider.
+     * @throws IllegalArgumentException is thrown when a provider with the same token is already registered.
+     */
+    void onProviderAddedToColony(@NotNull IRequestResolverProvider provider) throws IllegalArgumentException;
+
+    /**
+     * Method used to indicate to this manager that Provider has been removed from the colony.
+     * @param provider The removed provider.
+     * @throws IllegalArgumentException is thrown when no provider with the same token is registered.
+     */
+    void onProviderRemovedFromColony(@NotNull IRequestResolverProvider provider) throws IllegalArgumentException;
 }

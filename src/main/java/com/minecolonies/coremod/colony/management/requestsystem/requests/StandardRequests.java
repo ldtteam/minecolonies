@@ -1,7 +1,7 @@
 package com.minecolonies.coremod.colony.management.requestsystem.requests;
 
 import com.minecolonies.coremod.colony.management.requestsystem.api.RequestState;
-import com.minecolonies.coremod.colony.management.requestsystem.api.token.IRequestToken;
+import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import com.minecolonies.coremod.colony.management.requestsystem.requestable.Delivery;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -13,11 +13,11 @@ public final class StandardRequests {
 
     public static class ItemStackRequest extends AbstractRequest<ItemStack> {
 
-        public ItemStackRequest(@NotNull IRequestToken token, @NotNull ItemStack requested) {
+        public ItemStackRequest(@NotNull IToken token, @NotNull ItemStack requested) {
             super(token, requested);
         }
 
-        public ItemStackRequest(@NotNull IRequestToken token, @NotNull RequestState state, @NotNull ItemStack requested) {
+        public ItemStackRequest(@NotNull IToken token, @NotNull RequestState state, @NotNull ItemStack requested) {
             super(token, state, requested);
         }
 
@@ -34,11 +34,11 @@ public final class StandardRequests {
 
     public static class DeliveryRequest extends AbstractRequest<Delivery> {
 
-        public DeliveryRequest(@NotNull IRequestToken token, @NotNull Delivery requested) {
+        public DeliveryRequest(@NotNull IToken token, @NotNull Delivery requested) {
             super(token, requested);
         }
 
-        public DeliveryRequest(@NotNull IRequestToken token, @NotNull RequestState state, @NotNull Delivery requested) {
+        public DeliveryRequest(@NotNull IToken token, @NotNull RequestState state, @NotNull Delivery requested) {
             super(token, state, requested);
         }
     }
