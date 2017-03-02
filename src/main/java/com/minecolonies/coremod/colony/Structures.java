@@ -164,7 +164,7 @@ public final class Structures
                         addHutStyle(hut, style);
                         incrementHutMaxLevel(hut);
                     }
-                    else if (SCHEMATICS_HUTS.equals(schematicCategory) || SCHEMATICS_DECORATIONS.equals(schematicCategory))
+                    else if (SCHEMATICS_DECORATIONS.equals(schematicCategory))
                     {
                         if (isSchematicHut(hut))
                         {
