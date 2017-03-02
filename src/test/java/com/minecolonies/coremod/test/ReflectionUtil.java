@@ -21,4 +21,17 @@ public class ReflectionUtil
 
         field.set(object, newValue);
     }
+
+    public static void setStaticFinalField(Class clazz, String fieldName, Object newValue)
+            throws NoSuchFieldException, IllegalAccessException
+    {
+        Field field = clazz.getField(fieldName);
+        field.setAccessible(true);
+
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+        field.set(null, newValue);
+    }
 }
