@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -23,9 +24,10 @@ import java.util.stream.StreamSupport;
  */
 public final class ColonyList<T extends IColony> implements Iterable<T>
 {
-    private static final int INITIAL_SIZE = 16;
+    @VisibleForTesting
+    static final int INITIAL_SIZE = 16;
 
-    private Object[] list = new Object[INITIAL_SIZE];
+    private IColony[] list = new IColony[INITIAL_SIZE];
 
     private final List<Integer> nullIndices = new ArrayList<>();
 
@@ -60,9 +62,15 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     @NotNull
     public Colony create(World world, BlockPos position)
     {
-        final Colony colony = new Colony(getNextColonyID(), world, position);
-        list[colony.getID()] = colony;
+        int colonyID = getNextColonyID();
+        if (colonyID >= list.length)
+        {
+            expandList();
+        }
+
+        final Colony colony = new Colony(colonyID, world, position);
         size++;
+        list[colony.getID()] = colony;
         return colony;
     }
 
@@ -81,6 +89,13 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
                             existingColony.getName(),
                             colony.getName()));
         }
+
+        while (colony.getID() >= list.length)
+        {
+            expandList();
+        }
+
+        size++;
 
         list[colony.getID()] = colony;
     }
@@ -118,19 +133,18 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     {
         if (nullIndices.isEmpty())
         {
-            topID++;
-            if (topID >= list.length)
-            {
-                // Expand list
-                final Object[] newList = new Object[list.length * 2];
-                System.arraycopy(list, 0, newList, 0, list.length);
-                list = newList;
-            }
 
-            return topID;
+            return ++topID;
         }
 
         return nullIndices.remove(0);
+    }
+
+    private void expandList()
+    {
+        final IColony[] newList = new IColony[list.length * 2];
+        System.arraycopy(list, 0, newList, 0, list.length);
+        list = newList;
     }
 
     /**
