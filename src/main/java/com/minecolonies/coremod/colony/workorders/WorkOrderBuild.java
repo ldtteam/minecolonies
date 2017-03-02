@@ -102,9 +102,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
         cleared = compound.getBoolean(TAG_IS_CLEARED);
         md5 = compound.getString(TAG_SCHEMATIC_MD5);
         structureName = compound.getString(TAG_SCHEMATIC_NAME);
-        if (Structures.getMD5(structureName).isEmpty())
+        if (Structures.hasStructureName(structureName))
         {
-            if (!Structures.getMD5(getStructurePrefix() + '/' + structureName).isEmpty())
+            if (Structures.hasStructureName(getStructurePrefix() + '/' + structureName))
             {
                 //It is an old work order which does not start by huts/ or decorations/
                 structureName = getStructurePrefix() + '/' + structureName;

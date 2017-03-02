@@ -322,7 +322,7 @@ public abstract class AbstractBuilding
         final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
         final String structureName = Structures.SCHEMATICS_HUTS + '/' + style + '/' + this.getSchematicName() + buildingLevel;
 
-        if (Structures.getMD5(structureName).isEmpty())
+        if (Structures.hasStructureName(structureName))
         {
             final String prefix  = Structures.SCHEMATICS_HUTS+'/';
             final String postfix = '/' + buildingName + buildingLevel;

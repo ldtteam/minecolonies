@@ -322,18 +322,27 @@ public final class Structures
     }
 
     /**
-     * get the md5 hash for a structure name.
+     * check if a structure exist.
      *
      * @param structureName name of the structure as 'hut/wooden/Builder1'
      * @return the md5 hash or and empty String if not found
      */
-    public static @NotNull String getMD5(final String structureName)
+
+    public static boolean hasStructureName(final String structureName)
     {
-        if (Structures.md5Map.containsKey(structureName))
-        {
-            return Structures.md5Map.get(structureName);
-        }
-        return "";
+        return Structures.md5Map.containsKey(structureName);
+    }
+
+
+    /**
+     * get the md5 hash for a structure name.
+     *
+     * @param structureName name of the structure as 'hut/wooden/Builder1'
+     * @return the md5 hash String or null if not found
+     */
+    public static String getMD5(final String structureName)
+    {
+        return Structures.md5Map.get(structureName);
     }
 
     /**

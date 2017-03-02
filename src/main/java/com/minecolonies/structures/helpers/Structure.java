@@ -261,8 +261,17 @@ public class Structure
         return new String();
     }
 
+    /**
+     * Compare the md5 from the structure with an other md5 hash.
+     * @param otherMD5 to compare with
+     * @return whether the otherMD5 match, return false if md5 is null
+     */
     public boolean isCorrectMD5(final String otherMD5)
     {
+        if (md5 == null)
+        {
+            return false;
+        }
         return md5.compareTo(otherMD5)==0;
     }
 
