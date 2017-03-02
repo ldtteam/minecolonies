@@ -12,9 +12,6 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * Created by asie on 2/16/17.
- */
 public class BackupCommand extends AbstractSingleCommand
 {
     public static final String DESC = "backup";
@@ -35,20 +32,20 @@ public class BackupCommand extends AbstractSingleCommand
     @Override
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
-        if (!sender.canCommandSenderUseCommand(PERMNUM, "minecolonies backup"))
+        if (!sender.canUseCommand(PERMNUM, "minecolonies backup"))
         {
-            sender.addChatMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
+            sender.sendMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
         }
         else
         {
             server.addScheduledTask(() -> {
                 if (ColonyManager.backupColonyData())
                 {
-                    sender.addChatMessage(new TextComponentString(BACKUP_SUCCESS_MESSAGE));
+                    sender.sendMessage(new TextComponentString(BACKUP_SUCCESS_MESSAGE));
                 }
                 else
                 {
-                    sender.addChatMessage(new TextComponentString(BACKUP_FAILURE_MESSAGE));
+                    sender.sendMessage(new TextComponentString(BACKUP_FAILURE_MESSAGE));
                 }
             });
         }

@@ -100,7 +100,6 @@ public class Colony implements IColony
     private static final int    NUM_MOBS_ACHIEVEMENT_THIRD  = 100;
     private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH = 500;
     private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH  = 1000;
-    private static final int    CHECK_WAYPOINT_EVERY        = 100;
     private static final int    CHECK_WAYPOINT_EVERY              = 100;
     private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.workingRangeTownHall + 16D);
     private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
@@ -427,26 +426,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Increment the mobs killed by this colony.
-     * <p>
-     * Will award achievements for mobs killed.
-     * Returns the center of the colony.
-     *
-     * @return Chunk Coordinates of the center of the colony.
-     */
-    @Override
-    public BlockPos getCenter()
-    {
-        return center;
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    /**
      * Sets the name of the colony.
      * Marks dirty.
      *
@@ -456,29 +435,6 @@ public class Colony implements IColony
     {
         name = n;
         markDirty();
-    }
-
-    /**
-     * Marks the instance dirty.
-     */
-    private void markDirty()
-    {
-        isDirty = true;
-    }
-
-    @NotNull
-    @Override
-    public Permissions getPermissions()
-    {
-        return permissions;
-    }
-
-    @Override
-    public boolean isCoordInColony(@NotNull final World w, @NotNull final BlockPos pos)
-    {
-        //  Perform a 2D distance calculation, so pass center.posY as the Y
-        return w.equals(getWorld())
-                 && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
     }
 
     /**
@@ -703,7 +659,8 @@ public class Colony implements IColony
     private void updateSubscribers()
     {
         // If the world or server is null, don't try to update the subscribers this tick.
-        if (world == null || world.getMinecraftServer() == null) {
+        if (world == null || world.getMinecraftServer() == null)
+        {
             return;
         }
 
@@ -713,23 +670,20 @@ public class Colony implements IColony
         subscribers = new HashSet<>();
 
         // Add owners
-        world.getMinecraftServer().getPlayerList().getPlayerList()
-          .stream()
-          .filter(permissions::isSubscriber)
-          .forEachOrdered(subscribers::add);
+        world.getMinecraftServer().getPlayerList().getPlayers()
+                .stream()
+                .filter(permissions::isSubscriber)
+                .forEachOrdered(subscribers::add);
 
-        //  Add nearby players
-        if (world != null)
+        for (final EntityPlayer o : world.playerEntities)
         {
-            for (final EntityPlayer o : world.playerEntities)
+            if (o instanceof EntityPlayerMP)
             {
-                if (o instanceof EntityPlayerMP)
-                {
-                    @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
+                @NotNull final EntityPlayerMP player = (EntityPlayerMP) o;
 
                 final double distance = player.getDistanceSq(center);
                 if (distance < MAX_SQ_DIST_SUBSCRIBER_UPDATE
-                      || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
+                        || (oldSubscribers.contains(player) && distance < MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE))
                 {
                     // Players become subscribers if they come within 16 blocks of the edge of the colony
                     // Players remain subscribers while they remain within double the colony's radius
@@ -1065,18 +1019,6 @@ public class Colony implements IColony
     }
 
     /**
-     * Sets the name of the colony.
-     * Marks dirty.
-     *
-     * @param n new name.
-     */
-    public void setName(final String n)
-    {
-        name = n;
-        markDirty();
-    }
-
-    /**
      * Marks the instance dirty.
      */
     private void markDirty()
@@ -1097,40 +1039,6 @@ public class Colony implements IColony
         //  Perform a 2D distance calculation, so pass center.posY as the Y
         return w.equals(getWorld())
                  && BlockPosUtil.getDistanceSquared(center, new BlockPos(pos.getX(), center.getY(), pos.getZ())) <= MathUtils.square(Configurations.workingRangeTownHall);
-    }
-
-    /**
-     * Returns the world the colony is in.
-     *
-     * @return World the colony is in.
-     */
-    @Nullable
-    public World getWorld()
-    {
-        return world;
-    }
-
-    @Override
-    public long getDistanceSquared(@NotNull final BlockPos pos)
-    {
-        return BlockPosUtil.getDistanceSquared2D(center, pos);
-    }
-
-    @Override
-    public boolean hasTownHall()
-    {
-        return townHall != null;
-    }
-
-    /**
-     * Returns the ID of the colony.
-     *
-     * @return Colony ID.
-     */
-    @Override
-    public int getID()
-    {
-        return id;
     }
 
     /**
@@ -1404,7 +1312,6 @@ public class Colony implements IColony
     public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity)
     {
         tileEntity.setColony(this);
-
         @Nullable final AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
         if (building != null)
         {
@@ -1415,6 +1322,10 @@ public class Colony implements IColony
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
+            if(tileEntity.isMirrored())
+            {
+                building.setMirror();
+            }
             ConstructionTapeHelper.placeConstructionTape(building, world);
         }
         else

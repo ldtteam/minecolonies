@@ -127,6 +127,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             InventoryUtils.setStack(worker.getInventoryCitizen(), item);
         }
 
+        if(tool != null)
+        {
+            tool.getItem().onUpdate(tool, world, worker, worker.findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
+        }
         worker.addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
         return true;

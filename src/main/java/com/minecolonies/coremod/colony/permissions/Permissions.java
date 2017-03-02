@@ -652,6 +652,12 @@ public class Permissions implements IPermissions
         return isSubscriber(player.getGameProfile().getId());
     }
 
+    @Override
+    public boolean isColonyMember(@NotNull final EntityPlayer player)
+    {
+        return players.containsKey(player.getGameProfile().getId());
+    }
+
     /**
      * See {@link #isSubscriber(EntityPlayer)}.
      *
@@ -671,10 +677,6 @@ public class Permissions implements IPermissions
     public boolean isDirty()
     {
         return dirty;
-    }    @Override
-    public boolean isColonyMember(@NotNull final EntityPlayer player)
-    {
-        return players.containsKey(player.getGameProfile().getId());
     }
 
     /**

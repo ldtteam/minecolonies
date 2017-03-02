@@ -614,16 +614,16 @@ public class EntityCitizen extends EntityAgeable implements INpc
     {
         if (job instanceof JobMiner)
         {
-            if (source == DamageSource.lava || source == DamageSource.inFire || source == DamageSource.onFire)
+            if (source == DamageSource.LAVA || source == DamageSource.IN_FIRE || source == DamageSource.ON_FIRE)
             {
                 this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathLava);
             }
-            if (source.equals(DamageSource.fall))
+            if (source.equals(DamageSource.FALL))
             {
                 this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathFall);
             }
         }
-        if (job instanceof JobLumberjack && source == DamageSource.inWall)
+        if (job instanceof JobLumberjack && source == DamageSource.IN_WALL)
         {
             this.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
         }
