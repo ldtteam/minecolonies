@@ -649,7 +649,9 @@ public class Permissions implements IPermissions
     public boolean isSubscriber(@NotNull final EntityPlayer player)
     {
         return isSubscriber(player.getGameProfile().getId());
-    }    @Override
+    }
+
+    @Override
     public boolean isColonyMember(@NotNull final EntityPlayer player)
     {
         return players.containsKey(player.getGameProfile().getId());

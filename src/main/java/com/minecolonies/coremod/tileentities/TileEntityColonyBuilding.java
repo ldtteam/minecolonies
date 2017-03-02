@@ -23,6 +23,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * NBTTag to store the colony id.
      */
     private static final String TAG_COLONY = "colony";
+    private static final String TAG_MIRROR = "mirror";
 
     /**
      * The colony id.
@@ -38,6 +39,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * The building the tileEntity belongs to.
      */
     private AbstractBuilding building;
+
+    /**
+     * Check if the building has a mirror.
+     */
+    private boolean mirror;
 
     /**
      * Empty standard constructor.
@@ -242,6 +248,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
 
         updateColonyReferences();
+        mirror = compound.getBoolean(TAG_MIRROR);
     }
 
     @NotNull
@@ -256,6 +263,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
         */
         compound.setInteger(TAG_COLONY, colonyId);
+        compound.setBoolean(TAG_MIRROR, mirror);
         return compound;
     }
 
@@ -275,5 +283,23 @@ public class TileEntityColonyBuilding extends TileEntityChest
     {
         //TODO This is called every tick the GUI is open. Is that bad?
         return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
+    }
+
+    /**
+     * Set if the entity is mirrored.
+     * @param mirror true if so.
+     */
+    public void setMirror(final boolean mirror)
+    {
+        this.mirror = mirror;
+    }
+
+    /**
+     * Check if building is mirrored.
+     * @return true if so.
+     */
+    public boolean isMirrored()
+    {
+        return mirror;
     }
 }

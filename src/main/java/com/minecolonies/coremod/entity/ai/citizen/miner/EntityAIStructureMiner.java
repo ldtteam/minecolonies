@@ -594,22 +594,22 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
     {
         if(mineNode == null)
         {
-            loadStructure("miner/minerMainShaft", getRotationFromVector(), structurePos);
+            loadStructure("miner/minerMainShaft", getRotationFromVector(), structurePos, false);
         }
         else
         {
             //todo we can add other nodeTypes without a problem.
             if (mineNode.getStyle() == Node.NodeType.CROSSROAD)
             {
-                loadStructure("miner/minerX4", rotateTimes, structurePos);
+                loadStructure("miner/minerX4", rotateTimes, structurePos, false);
             }
             if (mineNode.getStyle() == Node.NodeType.BEND)
             {
-                loadStructure("miner/minerX2Right", rotateTimes, structurePos);
+                loadStructure("miner/minerX2Right", rotateTimes, structurePos, false);
             }
             if (mineNode.getStyle() == Node.NodeType.TUNNEL)
             {
-                loadStructure("miner/minerX2Top", rotateTimes, structurePos);
+                loadStructure("miner/minerX2Top", rotateTimes, structurePos, false);
             }
         }
     }

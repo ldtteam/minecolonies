@@ -1276,7 +1276,6 @@ public class Colony implements IColony
     public AbstractBuilding addNewBuilding(@NotNull final TileEntityColonyBuilding tileEntity)
     {
         tileEntity.setColony(this);
-
         @Nullable final AbstractBuilding building = AbstractBuilding.create(this, tileEntity);
         if (building != null)
         {
@@ -1287,6 +1286,10 @@ public class Colony implements IColony
               getID(),
               tileEntity.getBlockType().getClass(),
               tileEntity.getPosition()));
+            if(tileEntity.isMirrored())
+            {
+                building.setMirror();
+            }
             ConstructionTapeHelper.placeConstructionTape(building, world);
         }
         else
