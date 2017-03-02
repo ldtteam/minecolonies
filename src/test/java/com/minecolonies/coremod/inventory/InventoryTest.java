@@ -1,21 +1,20 @@
 package com.minecolonies.coremod.inventory;
 
-import com.minecolonies.coremod.colony.Colony;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
-import com.minecolonies.coremod.test.AbstractTest;
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-public class InventoryTest extends AbstractTest
+@RunWith(MockitoJUnitRunner.class)
+public class InventoryTest
 {
     private IInventory inventory;
 
@@ -34,16 +33,16 @@ public class InventoryTest extends AbstractTest
     }
 
     @Test
-    public void emptyInventoryTest()
+    public void testEmptyInventory()
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
-            assertEquals(ItemStack.EMPTY, inventory.getStackInSlot(i));
+            assertNull("Inventory space wasn't empty", inventory.getStackInSlot(i));
         }
     }
 
     @Test
-    public void addStackTest()
+    public void testAddStack()
     {
         final ItemStack itemStack = PowerMockito.mock(ItemStack.class);
         inventory.setInventorySlotContents(0, itemStack);
