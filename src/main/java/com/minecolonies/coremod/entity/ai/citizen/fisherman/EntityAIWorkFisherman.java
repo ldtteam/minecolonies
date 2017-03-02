@@ -432,6 +432,7 @@ public class EntityAIWorkFisherman extends AbstractEntityAISkill<JobFisherman>
         }
         if (caughtFish())
         {
+            this.getOwnBuilding().getColony().incrementStatistic("fish");
             playCaughtFishSound();
             if (random.nextDouble() < CHANCE_NEW_POND)
             {
