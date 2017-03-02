@@ -25,7 +25,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private static final String TAG_UPGRADE_NAME  = "upgrade";
     private static final String TAG_IS_CLEARED    = "cleared";
     private static final String TAG_IS_REQUESTED  = "requested";
-    private static final String TAG_IS_MIRROED    = "mirroed";
+    private static final String TAG_IS_MIRRORED   = "mirrored";
 
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
@@ -105,7 +105,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         structureName = compound.getString(TAG_SCHEMATIC_NAME);
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
-        isMirrored = compound.getBoolean(TAG_IS_MIRROED);
+        isMirrored = compound.getBoolean(TAG_IS_MIRRORED);
     }
 
     /**
@@ -127,7 +127,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         compound.setString(TAG_SCHEMATIC_NAME, structureName);
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
-        compound.setBoolean(TAG_IS_MIRROED, isMirrored);
+        compound.setBoolean(TAG_IS_MIRRORED, isMirrored);
     }
 
     /**
