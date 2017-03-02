@@ -18,9 +18,9 @@ import java.util.stream.StreamSupport;
 /**
  * Data structure for storing colonies, optimized for performance.
  *
- * @param <T> Type of IColony (Colony or ColonyView)
- *
  * @author Colton
+ *
+ * @param <T> Type of IColony (Colony or ColonyView)
  */
 public final class ColonyList<T extends IColony> implements Iterable<T>
 {
@@ -62,7 +62,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     @NotNull
     public Colony create(World world, BlockPos position)
     {
-        int colonyID = getNextColonyID();
+        final int colonyID = getNextColonyID();
         if (colonyID >= list.length)
         {
             expandList();
