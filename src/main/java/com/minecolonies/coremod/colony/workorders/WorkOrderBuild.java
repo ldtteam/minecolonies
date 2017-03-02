@@ -137,7 +137,10 @@ public class WorkOrderBuild extends AbstractWorkOrder
             compound.setString(TAG_UPGRADE_NAME, upgradeName);
         }
         compound.setBoolean(TAG_IS_CLEARED, cleared);
-        compound.setString(TAG_SCHEMATIC_MD5, md5);
+        if (md5 != null)
+        {
+            compound.setString(TAG_SCHEMATIC_MD5, md5);
+        }
         compound.setString(TAG_SCHEMATIC_NAME, structureName);
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
