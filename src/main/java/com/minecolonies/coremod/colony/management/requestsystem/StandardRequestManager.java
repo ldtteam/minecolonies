@@ -242,22 +242,7 @@ public class StandardRequestManager implements IRequestManager {
         }
 
         private static void removeProvider(StandardRequestManager manager, IToken token) throws IllegalArgumentException {
-            IRequestResolverProvider provider = getProvider(manager, token);
-
-            Log.getLogger().debug("Removing provider: " + provider);
-
-            ImmutableCollection<IToken> assignedResolvers = getRegisteredResolvers(manager, token);
-            for(IToken resolverToken : assignedResolvers) {
-                if (!manager.resolverRequestMap.containsKey(resolverToken))
-                    continue;
-
-                Log.getLogger().debug("Starting reassignment of already registered request registered to resolver with token: " + resolverToken);
-
-                for(IToken requestToken : manager.resolverRequestMap.get(resolverToken)) {
-
-                }
-            }
-
+            removeProviderInternal(manager, token);
         }
 
         private static void removeProvider(StandardRequestManager manager, IRequestResolverProvider provider) throws IllegalArgumentException {
@@ -266,7 +251,62 @@ public class StandardRequestManager implements IRequestManager {
             if (!registeredProvider.equals(provider))
                 throw new IllegalArgumentException("The given providers token is registered to a different provider!");
 
+            removeProviderInternal(manager, provider.getToken());
+        }
 
+        /**
+         * Internal method that handles the reassignment
+         * @param manager The manager that is being modified.
+         * @param token The token of the provider that is being removed.
+         * @throws IllegalArgumentException is thrown when the token is not registered to a provider, or when the data stored in the manager is in conflict.
+         */
+        private static void removeProviderInternal(StandardRequestManager manager, IToken token) throws IllegalArgumentException {
+            IRequestResolverProvider provider = getProvider(manager, token);
+
+            Log.getLogger().debug("Removing provider: " + provider);
+
+            //Get the resolvers that are being removed.
+            ImmutableCollection<IToken> assignedResolvers = getRegisteredResolvers(manager, token);
+            for(IToken resolverToken : assignedResolvers) {
+                //If no requests are assigned to this resolver skip.
+                if (!manager.resolverRequestMap.containsKey(resolverToken))
+                    continue;
+
+                //Skip if the resolver has no requests assigned.
+                if (manager.resolverRequestMap.get(resolverToken).size() == 0) {
+                    Log.getLogger().debug("Removing resolver without assigned requests: " + resolverToken);
+                    manager.resolverRequestMap.remove(resolverToken);
+                    manager.resolverBiMap.remove()
+                }
+
+                Collection<IToken> assigned
+                Log.getLogger().debug("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
+
+                //Get all assigned requests and reassign them.
+                for(IToken requestToken : manager.resolverRequestMap.get(resolverToken)) {
+                    Log.getLogger().debug("Removing assigned request: " + requestToken + " from resolver: " + resolverToken);
+
+                    //No need to notify the resolver of the cancellation, It is getting removed anyway.
+                    //In that case: All resources lost.
+                    //Still have to handle all child requests though :D
+                    manager.resolverRequestMap.get(resolverToken).remove(requestToken);
+                    manager.requestResolverMap.remove(requestToken);
+
+                    Log.getLogger().debug("Starting reassignment of: " + requestToken + " - Assigned to: " + resolverToken);
+
+                    RequestHandler.assignRequest(manager, RequestHandler.getRequest(manager, requestToken), assignedResolvers);
+
+                    Log.getLogger().debug("Finished reassignment of: " + requestToken + " - Assigned to: " + manager.requestResolverMap.get(requestToken));
+                }
+
+                Log.getLogger().debug("Finished reassignment of already registered requests registered to resolver with token: " + resolverToken);
+            }
+
+            //Removing the data from the maps.
+            manager.providerBiMap.remove(provider.getToken());
+            manager.providerResolverMap.remove(provider.getToken());
+
+            Log.getLogger().debug("Removed provider: " + provider);
         }
     }
 
@@ -382,7 +422,7 @@ public class StandardRequestManager implements IRequestManager {
                 throw new IllegalArgumentException("The given resolver and the resolver that is registered with its token are not the same.");
 
             if (manager.resolverRequestMap.containsKey(registeredResolver.getToken()) && manager.resolverRequestMap.get(registeredResolver.getToken()).size() > 0)
-                throw new IllegalArgumentException("Cannot remove a resolver that is still in use. Reassing all registered requests before removing");
+                throw new IllegalArgumentException("Cannot remove a resolver that is still in use. Reassign all registered requests before removing");
 
             Log.getLogger().debug("Removing resolver: " + resolver + " with request type: " + resolver.getRequestType().getName());
 
@@ -489,6 +529,7 @@ public class StandardRequestManager implements IRequestManager {
 
             manager.resolverRequestMap.get(resolver.getToken()).remove(request.getToken());
             manager.requestResolverMap.remove(request.getToken());
+
         }
     }
 
@@ -566,6 +607,7 @@ public class StandardRequestManager implements IRequestManager {
          * @throws IllegalArgumentException is thrown when the request is unknown to this manager.
          */
         private static void assignRequest(StandardRequestManager manager, IRequest request, Collection<IToken> resolverTokenBlackList) throws IllegalArgumentException {
+            //Check if the request is registered
             getRequest(manager, request.getToken());
 
             Log.getLogger().debug("Starting resolver assignment search for request: " + request);
@@ -588,6 +630,16 @@ public class StandardRequestManager implements IRequestManager {
                 //Succesfully found a resolver. Registering
                 Log.getLogger().debug("Finished resolver assignment search for request: " + request + " successfully");
                 ResolverHandler.addRequestToResolver(manager, resolver, request);
+
+                //TODO: Call can resolveImmediatly and process result.
+
+                //Change the data in the request and resolver maps.
+                manager.requestResolverMap.put(request.getToken(), resolver.getToken());
+                if (!manager.resolverRequestMap.containsKey(resolver.getToken()))
+                    manager.resolverRequestMap.put(resolver.getToken(), new ArrayList<>());
+
+                manager.resolverRequestMap.get(resolver.getToken()).add(request.getToken());
+
 
                 //We have found a resolver abort further processing.
                 return;
