@@ -476,7 +476,10 @@ public abstract class AbstractBuilding
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
             final String structureName=Structures.SCHEMATICS_HUTS + '/' + style + '/' + this.getSchematicName() +buildingLevel;
             final String md5 = Structures.getMD5(structureName);
-            compound.setString(TAG_SCHEMATIC_MD5, md5);
+            if (Structures.hasStructureName(structureName))
+            {
+                compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName));
+            }
         }
 
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);
