@@ -66,18 +66,27 @@ public final class ClientStructureWrapper
      */
     public static void handleSaveSchematicMessage(final byte[] bytes, final String name)
     {
-        final File schematicFolder = Structure.getSchematicsFolder();
+        final File schematicsFolder = Structure.getSchematicsFolder();
 
-        final File schematicFile = new File(schematicFolder.toPath() + "/" + name + ".nbt");
-        checkDirectory(schematicFile.getParentFile());
-        try (OutputStream outputstream = new FileOutputStream(schematicFile))
+        final File schematicFile = new File(schematicsFolder.toPath() + "/" + name + ".nbt");
+
+        if (schematicFile.toURI().normalize().getPath().startsWith(schematicsFolder.toURI().normalize().getPath()))
         {
-            outputstream.write(bytes);
+            checkDirectory(schematicFile.getParentFile());
+            try (OutputStream outputstream = new FileOutputStream(schematicFile))
+            {
+                outputstream.write(bytes);
+            }
+            catch (final IOException e)
+            {
+                Log.getLogger().warn("Exception while trying to save a schematic.", e);
+                return;
+            }
         }
-        catch (final IOException e)
+        else
         {
-            Log.getLogger().warn("Exception while trying to save a schematic.", e);
-            return;
+           Log.getLogger().info("ClientStructureWrapper.handleSaveSchematicMessage: Attempt to save invalid structure name " + name);
+           return;
         }
 
         //Let the gui know we just save a schematic
