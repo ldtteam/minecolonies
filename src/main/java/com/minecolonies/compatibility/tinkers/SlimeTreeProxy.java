@@ -1,7 +1,6 @@
 package com.minecolonies.compatibility.tinkers;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.block.Block;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -12,13 +11,33 @@ public class SlimeTreeProxy
     /**
      * This is the fallback for when tinkers is not present!
      *
-     * @param world the world.
-     * @param pos the position
-     * @return if the tree is Slime Tree.
+     * @param block the block.
+     * @return if the block is a slime block.
      */
-    protected boolean checkForTinkersSlimeBlock(@NotNull final IBlockAccess world, @NotNull final BlockPos pos)
+    protected boolean checkForTinkersSlimeBlock(@NotNull final Block block)
     {
         return false;
+    }
 
+    /**
+     * This is the fallback for when tinkers is not present!
+     *
+     * @param block the block.
+     * @return if the block is a slime leaf.
+     */
+    protected boolean checkForTinkersSlimeLeaves(@NotNull final Block block)
+    {
+        return false;
+    }
+
+    /**
+     * This is the fallback for when tinkers is not present!
+     *
+     * @param block the block.
+     * @return if the block is a slime sapling.
+     */
+    protected boolean checkForTinkersSlimeSapling(@NotNull final Block block)
+    {
+        return false;
     }
 }

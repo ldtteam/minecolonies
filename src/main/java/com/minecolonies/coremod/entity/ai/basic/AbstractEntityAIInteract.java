@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.*;
@@ -180,7 +181,10 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
 
         final ItemStack tool = worker.getHeldItemMainhand();
 
-        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool) && curBlock != Blocks.BEDROCK)
+        if (tool != null && !ForgeHooks.canToolHarvestBlock(world, blockToMine, tool)
+              && curBlock != Blocks.BEDROCK
+              && !Compatibility.isSlimeBlock(curBlock)
+              && !Compatibility.isSlimeLeaf(curBlock))
         {
             Log.getLogger().info(String.format(
               "ForgeHook not in sync with EfficientTool for %s and %s\n"
