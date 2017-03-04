@@ -145,8 +145,14 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
             if (foundPosition)
             {
-                /* everything checks out good make the TP and jump out*/
-                playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
+                if(MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+                {
+                    playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
+                }
+                else
+                {
+                    sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
+                }
                 return;
             }
         }
@@ -170,16 +176,3 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         return index == 0;
     }
 }
-
-
-
-
-                if(MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
-                {
-                    playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
-                }
-                else
-                {
-                    sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
-                }
-                return;
