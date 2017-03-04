@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.buildings.BuildingMiner;
+import com.minecolonies.coremod.colony.buildings.utils.BuildingBuilderResource;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.AbstractJobStructure;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
@@ -35,6 +36,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFlowerPot;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -456,7 +458,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             tempRotation = workOrder.getRotation();
         }
 
-        loadStructure(workOrder.getStructureName(), tempRotation, pos);
+        loadStructure(workOrder.getStructureName(), tempRotation, pos, workOrder.isMirrored());
 
         workOrder.setCleared(false);
         workOrder.setRequested(false);
@@ -491,10 +493,11 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * Loads the structure given the name, rotation and position.
      *
      * @param name        the name to retrieve  it.
-     * @param rotateTimes number of times to rotate it.
+     * @param rotateTimes number of times to rotateWithMirror it.
      * @param position    the position to set it.
+     * @param isMirrored  is the structure mirroed?
      */
-    public void loadStructure(@NotNull final String name, int rotateTimes, BlockPos position)
+    public void loadStructure(@NotNull final String name, int rotateTimes, BlockPos position, boolean isMirrored)
     {
         if (job instanceof AbstractJobStructure)
         {
@@ -502,6 +505,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             try
             {
                 final StructureWrapper wrapper = new StructureWrapper(world, name);
+
                 ((AbstractJobStructure) job).setStructure(wrapper);
                 currentStructure = new Structure(world, wrapper, Structure.Stage.CLEAR);
             }
@@ -511,7 +515,7 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 ((AbstractJobStructure) job).setStructure(null);
             }
 
-            ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position);
+            ((AbstractJobStructure) job).getStructure().rotate(rotateTimes, world, position, isMirrored ? Mirror.FRONT_BACK : Mirror.NONE);
             ((AbstractJobStructure) job).getStructure().setPosition(position);
         }
     }
@@ -890,8 +894,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
         final AbstractBuildingWorker buildingWorker = getOwnBuilding();
         if (buildingWorker instanceof BuildingBuilder)
         {
-            final ItemStack tempStack = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
-            return tempStack == null ? stack : tempStack.copy();
+            final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
+            return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
         }
         return stack;
     }

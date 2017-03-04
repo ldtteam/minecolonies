@@ -21,7 +21,7 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
  */
 public class CitizenInfoCommand extends AbstractCitizensCommands
 {
-    public static final  String       DESC                            = "citizenInfo";
+    public static final  String       DESC                            = "info";
     private static final String       CITIZEN_DESCRIPTION             = "§2ID: §f %d §2 Name: §f %s";
     private static final String       CITIZEN_LEVEL_AND_AGE           = "§2Level: §f%s §2Age: §f%s §2Experience: §f%s";
     private static final String       CITIZEN_SKILLS                  = "§2Charisma: §f%s §2Dexterity: §f%s §2Endurance: §f%s\n§2Intelligence: §f%s §2Strength: §f%s";
@@ -30,11 +30,11 @@ public class CitizenInfoCommand extends AbstractCitizensCommands
     private static final String       CITIZEN_HEALTH                  = "§2Health: §f%s §2Max Health: §f%s";
     private static final String       CITIZEN_DESIRED_ACTIVITY        = "§2Desired activity: §f%s §2Current Activity: §f%s";
     private static final String       CITIZEN_HOME_POSITION           = "§2Home position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_WORK_POSITION           = "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_POSITION                = "§2Citizen position: §4x=§f%s §4y=§f%s §4z=§f%s";
-    private static final String       CITIZEN_WORK_POSITION_NULL      = "§2Work position: §4No work position found!";
-    private static final String       CITIZEN_NO_ACTIVITY             = "§4No activity is being desired or executed!";
-    private static final String       CITIZEN_NOT_LOADED              = "Citizen entity not loaded!";
+    private static final String       CITIZEN_WORK_POSITION      = "§2Work position: §4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String       CITIZEN_POSITION           = "§2Citizen position: §4x=§f%s §4y=§f%s §4z=§f%s";
+    private static final String       CITIZEN_WORK_POSITION_NULL = "§2Work position: §4No work position found!";
+    private static final String       CITIZEN_NO_ACTIVITY        = "§4No activity is being desired or executed!";
+    private static final String       CITIZEN_NOT_LOADED         = "Citizen entity not loaded!";
 
     /**
      * Initialize this SubCommand with it's parents.

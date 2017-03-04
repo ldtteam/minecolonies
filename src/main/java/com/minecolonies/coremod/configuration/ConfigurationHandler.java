@@ -38,6 +38,8 @@ public final class ConfigurationHandler
         try
         {
             config.load();
+            builderPlaceConstructionTape = config.get(CATEGORY_GAMEPLAY, "placeConstructionTape", builderPlaceConstructionTape,
+                    "Should builder place construction tape").getBoolean();
             workingRangeTownHall = config.get(CATEGORY_GAMEPLAY, "workingRangeTownHall", workingRangeTownHall,
                     "Colony size (radius)").getInt();
             townHallPadding = config.get(CATEGORY_GAMEPLAY, "townHallPadding", townHallPadding,
@@ -61,14 +63,12 @@ public final class ConfigurationHandler
                     "Turn off explosions inside the colonies radius?").getBoolean();
 
             /* Configs for commands */
-            opLevelForServer = config.get(CATEGORY_GAMEPLAY, "opLevelForServer", opLevelForServer,
-                    "OP level to use all commands").getInt();
+            teleportBuffer = config.get(CATEGORY_GAMEPLAY, "timeBetweenTeleport", teleportBuffer,
+                    "Time until the next teleport in seconds").getInt();
             canPlayerUseCitizenInfoCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCitizenInfoCommand", canPlayerUseCitizenInfoCommand,
                     "Players get CitizenInfoCommand").getBoolean();
-            canPlayerUseRTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseCTPCommand", canPlayerUseRTPCommand,
+            canPlayerUseRTPCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseRTPCommand", canPlayerUseRTPCommand,
                     "Players can use the MC TP Command or not").getBoolean();
-            canPlayerUseRefreshColonyCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseHomeTPCommand", canPlayerUseHomeTPCommand,
-                    "Players get HomeTPCommand").getBoolean();
             canPlayerUseDeleteColonyCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseDeleteColonyCommand", canPlayerUseDeleteColonyCommand,
                     "Players get DeleteColonyCommand").getBoolean();
             canPlayerUseKillCitizensCommand = config.get(CATEGORY_GAMEPLAY, "canPlayerUseKillCitizensCommand", canPlayerUseKillCitizensCommand,

@@ -4,6 +4,7 @@ public class Configurations
 {
     public static final int     CITIZEN_RESPAWN_INTERVAL_MIN = 10;
     public static final int     CITIZEN_RESPAWN_INTERVAL_MAX = 600;
+    public static       boolean builderPlaceConstructionTape = true;
     public static       int     workingRangeTownHall         = 100;
     public static       int     townHallPadding              = 20;
     public static       boolean supplyChests                 = true;
@@ -17,9 +18,9 @@ public class Configurations
     public static boolean turnOffExplosionsInColonies = true;
 
     /* Command configs */
+    public static int teleportBuffer = 120;
     public static int opLevelForServer = 3;
     public static boolean canPlayerUseRTPCommand = true;
-    public static boolean canPlayerUseHomeTPCommand = true;
     public static boolean canPlayerUseCitizenInfoCommand = true;
     public static boolean canPlayerUseListCitizensCommand = true;
     public static boolean canPlayerRespawnCitizensCommand = true;
@@ -35,6 +36,7 @@ public class Configurations
     public static int maxDistanceFromWorldSpawn = 8000;
     public static int minDistanceFromWorldSpawn = 512;
 
+    public static boolean canPlayerUseHomeTPCommand = true;
     //TODO change to false when material handling is implemented
     public static boolean deliverymanInfiniteResources = false;
 

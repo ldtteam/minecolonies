@@ -9,6 +9,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -21,6 +22,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Random;
 
 import static net.minecraft.util.EnumFacing.*;
 
@@ -39,7 +42,7 @@ public class BlockConstructionTape extends Block
     /**
      * The hardness this block has.
      */
-    private static final float BLOCK_HARDNESS = 50.0F;
+    private static final float BLOCK_HARDNESS = 0.0F;
 
     /**
      * This blocks name.
@@ -49,7 +52,7 @@ public class BlockConstructionTape extends Block
     /**
      * The resistance this block has.
      */
-    private static final float RESISTANCE = 2000.0F;
+    private static final float RESISTANCE = 0.0F;
 
     /**
      * Start of the collision box at y.
@@ -110,7 +113,7 @@ public class BlockConstructionTape extends Block
      */
     public BlockConstructionTape()
     {
-        super(Material.WOOD);
+        super(Material.VINE);
         initBlock();
     }
 
@@ -129,7 +132,17 @@ public class BlockConstructionTape extends Block
         setHardness(BLOCK_HARDNESS);
         setResistance(RESISTANCE);
         setLightOpacity(LIGHT_OPACITY);
-        setBlockUnbreakable();
+        blockMaterial.setReplaceable();
+    }
+
+    /**
+     * @deprecated (Remove this as soon as minecraft offers anything better).
+     */
+    @Override
+    @Deprecated
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos)
+    {
+        return null;
     }
 
     @Override
@@ -137,7 +150,7 @@ public class BlockConstructionTape extends Block
     {
         return state.getValue(FACING).getIndex();
     }
-
+    
     /**
      * Convert the given metadata into a BlockState for this Block.
      *
@@ -236,6 +249,13 @@ public class BlockConstructionTape extends Block
                                       (float) HEIGHT_COLLISION,
                                       (float) SN_END_COLLISION_Z);
         }
+    }
+
+    @Nullable
+    @Override
+    public Item getItemDropped(final IBlockState state, final Random rand, final int fortune)
+    {
+        return null;
     }
 
     // =======================================================================

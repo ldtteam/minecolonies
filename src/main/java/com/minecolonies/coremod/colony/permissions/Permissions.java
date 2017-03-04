@@ -272,7 +272,7 @@ public class Permissions implements IPermissions
 
     /**
      * Change the owner of a colony.
-     * @param playerName the player to set.
+     * @param player the player to set.
      * @return true if succesful.
      */
     public boolean setOwner(final EntityPlayer player)
@@ -649,7 +649,9 @@ public class Permissions implements IPermissions
     public boolean isSubscriber(@NotNull final EntityPlayer player)
     {
         return isSubscriber(player.getGameProfile().getId());
-    }    @Override
+    }
+
+    @Override
     public boolean isColonyMember(@NotNull final EntityPlayer player)
     {
         return players.containsKey(player.getGameProfile().getId());

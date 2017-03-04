@@ -21,7 +21,7 @@ public class ItemStorage
     /**
      * The amount.
      */
-    private final int amount;
+    private int amount;
 
     /**
      * Set this to ignore the damage value in comparisons.
@@ -53,6 +53,17 @@ public class ItemStorage
     {
         return amount;
     }
+
+    /**
+     * Setter for the quantity.
+     *
+     * @param amount the amount.
+     */
+    public void setAmount(final int amount)
+    {
+        this.amount = amount;
+    }
+
 
     /**
      * Getter for the ignoreDamageValue.

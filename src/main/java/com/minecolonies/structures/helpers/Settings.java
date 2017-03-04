@@ -1,6 +1,7 @@
 package com.minecolonies.structures.helpers;
 
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
+import net.minecraft.util.Mirror;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.gen.structure.template.PlacementSettings;
 import net.minecraft.world.gen.structure.template.Template;
@@ -21,6 +22,7 @@ public final class Settings
      * The position of the structure.
      */
     public              BlockPos                 pos            = null;
+    private             boolean                  isMirrored     = false;
     private             boolean                  inHutMode      = true;
     @Nullable
     private             Structure                structure      = null;
@@ -88,6 +90,7 @@ public final class Settings
         isPendingReset = false;
         offset.setPos(0, 0, 0);
         rotation = 0;
+        isMirrored = false;
     }
 
     /**
@@ -201,5 +204,35 @@ public final class Settings
             }
         }
         return new BlockPos(0, 0, 0);
+    }
+
+    /**
+     * Makes the building mirror.
+     */
+    public void mirror()
+    {
+        if (structure == null)
+        {
+            return;
+        }
+        isMirrored = !isMirrored;
+
+        structure.setPlacementSettings(structure.getSettings().setMirror(getMirror()));
+    }
+
+    /**
+     * Get the mirror.
+     * @return the mirror object.
+     */
+    public Mirror getMirror()
+    {
+        if (isMirrored)
+        {
+            return Mirror.FRONT_BACK;
+        }
+        else
+        {
+            return Mirror.NONE;
+        }
     }
 }

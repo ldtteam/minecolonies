@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.entity;
 
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
@@ -24,6 +24,8 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -354,6 +356,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
         return level;
     }
 
+    /**
+     * On Inventory change, mark the building dirty.
+     */
+    public void onInventoryChanged()
+    {
+        final AbstractBuildingWorker building = citizenData.getWorkBuilding();
+        if (building!=null)
+        {
+            building.markDirty();
+        }
+    }
+
     public void setRenderMetadata(final String metadata)
     {
         renderMetadata = metadata;
@@ -606,6 +620,38 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
+     * Trigger the corresponding death achievement.
+     * @param source    The damage source.
+     * @param job       The job of the citizen.
+     */
+    public void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
+    {
+        if (job instanceof JobMiner)
+        {
+            if (source == DamageSource.lava || source == DamageSource.inFire || source == DamageSource.onFire)
+            {
+                this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathLava);
+            }
+            if (source.equals(DamageSource.fall))
+            {
+                this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathFall);
+            }
+        }
+        if (job instanceof JobLumberjack && source == DamageSource.inWall)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
+        }
+        if (job instanceof JobFisherman && source.getEntity() instanceof EntityGuardian)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
+        }
+        if(job instanceof JobGuard && source.getEntity() instanceof EntityEnderman)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
+        }
+    }
+
+    /**
      * Called when the mob's health reaches 0.
      *
      * @param par1DamageSource the attacking entity.
@@ -618,6 +664,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (colony != null)
         {
+            triggerDeathAchievement(par1DamageSource,getColonyJob());
             if (getColonyJob() instanceof JobGuard)
             {
                 LanguageHandler.sendPlayersMessage(

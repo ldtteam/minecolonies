@@ -574,6 +574,10 @@ public class InventoryCitizen implements IInventory
     public void markDirty()
     {
         this.inventoryChanged = true;
+        if (this.citizen != null)
+        {
+            this.citizen.onInventoryChanged();
+        }
     }
 
     /**
@@ -714,3 +718,4 @@ public class InventoryCitizen implements IInventory
         compound.setTag(TAG_INVENTORY, nbttaglist);
     }
 }
+

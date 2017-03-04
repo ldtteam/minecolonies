@@ -1,14 +1,16 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.test.AbstractTest;
 import net.minecraft.util.math.BlockPos;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 
 //TODO improve this test: check the value is correct, better edge cases
-public class DistanceSquaredTest extends AbstractTest
+@RunWith(MockitoJUnitRunner.class)
+public class DistanceSquaredTest
 {
     /**
      * Max x/z position in vanilla minecraft.
@@ -19,12 +21,6 @@ public class DistanceSquaredTest extends AbstractTest
      * Max y position in vanilla minecraft.
      */
     private static final int MAX_HEIGHT = 500;
-
-    @Override
-    public String getTestName()
-    {
-        return "DistanceSquaredTest";
-    }
 
     @Test
     public void testDistance2DTwoPositions()

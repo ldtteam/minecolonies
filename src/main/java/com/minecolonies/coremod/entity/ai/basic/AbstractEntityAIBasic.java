@@ -55,6 +55,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private static final int             HIT_EVERY_X_TICKS       = 5;
     /**
+     * Diamond pickaxe level.
+     */
+    private static final int DIAMOND_LEVEL                       = 3;
+    /**
      * The list of all items and their quantity that were requested by the worker.
      * Warning: This list does not change, if you need to see what is currently missing,
      * look at @see #itemsCurrentlyNeeded for things the miner needs.
@@ -1227,7 +1231,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                 checkForPickaxe(required);
                 break;
             default:
-                Log.getLogger().error("Invalid tool " + tool + " not implemented as tool!");
+                checkForPickaxe(DIAMOND_LEVEL);
+                Log.getLogger().error("Invalid tool " + tool + " not implemented as tool will require pickaxe level 4 instead.");
         }
     }
 
