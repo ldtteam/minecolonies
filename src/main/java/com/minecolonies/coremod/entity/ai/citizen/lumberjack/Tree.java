@@ -210,7 +210,7 @@ public class Tree
                 {
                     final BlockPos temp = log.add(x, y, z);
                     final Block block = world.getBlockState(temp).getBlock();
-                    if ((block.isWood(null, temp) || Compatibility.isSlimeBlock(block) ) && !woodenBlocks.contains(temp))
+                    if ((block.isWood(null, temp) || Compatibility.isSlimeBlock(block)) && !woodenBlocks.contains(temp))
                     {
                         return getBottomAndTopLog(world, temp, woodenBlocks, bottom, top);
                     }
@@ -407,9 +407,9 @@ public class Tree
             locZMax = locZMin;
             locZMin = temp;
         }
-        for ( int locX = locXMin; locX <= locXMax; locX++)
+        for (int locX = locXMin; locX <= locXMax; locX++)
         {
-            for ( int locY = locYMin; locY <= locYMax; locY++)
+            for (int locY = locYMin; locY <= locYMax; locY++)
             {
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
@@ -420,9 +420,9 @@ public class Tree
                     }
                 }
             }
-
         }
     }
+
     /**
      * Returns the next log block.
      *

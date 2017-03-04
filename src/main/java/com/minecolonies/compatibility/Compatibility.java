@@ -33,16 +33,18 @@ public final class Compatibility
 
     /**
      * This method checks if block is slime block.
+     *
      * @param block the block.
      * @return if the block is a slime block.
      */
     public static boolean isSlimeBlock(@NotNull final Block block)
     {
-         return SlimeTreeCheck.isSlimeBlock(block);
+        return SlimeTreeCheck.isSlimeBlock(block);
     }
 
     /**
      * This method checks if block is slime leaf.
+     *
      * @param block the block.
      * @return if the block is a slime leaf.
      */
@@ -53,6 +55,7 @@ public final class Compatibility
 
     /**
      * This method checks if block is slime sapling.
+     *
      * @param block the block.
      * @return if the block is a slime sapling.
      */

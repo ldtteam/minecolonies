@@ -348,17 +348,16 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             }
             job.tree.pollNextLog();
         }
-        else
-            if (job.tree.hasleaves() && isSlimeTree)
+        else if (job.tree.hasleaves() && isSlimeTree)
+        {
+            //take first leaf from queue
+            final BlockPos leaf = job.tree.peekNextLeaf();
+            if (!mineBlock(leaf))
             {
-                //take first leaf from queue
-                final BlockPos leaf = job.tree.peekNextLeaf();
-                if (!mineBlock(leaf))
-                {
-                    return getState();
-                }
-                job.tree.pollNextLeaf();
+                return getState();
             }
+            job.tree.pollNextLeaf();
+        }
         return getState();
     }
 

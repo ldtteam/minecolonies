@@ -43,7 +43,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
     /**
      * The minimum range the builder has to reach in order to construct or clear.
      */
-    private static final int    MIN_WORKING_RANGE             = 12;
+    private static final int    MIN_WORKING_RANGE    = 12;
 
     /**
      * Creates the abstract part of the AI.
@@ -140,7 +140,7 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
               || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
               || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
               || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
-              || world.getBlockState(blockToMine).getBlock() ==(Blocks.EMERALD_ORE))
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.EMERALD_ORE))
         {
             this.getOwnBuilding().getColony().incrementStatistic("ores");
         }
@@ -161,7 +161,6 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             this.getOwnBuilding().getColony().incrementStatistic("wheat");
         }
     }
-
 
     /**
      * Checks for the right tools and waits for an appropriate delay.
