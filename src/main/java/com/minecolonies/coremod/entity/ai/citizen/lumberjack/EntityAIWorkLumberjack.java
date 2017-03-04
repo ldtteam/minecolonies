@@ -80,12 +80,12 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     /**
      * The standard range the lumberjack should reach until his target.
      */
-    private static final int STANDARD_WORKING_RANGE = 2;
+    private static final int STANDARD_WORKING_RANGE = 1;
 
     /**
      * The minimum range the lumberjack has to reach in order to construct or clear.
      */
-    private static final int MIN_WORKING_RANGE      = 2;
+    private static final int MIN_WORKING_RANGE      = 1;
 
     /**
      * Time in ticks to wait before placing a sapling.
@@ -351,7 +351,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         }
 
         //The miner shouldn't search for a save position. Just let him build from where he currently is.
-        return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) < MIN_WORKING_RANGE;
+        return worker.isWorkerAtSiteWithMove(workFrom, STANDARD_WORKING_RANGE) || MathUtils.twoDimDistance(worker.getPosition(), workFrom) <= MIN_WORKING_RANGE;
     }
 
     /**
@@ -366,7 +366,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     private AIState chopTree()
     {
         final BlockPos location = job.tree.getLocation();
-        if (walkToTree(location))
+        if (!walkToTree(location))
         {
             checkIfStuckOnLeaves(location);
             return getState();
