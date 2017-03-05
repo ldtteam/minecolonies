@@ -48,8 +48,6 @@ public class HomeTeleportCommand extends AbstractSingleCommand
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
 
-
-
         //see if player is allowed to use in the configs
             if (!canCommandSenderUseCommand(HOMETP))
             {

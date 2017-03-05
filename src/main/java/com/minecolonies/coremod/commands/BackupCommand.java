@@ -38,11 +38,7 @@ public class BackupCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
 
-        if (!canCommandSenderUseCommand(MC_BACKUP))
-        {
-            sender.addChatMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
-        }
-        else
+        if (isPlayerOpped(sender, String.valueOf(MC_BACKUP)))
         {
             server.addScheduledTask(() -> {
                 if (ColonyManager.backupColonyData())

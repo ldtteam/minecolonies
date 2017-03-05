@@ -71,7 +71,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
                 return;
             }
-            EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
+            final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
             colonyId = colony.getID();
         }
