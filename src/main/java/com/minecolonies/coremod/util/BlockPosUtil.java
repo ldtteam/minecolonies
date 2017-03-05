@@ -31,6 +31,11 @@ public final class BlockPosUtil
      */
     private static final double CLOSE_DISTANCE = 4.84;
 
+    /**
+     * Max depth of the floor check to avoid endless void searching (Stackoverflow).
+     */
+    private static final int MAX_DEPTH = 50;
+
     private BlockPosUtil()
     {
         //Hide default constructor.
@@ -472,7 +477,7 @@ public final class BlockPosUtil
     @Nullable
     private static BlockPos getFloor(@NotNull final BlockPos position, int depth, @NotNull final World world)
     {
-        if (depth > 50)
+        if (depth > MAX_DEPTH)
         {
             return null;
         }
