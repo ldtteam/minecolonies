@@ -762,7 +762,7 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      */
     private BlockPos getNodeMiningPosition(BlockPos blockToMine)
     {
-        BuildingMiner buildingMiner = getOwnBuilding();
+        final BuildingMiner buildingMiner = getOwnBuilding();
         if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
         {
             return blockToMine;

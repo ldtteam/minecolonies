@@ -447,6 +447,7 @@ public final class BlockPosUtil
      * Calculates the floor level.
      *
      * @param position input position.
+     * @param world    the world the position is in.
      * @return returns BlockPos position with air above.
      */
     @NotNull
@@ -465,6 +466,7 @@ public final class BlockPosUtil
      *
      * @param position input position.
      * @param depth    the iteration depth.
+     * @param world    the world the position is in.
      * @return returns BlockPos position with air above.
      */
     @Nullable
