@@ -202,8 +202,7 @@ public class ColonyPermissionEventHandler
 
             @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(event.getEntityPlayer(), event.getWorld());
 
-            if(event.getItemStack() != null
-                    && event.getItemStack().getItem() instanceof ItemMonsterPlacer
+            if(event.getItemStack().getItem() instanceof ItemMonsterPlacer
                     && !colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
             {
                 cancelEvent(event);

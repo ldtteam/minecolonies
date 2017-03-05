@@ -94,12 +94,6 @@ public class Colony implements IColony
 
     //private int autoHostile = 0;//Off
     private static final String TAG_FIELDS                  = "fields";
-    private static final String TAG_MOB_KILLS               = "mobKills";
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIRST  = 1;
-    private static final int    NUM_MOBS_ACHIEVEMENT_SECOND = 25;
-    private static final int    NUM_MOBS_ACHIEVEMENT_THIRD  = 100;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FOURTH = 500;
-    private static final int    NUM_MOBS_ACHIEVEMENT_FIFTH  = 1000;
     private static final int    CHECK_WAYPOINT_EVERY              = 100;
     private static final double MAX_SQ_DIST_SUBSCRIBER_UPDATE     = MathUtils.square(Configurations.workingRangeTownHall + 16D);
     private static final double MAX_SQ_DIST_OLD_SUBSCRIBER_UPDATE = MathUtils.square(Configurations.workingRangeTownHall * 2D);
