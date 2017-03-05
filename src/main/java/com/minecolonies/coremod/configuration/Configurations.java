@@ -28,7 +28,8 @@ public class Configurations
     public static boolean canPlayerUseKillCitizensCommand = true;
     public static boolean canPlayerUseAddOfficerCommand = true;
     public static boolean canPlayerUseDeleteColonyCommand = true;
-    public static boolean canPlayerUseRefreshColonyCommand;
+    public static boolean canPlayerUseRefreshColonyCommand = false;
+    public static boolean canPlayerUseBackupCommand = false;
 
 
     /* Colony TP configs */

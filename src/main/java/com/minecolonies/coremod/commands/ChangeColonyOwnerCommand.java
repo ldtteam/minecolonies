@@ -18,7 +18,7 @@ import java.util.List;
 import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.CHANGE_COLONY_OWNER;
 
 /**
- * List all colonies.
+ * gives ability to change the colony owner.
  */
 public class ChangeColonyOwnerCommand extends AbstractSingleCommand
 {

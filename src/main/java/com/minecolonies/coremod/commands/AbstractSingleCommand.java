@@ -19,7 +19,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     public static final String NOT_PERMITTED = "You are not allowed to do that!";
     enum Commands
     {
-        CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY, HOMETP
+        CITIZENINFO, COLONYTP, DELETECOLONY, KILLCITIZENS, LISTCITIZENS, RESPAWNCITIZENS, SHOWCOLONYINFO, ADDOFFICER, CHANGE_COLONY_OWNER, REFRESH_COLONY, HOMETP, MC_BACKUP
     }
 
     /**
@@ -136,6 +136,8 @@ public abstract class AbstractSingleCommand implements ISubCommand
                 return Configurations.canPlayerUseDeleteColonyCommand;
             case REFRESH_COLONY:
                 return Configurations.canPlayerUseRefreshColonyCommand;
+            case MC_BACKUP:
+                return Configurations.canPlayerUseBackupCommand;
         }
 
         return false;
