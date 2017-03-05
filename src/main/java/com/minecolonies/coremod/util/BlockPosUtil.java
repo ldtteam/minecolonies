@@ -17,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -440,5 +441,49 @@ public final class BlockPosUtil
     public static BlockPos fromEntity(@NotNull final Entity entity)
     {
         return new BlockPos(MathHelper.floor_double(entity.posX), MathHelper.floor_double(entity.posY), MathHelper.floor_double(entity.posZ));
+    }
+
+    /**
+     * Calculates the floor level.
+     *
+     * @param position input position.
+     * @return returns BlockPos position with air above.
+     */
+    @NotNull
+    public static BlockPos getFloor(@NotNull BlockPos position, @NotNull final World world)
+    {
+        final BlockPos floor = getFloor(position, 0, world);
+        if (floor == null)
+        {
+            return position;
+        }
+        return floor;
+    }
+
+    /**
+     * Calculates the floor level.
+     *
+     * @param position input position.
+     * @param depth    the iteration depth.
+     * @return returns BlockPos position with air above.
+     */
+    @Nullable
+    private static BlockPos getFloor(@NotNull final BlockPos position, int depth, @NotNull final World world)
+    {
+        if (depth > 50)
+        {
+            return null;
+        }
+        //If the position is floating in Air go downwards
+        if (!EntityUtils.solidOrLiquid(world, position))
+        {
+            return getFloor(position.down(), depth + 1, world);
+        }
+        //If there is no air above the block go upwards
+        if (!EntityUtils.solidOrLiquid(world, position.up()))
+        {
+            return position;
+        }
+        return getFloor(position.up(), depth + 1, world);
     }
 }

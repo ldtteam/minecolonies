@@ -1370,50 +1370,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     @NotNull
     private BlockPos getPositionInDirection(final EnumFacing facing, final int distance, final BlockPos targetPos)
     {
-        return getFloor(targetPos.offset(facing, distance));
-    }
-
-    /**
-     * Calculates the floor level.
-     *
-     * @param position input position.
-     * @return returns BlockPos position with air above.
-     */
-    @NotNull
-    private BlockPos getFloor(@NotNull BlockPos position)
-    {
-        final BlockPos floor = getFloor(position, 0);
-        if (floor == null)
-        {
-            return position;
-        }
-        return floor;
-    }
-
-    /**
-     * Calculates the floor level.
-     *
-     * @param position input position.
-     * @param depth    the iteration depth.
-     * @return returns BlockPos position with air above.
-     */
-    @Nullable
-    private BlockPos getFloor(@NotNull BlockPos position, int depth)
-    {
-        if (depth > 50)
-        {
-            return null;
-        }
-        //If the position is floating in Air go downwards
-        if (!EntityUtils.solidOrLiquid(world, position))
-        {
-            return getFloor(position.down(), depth + 1);
-        }
-        //If there is no air above the block go upwards
-        if (!EntityUtils.solidOrLiquid(world, position.up()))
-        {
-            return position;
-        }
-        return getFloor(position.up(), depth + 1);
+        return BlockPosUtil.getFloor(targetPos.offset(facing, distance), world);
     }
 }
