@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -23,10 +24,10 @@ import static org.powermock.api.mockito.PowerMockito.*;
 @PrepareForTest({ColonyManager.class, LanguageHandler.class, Log.class})
 @PowerMockIgnore("javax.management.*")
 @RunWith(PowerMockRunner.class)
-public abstract class AbstractTest
+public abstract class AbstractMockStaticsTest
 {
-
-    private Random random;
+    @Mock
+    private Logger logger;
 
     @Before
     public void setupStaticMocks() throws Exception
@@ -38,19 +39,6 @@ public abstract class AbstractTest
         doNothing().when(LanguageHandler.class, "sendPlayerMessage", anyObject(), anyString());
         doNothing().when(LanguageHandler.class, "sendPlayersMessage", anyObject(), anyString());
 
-        final Logger logger = LogManager.getLogger(getTestName());
-        random = new Random(getTestName().hashCode());
-
         doReturn(logger).when(Log.class, "getLogger");
-    }
-
-    public String getTestName()
-    {
-        return "AbstractTest";
-    }
-
-    public Random getRandom()
-    {
-        return random;
     }
 }
