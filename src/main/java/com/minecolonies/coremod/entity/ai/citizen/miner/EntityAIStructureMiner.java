@@ -762,26 +762,22 @@ public class EntityAIStructureMiner extends AbstractEntityAIStructure<JobMiner>
      */
     private BlockPos getNodeMiningPosition(BlockPos blockToMine)
     {
-        if (getOwnBuilding() instanceof BuildingMiner)
+        BuildingMiner buildingMiner = getOwnBuilding();
+        if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
         {
-            BuildingMiner buildingMiner = (BuildingMiner) getOwnBuilding();
-            if (buildingMiner.getCurrentLevel() == null || buildingMiner.getCurrentLevel().getRandomNode() == null)
-            {
-                return blockToMine;
-            }
-            final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
-            if(parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
-                    && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
-            {
-                final BlockPos ladderPos = buildingMiner.getLadderLocation();
-                return new BlockPos(
-                        ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
-                        buildingMiner.getCurrentLevel().getDepth(),
-                        ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
-            }
-            final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
-            return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
+            return blockToMine;
         }
-        return blockToMine;
+        final Point2D parentPos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+        if (parentPos != null && buildingMiner.getCurrentLevel().getNode(parentPos) != null
+                && buildingMiner.getCurrentLevel().getNode(parentPos).getStyle() == Node.NodeType.SHAFT)
+        {
+            final BlockPos ladderPos = buildingMiner.getLadderLocation();
+            return new BlockPos(
+                    ladderPos.getX() + buildingMiner.getVectorX() * OTHER_SIDE_OF_SHAFT,
+                    buildingMiner.getCurrentLevel().getDepth(),
+                    ladderPos.getZ() + buildingMiner.getVectorZ() * OTHER_SIDE_OF_SHAFT);
+        }
+        final Point2D pos = buildingMiner.getCurrentLevel().getRandomNode().getParent();
+        return new BlockPos(pos.getX(), buildingMiner.getCurrentLevel().getDepth(), pos.getY());
     }
 }
