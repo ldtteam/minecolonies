@@ -48,16 +48,17 @@ public class HomeTeleportCommand extends AbstractSingleCommand
     public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
     {
 
-        EntityPlayer playerToTeleport = null;
-        IColony colony = null;
-        int colonyId = 0;
+
+
         //see if player is allowed to use in the configs
             if (!canCommandSenderUseCommand(HOMETP))
             {
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
                 return;
             }
-
+        EntityPlayer playerToTeleport;
+        IColony colony;
+        int colonyId;
         //see if sent by a player and grab their name and Get the players Colony ID that sent the command
             if (sender instanceof EntityPlayer)
             {
@@ -90,7 +91,8 @@ public class HomeTeleportCommand extends AbstractSingleCommand
      * @param colID           the senders colony ID.
      * @param playerToTeleport the player which shall be teleported.
      */
-    private static void teleportPlayer(final EntityPlayer playerToTeleport,int colID) {
+    private static void teleportPlayer(final EntityPlayer playerToTeleport,int colID)
+    {
         final Colony colony = ColonyManager.getColony(colID);
         final BlockPos position = colony.getCenter();
 

@@ -138,9 +138,9 @@ public abstract class AbstractSingleCommand implements ISubCommand
                 return Configurations.canPlayerUseRefreshColonyCommand;
             case MC_BACKUP:
                 return Configurations.canPlayerUseBackupCommand;
+            default:
+                return false;
         }
-
-        return false;
     }
 
     /**

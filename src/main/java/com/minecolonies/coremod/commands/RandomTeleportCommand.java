@@ -125,18 +125,10 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             /* this math is to get negative numbers */
             final int x = getRandCoordinate();
             final int z = getRandCoordinate();
-
-            /* Check for a close by colony*/
-            if (ColonyManager.getColony(sender.getEntityWorld(), new BlockPos(x, STARTING_Y, z)) != null)
-            {
-                continue;
-            }
-
             /*Search for a ground position*/
             final BlockPos groundPosition = BlockPosUtil.findLand(new BlockPos(x, STARTING_Y, z), sender.getEntityWorld());
-
-            /*If no position found*/
-            if (groundPosition == null)
+            /* Check for a close by colony*/
+            if (ColonyManager.getColony(sender.getEntityWorld(), new BlockPos(x, STARTING_Y, z)) != null || (groundPosition == null))
             {
                 continue;
             }

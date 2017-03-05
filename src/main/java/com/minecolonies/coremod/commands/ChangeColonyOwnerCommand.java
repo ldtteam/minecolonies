@@ -62,29 +62,17 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
         }
 
         int colonyId = getIthArgument(args, 0, -1);
-
         if(colonyId == -1)
         {
             final String playerName = args[0];
+
             if(playerName == null || playerName.isEmpty())
             {
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
                 return;
             }
-
-            final EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
-            if(player == null)
-            {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(NO_PLAYER));
-                return;
-            }
-
+            EntityPlayer player = sender.getEntityWorld().getPlayerEntityByName(playerName);
             final IColony colony = ColonyManager.getIColonyByOwner(sender.getEntityWorld(), player.getUniqueID());
-            if(colony == null)
-            {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString(COLONY_NULL));
-                return;
-            }
             colonyId = colony.getID();
         }
 
@@ -92,7 +80,7 @@ public class ChangeColonyOwnerCommand extends AbstractSingleCommand
 
         if (colony == null)
         {
-            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId, colonyId)));
+            sender.addChatMessage(new TextComponentString(String.format(COLONY_NULL, colonyId)));
             return;
         }
 
