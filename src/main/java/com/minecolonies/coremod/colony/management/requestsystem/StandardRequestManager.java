@@ -16,6 +16,7 @@ import com.minecolonies.coremod.colony.management.requestsystem.api.resolver.IRe
 import com.minecolonies.coremod.colony.management.requestsystem.api.resolver.IRequestResolverProvider;
 import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import com.minecolonies.coremod.colony.management.requestsystem.token.StandardToken;
+import com.sun.org.apache.regexp.internal.RE;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -276,28 +277,64 @@ public class StandardRequestManager implements IRequestManager {
                 if (manager.resolverRequestMap.get(resolverToken).size() == 0) {
                     Log.getLogger().debug("Removing resolver without assigned requests: " + resolverToken);
                     manager.resolverRequestMap.remove(resolverToken);
-                    manager.resolverBiMap.remove()
+
+                    ResolverHandler.removeResolver(manager, resolverToken);
+
+                    continue;
                 }
 
-                Collection<IToken> assigned
+                //Clone the original list to modify it during iteration, if need be.
+                Collection<IToken> assignedRequests = new ArrayList<>(manager.resolverRequestMap.get(resolverToken));
                 Log.getLogger().debug("Starting reassignment of already registered requests registered to resolver with token: " + resolverToken);
 
                 //Get all assigned requests and reassign them.
-                for(IToken requestToken : manager.resolverRequestMap.get(resolverToken)) {
+                for(IToken requestToken : assignedRequests) {
                     Log.getLogger().debug("Removing assigned request: " + requestToken + " from resolver: " + resolverToken);
 
                     //No need to notify the resolver of the cancellation, It is getting removed anyway.
-                    //In that case: All resources lost.
-                    //Still have to handle all child requests though :D
+                    //In that case: All resources lost, restart on different resolver.
+                    //Also cancel all registered child task:
                     manager.resolverRequestMap.get(resolverToken).remove(requestToken);
                     manager.requestResolverMap.remove(requestToken);
 
+                    Log.getLogger().debug("Cancelling all child requests of:" + requestToken);
+
+                    //Check if the request has children.
+                    IRequest assignedRequest = RequestHandler.getRequest(manager, requestToken);
+                    if (assignedRequest.hasChildren()) {
+                        //Iterate over all children and call there onParentCancelled method to get a new cleanup parent.
+                        for (Object objectToken :
+                                assignedRequest.getChildren()) {
+                            if (objectToken instanceof IToken) {
+                                IToken childToken = (IToken) objectToken;
+                                IRequest childRequest = RequestHandler.getRequest(manager, childToken);
+
+                                //Check if the child has been assigned. If not, no work done, no cleanup needed.
+                                if (RequestHandler.isAssigned(manager, childToken)) {
+                                    //Get the child request
+                                    IRequestResolver childResolver = ResolverHandler.getResolverForRequest(manager, childToken);
+                                    IRequest cleanUpRequest = childResolver.onParentCancelled(manager, childRequest);
+
+                                    //Switch out the parent, and add the old child to the followup request as new child
+                                    cleanUpRequest.addChild(childToken);
+                                    childRequest.setParent(cleanUpRequest.getToken());
+
+                                    //Assign the new followup request if it is not assigned yet.
+                                    if(!RequestHandler.isAssigned(manager, cleanUpRequest.getToken()))
+                                        RequestHandler.assignRequest(manager, cleanUpRequest);
+                                }
+                            }
+                        }
+                    }
+
                     Log.getLogger().debug("Starting reassignment of: " + requestToken + " - Assigned to: " + resolverToken);
 
-                    RequestHandler.assignRequest(manager, RequestHandler.getRequest(manager, requestToken), assignedResolvers);
+                    RequestHandler.assignRequest(manager, assignedRequest, assignedResolvers);
 
                     Log.getLogger().debug("Finished reassignment of: " + requestToken + " - Assigned to: " + manager.requestResolverMap.get(requestToken));
                 }
+
+                ResolverHandler.removeResolver(manager, resolverToken);
 
                 Log.getLogger().debug("Finished reassignment of already registered requests registered to resolver with token: " + resolverToken);
             }
@@ -531,6 +568,38 @@ public class StandardRequestManager implements IRequestManager {
             manager.requestResolverMap.remove(request.getToken());
 
         }
+
+        /**
+         * Method used to get a resolver from a given request token.
+         * @param manager The manager to get the resolver from.
+         * @param requestToken The token of a request a the assigned resolver is requested for.
+         * @return The resolver for the request with the given token.
+         * @throws IllegalArgumentException when the token is unknown or the request is not assigned yet.
+         */
+        private static IRequestResolver getResolverForRequest(StandardRequestManager manager, IToken requestToken) throws IllegalArgumentException {
+            RequestHandler.getRequest(manager, requestToken);
+
+            if (!manager.requestResolverMap.containsKey(requestToken))
+                throw new IllegalArgumentException("The given token belongs to a not resolved request");
+
+            return getResolver(manager, manager.requestResolverMap.get(requestToken));
+        }
+
+        /**
+         * Method used to get a resolver from a given request token.
+         * @param manager The manager to get the resolver from.
+         * @param request The request a the assigned resolver is requested for.
+         * @return The resolver for the request.
+         * @throws IllegalArgumentException when the token is unknown or the request is not assigned yet.
+         */
+        private static IRequestResolver getResolverForRequest(StandardRequestManager manager, IRequest request) {
+            RequestHandler.getRequest(manager, request.getToken());
+
+            if (!manager.requestResolverMap.containsKey(request.getToken()))
+                throw new IllegalArgumentException("The given token belongs to a not resolved request");
+
+            return getResolver(manager, manager.requestResolverMap.get(request.getToken()));
+        }
     }
 
     /**
@@ -621,7 +690,7 @@ public class StandardRequestManager implements IRequestManager {
                 if (!resolver.canResolve(manager, request))
                     continue;
 
-                @Nullable List<IRequest> attemptResult = resolver.attemptResolve(manager, request);
+                @Nullable List<IRequest> attemptResult = resolver.attemptResolve(new WrappedBlacklistAssignmentRequestManager(manager, resolverTokenBlackList), request);
 
                 //Skip if attempt failed (aka attemptResult == null)
                 if (attemptResult == null)
@@ -647,6 +716,70 @@ public class StandardRequestManager implements IRequestManager {
 
             //TODO: Implement player fallback!
         }
+
+        /**
+         * Method used to check if a given request token is assigned to a resolver.
+         * @param manager The manager to check for.
+         * @param token The request token to check for.
+         * @return True when the request token has been assigned, false when not.
+         */
+        private static boolean isAssigned(StandardRequestManager manager, IToken token) {
+            return manager.requestResolverMap.containsKey(token);
+        }
+
+        /**
+         * Method used to handle the successful resolving of a request.
+         *
+         * @param manager The manager that got notified of the successful resolving of the request.
+         * @param token The token of the request that got finished successfully.
+         */
+        private static void onRequestSuccessful(StandardRequestManager manager, IToken token) {
+            IRequest request = getRequest(manager, token);
+            IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
+
+            //Retrieve a followup request.
+            IRequest followupRequest = resolver.getFollowupRequestForCompletion(manager, request);
+
+            //Check if the request has a parent
+            if (request.hasParent()) {
+                IRequest parentRequest = getRequest(manager, request.getToken());
+
+                //Assign the followup to the parent as a child so that processing is still halted.
+                if (followupRequest != null)
+                    parentRequest.addChild(followupRequest.getToken());
+
+                parentRequest.removeChild(request.getToken());
+                //TODO: Check for completion of all child tasks. If so run parent.
+            }
+
+            //Assign the followup request if need be
+            if (followupRequest != null) {
+                if (!isAssigned(manager, followupRequest.getToken()))
+                    assignRequest(manager, followupRequest);
+            }
+        }
+
+        /**
+         * Method used to handle request that were cancelled or overruled.
+         * @param manager The manager that got notified of the cancellation or overruling.
+         * @param token The token of the request that got cancelled or overruled
+         */
+        private static void onRequestCancelled(StandardRequestManager manager, IToken token) {
+            IRequest request = getRequest(manager, token);
+            IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, token);
+
+            IRequest cleanUpRequest = resolver.onParentCancelled(manager, request);
+
+            if (cleanUpRequest != null) {
+                //Switch out the parent, and add the old child to the cleanup request as new child
+                cleanUpRequest.addChild(token);
+                request.setParent(cleanUpRequest.getToken());
+
+                //Assign the new followup request if it is not assigned yet.
+                if(!RequestHandler.isAssigned(manager, cleanUpRequest.getToken()))
+                    RequestHandler.assignRequest(manager, cleanUpRequest);
+            }
+        }
     }
 
     /**
@@ -661,4 +794,138 @@ public class StandardRequestManager implements IRequestManager {
         }
     }
 
+    private final static class WrappedBlacklistAssignmentRequestManager implements IRequestManager {
+
+        @NotNull
+        private final StandardRequestManager wrappedManager;
+        @NotNull
+        private final Collection<IToken> blackListedResolvers;
+
+        private WrappedBlacklistAssignmentRequestManager(@NotNull StandardRequestManager wrappedManager, @NotNull Collection<IToken> blackListedResolvers) {
+            this.wrappedManager = wrappedManager;
+            this.blackListedResolvers = blackListedResolvers;
+        }
+
+        /**
+         * The colony this manager manages the requests for.
+         *
+         * @return The colony this manager manages the requests for.
+         */
+        @NotNull
+        @Override
+        public IColony getColony() {
+            return wrappedManager.getColony();
+        }
+
+        /**
+         * Method used to get the FactoryController of the RequestManager.
+         *
+         * @return The FactoryController of this RequestManager.
+         */
+        @NotNull
+        @Override
+        public IFactoryController getFactoryController() {
+            return wrappedManager.getFactoryController();
+        }
+
+        /**
+         * Method to create a request for a given object
+         *
+         * @param requester The requester.
+         * @param object    The Object that is being requested.
+         * @return The token representing the request.
+         * @throws IllegalArgumentException is thrown when this manager cannot produce a request for the given types.
+         */
+        @NotNull
+        @Override
+        public <T> IToken createRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException {
+            return wrappedManager.createRequest(requester, object);
+        }
+
+        /**
+         * Method used to assign a request to a resolver.
+         *
+         * @param token The token of the request to assign.
+         * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
+         */
+        @NotNull
+        @Override
+        public void assignRequest(@NotNull IToken token) throws IllegalArgumentException {
+            RequestHandler.assignRequest(wrappedManager, RequestHandler.getRequest(wrappedManager, token), blackListedResolvers);
+        }
+
+        /**
+         * Method used to create and immediately assign a request.
+         *
+         * @param requester The requester of the requestable.
+         * @param object    The requestable
+         * @return The token that represents the request.
+         * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
+         */
+        @NotNull
+        @Override
+        public <T> IToken createAndAssignRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException {
+            IToken token = createRequest(requester, object);
+            assignRequest(token);
+            return token;
+        }
+
+        /**
+         * Method to get a request for a given token.
+         *
+         * @param token The token to get a request for.
+         * @return The request of the given type for that token.
+         * @throws IllegalArgumentException when either their is no request with that token, or the token does not produce a request of the given type T.
+         */
+        @NotNull
+        @Override
+        public <T> IRequest<T> getRequestForToken(@NotNull IToken token) throws IllegalArgumentException {
+            return wrappedManager.getRequestForToken(token);
+        }
+
+        /**
+         * Method to update the state of a given request.
+         *
+         * @param token The token that represents a given request to update.
+         * @param state The new state of that request.
+         * @throws IllegalArgumentException when the token is unknown to this manager.
+         */
+        @NotNull
+        @Override
+        public void updateRequestState(@NotNull IToken token, @NotNull RequestState state) throws IllegalArgumentException {
+            wrappedManager.updateRequestState(token, state);
+        }
+
+        /**
+         * Method used to indicate to this manager that a new Provider has been added to the colony.
+         *
+         * @param provider The new provider.
+         * @throws IllegalArgumentException is thrown when a provider with the same token is already registered.
+         */
+        @Override
+        public void onProviderAddedToColony(@NotNull IRequestResolverProvider provider) throws IllegalArgumentException {
+            wrappedManager.onProviderAddedToColony(provider);
+        }
+
+        /**
+         * Method used to indicate to this manager that Provider has been removed from the colony.
+         *
+         * @param provider The removed provider.
+         * @throws IllegalArgumentException is thrown when no provider with the same token is registered.
+         */
+        @Override
+        public void onProviderRemovedFromColony(@NotNull IRequestResolverProvider provider) throws IllegalArgumentException {
+            wrappedManager.onProviderRemovedFromColony(provider);
+        }
+
+        @Override
+        public NBTTagCompound serializeNBT() {
+            return wrappedManager.serializeNBT();
+        }
+
+        @Override
+        public void deserializeNBT(NBTTagCompound nbt) {
+            wrappedManager.deserializeNBT(nbt);
+        }
+    }
 }

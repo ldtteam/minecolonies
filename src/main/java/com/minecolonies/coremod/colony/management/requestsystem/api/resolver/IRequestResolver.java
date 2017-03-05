@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.colony.management.requestsystem.api.resolver;
 
 import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestManager;
+import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocatable;
 import com.minecolonies.coremod.colony.management.requestsystem.api.request.IRequest;
 import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,7 @@ import java.util.List;
  * The resolver himself is responsible for storing the tokens of requests that he returns
  * @param <R> The request type that this resolver can provide.
  */
-public interface IRequestResolver<R> {
+public interface IRequestResolver<R> extends ILocatable {
 
     /**
      * Method to get the unique token, used to identify this resolver inside the request
@@ -64,32 +65,80 @@ public interface IRequestResolver<R> {
     List<IRequest> attemptResolve(@NotNull IRequestManager manager, @NotNull IRequest<R> request);
 
     /**
-     * Method used to resolve given request.
+     * Method used to resolve a given request.
+     * Is called the moment all Child requests are resolved.
+     *
      * <p>
-     * When this method is called all requirements should be fullfilled for this resolver.
-     * If this is not the case it will throw a RunTimeException
+     *     The resolver should update the state through the given manager.
      * </p>
      *
-     * A successful resolve returns a NonNull Object.
+     * <p>
+     *     When this method is called all requirements need be fullfilled for this resolver.
+     *     If this is not the case it will throw a RunTimeException
+     * </p>
      *
      * @param request The request to resolve.
-     * @param manager The manager that is resolving this request.
-     * @return The result of the resolving operation.
+     * @param manager The manager that is resolving this request, under normal conditions this is the colony manager.
      * @throws RuntimeException is thrown when the resolver could not resolve the request. Should never happen as attemptResolve should be called first,
      *                          and all requirements should be available to this resolver at this point in time.
      */
+    @Nullable
+    void resolve(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws RuntimeException;
+
+    /**
+     * Method called by the given manager to request a followup request.
+     * This should generally return a request that brings the result of the completed request to its requester.
+     *
+     * @param manager The manager that requests to followup request.
+     * @param completedRequest The request that has been completed and the given manager is requesting a followup for.
+     * @return The followup request for the completed request. Null if none is needed.
+     */
     @NotNull
-    R resolve(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws RuntimeException;
+    IRequest getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<R> completedRequest);
+
+    /**
+     * Method used to indicate to this resolver that a request has been Cancelled or Overruled (force resolved by Player).
+     *
+     * If a cleanup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
+     * which will properly handle the processing of the new request. If this request has child requests they will be transferred to the returned request automatically.
+     * If null is returned then the onParentCancelled method is called and each of the child methods can create their own cleanup requests.
+     *
+     * @param manager The manager that indicates the cancelling.
+     * @param request The request that has been overruled.
+     * @throws IllegalArgumentException is thrown when the overrulling failed.
+     */
+    @Nullable
+    IRequest onResolvingCancelled(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws IllegalArgumentException;
+
+    /**
+     * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
+     * and that the resolver of the parent did not return a cleanup request.
+     *
+     * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
+     * which will properly handle the processing of the new request.
+     *
+     * The returned request will then be used as the new parent and should be used to clean up the results of this request.
+     *
+     * @param manager The manager that indicates the cancelling or overrulling
+     * @param request The request that has been cancelled or overrulled.
+     * @throws IllegalArgumentException is thrown when the cancelling or overrulling failed.
+     */
+    @Nullable
+    IRequest onParentCancelled(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws IllegalArgumentException;
+
 
     /**
      * Method used to indicate to this resolver that a request that has been made is already fullfilled by a player (Overruled).
      *
+     * If a followup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
+     * which will properly handle the processing of the new request.
+     *
      * @param manager The manager that indicates the overrulling.
      * @param request The request that has been overruled.
-     * @return A request that is made automatically. For a crafting resolver, you could send a pickup request for the completed yet obsolete item.
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException is thrown when the overrulling failed.
      */
-    IRequest onResolvingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws IllegalArgumentException;
+    @Nullable
+    void onResolvingOverruled(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws IllegalArgumentException;
 
     /**
      * The priority of this resolver.

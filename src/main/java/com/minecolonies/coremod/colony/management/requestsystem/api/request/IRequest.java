@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.management.requestsystem.api.request;
 
 import com.google.common.collect.ImmutableCollection;
 import com.minecolonies.coremod.colony.management.requestsystem.api.IRequestManager;
+import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocation;
 import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import com.minecolonies.coremod.colony.management.requestsystem.api.RequestState;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,14 @@ public interface IRequest<R> {
      * @param manager The request manager that updated the state.
      */
     void setState(@NotNull IRequestManager manager, @NotNull RequestState state);
+
+    /**
+     * The location of the requester.
+     * Is generally used in delivery requests to produce a delivery for a result from this request.
+     * @return The location of requester of this request.
+     */
+    @NotNull
+    ILocation getRequesterLocation();
 
     /**
      * Return the object that is actually requested.

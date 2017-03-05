@@ -42,6 +42,25 @@ public interface IRequestManager extends INBTSerializable<NBTTagCompound> {
     <T> IToken createRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException;
 
     /**
+     * Method used to assign a request to a resolver.
+     * @param token The token of the request to assign.
+     * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
+     */
+    @NotNull
+    void assignRequest(@NotNull IToken token) throws IllegalArgumentException;
+
+    /**
+     * Method used to create and immediately assign a request.
+     * @param requester The requester of the requestable.
+     * @param object The requestable
+     * @param <T> The type of the requestable
+     * @return The token that represents the request.
+     * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
+     */
+    @NotNull
+    <T> IToken createAndAssignRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException;
+
+    /**
      * Method to get a request for a given token.
      * @param token The token to get a request for.
      * @param <T> The type of request that is being looked for.
