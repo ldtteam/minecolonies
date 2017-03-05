@@ -54,6 +54,11 @@ public class Tree
     private static final int NUMBER_OF_LEAVES = 3;
 
     /**
+     * Number of leaves in every direction from the middle of the tree.
+     */
+    private static final int LEAVES_WIDTH = 4;
+
+    /**
      * Max size a tree should have.
      */
     private static final int MAX_TREE_SIZE = 256;
@@ -388,12 +393,11 @@ public class Tree
      */
     private void addAndSearch(@NotNull final World world)
     {
-        int locXMin = location.getX() - 4;
-        int locXMax = location.getX() + 4;
-        int locYMin = location.getY() + 2;
-        int locYMax = MAX_TREE_SIZE;
-        int locZMin = location.getZ() - 4;
-        int locZMax = location.getZ() + 4;
+        int locXMin = location.getX() - LEAVES_WIDTH;
+        int locXMax = location.getX() + LEAVES_WIDTH;
+        final int locYMin = location.getY() + 2;
+        int locZMin = location.getZ() - LEAVES_WIDTH;
+        int locZMax = location.getZ() + LEAVES_WIDTH;
         int temp;
         if (locXMin > locXMax)
         {
@@ -409,11 +413,11 @@ public class Tree
         }
         for (int locX = locXMin; locX <= locXMax; locX++)
         {
-            for (int locY = locYMin; locY <= locYMax; locY++)
+            for (int locY = locYMin; locY <= MAX_TREE_SIZE; locY++)
             {
                 for (int locZ = locZMin; locZ <= locZMax; locZ++)
                 {
-                    BlockPos leaf = new BlockPos(locX, locY, locZ);
+                    final BlockPos leaf = new BlockPos(locX, locY, locZ);
                     if (world.getBlockState(leaf).getMaterial() == Material.LEAVES)
                     {
                         leaves.add(leaf);
@@ -463,7 +467,12 @@ public class Tree
         return leaves.peekLast();
     }
 
-    public boolean hasleaves()
+    /**
+     * Check if the found tree has any leaves.
+     *
+     * @return true if there are leaves associated with the tree.
+     */
+    public boolean hasLeaves()
     {
         return !leaves.isEmpty();
     }

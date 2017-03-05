@@ -177,7 +177,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             // fix for printing the actual exception
             e.printStackTrace();
-        }catch (RuntimeException exp){
+        }
+        catch (RuntimeException exp)
+        {
             Log.getLogger().error("Welp reporting crashed:");
             exp.printStackTrace();
             Log.getLogger().error("Caused by ai exception:");
@@ -1248,7 +1250,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         }
         else
         {
-        tool = target.getHarvestTool(target.getDefaultState());
+            tool = target.getHarvestTool(target.getDefaultState());
         }
         final int required = target.getHarvestLevel(target.getDefaultState());
         int bestSlot = -1;
@@ -1263,8 +1265,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             if ((level >= required && level < bestLevel) && (tool == null || InventoryUtils.verifyToolLevel(item, level, hutLevel)))
             {
-                    bestSlot = i;
-                    bestLevel = level;
+                bestSlot = i;
+                bestLevel = level;
             }
         }
 

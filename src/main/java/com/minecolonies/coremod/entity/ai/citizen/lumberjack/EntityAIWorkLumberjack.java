@@ -328,7 +328,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             return getState();
         }
 
-        if (!job.tree.hasLogs() && (!isSlimeTree || !job.tree.hasleaves()))
+        if (!job.tree.hasLogs() && (!isSlimeTree || !job.tree.hasLeaves()))
         {
             if (hasNotDelayed(WAIT_BEFORE_SAPLING))
             {
@@ -348,7 +348,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             }
             job.tree.pollNextLog();
         }
-        else if (job.tree.hasleaves() && isSlimeTree)
+        else if (job.tree.hasLeaves() && isSlimeTree)
         {
             //take first leaf from queue
             final BlockPos leaf = job.tree.peekNextLeaf();
