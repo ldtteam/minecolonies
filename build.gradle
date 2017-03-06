@@ -12,8 +12,14 @@ buildscript {
 }
 plugins {
     id "org.sonarqube" version "2.1-rc3"
-} 
+}
 
+repositories {
+    maven {
+        name 'DVS1 Maven FS'
+        url 'http://dvs1.progwml6.com/files/maven'
+    }
+}
 
 sonarqube {
     properties{
@@ -34,6 +40,9 @@ jacocoTestReport {
 }
 
 dependencies {
+    deobfCompile "slimeknights.mantle:Mantle:1.10.2-1.1.5.205"
+    deobfCompile "slimeknights:TConstruct:1.10.2-2.6.3.500"
+
     testCompile 'junit:junit:4.11'
     testCompile "org.mockito:mockito-core:1.+"
     testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '1.6.5'
