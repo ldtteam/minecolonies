@@ -97,20 +97,6 @@ public interface IRequestResolver<R> extends ILocatable {
     IRequest getFollowupRequestForCompletion(@NotNull IRequestManager manager, @NotNull IRequest<R> completedRequest);
 
     /**
-     * Method used to indicate to this resolver that a request has been Cancelled or Overruled (force resolved by Player).
-     *
-     * If a cleanup request is needed (For example picking up crafting results to bring them to storage) a request can be made to the given manager
-     * which will properly handle the processing of the new request. If this request has child requests they will be transferred to the returned request automatically.
-     * If null is returned then the onParentCancelled method is called and each of the child methods can create their own cleanup requests.
-     *
-     * @param manager The manager that indicates the cancelling.
-     * @param request The request that has been overruled.
-     * @throws IllegalArgumentException is thrown when the overrulling failed.
-     */
-    @Nullable
-    IRequest onResolvingCancelled(@NotNull IRequestManager manager, @NotNull IRequest<R> request) throws IllegalArgumentException;
-
-    /**
      * Method used to indicate to this resolver that a parent of a request assigned to him has been cancelled,
      * and that the resolver of the parent did not return a cleanup request.
      *

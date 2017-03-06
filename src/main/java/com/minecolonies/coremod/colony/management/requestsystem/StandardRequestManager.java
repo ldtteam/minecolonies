@@ -16,7 +16,6 @@ import com.minecolonies.coremod.colony.management.requestsystem.api.resolver.IRe
 import com.minecolonies.coremod.colony.management.requestsystem.api.resolver.IRequestResolverProvider;
 import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import com.minecolonies.coremod.colony.management.requestsystem.token.StandardToken;
-import com.sun.org.apache.regexp.internal.RE;
 import net.minecraft.nbt.NBTTagCompound;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,6 +28,9 @@ import java.util.stream.Collectors;
  */
 public class StandardRequestManager implements IRequestManager {
 
+    /**
+     * BiMap that holds unique token to provider lookup.
+     */
     @NotNull
     private final BiMap<IToken, IRequestResolverProvider> providerBiMap = HashBiMap.create();
     
@@ -68,8 +70,21 @@ public class StandardRequestManager implements IRequestManager {
     @NotNull
     private final HashMap<Class, Collection<IRequestResolver>> requestClassResolverMap = new HashMap<>();
 
+    /**
+     * Colony of the manager.
+     */
     @NotNull
     private IColony colony;
+
+    /**
+     * The fallback resolver used to resolve directly to the player.
+     */
+    @NotNull
+    private final IRequestResolver playerResolver = null;
+
+    public StandardRequestManager(@NotNull IColony colony) {
+        this.colony = colony;
+    }
 
     /**
      * The colony this manager manages the requests for.
@@ -104,11 +119,42 @@ public class StandardRequestManager implements IRequestManager {
     @NotNull
     @Override
     public <T> IToken createRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException {
-        return null;
+        IRequest<T> request = RequestHandler.createRequest(this, requester, object);
+        return request.getToken();
+    }
+
+    /**
+     * Method used to assign a request to a resolver.
+     *
+     * @param token The token of the request to assign.
+     * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
+     */
+    @NotNull
+    @Override
+    public void assignRequest(@NotNull IToken token) throws IllegalArgumentException {
+        RequestHandler.assignRequest(this, RequestHandler.getRequest(this, token));
+    }
+
+    /**
+     * Method used to create and immediately assign a request.
+     *
+     * @param requester The requester of the requestable.
+     * @param object    The requestable
+     * @return The token that represents the request.
+     * @throws IllegalArgumentException when either createRequest or assignRequest have thrown an IllegalArgumentException
+     */
+    @NotNull
+    @Override
+    public <T> IToken createAndAssignRequest(@NotNull ILocatable requester, @NotNull T object) throws IllegalArgumentException {
+        IToken token = createRequest(requester, object);
+        assignRequest(token);
+        return token;
     }
 
     /**
      * Method to get a request for a given token.
+     *
+     * Returned value is a defensive copy. However should not be modified!
      *
      * @param token The token to get a request for.
      * @return The request of the given type for that token.
@@ -117,7 +163,13 @@ public class StandardRequestManager implements IRequestManager {
     @NotNull
     @Override
     public <T> IRequest<T> getRequestForToken(@NotNull IToken token) throws IllegalArgumentException {
-        return null;
+        IRequest<T> internalRequest = RequestHandler.getRequest(this, token);
+        IFactory factory = getFactoryController().getFactoryForInput(internalRequest.getRequest().getClass());
+
+        NBTTagCompound requestData = factory.serialize(getFactoryController(), internalRequest);
+        IRequest<T> defensiveCopiedRequest = (IRequest<T>) factory.deserialize(getFactoryController(), requestData);
+
+        return defensiveCopiedRequest;
     }
 
     /**
@@ -130,7 +182,20 @@ public class StandardRequestManager implements IRequestManager {
     @NotNull
     @Override
     public void updateRequestState(@NotNull IToken token, @NotNull RequestState state) throws IllegalArgumentException {
+        IRequest request = RequestHandler.getRequest(this, token);
+        request.setState(state);
 
+        switch (request.getState()) {
+            case COMPLETED:
+                RequestHandler.onRequestSuccessful(this, token);
+                return;
+            case OVERRULED:
+            case CANCELLED:
+                RequestHandler.onRequestCancelled(this, token);
+                return;
+            default:
+                return;
+        }
     }
 
     /**
@@ -140,13 +205,7 @@ public class StandardRequestManager implements IRequestManager {
      */
     @Override
     public void onProviderAddedToColony(@NotNull IRequestResolverProvider provider) throws IllegalArgumentException {
-        if (providerResolverMap.containsKey(provider.getToken()))
-            throw new IllegalArgumentException("The given token: " + provider.getResolvers() + "is already registered.");
-
-        ImmutableList.Builder<IRequestResolver> resolverListBuilder = new ImmutableList.Builder<>();
-        resolverListBuilder.addAll(provider.getResolvers());
-
-        providerResolverMap.put(provider.getToken(), resolverListBuilder.build());
+        ProviderHandler.registerProvider(this, provider);
     }
 
     /**
@@ -156,7 +215,7 @@ public class StandardRequestManager implements IRequestManager {
      */
     @Override
     public void onProviderRemovedFromColony(@NotNull IRequestResolverProvider provider) throws IllegalArgumentException {
-        List<IToken> providerRequests =
+        ProviderHandler.removeProvider(this, provider);
     }
 
     /**
@@ -622,13 +681,13 @@ public class StandardRequestManager implements IRequestManager {
         }
 
         @SuppressWarnings("unchecked")
-        private static <Request> IRequest<Request> createRequest(StandardRequestManager manager, Request request) {
+        private static <Request> IRequest<Request> createRequest(StandardRequestManager manager, ILocatable requester, Request request) {
             Class requestClass = request.getClass();
 
-            IToken token = TokenHandler.generateNewToken(manager);
+            IToken<UUID, NBTTagCompound> token = TokenHandler.generateNewToken(manager);
 
             IFactory<Request, ?> factory = manager.getFactoryController().getFactoryForInput(requestClass);
-            IRequest<Request> constructedRequest = (IRequest<Request>) factory.getNewInstance(request, token);
+            IRequest<Request> constructedRequest = (IRequest<Request>) factory.getNewInstance(request, requester.getLocation(), token);
 
             Log.getLogger().debug("Creating request for: " + request + " with factory: " + factory + ", token: " + token + " and output: " + constructedRequest);
 
@@ -681,6 +740,8 @@ public class StandardRequestManager implements IRequestManager {
 
             Log.getLogger().debug("Starting resolver assignment search for request: " + request);
 
+            request.setState(RequestState.ASSIGNING);
+
             for(IRequestResolver resolver : manager.requestClassResolverMap.get(request.getRequestType())) {
                 //Skip when the resolver is in the blacklist.
                 if (resolverTokenBlackList.contains(resolver.getToken()))
@@ -696,25 +757,30 @@ public class StandardRequestManager implements IRequestManager {
                 if (attemptResult == null)
                     continue;
 
-                //Succesfully found a resolver. Registering
+                //Successfully found a resolver. Registering
                 Log.getLogger().debug("Finished resolver assignment search for request: " + request + " successfully");
                 ResolverHandler.addRequestToResolver(manager, resolver, request);
 
-                //TODO: Call can resolveImmediatly and process result.
+                for (IRequest childRequest :
+                        attemptResult) {
+                    childRequest.setParent(request.getToken());
+                    request.addChild(childRequest.getToken());
 
-                //Change the data in the request and resolver maps.
-                manager.requestResolverMap.put(request.getToken(), resolver.getToken());
-                if (!manager.resolverRequestMap.containsKey(resolver.getToken()))
-                    manager.resolverRequestMap.put(resolver.getToken(), new ArrayList<>());
+                    if (!isAssigned(manager, childRequest.getToken()))
+                        assignRequest(manager, childRequest, resolverTokenBlackList);
+                }
 
-                manager.resolverRequestMap.get(resolver.getToken()).add(request.getToken());
+                request.setState(RequestState.ASSIGNED);
 
-
-                //We have found a resolver abort further processing.
+                if (!request.hasChildren())
+                    resolveRequest(manager, request);
                 return;
             }
 
-            //TODO: Implement player fallback!
+            Log.getLogger().debug("Resolving failed. Attempting Fallback PlayerManager for: " + request);
+            ResolverHandler.addRequestToResolver(manager, manager.playerResolver, request);
+            request.setState(RequestState.ASSIGNED);
+            resolveRequest(manager, request);
         }
 
         /**
@@ -749,7 +815,10 @@ public class StandardRequestManager implements IRequestManager {
                     parentRequest.addChild(followupRequest.getToken());
 
                 parentRequest.removeChild(request.getToken());
-                //TODO: Check for completion of all child tasks. If so run parent.
+
+                if (!parentRequest.hasChildren()) {
+                    resolveRequest(manager, parentRequest);
+                }
             }
 
             //Assign the followup request if need be
@@ -760,7 +829,7 @@ public class StandardRequestManager implements IRequestManager {
         }
 
         /**
-         * Method used to handle request that were cancelled or overruled.
+         * Method used to handle requests that were cancelled or overruled.
          * @param manager The manager that got notified of the cancellation or overruling.
          * @param token The token of the request that got cancelled or overruled
          */
@@ -780,6 +849,30 @@ public class StandardRequestManager implements IRequestManager {
                     RequestHandler.assignRequest(manager, cleanUpRequest);
             }
         }
+
+        /**
+         * Method used to resolve a request.
+         * When this method is called the given request has to be assigned.
+         * @param manager The manager requesting the resolving.
+         * @param request The request about to be resolved.
+         * @throws IllegalArgumentException when the request is unknown, not resolved, or cannot be resolved.
+         */
+        private static void resolveRequest(StandardRequestManager manager, IRequest request) throws IllegalArgumentException {
+            getRequest(manager, request.getToken());
+            if (!isAssigned(manager, request.getToken()))
+                throw new IllegalArgumentException("The given request is not resolved");
+
+            if (request.getState() != RequestState.ASSIGNED)
+                throw new IllegalArgumentException("The given request is not in the right state. Required: " + RequestState.ASSIGNED + " - Found:" + request.getState());
+
+            if (request.hasChildren())
+                throw new IllegalArgumentException("Cannot resolve request with open Children");
+
+            IRequestResolver resolver = ResolverHandler.getResolverForRequest(manager, request);
+
+            request.setState(RequestState.IN_PROGRESS);
+            resolver.resolve(manager, request);
+        }
     }
 
     /**
@@ -787,23 +880,23 @@ public class StandardRequestManager implements IRequestManager {
      */
     private final static class TokenHandler {
 
-        private static IToken generateNewToken(StandardRequestManager manager) {
+        private static IToken<UUID, NBTTagCompound> generateNewToken(StandardRequestManager manager) {
             //Force generic type to be correct.
             StandardToken standardToken = manager.getFactoryController().getNewInstance(UUID.randomUUID());
             return standardToken;
         }
     }
 
-    private final static class WrappedBlacklistAssignmentRequestManager implements IRequestManager {
-
+    /**
+     * Wrapper class for a Manager.
+     * Subclasses of this have custom behaviour on at least one method.
+     */
+    private static abstract class WrappedRequestManager implements IRequestManager {
         @NotNull
-        private final StandardRequestManager wrappedManager;
-        @NotNull
-        private final Collection<IToken> blackListedResolvers;
+        protected final StandardRequestManager wrappedManager;
 
-        private WrappedBlacklistAssignmentRequestManager(@NotNull StandardRequestManager wrappedManager, @NotNull Collection<IToken> blackListedResolvers) {
+        public WrappedRequestManager(@NotNull StandardRequestManager wrappedManager) {
             this.wrappedManager = wrappedManager;
-            this.blackListedResolvers = blackListedResolvers;
         }
 
         /**
@@ -851,7 +944,7 @@ public class StandardRequestManager implements IRequestManager {
         @NotNull
         @Override
         public void assignRequest(@NotNull IToken token) throws IllegalArgumentException {
-            RequestHandler.assignRequest(wrappedManager, RequestHandler.getRequest(wrappedManager, token), blackListedResolvers);
+            wrappedManager.assignRequest(token);
         }
 
         /**
@@ -926,6 +1019,57 @@ public class StandardRequestManager implements IRequestManager {
         @Override
         public void deserializeNBT(NBTTagCompound nbt) {
             wrappedManager.deserializeNBT(nbt);
+        }
+    }
+
+    /**
+     * Class used to handle internal reassignment changes.
+     * Take the given blacklist into account when it assigns the requests.
+     */
+    private final static class WrappedBlacklistAssignmentRequestManager extends WrappedRequestManager {
+
+        @NotNull
+        private final Collection<IToken> blackListedResolvers;
+
+        private WrappedBlacklistAssignmentRequestManager(@NotNull StandardRequestManager wrappedManager, @NotNull Collection<IToken> blackListedResolvers) {
+            super(wrappedManager);
+            this.blackListedResolvers = blackListedResolvers;
+        }
+
+        /**
+         * Method used to assign a request to a resolver.
+         *
+         * @param token The token of the request to assign.
+         * @throws IllegalArgumentException when the token is not registered to a request, or is already assigned to a resolver.
+         */
+        @NotNull
+        @Override
+        public void assignRequest(@NotNull IToken token) throws IllegalArgumentException {
+            RequestHandler.assignRequest(wrappedManager, RequestHandler.getRequest(wrappedManager, token), blackListedResolvers);
+        }
+    }
+
+    /**
+     * Class used to handle internal state changes that might cause a loop.
+     * Simply returns without notifying its wrapped manager about the state change.
+     */
+    private final static class WrappedStaticStateRequestManager extends WrappedRequestManager {
+
+        public WrappedStaticStateRequestManager(@NotNull StandardRequestManager wrappedManager) {
+            super(wrappedManager);
+        }
+
+        /**
+         * Method to update the state of a given request.
+         *
+         * @param token The token that represents a given request to update.
+         * @param state The new state of that request.
+         * @throws IllegalArgumentException when the token is unknown to this manager.
+         */
+        @NotNull
+        @Override
+        public void updateRequestState(@NotNull IToken token, @NotNull RequestState state) throws IllegalArgumentException {
+            return;
         }
     }
 }

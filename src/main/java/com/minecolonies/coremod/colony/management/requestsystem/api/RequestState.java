@@ -19,14 +19,14 @@ public enum RequestState {
     REPORTED,
 
     /**
-     * State for a request that is being resolved.
+     * State for a request that is being assigned.
      */
-    RESOLVING,
+    ASSIGNING,
 
     /**
-     * State for a request that has been resolved, yet it has not been started.
+     * State for a request that has been assigned, yet it has not been started.
      */
-    RESOLVED,
+    ASSIGNED,
 
     /**
      * State for a request on which is being worked.
@@ -44,9 +44,9 @@ public enum RequestState {
     OVERRULED,
 
     /**
-     * State for a request that has failed.
+     * State for a request that has been cancelled.
      */
-    FAILED;
+    CANCELLED;
 
     /**
      * Index list used to read and write from NBT

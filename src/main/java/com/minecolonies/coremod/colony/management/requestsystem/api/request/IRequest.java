@@ -41,13 +41,11 @@ public interface IRequest<R> {
 
     /**
      * Setter for the current state of this request.
-     *
-     * The implementing class is responsible for propagating the state change to its parent, if needed.
+     * It is not recommended to call this method from outside of the request management system.
      *
      * @param state The new state of this request.
-     * @param manager The request manager that updated the state.
      */
-    void setState(@NotNull IRequestManager manager, @NotNull RequestState state);
+    void setState(@NotNull RequestState state);
 
     /**
      * The location of the requester.

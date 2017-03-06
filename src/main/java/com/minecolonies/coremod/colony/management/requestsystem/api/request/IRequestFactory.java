@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony.management.requestsystem.api.request;
 
 import com.minecolonies.coremod.colony.management.requestsystem.api.RequestState;
 import com.minecolonies.coremod.colony.management.requestsystem.api.factory.IFactory;
+import com.minecolonies.coremod.colony.management.requestsystem.api.location.ILocation;
 import com.minecolonies.coremod.colony.management.requestsystem.api.token.IToken;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,38 +25,46 @@ public interface IRequestFactory<T, R extends IRequest<T>> extends IFactory<T, R
     @NotNull
     @Override
     default R getNewInstance(@NotNull T t, @NotNull Object... context) throws IllegalArgumentException {
-        if (context.length != 1  && context.length != 2)
-            throw new IllegalArgumentException("Unsupported context - Too many parameters. Only token or token state combination is needed.!");
+        if (context.length != 2 && context.length != 3)
+            throw new IllegalArgumentException("Unsupported context - Too many parameters.");
 
         if (!(context[0] instanceof IToken))
             throw new IllegalArgumentException("Unsupported context - First context object is not a token");
 
-        if (context.length == 2 && !(context[1] instanceof RequestState))
-            throw new IllegalArgumentException("Unsupported context - Second context object is not a request state");
+        if (!(context[1] instanceof ILocation))
+            throw new IllegalArgumentException("Unsupported context - Second context object should be a location");
 
-        return this.getNewInstance(t, (IToken) context[0]);
+        if (context.length == 2)
+            return this.getNewInstance(t, (ILocation) context[1], (IToken) context[0]);
+
+        if (context.length == 3 && !(context[2] instanceof RequestState))
+            throw new IllegalArgumentException("Unsupported context - Third context object is not a request state");
+
+        return this.getNewInstance(t, (ILocation) context[1], (IToken) context[0], (RequestState) context[2]);
     }
 
     /**
      * Method to get a new instance of a request given the input and token.
      *
      * @param input The input to build a new request for.
+     * @param location the location of the requester.
      * @param token The token to build the request from.
      * @return The new output instance for a given input.
      */
-    default R getNewInstance(@NotNull T input, @NotNull IToken token) {
-        return this.getNewInstance(input, token, RequestState.CREATED);
+    default R getNewInstance(@NotNull T input, @NotNull ILocation location, @NotNull IToken token) {
+        return this.getNewInstance(input, location, token, RequestState.CREATED);
     }
 
     /**
      * Method to get a new instance of a request given the input and token.
      *
      * @param input The input to build a new request for.
+     * @param location the location of the requester.
      * @param token The token to build the request from.
      * @param initialState The initial state of the request request.
      * @return The new output instance for a given input.
      */
-    R getNewInstance(@NotNull T input, @NotNull IToken token, @NotNull RequestState initialState);
+    R getNewInstance(@NotNull T input, @NotNull ILocation location, @NotNull IToken token, @NotNull RequestState initialState);
 
 
 }
