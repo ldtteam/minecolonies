@@ -1,11 +1,13 @@
 package com.minecolonies.structures.helpers;
 
+import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.fake.FakeEntity;
 import com.minecolonies.structures.fake.FakeWorld;
 import com.minecolonies.structures.lib.ModelHolder;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -19,6 +21,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
@@ -222,8 +225,25 @@ public class Structure
 
         for (final Template.BlockInfo aBlockList : blockList)
         {
-            final Block block = aBlockList.blockState.getBlock();
-            final IBlockState iblockstate = aBlockList.blockState;
+            Block block = aBlockList.blockState.getBlock();
+            IBlockState iblockstate = aBlockList.blockState;
+
+            if(block == ModBlocks.blockSubstitution)
+            {
+                continue;
+            }
+
+            if(block == ModBlocks.blockSolidSubstitution)
+            {
+                iblockstate = clientWorld.getBiome(startingPos).fillerBlock;
+                if (iblockstate.getBlock() instanceof BlockFalling)
+                {
+                    iblockstate =  Blocks.DIRT.getDefaultState();
+                }
+
+                block = iblockstate.getBlock();
+            }
+
             final BlockPos blockpos = aBlockList.pos.add(startingPos);
             final IBlockState iBlockExtendedState = block.getExtendedState(iblockstate, clientWorld, blockpos);
             final IBakedModel ibakedmodel = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(iblockstate);

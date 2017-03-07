@@ -408,7 +408,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             final TileEntity entity = worldObj.getTileEntity(pos);
             if(entity instanceof TileEntityChest
                     && InventoryUtils.findFirstSlotInInventoryWith((TileEntityChest) entity, stack.getItem(), stack.getItemDamage()) != -1
-                    && InventoryUtils.getOpenSlot(this) != -1)
+                    && InventoryUtils.getOpenSlot((TileEntityChest) entity) != -1)
             {
                 return (TileEntityChest) entity;
             }
@@ -431,7 +431,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
             final TileEntity entity = worldObj.getTileEntity(pos);
             if(entity instanceof TileEntityChest
                     && InventoryUtils.findFirstSlotInInventoryWith((TileEntityChest) entity, stack.getItem(), -1) != -1
-                    && InventoryUtils.getOpenSlot(this) != -1)
+                    && InventoryUtils.getOpenSlot((TileEntityChest)entity) != -1)
             {
                 return (TileEntityChest) entity;
             }
