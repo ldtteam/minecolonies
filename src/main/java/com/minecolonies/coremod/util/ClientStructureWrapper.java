@@ -39,10 +39,10 @@ public final class ClientStructureWrapper
      */
     public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
     {
-        final String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis, ".nbt");
+        final String fileName = "/minecolonies/schematics/custom/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis, ".nbt");
 
         final File file = new File(Minecraft.getMinecraft().mcDataDir, fileName);
-        createScanDirectory(Minecraft.getMinecraft().world);
+        checkDirectory(file.getParentFile());
 
         try (OutputStream outputstream = new FileOutputStream(file))
         {
@@ -66,12 +66,13 @@ public final class ClientStructureWrapper
      */
     public static void handleSaveSchematicMessage(final byte[] bytes, final String name)
     {
-        final File schematicsFolder = Structure.getSchematicsFolder();
+        final File schematicsFolder = Structure.getCachedSchematicsFolder();
 
-        final File schematicFile = new File(schematicsFolder.toPath() + "/" + name + ".nbt");
+        final String md5 = Structure.calculateMD5(bytes);
 
-        if (schematicFile.toURI().normalize().getPath().startsWith(schematicsFolder.toURI().normalize().getPath()))
+        if (md5 != null)
         {
+            final File schematicFile = new File(schematicsFolder.toPath() + "/" + md5 + ".nbt");
             checkDirectory(schematicFile.getParentFile());
             try (OutputStream outputstream = new FileOutputStream(schematicFile))
             {
@@ -85,7 +86,7 @@ public final class ClientStructureWrapper
         }
         else
         {
-           Log.getLogger().info("ClientStructureWrapper.handleSaveSchematicMessage: Attempt to save invalid structure name " + name);
+           Log.getLogger().info("ClientStructureWrapper.handleSaveSchematicMessage: Could not calculate the MD5 hash");
            return;
         }
 

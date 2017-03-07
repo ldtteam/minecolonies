@@ -37,7 +37,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     protected String   md5;
     protected boolean  cleared;
     private   int      upgradeLevel;
-    private   String   upgradeName;
+    protected String   upgradeName;
     private boolean hasSentMessageForThisWorkOrder = false;
     private boolean requested;
 
@@ -64,15 +64,20 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.buildingRotation = building.getRotation();
         this.cleared = level > 1;
         this.requested = false;
+        Log.getLogger().info("WorkOrderBuild: building.getSchematicName() = "+building.getSchematicName());
+        Log.getLogger().info("WorkOrderBuild: building.getStyle() = "+building.getStyle());
+        Log.getLogger().info("WorkOrderBuild: this.getUpgradeName() = "+this.getUpgradeName());
 
         this.structureName = Structures.SCHEMATICS_HUTS + '/' + building.getStyle() + '/' + this.getUpgradeName();
+        Log.getLogger().info("WorkOrderBuild: this.structureName = "+this.structureName);
         this.md5 = Structures.getMD5(this.structureName);
     }
 
-    protected String getStructurePrefix()
+/*    protected String getStructurePrefix()
     {
         return Structures.SCHEMATICS_HUTS;
     }
+*/
 
     /**
      * Returns the name after upgrade.
@@ -97,19 +102,31 @@ public class WorkOrderBuild extends AbstractWorkOrder
         if (!(this instanceof WorkOrderBuildDecoration))
         {
             upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
-            upgradeName = compound.getString(TAG_UPGRADE_NAME);
+            Log.getLogger().info("upgradeLevel = "+upgradeLevel);
         }
+        upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        Log.getLogger().info("upgradeName = "+upgradeName);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
+        Log.getLogger().info("cleared = "+cleared);
+
         md5 = compound.getString(TAG_SCHEMATIC_MD5);
+        Log.getLogger().info("md5 = "+md5);
         structureName = compound.getString(TAG_SCHEMATIC_NAME);
-        if (Structures.hasStructureName(structureName))
+        Log.getLogger().info("structureName = "+structureName);
+        Log.getLogger().warn("WorkOrderBuild.readFromNBT: Loading " + structureName);
+        if (!Structures.hasStructureName(structureName))
         {
-            if (Structures.hasStructureName(getStructurePrefix() + '/' + structureName))
+            if (Structures.hasStructureName(Structures.SCHEMATICS_HUTS + '/' + structureName))
             {
-                //It is an old work order which does not start by huts/ or decorations/
-                structureName = getStructurePrefix() + '/' + structureName;
+                //It is an old work order which does not start by huts/
+                structureName = Structures.SCHEMATICS_HUTS + '/' + structureName;
             }
-            else
+            else if (Structures.hasStructureName(Structures.SCHEMATICS_DECORATIONS + '/' + structureName))
+            {
+                //It is an old work order which does not start by decorations/
+                structureName = Structures.SCHEMATICS_DECORATIONS + '/' + structureName;
+            }
+            else if (md5 != null)
             {
                 // If the schematic move we can use the MD5 hash to find it
                 final String newStructureName = Structures.getStructureNameByMD5(md5);
@@ -118,7 +135,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
             }
         }
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
+        Log.getLogger().info("buildingRotation = "+buildingRotation);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
+        Log.getLogger().info("requested = "+requested);
     }
 
     /**
@@ -223,6 +242,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
     {
         return upgradeName;
     }
+
 
     /**
      * Checks if a builder may accept this workOrder.

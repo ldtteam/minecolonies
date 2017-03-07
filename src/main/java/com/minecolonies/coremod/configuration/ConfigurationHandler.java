@@ -59,6 +59,9 @@ public final class ConfigurationHandler
             turnOffExplosionsInColonies = config.get(CATEGORY_GAMEPLAY, "turnOffExplosionsInColonies", turnOffExplosionsInColonies,
                     "Turn off explosions inside the colonies radius?").getBoolean();
 
+            allowPlayerSchematics = config.get(CATEGORY_GAMEPLAY, "allowPlayerSchematics", allowPlayerSchematics,
+                    "Allow player to use their own schematics (in MP)").getBoolean();
+
             /* Configs for commands */
             teleportBuffer = config.get(CATEGORY_GAMEPLAY, "timeBetweenTeleport", teleportBuffer,
                     "Time until the next teleport in seconds").getInt();

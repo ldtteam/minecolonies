@@ -17,6 +17,8 @@ public class Configurations
     public static boolean enableColonyProtection      = true;
     public static boolean turnOffExplosionsInColonies = true;
 
+    public static boolean allowPlayerSchematics       = false;
+
     /* Command configs */
     public static int teleportBuffer = 120;
     public static int opLevelForServer = 3;

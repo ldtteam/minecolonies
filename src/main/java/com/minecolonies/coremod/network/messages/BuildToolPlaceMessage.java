@@ -14,6 +14,7 @@ import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
+import com.minecolonies.structures.helpers.Structure;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,8 +40,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * Language key for missing hut message.
      */
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
-    private String   hutDec;
-    private String   style;
+    private String   structureName;
+    private String   workOrderName;
     private int      rotation;
     private BlockPos pos;
     private boolean  isHut;
@@ -57,17 +58,19 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      * Create the building that was made with the build tool.
      * Item in inventory required
      *
-     * @param hutDec   String representation of sort of hutDec that made the request
-     * @param style    String representation of style that was requested
-     * @param pos      BlockPos
-     * @param rotation int representation of the rotation
-     * @param isHut    true if hut, false if decoration
+     * @param structureName  String representation of sort of hutDec that made the request
+     * @param workOrderName  String representation of style that was requested
+     * @param pos            BlockPos
+     * @param rotation       int representation of the rotation
+     * @param isHut          true if hut, false if decoration
      */
-    public BuildToolPlaceMessage(final String hutDec, final String style, final BlockPos pos, final int rotation, final boolean isHut)
+    public BuildToolPlaceMessage(final String structureName, final String workOrderName, final BlockPos pos, final int rotation, final boolean isHut)
     {
         super();
-        this.hutDec = hutDec;
-        this.style = style;
+        this.structureName = structureName;
+        this.workOrderName = workOrderName;
+        Log.getLogger().info("BuildToolPlaceMessage: this.structureName = " + structureName);
+        Log.getLogger().info("BuildToolPlaceMessage: this.workOrderName = " + workOrderName);
         this.pos = pos;
         this.rotation = rotation;
         this.isHut = isHut;
@@ -81,8 +84,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        hutDec = ByteBufUtils.readUTF8String(buf);
-        style = ByteBufUtils.readUTF8String(buf);
+        structureName = ByteBufUtils.readUTF8String(buf);
+        workOrderName = ByteBufUtils.readUTF8String(buf);
 
         pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
 
@@ -99,8 +102,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        ByteBufUtils.writeUTF8String(buf, hutDec);
-        ByteBufUtils.writeUTF8String(buf, style);
+        ByteBufUtils.writeUTF8String(buf, structureName);
+        ByteBufUtils.writeUTF8String(buf, workOrderName);
 
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
@@ -114,14 +117,15 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     @Override
     public void messageOnServerThread(final BuildToolPlaceMessage message, final EntityPlayerMP player)
     {
+        Log.getLogger().info("structureName: " + message.structureName + ", workOrderName: " + message.workOrderName);
         final World world = player.world;
         if (message.isHut)
         {
-            handleHut(world, player, message.hutDec, message.style, message.rotation, message.pos);
+            handleHut(world, player, message.structureName, message.workOrderName, message.rotation, message.pos);
         }
         else
         {
-            handleDecoration(world, player, message.hutDec, message.style, message.rotation, message.pos);
+            handleDecoration(world, player, message.structureName, message.workOrderName, message.rotation, message.pos);
         }
     }
 
@@ -137,14 +141,18 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     private static void handleHut(
                                    @NotNull final World world, @NotNull final EntityPlayer player,
-                                   final String hut, final String style, final int rotation, @NotNull final BlockPos buildPos)
+                                   final String structureName, final String workOrderName, final int rotation, @NotNull final BlockPos buildPos)
     {
-        if (Structures.getStylesForHut(hut) == null)
+/*        if (Structures.getStylesForHut(hut) == null)
         {
             Log.getLogger().error("No record of hut: " + hut);
             return;
         }
+*/
 
+        //TODO
+        final String hut = Structure.getHut(structureName);
+        Log.getLogger().info("hut = " + hut);
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
@@ -155,6 +163,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             return;
         }
 
+        Log.getLogger().info("block = " + block);
         if (block != null && player.inventory.hasItemStack(new ItemStack(block)))
         {
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
@@ -186,7 +195,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                             building.getTileEntity().setColony(colony);
                         }
                     }
-                    building.setStyle(style);
+                    Log.getLogger().info("BuildToolMessage: Structure.getStyleFromStructureName(structureName)) => " +Structure.getStyleFromStructureName(structureName));
+                    building.setStyle(Structure.getStyleFromStructureName(structureName));
                     building.setRotation(rotation);
                 }
             }
@@ -209,18 +219,24 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
      */
     private static void handleDecoration(
                                           @NotNull final World world, @NotNull final EntityPlayer player,
-                                          final String decoration, final String style, final int rotation, @NotNull final BlockPos buildPos)
+                                          final String structureName, final String workOrderName, final int rotation, @NotNull final BlockPos buildPos)
     {
-        if (Structures.getStylesForDecoration(decoration) == null)
+        Log.getLogger().error("handleDecoration: structureName = " + structureName);
+        Log.getLogger().error("handleDecoration: workOrderName = " + workOrderName);
+        if (Structures.hasStructureName(structureName))
+        {
+            Log.getLogger().error("handleDecoration: " + structureName + " => " + Structures.getMD5(structureName));
+        }
+/*        if (Structures.getStylesForDecoration(decoration) == null)
         {
             Log.getLogger().error("No record of decoration: " + decoration);
             return;
-        }
+        }*/
 
         @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
         {
-            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(style, decoration, rotation, buildPos));
+            colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(structureName, workOrderName, rotation, buildPos));
         }
     }
 }

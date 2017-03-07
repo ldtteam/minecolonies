@@ -152,6 +152,11 @@ public class MineColonies
         // Schematic transfer messages
         getNetwork().registerMessage(SchematicRequestMessage.class, SchematicRequestMessage.class, 38, Side.SERVER);
         getNetwork().registerMessage(SchematicSaveMessage.class, SchematicSaveMessage.class, 39, Side.CLIENT);
+        if (Configurations.allowPlayerSchematics)
+        {
+            getNetwork().registerMessage(SchematicRequestMessage.class, SchematicRequestMessage.class, 40, Side.CLIENT);
+            getNetwork().registerMessage(SchematicSaveMessage.class, SchematicSaveMessage.class, 41, Side.SERVER);
+        }
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, 50, Side.CLIENT);

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.*;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -38,6 +39,8 @@ public final class Structures
     private static final String                    SCHEMATICS_ASSET_PATH      = "/assets/minecolonies/schematics/";
     public  static final String                    SCHEMATICS_HUTS            = "huts";
     public  static final String                    SCHEMATICS_DECORATIONS     = "decorations";
+    public  static final String                    SCHEMATICS_CACHE           = "cache";
+    public  static final String                    SCHEMATICS_CUSTOM          = "custom";
     //Hut, Levels
     @NotNull
     private static       Map<String, Integer>      hutLevelsMap          = new HashMap<>();
@@ -45,6 +48,9 @@ public final class Structures
     private static       Map<String, List<String>> hutStyleMap           = new HashMap<>();
     //Decoration, Style
     private static       Map<String, List<String>> decorationStyleMap    = new HashMap<>();
+    //Decoration, Style
+    private static       Map<String, List<String>> customStyleMap        = new HashMap<>();
+
 
     /* md5 hash for the schematics
      * format is:
@@ -172,6 +178,12 @@ public final class Structures
                         }
                         addDecorationStyle(style, filename);
                     }
+                    else if (SCHEMATICS_CACHE.equals(schematicCategory))
+                    {
+                        //do nothing we just want the md5 hash for it
+                        Log.getLogger().info("New cached schematic found " + path);
+                    }
+
                     else
                     {
                         Log.getLogger().error(path + " schematic is not a huts or decorations, ignoring it");
@@ -188,6 +200,78 @@ public final class Structures
                     md5Map.put(relativePath, md5);
                 }
             }
+        }
+    }
+
+    public static void loadCustomStyleMaps()
+    {
+        Log.getLogger().info("loadCustomStyleMaps()");
+        File schematicsFolder = Structure.getCustomSchematicsFolder();
+
+        if (schematicsFolder == null)
+        {
+            Log.getLogger().info("could not find custom schematic folder");
+            return;
+        }
+        final Path basePath = schematicsFolder.toPath();
+        //Log.getLogger().info("Loading "+basePath);
+        try (Stream<Path> walk = Files.walk(basePath))
+        {
+            final Iterator<Path> it = walk.iterator();
+
+            while (it.hasNext())
+            {
+                final Path path = it.next();
+
+                //Log.getLogger().info("adding ?? "+path);
+                if (path.toString().endsWith(SCHEMATIC_EXTENSION))
+                {
+                    String style = "";
+                    String schematicCategory = "";
+                    if (path.getParent().toString().startsWith(basePath.toString()))
+                    {
+                        style = path.getParent().toString().substring(basePath.toString().length());
+                        if (style.startsWith("/"))
+                        {
+                            style = style.substring(1);
+                        }
+                        final int indexSeparator = style.indexOf('/');
+                        if (indexSeparator!=-1)
+                        {
+                            schematicCategory = style.substring(0,indexSeparator);
+                            style = style.substring(indexSeparator+1);
+                        }
+                    }
+
+
+
+                    final String filename = path.getFileName().toString().split("\\.nbt")[0];
+                    final String hut = filename.split("\\d+")[0];
+
+                    addCustomStyle(style, filename);
+
+                    String relativePath = path.toString().substring(basePath.toString().length()).split("\\.nbt")[0];
+                    if (relativePath.startsWith("/"))
+                    {
+                        relativePath = relativePath.substring(1);
+                    }
+
+                    if (!Structures.hasStructureName("custom/" + relativePath))
+                    {
+                        final FileInputStream fis =  new FileInputStream(path.toString());
+                        final String md5 = Structure.calculateMD5(fis);
+                        Log.getLogger().info("Add schematic custom/"+ relativePath + " (md5:" + md5+")");
+                        md5Map.put("custom/" + relativePath, md5);
+                    }
+                    else
+                    {
+                        Log.getLogger().info("Already have schematic custom/"+ relativePath + " (md5:" + Structures.getMD5("custom/" + relativePath) +")");
+                    }
+                }
+            }
+        }
+        catch (final IOException e)
+        {
         }
     }
 
@@ -228,6 +312,19 @@ public final class Structures
             decorationStyleMap.put(decoration, new ArrayList<>());
         }
         decorationStyleMap.get(decoration).add(style);
+    }
+
+    private static void addCustomStyle(final String decoration, final String style)
+    {
+        Log.getLogger().info("addCustomStyle(" + decoration + ", " + style + ")");
+        if (!customStyleMap.containsKey(decoration))
+        {
+            customStyleMap.put(decoration, new ArrayList<>());
+        }
+        if (!customStyleMap.get(decoration).contains(style))
+        {
+            customStyleMap.get(decoration).add(style);
+        }
     }
 
     /**
@@ -274,6 +371,11 @@ public final class Structures
         return decorationStyleMap.keySet();
     }
 
+    public static Set<String> getCustoms()
+    {
+        return customStyleMap.keySet();
+    }
+
     /**
      * Returns a list of styles for one specific decoration.
      *
@@ -283,6 +385,11 @@ public final class Structures
     public static List<String> getStylesForDecoration(final String decoration)
     {
         return decorationStyleMap.get(decoration);
+    }
+
+    public static List<String> getStylesForCustom(final String decoration)
+    {
+        return customStyleMap.get(decoration);
     }
 
     /**

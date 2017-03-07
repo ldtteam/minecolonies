@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.BuildToolPlaceMessage;
 import com.minecolonies.coremod.network.messages.SchematicRequestMessage;
+import com.minecolonies.coremod.network.messages.SchematicSaveMessage;
 import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.structures.helpers.Settings;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import java.io.InputStream;
 
 /**
  * BuildTool window.
@@ -250,14 +253,25 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
-        if (Settings.instance.isInHutMode())
+        Structures.loadCustomStyleMaps();
+        onChangeMode();
+    }
+
+    public void onChangeMode()
+    {
+        switch (Settings.instance.getBuildingMode())
         {
-            loadHutMode();
+            case HUT:
+                loadHutMode();
+                break;
+            case DECORATION:
+                loadDecorationMode();
+                break;
+            case CUSTOM:
+                loadCustomMode();
+                break;
         }
-        else
-        {
-            loadDecorationMode();
-        }
+
     }
 
     /**
@@ -289,6 +303,30 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         setupButtons();
     }
 
+    private void loadCustomMode()
+    {
+        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel("Custom");
+
+        Log.getLogger().info("hutDec.size() before "+hutDec.size());
+        for (String customStyle : Structures.getCustoms()) 
+        {
+            if (!hutDec.contains(customStyle))
+            {
+                Log.getLogger().info("Adding custom style "+customStyle);
+                hutDec.add(customStyle);
+            }
+            else
+            {
+                Log.getLogger().info("custom style already added: "+customStyle);
+            }
+        }
+        //hutDec.addAll(Structures.getCustoms());
+        Log.getLogger().info("hutDec.size() after "+hutDec.size());
+
+        setupButtons();
+    }
+
+
     /**
      * Loads the hut mode of the build tool.
      */
@@ -314,8 +352,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if (hutDec.isEmpty())
         {
             final Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
-            buttonHutDec.setLabel(LanguageHandler.format(
-              Settings.instance.isInHutMode() ? "com.minecolonies.coremod.gui.buildtool.nohut" : "com.minecolonies.coremod.gui.buildtool.nodecoration"));
+/*            buttonHutDec.setLabel(LanguageHandler.format(
+              Settings.instance.isInHutMode() ? "com.minecolonies.coremod.gui.buildtool.nohut" : "com.minecolonies.coremod.gui.buildtool.nodecoration"));*/
             buttonHutDec.setEnabled(false);
             final Button buttonStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
             buttonStyle.setVisible(false);
@@ -357,16 +395,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         hutDecIndex = 0;
         styleIndex = 0;
 
-        if (Settings.instance.isInHutMode())
-        {
-            Settings.instance.setInHutMode(false);
-            loadDecorationMode();
-        }
-        else
-        {
-            Settings.instance.setInHutMode(true);
-            loadHutMode();
-        }
+
+        Settings.instance.nextBuildingMode();
+        onChangeMode();
     }
 
     /**
@@ -401,16 +432,21 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if (hutDec.isEmpty())
         {
+            Log.getLogger().info("hutDec.isEmpty())");
             return Collections.emptyList();
         }
 
-        if (Settings.instance.isInHutMode())
+        switch (Settings.instance.getBuildingMode())
         {
-            return Structures.getStylesForHut(hutDec.get(hutDecIndex));
-        }
-        else
-        {
-            return Structures.getStylesForDecoration(hutDec.get(hutDecIndex));
+            case HUT:
+                return Structures.getStylesForHut(hutDec.get(hutDecIndex));
+            case DECORATION:
+                return Structures.getStylesForDecoration(hutDec.get(hutDecIndex));
+            case CUSTOM:
+                return Structures.getStylesForCustom(hutDec.get(hutDecIndex));
+            default:
+                //TODO
+                return Structures.getStylesForDecoration(hutDec.get(hutDecIndex));
         }
     }
 
@@ -425,13 +461,18 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         final Structure structure;
         final String structureName;
 
-        if (Settings.instance.isInHutMode())
+        switch (Settings.instance.getBuildingMode())
         {
-            structureName = Structures.SCHEMATICS_HUTS + "/" + labelHutStyle + '/' + labelHutDec + (level + 1);
-        }
-        else
-        {
-            structureName = Structures.SCHEMATICS_DECORATIONS + "/" + labelHutDec + '/' + labelHutStyle;
+            case HUT:
+                structureName = Structures.SCHEMATICS_HUTS + '/' + labelHutStyle + '/' + labelHutDec + (level + 1);
+                break;
+            case DECORATION:
+                structureName = Structures.SCHEMATICS_DECORATIONS + '/' + labelHutDec + '/' + labelHutStyle;
+                break;
+            case CUSTOM:
+            default:
+                structureName = Structures.SCHEMATICS_CUSTOM + '/' + labelHutDec + '/' + labelHutStyle;
+                break;
         }
 
         structure = new Structure(null,
@@ -504,7 +545,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private void updateLevelButton()
     {
         final Button buttonLevel = findPaneOfTypeByID(BUTTON_LEVEL_ID, Button.class);
-        if (Settings.instance.isInHutMode())
+        if (Settings.instance.getBuildingMode() == Settings.BuildingMode.HUT)
         {
             buttonLevel.setVisible(true);
             buttonLevel.setLabel("Level: " + (level + 1));
@@ -522,12 +563,90 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if (hutDecIndex < hutDec.size())
         {
-            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+            switch (Settings.instance.getBuildingMode())
+            {
+                case HUT:
+                    {
+                        final String structureName = Structures.SCHEMATICS_HUTS + '/' + getStyles().get(styleIndex) + '/' + hutDec.get(hutDecIndex);
+                        Log.getLogger().info("structureName="+structureName);
+                        MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                                                                              structureName,
+                                                                              //hutDec.get(hutDecIndex),
+                                                                              structureName,
+                                                                              //getStyles().get(styleIndex),
+                                                                              Settings.instance.pos,
+                                                                              Settings.instance.getRotation(),
+                                                                              true));
+                    }
+                    break;
+                case DECORATION:
+                    {
+                        final String structureName = Structures.SCHEMATICS_DECORATIONS + '/' + hutDec.get(hutDecIndex) + '/' + getStyles().get(styleIndex);
+                        MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                                                                              structureName,
+                                                                              structureName,
+                                                                              Settings.instance.pos,
+                                                                              Settings.instance.getRotation(),
+                                                                              false));
+                    }
+                    break;
+                case CUSTOM:
+                    {
+                        final String structureName = Structures.SCHEMATICS_CUSTOM + '/' + hutDec.get(hutDecIndex) + '/' + getStyles().get(styleIndex);
+                        if (Structures.hasStructureName(structureName))
+                        {
+                            Log.getLogger().warn("BuilderTool: client has structure " + structureName);
+                            final String md5 = Structures.getMD5(structureName);
+                            Log.getLogger().warn("BuilderTool: " + structureName + " => " + md5);
+                            final String serverSideName = "cache/"+md5;
+                            Log.getLogger().warn("BuilderTool: serverSideName = " + serverSideName);
+                            if (!Structures.hasStructureName(serverSideName))
+                            {
+                                Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
+                                final InputStream stream = Structure.getStream(structureName);
+                                if (stream!= null)
+                                {
+                                    Log.getLogger().warn("BuilderTool: Sending structure " + structureName +" (" + md5 + ")");
+                                    MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream), structureName));
+                                }
+                                else
+                                {
+                                    Log.getLogger().warn("BuilderTool: Can not load " + structureName);
+                                }
+                            }
+                            else
+                            {
+                                Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
+                            }
+
+                            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                                                                                  //Structures.SCHEMATICS_CUSTOM + '/' + hutDec.get(hutDecIndex),
+                                                                                  "cache/" + md5,
+                                                                                  structureName,
+                                                                                  //getStyles().get(styleIndex),
+                                                                                  Settings.instance.pos,
+                                                                                  Settings.instance.getRotation(),
+                                                                                  false));
+                        }
+                        else
+                        {
+                            Log.getLogger().warn("BuilderTool: Can not send schematic without md5: " + structureName);
+                        }
+                    }
+
+
+                    break;
+                    
+            }
+            /*else
+            {
+                MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
                                                                               hutDec.get(hutDecIndex),
                                                                               getStyles().get(styleIndex),
                                                                               Settings.instance.pos,
                                                                               Settings.instance.getRotation(),
-                                                                              Settings.instance.isInHutMode()));
+                                                                              Settings.instance.getBuildingMode() == Settings.BuildingMode.HUT));
+            }*/
         }
         else
         {

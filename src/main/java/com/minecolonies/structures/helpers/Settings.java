@@ -21,7 +21,18 @@ public final class Settings
      * The position of the structure.
      */
     public              BlockPos                 pos            = null;
-    private             boolean                  inHutMode      = true;
+    public enum BuildingMode
+    {
+        HUT, DECORATION, CUSTOM;
+        public BuildingMode getNext()
+        {
+            return this.ordinal() < BuildingMode.values().length - 1
+            ? BuildingMode.values()[this.ordinal() + 1]
+            : BuildingMode.values()[0];
+        }
+    }
+    //private             boolean                  inHutMode      = true;
+    private             BuildingMode             inBuildingMode   = BuildingMode.HUT;
     @Nullable
     private             Structure                structure      = null;
     private             int                      rotation       = 0;
@@ -93,17 +104,17 @@ public final class Settings
     /**
      * @return true if the client is in hut mode.
      */
-    public boolean isInHutMode()
+    public BuildingMode getBuildingMode()
     {
-        return inHutMode;
+        return inBuildingMode;
     }
 
     /**
      * @param mode true if in hut mode, false if in decoration mode.
      */
-    public void setInHutMode(final boolean mode)
+    public void nextBuildingMode()
     {
-        inHutMode = mode;
+        inBuildingMode = inBuildingMode.getNext();
     }
 
     /**

@@ -4,6 +4,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.util.Log;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.structures.fake.FakeEntity;
 import com.minecolonies.structures.fake.FakeWorld;
 import com.minecolonies.structures.lib.ModelHolder;
@@ -96,9 +97,14 @@ public class Structure
             this.mc = Minecraft.getMinecraft();
         }
 
-        final InputStream inputstream = Structure.getStream(structureName);
+        InputStream inputStream = Structure.getStream(structureName);
 
-        if (inputstream == null)
+        if (inputStream == null && Structures.hasStructureName(structureName))
+        {
+            inputStream = Structure.getStream(Structures.getMD5(structureName));
+        }
+
+        if (inputStream == null)
         {
             Log.getLogger().warn(String.format("Failed to load template %s", structureName));
             return;
@@ -107,7 +113,7 @@ public class Structure
         try
         {
             this.md5      = Structure.calculateMD5(Structure.getStream(structureName));
-            this.template = readTemplateFromStream(inputstream);
+            this.template = readTemplateFromStream(inputStream);
         }
         catch (final IOException e)
         {
@@ -115,8 +121,30 @@ public class Structure
         }
         finally
         {
-            IOUtils.closeQuietly(inputstream);
+            IOUtils.closeQuietly(inputStream);
         }
+    }
+
+    public static String getHut(@NotNull final String structureName)
+    {
+        final int indexEnd = structureName.lastIndexOf('/');
+        if (indexEnd == -1)
+        {
+            return null;
+        }
+        return structureName.substring(indexEnd+1).replaceAll("\\d*$", "");
+    }
+
+
+    public static String getStyleFromStructureName(@NotNull final String structureName)
+    {
+        final int indexStart = structureName.indexOf('/');
+        final int indexEnd = structureName.lastIndexOf('/');
+        if (indexStart == -1 || indexEnd == -1 || indexStart +1 >= indexEnd)
+        {
+            return null;
+        }
+        return structureName.substring(indexStart+1,indexEnd);
     }
 
     /**
@@ -143,6 +171,38 @@ public class Structure
     }
 
     /**
+     * Get the file representation of the cached schematics' folder.
+     * @return the folder for the cached schematics
+     */
+    public static File getCachedSchematicsFolder()
+    {
+        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
+        {
+            if (ColonyManager.getServerUUID()!=null)
+            {
+                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID()+"/cache/");
+            }
+            else
+            {
+                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
+                return null;
+            }
+        }
+
+        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
+                        + "/" + Constants.MOD_ID + "/schematics/cache/");
+    }
+
+    //Client only
+    public static File getCustomSchematicsFolder()
+    {
+        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/custom/");
+    }
+
+
+
+
+    /**
      * get a InputStream for a give structureName
      * 
      * @param structureName name of the structure to load
@@ -150,19 +210,51 @@ public class Structure
      */
     public static InputStream getStream(final String structureName)
     {
-        InputStream inputstream = null;
-        File nbtFile = null;
-        final File schematicsFolder = Structure.getSchematicsFolder();
+        Log.getLogger().info("Trying to load " + structureName);
+        InputStream inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
 
+        if (inputstream == null && structureName.startsWith(Structures.SCHEMATICS_CUSTOM + "/"))
+        {
+            inputstream = Structure.getStreamFromFolder(Structure.getCustomSchematicsFolder().getParentFile(), structureName);
+            if (inputstream != null)
+                Log.getLogger().info("Loaded " + structureName + " from Schematics folder");
+        }
+
+        if (inputstream == null && Structures.hasStructureName(structureName))
+        {
+            inputstream = Structure.getStreamFromFolder(Structure.getCachedSchematicsFolder(), Structures.getMD5(structureName));
+            if (inputstream != null)
+                Log.getLogger().info("Loaded " + structureName + " from Cached Schematics folder");
+        }
+
+        if (inputstream == null)
+        {
+            inputstream = Structure.getStreamFromJar(structureName);
+            if (inputstream != null)
+                Log.getLogger().info("Loaded " + structureName + " from Jar Schematics folder");
+        }
+
+        if (inputstream == null)
+        {
+            Log.getLogger().warn("Couldn't find any structure with this name " + structureName);
+        }
+
+        return inputstream;
+    }
+
+    private static InputStream getStreamFromFolder(final File folder, final String structureName)
+    {
+        //Log.getLogger().info("Trying to load " + structureName + " from " + folder.toPath());
         try
         {
-            if(schematicsFolder.exists())
+            if(folder.exists())
             {
                 //We need to check that we stay within the correct folder
-                nbtFile = new File(schematicsFolder.getPath() + "/" + structureName + ".nbt");
-                if (nbtFile.toURI().normalize().getPath().startsWith(schematicsFolder.toURI().normalize().getPath()))
+                final File nbtFile = new File(folder.getPath() + "/" + structureName + ".nbt");
+                if (nbtFile.toURI().normalize().getPath().startsWith(folder.toURI().normalize().getPath()))
                 {
-                    inputstream = new FileInputStream(schematicsFolder.getPath() + "/" + structureName + ".nbt");
+                    //Log.getLogger().info("Trying to load " + folder.getPath() + "/" + structureName + ".nbt");
+                    return new FileInputStream(folder.getPath() + "/" + structureName + ".nbt");
                 }
                 else
                 {
@@ -178,19 +270,14 @@ public class Structure
         {
             //Ignore the error
         }
-
-        if (inputstream == null)
-        {
-            inputstream = MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
-        }
-
-        if (inputstream == null)
-        {
-            Log.getLogger().warn("Couldn't find any structure with this name " + structureName);
-        }
-
-        return inputstream;
+        return null;
     }
+
+    private static InputStream getStreamFromJar(final String structureName)
+    {
+        return MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
+    }
+
 
     /**
      * get the Template from the structure.
@@ -240,25 +327,37 @@ public class Structure
 
     /**
      * Calculate the MD5 hash for a template from an inputstream.
+     * @param stream to which we want the MD5 hash
+     * @return the MD5 hash string or null
      */
-    public static String calculateMD5(final InputStream stream) throws IOException
+    public static String calculateMD5(final InputStream stream) //throws IOException
     {
         if (stream == null)
         {
             Log.getLogger().error("Structure.calculateMD5: stream is null, this should not happen");
-            return new String();
+            return null;
         }
+        return calculateMD5(getStreamAsByteArray(stream));
+    }
+
+    /**
+     * Calculate the MD5 hash of a byte array
+     * @param bytes array
+     * @return the MD5 hash string or null
+     */
+    public static String calculateMD5(final byte [] bytes) //throws IOException
+    {
         try
         {
             final MessageDigest md = MessageDigest.getInstance("MD5");
-            return DatatypeConverter.printHexBinary(md.digest(getStreamAsByteArray(stream)));
+            return DatatypeConverter.printHexBinary(md.digest(bytes));
         }
         catch (@NotNull NoSuchAlgorithmException e)
         {
             Log.getLogger().trace(e);
         }
 
-        return new String();
+        return null;
     }
 
     /**
@@ -268,7 +367,7 @@ public class Structure
      */
     public boolean isCorrectMD5(final String otherMD5)
     {
-        if (md5 == null)
+        if (md5 == null || otherMD5 == null)
         {
             return false;
         }
