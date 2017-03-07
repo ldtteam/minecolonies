@@ -27,9 +27,9 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
  */
 public class RandomTeleportCommand extends AbstractSingleCommand
 {
-    public static final  String DESC             = "rtp";
-    private static final int    STARTING_Y       = 250;
-    private static final double SAFETY_DROP      = 4;
+    public static final String DESC = "rtp";
+    private static final int STARTING_Y = 250;
+    private static final double SAFETY_DROP = 4;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
 
     /**
@@ -63,6 +63,12 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             return;
         }
 
+        if (!MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
+            return;
+        }
+
         EntityPlayer playerToTeleport = null;
 
         if (sender instanceof EntityPlayer)
@@ -92,6 +98,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
     /**
      * Get a random coordinate to teleport to.
+     *
      * @return
      */
     private static int getRandCoordinate()
@@ -101,7 +108,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         int x = rnd.nextInt(Configurations.maxDistanceFromWorldSpawn * 2) - Configurations.maxDistanceFromWorldSpawn;
 
         /* keeping X out of the spawn radius */
-        while (x > - Configurations.minDistanceFromWorldSpawn && x < Configurations.minDistanceFromWorldSpawn)
+        while (x > -Configurations.minDistanceFromWorldSpawn && x < Configurations.minDistanceFromWorldSpawn)
         {
             x = rnd.nextInt(Configurations.maxDistanceFromWorldSpawn * 2) - Configurations.maxDistanceFromWorldSpawn;
         }
@@ -137,15 +144,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
             if (foundPosition)
             {
-                if(MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
-                {
                     playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
-                }
-                else
-                {
-                    sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
-                }
-                return;
             }
         }
         playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Couldn't find a safe spot.  Try again in a moment."));

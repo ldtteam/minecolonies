@@ -48,8 +48,13 @@ public class BackupCommand extends AbstractSingleCommand
                 else
                 {
                     sender.addChatMessage(new TextComponentString(BACKUP_FAILURE_MESSAGE));
+
                 }
             });
+        }
+        else
+        {
+            sender.addChatMessage(new TextComponentString(NO_PERMISSION_MESSAGE));
         }
     }
 

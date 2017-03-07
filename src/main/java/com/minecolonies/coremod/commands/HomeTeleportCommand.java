@@ -3,6 +3,7 @@ package com.minecolonies.coremod.commands;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
+import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,9 +46,7 @@ public class HomeTeleportCommand extends AbstractSingleCommand
     }
 
     @Override
-    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException
-    {
-
+    public void execute(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args) throws CommandException {
         //see if player is allowed to use in the configs
             if (!canCommandSenderUseCommand(HOMETP))
             {
@@ -78,8 +77,19 @@ public class HomeTeleportCommand extends AbstractSingleCommand
                 sender.getCommandSenderEntity().addChatMessage(new TextComponentString(CANT_FIND_COLONY));
                 return;
             }
-        playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("There's no place like home, there's no place like home..."));
-        teleportPlayer(playerToTeleport, colonyId);
+
+        //lets see if they waited long enoughto try again or if they trying to spam it
+        if (MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
+        {
+            playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("There's no place like home, there's no place like home..."));
+            teleportPlayer(playerToTeleport, colonyId);
+        }
+        else
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Please wait at least " + Configurations.teleportBuffer + " seconds to teleport again"));
+        }
+        return;
+
     }
 
 
