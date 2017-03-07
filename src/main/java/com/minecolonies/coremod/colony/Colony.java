@@ -3,10 +3,9 @@ package com.minecolonies.coremod.colony;
 import com.google.common.collect.ImmutableMap;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.achievements.ModAchievements;
-import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
-import com.minecolonies.coremod.colony.buildings.BuildingHome;
-import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.*;
+import com.minecolonies.coremod.colony.requestsystem.StandardRequestManager;
+import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
@@ -107,6 +106,9 @@ public class Colony implements IColony
     private int topCitizenId = 0;
     private int maxCitizens  = Configurations.maxCitizens;
     private int killedMobs   = 0;
+    @NotNull
+    //TODO: Serialization of requestmanagers.
+    private final IRequestManager requestManager = new StandardRequestManager(this);
 
     /**
      * Constructor for a newly created Colony.
@@ -1437,8 +1439,19 @@ public class Colony implements IColony
      * @return Map with ID (coordinates) as key, and buildings as value.
      */
     @NotNull
-    public ImmutableMap<BlockPos, AbstractBuilding> getBuildings()
+    public ImmutableMap<BlockPos, IBuilding> getBuildings()
     {
         return ImmutableMap.copyOf(buildings);
+    }
+
+    /**
+     * Returns the request manager for the colony.
+     *
+     * @return The request manager.
+     */
+    @NotNull
+    @Override
+    public IRequestManager getRequestManager() {
+        return requestManager;
     }
 }

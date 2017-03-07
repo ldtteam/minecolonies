@@ -4,6 +4,9 @@ import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.colony.requestsystem.location.ILocatable;
+import com.minecolonies.coremod.colony.requestsystem.location.ILocation;
+import com.minecolonies.coremod.colony.requestsystem.locations.EntityLocation;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
@@ -20,7 +23,7 @@ import java.util.Random;
 /**
  * Extra data for Citizens.
  */
-public class CitizenData
+public class CitizenData implements ILocatable
 {
     private static final float  MAX_HEALTH              = 20.0F;
     /**
@@ -689,5 +692,17 @@ public class CitizenData
     {
         this.level = 0;
         this.experience = 0;
+    }
+
+    /**
+     * Method to get the location of this locatable.
+     *
+     * @return
+     */
+    @NotNull
+    @Override
+    public ILocation getLocation() {
+        //TODO: Check if this works!
+        return new EntityLocation(getCitizenEntity().getPersistentID());
     }
 }

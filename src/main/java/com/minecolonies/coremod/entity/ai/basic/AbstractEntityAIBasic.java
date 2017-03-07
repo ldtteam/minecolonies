@@ -55,15 +55,6 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private static final int             HIT_EVERY_X_TICKS       = 5;
     /**
-     * The list of all items and their quantity that were requested by the worker.
-     * Warning: This list does not change, if you need to see what is currently missing,
-     * look at @see #itemsCurrentlyNeeded for things the miner needs.
-     * <p>
-     * Will be cleared on restart, be aware!
-     */
-    @NotNull
-    private final        List<ItemStack> itemsNeeded             = new ArrayList<>();
-    /**
      * The block the ai is currently working at or wants to work.
      */
     @Nullable
@@ -139,16 +130,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
                  * If yes, transition to NEEDS_ITEM.
                  * and wait for new items.
                  */
-          new AITarget(() -> this.getOwnBuilding().areItemsNeeded(), this::waitForNeededItems),
-                /*
-                 * Wait for different tools.
-                 */
-          new AITarget(() -> this.getOwnBuilding().needsShovel(), this::waitForShovel),
-          new AITarget(() -> this.getOwnBuilding().needsAxe(), this::waitForAxe),
-          new AITarget(() -> this.getOwnBuilding().needsHoe(), this::waitForHoe),
-          new AITarget(() -> this.getOwnBuilding().needsPickaxe(), this::waitForPickaxe),
-          new AITarget(() -> this.getOwnBuilding().needsWeapon(), this::waitForWeapon),
-
+          new AITarget(() -> this.getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()), this::waitForRequests),
                 /*
                  * Dumps inventory as long as needs be.
                  * If inventory is dumped, execution continues
@@ -352,16 +334,16 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     }
 
     /**
-     * Looks for needed items as long as not all of them are there.
+     * If the worker has open requests their results will be queried until they all are completed
      * Also waits for DELAY_RECHECK.
      *
      * @return NEEDS_ITEM
      */
     @NotNull
-    private AIState waitForNeededItems()
+    private AIState waitForRequests()
     {
         delay = DELAY_RECHECK;
-        return lookForNeededItems();
+        return lookForRequests();
     }
 
     /**
@@ -369,13 +351,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      * Poll this until all items are there.
      */
     @NotNull
-    private AIState lookForNeededItems()
+    private AIState lookForRequests()
     {
-        syncNeededItemsWithInventory();
-        if (!getOwnBuilding().areItemsNeeded())
+        if (!getOwnBuilding().hasWorkerOpenRequests(worker.getCitizenData()))
         {
-            itemsNeeded.clear();
-            job.clearItemsNeeded();
             return IDLE;
         }
         if (!walkToBuilding())
@@ -387,24 +366,8 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             {
                 return NEEDS_ITEM;
             }
-
-            if (!getOwnBuilding().hasOnGoingDelivery())
-            {
-                requestWithoutSpam(first.getCount() + " " + first.getDisplayName());
-            }
         }
         return NEEDS_ITEM;
-    }
-
-    /**
-     * Updates the itemsCurrentlyNeeded with current values.
-     */
-    private void syncNeededItemsWithInventory()
-    {
-        job.clearItemsNeeded();
-        itemsNeeded.forEach(job::addItemNeeded);
-        InventoryUtils.getInventoryAsList(worker.getInventoryCitizen()).forEach(job::removeItemNeeded);
-        getOwnBuilding().setItemsCurrentlyNeeded(job.getItemsNeeded());
     }
 
     /**
@@ -630,7 +593,7 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
         {
             return false;
         }
-        if (!getOwnBuilding().hasOnGoingDelivery())
+        if (!getOwnBuilding().needsAnything())
         {
             chatSpamFilter.talkWithoutSpam("entity.worker.toolRequest", tool, InventoryUtils.swapToolGrade(hutLevel));
         }

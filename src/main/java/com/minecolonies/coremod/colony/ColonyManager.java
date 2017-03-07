@@ -3,6 +3,7 @@ package com.minecolonies.coremod.colony;
 import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.blocks.AbstractBlockHut;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
@@ -156,8 +157,9 @@ public final class ColonyManager
                 }
             }
             Log.getLogger().info("Removing buildings for " + id);
-            for (final AbstractBuilding building : new ArrayList<>(colony.getBuildings().values()))
+            for (final IBuilding buildingCore : new ArrayList<>(colony.getBuildings().values()))
             {
+                AbstractBuilding building = (AbstractBuilding) buildingCore;
 
                 final BlockPos location = building.getLocation();
                 Log.getLogger().info("Delete Building at " + location);

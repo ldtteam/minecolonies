@@ -145,7 +145,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     }
 
     /**
-     * Check if a building is being delivery by on of the warehouses deliverymen.
+     * Check if a building is being getDelivery by on of the warehouses deliverymen.
      *
      * @param buildingEntry the building to check.
      * @return true if so.
@@ -292,7 +292,7 @@ public class TileEntityWareHouse extends TileEntityColonyBuilding
     /**
      * Get the first task in the list.
      *
-     * @return the building which needs a delivery.
+     * @return the building which needs a getDelivery.
      */
     @Nullable
     public AbstractBuilding getTask()

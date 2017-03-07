@@ -1,8 +1,11 @@
 package com.minecolonies.coremod.colony;
 
+import com.google.common.collect.ImmutableMap;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
+import com.minecolonies.coremod.colony.buildings.IBuilding;
+import com.minecolonies.coremod.colony.requestsystem.IRequestManager;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.colony.workorders.AbstractWorkOrder;
 import com.minecolonies.coremod.configuration.Configurations;
@@ -475,5 +478,38 @@ public final class ColonyView implements IColony
     public int getID()
     {
         return id;
+    }
+
+    /**
+     * returns the World the colony is in.
+     *
+     * @return the World the colony is in.
+     */
+    @Nullable
+    @Override
+    public World getWorld() {
+        return null;
+    }
+
+    /**
+     * Returns the buildings in the colony
+     *
+     * @return The buildings in the colony
+     */
+    @NotNull
+    @Override
+    public ImmutableMap<BlockPos, IBuilding> getBuildings() {
+        return ImmutableMap.copyOf(buildings);
+    }
+
+    /**
+     * Returns the request manager for the colony.
+     *
+     * @return The request manager.
+     */
+    @NotNull
+    @Override
+    public IRequestManager getRequestManager() {
+        return null;
     }
 }

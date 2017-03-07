@@ -166,7 +166,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
             return null;
         }
 
-        final Collection<AbstractBuilding> buildingList = worker.getColony().getBuildings().values();
+        final Collection<IBuilding> buildingList = worker.getColony().getBuildings().values();
         final Object[] buildingArray = buildingList.toArray();
 
         final int random = worker.getRandom().nextInt(buildingArray.length);
@@ -332,7 +332,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Prepare deliveryman for delivery.
+     * Prepare deliveryman for getDelivery.
      * Check if the building still needs the item and if the required items are still in the warehouse.
      *
      * @return the next state to go to.
@@ -386,7 +386,7 @@ public class EntityAIWorkDeliveryman extends AbstractEntityAIInteract<JobDeliver
     }
 
     /**
-     * Check if the deliveryman has all the tools to make the delivery.
+     * Check if the deliveryman has all the tools to make the getDelivery.
      *
      * @param buildingToDeliver the building to deliver to.
      * @return true if is ready to deliver.

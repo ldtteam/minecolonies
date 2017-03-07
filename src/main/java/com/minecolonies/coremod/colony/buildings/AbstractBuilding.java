@@ -7,6 +7,9 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
+import com.minecolonies.coremod.colony.requestsystem.request.IRequest;
+import com.minecolonies.coremod.colony.requestsystem.token.IToken;
+import com.minecolonies.coremod.colony.requestsystem.requestable.Tool;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
@@ -36,8 +39,7 @@ import java.util.*;
 /**
  * Base building class, has all the foundation for what a building stores and does.
  */
-public abstract class AbstractBuilding
-{
+public abstract class AbstractBuilding implements IBuilding {
     /**
      * Tag used to store the containers to NBT.
      */
@@ -69,45 +71,28 @@ public abstract class AbstractBuilding
      */
     private static final String                  TAG_STYLE                    = "style";
     private static final int                     NO_WORK_ORDER                = 0;
+
     /**
-     * A list of ItemStacks with needed items and their quantity.
-     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
-     * the players inventory and their hut combined.
-     * So look here for what is currently still needed
-     * to fulfill the workers needs.
-     * <p>
-     * Will be cleared on restart, be aware!
+     * List of all open requests made by this building.
+     *
+     * The key in this map is the class for the request type.
+     * The value is a list of tokens that represent the open requests inside the colony.
      */
     @NotNull
-    private              List<ItemStack>         itemsCurrentlyNeeded         = new ArrayList<>();
+    private final Map<Class, List<IToken>> openRequests = new HashMap<>();
+
     /**
-     * This flag tells if we need a shovel, will be set on tool needs.
+     * Map used to identify which citizen assigned to this building made which request.
      */
-    private              boolean                 needsShovel                  = false;
+    @NotNull
+    private final Map<IToken, Integer> requestsByCitizen = new HashMap<>();
+
     /**
-     * This flag tells if we need an axe, will be set on tool needs.
+     * Map used to identify which requests a given citizen has open.
      */
-    private              boolean                 needsAxe                     = false;
-    /**
-     * This flag tells if we need a hoe, will be set on tool needs.
-     */
-    private              boolean                 needsHoe                     = false;
-    /**
-     * This flag tells if we need a pickaxe, will be set on tool needs.
-     */
-    private              boolean                 needsPickaxe                 = false;
-    /**
-     * This flag tells if we need a weapon, will be set on tool needs.
-     */
-    private              boolean                 needsWeapon                  = false;
-    /**
-     * The minimum pickaxe level we need to fulfill the tool request.
-     */
-    private              int                     needsPickaxeLevel            = -1;
-    /**
-     * Checks if there is a ongoing delivery for the currentItem.
-     */
-    private              boolean                 onGoingDelivery              = false;
+    @NotNull
+    private final Map<Integer, List<IToken>> citizensByRequests = new HashMap<>();
+
     /**
      * Map to resolve names to class.
      */
@@ -159,7 +144,7 @@ public abstract class AbstractBuilding
      * The colony the building belongs to.
      */
     @NotNull
-    private final Colony                   colony;
+    private final Colony colony;
     /**
      * The tileEntity of the building.
      */
@@ -468,6 +453,7 @@ public abstract class AbstractBuilding
      *
      * @return {@link BlockPos} of the current object.
      */
+    @Override
     public BlockPos getLocation()
     {
         return location;
@@ -557,6 +543,7 @@ public abstract class AbstractBuilding
      *
      * @return {@link com.minecolonies.coremod.colony.Colony} of the current object.
      */
+    @Override
     @NotNull
     public Colony getColony()
     {
@@ -627,17 +614,11 @@ public abstract class AbstractBuilding
      *
      * @return true if the building is building, upgrading or repairing.
      */
+    @Override
     public boolean hasWorkOrder()
     {
         return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
     }
-
-    /**
-     * Children must return their max building level.
-     *
-     * @return Max building level.
-     */
-    public abstract int getMaxBuildingLevel();
 
     /**
      * Adds work orders to the {@link Colony#workManager}.
@@ -664,6 +645,7 @@ public abstract class AbstractBuilding
      *
      * @return {@link BlockPos} of the current object.
      */
+    @Override
     public BlockPos getID()
     {
         // Location doubles as ID.
@@ -771,6 +753,7 @@ public abstract class AbstractBuilding
      *
      * @return Level of the current object.
      */
+    @Override
     public int getBuildingLevel()
     {
         return buildingLevel;
@@ -847,33 +830,23 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Check if the building is receiving the required items.
-     *
-     * @return true if so.
+     * Method used to check for a given worker if he has open request.
+     * @param citizen The worker to check for.
+     * @return True when the given worker has open requests, false when not.
      */
-    public boolean hasOnGoingDelivery()
-    {
-        return onGoingDelivery;
-    }
-
-    /**
-     * Check if the building is receiving the required items.
-     *
-     * @param valueToSet true or false
-     */
-    public void setOnGoingDelivery(boolean valueToSet)
-    {
-        this.onGoingDelivery = valueToSet;
+    public boolean hasWorkerOpenRequests(CitizenData citizen) {
+        return !citizensByRequests.containsKey(citizen.getId()) || citizensByRequests.get(citizen.getId()).isEmpty();
     }
 
     /**
      * Check if the worker needs anything. Tool or item.
+     * Basically checks if the worker has open requests, regardless of by whom they will be fullfilled.
      *
      * @return true if so.
      */
     public boolean needsAnything()
     {
-        return !itemsCurrentlyNeeded.isEmpty() || needsShovel || needsAxe || needsHoe || needsWeapon || needsPickaxe;
+        return !openRequests.isEmpty();
     }
 
     /**
@@ -883,7 +856,28 @@ public abstract class AbstractBuilding
      */
     public boolean areItemsNeeded()
     {
-        return !itemsCurrentlyNeeded.isEmpty();
+        return !openRequests.get(ItemStack.class).isEmpty();
+    }
+
+    /**
+     * Check if the worker needs a tool of the given type.
+     *
+     * @param toolClass The type of tool requested.
+     * @return True if so.
+     */
+    public boolean requiresTool(String toolClass) {
+        if (openRequests.get(Tool.class).isEmpty())
+            return false;
+
+        List<IToken> tokenList = openRequests.get(Tool.class);
+        for(IToken token : tokenList) {
+            IRequest<Tool> toolIRequest = colony.getRequestManager().getRequestForToken(token);
+
+            if (toolIRequest.getRequest().getToolClass().equals(toolClass))
+                return true;
+        }
+
+        return false;
     }
 
     /**
@@ -891,10 +885,7 @@ public abstract class AbstractBuilding
      *
      * @return true if so.
      */
-    public boolean needsShovel()
-    {
-        return needsShovel;
-    }
+    public boolean needsShovel() { return requiresTool(Utils.SHOVEL); }
 
     /**
      * Check if the worker requires a axe.
@@ -903,7 +894,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsAxe()
     {
-        return needsAxe;
+        return requiresTool(Utils.AXE);
     }
 
     /**
@@ -913,7 +904,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsHoe()
     {
-        return needsHoe;
+        return requiresTool(Utils.HOE);
     }
 
     /**
@@ -923,7 +914,7 @@ public abstract class AbstractBuilding
      */
     public boolean needsPickaxe()
     {
-        return needsPickaxe;
+        return requiresTool(Utils.PICKAXE);
     }
 
     /**
@@ -933,7 +924,23 @@ public abstract class AbstractBuilding
      */
     public boolean needsWeapon()
     {
-        return needsWeapon;
+        return requiresTool(Utils.WEAPON);
+    }
+
+    @Nullable
+    public Tool getRequestedToolForClass(String toolClass) {
+        if (!requiresTool(toolClass))
+            return null;
+
+        List<IToken> tokenList = openRequests.get(Tool.class);
+        for(IToken token : tokenList) {
+            IRequest<Tool> toolIRequest = colony.getRequestManager().getRequestForToken(token);
+
+            if (toolIRequest.getRequest().getToolClass().equals(toolClass))
+                return toolIRequest.getRequest();
+        }
+
+        return null;
     }
 
     /**
@@ -943,123 +950,12 @@ public abstract class AbstractBuilding
      */
     public int getNeededPickaxeLevel()
     {
-        return needsPickaxeLevel;
+        return getRequestedToolForClass(Utils.PICKAXE).getMinLevel();
     }
 
-    /**
-     * Set if the worker needs a shovel.
-     *
-     * @param needsShovel true or false.
-     */
-    public void setNeedsShovel(final boolean needsShovel)
-    {
-        this.needsShovel = needsShovel;
-    }
+    public <Request> void createRequest(@NotNull CitizenData requester, @NotNull Request requested) {
+        IToken requestToken = colony.getRequestManager().createAndAssignRequest(requester, requested);
 
-    /**
-     * Set if the worker needs a axe.
-     *
-     * @param needsAxe true or false.
-     */
-    public void setNeedsAxe(final boolean needsAxe)
-    {
-        this.needsAxe = needsAxe;
-    }
-
-    /**
-     * Set if the worker needs a hoe.
-     *
-     * @param needsHoe true or false.
-     */
-    public void setNeedsHoe(final boolean needsHoe)
-    {
-        this.needsHoe = needsHoe;
-    }
-
-    /**
-     * Set if the worker needs a pickaxe.
-     *
-     * @param needsPickaxe true or false.
-     */
-    public void setNeedsPickaxe(final boolean needsPickaxe)
-    {
-        this.needsPickaxe = needsPickaxe;
-    }
-
-    /**
-     * Set if the worker needs a weapon.
-     *
-     * @param needsWeapon true or false.
-     */
-    public void setNeedsWeapon(final boolean needsWeapon)
-    {
-        this.needsWeapon = needsWeapon;
-    }
-
-    /**
-     * Add a neededItem to the currentlyNeededItem list.
-     *
-     * @param stack the stack to add.
-     */
-    public void addNeededItems(@Nullable ItemStack stack)
-    {
-        if (stack != null)
-        {
-            itemsCurrentlyNeeded.add(stack);
-        }
-    }
-
-    /**
-     * Getter for the neededItems.
-     *
-     * @return an unmodifiable list.
-     */
-    public List<ItemStack> getNeededItems()
-    {
-        return Collections.unmodifiableList(itemsCurrentlyNeeded);
-    }
-
-    /**
-     * Getter for the first of the currentlyNeededItems.
-     *
-     * @return copy of the itemStack.
-     */
-    @Nullable
-    public ItemStack getFirstNeededItem()
-    {
-        if (itemsCurrentlyNeeded.isEmpty())
-        {
-            return null;
-        }
-        return itemsCurrentlyNeeded.get(0).copy();
-    }
-
-    /**
-     * Clear the currentlyNeededItem list.
-     */
-    public void clearNeededItems()
-    {
-        itemsCurrentlyNeeded.clear();
-    }
-
-    /**
-     * Overwrite the itemsCurrentlyNeededList with a new one.
-     *
-     * @param newList the new list to set.
-     */
-    public void setItemsCurrentlyNeeded(@NotNull List<ItemStack> newList)
-    {
-        this.itemsCurrentlyNeeded = new ArrayList<>(newList);
-    }
-
-    /**
-     * Set the needed pickaxe level of the worker.
-     *
-     * @param needsPickaxeLevel the mining level.
-     */
-    public void setNeedsPickaxeLevel(final int needsPickaxeLevel)
-    {
-        this.needsPickaxeLevel = needsPickaxeLevel;
     }
 
     /**
@@ -1069,27 +965,27 @@ public abstract class AbstractBuilding
      */
     public String getRequiredTool()
     {
-        if (needsHoe)
+        if (needsHoe())
         {
             return Utils.HOE;
         }
 
-        if (needsAxe)
+        if (needsAxe())
         {
             return Utils.AXE;
         }
 
-        if (needsPickaxe)
+        if (needsPickaxe())
         {
             return Utils.PICKAXE;
         }
 
-        if (needsShovel)
+        if (needsShovel())
         {
             return Utils.SHOVEL;
         }
 
-        if (needsWeapon)
+        if (needsWeapon())
         {
             return Utils.WEAPON;
         }
@@ -1159,7 +1055,7 @@ public abstract class AbstractBuilding
      * Views contain the AbstractBuilding's data that is relevant to a Client, in a more client-friendly form.
      * Mutable operations on a View result in a message to the server to perform the operation.
      */
-    public static class View
+    public static class View implements IBuilding
     {
         private final ColonyView colony;
         @NotNull
@@ -1225,16 +1121,6 @@ public abstract class AbstractBuilding
         }
 
         /**
-         * Get the max level of the building.
-         *
-         * @return AbstractBuilding max level.
-         */
-        public int getBuildingMaxLevel()
-        {
-            return buildingMaxLevel;
-        }
-
-        /**
          * Checks if this building is at its max level.
          *
          * @return true if the building is at its max level.
@@ -1262,6 +1148,16 @@ public abstract class AbstractBuilding
         public boolean hasWorkOrder()
         {
             return workOrderLevel != NO_WORK_ORDER;
+        }
+
+        /**
+         * Children must return their max building level.
+         *
+         * @return Max building level.
+         */
+        @Override
+        public int getMaxBuildingLevel() {
+            return buildingMaxLevel;
         }
 
         public boolean isBuilding()

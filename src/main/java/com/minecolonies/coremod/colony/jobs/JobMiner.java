@@ -4,10 +4,7 @@ import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.entity.ai.citizen.miner.EntityAIStructureMiner;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 /**
  * Class used for variables regarding his job.
@@ -48,25 +45,5 @@ public class JobMiner extends AbstractJobStructure
     public AbstractAISkeleton<JobMiner> generateAI()
     {
         return new EntityAIStructureMiner(this);
-    }
-
-    /**
-     * Adds items if job requires items not in inventory.
-     *
-     * @param stack Stack to check if it is a required item.
-     */
-    public void addItemNeededIfNotAlready(@NotNull final ItemStack stack)
-    {
-        final List<ItemStack> itemsNeeded = super.getItemsNeeded();
-
-        //check if stack is already in itemsNeeded
-        for (final ItemStack neededItem : itemsNeeded)
-        {
-            if (stack.isItemEqual(neededItem))
-            {
-                return;
-            }
-        }
-        addItemNeeded(stack);
     }
 }

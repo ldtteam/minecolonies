@@ -6,17 +6,15 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.entity.ai.basic.AbstractAISkeleton;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.ai.EntityAITasks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.common.util.Constants;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Basic job information.
@@ -58,8 +56,6 @@ public abstract class AbstractJob
     }
 
     private final CitizenData citizen;
-    @NotNull
-    private final List<ItemStack> itemsNeeded = new ArrayList<>();
     private       String          nameTag     = "";
 
     /**
@@ -154,12 +150,7 @@ public abstract class AbstractJob
      */
     public void readFromNBT(@NotNull final NBTTagCompound compound)
     {
-        final NBTTagList itemsNeededTag = compound.getTagList(TAG_ITEMS_NEEDED, Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < itemsNeededTag.tagCount(); i++)
-        {
-            final NBTTagCompound itemCompound = itemsNeededTag.getCompoundTagAt(i);
-            itemsNeeded.add(new ItemStack(itemCompound));
-        }
+        //NOOP; Requests are stored on the building.
     }
 
     /**
@@ -214,18 +205,6 @@ public abstract class AbstractJob
         }
 
         compound.setString(TAG_TYPE, s);
-
-        if (!itemsNeeded.isEmpty())
-        {
-            @NotNull final NBTTagList itemsNeededTag = new NBTTagList();
-            for (@NotNull final ItemStack itemstack : itemsNeeded)
-            {
-                @NotNull final NBTTagCompound itemCompound = new NBTTagCompound();
-                itemstack.writeToNBT(itemCompound);
-                itemsNeededTag.appendTag(itemCompound);
-            }
-            compound.setTag(TAG_ITEMS_NEEDED, itemsNeededTag);
-        }
     }
 
     /**
@@ -235,82 +214,17 @@ public abstract class AbstractJob
      */
     public boolean isMissingNeededItem()
     {
-        return !itemsNeeded.isEmpty();
+        return citizen.getWorkBuilding().hasWorkerOpenRequests(citizen);
     }
 
     /**
-     * Get the list of items needed by the Job.
-     *
-     * @return List of items needed by the Job.
+     * Method used to create a request in the workers building.
+     * @param request The request to create.
+     * @param <Request> The type of request.
      */
-    @NotNull
-    public List<ItemStack> getItemsNeeded()
+    public <Request> void createRequest(@NotNull final Request request)
     {
-        return Collections.unmodifiableList(itemsNeeded);
-    }
-
-    /**
-     * Reset the items needed.
-     */
-    public void clearItemsNeeded()
-    {
-        itemsNeeded.clear();
-    }
-
-    /**
-     * Add (or increment) an ItemStack to the items needed by the Job.
-     * We're not comparing item damage values since i.e a damaged rod is the same as a normal rod for our purpose.
-     *
-     * @param stack Item+count needed to do the job.
-     */
-    public void addItemNeeded(@NotNull final ItemStack stack)
-    {
-        for (@NotNull final ItemStack neededItem : itemsNeeded)
-        {
-            if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
-            {
-                neededItem.setCount(neededItem.getCount() + stack.getCount());
-                return;
-            }
-        }
-
-        itemsNeeded.add(stack);
-    }
-
-    /**
-     * Remove a items from those required to do the Job.
-     * We're not comparing item damage values since i.e a damaged rod is the same as a normal rod for our purpose.
-     *
-     * @param stack ItemStack (item+count) to remove from the list of needed items.
-     * @return modified ItemStack with remaining items (or null).
-     */
-    @Nullable
-    public ItemStack removeItemNeeded(@NotNull final ItemStack stack)
-    {
-        @NotNull final ItemStack stackCopy = stack.copy();
-
-        if (stack.isEmpty())
-        {
-            return stackCopy;
-        }
-
-        for (@NotNull final ItemStack neededItem : itemsNeeded)
-        {
-            if ((stack.getItem().isDamageable() && stack.getItem() == neededItem.getItem()) || stack.isItemEqual(neededItem))
-            {
-                //todo make this sofisticated as soon as material handling has been implemented.
-                //final int itemsToRemove = Math.min(neededItem.getCount(), stackCopy.getCount());
-                //neededItem.setCount(stackCopy.getCount() - itemsToRemove);
-                //stackCopy.setCount(stackCopy.getCount() - itemsToRemove);
-
-                //Deativate this if for now in order to keep working even if not all items are given. previously checked if stackSize is 0 and only removed then.
-                itemsNeeded.remove(neededItem);
-
-                break;
-            }
-        }
-
-        return stackCopy.getCount() == 0 ? ItemStack.EMPTY : stackCopy;
+        citizen.getWorkBuilding().createRequest(citizen, request);
     }
 
     /**
