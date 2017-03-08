@@ -2,6 +2,7 @@ package com.minecolonies.structures.helpers;
 
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.fake.FakeEntity;
 import com.minecolonies.structures.fake.FakeWorld;
@@ -235,12 +236,7 @@ public class Structure
 
             if(block == ModBlocks.blockSolidSubstitution)
             {
-                iblockstate = clientWorld.getBiome(startingPos).fillerBlock;
-                if (iblockstate.getBlock() instanceof BlockFalling)
-                {
-                    iblockstate =  Blocks.DIRT.getDefaultState();
-                }
-
+                iblockstate = BlockUtils.getSubstitutionBlockAtWorld(clientWorld, startingPos);
                 block = iblockstate.getBlock();
             }
 

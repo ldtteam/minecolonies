@@ -7,6 +7,7 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
+import com.minecolonies.coremod.util.BlockUtils;
 import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.block.BlockFalling;
@@ -64,14 +65,9 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     }
 
     @Override
-    public IBlockState getSolidSubstitution(BlockPos location)
+    public IBlockState getSolidSubstitution(@NotNull final BlockPos location)
     {
-        final IBlockState filler = world.getBiome(location).fillerBlock;
-        if (filler.getBlock() instanceof BlockFalling)
-        {
-            return Blocks.DIRT.getDefaultState();
-        }
-        return filler;
+        return BlockUtils.getSubstitutionBlockAtWorld(world, location);
     }
 
     private boolean checkIfExecute()
