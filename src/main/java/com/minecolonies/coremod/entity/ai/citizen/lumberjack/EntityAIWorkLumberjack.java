@@ -391,7 +391,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
             workFrom = null;
             return LUMBERJACK_GATHERING;
         }
-<<<<<<< HEAD
 
         if (isOnSapling())
         {
@@ -407,12 +406,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
 
         }
 
-        //take first log from queue
-        final BlockPos log = job.tree.peekNextLog();
-        if (!mineBlock(log, workFrom))
-=======
         if (job.tree.hasLogs())
->>>>>>> develop
         {
             //take first log from queue
             final BlockPos log = job.tree.peekNextLog();
