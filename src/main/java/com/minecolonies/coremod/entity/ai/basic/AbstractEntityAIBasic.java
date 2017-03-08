@@ -1249,15 +1249,17 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
     private int getMostEfficientTool(@NotNull final Block target)
     {
         final String tool;
+        final int required;
         if (Compatibility.isSlimeBlock(target) || Compatibility.isSlimeLeaf(target))
         {
             tool = "axe";
+            required = 0;
         }
         else
         {
             tool = target.getHarvestTool(target.getDefaultState());
+            required = target.getHarvestLevel(target.getDefaultState());
         }
-        final int required = target.getHarvestLevel(target.getDefaultState());
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
