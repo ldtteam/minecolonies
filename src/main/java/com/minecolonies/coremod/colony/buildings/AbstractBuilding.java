@@ -838,6 +838,15 @@ public abstract class AbstractBuilding implements IBuilding {
         return !citizensByRequests.containsKey(citizen.getId()) || citizensByRequests.get(citizen.getId()).isEmpty();
     }
 
+    @NotNull
+    public ItemStack getFirstUnpickedDelivery(CitizenData citizen)
+    {
+        if (!hasWorkerOpenRequests(citizen))
+        {
+            return ItemStack.EMPTY;
+        }
+    }
+
     /**
      * Check if the worker needs anything. Tool or item.
      * Basically checks if the worker has open requests, regardless of by whom they will be fullfilled.
