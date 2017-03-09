@@ -1,7 +1,5 @@
 package com.minecolonies.coremod.inventory;
 
-import com.minecolonies.coremod.colony.materials.MaterialStore;
-import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.entity.EntityCitizen;
 import net.minecraft.crash.CrashReport;
@@ -71,10 +69,6 @@ public class InventoryCitizen implements IInventory
      * The held item.
      */
     private int           heldItem;
-    /**
-     * The material store object.
-     */
-    private MaterialStore materialStore;
     /**
      * Updated after the inventory has been changed.
      */
@@ -396,22 +390,6 @@ public class InventoryCitizen implements IInventory
     }
 
     /**
-     * Create a material store.
-     *
-     * @param system the system to use.
-     */
-    public void createMaterialStore(@NotNull final MaterialSystem system)
-    {
-        if (materialStore == null)
-        {
-            materialStore = new MaterialStore(MaterialStore.Type.INVENTORY, system);
-        }
-    }
-
-    public MaterialStore getMaterialStore()
-    {
-        return materialStore;
-    }    /**
      * Get the name of this object. For citizens this returns their name.
      *
      * @return the name of the inventory.
@@ -421,32 +399,6 @@ public class InventoryCitizen implements IInventory
     public String getName()
     {
         return this.hasCustomName() ? this.customName : "citizen.inventory";
-    }
-
-    private void addStackToMaterialStore(@Nullable final ItemStack stack)
-    {
-        if (stack == null)
-        {
-            return;
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.addMaterial(stack.getItem(), stack.stackSize);
-        }
-    }
-
-    private void removeStackFromMaterialStore(@Nullable final ItemStack stack)
-    {
-        if (stack == null)
-        {
-            return;
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.removeMaterial(stack.getItem(), stack.stackSize);
-        }
     }
 
     /**
@@ -622,6 +574,10 @@ public class InventoryCitizen implements IInventory
     public void markDirty()
     {
         this.inventoryChanged = true;
+        if (this.citizen != null)
+        {
+            this.citizen.onInventoryChanged();
+        }
     }
 
     /**
@@ -758,33 +714,8 @@ public class InventoryCitizen implements IInventory
         {
             compound.setString(TAG_CUSTOM_NAME, this.customName);
         }
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.writeToNBT(compound);
-        }
 
         compound.setTag(TAG_INVENTORY, nbttaglist);
     }
-
-
-
-
-
-
-
-
-    //-----------------------------Material Handling--------------------------------
-
-
-    //todo missing now
-    /*
-    @Override
-    public ItemStack getStackInSlotOnClosing(int index)
-    {
-            ItemStack removed = super.getStackInSlotOnClosing(index);
-
-                    removeStackFromMaterialStore(removed);
-
-                    return removed;
-    }*/
 }
+

@@ -79,7 +79,7 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
 
                 rowPane.findPaneOfTypeByID("lvl", Label.class).setLabelText(Integer.toString(index));
                 rowPane.findPaneOfTypeByID("nONodes", Label.class)
-                  .setLabelText(LanguageHandler.getString("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + levels[index]);
+                  .setLabelText(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.minerNode") + ": " + levels[index]);
             }
         });
     }
@@ -105,6 +105,8 @@ public class WindowHutMiner extends AbstractWindowWorkerBuilding<BuildingMiner.V
     @Override
     public void onUpdate()
     {
+        super.onUpdate();
+
         final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_LEVELS))
         {

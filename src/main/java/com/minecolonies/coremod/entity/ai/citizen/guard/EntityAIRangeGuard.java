@@ -166,11 +166,11 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
     @Override
     protected AIState searchTarget()
     {
-        if (checkOrRequestItems(new ItemStack(Items.BOW)))
+        if (checkOrRequestItems(false, new ItemStack(Items.BOW)))
         {
             return AIState.GUARD_SEARCH_TARGET;
         }
-        worker.setHeldItem(worker.findFirstSlotInInventoryWith(Items.BOW));
+        worker.setHeldItem(worker.findFirstSlotInInventoryWith(Items.BOW, -1));
         return super.searchTarget();
     }
 
@@ -181,7 +181,7 @@ public class EntityAIRangeGuard extends AbstractEntityAIGuard implements IRanged
      */
     protected AIState huntDown()
     {
-        if (!targetEntity.isEntityAlive() || checkOrRequestItems(new ItemStack(Items.BOW)))
+        if (!targetEntity.isEntityAlive() || checkOrRequestItems(false, new ItemStack(Items.BOW)))
         {
             targetEntity = null;
             worker.setAIMoveSpeed((float) 1.0D);

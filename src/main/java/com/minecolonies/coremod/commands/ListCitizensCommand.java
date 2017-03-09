@@ -6,6 +6,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -20,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.LISTCITIZENS;
+
 /**
  * List all colonies.
  */
@@ -30,13 +33,12 @@ public class ListCitizensCommand extends AbstractSingleCommand
     private static final String CITIZEN_DESCRIPTION     = "§2ID: §f %d §2 Name: §f %s";
     private static final String COORDINATES_XYZ         = "§2Coordinates: §f §4x=§f%s §4y=§f%s §4z=§f%s";
     private static final String LIST_COMMAND_SUGGESTED  = "/mc citizens list ";
-    private static final String COMMAND_CITIZEN_INFO    = "/mc colony citizenInfo %s %s";
+    private static final String COMMAND_CITIZEN_INFO    = "/mc citizens info %s %s";
     private static final String PAGE_TOP                = "§2   ------------------ page %d of %d ------------------";
     private static final String PREV_PAGE               = " <- prev";
     private static final String NEXT_PAGE               = "next -> ";
     private static final String PAGE_LINE               = "§2 ----------------";
     private static final String PAGE_LINE_DIVIDER       = "§2 | ";
-    private static final String NO_COLONY_FOUND_MESSAGE = "No colony found for id: %d.";
     private static final int    CITIZENS_ON_PAGE        = 9;
 
     /**
@@ -60,13 +62,18 @@ public class ListCitizensCommand extends AbstractSingleCommand
     public void execute(@NotNull final MinecraftServer server, @NotNull final ICommandSender sender, @NotNull final String... args) throws CommandException
     {
         final int colonyId = getIthArgument(args, 0, getColonyId(sender));
-        final Colony colony = ColonyManager.getColony(colonyId);
 
-        if (colony == null)
+        if(sender instanceof EntityPlayer)
         {
-            sender.addChatMessage(new TextComponentString(String.format(NO_COLONY_FOUND_MESSAGE, colonyId)));
-            return;
+            final EntityPlayer player = (EntityPlayer) sender;
+            if (!canPlayerUseCommand(player, LISTCITIZENS, colonyId))
+            {
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("Not happenin bro!!, You are not permitted to do that!"));
+                return;
+            }
         }
+
+        final Colony colony = ColonyManager.getColony(colonyId);
 
         final List<CitizenData> citizens = new ArrayList<>(colony.getCitizens().values());
         final int citizenCount = citizens.size();
@@ -83,7 +90,6 @@ public class ListCitizensCommand extends AbstractSingleCommand
 
         final int pageStartIndex = CITIZENS_ON_PAGE * (page - 1);
         final int pageStopIndex = Math.min(CITIZENS_ON_PAGE * page, citizenCount);
-
 
         final List<CitizenData> citizensPage;
 

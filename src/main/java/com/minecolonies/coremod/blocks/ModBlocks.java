@@ -18,7 +18,7 @@ public final class ModBlocks
     public static final Block blockHutLumberjack     = new BlockHutLumberjack();
     public static final Block blockHutBaker          = new BlockHutBaker();
     public static final Block blockHutBuilder        = new BlockHutBuilder();
-    public static final Block blockHutWarehouse      = new BlockHutDeliveryman();
+    public static final Block blockHutDeliveryman    = new BlockHutDeliveryman();
     public static final Block blockHutBlacksmith     = new BlockHutBlacksmith();
     public static final Block blockHutStonemason     = new BlockHutStonemason();
     public static final Block blockHutFarmer         = new BlockHutFarmer();
@@ -27,6 +27,10 @@ public final class ModBlocks
     public static final Block blockSolidSubstitution = new BlockSolidSubstitution();
     public static final Block blockHutField          = new BlockHutField();
     public static final Block blockHutGuardTower     = new BlockHutGuardTower();
+    public static final Block blockHutWareHouse      = new BlockHutWareHouse();
+    public static final Block blockConstructionTape  = new BlockConstructionTape();
+    public static final Block blockConstructionTapeCorner  = new BlockConstructionTapeCorner();
+
 
     // Deactivated for now
     // public static final Block blockBarrel        = new BlockBarrel();

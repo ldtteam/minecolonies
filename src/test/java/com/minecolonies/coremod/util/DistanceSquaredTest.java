@@ -1,17 +1,17 @@
 package com.minecolonies.coremod.util;
 
-import com.minecolonies.coremod.test.AbstractTest;
 import net.minecraft.util.math.BlockPos;
 import org.junit.Test;
-
-import java.util.Random;
+import org.junit.runner.RunWith;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.number.OrderingComparison.greaterThanOrEqualTo;
 
-public class DistanceSquaredTest extends AbstractTest
+//TODO improve this test: check the value is correct, better edge cases
+@RunWith(MockitoJUnitRunner.class)
+public class DistanceSquaredTest
 {
-
     /**
      * Max x/z position in vanilla minecraft.
      */
@@ -22,19 +22,13 @@ public class DistanceSquaredTest extends AbstractTest
      */
     private static final int MAX_HEIGHT = 500;
 
-    @Override
-    public String getTestName()
-    {
-        return "DistanceSquaredTest";
-    }
-
     @Test
     public void testDistance2DTwoPositions()
     {
         for (int i = -400; i < 400; i += 20)
         {
-            final BlockPos posA = new BlockPos(Math.pow(i, 2), 0, i * 2);
-            final BlockPos posB = new BlockPos(i, 0, Math.pow(i, 3));
+            final BlockPos posA = new BlockPos(i * i, 0, i * 2);
+            final BlockPos posB = new BlockPos(i, 0, i * i * i);
 
             testDistance2D(posA, posB);
         }
@@ -63,25 +57,12 @@ public class DistanceSquaredTest extends AbstractTest
     }
 
     @Test
-    public void testDistance2DTwoPositionsRandomValues()
-    {
-        final Random random = this.getRandom();
-        for (int i = 0; i < 100; i++)
-        {
-            final BlockPos posA = new BlockPos(random.nextInt(MAX_POSITION), 0, random.nextInt(MAX_POSITION));
-            final BlockPos posB = new BlockPos(random.nextInt(MAX_POSITION), 0, random.nextInt(MAX_POSITION));
-
-            testDistance2D(posA, posB);
-        }
-    }
-
-    @Test
     public void testDistance3DTwoPositions()
     {
         for (int i = -400; i < 400; i += 20)
         {
-            final BlockPos posA = new BlockPos(Math.pow(i, 2), i % 200, i * 2);
-            final BlockPos posB = new BlockPos(i, (i + 100) % 200, Math.pow(i, 3));
+            final BlockPos posA = new BlockPos(i * i, i % 200, i * 2);
+            final BlockPos posB = new BlockPos(i, (i + 100) % 200, i * i * i);
 
             testDistance3D(posA, posB);
         }
@@ -104,19 +85,6 @@ public class DistanceSquaredTest extends AbstractTest
         {
             final BlockPos posA = new BlockPos(MAX_POSITION - i, 0, MAX_POSITION - i);
             final BlockPos posB = new BlockPos(-MAX_POSITION + i, i, -MAX_POSITION + i);
-
-            testDistance3D(posA, posB);
-        }
-    }
-
-    @Test
-    public void testDistance3DTwoPositionsRandomValues()
-    {
-        final Random random = this.getRandom();
-        for (int i = 0; i < 100; i++)
-        {
-            final BlockPos posA = new BlockPos(random.nextInt(MAX_POSITION), random.nextInt(MAX_HEIGHT), random.nextInt(MAX_POSITION));
-            final BlockPos posB = new BlockPos(random.nextInt(MAX_POSITION), random.nextInt(MAX_HEIGHT), random.nextInt(MAX_POSITION));
 
             testDistance3D(posA, posB);
         }

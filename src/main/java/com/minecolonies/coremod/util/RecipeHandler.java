@@ -2,6 +2,7 @@ package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.blocks.ModBlocks;
 import com.minecolonies.coremod.items.ModItems;
+import com.minecolonies.coremod.lib.Constants;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -12,7 +13,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 public final class RecipeHandler
 {
-
     /**
      * Private constructor to hide the implicit public one.
      */
@@ -28,6 +28,10 @@ public final class RecipeHandler
      */
     public static void init(final boolean enableInDevelopmentFeatures, final boolean supplyChests)
     {
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockConstructionTape, 16), "SWS", "S S", "S S",
+          'S', Items.STICK, 'W', new ItemStack(Blocks.WOOL, 1, Constants.YELLOW));
+        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTapeCorner, 1),ModBlocks.blockConstructionTape);
+        GameRegistry.addShapelessRecipe(new ItemStack(ModBlocks.blockConstructionTape, 1),ModBlocks.blockConstructionTapeCorner);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutMiner, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.WOODEN_PICKAXE);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutMiner, 2), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.STONE_PICKAXE);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutLumberjack, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.WOODEN_AXE);
@@ -51,12 +55,15 @@ public final class RecipeHandler
         GameRegistry.addRecipe(new ItemStack(Blocks.WEB, 1), "X X", " X ", "X X", 'X', Items.STRING);
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutGuardTower, 2), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.BOW);
 
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutWareHouse, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Blocks.CHEST);
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutDeliveryman, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.LEATHER_BOOTS);
+
         // Disabled for now
         // GameRegistry.addRecipe(new ItemStack(ModBlocks.blockBarrel, 1), "P P", "P P", " S ", 'P', Blocks.planks, 'S', Blocks.wooden_slab);
         if (enableInDevelopmentFeatures)
         {
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBaker, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.WHEAT);
-            GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutWarehouse, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Blocks.CHEST);
+
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutBlacksmith, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Items.IRON_INGOT);
             GameRegistry.addRecipe(new ItemStack(ModBlocks.blockHutStonemason, 1), "XXX", "X#X", "XXX", 'X', Blocks.PLANKS, '#', Blocks.STONEBRICK);
         }

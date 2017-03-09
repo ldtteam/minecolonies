@@ -264,6 +264,31 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
         }
     }
 
+    /**
+     * Event-Handler for placement of this block.
+     * <p>
+     * Override for custom logic.
+     *
+     * @param worldIn the word we are in.
+     * @param pos     the position where the block was placed.
+     * @param state   the state the placed block is in.
+     * @param placer  the player placing the block.
+     * @param stack   the itemstack from where the block was placed.
+     * @param mirror  the mirror used.
+     * @see Block#onBlockPlacedBy(World, BlockPos, IBlockState, EntityLivingBase, ItemStack)
+     */
+    public void onBlockPlacedByBuildTool(@NotNull final World worldIn, @NotNull final BlockPos pos,
+                                                  final IBlockState state, final EntityLivingBase placer, final ItemStack stack, final boolean mirror)
+    {
+        final TileEntity tileEntity = worldIn.getTileEntity(pos);
+        if (tileEntity instanceof TileEntityColonyBuilding)
+        {
+            ((TileEntityColonyBuilding) tileEntity).setMirror(mirror);
+        }
+
+        onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    }
+
     @NotNull
     @Override
     protected BlockStateContainer createBlockState()

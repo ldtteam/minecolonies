@@ -1,13 +1,13 @@
 package com.minecolonies.coremod.entity;
 
 import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.achievements.ModAchievements;
 import com.minecolonies.coremod.client.render.RenderBipedCitizen;
 import com.minecolonies.coremod.colony.*;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.buildings.BuildingFarmer;
 import com.minecolonies.coremod.colony.buildings.BuildingHome;
-import com.minecolonies.coremod.colony.jobs.AbstractJob;
-import com.minecolonies.coremod.colony.jobs.JobGuard;
+import com.minecolonies.coremod.colony.jobs.*;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
 import com.minecolonies.coremod.entity.ai.minimal.*;
@@ -24,8 +24,11 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityGuardian;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -39,6 +42,8 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
@@ -113,7 +118,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Quantity to be moved to rotate without actually moving.
      */
-    private static final double MOVE_MINIMAL = 0.01D;
+    private static final double MOVE_MINIMAL = 0.001D;
 
     /**
      * Base max health of the citizen.
@@ -123,7 +128,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     /**
      * Base movement speed of every citizen.
      */
-    private static final double BASE_MOVEMENT_SPEED = 0.3D;
+    public static final double BASE_MOVEMENT_SPEED = 0.3D;
 
     /**
      * Base pathfinding range of the citizen.
@@ -165,6 +170,10 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * The last job of the citizen.
      */
     private String lastJob                             = "";
+    /**
+     * If the entitiy is stuck for 2 minutes do something.
+     */
+    private static final int MAX_STUCK_TIME = 20*60*2;
     private static Field navigatorField;
     private final InventoryCitizen inventory;
     @NotNull
@@ -191,6 +200,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
     private Colony      colony;
     @Nullable
     private CitizenData citizenData;
+
+    /**
+     * The entities current Position.
+     */
+    private BlockPos currentPosition = null;
+
+    /**
+     * Time the entitiy is at the same position already.
+     */
+    private int stuckTime = 0;
+
 
     /**
      * Citizen constructor.
@@ -270,6 +290,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
         onJobChanged(getColonyJob());
     }
 
+    @Nullable
     public AbstractJob getColonyJob()
     {
         return citizenData == null ? null : citizenData.getJob();
@@ -333,6 +354,18 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public int getLevel()
     {
         return level;
+    }
+
+    /**
+     * On Inventory change, mark the building dirty.
+     */
+    public void onInventoryChanged()
+    {
+        final AbstractBuildingWorker building = citizenData.getWorkBuilding();
+        if (building!=null)
+        {
+            building.markDirty();
+        }
     }
 
     public void setRenderMetadata(final String metadata)
@@ -587,6 +620,38 @@ public class EntityCitizen extends EntityAgeable implements INpc
     }
 
     /**
+     * Trigger the corresponding death achievement.
+     * @param source    The damage source.
+     * @param job       The job of the citizen.
+     */
+    public void triggerDeathAchievement(final DamageSource source, final AbstractJob job)
+    {
+        if (job instanceof JobMiner)
+        {
+            if (source == DamageSource.lava || source == DamageSource.inFire || source == DamageSource.onFire)
+            {
+                this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathLava);
+            }
+            if (source.equals(DamageSource.fall))
+            {
+                this.getColony().triggerAchievement(ModAchievements.achievementMinerDeathFall);
+            }
+        }
+        if (job instanceof JobLumberjack && source == DamageSource.inWall)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementLumberjackDeathTree);
+        }
+        if (job instanceof JobFisherman && source.getEntity() instanceof EntityGuardian)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementFisherDeathGuardian);
+        }
+        if(job instanceof JobGuard && source.getEntity() instanceof EntityEnderman)
+        {
+            this.getColony().triggerAchievement(ModAchievements.achievementGuardDeathEnderman);
+        }
+    }
+
+    /**
      * Called when the mob's health reaches 0.
      *
      * @param par1DamageSource the attacking entity.
@@ -599,16 +664,17 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         if (colony != null)
         {
+            triggerDeathAchievement(par1DamageSource,getColonyJob());
             if (getColonyJob() instanceof JobGuard)
             {
-                LanguageHandler.sendPlayersLocalizedMessage(
+                LanguageHandler.sendPlayersMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageGuardDead",
-                  citizenData.getName(), (int) posX, (int) posY, (int) posZ);
+                        citizenData.getName(), (int)posX, (int) posY, (int) posZ);
             }
             else
             {
-                LanguageHandler.sendPlayersLocalizedMessage(
+                LanguageHandler.sendPlayersMessage(
                   colony.getMessageEntityPlayers(),
                   "tile.blockHutTownHall.messageColonistDead",
                   citizenData.getName(), (int) posX, (int) posY, (int) posZ);
@@ -793,6 +859,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
             pickupItems();
             cleanupChatMessages();
             updateColonyServer();
+            checkIfStuck();
             if (worldObj.isDaytime() && !worldObj.isRaining())
             {
                 SoundUtils.playRandomSound(worldObj, this);
@@ -810,6 +877,52 @@ public class EntityCitizen extends EntityAgeable implements INpc
 
         checkHeal();
         super.onLivingUpdate();
+    }
+
+    private void checkIfStuck()
+    {
+        if(this.currentPosition == null)
+        {
+            this.currentPosition = this.getPosition();
+            return;
+        }
+
+        if(this.currentPosition.equals(this.getPosition()) && newNavigator != null && newNavigator.getDestination() != null)
+        {
+            stuckTime++;
+            if(stuckTime >= MAX_STUCK_TIME)
+            {
+                if (newNavigator.getDestination().distanceSq(posX, posY, posZ) < MOVE_AWAY_RANGE)
+                {
+                    stuckTime = 0;
+                    return;
+                }
+
+                @Nullable final BlockPos spawnPoint =
+                        Utils.scanForBlockNearPoint
+                                (worldObj, newNavigator.getDestination(), 1, 0, 1, 2,
+                                        Blocks.AIR,
+                                        Blocks.SNOW_LAYER,
+                                        Blocks.TALLGRASS,
+                                        Blocks.RED_FLOWER,
+                                        Blocks.YELLOW_FLOWER,
+                                        Blocks.CARPET);
+
+                EntityUtils.setSpawnPoint(spawnPoint, this);
+                if (colony != null)
+                {
+                    Log.getLogger().info("Teleported stuck citizen " + this.getName() + " from colony: " + colony.getID() + " to target location");
+                }
+                stuckTime = 0;
+            }
+        }
+        else
+        {
+            stuckTime = 0;
+            this.currentPosition = this.getPosition();
+        }
+
+        this.currentPosition = this.getPosition();
     }
 
     /**
@@ -1043,8 +1156,6 @@ public class EntityCitizen extends EntityAgeable implements INpc
         citizenData.setCitizenEntity(this);
 
         onJobChanged(getColonyJob());
-
-        inventory.createMaterialStore(c.getMaterialSystem());
     }
 
     /**
@@ -1272,66 +1383,72 @@ public class EntityCitizen extends EntityAgeable implements INpc
      * Returns the first slot in the inventory with a specific item.
      *
      * @param targetItem the item.
+     * @param itemDamage the damage value
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(final Item targetItem)
+    public int findFirstSlotInInventoryWith(final Item targetItem, int itemDamage)
     {
-        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), targetItem);
+        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), targetItem, itemDamage);
     }
 
     /**
      * Returns the first slot in the inventory with a specific block.
      *
      * @param block the block.
+     * @param itemDamage the damage value
      * @return the slot.
      */
-    public int findFirstSlotInInventoryWith(final Block block)
+    public int findFirstSlotInInventoryWith(final Block block, int itemDamage)
     {
-        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), block);
+        return InventoryUtils.findFirstSlotInInventoryWith(getInventoryCitizen(), block, itemDamage);
     }
 
     /**
      * Returns the amount of a certain block in the inventory.
      *
      * @param block the block.
+     * @param itemDamage the damage value
      * @return the quantity.
      */
-    public int getItemCountInInventory(final Block block)
+    public int getItemCountInInventory(final Block block, int itemDamage)
     {
-        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), block);
+        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), block, itemDamage);
     }
 
     /**
      * Returns the amount of a certain item in the inventory.
      *
      * @param targetItem the block.
+     * @param itemDamage the damage value.
      * @return the quantity.
      */
-    public int getItemCountInInventory(final Item targetItem)
+    public int getItemCountInInventory(final Item targetItem, int itemDamage)
     {
-        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), targetItem);
+        return InventoryUtils.getItemCountInInventory(getInventoryCitizen(), targetItem, itemDamage);
     }
 
     /**
      * Checks if citizen has a certain block in the inventory.
      *
      * @param block the block.
+     * @param itemDamage the damage value
      * @return true if so.
      */
-    public boolean hasItemInInventory(final Block block)
+    public boolean hasItemInInventory(final Block block, int itemDamage)
     {
-        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), block);
+        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), block, itemDamage);
     }
 
     /**
      * Checks if citizen has a certain item in the inventory.
      *
      * @param item the item.
+     * @param itemDamage the damage value
      * @return true if so.
      */
-    public boolean hasItemInInventory(final Item item)
+    public boolean hasItemInInventory(final Item item, int itemDamage)
     {
-        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), item);
+        return InventoryUtils.hasitemInInventory(getInventoryCitizen(), item, itemDamage);
     }
 
     /**
@@ -1511,7 +1628,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
      */
     public void sendLocalizedChat(final String key, final Object... args)
     {
-        sendChat(LanguageHandler.format(key, args));
+        sendChat(key, args);
     }
 
     /**
@@ -1519,19 +1636,30 @@ public class EntityCitizen extends EntityAgeable implements INpc
      *
      * @param msg the message string.
      */
-    private void sendChat(@Nullable final String msg)
+    private void sendChat(final String key, @Nullable final Object... msg)
     {
-        if (msg == null || msg.length() == 0 || statusMessages.containsKey(msg))
+        if (msg == null || statusMessages.containsKey(key))
         {
             return;
         }
 
-        statusMessages.put(msg, ticksExisted);
+        final TextComponentTranslation requiredItem;
 
-        LanguageHandler.sendPlayersMessage(
-          colony.getMessageEntityPlayers(),
-          //TODO does this need to go through the LanguageHandler#format?
-          LanguageHandler.format(this.getColonyJob().getName()) + " " + this.getCustomNameTag() + ": " + msg);
+        if(msg.length == 0)
+        {
+            requiredItem = new TextComponentTranslation(key);
+        }
+        else
+        {
+            statusMessages.put(key + msg[0], ticksExisted);
+            requiredItem = new TextComponentTranslation(key, msg);
+        }
+
+        final TextComponentString citizenDescription = new TextComponentString(" ");
+        citizenDescription.appendText(this.getCustomNameTag()).appendText(": ");
+        final TextComponentString colonyDescription = new TextComponentString(" at " + this.getColony().getName() + ":");
+
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),  this.getColonyJob().getName(), colonyDescription, citizenDescription, requiredItem);
     }
 
     /**

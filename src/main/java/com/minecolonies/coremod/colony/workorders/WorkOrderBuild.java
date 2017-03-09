@@ -25,12 +25,14 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private static final String TAG_UPGRADE_NAME  = "upgrade";
     private static final String TAG_IS_CLEARED    = "cleared";
     private static final String TAG_IS_REQUESTED  = "requested";
+    private static final String TAG_IS_MIRRORED   = "mirrored";
 
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
 
-    private static final String DEFAULT_STYLE = "default";
+    private static final String DEFAULT_STYLE = "wooden";
 
+    protected boolean  isMirrored;
     protected BlockPos buildingLocation;
     protected int      buildingRotation;
     protected String   structureName;
@@ -61,12 +63,13 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.upgradeLevel = level;
         this.upgradeName = building.getSchematicName() + level;
         this.buildingRotation = building.getRotation();
+        this.isMirrored = building.getTileEntity() == null ? building.isMirrored() : building.getTileEntity().isMirrored();
         this.cleared = level > 1;
         this.requested = false;
 
         if (MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".nbt") == null)
         {
-            Log.getLogger().warn(String.format("StructureProxy in Style (%s) does not exist - switching to default", building.getStyle()));
+            Log.getLogger().warn(String.format("StructureProxy in Style (%s) does not exist - switching to wooden", building.getStyle()));
             this.structureName = DEFAULT_STYLE + '/' + this.getUpgradeName();
             return;
         }
@@ -102,6 +105,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         structureName = compound.getString(TAG_SCHEMATIC_NAME);
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
+        isMirrored = compound.getBoolean(TAG_IS_MIRRORED);
     }
 
     /**
@@ -123,6 +127,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         compound.setString(TAG_SCHEMATIC_NAME, structureName);
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
+        compound.setBoolean(TAG_IS_MIRRORED, isMirrored);
     }
 
     /**
@@ -155,7 +160,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         {
             final JobBuilder job = citizen.getJob(JobBuilder.class);
 
-            if (job == null)
+            if (job == null || citizen.getWorkBuilding() == null)
             {
                 continue;
             }
@@ -226,14 +231,14 @@ public class WorkOrderBuild extends AbstractWorkOrder
         if (hasBuilder && sendMessage)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
-              "entity.builder.messageBuilderNecessary", this.upgradeLevel);
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
+              "entity.builder.messageBuilderNecessary", Integer.toString(this.upgradeLevel));
         }
 
         if (!hasBuilder)
         {
             hasSentMessageForThisWorkOrder = true;
-            LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(),
+            LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(),
               "entity.builder.messageNoBuilder");
         }
     }
@@ -321,5 +326,14 @@ public class WorkOrderBuild extends AbstractWorkOrder
     public void setRequested(final boolean requested)
     {
         this.requested = requested;
+    }
+
+    /**
+     * Check if the workOrder should be built isMirrored.
+     * @return true if so.
+     */
+    public boolean isMirrored()
+    {
+        return isMirrored;
     }
 }

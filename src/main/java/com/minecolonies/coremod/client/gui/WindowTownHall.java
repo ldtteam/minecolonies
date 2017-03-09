@@ -13,6 +13,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
+import com.minecolonies.coremod.network.messages.RecallTownhallMessage;
 import com.minecolonies.coremod.network.messages.ToggleJobMessage;
 import com.minecolonies.coremod.network.messages.WorkOrderChangeMessage;
 import com.minecolonies.coremod.util.LanguageHandler;
@@ -285,7 +286,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_REMOVE_PLAYER, this::removePlayerClicked);
         registerButton(BUTTON_PROMOTE, this::promoteDemoteClicked);
         registerButton(BUTTON_DEMOTE, this::promoteDemoteClicked);
-        registerButton(BUTTON_RECALL, this::doNothing);
+        registerButton(BUTTON_RECALL, this::recallClicked);
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
 
@@ -301,7 +302,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         users.clear();
         users.addAll(townHall.getColony().getPlayers().values());
-        Collections.sort(users, (player1, player2) -> player1.getRank().compareTo(player2.getRank()));
+        users.sort(Comparator.comparing(Permissions.Player::getRank, Permissions.Rank::compareTo));
     }
 
     /**
@@ -320,7 +321,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     {
         workOrders.clear();
         workOrders.addAll(townHall.getColony().getWorkOrders());
-        Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
+        workOrders.sort((first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
     }
 
     /**
@@ -350,7 +351,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                     MineColonies.getNetwork().sendToServer(new WorkOrderChangeMessage(this.building, id, false, workOrder.getPriority()));
                 }
 
-                Collections.sort(workOrders, (first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
+                workOrders.sort((first, second) -> second.getPriority() > first.getPriority() ? 1 : (second.getPriority() < first.getPriority() ? -1 : 0));
                 window.findPaneOfTypeByID(LIST_WORKORDER, ScrollingList.class).refreshElementPanes();
                 return;
             }
@@ -605,6 +606,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     @Override
     public void onUpdate()
     {
+        super.onUpdate();
+
         final String currentPage = findPaneOfTypeByID(VIEW_PAGES, SwitchView.class).getCurrentView().getID();
         if (currentPage.equals(PAGE_PERMISSIONS))
         {
@@ -680,5 +683,13 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                   .sendToServer(new PermissionsMessage.ChangePlayerRank(townHall.getColony(), user.getID(), PermissionsMessage.ChangePlayerRank.Type.DEMOTE));
             }
         }
+    }
+
+    /**
+     * Action when a recall button is clicked.
+     */
+    private void recallClicked()
+    {
+        MineColonies.getNetwork().sendToServer(new RecallTownhallMessage(townHall));
     }
 }

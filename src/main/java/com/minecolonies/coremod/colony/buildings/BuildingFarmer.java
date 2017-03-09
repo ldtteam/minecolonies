@@ -11,11 +11,15 @@ import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobFarmer;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.Field;
 import com.minecolonies.coremod.entity.ai.citizen.farmer.FieldView;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.network.messages.AssignFieldMessage;
 import com.minecolonies.coremod.network.messages.AssignmentModeMessage;
 import com.minecolonies.coremod.tileentities.ScarecrowTileEntity;
 import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.coremod.util.Utils;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -25,9 +29,7 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * Class which handles the farmer building.
@@ -76,6 +78,13 @@ public class BuildingFarmer extends AbstractBuildingWorker
     private boolean assignManually = false;
 
     /**
+     * Sets the amount of saplings the lumberjack should keep.
+     */
+    private static final int SEEDS_TO_KEEP = 64;
+
+    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
+
+    /**
      * Public constructor which instantiates the building.
      *
      * @param c the colony the building is in.
@@ -84,6 +93,16 @@ public class BuildingFarmer extends AbstractBuildingWorker
     public BuildingFarmer(final Colony c, final BlockPos l)
     {
         super(c, l);
+        final ItemStack stackSeed = new ItemStack(Items.WHEAT_SEEDS);
+        final ItemStack stackCarrot = new ItemStack(Items.CARROT);
+        final ItemStack stackPotatoe = new ItemStack(Items.POTATO);
+        final ItemStack stackReed = new ItemStack(Items.BEETROOT_SEEDS);
+
+        keepX.put(new ItemStorage(stackSeed.getItem(), stackSeed.getItemDamage(), 0, false), SEEDS_TO_KEEP);
+        keepX.put(new ItemStorage(stackCarrot.getItem(), stackCarrot.getItemDamage(), 0, false), SEEDS_TO_KEEP);
+        keepX.put(new ItemStorage(stackPotatoe.getItem(), stackPotatoe.getItemDamage(), 0, false), SEEDS_TO_KEEP);
+        keepX.put(new ItemStorage(stackReed.getItem(), stackReed.getItemDamage(), 0, false), SEEDS_TO_KEEP);
+
     }
 
     /**
@@ -159,6 +178,19 @@ public class BuildingFarmer extends AbstractBuildingWorker
         return null;
     }
 
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    {
+        return keepX;
+    }
+
     @NotNull
     @Override
     public String getSchematicName()
@@ -185,6 +217,20 @@ public class BuildingFarmer extends AbstractBuildingWorker
         {
             getColony().triggerAchievement(ModAchievements.achievementUpgradeFarmerMax);
         }
+    }
+
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return stack != null && Utils.isHoe(stack);
     }
 
     @NotNull

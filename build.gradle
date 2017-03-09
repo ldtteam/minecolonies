@@ -114,6 +114,7 @@ task incrementBuildNumber() {
 }
 
 jar {
+    dependsOn "deobfJar"
     appendix = 'universal'
     archiveName = "minecolonies-universal-" + project.version + ".jar"
 

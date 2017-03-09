@@ -8,8 +8,16 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
+import com.minecolonies.coremod.util.Utils;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The lumberjacks building.
@@ -30,6 +38,13 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     private static final String LUMBERJACK_HUT_NAME = "lumberjackHut";
 
     /**
+     * Sets the amount of saplings the lumberjack should keep.
+     */
+    private static final int SAPLINGS_TO_KEEP = 32;
+
+    private final Map<ItemStorage, Integer> keepX = new HashMap<>();
+
+    /**
      * Public constructor of the building, creates an object of the building.
      *
      * @param c the colony.
@@ -38,6 +53,9 @@ public class BuildingLumberjack extends AbstractBuildingWorker
     public BuildingLumberjack(final Colony c, final BlockPos l)
     {
         super(c, l);
+
+        final ItemStack stack = new ItemStack(Blocks.SAPLING);
+        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
     }
 
     /**
@@ -79,6 +97,33 @@ public class BuildingLumberjack extends AbstractBuildingWorker
         {
             this.getColony().triggerAchievement(ModAchievements.achievementUpgradeLumberjackMax);
         }
+    }
+
+    /**
+     * Override this method if you want to keep some items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @param stack the stack to decide on
+     * @return true if the stack should remain in inventory
+     */
+    @Override
+    public boolean neededForWorker(@Nullable final ItemStack stack)
+    {
+        return Utils.isStackAxe(stack);
+    }
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    @Override
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    {
+        return keepX;
     }
 
     /**

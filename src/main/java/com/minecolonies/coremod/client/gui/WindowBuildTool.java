@@ -63,7 +63,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final String BUTTON_CANCEL = "cancel";
 
     /**
-     * This button will rotate the structure counterclockwise.
+     * This button will rotateWithMirror the structure counterclockwise.
      */
     private static final String BUTTON_ROTATE_LEFT = "rotateLeft";
 
@@ -103,6 +103,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final String BUTTON_RIGHT = "right";
 
     /**
+     * Mirror the structure.
+     */
+    private static final String BUTTON_MIRROR = "mirror";
+
+    /**
      * Resource suffix.
      */
     private static final String BUILD_TOOL_RESOURCE_SUFFIX = ":gui/windowBuildTool.xml";
@@ -118,17 +123,17 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final int POSSIBLE_ROTATIONS = 4;
 
     /**
-     * Rotation to rotate right.
+     * Rotation to rotateWithMirror right.
      */
     private static final int ROTATE_RIGHT = 1;
 
     /**
-     * Rotation to rotate 180 degree.
+     * Rotation to rotateWithMirror 180 degree.
      */
     private static final int ROTATE_180 = 2;
 
     /**
-     * Rotation to rotate left.
+     * Rotation to rotateWithMirror left.
      */
     private static final int ROTATE_LEFT = 3;
 
@@ -211,6 +216,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
+        registerButton(BUTTON_MIRROR, WindowBuildTool::mirror);
+
     }
 
     /**
@@ -280,7 +287,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void loadDecorationMode()
     {
-        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.coremod.gui.buildtool.decoration"));
+        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decoration"));
 
         hutDec.addAll(Structures.getDecorations());
 
@@ -292,7 +299,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void loadHutMode()
     {
-        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.getString("com.minecolonies.coremod.gui.buildtool.hut"));
+        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.hut"));
 
         final InventoryPlayer inventory = this.mc.thePlayer.inventory;
 
@@ -312,7 +319,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if (hutDec.isEmpty())
         {
             final Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
-            buttonHutDec.setLabel(LanguageHandler.getString(
+            buttonHutDec.setLabel(LanguageHandler.format(
               Settings.instance.isInHutMode() ? "com.minecolonies.coremod.gui.buildtool.nohut" : "com.minecolonies.coremod.gui.buildtool.nodecoration"));
             buttonHutDec.setEnabled(false);
             final Button buttonStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
@@ -515,11 +522,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                                                                               getStyles().get(styleIndex),
                                                                               Settings.instance.pos,
                                                                               Settings.instance.getRotation(),
-                                                                              Settings.instance.isInHutMode()));
+                                                                              Settings.instance.isInHutMode(),
+                                                                              Settings.instance.getMirror()));
         }
         else
         {
-            LanguageHandler.sendPlayerLocalizedMessage(this.mc.thePlayer, WindowBuildTool.NO_HUT_IN_INVENTORY);
+            LanguageHandler.sendPlayerMessage(this.mc.thePlayer, WindowBuildTool.NO_HUT_IN_INVENTORY);
         }
 
         Settings.instance.reset();
@@ -602,7 +610,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         if (Settings.instance.getActiveStructure() != null)
         {
-            Settings.instance.getActiveStructure().setPlacementSettings(settings);
+            Settings.instance.getActiveStructure().setPlacementSettings(settings.setMirror(Settings.instance.getMirror()));
         }
     }
 
@@ -613,5 +621,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         rotation = (rotation + ROTATE_LEFT) % POSSIBLE_ROTATIONS;
         updateRotation(rotation);
+    }
+
+    /**
+     * Rotate the structure counter clockwise.
+     */
+    private static void mirror()
+    {
+        Settings.instance.mirror();
     }
 }

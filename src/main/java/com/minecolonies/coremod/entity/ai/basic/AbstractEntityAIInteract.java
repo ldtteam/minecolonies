@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
+import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -26,7 +27,6 @@ import java.util.List;
  */
 public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends AbstractEntityAICrafting<J>
 {
-    private static final double DELAY_MODIFIER       = 1000.0D;
     /**
      * The amount of xp the entity gains per block mined.
      */
@@ -115,6 +115,9 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         //get all item drops
         final List<ItemStack> items = BlockPosUtil.getBlockDrops(world, blockToMine, fortune);
 
+        //if block in statistic then increment that statistic.
+        triggerMinedBlock(blockToMine);
+
         //Break the block
         worker.breakBlockWithToolInHand(blockToMine);
 
@@ -124,10 +127,44 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
             InventoryUtils.setStack(worker.getInventoryCitizen(), item);
         }
 
+        if(tool != null)
+        {
+            tool.getItem().onUpdate(tool, world, worker, worker.findFirstSlotInInventoryWith(tool.getItem(), tool.getItemDamage()), true);
+        }
         worker.addExperience(XP_PER_BLOCK);
         this.incrementActionsDone();
         return true;
     }
+
+    private void triggerMinedBlock(@NotNull final BlockPos blockToMine)
+    {
+        if (world.getBlockState(blockToMine).getBlock() == (Blocks.COAL_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.IRON_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.LAPIS_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.GOLD_ORE)
+              || world.getBlockState(blockToMine).getBlock() == (Blocks.REDSTONE_ORE)
+              || world.getBlockState(blockToMine).getBlock() ==(Blocks.EMERALD_ORE))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("ores");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.DIAMOND_ORE))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("diamonds");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.CARROTS))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("carrots");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.POTATOES))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("potatoes");
+        }
+        if (world.getBlockState(blockToMine).getBlock().equals(Blocks.WHEAT))
+        {
+            this.getOwnBuilding().getColony().incrementStatistic("wheat");
+        }
+    }
+
 
     /**
      * Checks for the right tools and waits for an appropriate delay.
@@ -180,7 +217,8 @@ public abstract class AbstractEntityAIInteract<J extends AbstractJob> extends Ab
         {
             return (int) world.getBlockState(pos).getBlockHardness(world, pos);
         }
-        return (int) ((DELAY_MODIFIER
+
+        return (int) ((Configurations.blockMiningDelayModifier
                          * Math.pow(LEVEL_MODIFIER, worker.getLevel()))
                         * (double) world.getBlockState(pos).getBlockHardness(world, pos)
                         / (double) (worker.getHeldItemMainhand().getItem()

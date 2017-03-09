@@ -2,7 +2,6 @@ package com.minecolonies.coremod.entity.ai.citizen.lumberjack;
 
 import com.minecolonies.coremod.colony.jobs.JobLumberjack;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIInteract;
-import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
 import com.minecolonies.coremod.entity.pathfinding.PathJobFindTree;
@@ -19,7 +18,9 @@ import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.minecolonies.coremod.entity.ai.util.AIState.*;
@@ -29,8 +30,6 @@ import static com.minecolonies.coremod.entity.ai.util.AIState.*;
  */
 public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberjack>
 {
-    private static final String TOOL_TYPE_AXE = "axe";
-
     /**
      * The render name to render logs.
      */
@@ -83,11 +82,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
      * Is used to collect falling saplings from the ground.
      */
     private static final int MAX_WAITING_TIME = 100;
-
-    /**
-     * Sets the amount of saplings the lumberjack should keep.
-     */
-    private static final int SAPLINGS_TO_KEEP = 10;
 
     /**
      * Number of ticks to wait for tree.
@@ -308,7 +302,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
         {
             return LUMBERJACK_SEARCHING_TREE;
         }
-
         return chopTree();
     }
 
@@ -337,6 +330,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
                 return getState();
             }
             plantSapling();
+            this.getOwnBuilding().getColony().incrementStatistic("trees");
             return LUMBERJACK_GATHERING;
         }
 
@@ -441,6 +435,7 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
               soundType.getVolume(),
               soundType.getPitch());
             worker.swingArm(worker.getActiveHand());
+            this.getOwnBuilding().getColony().incrementStatistic("saplings");
         }
 
         if (job.tree.getStumpLocations().isEmpty() || timeWaited >= MAX_WAITING_TIME)
@@ -659,49 +654,6 @@ public class EntityAIWorkLumberjack extends AbstractEntityAIInteract<JobLumberja
     protected void updateRenderMetaData()
     {
         worker.setRenderMetadata(hasLogs() ? RENDER_META_LOGS : "");
-    }
-
-    /**
-     * Override this method if you want to keep an amount of items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @return a list of objects which should be kept.
-     */
-    @Override
-    protected Map<ItemStorage, Integer> needXForWorker()
-    {
-        final Map<ItemStorage, Integer> keepX = new HashMap<>();
-        final ItemStack stack = new ItemStack(Blocks.SAPLING);
-        keepX.put(new ItemStorage(stack.getItem(), stack.getItemDamage(), 0, false), SAPLINGS_TO_KEEP);
-
-        return keepX;
-    }
-
-    /**
-     * Override this method if you want to keep some items in inventory.
-     * When the inventory is full, everything get's dumped into the building chest.
-     * But you can use this method to hold some stacks back.
-     *
-     * @param stack the stack to decide on
-     * @return true if the stack should remain in inventory
-     */
-    @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return isStackAxe(stack);
-    }
-
-    /**
-     * Check if a stack is an axe.
-     * todo: use parent code
-     *
-     * @param stack the stack to check.
-     * @return true if an axe.
-     */
-    private static boolean isStackAxe(@Nullable final ItemStack stack)
-    {
-        return stack != null && stack.getItem().getToolClasses(stack).contains(TOOL_TYPE_AXE);
     }
 
     /**

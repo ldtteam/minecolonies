@@ -1,10 +1,14 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.entity.ai.citizen.deliveryman.EntityAIWorkDeliveryman;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.inventory.InventoryCitizen;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityChest;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -52,16 +56,17 @@ public class InventoryUtils
     }
 
     /**
-     * {@link #filterInventory(IInventory, Item)}.
+     * {@link #filterInventory(IInventory, Item, int)}.
      *
      * @param inventory Inventory to filter in
      * @param block     Block to filter
+     * @param itemDamage the damage value.
      * @return List of item stacks
      */
     @NotNull
-    public static List<ItemStack> filterInventory(@NotNull final IInventory inventory, final Block block)
+    public static List<ItemStack> filterInventory(@NotNull final IInventory inventory, final Block block, int itemDamage)
     {
-        return filterInventory(inventory, getItemFromBlock(block));
+        return filterInventory(inventory, getItemFromBlock(block), itemDamage);
     }
 
     /**
@@ -69,10 +74,11 @@ public class InventoryUtils
      *
      * @param inventory  Inventory to get items from
      * @param targetItem Item to look for
+     * @param itemDamage the damage value.
      * @return List of item stacks with the given item in inventory
      */
     @NotNull
-    public static List<ItemStack> filterInventory(@NotNull final IInventory inventory, @Nullable final Item targetItem)
+    public static List<ItemStack> filterInventory(@NotNull final IInventory inventory, @Nullable final Item targetItem, int itemDamage)
     {
         @NotNull final ArrayList<ItemStack> filtered = new ArrayList<>();
         if (targetItem == null)
@@ -83,7 +89,7 @@ public class InventoryUtils
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
         {
             final ItemStack stack = inventory.getStackInSlot(slot);
-            if (compareItems(stack, targetItem))
+            if (compareItems(stack, targetItem, itemDamage))
             {
                 filtered.add(stack);
             }
@@ -107,11 +113,12 @@ public class InventoryUtils
      *
      * @param itemStack  ItemStack to check.
      * @param targetItem Item to check.
+     * @param itemDamage the item damage value.
      * @return True when item in item stack is equal to target item.
      */
-    private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem)
+    private static boolean compareItems(@Nullable final ItemStack itemStack, final Item targetItem, int itemDamage)
     {
-        return itemStack != null && itemStack.getItem() == targetItem;
+        return itemStack != null && itemStack.getItem() == targetItem && (itemStack.getItemDamage() == itemDamage || itemDamage == -1);
     }
 
     /**
@@ -119,25 +126,27 @@ public class InventoryUtils
      *
      * @param inventory Inventory to check.
      * @param block     Block to find.
+     * @param itemDamage the damage value.
      * @return Index of the first occurrence.
      */
-    public static int findFirstSlotInInventoryWith(@NotNull final IInventory inventory, final Block block)
+    public static int findFirstSlotInInventoryWith(@NotNull final IInventory inventory, final Block block, int itemDamage)
     {
-        return findFirstSlotInInventoryWith(inventory, getItemFromBlock(block));
+        return findFirstSlotInInventoryWith(inventory, getItemFromBlock(block), itemDamage);
     }
 
     /**
-     * {@link #findFirstSlotInInventoryWith(IInventory, Block)}.
+     * {@link #findFirstSlotInInventoryWith(IInventory, Block, int)}.
      *
      * @param inventory  Inventory to check
      * @param targetItem Item to find
+     * @param itemDamage the damage value.
      * @return Index of the first occurrence
      */
-    public static int findFirstSlotInInventoryWith(@NotNull final IInventory inventory, final Item targetItem)
+    public static int findFirstSlotInInventoryWith(@NotNull final IInventory inventory, final Item targetItem, int itemDamage)
     {
         for (int slot = 0; slot < inventory.getSizeInventory(); slot++)
         {
-            if (compareItems(inventory.getStackInSlot(slot), targetItem))
+            if (compareItems(inventory.getStackInSlot(slot), targetItem, itemDamage))
             {
                 return slot;
             }
@@ -148,15 +157,16 @@ public class InventoryUtils
     }
 
     /**
-     * {@link #getItemCountInInventory(IInventory, Item)}.
+     * {@link #getItemCountInInventory(IInventory, Item, int)}.
      *
      * @param inventory Inventory to scan
      * @param block     block to count
+     * @param itemDamage the damage value
      * @return Amount of occurences
      */
-    public static int getItemCountInInventory(@NotNull final IInventory inventory, final Block block)
+    public static int getItemCountInInventory(@NotNull final IInventory inventory, final Block block, int itemDamage)
     {
-        return getItemCountInInventory(inventory, getItemFromBlock(block));
+        return getItemCountInInventory(inventory, getItemFromBlock(block), itemDamage);
     }
 
     /**
@@ -164,12 +174,13 @@ public class InventoryUtils
      *
      * @param inventory  Inventory to scan
      * @param targetitem Item to count
+     * @param itemDamage the item damage value.
      * @return Amount of occurences
      */
-    public static int getItemCountInInventory(@NotNull final IInventory inventory, final Item targetitem)
+    public static int getItemCountInInventory(@NotNull final IInventory inventory, final Item targetitem, int itemDamage)
     {
         int count = 0;
-        for (@NotNull final ItemStack is : filterInventory(inventory, targetitem))
+        for (@NotNull final ItemStack is : filterInventory(inventory, targetitem, itemDamage))
         {
             count += is.stackSize;
         }
@@ -178,15 +189,16 @@ public class InventoryUtils
 
     /**
      * Checks if a player has an block in the inventory.
-     * Checked by {@link #getItemCountInInventory(IInventory, Block)} &gt; 0;
+     * Checked by {@link #getItemCountInInventory(IInventory, Block, int)} &gt; 0;
      *
      * @param inventory Inventory to scan
      * @param block     Block to count
+     * @param itemDamage the damage value.
      * @return True when in inventory, otherwise false
      */
-    public static boolean hasitemInInventory(@NotNull final IInventory inventory, final Block block)
+    public static boolean hasitemInInventory(@NotNull final IInventory inventory, final Block block, int itemDamage)
     {
-        return hasitemInInventory(inventory, getItemFromBlock(block));
+        return hasitemInInventory(inventory, getItemFromBlock(block), itemDamage);
     }
 
 
@@ -195,15 +207,16 @@ public class InventoryUtils
 
     /**
      * Checks if a player has an item in the inventory.
-     * Checked by {@link #getItemCountInInventory(IInventory, Item)} &gt; 0;
+     * Checked by {@link #getItemCountInInventory(IInventory, Item, int)} &gt; 0;
      *
      * @param inventory Inventory to scan
      * @param item      Item to count
+     * @param itemDamage the damage value of the item.
      * @return True when in inventory, otherwise false
      */
-    public static boolean hasitemInInventory(@NotNull final IInventory inventory, final Item item)
+    public static boolean hasitemInInventory(@NotNull final IInventory inventory, final Item item, int itemDamage)
     {
-        return getItemCountInInventory(inventory, item) > 0;
+        return getItemCountInInventory(inventory, item, itemDamage) > 0;
     }
 
     /**
@@ -233,6 +246,95 @@ public class InventoryUtils
             }
         }
         return -1;
+    }
+
+    /**
+     * Checks if the inventory contains the following tool.
+     * @param entity the tileEntity chest or building.
+     * @param tool the tool.
+     * @param toolLevel to check.
+     * @return true if found the tool.
+     */
+    public static boolean isToolInTileEntity(IInventory entity, final String tool, int toolLevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> Utils.isTool(stack, tool) && InventoryUtils.hasToolLevel(tool, stack, toolLevel),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     *
+     * @param entity inventory to check in.
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
+     */
+    public static boolean isPickaxeInTileEntity(TileEntityChest entity, final int minlevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> stack != null && Utils.checkIfPickaxeQualifies(
+                        minlevel,
+                        Utils.getMiningLevel(stack, Utils.PICKAXE)
+                ),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     *
+     * @param entity inventory to check in.
+     * @param minlevel the needed pickaxe level
+     * @param maxLevel the tools max level.
+     * @return true if a pickaxe was found
+     */
+    public static boolean isPickaxeInTileEntity(IInventory entity, final int minlevel, final int maxLevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> stack != null && Utils.checkIfPickaxeQualifies(
+                        minlevel,
+                        Utils.getMiningLevel(stack, Utils.PICKAXE)) && InventoryUtils.hasToolLevel(Utils.PICKAXE, stack, maxLevel
+                ),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Looks for a pickaxe to mine a block of {@code minLevel}.
+     *
+     * @param entity inventory to check in.
+     * @param minlevel the needed pickaxe level
+     * @return true if a pickaxe was found
+     */
+    public static boolean isPickaxeInTileEntity(InventoryCitizen entity, final int minlevel)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                entity,
+                stack -> Utils.checkIfPickaxeQualifies(
+                        minlevel,
+                        Utils.getMiningLevel(stack, Utils.PICKAXE)
+                ),
+                InventoryFunctions::doNothing
+        );
+    }
+
+    /**
+     * Checks if the inventory contains the following tool.
+     * @param inventoryCitizen the inventory citizen.
+     * @param tool the tool.
+     * @return true if found the tool.
+     */
+    public static boolean isToolInTileEntity(InventoryCitizen inventoryCitizen, final String tool)
+    {
+        return InventoryFunctions.matchFirstInInventoryWithInventory(
+                inventoryCitizen,
+                stack -> Utils.isTool(stack, tool),
+                InventoryFunctions::doNothing
+        );
     }
 
     /**
@@ -313,7 +415,12 @@ public class InventoryUtils
     @Nullable
     public static ItemStack setStack(@NotNull final IInventory inventory, @Nullable final ItemStack stack)
     {
-        if (stack != null)
+        if (stack !=null && stack.stackSize > stack.getMaxStackSize())
+        {
+            Log.getLogger().warn("InventoryUtils.setStack: stack size bigger than the max stack size. Please contact a minecolonnies developer.");
+        }
+
+        if (stack != null && stack.stackSize != 0 && stack.getItem() != null)
         {
             @Nullable ItemStack returnStack = stack.copy();
             int slot;
@@ -348,6 +455,37 @@ public class InventoryUtils
             return returnStack;
         }
         return null;
+    }
+
+    /**
+     * {@link #setStack(IInventory, ItemStack)}.
+     * Tries to put an itemStack into Inventory, unlike setStack, allow to use a ItemStack bigger than the maximum stack size allowed for the item
+     *
+     * @param inventory the inventory to set the stack in.
+     * @param stack     Item stack with items to be transferred, the stack can be bigger than allowed
+     * @return returns null if successful, or stack of remaining items, BE AWARE that the remaining stack can be bigger than the maximum stack size
+     */
+    @Nullable
+    public static ItemStack setOverSizedStack(@NotNull final IInventory inventory, @Nullable final ItemStack stack)
+    {
+        int stackSize = stack.stackSize;
+        while (stackSize > 0)
+        {
+            final int itemCount = Math.min(stackSize, stack.getMaxStackSize());
+            final ItemStack items = new ItemStack(stack.getItem(), itemCount, stack.getItemDamage());
+            stackSize-=itemCount;
+            final ItemStack remainingItems = setStack(inventory,items);
+            if(remainingItems != null)
+            {
+                stackSize += remainingItems.stackSize;
+                if (items.stackSize == remainingItems.stackSize)
+                {
+                    break;
+                }
+            }
+        }
+        return new ItemStack(stack.getItem(), stackSize, stack.getItemDamage());
+
     }
 
     /**
@@ -637,7 +775,7 @@ public class InventoryUtils
      * @param hutLevel  the worker's hut level
      * @return true if tool is acceptable
      */
-    public static boolean hasToolLevel(final String tool, @NotNull final InventoryCitizen inventory, final int hutLevel)
+    public static boolean hasToolLevel(final String tool, @NotNull final IInventory inventory, final int hutLevel)
     {
         for (int i = 0; i < inventory.getSizeInventory(); i++)
         {
@@ -649,6 +787,31 @@ public class InventoryUtils
                 return true;
             }
         }
+        return false;
+    }
+
+    /**
+     * Verifies if there is one tool with an acceptable level
+     * in a worker's inventory.
+     *
+     * @param tool      the type of tool needed
+     * @param stack     the stack to test.
+     * @param hutLevel  the worker's hut level
+     * @return true if tool is acceptable
+     */
+    public static boolean hasToolLevel(final String tool, @Nullable final ItemStack stack, final int hutLevel)
+    {
+        if (stack == null)
+        {
+            return false;
+        }
+
+        final int level = Utils.getMiningLevel(stack, tool);
+        if (Utils.isTool(stack, tool) && verifyToolLevel(stack, level, hutLevel))
+        {
+            return true;
+        }
+
         return false;
     }
 
@@ -697,7 +860,35 @@ public class InventoryUtils
             case 3:
                 return "Diamond";
             default:
-                return "";
+                return "Better than Diamond";
         }
+    }
+
+    /**
+     * Adapted from {@link net.minecraft.entity.player.InventoryPlayer#addItemStackToInventory(ItemStack)}.
+     *
+     * @param inventory Inventory to add itemstack to.
+     * @param itemStack ItemStack to add.
+     * @param building the building.
+     * @return itemStack which has been replaced.
+     */
+    @Nullable
+    public static ItemStack forceItemStackToInventory(@NotNull final IInventory inventory, @NotNull final ItemStack itemStack, @NotNull final AbstractBuilding building)
+    {
+        if(!addItemStackToInventory(inventory, itemStack))
+        {
+            final List<ItemStorage> localAlreadyKept = new ArrayList<>();
+            for(int i = 0; i < inventory.getSizeInventory(); i++)
+            {
+                final ItemStack localStack = inventory.getStackInSlot(i);
+                if(!EntityAIWorkDeliveryman.workerRequiresItem(building, localStack, localAlreadyKept))
+                {
+                    final ItemStack removedStack = inventory.removeStackFromSlot(i);
+                    inventory.setInventorySlotContents(i, itemStack.copy());
+                    return removedStack.copy();
+                }
+            }
+        }
+        return null;
     }
 }

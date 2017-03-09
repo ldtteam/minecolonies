@@ -7,11 +7,11 @@ import com.minecolonies.coremod.colony.workorders.WorkOrderBuildDecoration;
 import com.minecolonies.coremod.entity.ai.basic.AbstractEntityAIStructure;
 import com.minecolonies.coremod.entity.ai.util.AIState;
 import com.minecolonies.coremod.entity.ai.util.AITarget;
-import com.minecolonies.coremod.util.*;
-import net.minecraft.block.*;
+import com.minecolonies.coremod.util.LanguageHandler;
+import com.minecolonies.coremod.util.Log;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,25 +27,23 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     /**
      * How often should intelligence factor into the builders skill modifier.
      */
-    private static final int    INTELLIGENCE_MULTIPLIER       = 2;
+    private static final int INTELLIGENCE_MULTIPLIER = 2;
 
     /**
      * How often should strength factor into the builders skill modifier.
      */
-    private static final int    STRENGTH_MULTIPLIER           = 1;
+    private static final int STRENGTH_MULTIPLIER = 1;
 
     /**
      * After how many actions should the builder dump his inventory.
      */
-    private static final int    ACTIONS_UNTIL_DUMP            = 1024;
-
-
+    private static final int ACTIONS_UNTIL_DUMP = 1024;
 
     /**
      * Position where the Builders constructs from.
      */
     @Nullable
-    private              BlockPos workFrom       = null;
+    private BlockPos workFrom = null;
 
     /**
      * Initialize the builder and add all his tasks.
@@ -56,52 +54,24 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
     {
         super(job);
         super.registerTargets(
-          /**
-           * If IDLE - switch to start working.
-           */
-          new AITarget(IDLE, START_WORKING),
-          new AITarget(this::checkIfCanceled, IDLE),
-          new AITarget(this::checkIfExecute, this::getState),
-          new AITarget(START_WORKING, this::startWorkingAtOwnBuilding)
+                new AITarget(IDLE, START_WORKING),
+                new AITarget(this::checkIfExecute, this::getState),
+                new AITarget(START_WORKING, this::startWorkingAtOwnBuilding)
         );
         worker.setSkillModifier(INTELLIGENCE_MULTIPLIER * worker.getCitizenData().getIntelligence()
-                                  + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
+                + STRENGTH_MULTIPLIER * worker.getCitizenData().getStrength());
         worker.setCanPickUpLoot(true);
     }
 
     @Override
-    public Block getSolidSubstitution(BlockPos location)
+    public IBlockState getSolidSubstitution(BlockPos location)
     {
         final IBlockState filler = world.getBiome(location).fillerBlock;
-        if(filler.getBlock() instanceof BlockFalling)
+        if (filler.getBlock() instanceof BlockFalling)
         {
-            return Blocks.DIRT;
+            return Blocks.DIRT.getDefaultState();
         }
-        return filler.getBlock();
-    }
-
-    private boolean checkIfCanceled()
-    {
-        final WorkOrderBuild wo = job.getWorkOrder();
-
-        if (wo == null)
-        {
-            cancelTask();
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Resets the builders current task.
-     */
-    public void cancelTask()
-    {
-        super.resetTask();
-        job.setWorkOrder(null);
-        workFrom = null;
-        job.setStructure(null);
+        return filler;
     }
 
     private boolean checkIfExecute()
@@ -135,22 +105,21 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         {
             workFrom = null;
             loadStructure();
-
             final WorkOrderBuild wo = job.getWorkOrder();
             if (wo == null)
             {
                 Log.getLogger().error(
-                  String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)",
-                    worker.getColony().getID(),
-                    worker.getCitizenData().getId(), job.getWorkOrderId()));
+                        String.format("Builder (%d:%d) ERROR - Starting and missing work order(%d)",
+                                worker.getColony().getID(),
+                                worker.getCitizenData().getId(), job.getWorkOrderId()));
                 return;
             }
 
             if (wo instanceof WorkOrderBuildDecoration)
             {
-                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
-                  "entity.builder.messageBuildStart",
-                  job.getStructure().getName());
+                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildStart",
+                        job.getStructure().getName());
             }
             else
             {
@@ -158,14 +127,14 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                 if (building == null)
                 {
                     Log.getLogger().error(
-                      String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)",
-                        worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()));
+                            String.format("Builder (%d:%d) ERROR - Starting and missing building(%s)",
+                                    worker.getColony().getID(), worker.getCitizenData().getId(), wo.getBuildingLocation()));
                     return;
                 }
 
-                LanguageHandler.sendPlayersLocalizedMessage(worker.getColony().getMessageEntityPlayers(),
-                  "entity.builder.messageBuildStart",
-                  job.getStructure().getName());
+                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildStart",
+                        job.getStructure().getName());
 
                 //Don't go through the CLEAR stage for repairs and upgrades
                 if (building.getBuildingLevel() > 0)
@@ -173,6 +142,30 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
                     wo.setCleared(true);
                 }
             }
+        }
+    }
+
+    @Override
+    protected boolean checkIfCanceled()
+    {
+        if (job.getWorkOrder() == null)
+        {
+            super.resetTask();
+            workFrom = null;
+            job.setStructure(null);
+            job.setWorkOrder(null);
+            resetCurrentStructure();
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    protected void onStartWithoutStructure()
+    {
+        if(job.getWorkOrder() != null)
+        {
+            loadStructure();
         }
     }
 
@@ -196,16 +189,4 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
         return ACTIONS_UNTIL_DUMP;
     }
 
-    /**
-     * Can be overriden by implementations to specify which tools are useful for the worker.
-     * When dumping he will keep these.
-     *
-     * @param stack the stack to decide on
-     * @return if should be kept or not.
-     */
-    @Override
-    protected boolean neededForWorker(@Nullable final ItemStack stack)
-    {
-        return Utils.isMiningTool(stack);
-    }
 }

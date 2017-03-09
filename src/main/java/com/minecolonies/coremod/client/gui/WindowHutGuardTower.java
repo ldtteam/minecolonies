@@ -268,18 +268,18 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
 
         if (emptySlot == -1)
         {
-            LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.coremod.gui.workerHuts.noSpace");
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.gui.workerHuts.noSpace");
         }
 
         if (patrolManually && task.equals(BuildingGuardTower.Task.PATROL))
         {
             givePlayerScepter(BuildingGuardTower.Task.PATROL);
-            LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.coremod.job.guard.tool.taskPatrol");
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.job.guard.tool.taskPatrol");
         }
         else if (task.equals(BuildingGuardTower.Task.GUARD))
         {
             givePlayerScepter(BuildingGuardTower.Task.GUARD);
-            LanguageHandler.sendPlayerLocalizedMessage(player, "com.minecolonies.coremod.job.guard.tool.taskGuard");
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.job.guard.tool.taskGuard");
         }
         window.close();
     }
@@ -397,6 +397,8 @@ public class WindowHutGuardTower extends AbstractWindowWorkerBuilding<BuildingGu
     @Override
     public void onUpdate()
     {
+        super.onUpdate();
+
         pullInfoFromHut();
         handleButtons();
 

@@ -6,35 +6,43 @@ import com.minecolonies.coremod.colony.CitizenData;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
-import com.minecolonies.coremod.colony.materials.MaterialStore;
-import com.minecolonies.coremod.colony.materials.MaterialSystem;
+import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
+import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
-import com.minecolonies.coremod.util.BlockPosUtil;
-import com.minecolonies.coremod.util.LanguageHandler;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.coremod.util.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Base building class, has all the foundation for what a building stores and does.
  */
 public abstract class AbstractBuilding
 {
+    /**
+     * Tag used to store the containers to NBT.
+     */
+    private static final String TAG_CONTAINERS = "Containers";
+
     /**
      * The tag to store the building type.
      */
@@ -57,9 +65,66 @@ public abstract class AbstractBuilding
     private static final String TAG_ROTATION = "rotation";
 
     /**
+     * The tag to store the morror of the building.
+     */
+    private static final String TAG_MIRROR = "mirror";
+
+    /**
      * The tag to store the style of the building.
      */
     private static final String TAG_STYLE = "style";
+    private static final int NO_WORK_ORDER = 0;
+    /**
+     * A list of ItemStacks with needed items and their quantity.
+     * This list is a diff between itemsNeeded in AbstractEntityAiBasic and
+     * the players inventory and their hut combined.
+     * So look here for what is currently still needed
+     * to fulfill the workers needs.
+     * <p>
+     * Will be cleared on restart, be aware!
+     */
+    @NotNull
+    private List<ItemStack> itemsCurrentlyNeeded = new ArrayList<>();
+
+    /**
+     * A list which contains the position of all containers which belong to the worker building.
+     */
+    private final List<BlockPos> containerList = new ArrayList<>();
+
+    /**
+     * This flag tells if we need a shovel, will be set on tool needs.
+     */
+    private boolean needsShovel = false;
+
+    /**
+     * This flag tells if we need an axe, will be set on tool needs.
+     */
+    private boolean needsAxe = false;
+
+    /**
+     * This flag tells if we need a hoe, will be set on tool needs.
+     */
+    private boolean needsHoe = false;
+
+    /**
+     * This flag tells if we need a pickaxe, will be set on tool needs.
+     */
+    private boolean needsPickaxe = false;
+
+    /**
+     * This flag tells if we need a weapon, will be set on tool needs.
+     */
+    private boolean needsWeapon = false;
+
+    /**
+     * The minimum pickaxe level we need to fulfill the tool request.
+     */
+    private int needsPickaxeLevel = -1;
+
+    /**
+     * Checks if there is a ongoing delivery for the currentItem.
+     */
+    private boolean onGoingDelivery = false;
 
     /**
      * Map to resolve names to class.
@@ -83,24 +148,25 @@ public abstract class AbstractBuilding
      * Map to resolve classNameHash to class.
      */
     @NotNull
-    private static final Map<Integer, Class<?>> classNameHashToClassMap = new HashMap<>();
+    private static final Map<Integer, Class<?>>  classNameHashToViewClassMap  = new HashMap<>();
     /*
      * Add all the mappings.
      */
     static
     {
-        addMapping("Baker", BuildingBaker.class, BlockHutBaker.class);
-        addMapping("Blacksmith", BuildingBlacksmith.class, BlockHutBlacksmith.class);
-        addMapping("Builder", BuildingBuilder.class, BlockHutBuilder.class);
-        addMapping("Home", BuildingHome.class, BlockHutCitizen.class);
-        addMapping("Farmer", BuildingFarmer.class, BlockHutFarmer.class);
-        addMapping("Lumberjack", BuildingLumberjack.class, BlockHutLumberjack.class);
-        addMapping("Miner", BuildingMiner.class, BlockHutMiner.class);
-        addMapping("Stonemason", BuildingStonemason.class, BlockHutStonemason.class);
-        addMapping("TownHall", BuildingTownHall.class, BlockHutTownHall.class);
-        addMapping("Warehouse", BuildingDeliveryman.class, BlockHutDeliveryman.class);
-        addMapping("Fisherman", BuildingFisherman.class, BlockHutFisherman.class);
-        addMapping("GuardTower", BuildingGuardTower.class, BlockHutGuardTower.class);
+        addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
+        addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
+        addMapping("Builder", BuildingBuilder.class, BuildingBuilderView.class, BlockHutBuilder.class);
+        addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
+        addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);
+        addMapping("Lumberjack", BuildingLumberjack.class, BuildingLumberjack.View.class, BlockHutLumberjack.class);
+        addMapping("Miner", BuildingMiner.class, BuildingMiner.View.class, BlockHutMiner.class);
+        addMapping("Stonemason", BuildingStonemason.class, BuildingStonemason.View.class, BlockHutStonemason.class);
+        addMapping("TownHall", BuildingTownHall.class, BuildingTownHall.View.class, BlockHutTownHall.class);
+        addMapping("Deliveryman", BuildingDeliveryman.class, BuildingDeliveryman.View.class, BlockHutDeliveryman.class);
+        addMapping("Fisherman", BuildingFisherman.class, BuildingFisherman.View.class, BlockHutFisherman.class);
+        addMapping("GuardTower", BuildingGuardTower.class, BuildingGuardTower.View.class, BlockHutGuardTower.class);
+        addMapping("WareHouse", BuildingWareHouse.class, BuildingWareHouse.View.class, BlockHutWareHouse.class);
     }
 
     /**
@@ -113,11 +179,6 @@ public abstract class AbstractBuilding
      */
     @NotNull
     private final Colony colony;
-
-    /**
-     * The material store of the colony (WIP).
-     */
-    private final MaterialStore materialStore;
 
     /**
      * The tileEntity of the building.
@@ -135,9 +196,14 @@ public abstract class AbstractBuilding
     private int rotation = 0;
 
     /**
+     * The mirror of the building.
+     */
+    private boolean isMirrored = false;
+
+    /**
      * The building style.
      */
-    private String style = "default";
+    private String style = "wooden";
 
     /**
      * Made to check if the building has to update the server/client.
@@ -154,7 +220,6 @@ public abstract class AbstractBuilding
     {
         location = pos;
         this.colony = colony;
-        materialStore = new MaterialStore(MaterialStore.Type.CHEST, colony.getMaterialSystem());
     }
 
     /**
@@ -164,11 +229,18 @@ public abstract class AbstractBuilding
      *
      * @param name          name of building.
      * @param buildingClass subclass of AbstractBuilding, located in {@link com.minecolonies.coremod.colony.buildings}.
+     * @param viewClass     subclass of AbstractBuilding.View.
      * @param parentBlock   subclass of Block, located in {@link com.minecolonies.coremod.blocks}.
      */
-    private static void addMapping(final String name, @NotNull final Class<? extends AbstractBuilding> buildingClass, @NotNull final Class<? extends AbstractBlockHut> parentBlock)
+    private static void addMapping(
+            final String name,
+            @NotNull final Class<? extends AbstractBuilding> buildingClass,
+            @NotNull final Class<? extends AbstractBuilding.View> viewClass,
+            @NotNull final Class<? extends AbstractBlockHut> parentBlock)
     {
-        if (nameToClassMap.containsKey(name) || classNameHashToClassMap.containsKey(buildingClass.getName().hashCode()))
+        final int buildingHashCode = buildingClass.getName().hashCode();
+
+        if (nameToClassMap.containsKey(name) || classNameHashToViewClassMap.containsKey(buildingHashCode))
         {
             throw new IllegalArgumentException("Duplicate type '" + name + "' when adding AbstractBuilding class mapping");
         }
@@ -183,7 +255,7 @@ public abstract class AbstractBuilding
                 {
                     nameToClassMap.put(name, buildingClass);
                     classToNameMap.put(buildingClass, name);
-                    classNameHashToClassMap.put(buildingClass.getName().hashCode(), buildingClass);
+                    classNameHashToViewClassMap.put(buildingHashCode, viewClass);
                 }
             }
             catch (final NoSuchMethodException exception)
@@ -235,7 +307,7 @@ public abstract class AbstractBuilding
         if (building == null)
         {
             Log.getLogger().warn(String.format("Unknown Building type '%s' or missing constructor of proper format.", compound.getString(TAG_BUILDING_TYPE)));
-            return building;
+            return null;
         }
 
         try
@@ -264,16 +336,19 @@ public abstract class AbstractBuilding
 
         rotation = compound.getInteger(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
-        if ("".equals(style))
+        if (style.isEmpty())
         {
-            Log.getLogger().warn("Loaded empty style, setting to default");
-            style = "default";
+            Log.getLogger().warn("Loaded empty style, setting to wooden");
+            style = "wooden";
         }
 
-        if (MaterialSystem.isEnabled)
+        final NBTTagList containerTagList = compound.getTagList(TAG_CONTAINERS, Constants.NBT.TAG_COMPOUND);
+        for (int i = 0; i < containerTagList.tagCount(); ++i)
         {
-            materialStore.readFromNBT(compound);
+            final NBTTagCompound containerCompound = containerTagList.getCompoundTagAt(i);
+            containerList.add(NBTUtil.getPosFromTag(containerCompound));
         }
+        isMirrored = compound.getBoolean(TAG_MIRROR);
     }
 
     /**
@@ -296,7 +371,7 @@ public abstract class AbstractBuilding
             if (oclass == null)
             {
                 Log.getLogger().error(String.format("TileEntity %s does not have an associated Building.", parent.getClass().getName()));
-                return building;
+                return null;
             }
 
             final BlockPos loc = parent.getPosition();
@@ -308,6 +383,10 @@ public abstract class AbstractBuilding
             Log.getLogger().error(String.format("Unknown Building type '%s' or missing constructor of proper format.", parent.getClass().getName()), exception);
         }
 
+        if(building != null && parent.getWorld() != null)
+        {
+            ConstructionTapeHelper.placeConstructionTape(building, parent.getWorld());
+        }
         return building;
     }
 
@@ -328,19 +407,12 @@ public abstract class AbstractBuilding
         try
         {
             final int typeHash = buf.readInt();
-            oclass = classNameHashToClassMap.get(typeHash);
+            oclass = classNameHashToViewClassMap.get(typeHash);
 
             if (oclass != null)
             {
-                for (@NotNull final Class<?> c : oclass.getDeclaredClasses())
-                {
-                    if (c.getName().endsWith("$View"))
-                    {
-                        final Constructor<?> constructor = c.getDeclaredConstructor(ColonyView.class, BlockPos.class);
-                        view = (View) constructor.newInstance(colony, id);
-                        break;
-                    }
-                }
+                final Constructor<?> constructor = oclass.getDeclaredConstructor(ColonyView.class, BlockPos.class);
+                view = (View) constructor.newInstance(colony, id);
             }
         }
         catch (@NotNull NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException exception)
@@ -351,7 +423,7 @@ public abstract class AbstractBuilding
         if (view == null)
         {
             Log.getLogger().warn("Unknown AbstractBuilding type, missing View subclass, or missing constructor of proper format.");
-            return view;
+            return null;
         }
 
         try
@@ -363,7 +435,7 @@ public abstract class AbstractBuilding
             Log.getLogger().error(
               String.format("A AbstractBuilding View (%s) has thrown an exception during deserializing, its state cannot be restored. Report this to the mod author",
                 oclass.getName()), ex);
-            view = null;
+            return null;
         }
 
         return view;
@@ -412,10 +484,14 @@ public abstract class AbstractBuilding
         compound.setInteger(TAG_ROTATION, rotation);
         compound.setString(TAG_STYLE, style);
 
-        if (MaterialSystem.isEnabled)
+
+        @NotNull final NBTTagList containerTagList = new NBTTagList();
+        for (@NotNull final BlockPos pos: containerList)
         {
-            materialStore.writeToNBT(compound);
+            containerTagList.appendTag(NBTUtil.createPosTag(pos));
         }
+        compound.setTag(TAG_CONTAINERS, containerTagList);
+        compound.setBoolean(TAG_MIRROR, isMirrored);
     }
 
     /**
@@ -469,12 +545,9 @@ public abstract class AbstractBuilding
         {
             InventoryHelper.dropInventoryItems(world, this.location, (IInventory) tileEntityNew);
             world.updateComparatorOutputLevel(this.location, block);
+            ConstructionTapeHelper.removeConstructionTape(this, world);
         }
-
-        if (MaterialSystem.isEnabled)
-        {
-            materialStore.destroy();
-        }
+        ConstructionTapeHelper.removeConstructionTape(this, world);
     }
 
     /**
@@ -484,7 +557,7 @@ public abstract class AbstractBuilding
      */
     public TileEntityColonyBuilding getTileEntity()
     {
-        if (tileEntity == null && colony.getWorld().getBlockState(location).getBlock() != null)
+        if ((tileEntity == null || tileEntity.isInvalid()) && colony.getWorld().getBlockState(location).getBlock() != null)
         {
             final TileEntity te = getColony().getWorld().getTileEntity(location);
             if (te instanceof TileEntityColonyBuilding)
@@ -564,6 +637,34 @@ public abstract class AbstractBuilding
     }
 
     /**
+     * Get the current level of the work order.
+     *
+     * @return NO_WORK_ORDER if not current work otherwise the level requested.
+     */
+    private int getCurrentWorkOrderLevel()
+    {
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                return o.getUpgradeLevel();
+            }
+        }
+
+        return NO_WORK_ORDER;
+    }
+
+    /**
+     * Checks if this building have a work order.
+     *
+     * @return true if the building is building, upgrading or repairing.
+     */
+    public boolean hasWorkOrder()
+    {
+        return getCurrentWorkOrderLevel() != NO_WORK_ORDER;
+    }
+
+    /**
      * Children must return their max building level.
      *
      * @return Max building level.
@@ -586,7 +687,8 @@ public abstract class AbstractBuilding
         }
 
         colony.getWorkManager().addWorkOrder(new WorkOrderBuild(this, level));
-        LanguageHandler.sendPlayersLocalizedMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        LanguageHandler.sendPlayersMessage(colony.getMessageEntityPlayers(), "com.minecolonies.coremod.workOrderAdded");
+        markDirty();
     }
 
     /**
@@ -608,6 +710,24 @@ public abstract class AbstractBuilding
         if (buildingLevel > 0)
         {
             requestWorkOrder(buildingLevel);
+        }
+    }
+
+    /**
+     * Remove the work order for the building.
+     *
+     * Remove either the upgrade or repair work order
+     */
+    public void removeWorkOrder()
+    {
+        for (@NotNull final WorkOrderBuild o : colony.getWorkManager().getWorkOrdersOfType(WorkOrderBuild.class))
+        {
+            if (o.getBuildingLocation().equals(getID()))
+            {
+                colony.getWorkManager().removeWorkOrder(o.getID());
+                markDirty();
+                return;
+            }
         }
     }
 
@@ -652,16 +772,6 @@ public abstract class AbstractBuilding
     }
 
     /**
-     * Gets the MaterialStore for this building.
-     *
-     * @return The MaterialStore that tracks this building's inventory.
-     */
-    public MaterialStore getMaterialStore()
-    {
-        return materialStore;
-    }
-
-    /**
      * Called upon completion of an upgrade process.
      *
      * @param newLevel The new level.
@@ -685,6 +795,7 @@ public abstract class AbstractBuilding
         buf.writeInt(this.getClass().getName().hashCode());
         buf.writeInt(getBuildingLevel());
         buf.writeInt(getMaxBuildingLevel());
+        buf.writeInt(getCurrentWorkOrderLevel());
     }
 
     /**
@@ -720,8 +831,355 @@ public abstract class AbstractBuilding
     public final void markDirty()
     {
         dirty = true;
-        colony.markBuildingsDirty();
+        if(colony != null)
+        {
+            colony.markBuildingsDirty();
+        }
     }
+
+    /**
+     * Add a new container to the building.
+     * @param pos position to add.
+     */
+    public void addContainerPosition(BlockPos pos)
+    {
+        containerList.add(pos);
+    }
+
+    /**
+     * Remove a container from the building.
+     * @param pos position to remove.
+     */
+    public void removeContainerPosition(BlockPos pos)
+    {
+        containerList.remove(pos);
+    }
+
+    /**
+     * Get all additional containers which belong to the building.
+     * @return a copy of the list to avoid currentModification exception.
+     */
+    public List<BlockPos> getAdditionalCountainers()
+    {
+        return new ArrayList<>(containerList);
+    }
+
+    //------------------------- Starting Required Tools/Item handling -------------------------//
+
+    /**
+     * Override this method if you want to keep an amount of items in inventory.
+     * When the inventory is full, everything get's dumped into the building chest.
+     * But you can use this method to hold some stacks back.
+     *
+     * @return a list of objects which should be kept.
+     */
+    public Map<ItemStorage, Integer> getRequiredItemsAndAmount()
+    {
+        return Collections.emptyMap();
+    }
+
+    /**
+     * Check if the building is receiving the required items.
+     * @return true if so.
+     */
+    public boolean hasOnGoingDelivery()
+    {
+        return onGoingDelivery;
+    }
+
+    /**
+     * Check if the building is receiving the required items.
+     * @param valueToSet true or false
+     */
+    public void setOnGoingDelivery(boolean valueToSet)
+    {
+        this.onGoingDelivery = valueToSet;
+    }
+
+    /**
+     * Check if the worker needs anything. Tool or item.
+     * @return true if so.
+     */
+    public boolean needsAnything()
+    {
+        return !itemsCurrentlyNeeded.isEmpty() || needsShovel || needsAxe || needsHoe || needsWeapon || needsPickaxe;
+    }
+
+    /**
+     * Check if any items are needed at the moment.
+     * @return true if so.
+     */
+    public boolean areItemsNeeded()
+    {
+        return !itemsCurrentlyNeeded.isEmpty();
+    }
+
+    /**
+     * Check if the worker requires a shovel.
+     * @return true if so.
+     */
+    public boolean needsShovel()
+    {
+        return needsShovel;
+    }
+
+    /**
+     * Check if the worker requires a axe.
+     * @return true if so.
+     */
+    public boolean needsAxe()
+    {
+        return needsAxe;
+    }
+
+    /**
+     * Check if the worker requires a hoe.
+     * @return true if so.
+     */
+    public boolean needsHoe()
+    {
+        return needsHoe;
+    }
+
+    /**
+     * Check if the worker requires a pickaxe.
+     * @return true if so.
+     */
+    public boolean needsPickaxe()
+    {
+        return needsPickaxe;
+    }
+
+    /**
+     * Check if the worker requires a weapon.
+     * @return true if so.
+     */
+    public boolean needsWeapon()
+    {
+        return needsWeapon;
+    }
+
+    /**
+     * Check the required pickaxe level..
+     * @return the mining level of the pickaxe.
+     */
+    public int getNeededPickaxeLevel()
+    {
+        return needsPickaxeLevel;
+    }
+
+    /**
+     * Set if the worker needs a shovel.
+     * @param needsShovel true or false.
+     */
+    public void setNeedsShovel(final boolean needsShovel)
+    {
+        this.needsShovel = needsShovel;
+    }
+
+    /**
+     * Set if the worker needs a axe.
+     * @param needsAxe true or false.
+     */
+    public void setNeedsAxe(final boolean needsAxe)
+    {
+        this.needsAxe = needsAxe;
+    }
+
+    /**
+     * Set if the worker needs a hoe.
+     * @param needsHoe true or false.
+     */
+    public void setNeedsHoe(final boolean needsHoe)
+    {
+        this.needsHoe = needsHoe;
+    }
+
+    /**
+     * Set if the worker needs a pickaxe.
+     * @param needsPickaxe true or false.
+     */
+    public void setNeedsPickaxe(final boolean needsPickaxe)
+    {
+        this.needsPickaxe = needsPickaxe;
+    }
+
+    /**
+     * Set if the worker needs a weapon.
+     * @param needsWeapon true or false.
+     */
+    public void setNeedsWeapon(final boolean needsWeapon)
+    {
+        this.needsWeapon = needsWeapon;
+    }
+
+    /**
+     * Add a neededItem to the currentlyNeededItem list.
+     * @param stack the stack to add.
+     */
+    public void addNeededItems(@Nullable ItemStack stack)
+    {
+        if(stack != null)
+        {
+            itemsCurrentlyNeeded.add(stack);
+        }
+    }
+
+    /**
+     * Getter for the neededItems.
+     * @return an unmodifiable list.
+     */
+    public List<ItemStack> getNeededItems()
+    {
+        return Collections.unmodifiableList(itemsCurrentlyNeeded);
+    }
+
+    /**
+     * Getter for the first of the currentlyNeededItems.
+     * @return copy of the itemStack.
+     */
+    @Nullable
+    public ItemStack getFirstNeededItem()
+    {
+        if(itemsCurrentlyNeeded.isEmpty())
+        {
+            return null;
+        }
+        return itemsCurrentlyNeeded.get(0).copy();
+    }
+
+    /**
+     * Clear the currentlyNeededItem list.
+     */
+    public void clearNeededItems()
+    {
+        itemsCurrentlyNeeded.clear();
+    }
+
+    /**
+     * Overwrite the itemsCurrentlyNeededList with a new one.
+     * @param newList the new list to set.
+     */
+    public void setItemsCurrentlyNeeded(@NotNull List<ItemStack> newList)
+    {
+        this.itemsCurrentlyNeeded = new ArrayList<>(newList);
+    }
+
+    /**
+     * Set the needed pickaxe level of the worker.
+     * @param needsPickaxeLevel the mining level.
+     */
+    public void setNeedsPickaxeLevel(final int needsPickaxeLevel)
+    {
+        this.needsPickaxeLevel = needsPickaxeLevel;
+    }
+
+    /**
+     * Check for the required tool and return the describing string.
+     * @return the string of the required tool.
+     */
+    public String getRequiredTool()
+    {
+        if(needsHoe)
+        {
+            return Utils.HOE;
+        }
+
+        if(needsAxe)
+        {
+            return Utils.AXE;
+        }
+
+        if(needsPickaxe)
+        {
+            return Utils.PICKAXE;
+        }
+
+        if(needsShovel)
+        {
+            return Utils.SHOVEL;
+        }
+
+        if(needsWeapon)
+        {
+            return Utils.WEAPON;
+        }
+
+        return "";
+    }
+
+    /**
+     * Try to transfer a stack to one of the inventories of the building.
+     * @param stack the stack to transfer.
+     * @param world the world to do it in.
+     * @return true if was able to.
+     */
+    public boolean transferStack(@NotNull final ItemStack stack, @NotNull final World world)
+    {
+        if(tileEntity == null || InventoryUtils.isInventoryFull(tileEntity))
+        {
+            for(final BlockPos pos: containerList)
+            {
+                final TileEntity tempTileEntity = world.getTileEntity(pos);
+                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                {
+                    return InventoryUtils.addItemStackToInventory((IInventory) tempTileEntity, stack);
+                }
+            }
+        }
+        else
+        {
+            return InventoryUtils.addItemStackToInventory(tileEntity, stack);
+        }
+        return false;
+    }
+
+    /**
+     * Try to transfer a stack to one of the inventories of the building and force the transfer.
+     * @param stack the stack to transfer.
+     * @param world the world to do it in.
+     * @return the itemStack which has been replaced
+     */
+    @Nullable
+    public ItemStack forceTransferStack(final ItemStack stack, final World world)
+    {
+        if(tileEntity == null)
+        {
+            for(final BlockPos pos: containerList)
+            {
+                final TileEntity tempTileEntity = world.getTileEntity(pos);
+                if(tempTileEntity instanceof TileEntityChest && !InventoryUtils.isInventoryFull((IInventory) tempTileEntity))
+                {
+                    return InventoryUtils.forceItemStackToInventory((IInventory) tempTileEntity, stack, this);
+                }
+            }
+        }
+        else
+        {
+            return InventoryUtils.forceItemStackToInventory(tileEntity, stack, this);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the mirror of the current building.
+     *
+     * @return boolean value of the mirror.
+     */
+    public boolean isMirrored()
+    {
+        return isMirrored;
+    }
+
+    /**
+     * Sets the mirror of the current building.
+     */
+    public void setMirror()
+    {
+        this.isMirrored = !isMirrored;
+    }
+
+    //------------------------- Ending Required Tools/Item handling -------------------------//
 
     /**
      * The AbstractBuilding View is the client-side representation of a AbstractBuilding.
@@ -736,6 +1194,7 @@ public abstract class AbstractBuilding
 
         private int buildingLevel    = 0;
         private int buildingMaxLevel = 0;
+        private int workOrderLevel   = NO_WORK_ORDER;
 
         /**
          * Creates a building view.
@@ -813,6 +1272,36 @@ public abstract class AbstractBuilding
         }
 
         /**
+         * Get the current work order level.
+         *
+         * @return 0 if none, othewise the current level worked on
+         */
+        public int getCurrentWorkOrderLevel()
+        {
+            return workOrderLevel;
+        }
+
+        /**
+         * Get the current work order level.
+         *
+         * @return 0 if none, othewise the current level worked on
+         */
+        public boolean hasWorkOrder()
+        {
+            return workOrderLevel != NO_WORK_ORDER;
+        }
+
+        public boolean isBuilding()
+        {
+            return workOrderLevel != NO_WORK_ORDER && workOrderLevel > buildingLevel;
+        }
+
+        public boolean isRepairing()
+        {
+            return workOrderLevel != NO_WORK_ORDER && workOrderLevel == buildingLevel;
+        }
+
+        /**
          * Open the associated BlockOut window for this building.
          */
         public void openGui()
@@ -844,6 +1333,7 @@ public abstract class AbstractBuilding
         {
             buildingLevel = buf.readInt();
             buildingMaxLevel = buf.readInt();
+            workOrderLevel = buf.readInt();
         }
     }
 }

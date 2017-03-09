@@ -4,11 +4,9 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
-import com.minecolonies.coremod.colony.materials.MaterialSystem;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.util.Log;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -25,6 +23,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * NBTTag to store the colony id.
      */
     private static final String TAG_COLONY = "colony";
+    private static final String TAG_MIRROR = "mirror";
 
     /**
      * The colony id.
@@ -40,6 +39,11 @@ public class TileEntityColonyBuilding extends TileEntityChest
      * The building the tileEntity belongs to.
      */
     private AbstractBuilding building;
+
+    /**
+     * Check if the building has a mirror.
+     */
+    private boolean mirror;
 
     /**
      * Empty standard constructor.
@@ -210,6 +214,17 @@ public class TileEntityColonyBuilding extends TileEntityChest
         building = b;
     }
 
+    @Override
+    public void markDirty()
+    {
+        super.markDirty();
+        if (building!=null)
+        {
+            building.markDirty();
+        }
+    }
+
+
     /**
      * Returns the view of the building associated with the tile entity.
      *
@@ -233,6 +248,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
 
         updateColonyReferences();
+        mirror = compound.getBoolean(TAG_MIRROR);
     }
 
     @NotNull
@@ -247,6 +263,7 @@ public class TileEntityColonyBuilding extends TileEntityChest
         }
         */
         compound.setInteger(TAG_COLONY, colonyId);
+        compound.setBoolean(TAG_MIRROR, mirror);
         return compound;
     }
 
@@ -268,61 +285,21 @@ public class TileEntityColonyBuilding extends TileEntityChest
         return building == null || building.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
     }
 
-    //-----------------------------Material Handling--------------------------------
-    @Override
-    public ItemStack decrStackSize(final int index, final int quantity)
+    /**
+     * Set if the entity is mirrored.
+     * @param mirror true if so.
+     */
+    public void setMirror(final boolean mirror)
     {
-        final ItemStack removed = super.decrStackSize(index, quantity);
-
-        removeStackFromMaterialStore(removed);
-
-        return removed;
+        this.mirror = mirror;
     }
 
-    @Override
-    public ItemStack removeStackFromSlot(final int index)
+    /**
+     * Check if building is mirrored.
+     * @return true if so.
+     */
+    public boolean isMirrored()
     {
-        final ItemStack removed = super.removeStackFromSlot(index);
-
-        removeStackFromMaterialStore(removed);
-
-        return removed;
-    }
-
-    @Override
-    public void setInventorySlotContents(final int index, final ItemStack stack)
-    {
-        final ItemStack previous = getStackInSlot(index);
-        removeStackFromMaterialStore(previous);
-
-        super.setInventorySlotContents(index, stack);
-
-        addStackToMaterialStore(stack);
-    }
-
-    private void addStackToMaterialStore(final ItemStack stack)
-    {
-        if (stack == null)
-        {
-            return;
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            building.getMaterialStore().addMaterial(stack.getItem(), stack.stackSize);
-        }
-    }
-
-    private void removeStackFromMaterialStore(final ItemStack stack)
-    {
-        if (stack == null)
-        {
-            return;
-        }
-
-        if (MaterialSystem.isEnabled)
-        {
-            building.getMaterialStore().removeMaterial(stack.getItem(), stack.stackSize);
-        }
+        return mirror;
     }
 }
