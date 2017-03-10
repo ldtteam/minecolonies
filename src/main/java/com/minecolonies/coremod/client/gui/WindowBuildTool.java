@@ -200,7 +200,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if (structure != null)
         {
             rotation = Settings.instance.getRotation();
-//            level = Settings.instance.getLevel();
         }
         else if (pos != null)
         {
@@ -223,20 +222,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
-
-
-        //init();
     }
 
     private void init()
     {
-        Log.getLogger().info("before:");
-        printSections();
-        printStyles();
-        printSchematics();
-        Log.getLogger().info("before:end");
-
-        
         Structures.loadCustomStyleMaps();
 
         sections.clear();
@@ -244,18 +233,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         final List<String> allSections = Structures.getSections();
         for(String section: allSections)
         {
-            if (section.equals("decorations") || section.equals("custom") || inventoryHasHut(inventory, section))
+            if (section.equals(Structures.SCHEMATICS_DECORATIONS) || section.equals(Structures.SCHEMATICS_CUSTOM) || inventoryHasHut(inventory, section))
             {
-                Log.getLogger().info("add Section " + section);
                 sections.add(section);
             }
-            else
-            {
-                Log.getLogger().info("Ignore Section " + section);
-            }
         }
-        
-
 
         if (Settings.instance.getActiveStructure() != null)
         {
@@ -269,13 +251,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             setStyle(styleIndex);
             setSchematic(schematicIndex);
         }
-
-        Log.getLogger().info("After:");
-
-        printSections();
-        printStyles();
-        printSchematics();
-        Log.getLogger().info("After:end");
     }
 
     /**
@@ -332,53 +307,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
               sectionIndex, styleIndex, schematicIndex, 
               rotation);
         }
-    }
-
-    /**
-     * Change placement modes. Hut or Decoration.
-     */
-    private void placementModeClicked()
-    {
-        Settings.instance.setActiveSchematic(null);
-        sectionIndex = (sectionIndex + 1) % sections.size();
-        
-        updateSection();
-        updateStyles();
-    }
-
-    private void updateSection()
-    {
-        String mode = sections.get(sectionIndex);
-        if (mode.equals("decorations"))
-        {
-            findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decoration"));
-        }
-        else if (mode.equals("custom"))
-        {
-            findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.custom"));
-        }
-        else
-        {
-            //This should be a hut
-            findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("tile.minecolonies.blockHut"+ mode  +".name"));
-        }
-    }
-
-    /**
-     * Change to the next style.
-     */
-    private void styleClicked(@NotNull final Button button)
-    {
-        if (styles.size() == 1)
-        {
-            return;
-        }
-
-        styleIndex = (styleIndex + 1) % styles.size();
-
-        button.setLabel(styles.get(styleIndex));
-
-        updateSchematics();
     }
 
     /*
@@ -483,9 +411,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
                                                                               structureName.toString(),
-                                                                              //hutDec.get(hutDecIndex),
                                                                               structureName.toString(),
-                                                                              //getStyles().get(styleIndex),
                                                                               Settings.instance.pos,
                                                                               Settings.instance.getRotation(),
                                                                               structureName.isHut()));
@@ -587,7 +513,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     public void onUpdate()
     {
         super.onUpdate();
-        
+
         if (ColonyManager.isSchematicDownloaded())
         {
             ColonyManager.setSchematicDownloaded(false);
@@ -595,61 +521,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
-    private void printSections()
-    {
-        Log.getLogger().info("Sections:");
-        int counter = 0;
-        for(String item : sections)
-        {
-            if (counter==sectionIndex)
-            {
-                Log.getLogger().info("* " +item);
-            }
-            else
-            {
-                Log.getLogger().info("  " +item);
-            }
-            counter++;
-       }
-    }
-
-    private void printStyles()
-    {
-        Log.getLogger().info("Styles:");
-        int counter = 0;
-        for(String item : styles)
-        {
-            if (counter == styleIndex)
-            {
-                Log.getLogger().info("* " +item);
-            }
-            else
-            {
-                Log.getLogger().info("  " +item);
-            }
-            counter++;
-       }
-    }
-
-    private void printSchematics()
-    {
-        Log.getLogger().info("Schematics:");
-        int counter = 0;
-        for(String item : schematics)
-        {
-            if (counter==schematicIndex)
-            {
-               Log.getLogger().info("* " +item);
-            }
-            else
-            {
-                Log.getLogger().info("  " +item);
-            }
-            counter++;
-       }
-    }
-
-
+    /**
+     * Change to the next section, Builder, Citizen ... Decorations and Custom.
+     */
     public void nextSection()
     {
         if (sections.size() == 0)
@@ -662,6 +536,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
+    /**
+     * Set the current section and update styles.
+     */
     public void setSection(int index)
     {
         sectionIndex = index;
@@ -670,6 +547,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         updateStyles();
     }
 
+    /**
+     * get the name of the current section as displayed on the button.
+     */
     public String getSectionName()
     {
         if (sectionIndex <0 || sectionIndex >= sections.size())
@@ -680,6 +560,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         return sections.get(sectionIndex);
     }
 
+    /**
+     * Change to the next style.
+     */
     public void nextStyle()
     {
         if (styles.size() == 0)
@@ -693,6 +576,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     }
 
+    /**
+     * set the current Style and update schematics accordingly.
+     */
     public void setStyle(int index)
     {
         styleIndex = index;
@@ -701,6 +587,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         updateSchematics();
     }
 
+    /**
+     * get the name of the current style as displayed on the button.
+     */
     public String getStyleName()
     {
         if (styleIndex <0 || styleIndex >= styles.size())
@@ -711,6 +600,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         return styles.get(styleIndex);
     }
 
+    /**
+     * Update the styles list but try to keep the same one.
+     */
     public void updateStyles()
     {
         final String currentStyle = getStyleName();
@@ -735,6 +627,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         setStyle(newIndex);
     }
 
+    /**
+     * Go to the next schematic.
+     */
     public void nextSchematic()
     {
         if (schematics.size() == 0)
@@ -747,16 +642,21 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
+    /**
+     * Set the current schematic.
+     */
     public void setSchematic(int index)
     {
         schematicIndex = index;
         Log.getLogger().info("set schematic to " + getSchematicName() + " (" + schematicIndex + ")");
         Structures.StructureName sn = new Structures.StructureName(getSchematicName());
         findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setLabel(sn.getSchematic());
-        printMenu();
         changeSchematic();
     }
 
+    /**
+     * get the name of the schematic as displayed in the button.
+     */
     public String getSchematicName()
     {
         if (schematicIndex <0 || schematicIndex >= schematics.size())
@@ -767,7 +667,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         return schematics.get(schematicIndex);
     }
 
-
+    /**
+     * Update the list a available schematics.
+     */
     public void updateSchematics()
     {
         final String schematic = getSchematicName();
@@ -787,7 +689,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             }
         }
 
-        //int newIndex = schematics.indexOf(currentSchematic);
         if (newIndex == -1)
         {
             Log.getLogger().info("Can no keep the schematic "+ currentSchematic);
@@ -801,15 +702,4 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setEnabled(schematics.size() > 1);
         setSchematic(newIndex);
     }
-
-    public void printMenu()
-    {
-        Log.getLogger().info("** Menu status **");
-        Log.getLogger().info("Section: " + getSectionName());
-        Log.getLogger().info("Style: " + getStyleName());
-        Structures.StructureName sn = new Structures.StructureName(getSchematicName());
-        Log.getLogger().info("Schematic: " + sn.getSchematic());
-        Log.getLogger().info("*****************");
-    }
-
 }
