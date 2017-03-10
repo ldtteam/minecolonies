@@ -274,11 +274,6 @@ public final class Structures
         }
     }
 
-    private static boolean isSchematicHut(final String name)
-    {
-        return Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + name) != null;
-    }
-
     /**
      * Get the list of Sections.
      * Builder, Citizen, Farmer ... + decorations and custom.

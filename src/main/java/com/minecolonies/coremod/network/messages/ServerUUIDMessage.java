@@ -42,7 +42,7 @@ public class ServerUUIDMessage implements IMessage, IMessageHandler<ServerUUIDMe
     /**
      * {@inheritDoc}
      * <p>
-     * Sets the styles of the huts to the given value in the message
+     * Set the server UUID.
      *
      * @param message Message
      * @param ctx     Context
