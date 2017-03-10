@@ -160,9 +160,6 @@ public final class Structures
                         continue;
                     }
 
-                    //final String filename = path.getFileName().toString().split("\\.nbt")[0];
-                    //final String hut = filename.split("\\d+")[0];
-
                     String relativePath = path.toString().substring(basePath.toString().length()).split("\\.nbt")[0];
                     if (relativePath.startsWith("/"))
                     {
@@ -170,7 +167,6 @@ public final class Structures
                     }
 
                     final String md5 = Structure.calculateMD5(Structure.getStream(relativePath));
-                    //Log.getLogger().info("Add schematic "+ relativePath + " (md5:" + md5+")");
                     final StructureName structureName = new StructureName(relativePath);
 
                     if (md5Map.containsKey(structureName.toString()))
@@ -195,12 +191,6 @@ public final class Structures
             return;
         }
 
-        Log.getLogger().info("addMenuEntry " + structureName +" (" + fileName + ")");
-        /*Log.getLogger().info("Name " + structureName);
-        Log.getLogger().info("Section: " + structureName.getSection());
-        Log.getLogger().info("Style: " + structureName.getStyle());
-        Log.getLogger().info("Schematic: " + structureName.getSchematic());*/
-
         if (!schematicsMap.containsKey(structureName.getSection()))
         {
             Log.getLogger().warn("Can not add " + structureName + " to the menu, section " + structureName.getSection() + " does not exist" );
@@ -217,38 +207,8 @@ public final class Structures
 
     }
 
-    public static void printMenu()
-    {
-        Log.getLogger().info("************* Menu ************");
-        for (Map.Entry<String, Map<String, Map<String, String>>> sectionEntry : schematicsMap.entrySet())
-        {
-            Log.getLogger().info(sectionEntry.getKey());
-            for (Map.Entry<String, Map<String, String>> styleEntry : sectionEntry.getValue().entrySet())
-            {
-                Log.getLogger().info("        " + styleEntry.getKey());
-                for (Map.Entry<String, String> schematicEntry : styleEntry.getValue().entrySet())
-                {
-                    Log.getLogger().info("                " + schematicEntry.getKey() + " => " + schematicEntry.getValue());
-                }
-            }
-        }
-        Log.getLogger().info("*******************************");
-    }
-
-    public static void printMD5s()
-    {
-        Log.getLogger().info("************* MD5s ************");
-        for (Map.Entry<String, String> md5Entry : md5Map.entrySet())
-        {
-            Log.getLogger().info(md5Entry.getKey() + " => " + md5Entry.getValue());
-        }
-        Log.getLogger().info("*******************************");
-
-    }
-
     public static void loadCustomStyleMaps()
     {
-        Log.getLogger().info("loadCustomStyleMaps()");
         File schematicsFolder = Structure.getCustomSchematicsFolder();
 
         if (schematicsFolder == null)
@@ -257,7 +217,6 @@ public final class Structures
             return;
         }
         final Path basePath = schematicsFolder.toPath();
-        //Log.getLogger().info("Loading "+basePath);
         try (Stream<Path> walk = Files.walk(basePath))
         {
             final Iterator<Path> it = walk.iterator();
@@ -266,7 +225,6 @@ public final class Structures
             {
                 final Path path = it.next();
 
-                //Log.getLogger().info("adding ?? "+path);
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
                     String style = "";
@@ -288,7 +246,7 @@ public final class Structures
 
 
 
-                    final String filename = path.getFileName().toString().split("\\.nbt")[0];
+//                    final String filename = path.getFileName().toString().split("\\.nbt")[0];
                     String relativePath = path.toString().substring(basePath.toString().length()).split("\\.nbt")[0];
                     if (relativePath.startsWith("/"))
                     {
@@ -297,15 +255,7 @@ public final class Structures
 
                     final FileInputStream fis =  new FileInputStream(path.toString());
                     final String md5 = Structure.calculateMD5(fis);
-                    Log.getLogger().info("Add schematic custom/"+ relativePath + " (md5:" + md5+")");
-                    //md5Map.put("custom/" + relativePath, md5);
-                    //addSchematicStyle("custom", style, filename, md5);
-
-
-                    //final String md5 = Structure.calculateMD5(Structure.getStream(relativePath));
-                    //Log.getLogger().info("Add schematic "+ relativePath + " (md5:" + md5+")");
                     final StructureName structureName = new StructureName("custom/" + relativePath);
-
                     if (md5Map.containsKey(structureName.toString()))
                     {
                         Log.getLogger().info("Override " + structureName + " md5:" + md5 + " (was " + md5Map.containsKey(structureName.toString()) + ")");
@@ -328,24 +278,13 @@ public final class Structures
     {
         return Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + name) != null;
     }
-/*
-    private static void addSchematicStyle(final String section, final String style, final String schematic, final String md5)
-    {
-        if (!schematicsMap.containsKey(section))
-        {
-            schematicsMap.put(section, new HashMap<>());
-        }
-        final Map<String, Map<String, String>> sectionMap = schematicsMap.get(section);
-        if (!sectionMap.containsKey(style))
-        {
-            sectionMap.put(style, new HashMap<>());
-        }
-        final Map<String, String> styleMap = sectionMap.get(style);
-        styleMap.put(schematic, md5);
-        //TODO add to md5s map
-    }*/
 
-
+    /**
+     * Get the list of Sections.
+     * Builder, Citizen, Farmer ... + decorations and custom.
+     * @return list of sections.
+     */
+    @NotNull
     public static List<String> getSections()
     {
         final ArrayList<String> list = new ArrayList<>(schematicsMap.keySet());
@@ -353,6 +292,12 @@ public final class Structures
         return list;
     }
 
+    /**
+     * Get the list of styles for a given section.
+     * @param section such as decorations, Builder ...
+     * @return the list of style for that section.
+     */
+    @NotNull
     public static List<String> getStylesFor(final String section)
     {
         if (schematicsMap.containsKey(section))
@@ -366,9 +311,14 @@ public final class Structures
 
     }
 
+    /**
+     * Get a list of schematics for this section and style.
+     * @param section such as Builder, decorations...
+     * @return the list of schematics
+     */
+    @NotNull
     public static List<String> getSchematicsFor(final String section, final String style)
     {
-//        Log.getLogger().info("getSchematicsFor(" + section + ", " + style + ")");
         if (schematicsMap.containsKey(section))
         {
             final Map<String, Map<String, String>> sectionMap = schematicsMap.get(section);
@@ -587,7 +537,6 @@ public final class Structures
 
         //We don't want to overide it all (we need to key custom)
         Structures.md5Map.putAll(md5Map);
-        printMD5s();
     }
 
 
@@ -599,7 +548,6 @@ public final class Structures
     @SideOnly(Side.CLIENT)
     public static void setSchematics(final Map<String, Map<String, Map<String, String>>> schematicsMap)
     {
-        Log.getLogger().info("Structures.setSchematics");
         // We don't want to overide "Custom"
         for (Map.Entry<String, Map<String, Map<String, String>>> sectionEntry : schematicsMap.entrySet())
         {

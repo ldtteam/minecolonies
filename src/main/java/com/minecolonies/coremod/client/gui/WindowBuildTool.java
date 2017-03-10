@@ -288,9 +288,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
-        Structures.printMenu();
-        Structures.printMD5s();
-
         init();
     }
 
