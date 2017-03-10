@@ -118,7 +118,7 @@ public abstract class AbstractBuilding
      * Map to resolve names to class.
      */
     @NotNull
-    private static final Map<String, Class<?>>   nameToClassMap               = new HashMap<>();
+    private static final Map<String, Class<?>>   nameToClassMap               = new TreeMap<>();
     /**
      * Map to resolve classes to name.
      */
@@ -142,7 +142,7 @@ public abstract class AbstractBuilding
         addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
         addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
         addMapping("Builder", BuildingBuilder.class, BuildingBuilderView.class, BlockHutBuilder.class);
-        addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
+        addMapping("Citizen", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
         addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);
         addMapping("Lumberjack", BuildingLumberjack.class, BuildingLumberjack.View.class, BlockHutLumberjack.class);
         addMapping("Miner", BuildingMiner.class, BuildingMiner.View.class, BlockHutMiner.class);
@@ -255,6 +255,11 @@ public abstract class AbstractBuilding
         }
     }
 
+    public static Set<String> getNames()
+    {
+        return nameToClassMap.keySet();
+    }
+
     /**
      * Create and load a AbstractBuilding given it's saved NBTTagCompound.
      * Calls {@link #readFromNBT(net.minecraft.nbt.NBTTagCompound)}.
@@ -320,20 +325,20 @@ public abstract class AbstractBuilding
 
         final String buildingName = compound.getString(TAG_BUILDING_TYPE);
         final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
-        final String structureName = Structures.SCHEMATICS_HUTS + '/' + style + '/' + this.getSchematicName() + buildingLevel;
+        final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/'+ style + '/' + this.getSchematicName() + buildingLevel);
 
-        if (Structures.hasStructureName(structureName))
+        if (Structures.hasStructureName(sn))
         {
             final String prefix  = Structures.SCHEMATICS_HUTS+'/';
             final String postfix = '/' + buildingName + buildingLevel;
-            final String newStructureName = Structures.getStructureNameByMD5(md5);
+            final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
             if (newStructureName!= null
-                && newStructureName.startsWith(Structures.SCHEMATICS_HUTS+'/')
-                && newStructureName.endsWith(postfix))
+                && newStructureName.getSection().equals(sn.getSection())
+                && newStructureName.getSchematic().equals(sn.getSchematic()))
             {
                 //We found the new location for the schematic, update the style accordingly
-                style = newStructureName.substring(prefix.length(),newStructureName.length()-postfix.length());
-                Log.getLogger().warn("AbstractBuilding.readFromNBT: " + structureName + " have been mode to " + newStructureName);
+                style = newStructureName.getStyle();
+                Log.getLogger().warn("AbstractBuilding.readFromNBT: " + sn + " have been mode to " + newStructureName);
             }
         }
 
@@ -474,7 +479,7 @@ public abstract class AbstractBuilding
         {
             compound.setString(TAG_BUILDING_TYPE, s);
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
-            final String structureName=Structures.SCHEMATICS_HUTS + '/' + style + '/' + this.getSchematicName() +buildingLevel;
+            final Structures.StructureName  structureName = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/' + style + '/' + this.getSchematicName() + buildingLevel);
             final String md5 = Structures.getMD5(structureName);
             if (Structures.hasStructureName(structureName))
             {

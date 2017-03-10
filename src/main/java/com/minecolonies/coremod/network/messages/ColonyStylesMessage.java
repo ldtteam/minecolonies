@@ -17,10 +17,8 @@ import java.util.function.Function;
  */
 public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStylesMessage, IMessage>
 {
-    private Map<String, Integer> hutLevelsMap;
-    private Map<String, List<String>> hutStyleMap;
-    private Map<String, List<String>> decorationStyleMap;
     private Map<String, String> md5Map;
+    private Map<String, Map<String, Map<String, String>>> schematicsMap;
 
     /**
      * Empty constructor used when registering the message.
@@ -35,45 +33,8 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        hutLevelsMap = readHutLevelsMapFromByteBuf(buf);
-        hutStyleMap = readStyleMapFromByteBuf(buf);
-        decorationStyleMap = readStyleMapFromByteBuf(buf);
-        md5Map  = readMD5MapFromByteBuf(buf);
-    }
-
-    @NotNull
-    private static Map<String, Integer> readHutLevelsMapFromByteBuf(@NotNull final ByteBuf buf)
-    {
-        @NotNull final Map<String, Integer> map = new HashMap<>();
-
-        final int count = buf.readInt();
-        for (int i = 0; i < count; i++)
-        {
-            final String hutName = ByteBufUtils.readUTF8String(buf);
-            final Integer hurtMaxLevel = buf.readInt();
-            map.put(hutName, hurtMaxLevel);
-        }
-        return map;
-    }
-
-    @NotNull
-    private static Map<String, List<String>> readStyleMapFromByteBuf(@NotNull final ByteBuf buf)
-    {
-        @NotNull final Map<String, List<String>> map = new HashMap<>();
-
-        final int count = buf.readInt();
-        for (int i = 0; i < count; i++)
-        {
-            @NotNull final List<String> styles = new ArrayList<>();
-            final int numStyles = buf.readInt();
-            for (int j = 0; j < numStyles; j++)
-            {
-                styles.add(ByteBufUtils.readUTF8String(buf));
-            }
-
-            map.put(ByteBufUtils.readUTF8String(buf), styles);
-        }
-        return map;
+        md5Map = readMD5MapFromByteBuf(buf);
+        schematicsMap  = readSchematicMapFromByteBuf(buf);
     }
 
     @NotNull
@@ -89,25 +50,74 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
             map.put(filename, md5);
         }
         return map;
+}
+
+    @NotNull
+    private static Map<String, Map<String, Map<String, String>>> readSchematicMapFromByteBuf(@NotNull final ByteBuf buf)
+    {
+        @NotNull final Map<String, Map<String, Map<String, String>>> map = new HashMap<>();
+
+
+        final int countSection = buf.readInt();
+        for (int iSection = 0; iSection < countSection; iSection++)
+        {
+            final String section = ByteBufUtils.readUTF8String(buf);
+            final Map<String, Map<String, String>> sectionMap = new HashMap<>();
+            final int countStyle = buf.readInt();
+            for (int iStyle = 0; iStyle < countStyle; iStyle++)
+            {
+                final String style = ByteBufUtils.readUTF8String(buf);
+                final Map<String, String> sMap = new HashMap<>();
+                final int countSchematic = buf.readInt();
+                for (int iSchematic = 0; iSchematic < countSchematic; iSchematic++)
+                {
+                    sMap.put(ByteBufUtils.readUTF8String(buf), ByteBufUtils.readUTF8String(buf));
+                }
+                sectionMap.put(style, sMap);
+            }
+            map.put(section, sectionMap);
+        }
+        return map;
     }
 
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        writeHutLevelsMapToByteBuf(buf);
-        writeStyleMapToByteBuf(buf, Structures.getHuts(), Structures::getStylesForHut);
-        writeStyleMapToByteBuf(buf, Structures.getDecorations(), Structures::getStylesForDecoration);
         writeMD5MapToByteBuf(buf);
+        writeSchematicMapToByteBuf(buf);
     }
 
-    private static void writeHutLevelsMapToByteBuf(@NotNull final ByteBuf buf)
+    private static void writeMD5MapToByteBuf(@NotNull final ByteBuf buf)
     {
-        Map<String, Integer> hutLevels = Structures.getHutLevels();
-        buf.writeInt(hutLevels.size());
-        for(Map.Entry<String,Integer> entry : hutLevels.entrySet())
+        Map<String, String> md5s = Structures.getMD5s();
+        buf.writeInt(md5s.size());
+        for(Map.Entry<String,String> entry : md5s.entrySet())
         {
             ByteBufUtils.writeUTF8String(buf, entry.getKey());
-            buf.writeInt(entry.getValue());
+            ByteBufUtils.writeUTF8String(buf, entry.getValue());
+        }
+    }
+
+    private static void writeSchematicMapToByteBuf(@NotNull final ByteBuf buf)
+    {
+        Map<String, Map<String, Map<String, String>>> schematics = Structures.getSchematics();
+
+        buf.writeInt(schematics.size());
+        for(Map.Entry<String, Map<String, Map<String, String>>> section : schematics.entrySet())
+        {
+            ByteBufUtils.writeUTF8String(buf, section.getKey());
+            buf.writeInt(section.getValue().size());
+
+            for(Map.Entry<String, Map<String, String>> style : section.getValue().entrySet())
+            {
+                ByteBufUtils.writeUTF8String(buf, style.getKey());
+                buf.writeInt(style.getValue().size());
+                for(Map.Entry<String, String> schematic : style.getValue().entrySet())
+                {
+                    ByteBufUtils.writeUTF8String(buf, schematic.getKey());
+                    ByteBufUtils.writeUTF8String(buf, schematic.getValue());
+                }
+            }
         }
     }
 
@@ -128,17 +138,6 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
         }
     }
 
-    private static void writeMD5MapToByteBuf(@NotNull final ByteBuf buf)
-    {
-        Map<String, String> md5s = Structures.getMD5s();
-        buf.writeInt(md5s.size());
-        for(Map.Entry<String,String> entry : md5s.entrySet())
-        {
-            ByteBufUtils.writeUTF8String(buf, entry.getKey());
-            ByteBufUtils.writeUTF8String(buf, entry.getValue());
-        }
-    }
-
     /**
      * {@inheritDoc}
      * <p>
@@ -152,8 +151,8 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public IMessage onMessage(@NotNull final ColonyStylesMessage message, final MessageContext ctx)
     {
-        Structures.setStyles(message.hutLevelsMap, message.hutStyleMap, message.decorationStyleMap);
         Structures.setMD5s(message.md5Map);
+        Structures.setSchematics(message.schematicsMap);
         return null;
     }
 }

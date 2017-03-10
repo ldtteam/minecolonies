@@ -223,9 +223,10 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     {
         Log.getLogger().error("handleDecoration: structureName = " + structureName);
         Log.getLogger().error("handleDecoration: workOrderName = " + workOrderName);
-        if (Structures.hasStructureName(structureName))
+        final Structures.StructureName sn = new Structures.StructureName(structureName);
+        if (Structures.hasStructureName(sn))
         {
-            Log.getLogger().error("handleDecoration: " + structureName + " => " + Structures.getMD5(structureName));
+            Log.getLogger().error("handleDecoration: " + structureName + " => " + Structures.getMD5(sn));
         }
 /*        if (Structures.getStylesForDecoration(decoration) == null)
         {
@@ -236,7 +237,12 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
         {
+            Log.getLogger().error("handleDecoration: addWorkOrder");
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(structureName, workOrderName, rotation, buildPos));
+        }
+        else
+        {
+            Log.getLogger().error("handleDecoration: Could not build "+structureName);
         }
     }
 }

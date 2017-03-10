@@ -663,8 +663,8 @@ public final class ColonyManager
                 }
                 if (serverUUID == null)
                 {
-                    Log.getLogger().info(String.format("New Server UUID %s", serverUUID));
                     serverUUID = UUID.randomUUID();
+                    Log.getLogger().info(String.format("New Server UUID %s", serverUUID));
                     markDirty();
                 }
                 else

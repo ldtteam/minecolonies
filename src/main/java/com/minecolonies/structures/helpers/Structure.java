@@ -97,11 +97,14 @@ public class Structure
             this.mc = Minecraft.getMinecraft();
         }
 
+        Structures.StructureName sn = new Structures.StructureName(structureName);
+
         InputStream inputStream = Structure.getStream(structureName);
 
-        if (inputStream == null && Structures.hasStructureName(structureName))
+        if (inputStream == null && Structures.hasStructureName(sn))
         {
-            inputStream = Structure.getStream(Structures.getMD5(structureName));
+            Log.getLogger().info("Trying to load from cache :" + Structures.getMD5(sn));
+            inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' +Structures.getMD5(sn));
         }
 
         if (inputStream == null)
@@ -211,18 +214,20 @@ public class Structure
     public static InputStream getStream(final String structureName)
     {
         Log.getLogger().info("Trying to load " + structureName);
+
+        Structures.StructureName sn = new Structures.StructureName(structureName);
         InputStream inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
 
-        if (inputstream == null && structureName.startsWith(Structures.SCHEMATICS_CUSTOM + "/"))
+        if (inputstream == null && sn.getPrefix().equals(Structures.SCHEMATICS_CUSTOM))
         {
             inputstream = Structure.getStreamFromFolder(Structure.getCustomSchematicsFolder().getParentFile(), structureName);
             if (inputstream != null)
                 Log.getLogger().info("Loaded " + structureName + " from Schematics folder");
         }
 
-        if (inputstream == null && Structures.hasStructureName(structureName))
+        if (inputstream == null && Structures.hasStructureName(sn))
         {
-            inputstream = Structure.getStreamFromFolder(Structure.getCachedSchematicsFolder(), Structures.getMD5(structureName));
+            inputstream = Structure.getStreamFromFolder(Structure.getCachedSchematicsFolder(), Structures.getMD5(sn));
             if (inputstream != null)
                 Log.getLogger().info("Loaded " + structureName + " from Cached Schematics folder");
         }
@@ -367,6 +372,7 @@ public class Structure
      */
     public boolean isCorrectMD5(final String otherMD5)
     {
+        Log.getLogger().info("isCorrectMD5: md5:" +  md5 + " other:"+ otherMD5);
         if (md5 == null || otherMD5 == null)
         {
             return false;

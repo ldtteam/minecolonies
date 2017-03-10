@@ -31,13 +31,13 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private static final String TAG_SCHEMATIC_MD5     = "schematicMD5";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
 
-    protected BlockPos buildingLocation;
-    protected int      buildingRotation;
-    protected String   structureName;
-    protected String   md5;
-    protected boolean  cleared;
-    private   int      upgradeLevel;
-    protected String   upgradeName;
+    protected BlockPos                 buildingLocation;
+    protected int                      buildingRotation;
+    protected Structures.StructureName structureName;
+    protected String                   md5;
+    protected boolean                  cleared;
+    private   int                      upgradeLevel;
+    protected String                   upgradeName;
     private boolean hasSentMessageForThisWorkOrder = false;
     private boolean requested;
 
@@ -64,20 +64,10 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.buildingRotation = building.getRotation();
         this.cleared = level > 1;
         this.requested = false;
-        Log.getLogger().info("WorkOrderBuild: building.getSchematicName() = "+building.getSchematicName());
-        Log.getLogger().info("WorkOrderBuild: building.getStyle() = "+building.getStyle());
-        Log.getLogger().info("WorkOrderBuild: this.getUpgradeName() = "+this.getUpgradeName());
 
-        this.structureName = Structures.SCHEMATICS_HUTS + '/' + building.getStyle() + '/' + this.getUpgradeName();
-        Log.getLogger().info("WorkOrderBuild: this.structureName = "+this.structureName);
+        this.structureName = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/' + building.getStyle() + '/' + this.getUpgradeName());
         this.md5 = Structures.getMD5(this.structureName);
     }
-
-/*    protected String getStructurePrefix()
-    {
-        return Structures.SCHEMATICS_HUTS;
-    }
-*/
 
     /**
      * Returns the name after upgrade.
@@ -102,42 +92,41 @@ public class WorkOrderBuild extends AbstractWorkOrder
         if (!(this instanceof WorkOrderBuildDecoration))
         {
             upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
-            Log.getLogger().info("upgradeLevel = "+upgradeLevel);
         }
         upgradeName = compound.getString(TAG_UPGRADE_NAME);
-        Log.getLogger().info("upgradeName = "+upgradeName);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
-        Log.getLogger().info("cleared = "+cleared);
 
         md5 = compound.getString(TAG_SCHEMATIC_MD5);
-        Log.getLogger().info("md5 = "+md5);
-        structureName = compound.getString(TAG_SCHEMATIC_NAME);
-        Log.getLogger().info("structureName = "+structureName);
-        Log.getLogger().warn("WorkOrderBuild.readFromNBT: Loading " + structureName);
+        structureName = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
         if (!Structures.hasStructureName(structureName))
         {
-            if (Structures.hasStructureName(Structures.SCHEMATICS_HUTS + '/' + structureName))
+            Structures.StructureName newSN = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/' + structureName);
+            if (Structures.hasStructureName(newSN))
             {
                 //It is an old work order which does not start by huts/
-                structureName = Structures.SCHEMATICS_HUTS + '/' + structureName;
+                Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
+                structureName = newSN;
             }
-            else if (Structures.hasStructureName(Structures.SCHEMATICS_DECORATIONS + '/' + structureName))
+            else
             {
-                //It is an old work order which does not start by decorations/
-                structureName = Structures.SCHEMATICS_DECORATIONS + '/' + structureName;
-            }
-            else if (md5 != null)
-            {
-                // If the schematic move we can use the MD5 hash to find it
-                final String newStructureName = Structures.getStructureNameByMD5(md5);
-                Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newStructureName);
-                structureName = newStructureName;
+                newSN = new Structures.StructureName(Structures.SCHEMATICS_DECORATIONS + '/' + structureName);
+                if (Structures.hasStructureName(newSN))
+                {
+                    //It is an old work order which does not start by decorations/
+                    Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
+                    structureName = newSN;
+                }
+                else if (md5 != null)
+                {
+                    // If the schematic move we can use the MD5 hash to find it
+                    newSN = Structures.getStructureNameByMD5(md5);
+                    Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
+                    structureName = newSN;
+                }
             }
         }
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
-        Log.getLogger().info("buildingRotation = "+buildingRotation);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
-        Log.getLogger().info("requested = "+requested);
     }
 
     /**
@@ -160,7 +149,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         {
             compound.setString(TAG_SCHEMATIC_MD5, md5);
         }
-        compound.setString(TAG_SCHEMATIC_NAME, structureName);
+        compound.setString(TAG_SCHEMATIC_NAME, structureName.toString());
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
     }
@@ -311,8 +300,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
      */
     public String getStructureName()
     {
-        return this.structureName;
+        return this.structureName.toString();
     }
+
 
     /**
      * Gets how many times this structure should be rotated.

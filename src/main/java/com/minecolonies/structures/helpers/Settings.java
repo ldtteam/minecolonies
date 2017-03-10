@@ -21,24 +21,13 @@ public final class Settings
      * The position of the structure.
      */
     public              BlockPos                 pos            = null;
-    public enum BuildingMode
-    {
-        HUT, DECORATION, CUSTOM;
-        public BuildingMode getNext()
-        {
-            return this.ordinal() < BuildingMode.values().length - 1
-            ? BuildingMode.values()[this.ordinal() + 1]
-            : BuildingMode.values()[0];
-        }
-    }
-    //private             boolean                  inHutMode      = true;
-    private             BuildingMode             inBuildingMode   = BuildingMode.HUT;
     @Nullable
     private             Structure                structure      = null;
     private             int                      rotation       = 0;
-    private             String                   hutDec         = "";
-    private             String                   style          = "";
-    private             int                      level          = 0;
+    private             int                      sectionIndex   = 0;
+    private             int                      styleIndex     = 0;
+    private             int                      schematicIndex = 0;
+
     private             boolean                  isPendingReset = false;
 
     private Settings()
@@ -102,59 +91,44 @@ public final class Settings
     }
 
     /**
-     * @return true if the client is in hut mode.
-     */
-    public BuildingMode getBuildingMode()
-    {
-        return inBuildingMode;
-    }
-
-    /**
-     * @param mode true if in hut mode, false if in decoration mode.
-     */
-    public void nextBuildingMode()
-    {
-        inBuildingMode = inBuildingMode.getNext();
-    }
-
-    /**
      * Saves the schematic info when the client closes the build tool window.
      *
-     * @param hutDec   Hut/decoration name.
-     * @param style    AbstractBuilding style.
-     * @param level    AbstractBuilding level.
+     * @param sectionIndex   Index of the section.
+     * @param styleIndex     Index of the style.
+     * @param schematicIndex Index of the schematic.
      * @param rotation The number of times the building is rotated.
      */
-    public void setSchematicInfo(final String hutDec, final String style, final int level, final int rotation)
+    public void setSchematicInfo(final int sectionIndex, final int styleIndex, final int schematicIndex, final int rotation)
     {
-        this.hutDec = hutDec;
-        this.style = style;
-        this.level = level;
+        this.sectionIndex=sectionIndex;
+        this.styleIndex=styleIndex;
+        this.schematicIndex=schematicIndex;
         this.rotation = rotation;
     }
 
+
     /**
-     * @return The name of the hut/decoration.
+     * @return The index of the section.
      */
-    public String getHutDec()
+    public int getSectionIndex()
     {
-        return hutDec;
+        return sectionIndex;
     }
 
     /**
-     * @return The name of the style.
+     * @return The index of the style.
      */
-    public String getStyle()
+    public int getStyleIndex()
     {
-        return style;
+        return styleIndex;
     }
 
     /**
-     * @return The current level (minus 1) of the hut being rendered.
+     * @return The index of the schematic.
      */
-    public int getLevel()
+    public int getSchematicIndex()
     {
-        return level;
+        return schematicIndex;
     }
 
     /**

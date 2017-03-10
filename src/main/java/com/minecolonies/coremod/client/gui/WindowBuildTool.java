@@ -32,20 +32,17 @@ import java.util.stream.Collectors;
 
 import java.io.InputStream;
 
+import net.minecraftforge.fml.common.FMLCommonHandler;
+
 /**
  * BuildTool window.
  */
 public class WindowBuildTool extends AbstractWindowSkeleton
 {
     /**
-     * This button is used to set whether the window is in hut mode or decoration mode.
+     * This button is used to set the section either huts (Builder, Town Hall), decorations or custom mode.
      */
     private static final String BUTTON_TYPE_ID = "buildingType";
-
-    /**
-     * This button is used to choose which hut or decoration should be built.
-     */
-    private static final String BUTTON_HUT_DEC_ID = "hutDec";
 
     /**
      * This button is used to choose which style should be used.
@@ -53,9 +50,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final String BUTTON_STYLE_ID = "style";
 
     /**
-     * This button is used to cycle through different hut levels.
+     * This button is used to choose which hut or decoration should be built.
      */
-    private static final String BUTTON_LEVEL_ID = "level";
+    private static final String BUTTON_SCHEMATIC_ID = "schematic";
 
     /**
      * This button will send a packet to the server telling it to place this hut/decoration.
@@ -143,20 +140,37 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private static final String NO_HUT_IN_INVENTORY = "com.minecolonies.coremod.gui.buildtool.nohutininventory";
 
     /**
-     * List of huts or decorations possible to make.
+     * List of section.
      */
     @NotNull
-    private final List<String> hutDec = new ArrayList<>();
+    private List<String> sections = new ArrayList<>();
 
     /**
-     * Index of the rendered hutDec/decoration.
+     * List of style for the section.
      */
-    private int hutDecIndex = 0;
+    @NotNull
+    private List<String> styles = new ArrayList<>();
+
+    /**
+     * List of decorations or level possible to make with the style.
+     */
+    @NotNull
+    private List<String> schematics = new ArrayList<>();
+
+    /**
+     * Index of the section.
+     */
+    private int sectionIndex = 0;
 
     /**
      * Index of the current style.
      */
     private int styleIndex = 0;
+
+    /**
+     * Index of the rendered hutDec/decoration.
+     */
+    private int schematicIndex = 0;
 
     /**
      * Current position the hut/decoration is rendered at.
@@ -168,12 +182,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      * Current rotation of the hut/decoration.
      */
     private int rotation = 0;
-
-    /**
-     * Current hut level that is being rendered.
-     * This stores the level minus 1, because its easier and cooperates with modulus better.
-     */
-    private int level = 0;
 
     /**
      * Creates a window build tool.
@@ -192,7 +200,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if (structure != null)
         {
             rotation = Settings.instance.getRotation();
-            level = Settings.instance.getLevel();
+//            level = Settings.instance.getLevel();
         }
         else if (pos != null)
         {
@@ -202,10 +210,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
 
         //Register all necessary buttons with the window.
-        registerButton(BUTTON_TYPE_ID, this::placementModeClicked);
-        registerButton(BUTTON_HUT_DEC_ID, this::hutDecClicked);
-        registerButton(BUTTON_STYLE_ID, this::styleClicked);
-        registerButton(BUTTON_LEVEL_ID, this::levelClicked);
+        registerButton(BUTTON_TYPE_ID, this::nextSection);
+        registerButton(BUTTON_STYLE_ID, this::nextStyle);
+        registerButton(BUTTON_SCHEMATIC_ID, this::nextSchematic);
         registerButton(BUTTON_CONFIRM, this::confirmClicked);
         registerButton(BUTTON_CANCEL, this::cancelClicked);
         registerButton(BUTTON_LEFT, this::moveLeftClicked);
@@ -216,6 +223,59 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         registerButton(BUTTON_DOWN, WindowBuildTool::moveDownClicked);
         registerButton(BUTTON_ROTATE_RIGHT, this::rotateRightClicked);
         registerButton(BUTTON_ROTATE_LEFT, this::rotateLeftClicked);
+
+
+        //init();
+    }
+
+    private void init()
+    {
+        Log.getLogger().info("before:");
+        printSections();
+        printStyles();
+        printSchematics();
+        Log.getLogger().info("before:end");
+
+        
+        Structures.loadCustomStyleMaps();
+
+        sections.clear();
+        final InventoryPlayer inventory = this.mc.player.inventory;
+        final List<String> allSections = Structures.getSections();
+        for(String section: allSections)
+        {
+            if (section.equals("decorations") || section.equals("custom") || inventoryHasHut(inventory, section))
+            {
+                Log.getLogger().info("add Section " + section);
+                sections.add(section);
+            }
+            else
+            {
+                Log.getLogger().info("Ignore Section " + section);
+            }
+        }
+        
+
+
+        if (Settings.instance.getActiveStructure() != null)
+        {
+            setSection(Settings.instance.getSectionIndex());
+            setStyle(Settings.instance.getStyleIndex());
+            setSchematic(Settings.instance.getSchematicIndex());
+        }
+        else
+        {
+            setSection(sectionIndex);
+            setStyle(styleIndex);
+            setSchematic(schematicIndex);
+        }
+
+        Log.getLogger().info("After:");
+
+        printSections();
+        printStyles();
+        printSchematics();
+        Log.getLogger().info("After:end");
     }
 
     /**
@@ -231,7 +291,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     }
 
     /**
-     * Move the schmatic up.
+     * Move the schematic up.
      */
     private static void moveUpClicked()
     {
@@ -253,25 +313,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     @Override
     public void onOpened()
     {
-        Structures.loadCustomStyleMaps();
-        onChangeMode();
-    }
+        Structures.printMenu();
+        Structures.printMD5s();
 
-    public void onChangeMode()
-    {
-        switch (Settings.instance.getBuildingMode())
-        {
-            case HUT:
-                loadHutMode();
-                break;
-            case DECORATION:
-                loadDecorationMode();
-                break;
-            case CUSTOM:
-                loadCustomMode();
-                break;
-        }
-
+        init();
     }
 
     /**
@@ -284,104 +329,8 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         if (Settings.instance.getActiveStructure() != null)
         {
             Settings.instance.setSchematicInfo(
-              findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel(),
-              findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel(),
-              level,
+              sectionIndex, styleIndex, schematicIndex, 
               rotation);
-        }
-    }
-
-    /**
-     * Loads the decoration mode of the build tool.
-     */
-    private void loadDecorationMode()
-    {
-        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decoration"));
-
-        hutDec.addAll(Structures.getDecorations());
-
-        setupButtons();
-    }
-
-    private void loadCustomMode()
-    {
-        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel("Custom");
-
-        Log.getLogger().info("hutDec.size() before "+hutDec.size());
-        for (String customStyle : Structures.getCustoms()) 
-        {
-            if (!hutDec.contains(customStyle))
-            {
-                Log.getLogger().info("Adding custom style "+customStyle);
-                hutDec.add(customStyle);
-            }
-            else
-            {
-                Log.getLogger().info("custom style already added: "+customStyle);
-            }
-        }
-        //hutDec.addAll(Structures.getCustoms());
-        Log.getLogger().info("hutDec.size() after "+hutDec.size());
-
-        setupButtons();
-    }
-
-
-    /**
-     * Loads the hut mode of the build tool.
-     */
-    private void loadHutMode()
-    {
-        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.hut"));
-
-        final InventoryPlayer inventory = this.mc.player.inventory;
-
-        //Add possible hutDec (has item) to list, if it has a structure, and player has the block
-        hutDec.addAll(Structures.getHuts().stream()
-                        .filter(hut -> inventoryHasHut(inventory, hut) && Structures.getStylesForHut(hut) != null)
-                        .collect(Collectors.toList()));
-
-        setupButtons();
-    }
-
-    /**
-     * Setup all buttons, enable, disable them if required.
-     */
-    private void setupButtons()
-    {
-        if (hutDec.isEmpty())
-        {
-            final Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
-/*            buttonHutDec.setLabel(LanguageHandler.format(
-              Settings.instance.isInHutMode() ? "com.minecolonies.coremod.gui.buildtool.nohut" : "com.minecolonies.coremod.gui.buildtool.nodecoration"));*/
-            buttonHutDec.setEnabled(false);
-            final Button buttonStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
-            buttonStyle.setVisible(false);
-            Settings.instance.setActiveSchematic(null);
-        }
-        else
-        {
-            if (Settings.instance.getActiveStructure() != null)
-            {
-                hutDecIndex = Math.max(0, hutDec.indexOf(Settings.instance.getHutDec()));
-                styleIndex = Math.max(0, getStyles().indexOf(Settings.instance.getStyle()));
-            }
-
-            final Button buttonHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class);
-            buttonHutDec.setLabel(hutDec.get(hutDecIndex));
-            buttonHutDec.setEnabled(true);
-
-            final Button buttonStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class);
-            buttonStyle.setVisible(true);
-            buttonStyle.setLabel(getStyles().get(styleIndex));
-            if (Settings.instance.getActiveStructure() == null)
-            {
-                rotation = 0;
-                level = 0;
-                changeSchematic();
-            }
-
-            updateLevelButton();
         }
     }
 
@@ -391,32 +340,45 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     private void placementModeClicked()
     {
         Settings.instance.setActiveSchematic(null);
-        hutDec.clear();
-        hutDecIndex = 0;
-        styleIndex = 0;
+        sectionIndex = (sectionIndex + 1) % sections.size();
+        
+        updateSection();
+        updateStyles();
+    }
 
-
-        Settings.instance.nextBuildingMode();
-        onChangeMode();
+    private void updateSection()
+    {
+        String mode = sections.get(sectionIndex);
+        if (mode.equals("decorations"))
+        {
+            findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decoration"));
+        }
+        else if (mode.equals("custom"))
+        {
+            findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.custom"));
+        }
+        else
+        {
+            //This should be a hut
+            findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(LanguageHandler.format("tile.minecolonies.blockHut"+ mode  +".name"));
+        }
     }
 
     /**
-     * Change to the next hut/decoration.
+     * Change to the next style.
      */
-    private void hutDecClicked(@NotNull final Button button)
+    private void styleClicked(@NotNull final Button button)
     {
-        if (hutDec.size() == 1)
+        if (styles.size() == 1)
         {
             return;
         }
 
-        hutDecIndex = (hutDecIndex + 1) % hutDec.size();
-        styleIndex = 0;
+        styleIndex = (styleIndex + 1) % styles.size();
 
-        button.setLabel(hutDec.get(hutDecIndex));
-        findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyles().get(styleIndex));
+        button.setLabel(styles.get(styleIndex));
 
-        changeSchematic();
+        updateSchematics();
     }
 
     /*
@@ -424,59 +386,17 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
 
     /**
-     * Get all styles from the folders.
-     *
-     * @return list of style strings.
-     */
-    private List<String> getStyles()
-    {
-        if (hutDec.isEmpty())
-        {
-            Log.getLogger().info("hutDec.isEmpty())");
-            return Collections.emptyList();
-        }
-
-        switch (Settings.instance.getBuildingMode())
-        {
-            case HUT:
-                return Structures.getStylesForHut(hutDec.get(hutDecIndex));
-            case DECORATION:
-                return Structures.getStylesForDecoration(hutDec.get(hutDecIndex));
-            case CUSTOM:
-                return Structures.getStylesForCustom(hutDec.get(hutDecIndex));
-            default:
-                //TODO
-                return Structures.getStylesForDecoration(hutDec.get(hutDecIndex));
-        }
-    }
-
-    /**
      * Changes the current structure.
      * Set to button position at that time
      */
     private void changeSchematic()
     {
-        final String labelHutDec = findPaneOfTypeByID(BUTTON_HUT_DEC_ID, Button.class).getLabel();
-        final String labelHutStyle = findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).getLabel();
-        final Structure structure;
-        final String structureName;
-
-        switch (Settings.instance.getBuildingMode())
-        {
-            case HUT:
-                structureName = Structures.SCHEMATICS_HUTS + '/' + labelHutStyle + '/' + labelHutDec + (level + 1);
-                break;
-            case DECORATION:
-                structureName = Structures.SCHEMATICS_DECORATIONS + '/' + labelHutDec + '/' + labelHutStyle;
-                break;
-            case CUSTOM:
-            default:
-                structureName = Structures.SCHEMATICS_CUSTOM + '/' + labelHutDec + '/' + labelHutStyle;
-                break;
-        }
-
-        structure = new Structure(null,
-                                   structureName,
+        final String sname= schematics.get(schematicIndex);
+        Log.getLogger().info("Loading structure sname:" + sname);
+        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicIndex));
+        Log.getLogger().info("Loading structure " + structureName.toString());
+        Structure structure = new Structure(null,
+                                   structureName.toString(),
                                    new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
 
         final String md5 = Structures.getMD5(structureName);
@@ -493,7 +413,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             }
 
             Log.getLogger().info("Request To Server for structure " + structureName);
-            MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName));
+            MineColonies.getNetwork().sendToServer(new SchematicRequestMessage(structureName.toString()));
         }
 
 
@@ -505,55 +425,46 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         }
     }
 
-    /**
-     * Change to the next style.
-     */
-    private void styleClicked(@NotNull final Button button)
+    private void requestCustomSchematic(@NotNull final Structures.StructureName structureName)
     {
-        final List<String> styles = getStyles();
-
-        if (styles.size() == 1)
+        if (Structures.hasStructureName(structureName))
         {
-            return;
-        }
+            Log.getLogger().warn("BuilderTool: client has structure " + structureName);
+            final String md5 = Structures.getMD5(structureName);
+            Log.getLogger().warn("BuilderTool: " + structureName + " => " + md5);
+            final String serverSideName = "cache/"+md5;
+            Log.getLogger().warn("BuilderTool: serverSideName = " + serverSideName);
+            if (!Structures.hasStructureName(new Structures.StructureName(serverSideName)))
+            {
+                Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
+                final InputStream stream = Structure.getStream(structureName.toString());
+                if (stream!= null)
+                {
+                    Log.getLogger().warn("BuilderTool: Sending structure " + structureName +" (" + md5 + ")");
+                    MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream), structureName.toString()));
+                }
+                else
+                {
+                    Log.getLogger().warn("BuilderTool: Can not load " + structureName);
+                }
+            }
+            else
+            {
+                Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
+            }
 
-        styleIndex = (styleIndex + 1) % styles.size();
-
-        button.setLabel(styles.get(styleIndex));
-
-        changeSchematic();
-    }
-
-    /**
-     * Change to the next level building.
-     */
-    private void levelClicked()
-    {
-        final int maxLevel = Structures.getMaxLevelForHut(hutDec.get(hutDecIndex));
-        if (maxLevel > 1)
-        {
-            level = (level + 1) % maxLevel;
-            updateLevelButton();
-
-            changeSchematic();
-        }
-    }
-
-    /**
-     * Switch to another level of the structure.
-     */
-    private void updateLevelButton()
-    {
-        final Button buttonLevel = findPaneOfTypeByID(BUTTON_LEVEL_ID, Button.class);
-        if (Settings.instance.getBuildingMode() == Settings.BuildingMode.HUT)
-        {
-            buttonLevel.setVisible(true);
-            buttonLevel.setLabel("Level: " + (level + 1));
+            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                                                              Structures.SCHEMATICS_CACHE + '/' + md5,
+                                                              structureName.toString(),
+                                                              Settings.instance.pos,
+                                                              Settings.instance.getRotation(),
+                                                              false));
         }
         else
         {
-            buttonLevel.setVisible(false);
+            Log.getLogger().warn("BuilderTool: Can not send schematic without md5: " + structureName);
         }
+
     }
 
     /**
@@ -561,96 +472,23 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void confirmClicked()
     {
-        if (hutDecIndex < hutDec.size())
+        Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicIndex));
+        Log.getLogger().info("structureName="+structureName);
+        if (structureName.getPrefix().equals(Structures.SCHEMATICS_CUSTOM) && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
-            switch (Settings.instance.getBuildingMode())
-            {
-                case HUT:
-                    {
-                        final String structureName = Structures.SCHEMATICS_HUTS + '/' + getStyles().get(styleIndex) + '/' + hutDec.get(hutDecIndex);
-                        Log.getLogger().info("structureName="+structureName);
-                        MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                                                                              structureName,
-                                                                              //hutDec.get(hutDecIndex),
-                                                                              structureName,
-                                                                              //getStyles().get(styleIndex),
-                                                                              Settings.instance.pos,
-                                                                              Settings.instance.getRotation(),
-                                                                              true));
-                    }
-                    break;
-                case DECORATION:
-                    {
-                        final String structureName = Structures.SCHEMATICS_DECORATIONS + '/' + hutDec.get(hutDecIndex) + '/' + getStyles().get(styleIndex);
-                        MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                                                                              structureName,
-                                                                              structureName,
-                                                                              Settings.instance.pos,
-                                                                              Settings.instance.getRotation(),
-                                                                              false));
-                    }
-                    break;
-                case CUSTOM:
-                    {
-                        final String structureName = Structures.SCHEMATICS_CUSTOM + '/' + hutDec.get(hutDecIndex) + '/' + getStyles().get(styleIndex);
-                        if (Structures.hasStructureName(structureName))
-                        {
-                            Log.getLogger().warn("BuilderTool: client has structure " + structureName);
-                            final String md5 = Structures.getMD5(structureName);
-                            Log.getLogger().warn("BuilderTool: " + structureName + " => " + md5);
-                            final String serverSideName = "cache/"+md5;
-                            Log.getLogger().warn("BuilderTool: serverSideName = " + serverSideName);
-                            if (!Structures.hasStructureName(serverSideName))
-                            {
-                                Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
-                                final InputStream stream = Structure.getStream(structureName);
-                                if (stream!= null)
-                                {
-                                    Log.getLogger().warn("BuilderTool: Sending structure " + structureName +" (" + md5 + ")");
-                                    MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream), structureName));
-                                }
-                                else
-                                {
-                                    Log.getLogger().warn("BuilderTool: Can not load " + structureName);
-                                }
-                            }
-                            else
-                            {
-                                Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
-                            }
-
-                            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                                                                                  //Structures.SCHEMATICS_CUSTOM + '/' + hutDec.get(hutDecIndex),
-                                                                                  "cache/" + md5,
-                                                                                  structureName,
-                                                                                  //getStyles().get(styleIndex),
-                                                                                  Settings.instance.pos,
-                                                                                  Settings.instance.getRotation(),
-                                                                                  false));
-                        }
-                        else
-                        {
-                            Log.getLogger().warn("BuilderTool: Can not send schematic without md5: " + structureName);
-                        }
-                    }
-
-
-                    break;
-                    
-            }
-            /*else
-            {
-                MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
-                                                                              hutDec.get(hutDecIndex),
-                                                                              getStyles().get(styleIndex),
-                                                                              Settings.instance.pos,
-                                                                              Settings.instance.getRotation(),
-                                                                              Settings.instance.getBuildingMode() == Settings.BuildingMode.HUT));
-            }*/
+            //We need to check that the server hava it too using the md5
+            requestCustomSchematic(structureName);
         }
         else
         {
-            LanguageHandler.sendPlayerMessage(this.mc.player, WindowBuildTool.NO_HUT_IN_INVENTORY);
+            MineColonies.getNetwork().sendToServer(new BuildToolPlaceMessage(
+                                                                              structureName.toString(),
+                                                                              //hutDec.get(hutDecIndex),
+                                                                              structureName.toString(),
+                                                                              //getStyles().get(styleIndex),
+                                                                              Settings.instance.pos,
+                                                                              Settings.instance.getRotation(),
+                                                                              structureName.isHut()));
         }
 
         Settings.instance.reset();
@@ -749,11 +587,229 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     public void onUpdate()
     {
         super.onUpdate();
-
+        
         if (ColonyManager.isSchematicDownloaded())
         {
             ColonyManager.setSchematicDownloaded(false);
             changeSchematic();
         }
     }
+
+    private void printSections()
+    {
+        Log.getLogger().info("Sections:");
+        int counter = 0;
+        for(String item : sections)
+        {
+            if (counter==sectionIndex)
+            {
+                Log.getLogger().info("* " +item);
+            }
+            else
+            {
+                Log.getLogger().info("  " +item);
+            }
+            counter++;
+       }
+    }
+
+    private void printStyles()
+    {
+        Log.getLogger().info("Styles:");
+        int counter = 0;
+        for(String item : styles)
+        {
+            if (counter == styleIndex)
+            {
+                Log.getLogger().info("* " +item);
+            }
+            else
+            {
+                Log.getLogger().info("  " +item);
+            }
+            counter++;
+       }
+    }
+
+    private void printSchematics()
+    {
+        Log.getLogger().info("Schematics:");
+        int counter = 0;
+        for(String item : schematics)
+        {
+            if (counter==schematicIndex)
+            {
+               Log.getLogger().info("* " +item);
+            }
+            else
+            {
+                Log.getLogger().info("  " +item);
+            }
+            counter++;
+       }
+    }
+
+
+    public void nextSection()
+    {
+        if (sections.size() == 0)
+        {
+            setSection(0);
+        }
+        else
+        {
+            setSection((sectionIndex + 1) % sections.size());
+        }
+    }
+
+    public void setSection(int index)
+    {
+        sectionIndex = index;
+        Log.getLogger().info("set section to " + getSectionName() + " (" + sectionIndex + ")");
+        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(getSectionName());
+        updateStyles();
+    }
+
+    public String getSectionName()
+    {
+        if (sectionIndex <0 || sectionIndex >= sections.size())
+        {
+            Log.getLogger().error("Could not get section name for index " + sectionIndex + "(size:" + sections.size() + ")");
+            return "";
+        }
+        return sections.get(sectionIndex);
+    }
+
+    public void nextStyle()
+    {
+        if (styles.size() == 0)
+        {
+            setStyle(0);
+        }
+        else
+        {
+            setStyle((styleIndex + 1) % styles.size());
+        }
+
+    }
+
+    public void setStyle(int index)
+    {
+        styleIndex = index;
+        Log.getLogger().info("set style to " + getStyleName() + " (" + styleIndex + ")");
+        findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyleName());
+        updateSchematics();
+    }
+
+    public String getStyleName()
+    {
+        if (styleIndex <0 || styleIndex >= styles.size())
+        {
+            Log.getLogger().error("Could not get style name for index " + styleIndex + "(size:" + styles.size() + ")");
+            return "";
+        }
+        return styles.get(styleIndex);
+    }
+
+    public void updateStyles()
+    {
+        final String currentStyle = getStyleName();
+        styles = Structures.getStylesFor(getSectionName());
+        if (styles.size() == 0)
+        {
+            Log.getLogger().info("set style button to \"\"");
+            Log.getLogger().info("Disable style button");
+        }
+        int newIndex = styles.indexOf(currentStyle);
+        if (newIndex == -1)
+        {
+            Log.getLogger().info("Can no keep the style "+ currentStyle);
+            newIndex = 0;
+        }
+        else
+        {
+            Log.getLogger().info("Keep the style "+ currentStyle);
+        }
+
+        findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setEnabled(styles.size() > 1);
+        setStyle(newIndex);
+    }
+
+    public void nextSchematic()
+    {
+        if (schematics.size() == 0)
+        {
+            setSchematic(0);
+        }
+        else
+        {
+            setSchematic((schematicIndex + 1) % schematics.size());
+        }
+    }
+
+    public void setSchematic(int index)
+    {
+        schematicIndex = index;
+        Log.getLogger().info("set schematic to " + getSchematicName() + " (" + schematicIndex + ")");
+        Structures.StructureName sn = new Structures.StructureName(getSchematicName());
+        findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setLabel(sn.getSchematic());
+        printMenu();
+        changeSchematic();
+    }
+
+    public String getSchematicName()
+    {
+        if (schematicIndex <0 || schematicIndex >= schematics.size())
+        {
+            Log.getLogger().error("Could not get schematic name for index " + schematicIndex + "(size:" + schematics.size() + ")");
+            return "";
+        }
+        return schematics.get(schematicIndex);
+    }
+
+
+    public void updateSchematics()
+    {
+        final String schematic = getSchematicName();
+        final String currentSchematic = (schematic.isEmpty())?"":(new Structures.StructureName(getSchematicName())).getSchematic();
+        String section = getSectionName();
+        String style = getStyleName();
+        schematics = Structures.getSchematicsFor(section, style);
+        int newIndex = -1;
+        for (int i = 0 ; i < schematics.size();i++)
+        {
+            Log.getLogger().info("updateSchematics: schematic = " + schematics.get(i));
+            Structures.StructureName sn = new Structures.StructureName(schematics.get(i));
+            if (sn.getSchematic().equals(currentSchematic))
+            {
+                newIndex = i;
+                break;
+            }
+        }
+
+        //int newIndex = schematics.indexOf(currentSchematic);
+        if (newIndex == -1)
+        {
+            Log.getLogger().info("Can no keep the schematic "+ currentSchematic);
+            newIndex = 0;
+        }
+        else
+        {
+           Log.getLogger().info("Keep the schematic "+ currentSchematic);
+        }
+
+        findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setEnabled(schematics.size() > 1);
+        setSchematic(newIndex);
+    }
+
+    public void printMenu()
+    {
+        Log.getLogger().info("** Menu status **");
+        Log.getLogger().info("Section: " + getSectionName());
+        Log.getLogger().info("Style: " + getStyleName());
+        Structures.StructureName sn = new Structures.StructureName(getSchematicName());
+        Log.getLogger().info("Schematic: " + sn.getSchematic());
+        Log.getLogger().info("*****************");
+    }
+
 }
