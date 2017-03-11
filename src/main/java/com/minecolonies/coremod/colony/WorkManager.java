@@ -73,7 +73,7 @@ public class WorkManager
             final WorkOrderBuild wob = (WorkOrderBuild)workOrder;
             final AbstractBuilding building = colony.getBuilding(wob.getBuildingLocation());
             ConstructionTapeHelper.removeConstructionTape(wob, colony.getWorld());
-            if (building == null)
+            if (building != null)
             {
                 building.markDirty();
             }
