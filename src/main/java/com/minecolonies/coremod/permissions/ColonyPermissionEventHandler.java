@@ -297,7 +297,7 @@ public class ColonyPermissionEventHandler
      */
     private boolean isInteractionForbidden(final Block block)
     {
-        return Arrays.stream(Configurations.forbigInteractionBlocks).anyMatch(s -> toString().equalsIgnoreCase(block.getRegistryName().toString()));
+        return Arrays.stream(Configurations.forbidInteractionBlocks).anyMatch(s -> toString().equalsIgnoreCase(block.getRegistryName().toString()));
     }
 
     /**

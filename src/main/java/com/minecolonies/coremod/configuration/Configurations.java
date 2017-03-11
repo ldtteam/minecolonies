@@ -58,7 +58,7 @@ public class Configurations
 
             };
 
-    public static String[] forbigInteractionBlocks = new String[]
+    public static String[] forbidInteractionBlocks = new String[]
             {
                     "minecraft:lever",
                     "minecraft:stone_button",
