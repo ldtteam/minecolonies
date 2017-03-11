@@ -80,6 +80,14 @@ public class WorkOrderBuild extends AbstractWorkOrder
     }
 
     /**
+     * Get the name of the work order.
+     */
+    public String getName()
+    {
+        return structureName.toString();
+    }
+
+    /**
      * Read the WorkOrder data from the NBTTagCompound.
      *
      * @param compound NBT Tag compound.

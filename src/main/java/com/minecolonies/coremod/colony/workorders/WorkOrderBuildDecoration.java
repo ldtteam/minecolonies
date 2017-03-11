@@ -35,6 +35,11 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
         this.cleared = false;
     }
 
+    public String getName()
+    {
+        return upgradeName;
+    }
+
 
     @Override
     public boolean isValid(final Colony colony)

@@ -237,14 +237,12 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
             if (job instanceof JobBuilder && ((JobBuilder) job).getStructure() != null)
             {
                 final String structureName = ((AbstractJobStructure) job).getStructure().getName();
-                LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
-                        "entity.builder.messageBuildComplete",
-                        structureName);
-
-
                 final WorkOrderBuild wo = ((JobBuilder) job).getWorkOrder();
                 if (wo == null)
                 {
+                    LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildComplete",
+                        structureName);
                     Log.getLogger().error(String.format("Builder (%d:%d) ERROR - Finished, but missing work order(%d)",
                       worker.getColony().getID(),
                       worker.getCitizenData().getId(),
@@ -252,6 +250,9 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
                 }
                 else
                 {
+                    LanguageHandler.sendPlayersMessage(worker.getColony().getMessageEntityPlayers(),
+                        "entity.builder.messageBuildComplete",
+                        wo.getName());
                     if (wo instanceof WorkOrderBuildDecoration)
                     {
                         if (structureName.contains(WAYPOINT_STRING))
