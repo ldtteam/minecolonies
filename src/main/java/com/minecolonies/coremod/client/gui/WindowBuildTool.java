@@ -442,13 +442,13 @@ public class WindowBuildTool extends AbstractWindowSkeleton
         {
             structure = new Structure(null,
                                        labelHutStyle + '/' + labelHutDec + (level + 1),
-                                       new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+                                       new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
         }
         else
         {
             structure = new Structure(null,
                                        labelHutDec + '/' + labelHutStyle,
-                                       new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())));
+                                       new PlacementSettings().setRotation(BlockUtils.getRotation(Settings.instance.getRotation())).setMirror(Settings.instance.getMirror()));
         }
 
         Settings.instance.setActiveSchematic(structure);
