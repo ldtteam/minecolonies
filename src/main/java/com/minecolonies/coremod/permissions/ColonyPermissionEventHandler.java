@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -189,8 +190,14 @@ public class ColonyPermissionEventHandler
                 cancelEvent(event);
             }
 
+            if(isFreeToInteractWith(block))
+            {
+                return;
+            }
+
             if(Configurations.enableColonyProtection && (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer
-                    || event.getWorld().getTileEntity(event.getPos()) != null || (event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemPotion)))
+                    || event.getWorld().getTileEntity(event.getPos()) != null || (event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemPotion))
+                    || isInteractionForbidden(block))
             {
                 final Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
 
@@ -246,6 +253,10 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent.EntityInteract event)
     {
+        if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()).getBlock()))
+        {
+            return;
+        }
         checkEventCancelation(Permissions.Rank.FRIEND, event.getEntityPlayer(), event.getWorld(), event);
     }
 
@@ -262,9 +273,32 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent.EntityInteractSpecific event)
     {
+        if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()).getBlock()))
+        {
+            return;
+        }
         checkEventCancelation(Permissions.Rank.FRIEND, event.getEntityPlayer(), event.getWorld(), event);
     }
 
+    /**
+     * Check in the config if that block can be interacted with freely.
+     * @param block the block to check.
+     * @return true if so.
+     */
+    private boolean isFreeToInteractWith(final Block block)
+    {
+        return Arrays.stream(Configurations.freeToInteractBlocks).anyMatch(s -> toString().equalsIgnoreCase(block.getRegistryName().toString()));
+    }
+
+    /**
+     * Check in the config if that block can be interacted with freely.
+     * @param block the block to check.
+     * @return true if not so.
+     */
+    private boolean isInteractionForbidden(final Block block)
+    {
+        return Arrays.stream(Configurations.forbigInteractionBlocks).anyMatch(s -> toString().equalsIgnoreCase(block.getRegistryName().toString()));
+    }
 
     /**
      * ItemTossEvent handler.
