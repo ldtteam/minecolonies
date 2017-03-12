@@ -197,9 +197,9 @@ public class Structure
     }
 
     //Client only
-    public static File getCustomSchematicsFolder()
+    public static File getClientSchematicsFolder()
     {
-        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/custom/");
+        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/");
     }
 
 
@@ -213,30 +213,22 @@ public class Structure
      */
     public static InputStream getStream(final String structureName)
     {
-        Log.getLogger().info("Trying to load " + structureName);
-
         Structures.StructureName sn = new Structures.StructureName(structureName);
         InputStream inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
 
         if (inputstream == null && sn.getPrefix().equals(Structures.SCHEMATICS_CUSTOM))
         {
-            inputstream = Structure.getStreamFromFolder(Structure.getCustomSchematicsFolder().getParentFile(), structureName);
-            if (inputstream != null)
-                Log.getLogger().info("Loaded " + structureName + " from Schematics folder");
+            inputstream = Structure.getStreamFromFolder(Structure.getClientSchematicsFolder(), structureName);
         }
 
         if (inputstream == null && Structures.hasStructureName(sn))
         {
             inputstream = Structure.getStreamFromFolder(Structure.getCachedSchematicsFolder(), Structures.getMD5(sn));
-            if (inputstream != null)
-                Log.getLogger().info("Loaded " + structureName + " from Cached Schematics folder");
         }
 
         if (inputstream == null)
         {
             inputstream = Structure.getStreamFromJar(structureName);
-            if (inputstream != null)
-                Log.getLogger().info("Loaded " + structureName + " from Jar Schematics folder");
         }
 
         if (inputstream == null)
@@ -249,7 +241,6 @@ public class Structure
 
     private static InputStream getStreamFromFolder(final File folder, final String structureName)
     {
-        //Log.getLogger().info("Trying to load " + structureName + " from " + folder.toPath());
         try
         {
             if(folder.exists())
@@ -258,7 +249,6 @@ public class Structure
                 final File nbtFile = new File(folder.getPath() + "/" + structureName + ".nbt");
                 if (nbtFile.toURI().normalize().getPath().startsWith(folder.toURI().normalize().getPath()))
                 {
-                    //Log.getLogger().info("Trying to load " + folder.getPath() + "/" + structureName + ".nbt");
                     return new FileInputStream(folder.getPath() + "/" + structureName + ".nbt");
                 }
                 else

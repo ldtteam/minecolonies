@@ -90,20 +90,24 @@ public final class Structures
                 try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap()))
                 {
                     basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
-                    loadStyleMaps(basePath);
+                    loadSchematicsForSection(basePath, SCHEMATICS_HUTS);
+                    loadSchematicsForSection(basePath, SCHEMATICS_DECORATIONS);
                 }
             }
             else
             {
                 basePath = Paths.get(uri);
-                loadStyleMaps(basePath);
+                loadSchematicsForSection(basePath, SCHEMATICS_HUTS);
+                loadSchematicsForSection(basePath, SCHEMATICS_DECORATIONS);
             }
 
             File schematicsFolder = Structure.getSchematicsFolder();
 
             if (schematicsFolder != null)
             {
-                loadStyleMaps(schematicsFolder.toPath());
+                loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_HUTS);
+                loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_DECORATIONS);
+                loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CACHE);
             }
 
         }
@@ -112,7 +116,7 @@ public final class Structures
             //Silently ignore
         }
 
-        if (schematicsMap.size()==0)
+        if (md5Map.size()==0)
         {
             Log.getLogger().error("Error loading StructureProxy directory. Things will break!");
         }
@@ -122,11 +126,12 @@ public final class Structures
      * Load all style maps from a certain path.
      *
      * @param basePath the base path.
+     * @param section
      * @throws IOException if nothing found.
      */
-    public static void loadStyleMaps(final Path basePath) throws IOException
+    public static void loadSchematicsForSection(@NotNull final Path basePath, @NotNull final String section) throws IOException
     {
-        try (Stream<Path> walk = Files.walk(basePath))
+        try (Stream<Path> walk = Files.walk(basePath.resolve(section)))
         {
             final Iterator<Path> it = walk.iterator();
 
@@ -138,19 +143,12 @@ public final class Structures
                 {
                     Log.getLogger().info("path = " + path);
                     String style = "";
-                    String schematicCategory = "";
                     if (path.getParent().toString().startsWith(basePath.toString()))
                     {
                         style = path.getParent().toString().substring(basePath.toString().length());
                         if (style.startsWith("/"))
                         {
                             style = style.substring(1);
-                        }
-                        final int indexSeparator = style.indexOf('/');
-                        if (indexSeparator!=-1)
-                        {
-                            schematicCategory = style.substring(0,indexSeparator);
-                            style = style.substring(indexSeparator+1);
                         }
                     }
 
@@ -177,14 +175,14 @@ public final class Structures
 
                     if (MineColonies.isClient())
                     {
-                        addMenuEntry(structureName);
+                        addSchematic(structureName);
                     }
                 }
             }
         }
     }
 
-    private static void addMenuEntry(@NotNull StructureName structureName)
+    private static void addSchematic(@NotNull StructureName structureName)
     {
         if (structureName.getPrefix().equals(SCHEMATICS_CACHE))
         {
@@ -207,69 +205,16 @@ public final class Structures
 
     public static void loadCustomStyleMaps()
     {
-        File schematicsFolder = Structure.getCustomSchematicsFolder();
-
-        if (schematicsFolder == null)
+        File schematicsFolder = Structure.getClientSchematicsFolder();
+        try
         {
-            Log.getLogger().info("could not find custom schematic folder");
-            return;
+            loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CUSTOM);
         }
-        final Path basePath = schematicsFolder.toPath();
-        try (Stream<Path> walk = Files.walk(basePath))
+        catch (IOException e)
         {
-            final Iterator<Path> it = walk.iterator();
-
-            while (it.hasNext())
-            {
-                final Path path = it.next();
-
-                if (path.toString().endsWith(SCHEMATIC_EXTENSION))
-                {
-                    String style = "";
-                    String schematicCategory = "";
-                    if (path.getParent().toString().startsWith(basePath.toString()))
-                    {
-                        style = path.getParent().toString().substring(basePath.toString().length());
-                        if (style.startsWith("/"))
-                        {
-                            style = style.substring(1);
-                        }
-                        final int indexSeparator = style.indexOf('/');
-                        if (indexSeparator!=-1)
-                        {
-                            schematicCategory = style.substring(0,indexSeparator);
-                            style = style.substring(indexSeparator+1);
-                        }
-                    }
-
-
-
-//                    final String filename = path.getFileName().toString().split("\\.nbt")[0];
-                    String relativePath = path.toString().substring(basePath.toString().length()).split("\\.nbt")[0];
-                    if (relativePath.startsWith("/"))
-                    {
-                        relativePath = relativePath.substring(1);
-                    }
-
-                    final FileInputStream fis =  new FileInputStream(path.toString());
-                    final String md5 = Structure.calculateMD5(fis);
-                    final StructureName structureName = new StructureName("custom/" + relativePath);
-                    if (md5Map.containsKey(structureName.toString()))
-                    {
-                        Log.getLogger().info("Override " + structureName + " md5:" + md5 + " (was " + md5Map.containsKey(structureName.toString()) + ")");
-                    }
-                    md5Map.put(structureName.toString(), md5);
-
-                    if (MineColonies.isClient())
-                    {
-                        addMenuEntry(structureName);
-                    }
-                }
-            }
+            Log.getLogger().warn("Could not load the custom folder for schematics " + schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM));
         }
-        catch (final IOException e)
-        {
-        }
+
     }
 
     /**
@@ -301,7 +246,6 @@ public final class Structures
             return list;
         }
         return new ArrayList<>();
-
     }
 
     /**
@@ -525,18 +469,8 @@ public final class Structures
             if (!sn.getSection().equals(SCHEMATICS_CUSTOM))
             {
                 md5Map.put(md5.getKey(),md5.getValue());
-                addMenuEntry(sn);
+                addSchematic(sn);
             }
         }
-    }
-
-    public static void printMD5s()
-    {
-        Log.getLogger().warn("********** printMD5s ******************");
-        for (Map.Entry<String,String> entry : md5Map.entrySet())
-        {
-            Log.getLogger().warn("Structures.printMD5s: md5s = " + entry.getKey() + " => " + entry.getValue() );
-        }
-        Log.getLogger().warn("********** printMD5s END***************");
     }
 }
