@@ -367,6 +367,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
                 {
                     Log.getLogger().warn("BuilderTool: Sending structure " + structureName +" (" + md5 + ")");
                     MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream), structureName.toString()));
+
+                    //It is send now, assume the server have it
+                    Structures.addMD5ToCache(md5);
                 }
                 else
                 {

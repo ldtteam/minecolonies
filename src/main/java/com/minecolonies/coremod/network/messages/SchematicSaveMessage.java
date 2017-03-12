@@ -1,5 +1,9 @@
 package com.minecolonies.coremod.network.messages;
 
+import com.minecolonies.coremod.configuration.Configurations;
+import com.minecolonies.coremod.MineColonies;
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.util.ClientStructureWrapper;
 import com.minecolonies.coremod.util.Log;
 import io.netty.buffer.ByteBuf;
@@ -14,6 +18,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 
 import java.io.IOException;
 
@@ -31,7 +36,7 @@ import com.minecolonies.structures.helpers.Structure;
 public class SchematicSaveMessage implements IMessage, IMessageHandler<SchematicSaveMessage, IMessage>
 {
     private byte [] bytes;
-    private String         filename;
+    private String  filename;
 
     /**
      * Public standard constructor.
@@ -83,6 +88,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
             try (OutputStream outputstream = new FileOutputStream(schematicFile))
             {
                 outputstream.write(bytes);
+                Structures.addMD5ToCache(md5);
             }
             catch (final IOException e)
             {
@@ -97,7 +103,7 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
         }
 
         //Let the gui know we just save a schematic
-        //ColonyManager.setSchematicDownloaded(true);
+        ColonyManager.setSchematicDownloaded(true);
     }
 
     private static void checkDirectory(@NotNull final File directory)
@@ -113,10 +119,19 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     @Override
     public IMessage onMessage(@NotNull final SchematicSaveMessage message, final MessageContext ctx)
     {
-        Log.getLogger().info("SchematicSaveMessage.onMessage("+message.filename+")");
-        if (message.bytes != null)
+        if (!MineColonies.isClient() && !Configurations.allowPlayerSchematics)
         {
-            Log.getLogger().error("Received Schematic file for " + message.filename);
+            Log.getLogger().info("SchematicSaveMessage: custom schematic is not allowed on this server()");
+            return null;
+        }
+
+        if (message.bytes == null)
+        {
+            Log.getLogger().error("Received empty schematic file for " + message.filename);
+        }
+        else
+        {
+            Log.getLogger().info("Received Schematic file for " + message.filename);
             //ClientStructureWrapper.handleSaveSchematicMessage(message.bytes, message.filename);
             handleSaveSchematicMessage(message.bytes, message.filename);
         }

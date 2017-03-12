@@ -2,6 +2,7 @@ package com.minecolonies.coremod.colony;
 
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
+import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.helpers.Structure;
@@ -214,7 +215,6 @@ public final class Structures
         {
             Log.getLogger().warn("Could not load the custom folder for schematics " + schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM));
         }
-
     }
 
     /**
@@ -390,6 +390,18 @@ public final class Structures
     public static boolean hasStructureName(@NotNull final StructureName structureName)
     {
         return md5Map.containsKey(structureName.toString());
+    }
+
+
+    /**
+     * get the md5 hash for a structure name.
+     *
+     * @param structureName name of the structure as 'hut/wooden/Builder1'
+     * @return the md5 hash String or null if not found
+     */
+    public static void addMD5ToCache(@NotNull String md5)
+    {
+        md5Map.put(Structures.SCHEMATICS_CACHE + '/' + md5, md5);
     }
 
 
