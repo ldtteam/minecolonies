@@ -29,7 +29,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 {
     public static final String DESC = "rtp";
     private static final int STARTING_Y = 250;
-    private static final double SAFETY_DROP = 4;
+    private static final double SAFETY_DROP = 8;
     private static final String CANT_FIND_PLAYER = "No player found for teleport, please define one.";
 
     /**
@@ -94,6 +94,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
         }
         playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
         teleportPlayer(sender, playerToTeleport);
+        playerToTeleport.fallDistance=-5;
     }
 
     /**
