@@ -195,11 +195,14 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Returns the item stack currently held by the player.
+     * @return the current itemstack.
      */
     public ItemStack getCurrentItem()
     {
         return this.mainInventory.get(this.currentItem);
-    }    /**
+    }
+
+    /**
      * Get the name of this object. For citizens this returns their name.
      *
      * @return the name of the inventory.
@@ -222,7 +225,9 @@ public class InventoryCitizen implements IInventory
         ItemStack itemstack = this.mainInventory.get(this.currentItem);
         this.mainInventory.set(this.currentItem, this.mainInventory.get(index));
         this.mainInventory.set(index, itemstack);
-    }    /**
+    }
+
+    /**
      * Checks if the inventory is named.
      *
      * @return true if the inventory has a custom name.
@@ -716,6 +721,7 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Returns the first item stack that is empty.
+     * @return the first empty slot.
      */
     public int getFirstEmptyStack()
     {
@@ -998,6 +1004,7 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Stack helds by mouse, used in GUI and Containers
+     * @return the hold stack.
      */
     public ItemStack getItemStack()
     {
@@ -1006,6 +1013,7 @@ public class InventoryCitizen implements IInventory
 
     /**
      * Set the stack helds by mouse, used in GUI/Container
+     * @param itemStackIn the stack to set.
      */
     public void setItemStack(ItemStack itemStackIn)
     {
