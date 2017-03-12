@@ -116,7 +116,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
 
     /**
      * Method used to teleport the player.
-     *
+     * hi
      * @param sender           the sender to have access to the world.
      * @param playerToTeleport the player which shall be teleported.
      */
