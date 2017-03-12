@@ -69,8 +69,6 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
         super();
         this.structureName = structureName;
         this.workOrderName = workOrderName;
-        Log.getLogger().info("BuildToolPlaceMessage: this.structureName = " + structureName);
-        Log.getLogger().info("BuildToolPlaceMessage: this.workOrderName = " + workOrderName);
         this.pos = pos;
         this.rotation = rotation;
         this.isHut = isHut;
@@ -117,7 +115,6 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
     @Override
     public void messageOnServerThread(final BuildToolPlaceMessage message, final EntityPlayerMP player)
     {
-        Log.getLogger().info("structureName: " + message.structureName + ", workOrderName: " + message.workOrderName);
         final World world = player.world;
         if (message.isHut)
         {
@@ -143,16 +140,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                                    @NotNull final World world, @NotNull final EntityPlayer player,
                                    final String structureName, final String workOrderName, final int rotation, @NotNull final BlockPos buildPos)
     {
-/*        if (Structures.getStylesForHut(hut) == null)
-        {
-            Log.getLogger().error("No record of hut: " + hut);
-            return;
-        }
-*/
-
-        //TODO
         final String hut = Structure.getHut(structureName);
-        Log.getLogger().info("hut = " + hut);
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
@@ -163,7 +151,6 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
             return;
         }
 
-        Log.getLogger().info("block = " + block);
         if (block != null && player.inventory.hasItemStack(new ItemStack(block)))
         {
             if (EventHandler.onBlockHutPlaced(world, player, block, buildPos))
@@ -195,7 +182,6 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                             building.getTileEntity().setColony(colony);
                         }
                     }
-                    Log.getLogger().info("BuildToolMessage: Structure.getStyleFromStructureName(structureName)) => " +Structure.getStyleFromStructureName(structureName));
                     building.setStyle(Structure.getStyleFromStructureName(structureName));
                     building.setRotation(rotation);
                 }
@@ -221,23 +207,15 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                                           @NotNull final World world, @NotNull final EntityPlayer player,
                                           final String structureName, final String workOrderName, final int rotation, @NotNull final BlockPos buildPos)
     {
-        Log.getLogger().error("handleDecoration: structureName = " + structureName);
-        Log.getLogger().error("handleDecoration: workOrderName = " + workOrderName);
         final Structures.StructureName sn = new Structures.StructureName(structureName);
         if (Structures.hasStructureName(sn))
         {
             Log.getLogger().error("handleDecoration: " + structureName + " => " + Structures.getMD5(sn));
         }
-/*        if (Structures.getStylesForDecoration(decoration) == null)
-        {
-            Log.getLogger().error("No record of decoration: " + decoration);
-            return;
-        }*/
 
         @Nullable final Colony colony = ColonyManager.getColony(world, buildPos);
         if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
         {
-            Log.getLogger().error("handleDecoration: addWorkOrder");
             colony.getWorkManager().addWorkOrder(new WorkOrderBuildDecoration(structureName, workOrderName, rotation, buildPos));
         }
         else
