@@ -105,34 +105,39 @@ public class WorkOrderBuild extends AbstractWorkOrder
         cleared = compound.getBoolean(TAG_IS_CLEARED);
 
         md5 = compound.getString(TAG_SCHEMATIC_MD5);
-        structureName = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
-        if (!Structures.hasStructureName(structureName))
+        if (compound.getString(TAG_SCHEMATIC_NAME)!=null)
         {
-            Structures.StructureName newSN = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/' + structureName);
-            if (Structures.hasStructureName(newSN))
+            structureName = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
+            if (!Structures.hasStructureName(structureName))
             {
-                //It is an old work order which does not start by huts/
-                Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
-                structureName = newSN;
-            }
-            else
-            {
-                newSN = new Structures.StructureName(Structures.SCHEMATICS_DECORATIONS + '/' + structureName);
+                Structures.printMD5s();
+                Structures.StructureName newSN = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/' + structureName);
                 if (Structures.hasStructureName(newSN))
                 {
-                    //It is an old work order which does not start by decorations/
+                    //It is an old work order which does not start by huts/
                     Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
                     structureName = newSN;
                 }
-                else if (md5 != null)
+                else
                 {
-                    // If the schematic move we can use the MD5 hash to find it
-                    newSN = Structures.getStructureNameByMD5(md5);
-                    Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
-                    structureName = newSN;
+                    newSN = new Structures.StructureName(Structures.SCHEMATICS_DECORATIONS + '/' + structureName);
+                    if (Structures.hasStructureName(newSN))
+                    {
+                        //It is an old work order which does not start by decorations/
+                        Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
+                        structureName = newSN;
+                    }
+                    else if (md5 != null)
+                    {
+                        // If the schematic move we can use the MD5 hash to find it
+                        newSN = Structures.getStructureNameByMD5(md5);
+                        Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
+                        structureName = newSN;
+                    }
                 }
             }
         }
+        Log.getLogger().info("WorkOrderBuild.readFromNBT: structureName = " + structureName);
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
     }
@@ -157,7 +162,14 @@ public class WorkOrderBuild extends AbstractWorkOrder
         {
             compound.setString(TAG_SCHEMATIC_MD5, md5);
         }
-        compound.setString(TAG_SCHEMATIC_NAME, structureName.toString());
+        if (structureName == null)
+        {
+            Log.getLogger().error("WorkOrderBuild.writeToNBT: structureName should not be null!!!");
+        }
+        else
+        {
+            compound.setString(TAG_SCHEMATIC_NAME, structureName.toString());
+        }
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
     }

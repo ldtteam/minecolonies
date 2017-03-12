@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.colony;
 
+import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.Log;
@@ -19,8 +20,7 @@ import java.nio.file.*;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Stream;
-
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 
 /**
@@ -175,16 +175,16 @@ public final class Structures
                     }
                     md5Map.put(structureName.toString(), md5);
 
-                    if (!structureName.getPrefix().equals(SCHEMATICS_CACHE))
+                    if (MineColonies.isClient())
                     {
-                        addMenuEntry(structureName, path.toString());
+                        addMenuEntry(structureName);
                     }
                 }
             }
         }
     }
 
-    private static void addMenuEntry(@NotNull StructureName structureName, String fileName)
+    private static void addMenuEntry(@NotNull StructureName structureName)
     {
         if (structureName.getPrefix().equals(SCHEMATICS_CACHE))
         {
@@ -193,8 +193,6 @@ public final class Structures
 
         if (!schematicsMap.containsKey(structureName.getSection()))
         {
-            Log.getLogger().warn("Can not add " + structureName + " to the menu, section " + structureName.getSection() + " does not exist" );
-            //return;
             schematicsMap.put(structureName.getSection(), new HashMap<>());
         }
         final Map<String, Map<String, String>> sectionMap = schematicsMap.get(structureName.getSection());
@@ -262,9 +260,9 @@ public final class Structures
                     }
                     md5Map.put(structureName.toString(), md5);
 
-                    if (!structureName.getPrefix().equals(SCHEMATICS_CACHE))
+                    if (MineColonies.isClient())
                     {
-                        addMenuEntry(structureName, path.toString());
+                        addMenuEntry(structureName);
                     }
                 }
             }
@@ -447,18 +445,7 @@ public final class Structures
      */
     public static boolean hasStructureName(@NotNull final StructureName structureName)
     {
-        if (!schematicsMap.containsKey(structureName.getSection()))
-        {
-            return false;
-        }
-
-        final Map<String, Map<String, String>> sectionMap = schematicsMap.get(structureName.getSection());
-        if (!sectionMap.containsKey(structureName.getStyle()))
-        {
-            return false;
-        }
-
-        return sectionMap.get(structureName.getStyle()).containsKey(structureName.getSchematic());
+        return md5Map.containsKey(structureName.toString());
     }
 
 
@@ -526,30 +513,30 @@ public final class Structures
      * @param md5s        new md5Map.
      */
     @SideOnly(Side.CLIENT)
-    public static void setMD5s(final Map<String, String> md5Map)
+    public static void setMD5s(final Map<String, String> md5s)
     {
-        Log.getLogger().info("Structures.setMD5s");
+        // First clear all section except custom
+        schematicsMap.entrySet().removeIf(entry -> !entry.getKey().equals(SCHEMATICS_CUSTOM));
 
-        //We don't want to overide it all (we need to key custom)
-        Structures.md5Map.putAll(md5Map);
-    }
-
-
-    /**
-     * For use on client side by the ColonyStylesMessage.
-     *
-     * @param md5s        new md5Map.
-     */
-    @SideOnly(Side.CLIENT)
-    public static void setSchematics(final Map<String, Map<String, Map<String, String>>> schematicsMap)
-    {
-        // We don't want to overide "Custom"
-        for (Map.Entry<String, Map<String, Map<String, String>>> sectionEntry : schematicsMap.entrySet())
+        // Then we update all mdp hash and fill the schematicsMap
+        for (Map.Entry<String, String> md5 : md5s.entrySet())
         {
-            if (!sectionEntry.getKey().equals(SCHEMATICS_CUSTOM))
+            final StructureName sn = new StructureName(md5.getKey());
+            if (!sn.getSection().equals(SCHEMATICS_CUSTOM))
             {
-                Structures.schematicsMap.put(sectionEntry.getKey(),sectionEntry.getValue());
+                md5Map.put(md5.getKey(),md5.getValue());
+                addMenuEntry(sn);
             }
         }
+    }
+
+    public static void printMD5s()
+    {
+        Log.getLogger().warn("********** printMD5s ******************");
+        for (Map.Entry<String,String> entry : md5Map.entrySet())
+        {
+            Log.getLogger().warn("Structures.printMD5s: md5s = " + entry.getKey() + " => " + entry.getValue() );
+        }
+        Log.getLogger().warn("********** printMD5s END***************");
     }
 }
