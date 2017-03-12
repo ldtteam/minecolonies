@@ -6,13 +6,10 @@ import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.util.EntityUtils;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemMonsterPlacer;
-import net.minecraft.item.ItemPotion;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
@@ -79,6 +76,7 @@ public class ColonyPermissionEventHandler
             {
                 return true;
             }
+            //todo require special permissions in the permissions.
             final Permissions.Rank rank = colony.getPermissions().getRank(player);
             if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
             {
@@ -190,30 +188,23 @@ public class ColonyPermissionEventHandler
                 cancelEvent(event);
             }
 
+            //todo check rank for free to interact
             if(isFreeToInteractWith(block))
             {
                 return;
             }
 
-            if(Configurations.enableColonyProtection && (event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer
-                    || event.getWorld().getTileEntity(event.getPos()) != null || (event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemPotion))
-                    || isInteractionForbidden(block))
+            if(Configurations.enableColonyProtection)
             {
                 final Permissions.Rank rank = colony.getPermissions().getRank(event.getEntityPlayer());
 
+                //todo check rank for container
+                //todo check rank for potion
+                //todo check rank for tileEntity
                 if (rank.ordinal() >= Permissions.Rank.FRIEND.ordinal())
                 {
                     cancelEvent(event);
                 }
-            }
-
-            @NotNull final EntityPlayer player = EntityUtils.getPlayerOfFakePlayer(event.getEntityPlayer(), event.getWorld());
-
-            if(event.getItemStack() != null
-                    && event.getItemStack().getItem() instanceof ItemMonsterPlacer
-                    && !colony.getPermissions().hasPermission(player, Permissions.Action.PLACE_HUTS))
-            {
-                cancelEvent(event);
             }
         }
     }
@@ -253,6 +244,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent.EntityInteract event)
     {
+        //todo check rank for free to interact
         if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()).getBlock()))
         {
             return;
@@ -273,6 +265,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent.EntityInteractSpecific event)
     {
+        //todo check rank for free to interact
         if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()).getBlock()))
         {
             return;
@@ -377,7 +370,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final AttackEntityEvent event)
     {
-        if(event.getEntity() instanceof EntityMob)
+        if(event.getTarget() instanceof EntityMob)
         {
             return;
         }
