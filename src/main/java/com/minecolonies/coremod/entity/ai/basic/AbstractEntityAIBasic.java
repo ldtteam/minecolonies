@@ -1,5 +1,6 @@
 package com.minecolonies.coremod.entity.ai.basic;
 
+import com.minecolonies.compatibility.Compatibility;
 import com.minecolonies.coremod.colony.buildings.AbstractBuildingWorker;
 import com.minecolonies.coremod.colony.jobs.AbstractJob;
 import com.minecolonies.coremod.colony.jobs.JobDeliveryman;
@@ -180,7 +181,9 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
 
             // fix for printing the actual exception
             e.printStackTrace();
-        }catch (RuntimeException exp){
+        }
+        catch (RuntimeException exp)
+        {
             Log.getLogger().error("Welp reporting crashed:");
             exp.printStackTrace();
             Log.getLogger().error("Caused by ai exception:");
@@ -1245,8 +1248,18 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
      */
     private int getMostEfficientTool(@NotNull final Block target)
     {
-        final String tool = target.getHarvestTool(target.getDefaultState());
-        final int required = target.getHarvestLevel(target.getDefaultState());
+        final String tool;
+        final int required;
+        if (Compatibility.isSlimeBlock(target) || Compatibility.isSlimeLeaf(target))
+        {
+            tool = "axe";
+            required = 0;
+        }
+        else
+        {
+            tool = target.getHarvestTool(target.getDefaultState());
+            required = target.getHarvestLevel(target.getDefaultState());
+        }
         int bestSlot = -1;
         int bestLevel = Integer.MAX_VALUE;
         @NotNull final InventoryCitizen inventory = worker.getInventoryCitizen();
@@ -1257,13 +1270,10 @@ public abstract class AbstractEntityAIBasic<J extends AbstractJob> extends Abstr
             final ItemStack item = inventory.getStackInSlot(i);
             final int level = Utils.getMiningLevel(item, tool);
 
-            if (level >= required && level < bestLevel)
+            if ((level >= required && level < bestLevel) && (tool == null || InventoryUtils.verifyToolLevel(item, level, hutLevel)))
             {
-                if (tool == null || InventoryUtils.verifyToolLevel(item, level, hutLevel))
-                {
-                    bestSlot = i;
-                    bestLevel = level;
-                }
+                bestSlot = i;
+                bestLevel = level;
             }
         }
 
