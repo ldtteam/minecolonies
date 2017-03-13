@@ -57,6 +57,8 @@ public final class Structures
     @NotNull
     private static       Map<String, String>       md5Map                = new HashMap<>();
 
+    private static boolean dirty = false;
+
     /**
      * Private constructor so Structures objects can't be made.
      */
@@ -183,6 +185,31 @@ public final class Structures
                 }
             }
         }
+    }
+
+    /**
+     * return true if the schematics list have changed.
+     * @return True if dirty, otherwise false
+     */
+    public static boolean isDirty()
+    {
+        return dirty;
+    }
+
+    /**
+     * mark Structures as not dirty.
+     */
+    public static void clearDirty()
+    {
+        dirty = false;
+    }
+
+    /**
+     * mark Structures as dirty.
+     */
+    private static void markDirty()
+    {
+        dirty = true;
     }
 
     private static void addSchematic(@NotNull StructureName structureName)
@@ -430,6 +457,7 @@ public final class Structures
      */
     public static void addMD5ToCache(@NotNull String md5)
     {
+        markDirty();
         md5Map.put(Structures.SCHEMATICS_CACHE + '/' + md5, md5);
     }
 
