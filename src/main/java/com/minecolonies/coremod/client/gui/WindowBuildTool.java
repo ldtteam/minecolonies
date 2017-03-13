@@ -358,19 +358,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
         if (Structures.hasMD5(structureName))
         {
-            Log.getLogger().warn("BuilderTool: client has structure " + structureName);
             final String md5 = Structures.getMD5(structureName);
-            Log.getLogger().warn("BuilderTool: " + structureName + " => " + md5);
             final String serverSideName = "cache/"+md5;
-            Log.getLogger().warn("BuilderTool: serverSideName = " + serverSideName);
             if (!Structures.hasMD5(new Structures.StructureName(serverSideName)))
             {
-                Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
                 final InputStream stream = Structure.getStream(structureName.toString());
                 if (stream!= null)
                 {
-                    Log.getLogger().warn("BuilderTool: Sending structure " + structureName +" (" + md5 + ")");
-                    MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream), structureName.toString()));
+                    Log.getLogger().info("BuilderTool: sending schematic " + structureName + "(md5:" + md5 + ") to the server");
+                    MineColonies.getNetwork().sendToServer(new SchematicSaveMessage(Structure.getStreamAsByteArray(stream)));
                 }
                 else
                 {

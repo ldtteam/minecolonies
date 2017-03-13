@@ -36,7 +36,6 @@ import com.minecolonies.structures.helpers.Structure;
 public class SchematicSaveMessage implements IMessage, IMessageHandler<SchematicSaveMessage, IMessage>
 {
     private byte [] bytes;
-    private String  filename;
 
     /**
      * Public standard constructor.
@@ -52,16 +51,14 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
      * @param bytes byte array of the schematic.
      * @param name name of the schematic ex: huts/stone/builder1.
      */
-    public SchematicSaveMessage(final byte[] bytes, final String filename)
+    public SchematicSaveMessage(final byte[] bytes)
     {
-        this.filename = filename;
         this.bytes = bytes;
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
-        filename = ByteBufUtils.readUTF8String(buf);
         final int length = buf.readInt();
         bytes = new byte [length];
         buf.readBytes(bytes);
@@ -70,50 +67,9 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        ByteBufUtils.writeUTF8String(buf, filename);
         buf.writeInt(bytes.length);
         buf.writeBytes(bytes);
     }
-
-    private void handleSaveSchematicMessage(final byte[] bytes, final String name)
-    {
-        final File schematicsFolder = Structure.getCachedSchematicsFolder();
-
-        final String md5 = Structure.calculateMD5(bytes);
-
-        if (md5 != null)
-        {
-            final File schematicFile = new File(schematicsFolder.toPath() + "/" + md5 + ".nbt");
-            checkDirectory(schematicFile.getParentFile());
-            try (OutputStream outputstream = new FileOutputStream(schematicFile))
-            {
-                outputstream.write(bytes);
-                Structures.addMD5ToCache(md5);
-            }
-            catch (final IOException e)
-            {
-                Log.getLogger().warn("Exception while trying to save a schematic.", e);
-                return;
-            }
-        }
-        else
-        {
-           Log.getLogger().info("ClientStructureWrapper.handleSaveSchematicMessage: Could not calculate the MD5 hash");
-           return;
-        }
-
-        //Let the gui know we just save a schematic
-        ColonyManager.setSchematicDownloaded(true);
-    }
-
-    private static void checkDirectory(@NotNull final File directory)
-    {
-        if (!directory.exists() && !directory.mkdirs())
-        {
-            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
-        }
-    }
-    
 
     @Nullable
     @Override
@@ -127,13 +83,11 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
 
         if (message.bytes == null)
         {
-            Log.getLogger().error("Received empty schematic file for " + message.filename);
+            Log.getLogger().error("Received empty schematic file");
         }
         else
         {
-            Log.getLogger().info("Received Schematic file for " + message.filename);
-            //ClientStructureWrapper.handleSaveSchematicMessage(message.bytes, message.filename);
-            handleSaveSchematicMessage(message.bytes, message.filename);
+            Structures.handleSaveSchematicMessage(message.bytes);
         }
         return null;
     }

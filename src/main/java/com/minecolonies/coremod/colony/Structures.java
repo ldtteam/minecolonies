@@ -546,6 +546,43 @@ public final class Structures
     }
 
     /**
+     * Save a schematic in the cache.
+     * This method is valid on the client and server
+     * @param bytes representing the schematic
+     */
+    public static void handleSaveSchematicMessage(final byte[] bytes)
+    {
+        final File schematicsFolder = Structure.getCachedSchematicsFolder();
+
+        final String md5 = Structure.calculateMD5(bytes);
+
+        if (md5 != null)
+        {
+            final File schematicFile = new File(schematicsFolder.toPath() + "/" + md5 + ".nbt");
+            checkDirectory(schematicFile.getParentFile());
+            try (OutputStream outputstream = new FileOutputStream(schematicFile))
+            {
+                outputstream.write(bytes);
+                Structures.addMD5ToCache(md5);
+            }
+            catch (final IOException e)
+            {
+                Log.getLogger().warn("Exception while trying to save a schematic.", e);
+                return;
+            }
+        }
+        else
+        {
+           Log.getLogger().info("ClientStructureWrapper.handleSaveSchematicMessage: Could not calculate the MD5 hash");
+           return;
+        }
+
+        //Let the gui know we just save a schematic
+        ColonyManager.setSchematicDownloaded(true);
+    }
+
+
+    /**
      * For use on client side by the ColonyStylesMessage.
      *
      * @param md5s        new md5Map.

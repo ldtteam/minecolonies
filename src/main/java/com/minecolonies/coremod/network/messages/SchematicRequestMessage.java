@@ -75,9 +75,9 @@ public class SchematicRequestMessage extends AbstractMessage<SchematicRequestMes
         }
         else
         {
-            Log.getLogger().info("Request Schematic file for " + message.filename);
+            Log.getLogger().info("Request Schematic file for " + message.filename + " to player " + player.getName());
             byte [] schematic = Structure.getStreamAsByteArray(stream);
-            MineColonies.getNetwork().sendTo(new SchematicSaveMessage(schematic, message.filename), player);
+            MineColonies.getNetwork().sendTo(new SchematicSaveMessage(schematic), player);
         }
     }
 }
