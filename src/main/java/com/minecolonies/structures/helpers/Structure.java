@@ -157,21 +157,7 @@ public class Structure
      */
     public static File getCachedSchematicsFolder()
     {
-        if (FMLCommonHandler.instance().getMinecraftServerInstance() == null)
-        {
-            if (ColonyManager.getServerUUID()!=null)
-            {
-                return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/" + ColonyManager.getServerUUID()+"/cache/");
-            }
-            else
-            {
-                Log.getLogger().error("ColonyManager.getServerUUID() => null this should not happen");
-                return null;
-            }
-        }
-
-        return new File(FMLCommonHandler.instance().getMinecraftServerInstance().getEntityWorld().getSaveHandler().getWorldDirectory()
-                        + "/" + Constants.MOD_ID + "/schematics/cache/");
+        return getSchematicsFolder().toPath().resolve(Structures.SCHEMATICS_CACHE).toFile();
     }
 
     /**

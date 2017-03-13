@@ -51,8 +51,8 @@ public final class Structures
 
     /* md5 hash for the schematics
      * format is:
-     * huts/stone/builder1.nbt -> hash
-     * decorations/decoration/Well.nbt -> hash
+     * huts/stone/builder1 -> hash
+     * decorations/decoration/Well -> hash
      */
     @NotNull
     private static       Map<String, String>       md5Map                = new HashMap<>();
@@ -169,7 +169,7 @@ public final class Structures
                         continue;
                     }
 
-                    String relativePath = path.toString().substring(basePath.toString().length()).split("\\.nbt")[0];
+                    String relativePath = path.toString().substring(basePath.toString().length()).split("\\"+SCHEMATIC_EXTENSION)[0];
                     if (relativePath.startsWith("/"))
                     {
                         relativePath = relativePath.substring(1);
@@ -614,7 +614,7 @@ public final class Structures
 
         if (md5 != null)
         {
-            final File schematicFile = new File(schematicsFolder.toPath() + "/" + md5 + ".nbt");
+            final File schematicFile = schematicsFolder.toPath().resolve(md5 + SCHEMATIC_EXTENSION).toFile();
             checkDirectory(schematicFile.getParentFile());
             try (OutputStream outputstream = new FileOutputStream(schematicFile))
             {
