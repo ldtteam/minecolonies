@@ -244,7 +244,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             final Structures.StructureName sn = new Structures.StructureName(Settings.instance.getStructureName());
             setSection(sections.indexOf(sn.getSection()));
             setStyle(styles.indexOf(sn.getStyle()));
-            setSchematic(schematics.indexOf(sn.getSchematic()));
+            setSchematic(schematics.indexOf(sn.toString()));
         }
         else
         {
@@ -579,7 +579,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     public void setStyle(int index)
     {
         styleIndex = index;
-        Log.getLogger().info("set style to " + getStyleName() + " (" + styleIndex + ")");
         findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setLabel(getStyleName());
         updateSchematics();
     }
@@ -604,20 +603,10 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         final String currentStyle = getStyleName();
         styles = Structures.getStylesFor(getSectionName());
-        if (styles.size() == 0)
-        {
-            Log.getLogger().info("set style button to \"\"");
-            Log.getLogger().info("Disable style button");
-        }
         int newIndex = styles.indexOf(currentStyle);
         if (newIndex == -1)
         {
-            Log.getLogger().info("Can no keep the style "+ currentStyle);
             newIndex = 0;
-        }
-        else
-        {
-            Log.getLogger().info("Keep the style "+ currentStyle);
         }
 
         findPaneOfTypeByID(BUTTON_STYLE_ID, Button.class).setEnabled(styles.size() > 1);
@@ -645,7 +634,6 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     public void setSchematic(int index)
     {
         schematicIndex = index;
-        Log.getLogger().info("set schematic to " + getSchematicName() + " (" + schematicIndex + ")");
         Structures.StructureName sn = new Structures.StructureName(getSchematicName());
         findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setLabel(sn.getSchematic());
         changeSchematic();
