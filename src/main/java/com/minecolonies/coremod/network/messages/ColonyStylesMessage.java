@@ -1,6 +1,7 @@
 package com.minecolonies.coremod.network.messages;
 
 import com.minecolonies.coremod.colony.Structures;
+import com.minecolonies.coremod.configuration.Configurations;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -17,6 +18,7 @@ import java.util.function.Function;
  */
 public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStylesMessage, IMessage>
 {
+    private boolean allowPlayerSchematics;
     private Map<String, String> md5Map;
 
     /**
@@ -32,6 +34,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
+        allowPlayerSchematics = buf.readBoolean();
         md5Map = readMD5MapFromByteBuf(buf);
     }
 
@@ -54,6 +57,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
+        buf.writeBoolean(Configurations.allowPlayerSchematics);
         writeMD5MapToByteBuf(buf);
     }
 
@@ -81,6 +85,7 @@ public class ColonyStylesMessage implements IMessage, IMessageHandler<ColonyStyl
     @Override
     public IMessage onMessage(@NotNull final ColonyStylesMessage message, final MessageContext ctx)
     {
+        Structures.setAllowPlayerSchematics(message.allowPlayerSchematics);
         Structures.setMD5s(message.md5Map);
         return null;
     }

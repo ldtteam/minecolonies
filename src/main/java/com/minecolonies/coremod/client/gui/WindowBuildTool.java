@@ -352,6 +352,11 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private void requestCustomSchematic(@NotNull final Structures.StructureName structureName)
     {
+        if (!Structures.isPlayerSchematicsAllowed())
+        {
+            return;
+        }
+
         if (Structures.hasMD5(structureName))
         {
             Log.getLogger().warn("BuilderTool: client has structure " + structureName);
