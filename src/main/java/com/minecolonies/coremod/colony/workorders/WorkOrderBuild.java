@@ -65,7 +65,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.cleared = level > 1;
         this.requested = false;
 
-        this.structureName = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/' + building.getStyle() + '/' + this.getUpgradeName());
+        this.structureName = new Structures.StructureName(Structures.SCHEMATICS_HUTS, building.getStyle(), this.getUpgradeName());
         this.md5 = Structures.getMD5(this.structureName);
     }
 

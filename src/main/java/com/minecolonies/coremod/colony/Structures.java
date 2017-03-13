@@ -291,6 +291,23 @@ public final class Structures
 
         public StructureName(@NotNull final String structureName)
         {
+            init(structureName);
+        }
+
+        public StructureName(@NotNull final String section, final String style, @NotNull final String schematic)
+        {
+            String name = section;
+            if (style != null && !style.isEmpty())
+            {
+                name = name + '/' + style;
+            }
+            name = name + '/' + schematic;
+            init(name);
+        }
+
+
+        private void init(@NotNull final String structureName)
+        {
             final int firstSeparator = structureName.indexOf('/');
             final int lastSeparator = structureName.lastIndexOf('/');
             if (firstSeparator != -1 || lastSeparator != -1)
@@ -435,17 +452,11 @@ public final class Structures
             return null;
         }
 
-        for (Map.Entry<String, Map<String, Map<String, String>>> sectionEntry : schematicsMap.entrySet())
+        for (Map.Entry<String, String> md5Entry : md5Map.entrySet())
         {
-            for (Map.Entry<String, Map<String, String>> styleEntry : sectionEntry.getValue().entrySet())
+            if (md5Entry.getValue().equals(md5))
             {
-                for (Map.Entry<String, String> schematicEntry : styleEntry.getValue().entrySet())
-                {
-                    if (schematicEntry.getValue().compareTo(md5) == 0)
-                    {
-                        return new StructureName(sectionEntry.getKey() + '/' + styleEntry.getKey() + '/'+ schematicEntry.getKey());
-                    }
-                }
+                return new StructureName(md5Entry.getKey());
             }
         }
 
