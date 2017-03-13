@@ -5,6 +5,7 @@ import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.colony.buildings.BuildingBuilder;
 import com.minecolonies.coremod.colony.jobs.JobBuilder;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
@@ -27,16 +28,16 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private static final String TAG_IS_REQUESTED  = "requested";
 
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
+    private static final String TAG_SCHEMATIC_MD5     = "schematicMD5";
     private static final String TAG_BUILDING_ROTATION = "buildingRotation";
 
-    private static final String DEFAULT_STYLE = "wooden";
-
-    protected BlockPos buildingLocation;
-    protected int      buildingRotation;
-    protected String   structureName;
-    protected boolean  cleared;
-    private   int      upgradeLevel;
-    private   String   upgradeName;
+    protected BlockPos                 buildingLocation;
+    protected int                      buildingRotation;
+    protected Structures.StructureName structureName;
+    protected String                   md5;
+    protected boolean                  cleared;
+    private   int                      upgradeLevel;
+    protected String                   upgradeName;
     private boolean hasSentMessageForThisWorkOrder = false;
     private boolean requested;
 
@@ -64,13 +65,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.cleared = level > 1;
         this.requested = false;
 
-        if (MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + building.getStyle() + '/' + this.getUpgradeName() + ".nbt") == null)
-        {
-            Log.getLogger().warn(String.format("StructureProxy in Style (%s) does not exist - switching to default", building.getStyle()));
-            this.structureName = DEFAULT_STYLE + '/' + this.getUpgradeName();
-            return;
-        }
-        this.structureName = building.getStyle() + '/' + this.getUpgradeName();
+        this.structureName = new Structures.StructureName(Structures.SCHEMATICS_HUTS, building.getStyle(), this.getUpgradeName());
+        this.md5 = Structures.getMD5(this.structureName);
     }
 
     /**
@@ -81,6 +77,14 @@ public class WorkOrderBuild extends AbstractWorkOrder
     private String getUpgradeName()
     {
         return upgradeName;
+    }
+
+    /**
+     * Get the name of the work order.
+     */
+    public String getName()
+    {
+        return structureName.toString();
     }
 
     /**
@@ -96,10 +100,43 @@ public class WorkOrderBuild extends AbstractWorkOrder
         if (!(this instanceof WorkOrderBuildDecoration))
         {
             upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
-            upgradeName = compound.getString(TAG_UPGRADE_NAME);
         }
+        upgradeName = compound.getString(TAG_UPGRADE_NAME);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
-        structureName = compound.getString(TAG_SCHEMATIC_NAME);
+
+        md5 = compound.getString(TAG_SCHEMATIC_MD5);
+        if (compound.getString(TAG_SCHEMATIC_NAME)!=null)
+        {
+            structureName = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
+            if (!Structures.hasMD5(structureName))
+            {
+                Structures.StructureName newSN = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/' + structureName);
+                if (Structures.hasMD5(newSN))
+                {
+                    //It is an old work order which does not start by huts/
+                    Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
+                    structureName = newSN;
+                }
+                else
+                {
+                    newSN = new Structures.StructureName(Structures.SCHEMATICS_DECORATIONS + '/' + structureName);
+                    if (Structures.hasMD5(newSN))
+                    {
+                        //It is an old work order which does not start by decorations/
+                        Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
+                        structureName = newSN;
+                    }
+                    else if (md5 != null)
+                    {
+                        // If the schematic move we can use the MD5 hash to find it
+                        newSN = Structures.getStructureNameByMD5(md5);
+                        Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
+                        structureName = newSN;
+                    }
+                }
+            }
+        }
+        Log.getLogger().info("WorkOrderBuild.readFromNBT: structureName = " + structureName);
         buildingRotation = compound.getInteger(TAG_BUILDING_ROTATION);
         requested = compound.getBoolean(TAG_IS_REQUESTED);
     }
@@ -120,7 +157,18 @@ public class WorkOrderBuild extends AbstractWorkOrder
             compound.setString(TAG_UPGRADE_NAME, upgradeName);
         }
         compound.setBoolean(TAG_IS_CLEARED, cleared);
-        compound.setString(TAG_SCHEMATIC_NAME, structureName);
+        if (md5 != null)
+        {
+            compound.setString(TAG_SCHEMATIC_MD5, md5);
+        }
+        if (structureName == null)
+        {
+            Log.getLogger().error("WorkOrderBuild.writeToNBT: structureName should not be null!!!");
+        }
+        else
+        {
+            compound.setString(TAG_SCHEMATIC_NAME, structureName.toString());
+        }
         compound.setInteger(TAG_BUILDING_ROTATION, buildingRotation);
         compound.setBoolean(TAG_IS_REQUESTED, requested);
     }
@@ -203,6 +251,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         return upgradeName;
     }
 
+
     /**
      * Checks if a builder may accept this workOrder.
      *
@@ -270,8 +319,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
      */
     public String getStructureName()
     {
-        return this.structureName;
+        return this.structureName.toString();
     }
+
 
     /**
      * Gets how many times this structure should be rotated.

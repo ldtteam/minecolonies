@@ -1,5 +1,7 @@
 package com.minecolonies.coremod.util;
 
+import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -11,6 +13,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Client only structure wrapper methods.
@@ -35,10 +39,10 @@ public final class ClientStructureWrapper
      */
     public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
     {
-        final String fileName = "/minecolonies/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis, ".nbt");
+        final String fileName = "/minecolonies/schematics/custom/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis, ".nbt");
 
         final File file = new File(Minecraft.getMinecraft().mcDataDir, fileName);
-        createScanDirectory(Minecraft.getMinecraft().world);
+        checkDirectory(file.getParentFile());
 
         try (OutputStream outputstream = new FileOutputStream(file))
         {
@@ -52,6 +56,42 @@ public final class ClientStructureWrapper
         }
 
         LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player,"item.scepterSteel.scanSuccess", fileName);
+    }
+
+    /**
+     * Handles the save message of schematic.
+     *
+     * @param bytes data from the schematic.
+     * @param name name of the schematic.
+     */
+    public static void handleSaveSchematicMessage(final byte[] bytes, final String name)
+    {
+        final File schematicsFolder = Structure.getCachedSchematicsFolder();
+
+        final String md5 = Structure.calculateMD5(bytes);
+
+        if (md5 != null)
+        {
+            final File schematicFile = new File(schematicsFolder.toPath() + "/" + md5 + ".nbt");
+            checkDirectory(schematicFile.getParentFile());
+            try (OutputStream outputstream = new FileOutputStream(schematicFile))
+            {
+                outputstream.write(bytes);
+            }
+            catch (final IOException e)
+            {
+                Log.getLogger().warn("Exception while trying to save a schematic.", e);
+                return;
+            }
+        }
+        else
+        {
+           Log.getLogger().info("ClientStructureWrapper.handleSaveSchematicMessage: Could not calculate the MD5 hash");
+           return;
+        }
+
+        //Let the gui know we just save a schematic
+        ColonyManager.setSchematicDownloaded(true);
     }
 
     /**

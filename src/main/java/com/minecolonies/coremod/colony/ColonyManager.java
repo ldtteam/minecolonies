@@ -49,6 +49,11 @@ public final class ColonyManager
      */
     private static final String                     TAG_COLONIES          = "colonies";
     /**
+     * The tag of the pseudo unique identifier
+     */
+    private static final String                     TAG_UUID              = "uuid";
+
+    /**
      * The damage source used to kill citizens.
      */
     private static final DamageSource               CONSOLE_DAMAGE_SOURCE = new DamageSource("Console");
@@ -79,6 +84,16 @@ public final class ColonyManager
      * Whether the colonyManager should persist data.
      */
     private static boolean saveNeeded;
+
+    /**
+     * Indicate if a schematic have just been downloaded.
+     * Client only
+     */
+    private static boolean schematicDownloaded = false;
+    /**
+     * Pseudo unique id for the server
+     */
+    private static UUID serverUUID = null;
 
     private ColonyManager()
     {
@@ -556,6 +571,10 @@ public final class ColonyManager
             colonyTagList.appendTag(colonyTagCompound);
         }
         compound.setTag(TAG_COLONIES, colonyTagList);
+        if (serverUUID != null)
+        {
+            compound.setUniqueId(TAG_UUID, serverUUID);
+        }
     }
 
     /**
@@ -634,11 +653,23 @@ public final class ColonyManager
         {
             if (numWorldsLoaded == 0)
             {
+                Structures.init();
+
                 @NotNull final File file = getSaveLocation();
                 @Nullable final NBTTagCompound data = loadNBTFromPath(file);
                 if (data != null)
                 {
                     readFromNBT(data);
+                }
+                if (serverUUID == null)
+                {
+                    serverUUID = UUID.randomUUID();
+                    Log.getLogger().info(String.format("New Server UUID %s", serverUUID));
+                    markDirty();
+                }
+                else
+                {
+                    Log.getLogger().info(String.format("Server UUID %s", serverUUID));
                 }
             }
             ++numWorldsLoaded;
@@ -701,8 +732,34 @@ public final class ColonyManager
             topColonyId = Math.max(topColonyId, colony.getID());
         }
 
+        if (compound.hasUniqueId(TAG_UUID))
+        {
+            serverUUID = compound.getUniqueId(TAG_UUID);
+        }
+
         Log.getLogger().info(String.format("Loaded %d colonies", colonies.size()));
     }
+
+    /**
+     * Set the server UUID.
+     *
+     * @param uuid the universal unique id
+     */
+    public static void setServerUUID(final UUID uuid)
+    {
+        serverUUID = uuid;
+    }
+
+    /**
+     * Get the Universal Unique ID for the server.
+     *
+     * @return the server Universal Unique ID for ther
+     */
+    public static UUID getServerUUID()
+    {
+        return serverUUID;
+    }
+
 
     /**
      * Saves data when world is saved.
@@ -921,5 +978,23 @@ public final class ColonyManager
         }
 
         return null;
+    }
+
+    /**
+     * Whether or not a new schematic have been downloaded.
+     */
+    public static boolean isSchematicDownloaded()
+    {
+        return schematicDownloaded;
+    }
+
+    /**
+     * Set the schematic downloaded
+     *
+     * @param downloaded
+     */
+    public static void setSchematicDownloaded(boolean downloaded)
+    {
+        schematicDownloaded = downloaded;
     }
 }

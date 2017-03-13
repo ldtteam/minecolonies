@@ -16,10 +16,7 @@
     <buttonimage id="forward" source="minecolonies:textures/gui/up.png" size="32" pos="210 140"/>
     <buttonimage id="back" source="minecolonies:textures/gui/down.png" size="32" pos="250 140"/>
 
-    <button id="hutDec" size="100 15" pos="110 180"/>
-
-    <button id="style" size="100 15" pos="110 200" visible="false"/>
-    <button id="level" size="100 15" pos="210 200" visible="false"/>
-
-    <button id="buildingType" label="$(com.minecolonies.coremod.gui.buildtool.hutDec)" size="100 15" pos="210 180"/>
+    <button id="buildingType" size="100 15" pos="150 180"/>
+    <button id="style" size="100 15" pos="150 200"/>
+    <button id="schematic" size="100 15" pos="150 220"/>
 </window>

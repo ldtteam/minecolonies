@@ -8,6 +8,7 @@ import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.buildings.views.BuildingBuilderView;
 import com.minecolonies.coremod.colony.workorders.WorkOrderBuild;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.coremod.entity.ai.citizen.builder.ConstructionTapeHelper;
 import com.minecolonies.coremod.entity.ai.item.handling.ItemStorage;
 import com.minecolonies.coremod.tileentities.TileEntityColonyBuilding;
@@ -65,6 +66,11 @@ public abstract class AbstractBuilding
     private static final String TAG_ROTATION = "rotation";
 
     /**
+     * The tag to store the md5 hash of the schematic.
+     */
+    private static final String TAG_SCHEMATIC_MD5 = "schematicMD5";
+
+    /**
      * The tag to store the style of the building.
      */
     private static final String                  TAG_STYLE                    = "style";
@@ -112,7 +118,7 @@ public abstract class AbstractBuilding
      * Map to resolve names to class.
      */
     @NotNull
-    private static final Map<String, Class<?>>   nameToClassMap               = new HashMap<>();
+    private static final Map<String, Class<?>>   nameToClassMap               = new TreeMap<>();
     /**
      * Map to resolve classes to name.
      */
@@ -136,7 +142,7 @@ public abstract class AbstractBuilding
         addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
         addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
         addMapping("Builder", BuildingBuilder.class, BuildingBuilderView.class, BlockHutBuilder.class);
-        addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
+        addMapping("Citizen", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
         addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);
         addMapping("Lumberjack", BuildingLumberjack.class, BuildingLumberjack.View.class, BlockHutLumberjack.class);
         addMapping("Miner", BuildingMiner.class, BuildingMiner.View.class, BlockHutMiner.class);
@@ -249,6 +255,11 @@ public abstract class AbstractBuilding
         }
     }
 
+    public static Set<String> getNames()
+    {
+        return nameToClassMap.keySet();
+    }
+
     /**
      * Create and load a AbstractBuilding given it's saved NBTTagCompound.
      * Calls {@link #readFromNBT(net.minecraft.nbt.NBTTagCompound)}.
@@ -311,6 +322,26 @@ public abstract class AbstractBuilding
 
         rotation = compound.getInteger(TAG_ROTATION);
         style = compound.getString(TAG_STYLE);
+
+        final String buildingName = compound.getString(TAG_BUILDING_TYPE);
+        final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
+        final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_HUTS, style, this.getSchematicName() + buildingLevel);
+
+        if (Structures.hasMD5(sn))
+        {
+            final String prefix  = Structures.SCHEMATICS_HUTS+'/';
+            final String postfix = '/' + buildingName + buildingLevel;
+            final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
+            if (newStructureName!= null
+                && newStructureName.getSection().equals(sn.getSection())
+                && newStructureName.getSchematic().equals(sn.getSchematic()))
+            {
+                //We found the new location for the schematic, update the style accordingly
+                style = newStructureName.getStyle();
+                Log.getLogger().warn("AbstractBuilding.readFromNBT: " + sn + " have been mode to " + newStructureName);
+            }
+        }
+
         if (style.isEmpty())
         {
             Log.getLogger().warn("Loaded empty style, setting to wooden");
@@ -448,6 +479,12 @@ public abstract class AbstractBuilding
         {
             compound.setString(TAG_BUILDING_TYPE, s);
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
+            final Structures.StructureName  structureName = new Structures.StructureName(Structures.SCHEMATICS_HUTS, style, this.getSchematicName() + buildingLevel);
+            final String md5 = Structures.getMD5(structureName);
+            if (Structures.hasMD5(structureName))
+            {
+                compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName));
+            }
         }
 
         compound.setInteger(TAG_BUILDING_LEVEL, buildingLevel);

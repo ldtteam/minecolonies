@@ -105,14 +105,14 @@ public class MineColonies
 
         proxy.registerRenderer();
 
-        Structures.init();
-
         ModAchievements.init();
     }
 
     private static synchronized void initializeNetwork()
     {
         network = NetworkRegistry.INSTANCE.newSimpleChannel(Constants.MOD_NAME);
+
+        getNetwork().registerMessage(ServerUUIDMessage.class, ServerUUIDMessage.class, 37, Side.CLIENT);
 
         //  ColonyView messages
         getNetwork().registerMessage(ColonyViewMessage.class, ColonyViewMessage.class, 1, Side.CLIENT);
@@ -148,6 +148,11 @@ public class MineColonies
         getNetwork().registerMessage(RecallTownhallMessage.class, RecallTownhallMessage.class, 34, Side.SERVER);
         getNetwork().registerMessage(TransferItemsRequestMessage.class, TransferItemsRequestMessage.class, 35, Side.SERVER);
         getNetwork().registerMessage(MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage.class, 36, Side.SERVER);
+
+        // Schematic transfer messages
+        getNetwork().registerMessage(SchematicRequestMessage.class, SchematicRequestMessage.class, 38, Side.SERVER);
+        getNetwork().registerMessage(SchematicSaveMessage.class, SchematicSaveMessage.class, 39, Side.CLIENT);
+        getNetwork().registerMessage(SchematicSaveMessage.class, SchematicSaveMessage.class, 41, Side.SERVER);
 
         //Client side only
         getNetwork().registerMessage(BlockParticleEffectMessage.class, BlockParticleEffectMessage.class, 50, Side.CLIENT);
