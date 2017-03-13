@@ -59,42 +59,6 @@ public final class ClientStructureWrapper
     }
 
     /**
-     * Handles the save message of schematic.
-     *
-     * @param bytes data from the schematic.
-     * @param name name of the schematic.
-     */
-    public static void handleSaveSchematicMessage(final byte[] bytes, final String name)
-    {
-        final File schematicsFolder = Structure.getCachedSchematicsFolder();
-
-        final String md5 = Structure.calculateMD5(bytes);
-
-        if (md5 != null)
-        {
-            final File schematicFile = new File(schematicsFolder.toPath() + "/" + md5 + ".nbt");
-            checkDirectory(schematicFile.getParentFile());
-            try (OutputStream outputstream = new FileOutputStream(schematicFile))
-            {
-                outputstream.write(bytes);
-            }
-            catch (final IOException e)
-            {
-                Log.getLogger().warn("Exception while trying to save a schematic.", e);
-                return;
-            }
-        }
-        else
-        {
-           Log.getLogger().info("ClientStructureWrapper.handleSaveSchematicMessage: Could not calculate the MD5 hash");
-           return;
-        }
-
-        //Let the gui know we just save a schematic
-        ColonyManager.setSchematicDownloaded(true);
-    }
-
-    /**
      * Creates the scan directories for the scanTool.
      *
      * @param world the worldIn.
