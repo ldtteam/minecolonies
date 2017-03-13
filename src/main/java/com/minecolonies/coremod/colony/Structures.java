@@ -387,7 +387,7 @@ public final class Structures
      * @param structureName name of the structure as 'hut/wooden/Builder1'
      * @return the md5 hash or and empty String if not found
      */
-    public static boolean hasStructureName(@NotNull final StructureName structureName)
+    public static boolean hasMD5(@NotNull final StructureName structureName)
     {
         return md5Map.containsKey(structureName.toString());
     }

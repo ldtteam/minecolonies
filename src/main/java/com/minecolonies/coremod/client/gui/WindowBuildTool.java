@@ -352,14 +352,14 @@ public class WindowBuildTool extends AbstractWindowSkeleton
 
     private void requestCustomSchematic(@NotNull final Structures.StructureName structureName)
     {
-        if (Structures.hasStructureName(structureName))
+        if (Structures.hasMD5(structureName))
         {
             Log.getLogger().warn("BuilderTool: client has structure " + structureName);
             final String md5 = Structures.getMD5(structureName);
             Log.getLogger().warn("BuilderTool: " + structureName + " => " + md5);
             final String serverSideName = "cache/"+md5;
             Log.getLogger().warn("BuilderTool: serverSideName = " + serverSideName);
-            if (!Structures.hasStructureName(new Structures.StructureName(serverSideName)))
+            if (!Structures.hasMD5(new Structures.StructureName(serverSideName)))
             {
                 Log.getLogger().warn("BuilderTool: server does not have " + serverSideName);
                 final InputStream stream = Structure.getStream(structureName.toString());

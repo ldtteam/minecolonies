@@ -327,7 +327,7 @@ public abstract class AbstractBuilding
         final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
         final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/'+ style + '/' + this.getSchematicName() + buildingLevel);
 
-        if (Structures.hasStructureName(sn))
+        if (Structures.hasMD5(sn))
         {
             final String prefix  = Structures.SCHEMATICS_HUTS+'/';
             final String postfix = '/' + buildingName + buildingLevel;
@@ -481,7 +481,7 @@ public abstract class AbstractBuilding
             BlockPosUtil.writeToNBT(compound, TAG_LOCATION, location);
             final Structures.StructureName  structureName = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/' + style + '/' + this.getSchematicName() + buildingLevel);
             final String md5 = Structures.getMD5(structureName);
-            if (Structures.hasStructureName(structureName))
+            if (Structures.hasMD5(structureName))
             {
                 compound.setString(TAG_SCHEMATIC_MD5, Structures.getMD5(structureName));
             }

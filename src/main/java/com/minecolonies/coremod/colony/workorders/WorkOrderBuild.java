@@ -108,11 +108,10 @@ public class WorkOrderBuild extends AbstractWorkOrder
         if (compound.getString(TAG_SCHEMATIC_NAME)!=null)
         {
             structureName = new Structures.StructureName(compound.getString(TAG_SCHEMATIC_NAME));
-            if (!Structures.hasStructureName(structureName))
+            if (!Structures.hasMD5(structureName))
             {
-                Structures.printMD5s();
                 Structures.StructureName newSN = new Structures.StructureName(Structures.SCHEMATICS_HUTS + '/' + structureName);
-                if (Structures.hasStructureName(newSN))
+                if (Structures.hasMD5(newSN))
                 {
                     //It is an old work order which does not start by huts/
                     Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);
@@ -121,7 +120,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
                 else
                 {
                     newSN = new Structures.StructureName(Structures.SCHEMATICS_DECORATIONS + '/' + structureName);
-                    if (Structures.hasStructureName(newSN))
+                    if (Structures.hasMD5(newSN))
                     {
                         //It is an old work order which does not start by decorations/
                         Log.getLogger().warn("WorkOrderBuild.readFromNBT: replace " + structureName + " by " + newSN);

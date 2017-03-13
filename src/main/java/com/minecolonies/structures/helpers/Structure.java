@@ -101,7 +101,7 @@ public class Structure
 
         InputStream inputStream = Structure.getStream(structureName);
 
-        if (inputStream == null && Structures.hasStructureName(sn))
+        if (inputStream == null && Structures.hasMD5(sn))
         {
             Log.getLogger().info("Trying to load from cache :" + Structures.getMD5(sn));
             inputStream = Structure.getStream(Structures.SCHEMATICS_CACHE + '/' +Structures.getMD5(sn));
@@ -221,7 +221,7 @@ public class Structure
             inputstream = Structure.getStreamFromFolder(Structure.getClientSchematicsFolder(), structureName);
         }
 
-        if (inputstream == null && Structures.hasStructureName(sn))
+        if (inputstream == null && Structures.hasMD5(sn))
         {
             inputstream = Structure.getStreamFromFolder(Structure.getCachedSchematicsFolder(), Structures.getMD5(sn));
         }

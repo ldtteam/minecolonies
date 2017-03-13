@@ -208,7 +208,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                                           final String structureName, final String workOrderName, final int rotation, @NotNull final BlockPos buildPos)
     {
         final Structures.StructureName sn = new Structures.StructureName(structureName);
-        if (Structures.hasStructureName(sn))
+        if (Structures.hasMD5(sn))
         {
             Log.getLogger().error("handleDecoration: " + structureName + " => " + Structures.getMD5(sn));
         }
