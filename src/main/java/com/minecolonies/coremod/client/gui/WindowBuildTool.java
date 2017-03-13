@@ -239,11 +239,12 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             }
         }
 
-        if (Settings.instance.getActiveStructure() != null)
+        if (Settings.instance.getStructureName() != null)
         {
-            setSection(Settings.instance.getSectionIndex());
-            setStyle(Settings.instance.getStyleIndex());
-            setSchematic(Settings.instance.getSchematicIndex());
+            final Structures.StructureName sn = new Structures.StructureName(Settings.instance.getStructureName());
+            setSection(sections.indexOf(sn.getSection()));
+            setStyle(styles.indexOf(sn.getStyle()));
+            setSchematic(schematics.indexOf(sn.getSchematic()));
         }
         else
         {
@@ -300,9 +301,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         if (Settings.instance.getActiveStructure() != null)
         {
-            Settings.instance.setSchematicInfo(
-              sectionIndex, styleIndex, schematicIndex, 
-              rotation);
+            Settings.instance.setSchematicInfo(schematics.get(schematicIndex), rotation);
         }
     }
 

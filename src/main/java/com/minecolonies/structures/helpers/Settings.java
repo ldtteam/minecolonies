@@ -24,9 +24,8 @@ public final class Settings
     @Nullable
     private             Structure                structure      = null;
     private             int                      rotation       = 0;
-    private             int                      sectionIndex   = 0;
-    private             int                      styleIndex     = 0;
-    private             int                      schematicIndex = 0;
+    private             String                   structureName  = null;
+
 
     private             boolean                  isPendingReset = false;
 
@@ -93,42 +92,21 @@ public final class Settings
     /**
      * Saves the schematic info when the client closes the build tool window.
      *
-     * @param sectionIndex   Index of the section.
-     * @param styleIndex     Index of the style.
-     * @param schematicIndex Index of the schematic.
+     * @param structureName  name of the structure.
      * @param rotation The number of times the building is rotated.
      */
-    public void setSchematicInfo(final int sectionIndex, final int styleIndex, final int schematicIndex, final int rotation)
+    public void setSchematicInfo(final String structureName, final int rotation)
     {
-        this.sectionIndex=sectionIndex;
-        this.styleIndex=styleIndex;
-        this.schematicIndex=schematicIndex;
+        this.structureName = structureName;
         this.rotation = rotation;
     }
 
-
     /**
-     * @return The index of the section.
+     * @return the structure name currently used.
      */
-    public int getSectionIndex()
+    public String getStructureName()
     {
-        return sectionIndex;
-    }
-
-    /**
-     * @return The index of the style.
-     */
-    public int getStyleIndex()
-    {
-        return styleIndex;
-    }
-
-    /**
-     * @return The index of the schematic.
-     */
-    public int getSchematicIndex()
-    {
-        return schematicIndex;
+        return structureName;
     }
 
     /**
