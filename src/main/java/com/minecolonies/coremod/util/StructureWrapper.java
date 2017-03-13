@@ -82,43 +82,6 @@ public final class StructureWrapper
     }
 
     /**
-     * Generate a resource location from a structures name.
-     *
-     * @param name the structures name
-     * @return the resource location pointing towards the structure
-     */
-    @NotNull
-    private static ResourceLocation getResourceLocation(@NotNull final String name)
-    {
-        return new ResourceLocation("minecolonies:schematics/" + name + ".nbt");
-    }
-
-    /**
-     * Generate the stream from a resource location.
-     *
-     * @param res the location to pull the stream from
-     * @return a stream from this location
-     */
-    public static InputStream getStream(@NotNull final ResourceLocation res)
-    {
-        try
-        {
-            if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-            {
-                return Minecraft.getMinecraft().getResourceManager().getResource(res).getInputStream();
-            }
-            else
-            {
-                return StructureWrapper.class.getResourceAsStream(String.format("/assets/%s/%s", res.getResourceDomain(), res.getResourcePath()));
-            }
-        }
-        catch (final IOException e)
-        {
-            throw new IllegalStateException("Could not load stream!", e);
-        }
-    }
-
-    /**
      * Load a structure into this world
      * and place it in the right position and rotation.
      *
