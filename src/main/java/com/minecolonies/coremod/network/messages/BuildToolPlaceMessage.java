@@ -140,7 +140,8 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                                    @NotNull final World world, @NotNull final EntityPlayer player,
                                    final String structureName, final String workOrderName, final int rotation, @NotNull final BlockPos buildPos)
     {
-        final String hut = Structure.getHut(structureName);
+        final Structures.StructureName sn = new Structures.StructureName(structureName);
+        final String hut = sn.getSection();
         final Block block = Block.getBlockFromName(Constants.MOD_ID + ":blockHut" + hut);
         final Colony tempColony = ColonyManager.getClosestColony(world, buildPos);
         if (tempColony != null
@@ -182,7 +183,7 @@ public class BuildToolPlaceMessage extends AbstractMessage<BuildToolPlaceMessage
                             building.getTileEntity().setColony(colony);
                         }
                     }
-                    building.setStyle(Structure.getStyleFromStructureName(structureName));
+                    building.setStyle(sn.getStyle());
                     building.setRotation(rotation);
                 }
             }

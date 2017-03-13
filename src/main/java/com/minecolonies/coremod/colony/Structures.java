@@ -134,7 +134,8 @@ public final class Structures
 
     /**
      * Load all style maps from a certain path.
-     *
+     * load all the schematics inside the forlder path/section
+     * and add them in the section of schematicsMap
      * @param basePath the base path.
      * @param section
      * @throws IOException if nothing found.
@@ -258,6 +259,9 @@ public final class Structures
 
     }
 
+    /**
+     * Load all schematic in the custom folder.
+     */
     @SideOnly(Side.CLIENT)
     public static void loadCustomStyleMaps()
     {
@@ -278,6 +282,10 @@ public final class Structures
         }
     }
 
+    /**
+     * check/create a directory and its parents.
+     * @param directory to be created
+     */
     private static void checkDirectory(@NotNull final File directory)
     {
         if (!directory.exists() && !directory.mkdirs())
@@ -351,6 +359,10 @@ public final class Structures
         return Structures.schematicsMap;
     }
 
+    /**
+     * class to handle schematic naming.
+     * It does extract information from a schematic using its name.
+     */
     public static class StructureName
     {
         private String section;
@@ -359,11 +371,21 @@ public final class Structures
         private String schematic;
         private String hut = null;
 
+        /**
+         * Create a StructuireName object from a schematic name.
+         * @param structureName as huts/stobe/Builder1 or decorations/Walls/Gate
+         */
         public StructureName(@NotNull final String structureName)
         {
             init(structureName);
         }
 
+        /**
+         * Create a StructureName'
+         * @param section should be huts, decorations, custom of cache.
+         * @param style ex: wood, stone, walls/stone
+         * @param schematic as in Builde1, Gate, without the nbt extension.
+         */
         public StructureName(@NotNull final String section, final String style, @NotNull final String schematic)
         {
             String name = section;
@@ -428,36 +450,70 @@ public final class Structures
             }
         }
 
+        /**
+         * Whether the schematic is a huit or not.
+         * This is done using the naming convention only, should start by huts/
+         * and a minecolonies block name should exist.
+         * @return True is it is a hut otherwise False
+         */
         public boolean isHut()
         {
             return hut != null;
         }
 
+        /**
+         * get the hut name.
+         * such as Builder, Citizen, ...
+         * @return the name of the hut.
+         */
         public String getHutName()
         {
             return hut;
         }
 
+        /**
+         * Get the section for the schematic.
+         * it should be huts, custom, the block name (if isHut)
+         * @return the section the schematic belong to.
+         */
         public String getSection()
         {
             return section;
         }
 
+        /**
+         * Get the prefix for the schematics
+         * @return huts, decorations, cache or custom.
+         */
         public String getPrefix()
         {
             return section;
         }
 
+        /**
+         * get the style for the schematic.
+         * @return the style of the schematic.
+         */
         public String getStyle()
         {
             return style;
         }
-
+        /**
+         * Get the name of the schematic.
+         * For Builder's hut, it would be Builder1 (or Builder2. or ...)
+         * @return the schematic name
+         */
         public String getSchematic()
         {
             return schematic;
         }
 
+        /**
+         * Get the ful name of the scematic.
+         * Examples: huts/sone/Builder4 or custom/test/myown
+         * This is what Structure.getStream use as a parameter.
+         * @return the full name of the schematics
+         */
         public String toString()
         {
             if (style.isEmpty())

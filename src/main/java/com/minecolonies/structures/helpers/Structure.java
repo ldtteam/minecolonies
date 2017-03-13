@@ -128,28 +128,6 @@ public class Structure
         }
     }
 
-    public static String getHut(@NotNull final String structureName)
-    {
-        final int indexEnd = structureName.lastIndexOf('/');
-        if (indexEnd == -1)
-        {
-            return null;
-        }
-        return structureName.substring(indexEnd+1).replaceAll("\\d*$", "");
-    }
-
-
-    public static String getStyleFromStructureName(@NotNull final String structureName)
-    {
-        final int indexStart = structureName.indexOf('/');
-        final int indexEnd = structureName.lastIndexOf('/');
-        if (indexStart == -1 || indexEnd == -1 || indexStart +1 >= indexEnd)
-        {
-            return null;
-        }
-        return structureName.substring(indexStart+1,indexEnd);
-    }
-
     /**
      * Get the file representation of the schematics' folder.
      * @return the folder for the schematic
