@@ -174,18 +174,24 @@ public class Structure
                         + "/" + Constants.MOD_ID + "/schematics/cache/");
     }
 
-    //Client only
+    /**
+     * get the schematic folder for the client.
+     */
     public static File getClientSchematicsFolder()
     {
         return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/");
     }
 
 
-
-
     /**
-     * get a InputStream for a give structureName
-     * 
+     * get a InputStream for a give structureName.
+     *
+     * Look into the followinf director (in order):
+     * - custom
+     * - cache
+     * - schematics folder
+     * - jar
+     * It shoud be the exact oppsite that the way used to buikd the list.
      * @param structureName name of the structure to load
      * @return the input stream or null
      */
@@ -217,6 +223,12 @@ public class Structure
         return inputstream;
     }
 
+    /**
+     * get a input stream for a schematic within a specif folder.
+     * @param folder where to load it from.
+     * @param structureName name of the structure to load.
+     * @return the input stream or null
+     */
     private static InputStream getStreamFromFolder(final File folder, final String structureName)
     {
         try
@@ -246,6 +258,11 @@ public class Structure
         return null;
     }
 
+    /**
+     * get a input stream for a schematic from jar.
+     * @param structureName  name of the structure to load from the jar.
+     * @return the input stream or null
+     */
     private static InputStream getStreamFromJar(final String structureName)
     {
         return MinecraftServer.class.getResourceAsStream("/assets/" + Constants.MOD_ID + "/schematics/" + structureName + ".nbt");
