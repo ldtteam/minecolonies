@@ -103,11 +103,13 @@ public final class Structures
             }
 
             File schematicsFolder = Structure.getSchematicsFolder();
-
             if (schematicsFolder != null)
             {
+                checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_HUTS).toFile());
                 loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_HUTS);
+                checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_DECORATIONS).toFile());
                 loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_DECORATIONS);
+                checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CACHE).toFile());
                 loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CACHE);
             }
 
@@ -209,6 +211,7 @@ public final class Structures
         File schematicsFolder = Structure.getClientSchematicsFolder();
         try
         {
+            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM).toFile());
             loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CUSTOM);
         }
         catch (IOException e)
@@ -216,6 +219,15 @@ public final class Structures
             Log.getLogger().warn("Could not load the custom folder for schematics " + schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM));
         }
     }
+
+    private static void checkDirectory(@NotNull final File directory)
+    {
+        if (!directory.exists() && !directory.mkdirs())
+        {
+            Log.getLogger().error("Directory doesn't exist and failed to be created: " + directory.toString());
+        }
+    }
+
 
     /**
      * Get the list of Sections.
