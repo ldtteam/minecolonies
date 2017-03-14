@@ -142,7 +142,7 @@ public abstract class AbstractBuilding
         addMapping("Baker", BuildingBaker.class, BuildingBaker.View.class, BlockHutBaker.class);
         addMapping("Blacksmith", BuildingBlacksmith.class, BuildingBlacksmith.View.class, BlockHutBlacksmith.class);
         addMapping("Builder", BuildingBuilder.class, BuildingBuilderView.class, BlockHutBuilder.class);
-        addMapping("Citizen", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
+        addMapping("Home", BuildingHome.class, BuildingHome.View.class, BlockHutCitizen.class);
         addMapping("Farmer", BuildingFarmer.class, BuildingFarmer.View.class, BlockHutFarmer.class);
         addMapping("Lumberjack", BuildingLumberjack.class, BuildingLumberjack.View.class, BlockHutLumberjack.class);
         addMapping("Miner", BuildingMiner.class, BuildingMiner.View.class, BlockHutMiner.class);
@@ -253,11 +253,6 @@ public abstract class AbstractBuilding
         {
             blockClassToBuildingClassMap.put(parentBlock, buildingClass);
         }
-    }
-
-    public static Set<String> getNames()
-    {
-        return nameToClassMap.keySet();
     }
 
     /**
