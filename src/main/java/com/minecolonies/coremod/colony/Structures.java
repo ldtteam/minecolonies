@@ -80,8 +80,6 @@ public final class Structures
         loadStyleMaps();
     }
 
-
-
     /**
      * Loads all styles saved in ["/assets/minecolonies/schematics/"].
      * Puts these in {@link #hutStyleMap}, with key being the name of the hutDec (E.G. Lumberjack).
@@ -133,6 +131,29 @@ public final class Structures
     }
 
     /**
+     * Load all schematic in the custom folder.
+     */
+    @SideOnly(Side.CLIENT)
+    public static void loadCustomStyleMaps()
+    {
+        if (!allowPlayerSchematics)
+        {
+            return;
+        }
+
+        File schematicsFolder = Structure.getSchematicsFolder();
+        try
+        {
+            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM).toFile());
+            loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CUSTOM);
+        }
+        catch (IOException e)
+        {
+            Log.getLogger().warn("Could not load the custom folder for schematics " + schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM));
+        }
+    }
+
+    /**
      * Load all style maps from a certain path.
      * load all the schematics inside the forlder path/section
      * and add them in the section of schematicsMap
@@ -140,7 +161,7 @@ public final class Structures
      * @param section
      * @throws IOException if nothing found.
      */
-    public static void loadSchematicsForSection(@NotNull final Path basePath, @NotNull final String section) throws IOException
+    private static void loadSchematicsForSection(@NotNull final Path basePath, @NotNull final String section) throws IOException
     {
         try (Stream<Path> walk = Files.walk(basePath.resolve(section)))
         {
@@ -152,35 +173,21 @@ public final class Structures
 
                 if (path.toString().endsWith(SCHEMATIC_EXTENSION))
                 {
-                    Log.getLogger().info("path = " + path);
-                    String style = "";
-                    if (path.getParent().toString().startsWith(basePath.toString()))
-                    {
-                        style = path.getParent().toString().substring(basePath.toString().length());
-                        if (style.startsWith("/"))
-                        {
-                            style = style.substring(1);
-                        }
-                    }
-
-                    //Don't treat generic schematics as decorations or huts - ex: supply ship
-                    if (NULL_STYLE.equals(style) || MINER_STYLE.equals(style))
-                    {
-                        continue;
-                    }
-
                     String relativePath = path.toString().substring(basePath.toString().length()).split("\\"+SCHEMATIC_EXTENSION)[0];
                     if (relativePath.startsWith("/"))
                     {
                         relativePath = relativePath.substring(1);
                     }
 
-                    final String md5 = Structure.calculateMD5(Structure.getStream(relativePath));
                     final StructureName structureName = new StructureName(relativePath);
-
+                    final String md5 = Structure.calculateMD5(Structure.getStream(relativePath));
                     if (md5Map.containsKey(structureName.toString()))
                     {
                         Log.getLogger().info("Override " + structureName + " md5:" + md5 + " (was " + md5Map.containsKey(structureName.toString()) + ")");
+                    }
+                    else
+                    {
+                        Log.getLogger().info("Override " + structureName + " md5:" + md5);
                     }
                     md5Map.put(structureName.toString(), md5);
 
@@ -257,29 +264,6 @@ public final class Structures
         final Map<String, String> styleMap = sectionMap.get(structureName.getStyle());
         styleMap.put(structureName.getSchematic(), structureName.toString());
 
-    }
-
-    /**
-     * Load all schematic in the custom folder.
-     */
-    @SideOnly(Side.CLIENT)
-    public static void loadCustomStyleMaps()
-    {
-        if (!allowPlayerSchematics)
-        {
-            return;
-        }
-
-        File schematicsFolder = Structure.getSchematicsFolder();
-        try
-        {
-            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM).toFile());
-            loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CUSTOM);
-        }
-        catch (IOException e)
-        {
-            Log.getLogger().warn("Could not load the custom folder for schematics " + schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM));
-        }
     }
 
     /**
@@ -372,8 +356,8 @@ public final class Structures
         private String hut = null;
 
         /**
-         * Create a StructuireName object from a schematic name.
-         * @param structureName as huts/stobe/Builder1 or decorations/Walls/Gate
+         * Create a StructureName object from a schematic name.
+         * @param structureName as huts/stone/Builder1 or decorations/Walls/Gate
          */
         public StructureName(@NotNull final String structureName)
         {
@@ -381,7 +365,7 @@ public final class Structures
         }
 
         /**
-         * Create a StructureName'
+         * Create a StructureName
          * @param section should be huts, decorations, custom of cache.
          * @param style ex: wood, stone, walls/stone
          * @param schematic as in Builde1, Gate, without the nbt extension.
