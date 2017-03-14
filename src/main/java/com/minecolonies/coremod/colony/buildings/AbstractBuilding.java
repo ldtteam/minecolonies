@@ -331,7 +331,7 @@ public abstract class AbstractBuilding
         {
             final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
             if (newStructureName!= null
-                && newStructureName.getSection().equals(sn.getSection())
+                && newStructureName.getPrefix().equals(sn.getPrefix())
                 && newStructureName.getSchematic().equals(sn.getSchematic()))
             {
                 //We found the new location for the schematic, update the style accordingly

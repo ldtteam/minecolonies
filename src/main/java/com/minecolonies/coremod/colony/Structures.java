@@ -4,6 +4,7 @@ import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.buildings.AbstractBuilding;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
+import com.minecolonies.coremod.util.LanguageHandler;
 import com.minecolonies.coremod.util.Log;
 import com.minecolonies.structures.helpers.Structure;
 import net.minecraft.block.Block;
@@ -20,6 +21,8 @@ import java.net.URISyntaxException;
 import java.nio.file.*;
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import java.util.stream.Collectors;
 
@@ -275,8 +278,7 @@ public final class Structures
             sectionMap.put(structureName.getStyle(), new TreeMap<>());
         }
         final Map<String, String> styleMap = sectionMap.get(structureName.getStyle());
-        styleMap.put(structureName.getSchematic(), structureName.toString());
-
+        styleMap.put(structureName.getLocalizedName(), structureName.toString());
     }
 
     /**
@@ -354,6 +356,8 @@ public final class Structures
      */
     public static class StructureName
     {
+        private final static Pattern levelPattern = Pattern.compile("[^0-9]+([0-9]+)$");
+        private final static String LOCALIZED_SCHEMATIC_LEVEL = "com.minecolonies.coremod.gui.hut.level";
         private String section;
         private String prefix;
         private String style;
@@ -471,6 +475,10 @@ public final class Structures
          */
         public String getSection()
         {
+            if (isHut())
+            {
+                return LanguageHandler.format("tile.minecolonies.blockHut" + getHutName()+ ".name");
+            }
             return section;
         }
 
@@ -498,6 +506,26 @@ public final class Structures
          */
         public String getSchematic()
         {
+            return schematic;
+        }
+
+        /**
+         * Get the localized name.
+         * Examples:
+         * - huts/stone/Builder1 => Level 1
+         * - decorations/walls/Gate => Gate
+         */
+        public String getLocalizedName()
+        {
+            if (isHut())
+            {
+                Matcher matcher = levelPattern.matcher(schematic);
+                if (matcher.find())
+                {
+                    final int level = Integer.parseInt(matcher.group(1));
+                    return LanguageHandler.format(LOCALIZED_SCHEMATIC_LEVEL, level);
+                }
+            }
             return schematic;
         }
 
