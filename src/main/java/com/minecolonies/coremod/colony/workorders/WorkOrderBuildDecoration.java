@@ -25,21 +25,15 @@ public class WorkOrderBuildDecoration extends WorkOrderBuild
      * @param rotation   The number of times the decoration was rotated.
      * @param location   The location where the decoration should be built.
      */
-    public WorkOrderBuildDecoration(final String structureName, final String decorationName, final int rotation, final BlockPos location)
+    public WorkOrderBuildDecoration(final String structureName, final String workOrderName, final int rotation, final BlockPos location)
     {
         super();
         this.structureName = new Structures.StructureName(structureName);
-        this.upgradeName = decorationName;
+        this.workOrderName = workOrderName;
         this.buildingRotation = rotation;
         this.buildingLocation = location;
         this.cleared = false;
     }
-
-    public String getName()
-    {
-        return upgradeName;
-    }
-
 
     @Override
     public boolean isValid(final Colony colony)

@@ -198,7 +198,7 @@ public final class Structures
                     }
                     else
                     {
-                        Log.getLogger().info("Override " + structureName + " md5:" + md5);
+                        Log.getLogger().info("Add " + structureName + " md5:" + md5);
                     }
                     md5Map.put(structureName.toString(), md5);
 

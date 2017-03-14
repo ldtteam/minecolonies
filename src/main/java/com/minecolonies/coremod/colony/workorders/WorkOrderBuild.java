@@ -17,15 +17,16 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents one building order to complete.
- * Has his onw structure for the building.
+ * Has his own structure for the building.
  */
 public class WorkOrderBuild extends AbstractWorkOrder
 {
-    private static final String TAG_BUILDING      = "building";
-    private static final String TAG_UPGRADE_LEVEL = "upgradeLevel";
-    private static final String TAG_UPGRADE_NAME  = "upgrade";
-    private static final String TAG_IS_CLEARED    = "cleared";
-    private static final String TAG_IS_REQUESTED  = "requested";
+    private static final String TAG_BUILDING        = "building";
+    private static final String TAG_UPGRADE_LEVEL   = "upgradeLevel";
+    private static final String TAG_UPGRADE_NAME    = "upgrade";
+    private static final String TAG_WORKORDER_NAME  = "workOrderName";
+    private static final String TAG_IS_CLEARED      = "cleared";
+    private static final String TAG_IS_REQUESTED    = "requested";
 
     private static final String TAG_SCHEMATIC_NAME    = "structureName";
     private static final String TAG_SCHEMATIC_MD5     = "schematicMD5";
@@ -37,7 +38,8 @@ public class WorkOrderBuild extends AbstractWorkOrder
     protected String                   md5;
     protected boolean                  cleared;
     private   int                      upgradeLevel;
-    protected String                   upgradeName;
+    private   String                   upgradeName;
+    protected String                   workOrderName;
     private boolean hasSentMessageForThisWorkOrder = false;
     private boolean requested;
 
@@ -66,6 +68,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
         this.requested = false;
 
         this.structureName = new Structures.StructureName(Structures.SCHEMATICS_HUTS, building.getStyle(), this.getUpgradeName());
+        this.workOrderName = this.structureName.toString();
         this.md5 = Structures.getMD5(this.structureName);
     }
 
@@ -84,7 +87,7 @@ public class WorkOrderBuild extends AbstractWorkOrder
      */
     public String getName()
     {
-        return structureName.toString();
+        return workOrderName;
     }
 
     /**
@@ -100,8 +103,9 @@ public class WorkOrderBuild extends AbstractWorkOrder
         if (!(this instanceof WorkOrderBuildDecoration))
         {
             upgradeLevel = compound.getInteger(TAG_UPGRADE_LEVEL);
+            upgradeName = compound.getString(TAG_UPGRADE_NAME);
         }
-        upgradeName = compound.getString(TAG_UPGRADE_NAME);
+        workOrderName = compound.getString(TAG_WORKORDER_NAME);
         cleared = compound.getBoolean(TAG_IS_CLEARED);
 
         md5 = compound.getString(TAG_SCHEMATIC_MD5);
