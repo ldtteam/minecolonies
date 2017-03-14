@@ -96,6 +96,7 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
         }
 
         size++;
+        topID++;
 
         list[colony.getID()] = colony;
     }
@@ -133,7 +134,6 @@ public final class ColonyList<T extends IColony> implements Iterable<T>
     {
         if (nullIndices.isEmpty())
         {
-
             return ++topID;
         }
 
