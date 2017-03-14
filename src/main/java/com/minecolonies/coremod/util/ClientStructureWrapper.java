@@ -59,6 +59,16 @@ public final class ClientStructureWrapper
     }
 
     /**
+     * Send a message to the player informing him that the schematic is too big.
+     * @param maxSize is the maximum size allowed in bytes.
+     */
+    public static void sendMessageSchematicTooBig(int maxSize)
+    {
+	LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
+    }
+
+
+    /**
      * Creates the scan directories for the scanTool.
      *
      * @param world the worldIn.

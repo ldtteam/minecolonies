@@ -54,7 +54,24 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
      */
     public SchematicSaveMessage(final byte[] bytes)
     {
-        this.bytes = bytes;
+        final int MAX_TOTAL_SIZE = 32767;
+        final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
+        if (bytes.length > MAX_SIZE)
+        {
+            this.bytes = new byte[0];
+            if (MineColonies.isClient())
+            {
+                ClientStructureWrapper.sendMessageSchematicTooBig(MAX_SIZE);
+            }
+            else
+            {
+                Log.getLogger().error("SchematicSaveMessage: schematic size too big, can not be bigger than " + MAX_SIZE + " bytes");
+            }
+        }
+        else
+        {
+            this.bytes = bytes;
+        }
     }
 
     @Override
@@ -68,22 +85,8 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
-        final int MAX_TOTAL_SIZE = 32767;
-        final int MAX_SIZE = MAX_TOTAL_SIZE - Integer.SIZE / Byte.SIZE;
-        if (bytes.length > MAX_SIZE)
-        {
-            buf.writeInt(0);
-            Log.getLogger().error("SchematicSaveMessage: schematic size too big, can not be bigger than " + MAX_SIZE + " bytes");
-            if (MineColonies.isClient())
-            {
-                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", MAX_SIZE);
-            }
-        }
-        else
-        {
-            buf.writeInt(bytes.length);
-            buf.writeBytes(bytes);
-        }
+        buf.writeInt(bytes.length);
+        buf.writeBytes(bytes);
     }
 
     @Nullable
