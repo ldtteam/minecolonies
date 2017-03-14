@@ -270,7 +270,7 @@ public final class Structures
             return;
         }
 
-        File schematicsFolder = Structure.getClientSchematicsFolder();
+        File schematicsFolder = Structure.getSchematicsFolder();
         try
         {
             checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM).toFile());
