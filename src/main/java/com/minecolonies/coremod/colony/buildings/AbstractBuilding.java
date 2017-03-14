@@ -329,8 +329,6 @@ public abstract class AbstractBuilding
 
         if (Structures.hasMD5(sn))
         {
-            final String prefix  = Structures.SCHEMATICS_HUTS+'/';
-            final String postfix = '/' + buildingName + buildingLevel;
             final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
             if (newStructureName!= null
                 && newStructureName.getSection().equals(sn.getSection())
