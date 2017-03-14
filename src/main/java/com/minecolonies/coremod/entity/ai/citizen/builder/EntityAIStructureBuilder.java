@@ -85,8 +85,6 @@ public class EntityAIStructureBuilder extends AbstractEntityAIStructure<JobBuild
 
         final WorkOrderBuild wo = job.getWorkOrder();
 
-        Log.getLogger().info("checkIfExecute: WorkOrder wo = " + wo);
-
         if (job.getColony().getBuilding(wo.getBuildingLocation()) == null && !(wo instanceof WorkOrderBuildDecoration))
         {
             job.complete();

@@ -4,10 +4,10 @@ import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.MineColonies;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.Structures;
-import com.minecolonies.coremod.util.ClientStructureWrapper;
-import com.minecolonies.coremod.util.Log;
+import com.minecolonies.coremod.util.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufInputStream;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +18,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
 
 
 import java.io.IOException;
@@ -73,6 +74,10 @@ public class SchematicSaveMessage implements IMessage, IMessageHandler<Schematic
         {
             buf.writeInt(0);
             Log.getLogger().error("SchematicSaveMessage: schematic size too big, can not be bigger than " + MAX_SIZE + " bytes");
+            if (MineColonies.isClient())
+            {
+                LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", MAX_SIZE);
+            }
         }
         else
         {
