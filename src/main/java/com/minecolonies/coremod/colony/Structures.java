@@ -45,11 +45,19 @@ public final class Structures
     public  static final String                    SCHEMATICS_DECORATIONS     = "decorations";
     public  static final String                    SCHEMATICS_CACHE           = "cache";
     public  static final String                    SCHEMATICS_CUSTOM          = "custom";
-    //Hut, Levels
+    /**
+     * Hut/Decoration, Styles, Levels.
+     * This is populated on the client side only
+     * Examples:
+     *  - huts/stone/Builder1 => Builder -> stone -> Level 1 , huts/stone/Builder1
+     *  - decorations/walls/stone/Gate => decorations -> walls/stone -> Gate , decorations/walls/stone/Gate
+     *  - custom/scan/458764687564687654 => custom -> scan -> 458764687564687654 , custom/scan/458764687564687654
+     */
     @NotNull
     private static       Map<String, Map<String, Map<String, String>>> schematicsMap = new HashMap<>();
 
-    /* md5 hash for the schematics
+    /**
+     * md5 hash for the schematics.
      * format is:
      * huts/stone/builder1 -> hash
      * decorations/decoration/Well -> hash
@@ -245,6 +253,11 @@ public final class Structures
         allowPlayerSchematics = allowed;
     }
 
+    /**
+     * add a schematic in the schematicsMap.
+     * @param structureName the structure to add
+     */
+    @SideOnly(Side.CLIENT)
     private static void addSchematic(@NotNull StructureName structureName)
     {
         if (structureName.getPrefix().equals(SCHEMATICS_CACHE))
@@ -285,6 +298,7 @@ public final class Structures
      * @return list of sections.
      */
     @NotNull
+    @SideOnly(Side.CLIENT)
     public static List<String> getSections()
     {
         final ArrayList<String> list = new ArrayList<>(schematicsMap.keySet());
@@ -298,6 +312,7 @@ public final class Structures
      * @return the list of style for that section.
      */
     @NotNull
+    @SideOnly(Side.CLIENT)
     public static List<String> getStylesFor(final String section)
     {
         if (schematicsMap.containsKey(section))
@@ -316,6 +331,7 @@ public final class Structures
      * @return the list of schematics
      */
     @NotNull
+    @SideOnly(Side.CLIENT)
     public static List<String> getSchematicsFor(final String section, final String style)
     {
         if (schematicsMap.containsKey(section))
@@ -333,18 +349,7 @@ public final class Structures
     }
 
     /**
-     * Returns a map of styles for one specific decoration.
-     *
-     * @param decoration Decoration to get styles for.
-     * @return List of styles.
-     */
-    public static Map<String, Map<String, Map<String, String>>> getSchematics()
-    {
-        return Structures.schematicsMap;
-    }
-
-    /**
-     * class to handle schematic naming.
+     * Class to handle schematic naming.
      * It does extract information from a schematic using its name.
      */
     public static class StructureName
@@ -384,6 +389,10 @@ public final class Structures
 
         private void init(@NotNull final String structureName)
         {
+            if (structureName == null || structureName.isEmpty())
+            {
+                return;
+            }
             final int firstSeparator = structureName.indexOf('/');
             final int lastSeparator = structureName.lastIndexOf('/');
             if (firstSeparator != -1 || lastSeparator != -1)
