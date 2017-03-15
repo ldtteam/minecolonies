@@ -18,6 +18,7 @@ import com.minecolonies.coremod.network.messages.RecallTownhallMessage;
 import com.minecolonies.coremod.network.messages.ToggleJobMessage;
 import com.minecolonies.coremod.network.messages.WorkOrderChangeMessage;
 import com.minecolonies.coremod.util.LanguageHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
@@ -308,6 +309,15 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private static final String LIST_FREE_BLOCKS = "blocks";
 
+    /**
+     * Key to get readable permission values.
+     */
+    private static final String KEY_TO_PERMISSIONS = "com.minecolonies.coremod.permission.";
+
+    /**
+     * Ignored index starts at this line, ignore this amount after this index.
+     */
+    private static final int IGNORE_INDEX = 3;
 
     /**
      * List of workOrders.
@@ -408,7 +418,26 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
     public void trigger(Button button)
     {
-        //todo get parent, get line, get line of list and get view! (hostile etc)
+        @NotNull final Pane pane = button.getParent().getChildren().get(2);
+        int index = 0;
+        if(pane instanceof Label)
+        {
+            index = Integer.valueOf(((Label) pane).getLabelText());
+        }
+        final boolean trigger = !(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOn")).equals(button.getLabel());
+        final int actionIndex = index <= IGNORE_INDEX ? index : (index + IGNORE_INDEX);
+        final Permissions.Action action = Permissions.Action.values()[actionIndex];
+
+        if(trigger)
+        {
+            townHall.getColony().getPermissions().removePermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
+            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOff"));
+        }
+        else
+        {
+            townHall.getColony().getPermissions().setPermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
+            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOn"));
+        }
     }
 
     /**
@@ -416,6 +445,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void switchPage(@NotNull final Button button)
     {
+        //todo only for owner
         if(button.getID().equals(BUTTON_PREV_PAGE_PERM))
         {
             findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).previousView();
@@ -667,7 +697,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Fills the permission list in the GUI.
      */
-    //todo make the button work.
     private void fillPermissionList(@NotNull final String category)
     {
         actionsList = findPaneOfTypeByID(LIST_ACTIONS + category, ScrollingList.class);
@@ -676,18 +705,27 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @Override
             public int getElementCount()
             {
-                return Permissions.Action.values().length;
+                return Permissions.Action.values().length-3;
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                final Permissions.Action action = Permissions.Action.values()[index];
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(action.name());
+                final int actionIndex = index <= IGNORE_INDEX ? index : (index + IGNORE_INDEX);
+                final Permissions.Action action = Permissions.Action.values()[actionIndex];
+                final String name = LanguageHandler.format(KEY_TO_PERMISSIONS + action.toString().toLowerCase());
+
+                if(name.contains(KEY_TO_PERMISSIONS))
+                {
+                    return;
+                }
+
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(name);
                 final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
                         .setLabel(isTriggered ? LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOn")
                                 : LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOff"));
+                rowPane.findPaneOfTypeByID("index", Label.class).setLabelText(actionIndex + "");
             }
         });
     }
