@@ -519,15 +519,16 @@ public final class Structures
                 if (matcher.find())
                 {
                     final int level = Integer.parseInt(matcher.group(1));
-                    return LanguageHandler.format(LOCALIZED_SCHEMATIC_LEVEL, level);
+                    return "Level " + level;
+//TODO                    return LanguageHandler.format(LOCALIZED_SCHEMATIC_LEVEL, level);
                 }
             }
             return schematic;
         }
 
         /**
-         * Get the ful name of the scematic.
-         * Examples: huts/sone/Builder4 or custom/test/myown
+         * Get the full name of the scematic.
+         * Examples: huts/stone/Builder4 or custom/test/myown
          * This is what Structure.getStream use as a parameter.
          * @return the full name of the schematics
          */

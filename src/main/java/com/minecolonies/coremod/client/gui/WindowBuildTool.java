@@ -239,19 +239,40 @@ public class WindowBuildTool extends AbstractWindowSkeleton
             }
         }
 
-        if (Settings.instance.getStructureName() != null)
+        setStructureName(Settings.instance.getStructureName());
+    }
+
+    /**
+     * Set the structure name.
+     * @param String structureName name of the structure name
+     * Ex: huts/wooden/Builder2
+     */
+    private void setStructureName(final String structureName)
+    {
+        if (structureName != null)
         {
-            final Structures.StructureName sn = new Structures.StructureName(Settings.instance.getStructureName());
-            setSection(sections.indexOf(sn.getSection()));
-            setStyle(styles.indexOf(sn.getStyle()));
-            setSchematic(schematics.indexOf(sn.toString()));
+            final Structures.StructureName sn = new Structures.StructureName(structureName);
+            final int sectionIndex = sections.indexOf(sn.getSection());
+            if (sectionIndex != -1)
+            {
+                setSection(sectionIndex);
+                final int styleIndex = styles.indexOf(sn.getStyle());
+                if (styleIndex != -1)
+                {
+                    setStyle(styleIndex);
+                    final int schematicIndex = schematics.indexOf(sn.toString());
+                    if (schematicIndex != -1)
+                    {
+                        setSchematic(schematicIndex);
+                        return;
+                    }
+                }
+            }
         }
-        else
-        {
-            setSection(sectionIndex);
-            setStyle(styleIndex);
-            setSchematic(schematicIndex);
-        }
+
+        setSection(sectionIndex);
+        setStyle(styleIndex);
+        setSchematic(schematicIndex);
     }
 
     /**
@@ -315,9 +336,9 @@ public class WindowBuildTool extends AbstractWindowSkeleton
      */
     private void changeSchematic()
     {
-        final String sname= schematics.get(schematicIndex);
+        final String sname= getSchematicName();
         Log.getLogger().info("Loading structure sname:" + sname);
-        final Structures.StructureName structureName = new Structures.StructureName(schematics.get(schematicIndex));
+        final Structures.StructureName structureName = new Structures.StructureName(getSchematicName());
         Log.getLogger().info("Loading structure " + structureName.toString());
         Structure structure = new Structure(null,
                                    structureName.toString(),
@@ -539,8 +560,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     public void setSection(int index)
     {
         sectionIndex = index;
-        Log.getLogger().info("set section to " + getSectionName() + " (" + sectionIndex + ")");
-        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(getSectionName());
+        String name = getSectionName();
+        if (! Structures.SCHEMATICS_DECORATIONS.equals(name) &&
+            ! Structures.SCHEMATICS_CUSTOM.equals(name))
+        {
+            //should be a hut
+            name = LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");
+        }
+
+        findPaneOfTypeByID(BUTTON_TYPE_ID, Button.class).setLabel(name);
         updateStyles();
     }
 
@@ -635,7 +663,7 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         schematicIndex = index;
         Structures.StructureName sn = new Structures.StructureName(getSchematicName());
-        findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setLabel(sn.getSchematic());
+        findPaneOfTypeByID(BUTTON_SCHEMATIC_ID, Button.class).setLabel(sn.getLocalizedName());
         changeSchematic();
     }
 
