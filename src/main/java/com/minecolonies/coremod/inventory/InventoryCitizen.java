@@ -589,7 +589,7 @@ public class InventoryCitizen implements IInventory
     @Override
     public boolean isUseableByPlayer(@NotNull final EntityPlayer player)
     {
-        return this.citizen.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS);
+        return this.citizen.getColony().getPermissions().hasPermission(player, Permissions.Action.ACCESS_GUI);
     }
 
     /**

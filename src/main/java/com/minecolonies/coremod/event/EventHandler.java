@@ -132,7 +132,7 @@ public class EventHandler
             {
                 final IColony colony = ColonyManager.getIColony(world, event.getPos());
                 if (colony != null
-                      && !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+                      && !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_GUI))
                 {
                     event.setCanceled(true);
                 }

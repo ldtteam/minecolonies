@@ -58,7 +58,7 @@ public class ContainerHut extends Container
         {
             final Colony colony = hut.getColony();
 
-            if (colony != null && !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+            if (colony != null && !colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_GUI))
             {
                 LanguageHandler.sendPlayerMessage(player, "tile.blockHut.messageNoPermission", colony.getName());
             }

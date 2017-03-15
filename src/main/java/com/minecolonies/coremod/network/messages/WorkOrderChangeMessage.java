@@ -91,7 +91,7 @@ public class WorkOrderChangeMessage extends AbstractMessage<WorkOrderChangeMessa
     public void messageOnServerThread(final WorkOrderChangeMessage message, final EntityPlayerMP player)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
-        if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
+        if (colony != null && colony.getPermissions().hasPermission(player, Permissions.Action.ACCESS_GUI))
         {
             //Verify player has permission to change this huts settings
             if (!colony.getPermissions().hasPermission(player, Permissions.Action.MANAGE_HUTS))
