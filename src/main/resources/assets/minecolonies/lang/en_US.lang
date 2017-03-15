@@ -220,7 +220,6 @@ com.minecolonies.coremod.gui.workerHuts.Deliveryman=Deliveryman
 com.minecolonies.coremod.gui.workerHuts.cancelBuild=Cancel Build
 com.minecolonies.coremod.gui.workerHuts.cancelUpgrade=Cancel Upgrade
 com.minecolonies.coremod.gui.workerHuts.cancelRepair=Cancel Repair
-
 //death achievements
 achievement.miner.death.lava=Dug too deep.
 achievement.miner.death.fall=It's the stop at the end.
@@ -335,3 +334,4 @@ achievement.farmer.wheatHarvested.25.desc=Your farmers harvested 25 wheat.
 achievement.farmer.wheatHarvested.100.desc=Your farmers harvested 100 wheat.
 achievement.farmer.wheatHarvested.500.desc=Your farmers harvested 500 wheat.
 achievement.farmer.wheatHarvested.1000.desc=Your farmers harvested 1000 wheat.
+com.minecolonies.coremod.permission.no = You have no permission to do this in this colony!

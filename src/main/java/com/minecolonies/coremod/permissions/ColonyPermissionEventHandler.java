@@ -6,7 +6,9 @@ import com.minecolonies.coremod.colony.jobs.JobGuard;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.entity.EntityCitizen;
+import com.minecolonies.coremod.items.ItemScanTool;
 import com.minecolonies.coremod.util.EntityUtils;
+import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.state.IBlockState;
@@ -23,6 +25,7 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -58,7 +61,7 @@ public class ColonyPermissionEventHandler
         if (Configurations.enableColonyProtection && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getPlacedBlock(),
                 Permissions.Action.PLACE_BLOCKS))
         {
-            cancelEvent(event);
+            cancelEvent(event, event.getPlayer());
         }
     }
 
@@ -102,12 +105,18 @@ public class ColonyPermissionEventHandler
         return false;
     }
 
-    private static void cancelEvent(final Event event)
+    private static void cancelEvent(final Event event, @Nullable final EntityPlayer player)
     {
         event.setResult(Event.Result.DENY);
         if (event.isCancelable())
         {
             event.setCanceled(true);
+
+            if(player == null)
+            {
+                return;
+            }
+            LanguageHandler.sendPlayerMessage(player, "com.minecolonies.coremod.permission.no");
         }
     }
 
@@ -122,7 +131,7 @@ public class ColonyPermissionEventHandler
         if (Configurations.enableColonyProtection && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(),
                 event.getWorld().getBlockState(event.getPos()), Permissions.Action.BREAK_BLOCKS))
         {
-            cancelEvent(event);
+            cancelEvent(event, event.getPlayer());
         }
     }
 
@@ -167,7 +176,7 @@ public class ColonyPermissionEventHandler
                 && Configurations.turnOffExplosionsInColonies
                 && colony.isCoordInColony(event.getWorld(), new BlockPos(event.getExplosion().getPosition())))
         {
-            cancelEvent(event);
+            cancelEvent(event, null);
         }
     }
 
@@ -192,7 +201,7 @@ public class ColonyPermissionEventHandler
             if (block instanceof AbstractBlockHut
                     && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_GUI))
             {
-                cancelEvent(event);
+                cancelEvent(event, event.getEntityPlayer());
             }
 
             final Permissions perms = colony.getPermissions();
@@ -206,24 +215,30 @@ public class ColonyPermissionEventHandler
             {
                 if(!perms.hasPermission(event.getEntityPlayer(), Permissions.Action.RIGHTCLICK_BLOCK) && event.getWorld().getBlockState(event.getPos()).getBlock() != null)
                 {
-                    cancelEvent(event);
+                    cancelEvent(event, event.getEntityPlayer());
                 }
 
                 if(event.getWorld().getBlockState(event.getPos()).getBlock() instanceof BlockContainer && !perms.hasPermission(event.getEntityPlayer(),
                         Permissions.Action.OPEN_CONTAINER))
                 {
-                    cancelEvent(event);
+                    cancelEvent(event, event.getEntityPlayer());
                 }
 
                 if(event.getWorld().getTileEntity(event.getPos()) != null && !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.RIGHTCLICK_ENTITY))
                 {
-                    cancelEvent(event);
+                    cancelEvent(event, event.getEntityPlayer());
                 }
 
                 if(event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemPotion && !perms.hasPermission(event.getEntityPlayer(),
                         Permissions.Action.THROW_POTION))
                 {
-                    cancelEvent(event);
+                    cancelEvent(event, event.getEntityPlayer());
+                }
+
+                if(event.getItemStack() != null && event.getItemStack().getItem() instanceof ItemScanTool
+                        && !perms.hasPermission(event.getEntityPlayer(), Permissions.Action.USE_SCAN_TOOL))
+                {
+                    cancelEvent(event, event.getEntityPlayer());
                 }
             }
         }
@@ -244,7 +259,7 @@ public class ColonyPermissionEventHandler
                 && colony.isCoordInColony(player.getEntityWorld(), player.getPosition())
                 && !colony.getPermissions().hasPermission(player, action))
         {
-            cancelEvent(event);
+            cancelEvent(event, player);
         }
     }
 
@@ -402,13 +417,13 @@ public class ColonyPermissionEventHandler
                     return;
                 }
 
-                cancelEvent(event);
+                cancelEvent(event, player);
                 return;
             }
 
             if(!perms.hasPermission(event.getEntityPlayer(), Permissions.Action.ATTACK_ENTITY))
             {
-                cancelEvent(event);
+                cancelEvent(event, player);
             }
         }
     }
