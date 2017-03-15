@@ -18,12 +18,9 @@ import com.minecolonies.coremod.network.messages.RecallTownhallMessage;
 import com.minecolonies.coremod.network.messages.ToggleJobMessage;
 import com.minecolonies.coremod.network.messages.WorkOrderChangeMessage;
 import com.minecolonies.coremod.util.LanguageHandler;
-import net.minecraft.entity.player.EntityPlayer;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 /**
  * Window for the town hall.
@@ -94,6 +91,16 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      * Id of the promote player button in the GUI..
      */
     private static final String BUTTON_PROMOTE = "promote";
+
+    /**
+     * TAG to retrieve the string for on.
+     */
+    private static final String ON = "com.minecolonies.coremod.gui.workerHuts.retrieveOn";
+
+    /**
+     * TAG to retrieve the string for off.
+     */
+    private static final String OFF = "com.minecolonies.coremod.gui.workerHuts.retrieveOff";
 
     /**
      * Id of the demote player button in the GUI..
@@ -410,7 +417,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(false);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
-        //todo set up al the buttons with messages for the permission changes!
 
         registerButton(BUTTON_TRIGGER, this::trigger);
 
@@ -424,19 +430,18 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         {
             index = Integer.valueOf(((Label) pane).getLabelText());
         }
-        final boolean trigger = !(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOn")).equals(button.getLabel());
-        final int actionIndex = index <= IGNORE_INDEX ? index : (index + IGNORE_INDEX);
-        final Permissions.Action action = Permissions.Action.values()[actionIndex];
+        final boolean trigger = LanguageHandler.format(ON).equals(button.getLabel());
+        final Permissions.Action action = Permissions.Action.values()[index];
 
         if(trigger)
         {
             townHall.getColony().getPermissions().removePermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
-            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOff"));
+            button.setLabel(LanguageHandler.format(OFF));
         }
         else
         {
             townHall.getColony().getPermissions().setPermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
-            button.setLabel(LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOn"));
+            button.setLabel(LanguageHandler.format(ON));
         }
     }
 
@@ -445,7 +450,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void switchPage(@NotNull final Button button)
     {
-        //todo only for owner
         if(button.getID().equals(BUTTON_PREV_PAGE_PERM))
         {
             findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).previousView();
@@ -723,9 +727,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(name);
                 final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
                 rowPane.findPaneOfTypeByID("trigger", Button.class)
-                        .setLabel(isTriggered ? LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOn")
-                                : LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOff"));
-                rowPane.findPaneOfTypeByID("index", Label.class).setLabelText(actionIndex + "");
+                        .setLabel(isTriggered ? LanguageHandler.format(ON)
+                                : LanguageHandler.format(OFF));
+                rowPane.findPaneOfTypeByID("index", Label.class).setLabelText(Integer.toString(actionIndex));
             }
         });
     }
