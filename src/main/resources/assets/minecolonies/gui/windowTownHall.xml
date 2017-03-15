@@ -115,19 +115,56 @@
                 <view id="managePermissions">
                     <switch id="userGroups" size="100% 200px" pos="0 7">
                         <view id="officer">
-                            <button id="pups" size = "20 20" pos = "20 20 " label ="pups"></button>
+                            <list id="actionsofficer" size="110 150" pos="55 20">
+                                <box size="100% 20" linewidth="2">
+                                    <label id="name" size="60 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
+                                    <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
+                                </box>
+                            </list>
                         </view>
                         <view id="friend">
+                            <list id="actionsfriend" size="110 150" pos="55 20">
+                                <box size="100% 20" linewidth="2">
+                                    <label id="name" size="60 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
+                                    <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
+                                </box>
+                            </list>
                         </view>
                         <view id="neutral">
+                            <list id="actionsneutral" size="110 150" pos="55 20">
+                                <box size="100% 20" linewidth="2">
+                                    <label id="name" size="60 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
+                                    <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
+                                </box>
+                            </list>
                         </view>
                         <view id="hostile">
+                            <list id="actionshostile" size="110 150" pos="55 20">
+                                <box size="100% 20" linewidth="2">
+                                    <label id="name" size="60 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
+                                    <button id="trigger" size="20 16" pos="5 2" align="TOP_RIGHT" label="$(com.minecolonies.coremod.gui.workerHuts.retrieveOff)"/>
+                                </box>
+                            </list>
                         </view>
                     </switch>
                     <button id="officerPage"  size="42 15" pos="10 50" label="Officer"/>
                     <button id="friendPage"   size="42 15" pos="10 70" label="Friend"/>
                     <button id="neutralPage"  size="42 15" pos="10 90" label="Neutral"/>
                     <button id="hostilePage"  size="42 15" pos="10 110" label="Hostile"/>
+                </view>
+
+                <!--TODO Make this list work! -->
+                <view id="freeBlockList">
+                    <list id="blocks" size="140 150" pos="15 30">
+                        <box size="100% 30" linewidth="2">
+                            <label id="name" size="100 12" pos="5 2" textalign="MIDDLE_LEFT" color="black"/>
+                            <button id="removeBlock" size="12 12" pos="5 2" align="TOP_RIGHT" label="X"/>
+                        </box>
+                    </list>
+
+                    <label size="100 11" pos="15 170" textalign="TOP_LEFT" color="black" label="$(com.minecolonies.coremod.gui.townHall.addBlock)"/>
+                    <input id="addBlockName" size="120 20" pos="15 185" maxlength="32"/>
+                    <button id="addBlock" size="20 20" pos="140 185" label="+"/>
                 </view>
             </switch>
             <button id="prevPagePerm" align="TOP_LEFT" size="20 20" pos="10 5" label="&lt;&lt;"/>

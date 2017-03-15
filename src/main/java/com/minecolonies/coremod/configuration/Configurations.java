@@ -55,28 +55,8 @@ public class Configurations
 
     public static String[] freeToInteractBlocks = new String[]
             {
-
-            };
-
-    public static String[] forbidInteractionBlocks = new String[]
-            {
-                    "minecraft:lever",
-                    "minecraft:stone_button",
-                    "minecraft:wooden_button",
-                    "minecraft:spruce_door",
-                    "minecraft:birch_door",
-                    "minecraft:jungle_door",
-                    "minecraft:acacia_door",
-                    "minecraft:dark_oak_door",
-                    "minecraft:wooden_door",
-                    "minecraft:trapdoor",
-                    "minecraft:daylight_detector",
-                    "minecraft:daylight_detector_inverted",
-                    "minecraft:spruce_fence_gate",
-                    "minecraft:birch_fence_gate",
-                    "minecraft:jungle_fence_gate",
-                    "minecraft:dark_oak_fence_gate",
-                    "minecraft:acacia_fence_gate",
+                    "minecraft:BlockDirt",
+                    "minecraft:damnIt"
             };
 
     public static String[] maleFirstNames = new String[]

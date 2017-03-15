@@ -885,7 +885,7 @@ public class Permissions implements IPermissions
         //has access to allowed list, "hostile+" or "neutral+"
         ACCESS_FREE_BLOCKS(23);
 
-
+        //todo have permissions lang strings which these but readable, build string with "coremod.stuff." + action.toString "
 
         private final int flag;
 

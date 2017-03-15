@@ -11,6 +11,7 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.WorkOrderView;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.Permissions;
+import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.PermissionsMessage;
 import com.minecolonies.coremod.network.messages.RecallTownhallMessage;
@@ -19,7 +20,9 @@ import com.minecolonies.coremod.network.messages.WorkOrderChangeMessage;
 import com.minecolonies.coremod.util.LanguageHandler;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * Window for the town hall.
@@ -266,6 +269,47 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String VIEW_PERM_GROUPS = "userGroups";
 
     /**
+     * The view of the permission management.
+     */
+    private static final String PERMISSION_VIEW = "managePermissions";
+
+    /**
+     * Button to trigger the permission changes.
+     */
+    private static final String BUTTON_TRIGGER = "trigger";
+
+    /**
+     * The id of the officer permission view.
+     */
+    private static final String VIEW_OFFICER = "officer";
+
+    /**
+     * The id of the officer permission view.
+     */
+    private static final String VIEW_FRIEND = "friend";
+
+    /**
+     * The id of the officer permission view.
+     */
+    private static final String VIEW_NEUTRAL = "neutral";
+
+    /**
+     * The id of the officer permission view.
+     */
+    private static final String VIEW_HOSTILE = "hostile";
+
+    /**
+     * The list of actions for a certain permission group.
+     */
+    private static final String LIST_ACTIONS = "actions";
+
+    /**
+     * The list of free blocks to be interacted with.
+     */
+    private static final String LIST_FREE_BLOCKS = "blocks";
+
+
+    /**
      * List of workOrders.
      */
     private final        List<WorkOrderView> workOrders      = new ArrayList<>();
@@ -300,6 +344,16 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private ScrollingList userList;
 
     /**
+     * The ScrollingList of the users.
+     */
+    private ScrollingList actionsList;
+
+    /**
+     * The ScrollingList of the users.
+     */
+    private ScrollingList freeBlocksList;
+
+    /**
      * Constructor for the town hall window.
      *
      * @param townHall {@link BuildingTownHall.View}.
@@ -331,8 +385,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
 
-        registerButton(BUTTON_PREV_PAGE_PERM, this::prevPage);
-        registerButton(BUTTON_NEXT_PAGE_PERM, this::nextPage);
+        registerButton(BUTTON_PREV_PAGE_PERM, this::switchPage);
+        registerButton(BUTTON_NEXT_PAGE_PERM, this::switchPage);
 
         registerButton(BUTTON_MANAGE_OFFICER, this::editOfficer);
         registerButton(BUTTON_MANAGE_FRIEND, this::editFriend);
@@ -346,63 +400,88 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(false);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
+        //todo set up al the buttons with messages for the permission changes!
+
+        registerButton(BUTTON_TRIGGER, this::trigger);
 
     }
 
-    /**
-     * Switch to the previous permission page.
-     */
-    private void prevPage()
+    public void trigger(Button button)
     {
-        findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).previousView();
-        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(false);
-        findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(true);
+        //todo get parent, get line, get line of list and get view! (hostile etc)
     }
 
     /**
-     * Switch to the next permission page.
+     * Switch between previous and next page.
      */
-    private void nextPage()
+    private void switchPage(@NotNull final Button button)
     {
-        findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).nextView();
-        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(true);
-        findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(false);
+        if(button.getID().equals(BUTTON_PREV_PAGE_PERM))
+        {
+            findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).previousView();
+
+            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(false);
+            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(true);
+        }
+        else
+        {
+            findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).nextView();
+
+            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(true);
+            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(false);
+        }
+
+        if(findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).getCurrentView().getID().equals(PERMISSION_VIEW))
+        {
+            findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(true);
+            findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(true);
+
+            fillPermissionList(VIEW_OFFICER);
+        }
     }
 
     private void editOfficer()
     {
-        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView("officer");
+        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView(VIEW_OFFICER);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
         findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(true);
         findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(true);
         findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(true);
+
+        fillPermissionList(VIEW_OFFICER);
     }
 
     private void editFriend()
     {
-        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView("friend");
+        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView(VIEW_FRIEND);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(true);
         findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(false);
         findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(true);
         findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(true);
+
+        fillPermissionList(VIEW_FRIEND);
     }
 
     private void editNeutral()
     {
-        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView("neutral");
+        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView(VIEW_NEUTRAL);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(true);
         findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(true);
         findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(false);
         findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(true);
+
+        fillPermissionList(VIEW_NEUTRAL);
     }
 
     private void editHostile()
     {
-        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView("hostile");
+        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView(VIEW_HOSTILE);
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(true);
         findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(true);
         findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(true);
         findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(false);
+
+        fillPermissionList(VIEW_HOSTILE);
     }
 
     /**
@@ -508,6 +587,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         fillUserList();
         fillCitizensList();
         fillWorkOrderList();
+        fillFreeBlockList();
 
         if (townHall.getColony().isManualHiring())
         {
@@ -580,6 +660,57 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 rank = Character.toUpperCase(rank.charAt(0)) + rank.toLowerCase().substring(1);
                 rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(player.getName());
                 rowPane.findPaneOfTypeByID("rank", Label.class).setLabelText(rank);
+            }
+        });
+    }
+
+    /**
+     * Fills the permission list in the GUI.
+     */
+    //todo make the button work.
+    private void fillPermissionList(@NotNull final String category)
+    {
+        actionsList = findPaneOfTypeByID(LIST_ACTIONS + category, ScrollingList.class);
+        actionsList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return Permissions.Action.values().length;
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                final Permissions.Action action = Permissions.Action.values()[index];
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(action.name());
+                final boolean isTriggered = townHall.getColony().getPermissions().hasPermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
+                rowPane.findPaneOfTypeByID("trigger", Button.class)
+                        .setLabel(isTriggered ? LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOn")
+                                : LanguageHandler.format("com.minecolonies.coremod.gui.workerHuts.retrieveOff"));
+            }
+        });
+    }
+
+    /**
+     * Fills the free blocks list in the GUI.
+     */
+    //todo make it configurable, will have to store list in colony then. And persist and get to view.
+    private void fillFreeBlockList()
+    {
+        freeBlocksList = findPaneOfTypeByID(LIST_FREE_BLOCKS, ScrollingList.class);
+        freeBlocksList.setDataProvider(new ScrollingList.DataProvider()
+        {
+            @Override
+            public int getElementCount()
+            {
+                return Configurations.freeToInteractBlocks.length;
+            }
+
+            @Override
+            public void updateElement(final int index, @NotNull final Pane rowPane)
+            {
+                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(Configurations.freeToInteractBlocks[index]);
             }
         });
     }

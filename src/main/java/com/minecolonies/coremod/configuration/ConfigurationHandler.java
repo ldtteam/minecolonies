@@ -117,9 +117,6 @@ public final class ConfigurationHandler
 
             freeToInteractBlocks = config.get(CATEGORY_NAMES, "freeToInteractBlocks", freeToInteractBlocks,
                     "Blocks players should be able to interact with inside any colony.").getStringList();
-
-            forbidInteractionBlocks = config.get(CATEGORY_NAMES, "forbidInteractionBlocks", forbidInteractionBlocks,
-                    "Blocks players should not be able to interact with inside any colony.").getStringList();
         }
         finally
         {
