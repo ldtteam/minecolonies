@@ -782,7 +782,7 @@ public class EntityCitizen extends EntityAgeable implements INpc
     public boolean processInteract(@NotNull final EntityPlayer player, final EnumHand hand, @Nullable final ItemStack stack)
     {
         final ColonyView colonyView =  ColonyManager.getColonyView(colonyId);
-        if(colonyView != null && !colonyView.getPermissions().hasPermission(player, Permissions.Action.ACCESS_GUI))
+        if(colonyView != null && !colonyView.getPermissions().hasPermission(player, Permissions.Action.ACCESS_HUTS))
         {
             return false;
         }

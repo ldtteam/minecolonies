@@ -203,7 +203,7 @@ public abstract class AbstractBlockHut extends Block implements ITileEntityProvi
             if (building != null
                     && building.getColony() != null
                     && building.getColony().getPermissions() != null
-                    && building.getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_GUI))
+                    && building.getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS))
             {
                 building.openGui();
             }

@@ -98,7 +98,7 @@ public class Permissions implements IPermissions
     {
         //Owner
         permissionMap.put(Rank.OWNER, 0);
-        this.setPermission(Rank.OWNER, Action.ACCESS_GUI);
+        this.setPermission(Rank.OWNER, Action.ACCESS_HUTS);
         this.setPermission(Rank.OWNER, Action.PLACE_HUTS);
         this.setPermission(Rank.OWNER, Action.BREAK_HUTS);
         this.setPermission(Rank.OWNER, Action.CAN_PROMOTE);
@@ -124,7 +124,7 @@ public class Permissions implements IPermissions
 
         //Officer
         permissionMap.put(Rank.OFFICER, 0);
-        this.setPermission(Rank.OFFICER, Action.ACCESS_GUI);
+        this.setPermission(Rank.OFFICER, Action.ACCESS_HUTS);
         this.setPermission(Rank.OFFICER, Action.PLACE_HUTS);
         this.setPermission(Rank.OFFICER, Action.BREAK_HUTS);
         this.setPermission(Rank.OFFICER, Action.CAN_PROMOTE);
@@ -149,7 +149,7 @@ public class Permissions implements IPermissions
 
         //Friend
         permissionMap.put(Rank.FRIEND, 0);
-        this.setPermission(Rank.FRIEND, Action.ACCESS_GUI);
+        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
         this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
         this.setPermission(Rank.FRIEND, Action.TOSS_ITEM);
         this.setPermission(Rank.FRIEND, Action.PICKUP_ITEM);
@@ -231,7 +231,7 @@ public class Permissions implements IPermissions
         this.setPermission(Rank.OFFICER, Action.ATTACK_ENTITY);
         this.setPermission(Rank.OFFICER, Action.ACCESS_FREE_BLOCKS);
 
-        this.setPermission(Rank.FRIEND, Action.ACCESS_GUI);
+        this.setPermission(Rank.FRIEND, Action.ACCESS_HUTS);
         this.setPermission(Rank.FRIEND, Action.USE_SCAN_TOOL);
         this.setPermission(Rank.FRIEND, Action.TOSS_ITEM);
         this.setPermission(Rank.FRIEND, Action.PICKUP_ITEM);
@@ -855,7 +855,8 @@ public class Permissions implements IPermissions
      */
     public enum Action
     {
-        ACCESS_GUI(0),
+        //counts for citizen and huts.
+        ACCESS_HUTS(0),
         //If guards can attack, player can attack back
         GUARDS_ATTACK(1),
         PLACE_HUTS(2),
@@ -890,7 +891,7 @@ public class Permissions implements IPermissions
 
         /**
          * Stores the action as byte.
-         * {@link #ACCESS_GUI} has value 0000 0000
+         * {@link #ACCESS_HUTS} has value 0000 0000
          * {@link #SEND_MESSAGES} has value 0100 0000
          *
          * @param bit how many bits should be shifted and set

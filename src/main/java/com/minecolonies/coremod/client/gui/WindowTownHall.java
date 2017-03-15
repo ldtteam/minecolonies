@@ -223,7 +223,48 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * The deliverymen job description string.
      */
-    private static final String              DELIVERYMEN_JOB = "com.minecolonies.coremod.job.Deliveryman";
+    private static final String DELIVERYMEN_JOB = "com.minecolonies.coremod.job.Deliveryman";
+
+    /**
+     * The button to go to the previous permission settings page.
+     */
+    private static final String BUTTON_PREV_PAGE_PERM = "prevPagePerm";
+
+    /**
+     * The button to go to the next permission settings page.
+     */
+    private static final String BUTTON_NEXT_PAGE_PERM = "nextPagePerm";
+
+    /**
+     * The button to go to the officer permission settings page.
+     */
+    private static final String BUTTON_MANAGE_OFFICER = "officerPage";
+
+    /**
+     * The button to go to the friend permission settings page.
+     */
+    private static final String BUTTON_MANAGE_FRIEND = "friendPage";
+
+    /**
+     * The button to go to the neutral permission settings page.
+     */
+    private static final String BUTTON_MANAGE_NEUTRAL = "neutralPage";
+
+    /**
+     * The button to go to the hostile permission settings page.
+     */
+    private static final String BUTTON_MANAGE_HOSTILE = "hostilePage";
+
+    /**
+     * Id of the switch view of the perm pages.
+     */
+    private static final String VIEW_PERM_PAGES = "permPages";
+
+    /**
+     * Id of the switch view of the different groups.
+     */
+    private static final String VIEW_PERM_GROUPS = "userGroups";
+
     /**
      * List of workOrders.
      */
@@ -290,9 +331,78 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         registerButton(BUTTON_CHANGE_SPEC, this::doNothing);
         registerButton(BUTTON_TOGGLE_JOB, this::toggleHiring);
 
+        registerButton(BUTTON_PREV_PAGE_PERM, this::prevPage);
+        registerButton(BUTTON_NEXT_PAGE_PERM, this::nextPage);
+
+        registerButton(BUTTON_MANAGE_OFFICER, this::editOfficer);
+        registerButton(BUTTON_MANAGE_FRIEND, this::editFriend);
+        registerButton(BUTTON_MANAGE_NEUTRAL, this::editNeutral);
+        registerButton(BUTTON_MANAGE_HOSTILE, this::editHostile);
+
+
         registerButton(BUTTON_UP, this::updatePriority);
         registerButton(BUTTON_DOWN, this::updatePriority);
         registerButton(BUTTON_DELETE, this::deleteWorkOrder);
+
+        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(false);
+        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
+
+    }
+
+    /**
+     * Switch to the previous permission page.
+     */
+    private void prevPage()
+    {
+        findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).previousView();
+        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(false);
+        findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(true);
+    }
+
+    /**
+     * Switch to the next permission page.
+     */
+    private void nextPage()
+    {
+        findPaneOfTypeByID(VIEW_PERM_PAGES, SwitchView.class).nextView();
+        findPaneOfTypeByID(BUTTON_PREV_PAGE_PERM, Button.class).setEnabled(true);
+        findPaneOfTypeByID(BUTTON_NEXT_PAGE_PERM, Button.class).setEnabled(false);
+    }
+
+    private void editOfficer()
+    {
+        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView("officer");
+        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
+        findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(true);
+        findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(true);
+        findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(true);
+    }
+
+    private void editFriend()
+    {
+        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView("friend");
+        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(true);
+        findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(false);
+        findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(true);
+        findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(true);
+    }
+
+    private void editNeutral()
+    {
+        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView("neutral");
+        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(true);
+        findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(true);
+        findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(false);
+        findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(true);
+    }
+
+    private void editHostile()
+    {
+        findPaneOfTypeByID(VIEW_PERM_GROUPS, SwitchView.class).setView("hostile");
+        findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(true);
+        findPaneOfTypeByID(BUTTON_MANAGE_FRIEND, Button.class).setEnabled(true);
+        findPaneOfTypeByID(BUTTON_MANAGE_NEUTRAL, Button.class).setEnabled(true);
+        findPaneOfTypeByID(BUTTON_MANAGE_HOSTILE, Button.class).setEnabled(false);
     }
 
     /**

@@ -199,7 +199,7 @@ public class ColonyPermissionEventHandler
             final Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
             // Huts
             if (block instanceof AbstractBlockHut
-                    && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_GUI))
+                    && !colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_HUTS))
             {
                 cancelEvent(event, event.getEntityPlayer());
             }

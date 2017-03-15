@@ -276,7 +276,7 @@ public class Field extends Container
     @Override
     public boolean canInteractWith(@NotNull final EntityPlayer playerIn)
     {
-        return getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_GUI);
+        return getColony().getPermissions().hasPermission(playerIn, Permissions.Action.ACCESS_HUTS);
     }
 
     /**
