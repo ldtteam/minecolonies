@@ -161,6 +161,14 @@ public class Structure
     }
 
     /**
+     * get the schematic folder for the client.
+     */
+    public static File getClientSchematicsFolder()
+    {
+        return new File(Minecraft.getMinecraft().mcDataDir, Constants.MOD_ID + "/schematics/");
+    }
+
+    /**
      * get a InputStream for a give structureName.
      *
      * Look into the followinf director (in order):
@@ -176,6 +184,11 @@ public class Structure
     {
         Structures.StructureName sn = new Structures.StructureName(structureName);
         InputStream inputstream = Structure.getStreamFromFolder(Structure.getSchematicsFolder(), structureName);
+
+        if (inputstream == null && sn.getPrefix().equals(Structures.SCHEMATICS_CUSTOM))
+        {
+            inputstream = Structure.getStreamFromFolder(Structure.getClientSchematicsFolder(), structureName);
+        }
 
         if (inputstream == null && Structures.hasMD5(sn))
         {

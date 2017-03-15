@@ -322,7 +322,7 @@ public abstract class AbstractBuilding
         final String md5 = compound.getString(TAG_SCHEMATIC_MD5);
         final Structures.StructureName sn = new Structures.StructureName(Structures.SCHEMATICS_HUTS, style, this.getSchematicName() + buildingLevel);
 
-        if (Structures.hasMD5(sn))
+        if (!Structures.hasMD5(sn))
         {
             final Structures.StructureName newStructureName = Structures.getStructureNameByMD5(md5);
             if (newStructureName!= null

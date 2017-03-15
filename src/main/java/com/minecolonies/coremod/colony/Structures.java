@@ -152,7 +152,7 @@ public final class Structures
             return;
         }
 
-        File schematicsFolder = Structure.getSchematicsFolder();
+        File schematicsFolder = Structure.getClientSchematicsFolder();
         try
         {
             checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM).toFile());
@@ -278,7 +278,7 @@ public final class Structures
             sectionMap.put(structureName.getStyle(), new TreeMap<>());
         }
         final Map<String, String> styleMap = sectionMap.get(structureName.getStyle());
-        styleMap.put(structureName.getLocalizedName(), structureName.toString());
+        styleMap.put(structureName.getSchematic(), structureName.toString());
     }
 
     /**
@@ -475,10 +475,6 @@ public final class Structures
          */
         public String getSection()
         {
-            if (isHut())
-            {
-                return LanguageHandler.format("tile.minecolonies.blockHut" + getHutName()+ ".name");
-            }
             return section;
         }
 
@@ -630,7 +626,6 @@ public final class Structures
     public static void handleSaveSchematicMessage(final byte[] bytes)
     {
         final File schematicsFolder = Structure.getCachedSchematicsFolder();
-
         final String md5 = Structure.calculateMD5(bytes);
 
         if (md5 != null)
@@ -651,7 +646,7 @@ public final class Structures
         }
         else
         {
-           Log.getLogger().info("ClientStructureWrapper.handleSaveSchematicMessage: Could not calculate the MD5 hash");
+           Log.getLogger().info("Structures.handleSaveSchematicMessage: Could not calculate the MD5 hash");
            return;
         }
 
