@@ -6,11 +6,9 @@ import com.minecolonies.coremod.colony.ColonyView;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.util.BlockPosUtil;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -20,8 +18,21 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Message to execute the renaiming of the townHall.
  */
-public class AddFreeToInteractBlockMessage extends AbstractMessage<AddFreeToInteractBlockMessage, IMessage>
+public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFreeToInteractBlockMessage, IMessage>
 {
+
+    /**
+     * Enums for Message Type for the freeBlock message.
+     * <p>
+     * ADD_BLOCK       Add a block or pos.
+     * REMOVE_BLOCK    Removing a block or pos.
+     */
+    public enum MessageType
+    {
+        REMOVE_BLOCK,
+        ADD_BLOCK,
+    }
+
     /**
      * The id of the colony.
      */
@@ -35,12 +46,17 @@ public class AddFreeToInteractBlockMessage extends AbstractMessage<AddFreeToInte
     /**
      * The blockState which can be freely interacted with.
      */
-    private IBlockState blockState = Blocks.DIRT.getDefaultState();
+    private Block block = Blocks.DIRT;
+
+    /**
+     * The type of the message.
+     */
+    private MessageType type;
 
     /**
      * Empty public constructor.
      */
-    public AddFreeToInteractBlockMessage()
+    public ChangeFreeToInteractBlockMessage()
     {
         super();
     }
@@ -49,14 +65,16 @@ public class AddFreeToInteractBlockMessage extends AbstractMessage<AddFreeToInte
      * Message creation to add a new freely interactable block to the colony.
      *
      * @param colony Colony the block can be interacted with in.
-     * @param blockState the blockState.
+     * @param block the blockState.
+     * @param type the type of message.
      */
-    public AddFreeToInteractBlockMessage(@NotNull final ColonyView colony, @Nullable final IBlockState blockState)
+    public ChangeFreeToInteractBlockMessage(@NotNull final ColonyView colony, @Nullable final Block block, @NotNull final MessageType type)
     {
         super();
         this.colonyId = colony.getID();
         this.pos = new BlockPos(0,0,0);
-        this.blockState = blockState;
+        this.block = block;
+        this.type = type;
     }
 
     /**
@@ -64,33 +82,37 @@ public class AddFreeToInteractBlockMessage extends AbstractMessage<AddFreeToInte
      *
      * @param colony Colony the position can be interacted with in.
      * @param pos the position.
+     * @param type the type of message.
      */
-    public AddFreeToInteractBlockMessage(@NotNull final ColonyView colony, @Nullable final BlockPos pos)
+    public ChangeFreeToInteractBlockMessage(@NotNull final ColonyView colony, @Nullable final BlockPos pos, @NotNull final MessageType type)
     {
         super();
         this.colonyId = colony.getID();
         this.pos = pos;
-        this.blockState = Blocks.DIRT.getDefaultState();
+        this.block = Blocks.DIRT;
+        this.type = type;
     }
 
     @Override
     public void fromBytes(@NotNull final ByteBuf buf)
     {
         colonyId = buf.readInt();
-        blockState = NBTUtil.readBlockState(ByteBufUtils.readTag(buf));
+        block = Block.getBlockFromName(ByteBufUtils.readUTF8String(buf));
         pos = BlockPosUtil.readFromByteBuf(buf);
+        type = MessageType.values()[buf.readInt()];
     }
 
     @Override
     public void toBytes(@NotNull final ByteBuf buf)
     {
         buf.writeInt(colonyId);
-        ByteBufUtils.writeTag(buf, NBTUtil.writeBlockState(new NBTTagCompound(), blockState));
+        ByteBufUtils.writeUTF8String(buf, block.getRegistryName().toString());
         BlockPosUtil.writeToByteBuf(buf, pos);
+        buf.writeInt(type.ordinal());
     }
 
     @Override
-    public void messageOnServerThread(final AddFreeToInteractBlockMessage message, final EntityPlayerMP player)
+    public void messageOnServerThread(final ChangeFreeToInteractBlockMessage message, final EntityPlayerMP player)
     {
         final Colony colony = ColonyManager.getColony(message.colonyId);
         if (colony != null)
@@ -101,15 +123,31 @@ public class AddFreeToInteractBlockMessage extends AbstractMessage<AddFreeToInte
                 return;
             }
 
-            if(message.blockState.getBlock() != Blocks.DIRT)
+            if(message.type == MessageType.ADD_BLOCK)
             {
-                colony.addFreeBlock(message.blockState);
+                if (message.block != Blocks.DIRT)
+                {
+                    colony.addFreeBlock(message.block);
+                }
+
+                if (pos.getX() != 0 && pos.getZ() != 0 && pos.getY() != 0)
+                {
+                    colony.addFreePosition(message.pos);
+                }
+            }
+            else
+            {
+                if (message.block != Blocks.DIRT)
+                {
+                    colony.removeFreeBlock(message.block);
+                }
+
+                if (pos.getX() != 0 && pos.getZ() != 0 && pos.getY() != 0)
+                {
+                    colony.removeFreePosition(message.pos);
+                }
             }
 
-            if(pos.getX() != 0 && pos.getZ() != 0 && pos.getY() != 0)
-            {
-                colony.addFreePosition(message.pos);
-            }
         }
     }
 }

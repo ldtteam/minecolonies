@@ -148,7 +148,7 @@ public class MineColonies
         getNetwork().registerMessage(RecallTownhallMessage.class, RecallTownhallMessage.class, 34, Side.SERVER);
         getNetwork().registerMessage(TransferItemsRequestMessage.class, TransferItemsRequestMessage.class, 35, Side.SERVER);
         getNetwork().registerMessage(MarkBuildingDirtyMessage.class, MarkBuildingDirtyMessage.class, 36, Side.SERVER);
-        getNetwork().registerMessage(AddFreeToInteractBlockMessage.class, AddFreeToInteractBlockMessage.class, 37, Side.SERVER);
+        getNetwork().registerMessage(ChangeFreeToInteractBlockMessage.class, ChangeFreeToInteractBlockMessage.class, 37, Side.SERVER);
 
 
         //Client side only

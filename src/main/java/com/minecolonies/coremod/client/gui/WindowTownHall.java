@@ -11,12 +11,10 @@ import com.minecolonies.coremod.colony.CitizenDataView;
 import com.minecolonies.coremod.colony.WorkOrderView;
 import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.Permissions;
-import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
@@ -337,6 +335,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String INPUT_BLOCK_NAME = "addBlockName";
 
     /**
+     * Button to remove a block or position of the list.
+     */
+    private static final String BUTTON_REMOVE_BLOCK = "removeBlock";
+
+    /**
      * List of workOrders.
      */
     private final        List<WorkOrderView> workOrders      = new ArrayList<>();
@@ -429,8 +432,32 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         findPaneOfTypeByID(BUTTON_MANAGE_OFFICER, Button.class).setEnabled(false);
 
         registerButton(BUTTON_TRIGGER, this::trigger);
-
         registerButton(BUTTON_ADD_BLOCK, this::addBlock);
+        registerButton(BUTTON_REMOVE_BLOCK, this::removeBlock);
+    }
+
+    private void removeBlock(final Button button)
+    {
+        final int row = freeBlocksList.getListElementIndexByPane(button);
+        if (row >= 0)
+        {
+            @NotNull final List<Block> freeBlocks = townHall.getColony().getFreeBlocks();
+            @NotNull final List<BlockPos> freePositions = townHall.getColony().getFreePositions();
+
+            if(row < freeBlocks.size())
+            {
+                MineColonies.getNetwork().sendToServer(
+                        new ChangeFreeToInteractBlockMessage(townHall.getColony(), freeBlocks.get(row), ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                townHall.getColony().removeFreeBlock(freeBlocks.get(row));
+            }
+            else if(row < freeBlocks.size() + freePositions.size())
+            {
+                final BlockPos freePos = freePositions.get(row - freeBlocks.size());
+                MineColonies.getNetwork().sendToServer(
+                        new ChangeFreeToInteractBlockMessage(townHall.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
+                townHall.getColony().removeFreePosition(freePos);
+            }
+        }
     }
 
     /**
@@ -439,7 +466,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
      */
     private void addBlock()
     {
-        //todo really have the lists in the colony view and add the new blocks here then!
         final TextField input = findPaneOfTypeByID(INPUT_BLOCK_NAME, TextField.class);
         final String inputText = input.getText();
 
@@ -447,7 +473,8 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         if(block != null)
         {
-            MineColonies.getNetwork().sendToServer(new AddFreeToInteractBlockMessage(townHall.getColony(), block.getDefaultState()));
+            townHall.getColony().addFreeBlock(block);
+            MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
         }
 
         final String[] strings = inputText.split(" ");
@@ -459,7 +486,9 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                 final int x = Integer.parseInt(strings[0]);
                 final int y = Integer.parseInt(strings[1]);
                 final int z = Integer.parseInt(strings[2]);
-                MineColonies.getNetwork().sendToServer(new AddFreeToInteractBlockMessage(townHall.getColony(), new BlockPos(x, y, z)));
+                final BlockPos pos = new BlockPos(x, y, z);
+                MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
+                townHall.getColony().addFreePosition(pos);
 
             }
             catch (NumberFormatException e)
@@ -470,6 +499,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             }
         }
 
+        fillFreeBlockList();
         input.setText("");
     }
 
@@ -794,22 +824,32 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Fills the free blocks list in the GUI.
      */
-    //todo make it configurable, will have to store list in colony then. And persist and get to view.
     private void fillFreeBlockList()
     {
+        @NotNull final List<Block> freeBlocks = townHall.getColony().getFreeBlocks();
+        @NotNull final List<BlockPos> freePositions = townHall.getColony().getFreePositions();
+
         freeBlocksList = findPaneOfTypeByID(LIST_FREE_BLOCKS, ScrollingList.class);
         freeBlocksList.setDataProvider(new ScrollingList.DataProvider()
         {
             @Override
             public int getElementCount()
             {
-                return Configurations.freeToInteractBlocks.length;
+                return freeBlocks.size() + freePositions.size();
             }
 
             @Override
             public void updateElement(final int index, @NotNull final Pane rowPane)
             {
-                rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(Configurations.freeToInteractBlocks[index]);
+                if(index < freeBlocks.size())
+                {
+                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(freeBlocks.get(index).getRegistryName().toString());
+                }
+                else
+                {
+                    final BlockPos pos = freePositions.get(index - freeBlocks.size());
+                    rowPane.findPaneOfTypeByID("name", Label.class).setLabelText(pos.getX() + " " + pos.getY() + " " + pos.getZ());
+                }
             }
         });
     }

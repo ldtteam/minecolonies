@@ -24,6 +24,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.stats.Achievement;
 import net.minecraft.stats.StatBase;
@@ -141,12 +142,12 @@ public class Colony implements IColony
     /**
      * The Positions which players can freely interact.
      */
-    private final List<BlockPos> freePositions = new ArrayList<>();
+    private final Set<BlockPos> freePositions = new HashSet<>();
 
     /**
      * The Blocks which players can freely interact with.
      */
-    private final List<IBlockState> freeBlocks = new ArrayList<>();
+    private final Set<Block> freeBlocks = new HashSet<>();
 
     /**
      * Constructor for a newly created Colony.
@@ -179,14 +180,12 @@ public class Colony implements IColony
         // Register a new event handler
         MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
 
-        //todo transform things from configuration to list.
-        //todo need some ways to make it blockState really.
         for(String s: Configurations.freeToInteractBlocks)
         {
             final Block block = Block.getBlockFromName(s);
             if(block != null)
             {
-                freeBlocks.add(block.getDefaultState());
+                freeBlocks.add(block);
             }
         }
     }
@@ -304,10 +303,8 @@ public class Colony implements IColony
         final NBTTagList freeBlockTagList = compound.getTagList(TAG_FREE_BLOCKS, NBT.TAG_COMPOUND);
         for (int i = 0; i < freeBlockTagList.tagCount(); ++i)
         {
-            final NBTTagCompound blockTag = freeBlockTagList.getCompoundTagAt(i);
-            final IBlockState block = NBTUtil.readBlockState(blockTag);
-
-            freeBlocks.add(block);
+            final String registryName = freeBlockTagList.getStringTagAt(i);
+            freeBlocks.add(Block.getBlockFromName(registryName));
         }
 
         // Free positions
@@ -453,18 +450,15 @@ public class Colony implements IColony
         lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_TREES, felledTrees);
         lumberjackStatisticsCompound.setInteger(TAG_LUMBERJACK_SAPLINGS, plantedSaplings);
 
-        // Waypoints
+        // Free blocks
         @NotNull final NBTTagList freeBlocksTagList = new NBTTagList();
-        for (@NotNull final IBlockState blockState : freeBlocks)
+        for (@NotNull final Block block : freeBlocks)
         {
-            @NotNull final NBTTagCompound freeBlockCompound = new NBTTagCompound();
-            NBTUtil.writeBlockState(freeBlockCompound, blockState);
-
-            freeBlocksTagList.appendTag(freeBlockCompound);
+            freeBlocksTagList.appendTag(new NBTTagString(block.getRegistryName().toString()));
         }
         compound.setTag(TAG_FREE_BLOCKS, freeBlocksTagList);
 
-        // Waypoints
+        // Free positions
         @NotNull final NBTTagList freePositionsTagList = new NBTTagList();
         for (@NotNull final BlockPos pos: freePositions)
         {
@@ -971,18 +965,18 @@ public class Colony implements IColony
      * Get a copy of the freePositions list.
      * @return the list of free to interact positions.
      */
-    public List<BlockPos> getFreePositions()
+    public Set<BlockPos> getFreePositions()
     {
-        return new ArrayList<>(freePositions);
+        return new HashSet<>(freePositions);
     }
 
     /**
      * Get a copy of the freeBlocks list.
      * @return the list of free to interact blocks.
      */
-    public List<IBlockState> getFreeBlocks()
+    public Set<Block> getFreeBlocks()
     {
-        return new ArrayList<>(freeBlocks);
+        return new HashSet<>(freeBlocks);
     }
 
     /**
@@ -992,15 +986,17 @@ public class Colony implements IColony
     public void addFreePosition(@NotNull final BlockPos pos)
     {
         freePositions.add(pos);
+        markDirty();
     }
 
     /**
      * Add a new free to interact block.
-     * @param state block to add.
+     * @param block block to add.
      */
-    public void addFreeBlock(@NotNull final IBlockState state)
+    public void addFreeBlock(@NotNull final Block block)
     {
-        freeBlocks.add(state);
+        freeBlocks.add(block);
+        markDirty();
     }
 
     /**
@@ -1010,15 +1006,17 @@ public class Colony implements IColony
     public void removeFreePosition(@NotNull final BlockPos pos)
     {
         freePositions.remove(pos);
+        markDirty();
     }
 
     /**
      * Remove a free to interact block.
-     * @param state state to remove.
+     * @param block state to remove.
      */
-    public void removeFreeBlock(@NotNull final IBlockState state)
+    public void removeFreeBlock(@NotNull final Block block)
     {
-        freeBlocks.remove(state);
+        freeBlocks.remove(block);
+        markDirty();
     }
 
     /**
