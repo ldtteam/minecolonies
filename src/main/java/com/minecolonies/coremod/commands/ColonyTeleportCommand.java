@@ -11,21 +11,21 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.HOMETP;
+import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.COLONYTP;
 
 /**
- * this command is made to TP a player to their home colony.
+ * this command is made to TP a player to a friends colony.
  */
-public class HomeTeleportCommand extends AbstractSingleCommand
+public class ColonyTeleportCommand extends AbstractSingleCommand
 {
-    public static final  String DESC             = "home";
+    public static final  String DESC             = "colonytp";
 
     /**
      * Initialize this SubCommand with it's parents.
      *
      * @param parents an array of all the parents.
      */
-    public HomeTeleportCommand(@NotNull final String... parents)
+    public ColonyTeleportCommand(@NotNull final String... parents)
     {
         super(parents);
     }
@@ -34,7 +34,7 @@ public class HomeTeleportCommand extends AbstractSingleCommand
     @Override
     public String getCommandUsage(@NotNull final ICommandSender sender)
     {
-        return super.getCommandUsage(sender) + "home";
+        return super.getCommandUsage(sender) + "colonytp" + "<colID>";
     }
 
     @Override
@@ -42,26 +42,25 @@ public class HomeTeleportCommand extends AbstractSingleCommand
     {
 
         //see if player is allowed to use in the configs
-            if (!canCommandSenderUseCommand(HOMETP))
-            {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
-                return;
-            }
-            else
-            {
-                //send the info to the Colony TP utils
-                String homeID = "99999";
-                TeleportToColony.ColonyTeleport(server, sender, homeID);
-            }
+        if (!canCommandSenderUseCommand(COLONYTP))
+        {
+            sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
+            return;
+        }
+        else
+        {
+            //send the info to the Colony TP utils
+            TeleportToColony.ColonyTeleport(server,sender,args[0]);
+        }
     }
 
     @NotNull
     @Override
     public List<String> getTabCompletionOptions (
-    @NotNull final MinecraftServer server,
-    @NotNull final ICommandSender sender,
-    @NotNull final String[] args,
-    final BlockPos pos)
+            @NotNull final MinecraftServer server,
+            @NotNull final ICommandSender sender,
+            @NotNull final String[] args,
+            final BlockPos pos)
     {
         return Collections.emptyList();
     }

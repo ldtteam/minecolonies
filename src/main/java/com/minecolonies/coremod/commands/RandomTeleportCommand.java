@@ -91,6 +91,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             return;
         }
         playerToTeleport.getCommandSenderEntity().addChatMessage(new TextComponentString("Buckle up buttercup, this ain't no joy ride!!!"));
+
         teleportPlayer(sender, playerToTeleport);
         playerToTeleport.fallDistance=-5;
     }
@@ -151,6 +152,7 @@ public class RandomTeleportCommand extends AbstractSingleCommand
             {
                 if(MinecoloniesCommand.canExecuteCommand((EntityPlayer) sender))
                 {
+
                     playerToTeleport.setPositionAndUpdate(groundPosition.getX(), groundPosition.getY() + SAFETY_DROP, groundPosition.getZ());
                 }
                 else

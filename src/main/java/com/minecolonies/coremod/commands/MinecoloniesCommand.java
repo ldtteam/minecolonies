@@ -28,6 +28,7 @@ public class MinecoloniesCommand extends AbstractSplitCommand
         .put(RandomTeleportCommand.DESC, new RandomTeleportCommand(DESC))
         .put(BackupCommand.DESC, new BackupCommand(DESC))
         .put(HomeTeleportCommand.DESC, new HomeTeleportCommand(DESC))
+        .put(ColonyTeleportCommand.DESC, new ColonyTeleportCommand(DESC))
         .build();
 
     /**
