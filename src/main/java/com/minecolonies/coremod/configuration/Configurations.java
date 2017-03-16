@@ -55,8 +55,7 @@ public class Configurations
 
     public static String[] freeToInteractBlocks = new String[]
             {
-                    "minecraft:BlockDirt",
-                    "minecraft:damnIt"
+                    
             };
 
     public static String[] maleFirstNames = new String[]
