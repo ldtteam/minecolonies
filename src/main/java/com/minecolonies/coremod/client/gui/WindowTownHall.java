@@ -340,6 +340,11 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String BUTTON_REMOVE_BLOCK = "removeBlock";
 
     /**
+     * Amount of string required to try to calculate a blockpos.
+     */
+    private static final int BLOCKPOS_LENGTH = 3;
+
+    /**
      * List of workOrders.
      */
     private final        List<WorkOrderView> workOrders      = new ArrayList<>();
@@ -480,7 +485,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         final String[] strings = inputText.split(" ");
 
-        if(strings.length == 3)
+        if(strings.length == BLOCKPOS_LENGTH)
         {
             try
             {
@@ -797,7 +802,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             @Override
             public int getElementCount()
             {
-                return Permissions.Action.values().length-3;
+                return Permissions.Action.values().length - IGNORE_INDEX;
             }
 
             @Override

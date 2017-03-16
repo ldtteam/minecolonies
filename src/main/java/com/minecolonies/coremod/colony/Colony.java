@@ -180,7 +180,7 @@ public class Colony implements IColony
         // Register a new event handler
         MinecraftForge.EVENT_BUS.register(new ColonyPermissionEventHandler(this));
 
-        for(String s: Configurations.freeToInteractBlocks)
+        for(final String s: Configurations.freeToInteractBlocks)
         {
             final Block block = Block.getBlockFromName(s);
             if(block != null)
