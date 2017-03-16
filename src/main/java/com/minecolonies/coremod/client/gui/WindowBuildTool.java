@@ -561,8 +561,15 @@ public class WindowBuildTool extends AbstractWindowSkeleton
     {
         sectionIndex = index;
         String name = getSectionName();
-        if (! Structures.SCHEMATICS_DECORATIONS.equals(name) &&
-            ! Structures.SCHEMATICS_CUSTOM.equals(name))
+        if (Structures.SCHEMATICS_DECORATIONS.equals(name))
+        {
+            name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.decorations");
+        }
+        else if (Structures.SCHEMATICS_CUSTOM.equals(name))
+        {
+            name = LanguageHandler.format("com.minecolonies.coremod.gui.buildtool.custom");
+        }
+        else
         {
             //should be a hut
             name = LanguageHandler.format("tile.minecolonies.blockHut" + name + ".name");

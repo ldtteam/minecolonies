@@ -342,7 +342,7 @@ public final class Structures
     public static class StructureName
     {
         private final static Pattern levelPattern = Pattern.compile("[^0-9]+([0-9]+)$");
-        private final static String LOCALIZED_SCHEMATIC_LEVEL = "com.minecolonies.coremod.gui.hut.level";
+        private final static String LOCALIZED_SCHEMATIC_LEVEL = "com.minecolonies.coremod.gui.buildtool.hut.level";
         private String section;
         private String prefix;
         private String style;
@@ -504,8 +504,7 @@ public final class Structures
                 if (matcher.find())
                 {
                     final int level = Integer.parseInt(matcher.group(1));
-                    return "Level " + level;
-//TODO                    return LanguageHandler.format(LOCALIZED_SCHEMATIC_LEVEL, level);
+                    return LanguageHandler.format(LOCALIZED_SCHEMATIC_LEVEL, level);
                 }
             }
             return schematic;
