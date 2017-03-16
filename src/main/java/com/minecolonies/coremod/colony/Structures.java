@@ -101,38 +101,26 @@ public final class Structures
         try
         {
             @NotNull final URI uri = ColonyManager.class.getResource(SCHEMATICS_ASSET_PATH).toURI();
-            final Path basePath;
-            if ("jar".equals(uri.getScheme()))
-            {
-                try (FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap()))
-                {
-                    basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
-                    loadSchematicsForSection(basePath, SCHEMATICS_HUTS);
-                    loadSchematicsForSection(basePath, SCHEMATICS_DECORATIONS);
-                }
-            }
-            else
-            {
-                basePath = Paths.get(uri);
-                loadSchematicsForSection(basePath, SCHEMATICS_HUTS);
-                loadSchematicsForSection(basePath, SCHEMATICS_DECORATIONS);
-            }
-
-            File schematicsFolder = Structure.getSchematicsFolder();
-            if (schematicsFolder != null)
-            {
-                checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_HUTS).toFile());
-                loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_HUTS);
-                checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_DECORATIONS).toFile());
-                loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_DECORATIONS);
-                checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CACHE).toFile());
-                loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CACHE);
-            }
-
+            final FileSystem fileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+            final Path basePath = fileSystem.getPath(SCHEMATICS_ASSET_PATH);
+            loadSchematicsForSection(basePath, SCHEMATICS_HUTS);
+            loadSchematicsForSection(basePath, SCHEMATICS_DECORATIONS);
         }
         catch (@NotNull IOException | URISyntaxException e)
         {
             //Silently ignore
+            Log.getLogger().warn("loadStyleMaps: Could not load the schematics from the jar");
+        }
+
+        File schematicsFolder = Structure.getSchematicsFolder();
+        if (schematicsFolder != null)
+        {
+            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_HUTS).toFile());
+            loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_HUTS);
+            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_DECORATIONS).toFile());
+            loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_DECORATIONS);
+            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CACHE).toFile());
+            loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CACHE);
         }
 
         if (md5Map.size()==0)
@@ -147,21 +135,14 @@ public final class Structures
     @SideOnly(Side.CLIENT)
     public static void loadCustomStyleMaps()
     {
-        if (!allowPlayerSchematics)
+        if (!allowPlayerSchematics && FMLCommonHandler.instance().getMinecraftServerInstance() == null)
         {
             return;
         }
 
-        File schematicsFolder = Structure.getClientSchematicsFolder();
-        try
-        {
-            checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM).toFile());
-            loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CUSTOM);
-        }
-        catch (IOException e)
-        {
-            Log.getLogger().warn("Could not load the custom folder for schematics " + schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM));
-        }
+        final File schematicsFolder = Structure.getClientSchematicsFolder();
+        checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM).toFile());
+        loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CUSTOM);
     }
 
     /**
@@ -172,7 +153,7 @@ public final class Structures
      * @param section
      * @throws IOException if nothing found.
      */
-    private static void loadSchematicsForSection(@NotNull final Path basePath, @NotNull final String section) throws IOException
+    private static void loadSchematicsForSection(@NotNull final Path basePath, @NotNull final String section)
     {
         try (Stream<Path> walk = Files.walk(basePath.resolve(section)))
         {
@@ -208,6 +189,10 @@ public final class Structures
                     }
                 }
             }
+        }
+        catch (@NotNull IOException e)
+        {
+            Log.getLogger().warn("loadSchematicsForSection: Could not load schematics from " + basePath.resolve(section));
         }
     }
 
