@@ -196,7 +196,8 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent event)
     {
-        if (colony.isCoordInColony(event.getWorld(), event.getPos()))
+        if (colony.isCoordInColony(event.getWorld(), event.getPos())
+                && !(event instanceof PlayerInteractEvent.EntityInteract || event instanceof PlayerInteractEvent.EntityInteractSpecific))
         {
             final Block block = event.getWorld().getBlockState(event.getPos()).getBlock();
             // Huts
@@ -279,7 +280,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent.EntityInteract event)
     {
-        if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()).getBlock(), event.getPos())
+        if(isFreeToInteractWith(null, event.getPos())
                 && colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_FREE_BLOCKS))
         {
             return;
@@ -301,7 +302,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent.EntityInteractSpecific event)
     {
-        if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()).getBlock(), event.getPos())
+        if(isFreeToInteractWith(null, event.getPos())
                 && colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_FREE_BLOCKS))
         {
             return;
@@ -314,9 +315,9 @@ public class ColonyPermissionEventHandler
      * @param block the block to check.
      * @return true if so.
      */
-    private boolean isFreeToInteractWith(final Block block, final BlockPos pos)
+    private boolean isFreeToInteractWith(@Nullable final Block block, final BlockPos pos)
     {
-        return colony.getFreeBlocks().stream().anyMatch(b -> b.equals(block)) || colony.getFreePositions().stream().anyMatch(position -> position.equals(pos));
+        return (block != null && colony.getFreeBlocks().stream().anyMatch(b -> b.equals(block))) || colony.getFreePositions().stream().anyMatch(position -> position.equals(pos));
     }
 
     /**
