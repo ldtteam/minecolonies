@@ -13,6 +13,7 @@ import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.lib.Constants;
 import com.minecolonies.coremod.network.messages.*;
+import com.minecolonies.coremod.util.BlockPosUtil;
 import com.minecolonies.coremod.util.LanguageHandler;
 import net.minecraft.block.Block;
 import net.minecraft.util.math.BlockPos;
@@ -340,11 +341,6 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     private static final String BUTTON_REMOVE_BLOCK = "removeBlock";
 
     /**
-     * Amount of string required to try to calculate a blockpos.
-     */
-    private static final int BLOCKPOS_LENGTH = 3;
-
-    /**
      * List of workOrders.
      */
     private final        List<WorkOrderView> workOrders      = new ArrayList<>();
@@ -483,26 +479,12 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
             MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), block, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
         }
 
-        final String[] strings = inputText.split(" ");
+        final BlockPos pos = BlockPosUtil.getBlockPosOfString(inputText);
 
-        if(strings.length == BLOCKPOS_LENGTH)
+        if(pos != null)
         {
-            try
-            {
-                final int x = Integer.parseInt(strings[0]);
-                final int y = Integer.parseInt(strings[1]);
-                final int z = Integer.parseInt(strings[2]);
-                final BlockPos pos = new BlockPos(x, y, z);
-                MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
-                townHall.getColony().addFreePosition(pos);
-
-            }
-            catch (NumberFormatException e)
-            {
-                /**
-                 * Empty for a purpose.
-                 */
-            }
+            MineColonies.getNetwork().sendToServer(new ChangeFreeToInteractBlockMessage(townHall.getColony(), pos, ChangeFreeToInteractBlockMessage.MessageType.ADD_BLOCK));
+            townHall.getColony().addFreePosition(pos);
         }
 
         fillFreeBlockList();

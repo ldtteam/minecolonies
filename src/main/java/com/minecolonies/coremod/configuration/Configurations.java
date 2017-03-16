@@ -55,7 +55,8 @@ public class Configurations
 
     public static String[] freeToInteractBlocks = new String[]
             {
-                    
+                "block:dirt",
+                "0 0 0"
             };
 
     public static String[] maleFirstNames = new String[]

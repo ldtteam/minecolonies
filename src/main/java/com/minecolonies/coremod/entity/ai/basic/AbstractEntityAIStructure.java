@@ -889,14 +889,8 @@ public abstract class AbstractEntityAIStructure<J extends AbstractJob> extends A
      * @return the new stack with the correct amount.
      */
     @Nullable
-    private ItemStack getTotalAmount(@Nullable final ItemStack stack)
+    public ItemStack getTotalAmount(@Nullable final ItemStack stack)
     {
-        final AbstractBuildingWorker buildingWorker = getOwnBuilding();
-        if (buildingWorker instanceof BuildingBuilder)
-        {
-            final BuildingBuilderResource resource = ((BuildingBuilder) buildingWorker).getNeededResources().get(stack.getUnlocalizedName());
-            return resource == null ? stack : new ItemStack(resource.getItem(), resource.getAmount(), resource.getDamageValue());
-        }
         return stack;
     }
 

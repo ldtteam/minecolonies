@@ -187,6 +187,14 @@ public class Colony implements IColony
             {
                 freeBlocks.add(block);
             }
+            else
+            {
+                final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
+                if(pos != null)
+                {
+                    freePositions.add(pos);
+                }
+            }
         }
     }
 
