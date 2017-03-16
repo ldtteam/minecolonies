@@ -300,11 +300,10 @@ public class Colony implements IColony
         plantedSaplings = lumberjackStatisticsCompound.getInteger(TAG_LUMBERJACK_SAPLINGS);
 
         // Free blocks
-        final NBTTagList freeBlockTagList = compound.getTagList(TAG_FREE_BLOCKS, NBT.TAG_COMPOUND);
+        final NBTTagList freeBlockTagList = compound.getTagList(TAG_FREE_BLOCKS, NBT.TAG_STRING);
         for (int i = 0; i < freeBlockTagList.tagCount(); ++i)
         {
-            final String registryName = freeBlockTagList.getStringTagAt(i);
-            freeBlocks.add(Block.getBlockFromName(registryName));
+            freeBlocks.add(Block.getBlockFromName(freeBlockTagList.getStringTagAt(i)));
         }
 
         // Free positions
@@ -313,7 +312,6 @@ public class Colony implements IColony
         {
             final NBTTagCompound blockTag = freePositionTagList.getCompoundTagAt(i);
             final BlockPos block = BlockPosUtil.readFromNBT(blockTag, TAG_FREE_POSITIONS);
-
             freePositions.add(block);
         }
     }
@@ -464,7 +462,6 @@ public class Colony implements IColony
         {
             @NotNull final NBTTagCompound wayPointCompound = new NBTTagCompound();
             BlockPosUtil.writeToNBT(wayPointCompound, TAG_FREE_POSITIONS, pos);
-
             freePositionsTagList.appendTag(wayPointCompound);
         }
         compound.setTag(TAG_FREE_POSITIONS, freePositionsTagList);

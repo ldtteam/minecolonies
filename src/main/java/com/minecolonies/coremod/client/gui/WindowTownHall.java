@@ -457,6 +457,7 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
                         new ChangeFreeToInteractBlockMessage(townHall.getColony(), freePos, ChangeFreeToInteractBlockMessage.MessageType.REMOVE_BLOCK));
                 townHall.getColony().removeFreePosition(freePos);
             }
+            fillFreeBlockList();
         }
     }
 

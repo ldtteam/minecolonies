@@ -130,7 +130,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                     colony.addFreeBlock(message.block);
                 }
 
-                if (pos.getX() != 0 && pos.getZ() != 0 && pos.getY() != 0)
+                if (!(message.pos.getX() == 0 && message.pos.getZ() == 0 && message.pos.getY() == 0))
                 {
                     colony.addFreePosition(message.pos);
                 }
@@ -142,7 +142,7 @@ public class ChangeFreeToInteractBlockMessage extends AbstractMessage<ChangeFree
                     colony.removeFreeBlock(message.block);
                 }
 
-                if (pos.getX() != 0 && pos.getZ() != 0 && pos.getY() != 0)
+                if (!(message.pos.getX() == 0 && message.pos.getZ() == 0 && message.pos.getY() == 0))
                 {
                     colony.removeFreePosition(message.pos);
                 }
