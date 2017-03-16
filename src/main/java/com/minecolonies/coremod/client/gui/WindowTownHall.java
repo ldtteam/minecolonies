@@ -13,11 +13,11 @@ import com.minecolonies.coremod.colony.buildings.BuildingTownHall;
 import com.minecolonies.coremod.colony.permissions.Permissions;
 import com.minecolonies.coremod.configuration.Configurations;
 import com.minecolonies.coremod.lib.Constants;
-import com.minecolonies.coremod.network.messages.PermissionsMessage;
-import com.minecolonies.coremod.network.messages.RecallTownhallMessage;
-import com.minecolonies.coremod.network.messages.ToggleJobMessage;
-import com.minecolonies.coremod.network.messages.WorkOrderChangeMessage;
+import com.minecolonies.coremod.network.messages.*;
 import com.minecolonies.coremod.util.LanguageHandler;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -324,7 +324,17 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
     /**
      * Ignored index starts at this line, ignore this amount after this index.
      */
-    private static final int IGNORE_INDEX = 3;
+    private static final int IGNORE_INDEX     = 3;
+
+    /**
+     * Button clicked to add a block to the colony to be freely interacted with.
+     */
+    private static final String BUTTON_ADD_BLOCK = "addBlock";
+
+    /**
+     * Input field with the blockName or position to add.
+     */
+    private static final String INPUT_BLOCK_NAME = "addBlockName";
 
     /**
      * List of workOrders.
@@ -420,9 +430,54 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
 
         registerButton(BUTTON_TRIGGER, this::trigger);
 
+        registerButton(BUTTON_ADD_BLOCK, this::addBlock);
     }
 
-    public void trigger(Button button)
+    /**
+     * Called when the "addBlock" button has been triggered.
+     * Tries to add the content of the input field as block or position to the colony.
+     */
+    private void addBlock()
+    {
+        //todo really have the lists in the colony view and add the new blocks here then!
+        final TextField input = findPaneOfTypeByID(INPUT_BLOCK_NAME, TextField.class);
+        final String inputText = input.getText();
+
+        final Block block = Block.getBlockFromName(inputText);
+
+        if(block != null)
+        {
+            MineColonies.getNetwork().sendToServer(new AddFreeToInteractBlockMessage(townHall.getColony(), block.getDefaultState()));
+        }
+
+        final String[] strings = inputText.split(" ");
+
+        if(strings.length == 3)
+        {
+            try
+            {
+                final int x = Integer.parseInt(strings[0]);
+                final int y = Integer.parseInt(strings[1]);
+                final int z = Integer.parseInt(strings[2]);
+                MineColonies.getNetwork().sendToServer(new AddFreeToInteractBlockMessage(townHall.getColony(), new BlockPos(x, y, z)));
+
+            }
+            catch (NumberFormatException e)
+            {
+                /**
+                 * Empty for a purpose.
+                 */
+            }
+        }
+
+        input.setText("");
+    }
+
+    /**
+     * Called when the permission button has been triggered.
+     * @param button the triggered button.
+     */
+    private void trigger(@NotNull final Button button)
     {
         @NotNull final Pane pane = button.getParent().getChildren().get(2);
         int index = 0;
@@ -432,15 +487,17 @@ public class WindowTownHall extends AbstractWindowBuilding<BuildingTownHall.View
         }
         final boolean trigger = LanguageHandler.format(ON).equals(button.getLabel());
         final Permissions.Action action = Permissions.Action.values()[index];
+        final Permissions.Rank rank = Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase());
+
+        MineColonies.getNetwork().sendToServer(new PermissionsMessage.Permission(townHall.getColony(), PermissionsMessage.MessageType.TOGGLE_PERMISSION, rank, action));
+        townHall.getColony().getPermissions().togglePermission(rank, action);
 
         if(trigger)
         {
-            townHall.getColony().getPermissions().removePermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
             button.setLabel(LanguageHandler.format(OFF));
         }
         else
         {
-            townHall.getColony().getPermissions().setPermission(Permissions.Rank.valueOf(actionsList.getParent().getID().toUpperCase()), action);
             button.setLabel(LanguageHandler.format(ON));
         }
     }

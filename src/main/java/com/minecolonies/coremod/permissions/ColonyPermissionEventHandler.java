@@ -27,7 +27,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -59,7 +58,7 @@ public class ColonyPermissionEventHandler
     public void on(final BlockEvent.PlaceEvent event)
     {
         if (Configurations.enableColonyProtection && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(), event.getPlacedBlock(),
-                Permissions.Action.PLACE_BLOCKS))
+                event.getPlacedBlock().getBlock() instanceof AbstractBlockHut ? Permissions.Action.PLACE_HUTS : Permissions.Action.PLACE_BLOCKS))
         {
             cancelEvent(event, event.getPlayer());
         }
@@ -96,6 +95,8 @@ public class ColonyPermissionEventHandler
             {
                 return false;
             }
+
+            return true;
         }
 
         /*
@@ -129,7 +130,8 @@ public class ColonyPermissionEventHandler
     public void on(final BlockEvent.BreakEvent event)
     {
         if (Configurations.enableColonyProtection && checkBlockEventDenied(event.getWorld(), event.getPos(), event.getPlayer(),
-                event.getWorld().getBlockState(event.getPos()), Permissions.Action.BREAK_BLOCKS))
+                event.getWorld().getBlockState(event.getPos()),
+                event.getWorld().getBlockState(event.getPos()).getBlock() instanceof AbstractBlockHut ? Permissions.Action.BREAK_HUTS : Permissions.Action.BREAK_BLOCKS))
         {
             cancelEvent(event, event.getPlayer());
         }
@@ -206,7 +208,8 @@ public class ColonyPermissionEventHandler
 
             final Permissions perms = colony.getPermissions();
 
-            if(isFreeToInteractWith(block) && perms.hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_FREE_BLOCKS))
+            if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()), event.getPos())
+                    && perms.hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_FREE_BLOCKS))
             {
                 return;
             }
@@ -276,7 +279,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent.EntityInteract event)
     {
-        if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()).getBlock())
+        if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()), event.getPos())
                 && colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_FREE_BLOCKS))
         {
             return;
@@ -298,7 +301,7 @@ public class ColonyPermissionEventHandler
     @SubscribeEvent
     public void on(final PlayerInteractEvent.EntityInteractSpecific event)
     {
-        if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()).getBlock())
+        if(isFreeToInteractWith(event.getWorld().getBlockState(event.getPos()), event.getPos())
                 && colony.getPermissions().hasPermission(event.getEntityPlayer(), Permissions.Action.ACCESS_FREE_BLOCKS))
         {
             return;
@@ -311,9 +314,9 @@ public class ColonyPermissionEventHandler
      * @param block the block to check.
      * @return true if so.
      */
-    private boolean isFreeToInteractWith(final Block block)
+    private boolean isFreeToInteractWith(final IBlockState blockState, final BlockPos pos)
     {
-        return Arrays.stream(Configurations.freeToInteractBlocks).anyMatch(s -> toString().equalsIgnoreCase(block.getRegistryName().toString()));
+        return colony.getFreeBlocks().stream().anyMatch(block -> block.equals(blockState)) || colony.getFreePositions().stream().anyMatch(position -> position.equals(pos));
     }
 
     /**

@@ -336,7 +336,8 @@ achievement.farmer.wheatHarvested.25.desc=Your farmers harvested 25 wheat.
 achievement.farmer.wheatHarvested.100.desc=Your farmers harvested 100 wheat.
 achievement.farmer.wheatHarvested.500.desc=Your farmers harvested 500 wheat.
 achievement.farmer.wheatHarvested.1000.desc=Your farmers harvested 1000 wheat.
-com.minecolonies.coremod.permission.no = You have no permission to do this in this colony!
+
+com.minecolonies.coremod.permission.no=You have no permission to do this in this colony!
 com.minecolonies.coremod.gui.townHall.freeBlocks=Free for interaction
 
 com.minecolonies.coremod.permission.access_huts=Access GUIs

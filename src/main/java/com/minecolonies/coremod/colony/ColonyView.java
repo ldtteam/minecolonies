@@ -87,6 +87,7 @@ public final class ColonyView implements IColony
         //  Citizenry
         buf.writeInt(colony.getMaxCitizens());
         //  Citizens are sent as a separate packet
+        //todo add free blocks lists.
     }
 
     /**
@@ -270,6 +271,7 @@ public final class ColonyView implements IColony
             townHall = null;
             buildings.clear();
         }
+        //todo retrieve the lists here
 
         return null;
     }
