@@ -1,7 +1,9 @@
 package com.minecolonies.coremod.util;
 
 import com.minecolonies.coremod.colony.ColonyManager;
+import com.minecolonies.coremod.colony.Structures;
 import com.minecolonies.structures.helpers.Structure;
+import com.minecolonies.structures.helpers.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,7 +41,8 @@ public final class ClientStructureWrapper
      */
     public static void handleSaveScanMessage(final NBTTagCompound nbttagcompound, final long currentMillis)
     {
-        final String fileName = "/minecolonies/schematics/custom/scans/" + LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis, ".nbt");
+        final Structures.StructureName structureName = new Structures.StructureName(Structures.SCHEMATICS_CUSTOM, "scans",  LanguageHandler.format("item.scepterSteel.scanFormat", currentMillis));
+        final String fileName = "/minecolonies/schematics/" + structureName.toString() + Structures.SCHEMATIC_EXTENSION;
 
         final File file = new File(Minecraft.getMinecraft().mcDataDir, fileName);
         checkDirectory(file.getParentFile());
@@ -56,6 +59,7 @@ public final class ClientStructureWrapper
         }
 
         LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player,"item.scepterSteel.scanSuccess", fileName);
+        Settings.instance.setStructureName(structureName.toString());
     }
 
     /**
@@ -64,7 +68,7 @@ public final class ClientStructureWrapper
      */
     public static void sendMessageSchematicTooBig(int maxSize)
     {
-	LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
+	    LanguageHandler.sendPlayerMessage(Minecraft.getMinecraft().player, "com.minecolonies.coremod.network.messages.schematicsavemessage.toobig", maxSize);
     }
 
 

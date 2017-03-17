@@ -42,7 +42,7 @@ public final class Structures
      */
     private static final String MINER_STYLE = "miner";
 
-    private static final String                    SCHEMATIC_EXTENSION        = ".nbt";
+    public static final String                     SCHEMATIC_EXTENSION        = ".nbt";
     private static final String                    SCHEMATICS_ASSET_PATH      = "/assets/minecolonies/schematics/";
     public  static final String                    SCHEMATICS_HUTS            = "huts";
     public  static final String                    SCHEMATICS_DECORATIONS     = "decorations";
@@ -140,6 +140,8 @@ public final class Structures
             return;
         }
 
+
+        schematicsMap.remove(SCHEMATICS_CUSTOM);
         final File schematicsFolder = Structure.getClientSchematicsFolder();
         checkDirectory(schematicsFolder.toPath().resolve(SCHEMATICS_CUSTOM).toFile());
         loadSchematicsForSection(schematicsFolder.toPath(), SCHEMATICS_CUSTOM);
@@ -270,6 +272,7 @@ public final class Structures
      * rename a custom structure.
      * rename the file and the md5 entry
      * @param structureName the structure to add
+     * @return the new structureName
      */
     @SideOnly(Side.CLIENT)
     public static Structures.StructureName renameCustomStructure(@NotNull final StructureName structureName, @NotNull final String name)
@@ -311,6 +314,41 @@ public final class Structures
             Log.getLogger().warn("Failed to rename structure from " + structureFile + " to " + newStructureFile);
         }
         return null;
+    }
+
+    /**
+     * delete a custom structure.
+     * delete the file and the md5 entry
+     * @param structureName the structure to delete
+     * @return True if the structure have been deleted, False otherwise
+     */
+    @SideOnly(Side.CLIENT)
+    public static boolean deleteCustomStructure(@NotNull final StructureName structureName)
+    {
+        Log.getLogger().warn("deleteCustomStructure(" + structureName + ")");
+        if (!SCHEMATICS_CUSTOM.equals(structureName.getPrefix()))
+        {
+            Log.getLogger().warn("Delete failed: Invalid name " + structureName);
+            return false;
+        }
+
+        if (!hasMD5(structureName))
+        {
+            Log.getLogger().warn("Delete failed: No MD5 hash found for " + structureName);
+            return false;
+        }
+
+        final File structureFile = Structure.getClientSchematicsFolder().toPath().resolve(structureName.toString()+SCHEMATIC_EXTENSION).toFile();
+        if (structureFile.delete())
+        {
+            md5Map.remove(structureName.toString());
+            return true;
+        }
+        else
+        {
+            Log.getLogger().warn("Failed to delete structure " + structureName);
+        }
+        return false;
     }
 
     /**
