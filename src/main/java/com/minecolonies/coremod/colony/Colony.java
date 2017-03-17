@@ -183,17 +183,17 @@ public class Colony implements IColony
         for(final String s: Configurations.freeToInteractBlocks)
         {
             final Block block = Block.getBlockFromName(s);
-            if(block != null)
-            {
-                freeBlocks.add(block);
-            }
-            else
+            if(block == null)
             {
                 final BlockPos pos = BlockPosUtil.getBlockPosOfString(s);
                 if(pos != null)
                 {
                     freePositions.add(pos);
                 }
+            }
+            else
+            {
+                freeBlocks.add(block);
             }
         }
     }
