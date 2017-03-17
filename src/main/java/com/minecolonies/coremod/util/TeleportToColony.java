@@ -3,8 +3,6 @@ package com.minecolonies.coremod.util;
 import com.minecolonies.coremod.colony.Colony;
 import com.minecolonies.coremod.colony.ColonyManager;
 import com.minecolonies.coremod.colony.IColony;
-import com.minecolonies.coremod.commands.MinecoloniesCommand;
-import com.minecolonies.coremod.configuration.Configurations;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
@@ -23,13 +21,22 @@ public final class TeleportToColony
     /**
      * Private constructor to hide the implicit public one.
      */
-    public TeleportToColony(@NotNull final String... parents)
+    private TeleportToColony(@NotNull final String... parents)
     {
 
     }
 
+    /**
+     * colonyTeleport is used with Home and Colony to teleport people to either there home
+     * or to another colony, when you specified a colonyID
+     * @param server the server instance.
+     * @param sender the player that is initiating the command.
+     * @param args this is the colony ID that the player wishes to TP to.
+     */
+
     @NotNull
-    public static void ColonyTeleport(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args){
+    public static void colonyTeleport(@NotNull MinecraftServer server, @NotNull ICommandSender sender, @NotNull String... args)
+    {
         EntityPlayer playerToTeleport;
         IColony colony;
         int colonyId;
@@ -37,7 +44,7 @@ public final class TeleportToColony
         if (sender instanceof EntityPlayer)
         {
             //if no args then this is a home colony TP and we get the players Colony ID
-            if (args[0] == "99999")
+            if ("99999".equals(args[0]))
             {
                 playerToTeleport = (EntityPlayer) sender;
                 colony = ColonyManager.getIColonyByOwner(((EntityPlayer) sender).worldObj, (EntityPlayer) sender);
@@ -73,7 +80,7 @@ public final class TeleportToColony
 
         if (colID >= 1)
         {
-            playerToTeleport.setPositionAndUpdate(position.getX(),position.getY()+2,position.getZ());
+            playerToTeleport.setPositionAndUpdate(position.getX(),position.getY()+2.0,position.getZ());
         }
         else
         {

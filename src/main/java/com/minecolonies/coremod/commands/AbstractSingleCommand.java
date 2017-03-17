@@ -24,7 +24,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
     }
 
     /**
-     * Initialize this SubCommand with it's parents.**
+     * Initialize this SubCommand with it's parents.
      *
      * @param parents an array of all the parents.
      */
@@ -76,7 +76,7 @@ public abstract class AbstractSingleCommand implements ISubCommand
      * @param player the players/senders name.
      * @param theCommand which command to check if the player can use it.
      * @param colonyId the id of the colony.
-     * @return boolean
+     * @return boolean.
      */
 
     public boolean canPlayerUseCommand(final EntityPlayer player, final Commands theCommand, final int colonyId)

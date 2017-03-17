@@ -42,16 +42,16 @@ public class HomeTeleportCommand extends AbstractSingleCommand
     {
 
         //see if player is allowed to use in the configs
-            if (!canCommandSenderUseCommand(HOMETP))
+            if (canCommandSenderUseCommand(HOMETP))
             {
-                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
-                return;
+                //send the info to the Colony TP utils
+                final String homeID = "99999";
+                TeleportToColony.colonyTeleport(server, sender, homeID);
+
             }
             else
             {
-                //send the info to the Colony TP utils
-                String homeID = "99999";
-                TeleportToColony.ColonyTeleport(server, sender, homeID);
+                sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
             }
     }
 

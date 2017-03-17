@@ -16,7 +16,7 @@ import static com.minecolonies.coremod.commands.AbstractSingleCommand.Commands.C
 /**
  * this command is made to TP a player to a friends colony.
  */
-public class ColonyTeleportCommand extends AbstractSingleCommand
+public final class ColonyTeleportCommand extends AbstractSingleCommand
 {
     public static final  String DESC             = "colonytp";
 
@@ -45,12 +45,11 @@ public class ColonyTeleportCommand extends AbstractSingleCommand
         if (!canCommandSenderUseCommand(COLONYTP))
         {
             sender.getCommandSenderEntity().addChatMessage(new TextComponentString("This is not allowed on this server."));
-            return;
         }
         else
         {
             //send the info to the Colony TP utils
-            TeleportToColony.ColonyTeleport(server,sender,args[0]);
+            TeleportToColony.colonyTeleport(server,sender,args[0]);
         }
     }
 
